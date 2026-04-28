@@ -1,0 +1,1514 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exhibit Graphic Sign · A creative partner that remembers</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  /* ===== TWEAK TARGETS ===== */
+  :root {
+    --accent-a: #D4A017; /* ochre */
+    --accent-b: #C6532E; /* terracotta */
+    --accent-c: #3D4B2E; /* olive */
+    --accent-d: #8E3B46; /* claret */
+    --accent-e: #2B3A67; /* ink blue */
+  }
+  .logo-img { height: 40px; width: auto; display: block; }
+  .nav-inner { gap: 20px; }
+
+  /* ===== HERO ===== */
+  .hero {
+    padding: 48px 0 64px;
+    position: relative;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.9fr;
+    gap: clamp(28px, 4vw, 56px);
+    align-items: stretch;
+  }
+  .hero-l { display: flex; flex-direction: column; justify-content: space-between; }
+  .hero-chip-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .hero h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(52px, 9vw, 148px);
+    line-height: 0.92;
+    letter-spacing: -0.028em;
+    margin: 40px 0 28px;
+  }
+  .hero h1 .ital { font-style: italic; }
+  .hero h1 .c1 { color: var(--accent-b); }
+  .hero h1 .c2 { color: var(--accent-c); }
+  .hero h1 .c3 { color: var(--accent-a); }
+  .hero h1 .underlined {
+    background: linear-gradient(transparent 62%, var(--accent-a) 62%, var(--accent-a) 92%, transparent 92%);
+    padding: 0 4px;
+  }
+  .hero .lede {
+    font-family: var(--serif);
+    font-size: clamp(20px, 2vw, 28px);
+    line-height: 1.3;
+    color: var(--ink-2);
+    max-width: 26ch;
+  }
+  .hero .lede em { color: var(--ink); }
+  .hero-img-stack {
+    display: grid;
+    grid-template-rows: 1.4fr 1fr;
+    gap: 12px;
+    min-height: 540px;
+  }
+  .hero-img-stack .cell { overflow: hidden; position: relative; }
+  .hero-img-stack .cell img { width: 100%; height: 100%; object-fit: cover; }
+  .hero-img-stack .cell .lbl {
+    position: absolute; left: 12px; bottom: 12px;
+    background: var(--paper);
+    padding: 6px 10px;
+    font-family: var(--serif); font-style: italic;
+    font-size: 13px;
+    border-left: 2px solid var(--accent-b);
+  }
+  .hero-img-stack .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .hero-footer { display: flex; gap: 14px; margin-top: 40px; flex-wrap: wrap; align-items: center; }
+  .hero-stats { display: flex; gap: 24px; align-items: baseline; margin-top: 36px; padding-top: 28px; border-top: 1px solid var(--rule); flex-wrap: wrap; }
+  .hero-stat .n { font-family: var(--serif); font-size: 34px; letter-spacing: -0.02em; }
+  .hero-stat .n.a1 { color: var(--accent-b); }
+  .hero-stat .n.a2 { color: var(--accent-c); }
+  .hero-stat .n.a3 { color: var(--accent-a); }
+  .hero-stat .l { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint); margin-top: 2px; }
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-img-stack { min-height: 420px; }
+  }
+
+  /* ===== WHAT WE DO (explainer, 4 blocks, image-led) ===== */
+  .quick {
+    padding: clamp(48px, 7vw, 96px) 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    background: var(--paper-2);
+  }
+  .quick-head {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    gap: 24px; flex-wrap: wrap; margin-bottom: 40px;
+  }
+  .quick-head h2 {
+    font-family: var(--serif);
+    font-size: clamp(36px, 4.5vw, 64px);
+    line-height: 1.0; letter-spacing: -0.018em;
+    max-width: 22ch;
+  }
+  .quick-head h2 .ital { font-style: italic; }
+  .quick-head h2 .cc1 { color: var(--accent-b); }
+  .quick-head h2 .cc2 { color: var(--accent-c); }
+  .quick-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .qcard {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    transition: transform .3s;
+  }
+  .qcard:hover { transform: translateY(-4px); }
+  .qcard .ci { aspect-ratio: 4/3; overflow: hidden; position: relative; }
+  .qcard .ci img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s; }
+  .qcard:hover .ci img { transform: scale(1.05); }
+  .qcard .ci .swatch {
+    position: absolute; top: 0; left: 0;
+    padding: 6px 10px;
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--paper);
+    font-weight: 500;
+  }
+  .qcard .body {
+    padding: 20px 20px 22px;
+    display: flex; flex-direction: column; gap: 8px;
+    flex: 1;
+  }
+  .qcard h3 {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: -0.005em;
+    line-height: 1.1;
+  }
+  .qcard h3 .ital { font-style: italic; }
+  .qcard p { font-size: 13px; color: var(--ink-soft); line-height: 1.45; }
+  .qcard .go {
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    margin-top: auto;
+    padding-top: 14px;
+    display: flex; justify-content: space-between;
+    border-top: 1px dashed var(--rule);
+  }
+  .qcard .go .arrow { font-family: var(--serif); font-style: italic; }
+  @media (max-width: 1100px) { .quick-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .quick-grid { grid-template-columns: 1fr; } }
+
+  /* ===== 3D STAND ===== */
+  .stand3d {
+    padding: clamp(60px, 9vw, 120px) 0;
+    background: var(--ink);
+    color: var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+  .stand3d-head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(32px, 5vw, 80px);
+    margin-bottom: 48px;
+    align-items: end;
+  }
+  .stand3d-head .chip {
+    background: transparent; color: rgba(245, 241, 234, 0.7);
+    border-color: rgba(245, 241, 234, 0.3);
+    margin-bottom: 18px;
+  }
+  .stand3d-head h2 {
+    font-family: var(--serif);
+    font-size: clamp(40px, 5.5vw, 84px);
+    line-height: 0.95; letter-spacing: -0.02em;
+  }
+  .stand3d-head h2 .ital { font-style: italic; }
+  .stand3d-head h2 .cc1 { color: var(--accent-a); }
+  .stand3d-head h2 .cc2 { color: var(--accent-b); }
+  .stand3d-head p {
+    font-size: 16px; line-height: 1.5;
+    color: rgba(245, 241, 234, 0.75);
+    max-width: 42ch;
+  }
+
+  .stand3d-stage {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background:
+      radial-gradient(ellipse at center 90%, rgba(212, 160, 23, 0.08), transparent 60%),
+      #0e0c0b;
+    border: 1px solid rgba(245, 241, 234, 0.12);
+    overflow: hidden;
+  }
+  .stand3d-stage svg { width: 100%; height: 100%; display: block; }
+  .stand3d-overlay {
+    position: absolute;
+    left: 20px; top: 20px;
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: rgba(245, 241, 234, 0.55);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .stand3d-overlay::before {
+    content: ''; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent-a);
+    animation: blink 1.6s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  .stand3d-meta {
+    position: absolute;
+    right: 20px; top: 20px;
+    font-family: var(--serif); font-style: italic;
+    font-size: 14px; color: rgba(245, 241, 234, 0.8);
+  }
+  .stand3d-meta span { display: block; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; font-style: normal; font-family: var(--sans); color: rgba(245, 241, 234, 0.4); margin-bottom: 2px; }
+  .stand3d-ctrl {
+    position: absolute;
+    bottom: 20px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 8px;
+    background: rgba(10, 9, 9, 0.6);
+    backdrop-filter: blur(8px);
+    padding: 8px;
+    border: 1px solid rgba(245, 241, 234, 0.15);
+    border-radius: 999px;
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .stand3d-ctrl button {
+    padding: 7px 14px;
+    border-radius: 999px;
+    color: rgba(245, 241, 234, 0.6);
+    cursor: pointer;
+    transition: background .2s, color .2s;
+  }
+  .stand3d-ctrl button.on { background: var(--accent-a); color: var(--ink); }
+
+  .stand3d-legend {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(245, 241, 234, 0.12);
+  }
+  .stand3d-legend .lg {
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: rgba(245, 241, 234, 0.6);
+  }
+  .stand3d-legend .lg strong {
+    display: block;
+    font-family: var(--serif); font-style: italic;
+    font-size: 18px; font-weight: 400; color: var(--paper);
+    letter-spacing: 0; text-transform: none;
+    margin-bottom: 4px;
+  }
+  .stand3d-legend .c-dot {
+    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    margin-right: 6px; vertical-align: 1px;
+  }
+  @media (max-width: 900px) {
+    .stand3d-head { grid-template-columns: 1fr; }
+    .stand3d-legend { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ===== AUDIENCE BLOCK (image-led) ===== */
+  .aud-block {
+    padding: clamp(56px, 8vw, 100px) 0;
+  }
+  .aud-block .head {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    gap: 24px; flex-wrap: wrap; margin-bottom: 40px;
+  }
+  .aud-block h2 {
+    font-family: var(--serif);
+    font-size: clamp(40px, 5vw, 72px);
+    line-height: 0.98; letter-spacing: -0.018em;
+  }
+  .aud-block h2 .ital { font-style: italic; }
+  .aud-block h2 .c1 { color: var(--accent-a); }
+  .aud-block h2 .c2 { color: var(--accent-b); }
+  .aud-block h2 .c3 { color: var(--accent-c); }
+  .aud-block h2 .c4 { color: var(--accent-d); }
+  .aud-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .au {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 3/4;
+    display: block;
+    color: var(--paper);
+  }
+  .au img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s; }
+  .au::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(20, 17, 15, 0.85), rgba(20, 17, 15, 0.1) 60%);
+  }
+  .au:hover img { transform: scale(1.06); }
+  .au .body {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 22px 20px;
+    z-index: 2;
+  }
+  .au .body .n {
+    font-family: var(--serif); font-style: italic;
+    font-size: 14px;
+    opacity: 0.75;
+    margin-bottom: 10px;
+  }
+  .au .body h3 {
+    font-family: var(--serif);
+    font-size: clamp(26px, 2.2vw, 32px);
+    font-weight: 400; letter-spacing: -0.01em;
+    line-height: 1.05;
+  }
+  .au .body h3 .ital { font-style: italic; }
+  .au .body .hook {
+    font-size: 12px;
+    margin-top: 10px;
+    opacity: 0.85;
+  }
+  .au .body .go {
+    margin-top: 16px;
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    display: inline-flex; align-items: center; gap: 10px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid currentColor;
+  }
+  .au .stripe {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 4px;
+    z-index: 2;
+  }
+  .au[data-c="a"] .stripe { background: var(--accent-a); }
+  .au[data-c="b"] .stripe { background: var(--accent-b); }
+  .au[data-c="c"] .stripe { background: var(--accent-c); }
+  .au[data-c="d"] .stripe { background: var(--accent-d); }
+  @media (max-width: 1000px) { .aud-grid { grid-template-columns: 1fr 1fr; } }
+
+  /* ===== CLIENT MARQUEE color variant ===== */
+  .mq-wrap { background: var(--paper); }
+  .mq-wrap .marquee { border-color: var(--rule-soft); padding: 24px 0; }
+  .mq-wrap .marquee-item::after { color: var(--accent-b); }
+  .mq-wrap .marquee-item:nth-child(3n)::after { color: var(--accent-c); }
+  .mq-wrap .marquee-item:nth-child(4n)::after { color: var(--accent-a); }
+  .mq-wrap .marquee-item:nth-child(5n)::after { color: var(--accent-d); }
+
+  /* ===== MEMORY / LEDGER ===== */
+  .memory {
+    padding: clamp(60px, 10vw, 140px) 0;
+    position: relative;
+  }
+  .memory-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: clamp(32px, 5vw, 72px);
+    align-items: start;
+  }
+  .memory h2 {
+    font-family: var(--serif);
+    font-size: clamp(40px, 5.5vw, 84px);
+    line-height: 0.96; letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+  .memory h2 .ital { font-style: italic; }
+  .memory h2 .c1 { color: var(--accent-b); }
+  .memory h2 .c2 { color: var(--accent-c); }
+  .memory .lede-m {
+    font-family: var(--serif);
+    font-size: 20px;
+    line-height: 1.4;
+    color: var(--ink);
+    max-width: 30ch;
+    margin-bottom: 18px;
+  }
+  .memory .sub-m {
+    font-size: 14px; line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 38ch;
+    margin-bottom: 26px;
+  }
+  .chiprow { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chiprow .chip { padding: 5px 10px; font-size: 10px; }
+  .chip.c-a .chip-dot { background: var(--accent-a); }
+  .chip.c-b .chip-dot { background: var(--accent-b); }
+  .chip.c-c .chip-dot { background: var(--accent-c); }
+  .chip.c-d .chip-dot { background: var(--accent-d); }
+
+  .ledger {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    position: relative;
+  }
+  .ledger-hd {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--paper-2);
+  }
+  .ledger-hd .t { font-family: var(--serif); font-style: italic; font-size: 18px; }
+  .ledger-hd .t strong { font-family: var(--sans); font-style: normal; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); font-weight: 500; margin-left: 6px; }
+  .ledger-hd .sub { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); }
+  .ledger-row {
+    display: grid;
+    grid-template-columns: 44px 1.4fr 1fr 1fr 96px;
+    gap: 16px;
+    padding: 12px 20px;
+    border-bottom: 1px dashed var(--rule);
+    font-size: 13px;
+    align-items: center;
+  }
+  .ledger-row:last-child { border-bottom: none; }
+  .ledger-row .year { font-family: var(--serif); font-style: italic; color: var(--ink-faint); font-size: 16px; }
+  .ledger-row .proj { color: var(--ink); font-weight: 500; }
+  .ledger-row .what, .ledger-row .note { color: var(--ink-soft); font-size: 12px; }
+  .ledger-row .note { font-style: italic; }
+  .result {
+    display: inline-block;
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 2px;
+    text-align: center; font-weight: 500;
+  }
+  .result.up { background: rgba(61, 75, 46, 0.14); color: var(--accent-c); }
+  .result.mid { background: rgba(212, 160, 23, 0.2); color: #8a6608; }
+  .result.flat { background: var(--paper-2); color: var(--ink-faint); }
+  .result.best { background: rgba(198, 83, 46, 0.15); color: var(--accent-b); }
+  .ledger-ft {
+    padding: 14px 20px;
+    font-size: 11px;
+    color: var(--ink-faint);
+    letter-spacing: 0.08em;
+    background: var(--paper-2);
+    border-top: 1px solid var(--rule);
+    display: flex; justify-content: space-between;
+  }
+  .pulse-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--accent-c);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity:1; transform: scale(1); } 50% { opacity: .4; transform: scale(0.8); } }
+  @media (max-width: 900px) {
+    .memory-grid { grid-template-columns: 1fr; }
+    .ledger-row { grid-template-columns: 40px 1fr auto; }
+    .ledger-row .what, .ledger-row .note { display: none; }
+  }
+
+  /* ===== HCT FEATURE ===== */
+  .hct {
+    background: var(--ink);
+    color: var(--paper);
+    padding: clamp(60px, 10vw, 140px) 0;
+  }
+  .hct .chip { background: transparent; border-color: rgba(245, 241, 234, 0.3); color: rgba(245, 241, 234, 0.7); }
+  .hct-head {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    gap: 40px; margin-bottom: 48px; flex-wrap: wrap;
+  }
+  .hct-head h2 {
+    font-family: var(--serif);
+    font-size: clamp(48px, 7vw, 116px);
+    line-height: 0.93; letter-spacing: -0.025em;
+    max-width: 12ch;
+  }
+  .hct-head h2 .ital { font-style: italic; color: var(--accent-a); }
+  .hct-hero { aspect-ratio: 16/8; overflow: hidden; margin-bottom: 56px; position: relative; }
+  .hct-hero img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.95) brightness(0.88); }
+  .hct-hero .overlay-meta {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 22px 24px;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    color: rgba(245, 241, 234, 0.9);
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+  }
+  .hct-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+  .hct-numbers { display: flex; flex-direction: column; }
+  .hct-num {
+    padding: 22px 0;
+    border-bottom: 1px solid rgba(245, 241, 234, 0.12);
+    display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: baseline;
+  }
+  .hct-num:first-child { border-top: 1px solid rgba(245, 241, 234, 0.12); }
+  .hct-num .fig {
+    font-family: var(--serif);
+    font-size: clamp(72px, 10vw, 160px);
+    line-height: 0.85; letter-spacing: -0.03em;
+  }
+  .hct-num[data-c="a"] .fig { color: var(--accent-a); }
+  .hct-num[data-c="b"] .fig { color: var(--accent-b); }
+  .hct-num .cap {
+    font-family: var(--sans);
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: rgba(245, 241, 234, 0.6);
+    text-align: right; max-width: 20ch; line-height: 1.35;
+  }
+  .hct-story h3 {
+    font-family: var(--serif); font-style: italic;
+    font-size: 26px; color: var(--accent-a); margin-bottom: 18px;
+    line-height: 1.2;
+  }
+  .hct-story p { font-size: 16px; line-height: 1.55; color: rgba(245, 241, 234, 0.85); margin-bottom: 16px; }
+  .hct-footer { margin-top: 56px; padding-top: 28px; border-top: 1px solid rgba(245, 241, 234, 0.12); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+  .hct-footer .btn { border-color: var(--paper); color: var(--paper); }
+  .hct-footer .btn:hover { background: var(--paper); color: var(--ink); }
+  .scroll-strip { display: flex; gap: 12px; }
+  .hct-thumb { width: 110px; aspect-ratio: 4/3; overflow: hidden; }
+  .hct-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  @media (max-width: 900px) {
+    .hct-stats { grid-template-columns: 1fr; gap: 40px; }
+    .hct-num .fig { font-size: 80px; }
+  }
+
+  /* ===== GALLERY WALL ===== */
+  .gallery { padding: clamp(60px, 9vw, 120px) 0; border-top: 1px solid var(--rule); }
+  .gallery-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; gap: 24px; flex-wrap: wrap; }
+  .gallery-head h2 { font-family: var(--serif); font-size: clamp(40px, 5vw, 72px); line-height: 1.0; letter-spacing: -0.018em; }
+  .gallery-head h2 .ital { font-style: italic; }
+  .gallery-head h2 .c1 { color: var(--accent-b); }
+  .gallery-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 12px; }
+  .gm { overflow: hidden; position: relative; }
+  .gm img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s; }
+  .gm:hover img { transform: scale(1.04); }
+  .gm .cap {
+    position: absolute; left: 12px; bottom: 12px;
+    background: var(--paper);
+    padding: 6px 10px;
+    font-family: var(--serif); font-style: italic;
+    font-size: 13px;
+    border-left: 2px solid var(--accent-a);
+  }
+  .gm[data-c="b"] .cap { border-left-color: var(--accent-b); }
+  .gm[data-c="c"] .cap { border-left-color: var(--accent-c); }
+  .gm[data-c="d"] .cap { border-left-color: var(--accent-d); }
+  .gm[data-c="e"] .cap { border-left-color: var(--accent-e); }
+  .gm .yr { position: absolute; right: 12px; top: 12px; background: var(--ink); color: var(--paper); padding: 4px 8px; font-size: 10px; letter-spacing: 0.12em; }
+  .g-a { grid-column: span 5; aspect-ratio: 4/5; }
+  .g-b { grid-column: span 4; aspect-ratio: 1/1; }
+  .g-c { grid-column: span 3; aspect-ratio: 3/4; }
+  .g-d { grid-column: span 4; aspect-ratio: 4/3; }
+  .g-e { grid-column: span 5; aspect-ratio: 16/9; }
+  .g-f { grid-column: span 3; aspect-ratio: 3/4; }
+  @media (max-width: 900px) {
+    .g-a,.g-b,.g-c,.g-d,.g-e,.g-f { grid-column: span 12; }
+  }
+
+  /* ===== TESTIMONIALS ===== */
+  .testimonials { padding: clamp(60px, 9vw, 120px) 0; }
+  .testi {
+    display: grid; grid-template-columns: 2fr 1fr; gap: clamp(32px, 5vw, 64px);
+    padding: 44px 0; border-top: 1px solid var(--rule);
+    align-items: start;
+  }
+  .testi:last-child { border-bottom: 1px solid var(--rule); }
+  .testi .quote {
+    font-family: var(--serif);
+    font-size: clamp(24px, 2.6vw, 36px);
+    line-height: 1.22; letter-spacing: -0.005em; color: var(--ink);
+  }
+  .testi .quote::before { content: '“'; font-size: 1.2em; vertical-align: -0.1em; margin-right: 0.05em; }
+  .testi.c-a .quote::before { color: var(--accent-b); }
+  .testi.c-b .quote::before { color: var(--accent-c); }
+  .testi.c-c .quote::before { color: var(--accent-d); }
+  .testi .byline { font-size: 12px; letter-spacing: 0.08em; color: var(--ink-soft); padding-top: 10px; border-top: 1px solid var(--rule); }
+  .testi .byline strong { display: block; color: var(--ink); font-size: 14px; letter-spacing: 0; font-weight: 400; font-family: var(--serif); font-style: italic; margin-bottom: 4px; }
+  @media (max-width: 900px) { .testi { grid-template-columns: 1fr; } }
+
+  /* ===== CONTACT ===== */
+  .contact-band { background: var(--ink); color: var(--paper); padding: clamp(60px, 10vw, 140px) 0; }
+  .contact-band .lead {
+    font-family: var(--serif);
+    font-size: clamp(48px, 6vw, 104px);
+    line-height: 0.96; letter-spacing: -0.022em;
+    max-width: 18ch;
+  }
+  .contact-band .lead .ital { font-style: italic; }
+  .contact-band .lead .c1 { color: var(--accent-a); }
+  .contact-band .lead .c2 { color: var(--accent-b); }
+  .contact-band .lead .c3 { color: var(--accent-c); }
+  .contact-grid { margin-top: 60px; display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 40px; padding-top: 40px; border-top: 1px solid rgba(245, 241, 234, 0.18); }
+  .contact-col h4 { font-family: var(--sans); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(245, 241, 234, 0.5); margin-bottom: 16px; }
+  .contact-col p, .contact-col a { font-size: 15px; line-height: 1.5; color: rgba(245, 241, 234, 0.9); }
+  .contact-col .big { font-family: var(--serif); font-size: 22px; font-style: italic; }
+  @media (max-width: 900px) { .contact-grid { grid-template-columns: 1fr; } }
+
+  /* ===== TWEAKS PANEL ===== */
+  .tweaks-panel {
+    position: fixed; right: 16px; bottom: 16px;
+    width: 320px; max-height: 80vh;
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    z-index: 1000;
+    font-family: var(--sans);
+    font-size: 12px;
+    overflow: auto;
+    display: none;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  }
+  .tweaks-panel.open { display: block; }
+  .tweaks-hd { padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--rule); background: var(--ink); color: var(--paper); }
+  .tweaks-hd .t { font-family: var(--serif); font-style: italic; font-size: 18px; }
+  .tweaks-hd button { color: var(--paper); font-size: 18px; }
+  .tweaks-body { padding: 14px 16px; }
+  .tweak-group { margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px dashed var(--rule); }
+  .tweak-group:last-child { border-bottom: none; }
+  .tweak-group h5 { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 10px; }
+  .tweak-group label { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .tweak-group input[type=color] { width: 28px; height: 28px; border: 1px solid var(--rule); padding: 0; background: transparent; cursor: pointer; }
+  .tweak-group .tlabel { font-size: 12px; color: var(--ink-2); flex: 1; }
+  .tweak-group select, .tweak-group input[type=range] { width: 100%; font: inherit; padding: 6px; border: 1px solid var(--rule); background: var(--paper); }
+  .tweak-row { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+  .tweak-row .pair { flex: 1; display: flex; align-items: center; gap: 6px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo" aria-label="Exhibit Graphic Sign home">
+      <img class="logo-img" src="https://exhibitgraphicsign.com/wp-content/uploads/2024/02/EGS-Logo-300x126.png" alt="EGS">
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="exhibitions.html">Exhibitions</a>
+      <a href="events.html">Events</a>
+      <a href="fitouts.html">Fitouts</a>
+      <a href="retail.html">Retail</a>
+      <a href="hct-case-study.html">Case Study</a>
+    </div>
+    <a href="#contact" class="nav-cta">Start a file <span>→</span></a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-l">
+        <div>
+          <div class="hero-chip-row">
+            <span class="chip"><span class="chip-dot"></span>Dubai production house · since 2010</span>
+            <span class="chip c-a"><span class="chip-dot"></span>We remember every project</span>
+          </div>
+          <h1>
+            We build the <span class="ital c1">moment</span>.<br>
+            We remember <span class="underlined ital">what&nbsp;worked</span>.<br>
+            Next one&nbsp;is <span class="ital c2">better</span>.
+          </h1>
+          <p class="lede">Exhibition stands, events, fitouts, retail. A creative partner <em>who keeps a file on you</em>.</p>
+        </div>
+        <div>
+          <div class="hero-footer">
+            <a href="#audiences" class="btn btn-primary">See our work <span class="arrow">→</span></a>
+            <a href="#contact" class="btn btn-ghost">Start a project</a>
+          </div>
+          <div class="hero-stats">
+            <div class="hero-stat"><div class="n a1">14<span style="font-size:.55em;font-style:italic;">&nbsp;yrs</span></div><div class="l">making rooms</div></div>
+            <div class="hero-stat"><div class="n a2">300+</div><div class="l">engagements</div></div>
+            <div class="hero-stat"><div class="n a3">40+</div><div class="l">returning clients</div></div>
+            <div class="hero-stat"><div class="n">8,000<span style="font-size:.55em;font-style:italic;">&nbsp;sqft</span></div><div class="l">joinery, Sharjah</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-img-stack">
+        <div class="cell">
+          <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg" alt="HCT Grand Graduation">
+          <span class="lbl">HCT Grand Graduation &middot; '24</span>
+        </div>
+        <div class="row">
+          <div class="cell">
+            <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Pairs.jpg" alt="Philips Pairs Arab Health">
+            <span class="lbl">Philips &middot; 240 sqm</span>
+          </div>
+          <div class="cell">
+            <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/FAK-Properties1.jpg" alt="Fakhruddin Properties showroom">
+            <span class="lbl">Fakhruddin &middot; showroom</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLIENT MARQUEE -->
+<div class="mq-wrap">
+  <div class="marquee">
+    <div class="marquee-track">
+      <div class="marquee-item">Philips</div>
+      <div class="marquee-item">Schindler</div>
+      <div class="marquee-item">Landmark Group</div>
+      <div class="marquee-item">Higher Colleges of Technology</div>
+      <div class="marquee-item">800 Pizza</div>
+      <div class="marquee-item">Serco</div>
+      <div class="marquee-item">ENH Media</div>
+      <div class="marquee-item">Fakhruddin Properties</div>
+      <div class="marquee-item">Abbott Nutrition</div>
+      <div class="marquee-item">GSK</div>
+      <div class="marquee-item">RAK American Academy</div>
+    </div>
+  </div>
+</div>
+
+<!-- WHAT WE DO (image-led explainer) -->
+<section class="quick">
+  <div class="container">
+    <div class="quick-head">
+      <h2>We do four <span class="ital cc1">kinds of work</span>. Each one <span class="ital cc2">remembered</span>, year after year.</h2>
+      <span class="chip c-a"><span class="chip-dot"></span>Plain English, no pitch</span>
+    </div>
+    <div class="quick-grid">
+      <a class="qcard" href="exhibitions.html">
+        <div class="ci">
+          <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Pairs.jpg" alt="">
+          <span class="swatch" style="background: var(--accent-a); color: var(--ink);">01 · STANDS</span>
+        </div>
+        <div class="body">
+          <h3>Exhibition <span class="ital">stands</span></h3>
+          <p>Arab Health. GITEX. ADIPEC. Stands that get re-skinned and re-used.</p>
+          <span class="go"><span>For exhibitors</span><span class="arrow">→</span></span>
+        </div>
+      </a>
+      <a class="qcard" href="events.html">
+        <div class="ci">
+          <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg" alt="">
+          <span class="swatch" style="background: var(--accent-b);">02 · EVENTS</span>
+        </div>
+        <div class="body">
+          <h3>Events &amp; <span class="ital">activations</span></h3>
+          <p>Graduations, galas, product launches. Lasers, kabuki, quiet crew.</p>
+          <span class="go"><span>For CMOs &amp; registrars</span><span class="arrow">→</span></span>
+        </div>
+      </a>
+      <a class="qcard" href="fitouts.html">
+        <div class="ci">
+          <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/FAK-Properties1.jpg" alt="">
+          <span class="swatch" style="background: var(--accent-c);">03 · FITOUTS</span>
+        </div>
+        <div class="body">
+          <h3>Interior <span class="ital">fitouts</span></h3>
+          <p>Showrooms and offices. Built once. Looked at for the next decade.</p>
+          <span class="go"><span>For property &amp; HR</span><span class="arrow">→</span></span>
+        </div>
+      </a>
+      <a class="qcard" href="retail.html">
+        <div class="ci">
+          <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/800-Pizza.jpg" alt="">
+          <span class="swatch" style="background: var(--accent-d);">04 · RETAIL</span>
+        </div>
+        <div class="body">
+          <h3>Retail <span class="ital">branding</span></h3>
+          <p>End-caps, kiosks, in-store theatre. 30+ mall locations, one week.</p>
+          <span class="go"><span>For merchandisers</span><span class="arrow">→</span></span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 3D STAND  -->
+<section class="stand3d">
+  <div class="container">
+    <div class="stand3d-head reveal">
+      <div>
+        <span class="chip"><span class="chip-dot"></span>Live · From the drawing board</span>
+        <h2 style="margin-top: 18px;">Every stand <span class="ital cc1">starts</span> as<br>a <span class="ital cc2">wireframe</span>.</h2>
+      </div>
+      <p>A rotating 3D sketch of a typical double-deck stand. Rendered every project before the first plywood gets cut. Meeting pods, LED wall, demo zone, pair zones.</p>
+    </div>
+
+    <div class="stand3d-stage reveal" id="stand3d-stage">
+      <div class="stand3d-overlay">Stand preview · wireframe</div>
+      <div class="stand3d-meta">
+        <span>Ref</span>
+        <em>Philips Pairs · 240 sqm</em>
+      </div>
+
+      <svg id="stand3d-svg" viewBox="-400 -260 800 520" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="floorGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(212,160,23,0.18)"/>
+            <stop offset="100%" stop-color="rgba(212,160,23,0)"/>
+          </linearGradient>
+        </defs>
+        <g id="stand-root">
+          <!-- Floor grid (rendered via JS for rotation) -->
+        </g>
+      </svg>
+
+      <div class="stand3d-ctrl">
+        <button data-spd="slow">Slow</button>
+        <button data-spd="med" class="on">Rotate</button>
+        <button data-spd="fast">Fast</button>
+        <button data-spd="pause">Pause</button>
+      </div>
+    </div>
+
+    <div class="stand3d-legend reveal">
+      <div class="lg"><strong><span class="c-dot" style="background: var(--accent-a);"></span>LED wall</strong>6m &middot; 4k</div>
+      <div class="lg"><strong><span class="c-dot" style="background: var(--accent-b);"></span>Meeting pods</strong>4 &times; semi-private</div>
+      <div class="lg"><strong><span class="c-dot" style="background: var(--accent-c);"></span>Demo zones</strong>2 &middot; pair-zone concept</div>
+      <div class="lg"><strong><span class="c-dot" style="background: #b8c7cc;"></span>Modular shell</strong>62% re-usable</div>
+    </div>
+  </div>
+</section>
+
+<!-- AUDIENCE BLOCK (image-led) -->
+<section class="aud-block" id="audiences">
+  <div class="container">
+    <div class="head">
+      <div>
+        <span class="chip"><span class="chip-dot"></span>Who are you building for</span>
+        <h2 style="margin-top: 14px;">Pick your <span class="ital c1">room</span>. We'll speak <span class="ital c2">your language</span>.</h2>
+      </div>
+      <span class="body-sm" style="max-width: 40ch;">A trade-show director and a retail merchandiser don't hear the same pitch. Click in.</span>
+    </div>
+    <div class="aud-grid">
+      <a class="au" href="exhibitions.html" data-c="a">
+        <span class="stripe"></span>
+        <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Arab-Health.jpg" alt="">
+        <div class="body">
+          <div class="n">01 &middot; Stands</div>
+          <h3><span class="ital">Exhibitions</span></h3>
+          <div class="hook">Philips, Abbott, GSK. 240 sqm builds. 62% re-use.</div>
+          <span class="go">Enter <span>→</span></span>
+        </div>
+      </a>
+      <a class="au" href="events.html" data-c="b">
+        <span class="stripe"></span>
+        <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg" alt="">
+        <div class="body">
+          <div class="n">02 &middot; Events</div>
+          <h3>Brand <span class="ital">activations</span></h3>
+          <div class="hook">HCT, RAK American. 4,500 graduates. Zero missed cues.</div>
+          <span class="go">Enter <span>→</span></span>
+        </div>
+      </a>
+      <a class="au" href="fitouts.html" data-c="c">
+        <span class="stripe"></span>
+        <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/FAK-Properties1.jpg" alt="">
+        <div class="body">
+          <div class="n">03 &middot; Fitouts</div>
+          <h3>Showroom <span class="ital">fitouts</span></h3>
+          <div class="hook">Fakhruddin, Schindler. Built once. Ten-year surface.</div>
+          <span class="go">Enter <span>→</span></span>
+        </div>
+      </a>
+      <a class="au" href="retail.html" data-c="d">
+        <span class="stripe"></span>
+        <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/800-Pizza.jpg" alt="">
+        <div class="body">
+          <div class="n">04 &middot; Retail</div>
+          <h3>Retail <span class="ital">branding</span></h3>
+          <div class="hook">Landmark, 800 Pizza. 30+ sites. One-week rollout.</div>
+          <span class="go">Enter <span>→</span></span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- MEMORY / LEDGER -->
+<section class="memory">
+  <div class="container">
+    <div class="memory-grid">
+      <div class="reveal">
+        <span class="eyebrow"><span class="dot"></span>The difference</span>
+        <h2 style="margin-top: 14px;">Most vendors <span class="ital c1">forget</span>.<br>We keep a <span class="ital c2">file</span>.</h2>
+        <p class="lede-m">Every show, we write down: what moved the room, what flopped, what to fix next year.</p>
+        <p class="sub-m">When you come back, we don't start from zero. Colours, hardware, traffic patterns, last year's mistakes, already in the room.</p>
+        <div class="chiprow">
+          <span class="chip c-a"><span class="chip-dot"></span>Project memory</span>
+          <span class="chip c-b"><span class="chip-dot"></span>Post-event notes</span>
+          <span class="chip c-c"><span class="chip-dot"></span>Lead tracking</span>
+          <span class="chip c-d"><span class="chip-dot"></span>Hardware re-use</span>
+        </div>
+      </div>
+
+      <div class="ledger reveal" aria-hidden="true">
+        <div class="ledger-hd">
+          <div class="t">Client dossier <strong>Philips Healthcare</strong></div>
+          <div class="sub">Engagement 06</div>
+        </div>
+        <div>
+          <div class="ledger-row">
+            <div class="year">'19</div>
+            <div class="proj">Arab Health &middot; 120 sqm</div>
+            <div class="what">Double-deck, pairs zone</div>
+            <div class="note">first engagement</div>
+            <div><span class="result mid">benchmark</span></div>
+          </div>
+          <div class="ledger-row">
+            <div class="year">'20</div>
+            <div class="proj">Arab Health &middot; 120 sqm</div>
+            <div class="what">Re-skinned hardware, 18% less</div>
+            <div class="note">kept meeting pods</div>
+            <div><span class="result up">+34% leads</span></div>
+          </div>
+          <div class="ledger-row">
+            <div class="year">'21</div>
+            <div class="proj">Meydan Launch Event</div>
+            <div class="what">Radiology reveal &middot; 380 guests</div>
+            <div class="note">LED spec from '19</div>
+            <div><span class="result up">NPS 72</span></div>
+          </div>
+          <div class="ledger-row">
+            <div class="year">'22</div>
+            <div class="proj">Arab Health &middot; 180 sqm</div>
+            <div class="what">Pair-zone v2 &middot; VR demo</div>
+            <div class="note">dead corner noted</div>
+            <div><span class="result up">+41% leads</span></div>
+          </div>
+          <div class="ledger-row">
+            <div class="year">'23</div>
+            <div class="proj">Radiology roadshow</div>
+            <div class="what">6 cities &middot; modular shell</div>
+            <div class="note">same carpenters</div>
+            <div><span class="result flat">on plan</span></div>
+          </div>
+          <div class="ledger-row">
+            <div class="year">'24</div>
+            <div class="proj">Arab Health &middot; 240 sqm</div>
+            <div class="what">3-storey &middot; 62% re-used</div>
+            <div class="note">booked '25</div>
+            <div><span class="result best">+22% leads</span></div>
+          </div>
+        </div>
+        <div class="ledger-ft">
+          <span>Confidential &middot; illustrative format</span>
+          <span style="display:inline-flex;align-items:center;gap:8px;"><span class="pulse-dot"></span>Still tracking</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HCT FEATURE -->
+<section class="hct">
+  <div class="container">
+    <div class="hct-head reveal">
+      <div>
+        <span class="chip" style="margin-bottom: 20px;"><span class="chip-dot" style="background: var(--accent-a);"></span>Case No. 001 &middot; Anchor project</span>
+        <h2>Seven nights, <span class="ital">five emirates</span>, 4,500 graduates.</h2>
+      </div>
+      <a href="hct-case-study.html" class="btn" style="border-color: rgba(245,241,234,0.5); color: var(--paper);">Read the full story <span class="arrow">→</span></a>
+    </div>
+
+    <div class="hct-hero reveal">
+      <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg" alt="HCT Graduation Ceremony">
+      <div class="overlay-meta">
+        <span>Higher Colleges of Technology</span>
+        <span>Dubai &middot; Abu Dhabi &middot; Sharjah &middot; RAK &middot; Fujairah</span>
+        <span>Since 2018</span>
+      </div>
+    </div>
+
+    <div class="hct-stats">
+      <div class="hct-numbers reveal">
+        <div class="hct-num" data-c="a">
+          <div class="fig">7</div>
+          <div class="cap">Grand ceremonies, UAE</div>
+        </div>
+        <div class="hct-num">
+          <div class="fig">4,500</div>
+          <div class="cap">Graduates, each cued by name</div>
+        </div>
+        <div class="hct-num" data-c="b">
+          <div class="fig">13,500</div>
+          <div class="cap">Families in the rooms</div>
+        </div>
+        <div class="hct-num">
+          <div class="fig">5</div>
+          <div class="cap">Emirates, single season</div>
+        </div>
+        <div class="hct-num" data-c="a">
+          <div class="fig">0</div>
+          <div class="cap">Cues missed, ever</div>
+        </div>
+      </div>
+      <div class="hct-story reveal">
+        <h3>A graduation is the loudest photograph a family ever takes.</h3>
+        <p>HCT trusted us with seven, across five emirates, one season. Stage &amp; 3D render. LED walls, sound, laser, kabuki. Student registration, seating, live streaming. The unseen hundred things that make a four-second name-reading feel like a lifetime.</p>
+        <p>Year after year for HCT. The run-of-show template lives in our drive. We know which hall in RAK has tricky acoustics, which campus loves a big laser finish. Seventh ceremony is not like the first.</p>
+        <div style="margin-top: 24px;">
+          <span class="chip c-a"><span class="chip-dot"></span>Concept &amp; 3D</span>
+          <span class="chip c-b" style="margin-left: 6px;"><span class="chip-dot"></span>LED &middot; Sound &middot; Lighting</span>
+          <span class="chip c-c" style="margin-left: 6px;"><span class="chip-dot"></span>Laser &middot; Kabuki</span>
+          <span class="chip c-d" style="margin-left: 6px;"><span class="chip-dot"></span>Live stream</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hct-footer reveal">
+      <a href="hct-case-study.html" class="btn">Open the HCT dossier <span class="arrow">→</span></a>
+      <div class="scroll-strip">
+        <div class="hct-thumb"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/3-HCT-Fujeirah1.jpg" alt=""></div>
+        <div class="hct-thumb"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-2-1-1.jpg" alt=""></div>
+        <div class="hct-thumb"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-2-2.jpg" alt=""></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY WALL -->
+<section class="gallery bg-paper-2">
+  <div class="container">
+    <div class="gallery-head reveal">
+      <div>
+        <span class="eyebrow"><span class="dot"></span>Selected works</span>
+        <h2 style="margin-top: 12px;">A wall of <span class="ital c1">what we've made</span>.</h2>
+      </div>
+      <span class="body-sm">Philips &middot; Schindler &middot; Landmark &middot; HCT &middot; 800 Pizza &middot; Fakhruddin</span>
+    </div>
+    <div class="gallery-grid reveal">
+      <div class="gm g-a" data-c="b">
+        <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Pairs.jpg" alt="">
+        <span class="yr">'24</span>
+        <span class="cap">Philips Pairs &middot; Arab Health</span>
+      </div>
+      <div class="gm g-b" data-c="c">
+        <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/FAK-Properties1.jpg" alt="">
+        <span class="yr">'23</span>
+        <span class="cap">Fakhruddin showroom</span>
+      </div>
+      <div class="gm g-c" data-c="a">
+        <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Meydan13.jpg" alt="">
+        <span class="yr">'21</span>
+        <span class="cap">Meydan launch</span>
+      </div>
+      <div class="gm g-d" data-c="d">
+        <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/800-Pizza.jpg" alt="">
+        <span class="yr">'22</span>
+        <span class="cap">800 Pizza &middot; retail</span>
+      </div>
+      <div class="gm g-e" data-c="b">
+        <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Velocity-3.jpg" alt="">
+        <span class="yr">'23</span>
+        <span class="cap">Velocity &middot; brand event</span>
+      </div>
+      <div class="gm g-f" data-c="e">
+        <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg" alt="">
+        <span class="yr">'24</span>
+        <span class="cap">HCT &middot; grand ceremony</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="container">
+    <div style="margin-bottom: 40px;">
+      <span class="eyebrow"><span class="dot"></span>In clients' own words</span>
+    </div>
+    <div class="testi c-a reveal">
+      <div class="quote">EGS came up with a clean and elegant design. Our client was impressed. We used these boards at every backlog site.</div>
+      <div class="byline"><strong>Seby Cyriac</strong>Director &middot; Cube Innovators</div>
+    </div>
+    <div class="testi c-b reveal">
+      <div class="quote">Prompt response, quick turnaround, friendly service, fair pricing. That is how I recognize EGS.</div>
+      <div class="byline"><strong>K. Bala</strong>Director &middot; ENH Media</div>
+    </div>
+    <div class="testi c-c reveal">
+      <div class="quote">One company I can recommend with confidence. I have called at the most ungodly hour. The job got executed.</div>
+      <div class="byline"><strong>Amrita Kalra</strong>Director &middot; Media Mind</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-band" id="contact">
+  <div class="container">
+    <div class="reveal">
+      <span class="chip" style="background:transparent;border-color:rgba(245,241,234,0.3);color:rgba(245,241,234,0.7); margin-bottom: 28px;">
+        <span class="chip-dot" style="background: var(--accent-a);"></span>Let's open a file
+      </span>
+      <div class="lead">A <span class="ital c1">brief</span>, a <span class="ital c2">coffee</span>,<br>or a late-night <span class="ital c3">call</span>.</div>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-col">
+        <h4>Say hello</h4>
+        <p class="big">info@exhibitgraphicsign.com</p>
+        <p style="margin-top: 10px;">+971 4 238 3278 &middot; +971 52 458 7992</p>
+        <p style="margin-top:20px;"><a href="#" style="border-bottom: 1px solid currentColor; padding-bottom: 2px;">WhatsApp →</a></p>
+      </div>
+      <div class="contact-col">
+        <h4>Showroom</h4>
+        <p>Nasiriya Building<br>Baghdad Street<br>Al Qusais, Dubai</p>
+      </div>
+      <div class="contact-col">
+        <h4>Joinery</h4>
+        <p>Industrial Area 11<br>Sharjah<br>8,000 sqft under one roof</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/02/EGS-Logo-300x126.png" alt="EGS" style="height: 44px; filter: brightness(0) invert(1); margin-bottom: 20px;">
+        <p style="max-width: 40ch; font-size: 14px; opacity: 0.7; line-height: 1.5;">A Dubai production house for exhibitions, events, fitouts and retail branding. We build the moment. We remember what worked.</p>
+      </div>
+      <div><h4>Audiences</h4><ul><li><a href="exhibitions.html">Exhibition Stands</a></li><li><a href="events.html">Events &amp; Activations</a></li><li><a href="fitouts.html">Interior Fitouts</a></li><li><a href="retail.html">Retail Branding</a></li></ul></div>
+      <div><h4>Services</h4><ul><li>Signage</li><li>Large-Format Printing</li><li>Product Display Stands</li><li>Mall Kiosks</li><li>Vehicle Branding</li></ul></div>
+      <div><h4>Contact</h4><ul><li>info@exhibitgraphicsign.com</li><li>+971 4 238 3278</li><li>Al Qusais, Dubai</li><li>Industrial Area 11, Sharjah</li></ul></div>
+    </div>
+    <div class="footer-big"><em>We remember</em> every project.</div>
+    <div class="footer-bottom">
+      <span>© 2026 Exhibit Graphic Sign &middot; Est. 2010</span>
+      <span>File No. 001 / Home</span>
+    </div>
+  </div>
+</footer>
+
+<!-- TWEAKS PANEL -->
+<div class="tweaks-panel" id="tweaksPanel">
+  <div class="tweaks-hd">
+    <span class="t">Tweaks</span>
+    <button onclick="document.getElementById('tweaksPanel').classList.remove('open')">×</button>
+  </div>
+  <div class="tweaks-body">
+    <div class="tweak-group">
+      <h5>Accent colors</h5>
+      <label><input type="color" data-var="--accent-a" value="#D4A017"><span class="tlabel">Ochre &middot; A</span></label>
+      <label><input type="color" data-var="--accent-b" value="#C6532E"><span class="tlabel">Terracotta &middot; B</span></label>
+      <label><input type="color" data-var="--accent-c" value="#3D4B2E"><span class="tlabel">Olive &middot; C</span></label>
+      <label><input type="color" data-var="--accent-d" value="#8E3B46"><span class="tlabel">Claret &middot; D</span></label>
+      <label><input type="color" data-var="--accent-e" value="#2B3A67"><span class="tlabel">Ink Blue &middot; E</span></label>
+    </div>
+    <div class="tweak-group">
+      <h5>Paper tones</h5>
+      <label><input type="color" data-var="--paper" value="#F5F1EA"><span class="tlabel">Paper base</span></label>
+      <label><input type="color" data-var="--paper-2" value="#EDE7DC"><span class="tlabel">Paper 2</span></label>
+      <label><input type="color" data-var="--ink" value="#1A1715"><span class="tlabel">Ink</span></label>
+    </div>
+    <div class="tweak-group">
+      <h5>3D stand</h5>
+      <label>
+        <span class="tlabel">Rotation speed</span>
+        <input type="range" min="0" max="3" step="0.01" value="0.6" id="tweakSpeed">
+      </label>
+      <label>
+        <span class="tlabel">Stand type</span>
+        <select id="tweakStandType">
+          <option value="double">Double-deck · 240 sqm</option>
+          <option value="flat">Flat · 120 sqm</option>
+          <option value="tower">Tower · tradeshow island</option>
+        </select>
+      </label>
+    </div>
+    <div class="tweak-group">
+      <h5>Hero variant</h5>
+      <label>
+        <span class="tlabel">Headline accent</span>
+        <select id="tweakHeroVariant">
+          <option value="0">Bold mixed colors</option>
+          <option value="1">One-color accent</option>
+          <option value="2">All ink, no color</option>
+        </select>
+      </label>
+    </div>
+  </div>
+</div>
+
+<script>
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accentA": "#D4A017",
+  "accentB": "#C6532E",
+  "accentC": "#3D4B2E",
+  "accentD": "#8E3B46",
+  "accentE": "#2B3A67",
+  "paperBase": "#F5F1EA",
+  "paper2": "#EDE7DC",
+  "ink": "#1A1715",
+  "spinSpeed": 0.6,
+  "standType": "double",
+  "heroVariant": 0
+}/*EDITMODE-END*/;
+</script>
+
+<script src="shared.js"></script>
+
+<!-- 3D WIREFRAME -->
+<script>
+(function(){
+  const svg = document.getElementById('stand3d-svg');
+  const root = document.getElementById('stand-root');
+  if (!svg || !root) return;
+
+  // Simple SVG 3D: project 3D points through a rotation-Y matrix into 2D.
+  const FL = 620; // focal length
+  function project(p) {
+    const z = p.z + 900; // camera distance
+    const s = FL / z;
+    return { x: p.x * s, y: -p.y * s };
+  }
+  function rotY(p, a) {
+    const c = Math.cos(a), s = Math.sin(a);
+    return { x: p.x * c + p.z * s, y: p.y, z: -p.x * s + p.z * c };
+  }
+  function rotX(p, a) {
+    const c = Math.cos(a), s = Math.sin(a);
+    return { x: p.x, y: p.y * c - p.z * s, z: p.y * s + p.z * c };
+  }
+
+  // Geometry: a modular exhibition stand. Double-deck variant.
+  function buildStand(kind) {
+    // Footprint: 20m x 12m x 6m (scaled).
+    // W = 300, D = 200, upper deck at H=140, roof 240
+    const W = kind === 'tower' ? 180 : 300;
+    const D = kind === 'tower' ? 180 : 200;
+    const H = kind === 'flat' ? 90 : 140;
+    const H2 = kind === 'flat' ? 90 : 240;
+
+    const lines = [];
+    const dots = [];
+    // Ground frame
+    const g = [
+      [{x:-W,y:0,z:-D},{x: W,y:0,z:-D}],
+      [{x: W,y:0,z:-D},{x: W,y:0,z: D}],
+      [{x: W,y:0,z: D},{x:-W,y:0,z: D}],
+      [{x:-W,y:0,z: D},{x:-W,y:0,z:-D}],
+    ];
+    g.forEach(l => lines.push({ p:l, c:'#e3dbc9', w: 1 }));
+
+    // Floor grid
+    const step = 40;
+    for (let x = -W + step; x < W; x += step) {
+      lines.push({ p:[{x,y:0,z:-D},{x,y:0,z:D}], c:'rgba(245,241,234,0.08)', w: 0.5 });
+    }
+    for (let z = -D + step; z < D; z += step) {
+      lines.push({ p:[{x:-W,y:0,z},{x:W,y:0,z}], c:'rgba(245,241,234,0.08)', w: 0.5 });
+    }
+
+    // Vertical columns (4 corners)
+    [[-W,-D],[W,-D],[W,D],[-W,D]].forEach(([x,z])=>{
+      lines.push({ p:[{x,y:0,z},{x,y:H2,z}], c:'rgba(245,241,234,0.5)', w: 1.2 });
+    });
+
+    // Upper deck (not for flat)
+    if (kind !== 'flat') {
+      lines.push({ p:[{x:-W,y:H,z:-D},{x: W,y:H,z:-D}], c:'rgba(245,241,234,0.4)', w: 1 });
+      lines.push({ p:[{x: W,y:H,z:-D},{x: W,y:H,z: D}], c:'rgba(245,241,234,0.4)', w: 1 });
+      lines.push({ p:[{x: W,y:H,z: D},{x:-W,y:H,z: D}], c:'rgba(245,241,234,0.4)', w: 1 });
+      lines.push({ p:[{x:-W,y:H,z: D},{x:-W,y:H,z:-D}], c:'rgba(245,241,234,0.4)', w: 1 });
+      // Railings
+      for (let x = -W + step; x < W; x += step*2) {
+        lines.push({ p:[{x,y:H,z:-D},{x,y:H+20,z:-D}], c:'rgba(245,241,234,0.25)', w: 0.8 });
+      }
+    }
+
+    // Roof
+    lines.push({ p:[{x:-W,y:H2,z:-D},{x: W,y:H2,z:-D}], c:'rgba(245,241,234,0.55)', w: 1.2 });
+    lines.push({ p:[{x: W,y:H2,z:-D},{x: W,y:H2,z: D}], c:'rgba(245,241,234,0.55)', w: 1.2 });
+    lines.push({ p:[{x: W,y:H2,z: D},{x:-W,y:H2,z: D}], c:'rgba(245,241,234,0.55)', w: 1.2 });
+    lines.push({ p:[{x:-W,y:H2,z: D},{x:-W,y:H2,z:-D}], c:'rgba(245,241,234,0.55)', w: 1.2 });
+
+    // LED wall (back): ochre outline
+    const wallY1 = 20, wallY2 = H2 - 30;
+    const wallX1 = -W + 60, wallX2 = W - 60;
+    lines.push({ p:[{x:wallX1,y:wallY1,z:-D+8},{x:wallX2,y:wallY1,z:-D+8}], c: getCss('--accent-a'), w: 2 });
+    lines.push({ p:[{x:wallX2,y:wallY1,z:-D+8},{x:wallX2,y:wallY2,z:-D+8}], c: getCss('--accent-a'), w: 2 });
+    lines.push({ p:[{x:wallX2,y:wallY2,z:-D+8},{x:wallX1,y:wallY2,z:-D+8}], c: getCss('--accent-a'), w: 2 });
+    lines.push({ p:[{x:wallX1,y:wallY2,z:-D+8},{x:wallX1,y:wallY1,z:-D+8}], c: getCss('--accent-a'), w: 2 });
+    // LED grid
+    const gridX = 8, gridY = 4;
+    for (let i = 1; i < gridX; i++) {
+      const x = wallX1 + (wallX2 - wallX1) * (i / gridX);
+      lines.push({ p:[{x,y:wallY1,z:-D+8},{x,y:wallY2,z:-D+8}], c: 'rgba(212,160,23,0.25)', w: 0.6 });
+    }
+    for (let i = 1; i < gridY; i++) {
+      const y = wallY1 + (wallY2 - wallY1) * (i / gridY);
+      lines.push({ p:[{x:wallX1,y,z:-D+8},{x:wallX2,y,z:-D+8}], c: 'rgba(212,160,23,0.25)', w: 0.6 });
+    }
+
+    // Meeting pods (4 cubes)  terracotta
+    if (kind !== 'tower') {
+      const podW = 44, podH = 60, podD = 40;
+      const podPos = [
+        { x: -W + 80, z: 60 },
+        { x: -W + 80, z: -40 },
+        { x:  W - 80, z: 60 },
+        { x:  W - 80, z: -40 },
+      ];
+      podPos.forEach(p => {
+        const x1 = p.x - podW/2, x2 = p.x + podW/2;
+        const z1 = p.z - podD/2, z2 = p.z + podD/2;
+        const y1 = 0, y2 = podH;
+        const edges = [
+          [{x:x1,y:y1,z:z1},{x:x2,y:y1,z:z1}],
+          [{x:x2,y:y1,z:z1},{x:x2,y:y1,z:z2}],
+          [{x:x2,y:y1,z:z2},{x:x1,y:y1,z:z2}],
+          [{x:x1,y:y1,z:z2},{x:x1,y:y1,z:z1}],
+          [{x:x1,y:y2,z:z1},{x:x2,y:y2,z:z1}],
+          [{x:x2,y:y2,z:z1},{x:x2,y:y2,z:z2}],
+          [{x:x2,y:y2,z:z2},{x:x1,y:y2,z:z2}],
+          [{x:x1,y:y2,z:z2},{x:x1,y:y2,z:z1}],
+          [{x:x1,y:y1,z:z1},{x:x1,y:y2,z:z1}],
+          [{x:x2,y:y1,z:z1},{x:x2,y:y2,z:z1}],
+          [{x:x2,y:y1,z:z2},{x:x2,y:y2,z:z2}],
+          [{x:x1,y:y1,z:z2},{x:x1,y:y2,z:z2}],
+        ];
+        edges.forEach(e => lines.push({ p:e, c: getCss('--accent-b'), w: 1.4 }));
+      });
+    }
+
+    // Demo zones (olive discs)
+    if (kind !== 'tower') {
+      const discPos = [ {x: 0, z: 80}, {x: 0, z: -60} ];
+      discPos.forEach(p => {
+        const r = 40; const segs = 20;
+        for (let i = 0; i < segs; i++) {
+          const a1 = (i/segs) * Math.PI * 2;
+          const a2 = ((i+1)/segs) * Math.PI * 2;
+          lines.push({
+            p:[{x:p.x+Math.cos(a1)*r,y:2,z:p.z+Math.sin(a1)*r},
+               {x:p.x+Math.cos(a2)*r,y:2,z:p.z+Math.sin(a2)*r}],
+            c: getCss('--accent-c'), w: 1.5
+          });
+        }
+        dots.push({ p:{x:p.x,y:2,z:p.z}, c: getCss('--accent-c'), r: 3 });
+      });
+    }
+
+    // Reception desk  sky
+    const dX = 80, dZ = 30, dH = 40;
+    lines.push({ p:[{x:-dX,y:0,z:D-30},{x:dX,y:0,z:D-30}], c:'#b8c7cc', w: 1.5 });
+    lines.push({ p:[{x:dX,y:0,z:D-30},{x:dX,y:dH,z:D-30}], c:'#b8c7cc', w: 1.5 });
+    lines.push({ p:[{x:dX,y:dH,z:D-30},{x:-dX,y:dH,z:D-30}], c:'#b8c7cc', w: 1.5 });
+    lines.push({ p:[{x:-dX,y:dH,z:D-30},{x:-dX,y:0,z:D-30}], c:'#b8c7cc', w: 1.5 });
+
+    // Tower variant extras
+    if (kind === 'tower') {
+      // Vertical hanging banner
+      lines.push({ p:[{x:0,y:H2-20,z:0},{x:0,y:H2+80,z:0}], c: getCss('--accent-a'), w: 2 });
+      const bw = 60, bh = 90;
+      lines.push({ p:[{x:-bw,y:H2+10,z:0},{x:bw,y:H2+10,z:0}], c: getCss('--accent-a'), w: 1.5 });
+      lines.push({ p:[{x:-bw,y:H2+80,z:0},{x:bw,y:H2+80,z:0}], c: getCss('--accent-a'), w: 1.5 });
+      lines.push({ p:[{x:-bw,y:H2+10,z:0},{x:-bw,y:H2+80,z:0}], c: getCss('--accent-a'), w: 1.5 });
+      lines.push({ p:[{x: bw,y:H2+10,z:0},{x: bw,y:H2+80,z:0}], c: getCss('--accent-a'), w: 1.5 });
+    }
+
+    return { lines, dots };
+  }
+
+  function getCss(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || '#d4a017';
+  }
+
+  let angleY = -0.6;
+  let angleX = 0.28;
+  let speed = 0.6;
+  let prev = performance.now();
+  let kind = 'double';
+  let geom = buildStand(kind);
+  let paused = false;
+
+  function render() {
+    // sort lines by avg z after rotation for crude depth — actually just draw in order for wireframe
+    const frag = [];
+    geom.lines.forEach(ln => {
+      const a = project(rotX(rotY(ln.p[0], angleY), angleX));
+      const b = project(rotX(rotY(ln.p[1], angleY), angleX));
+      frag.push(`<line x1="${a.x.toFixed(1)}" y1="${a.y.toFixed(1)}" x2="${b.x.toFixed(1)}" y2="${b.y.toFixed(1)}" stroke="${ln.c}" stroke-width="${ln.w}" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`);
+    });
+    geom.dots.forEach(d => {
+      const a = project(rotX(rotY(d.p, angleY), angleX));
+      frag.push(`<circle cx="${a.x.toFixed(1)}" cy="${a.y.toFixed(1)}" r="${d.r}" fill="${d.c}" opacity="0.9"/>`);
+    });
+    root.innerHTML = frag.join('');
+  }
+
+  function loop(t) {
+    const dt = (t - prev) / 1000; prev = t;
+    if (!paused) angleY += speed * dt;
+    render();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  // Speed buttons
+  const btns = document.querySelectorAll('.stand3d-ctrl button');
+  btns.forEach(b => b.addEventListener('click', () => {
+    btns.forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    const s = b.dataset.spd;
+    if (s === 'pause') { paused = true; }
+    else {
+      paused = false;
+      speed = s === 'slow' ? 0.2 : s === 'fast' ? 1.6 : 0.6;
+    }
+  }));
+
+  // Expose for tweaks
+  window.__stand3d = {
+    setSpeed(v){ speed = v; if (v > 0) paused = false; },
+    setKind(k){ kind = k; geom = buildStand(kind); },
+    refresh(){ geom = buildStand(kind); }
+  };
+
+  // Drag to rotate
+  let dragging = false, sx = 0, sy = 0, ay0 = 0, ax0 = 0;
+  const stage = document.getElementById('stand3d-stage');
+  stage.addEventListener('pointerdown', e => { dragging = true; paused = true; sx = e.clientX; sy = e.clientY; ay0 = angleY; ax0 = angleX; });
+  window.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    angleY = ay0 + (e.clientX - sx) * 0.008;
+    angleX = Math.max(-0.8, Math.min(0.8, ax0 - (e.clientY - sy) * 0.006));
+  });
+  window.addEventListener('pointerup', () => { dragging = false; });
+})();
+</script>
+
+<!-- TWEAKS WIRING -->
+<script>
+(function(){
+  let registered = false;
+  const panel = document.getElementById('tweaksPanel');
+
+  function applyColors(k, v) {
+    document.documentElement.style.setProperty(k, v);
+  }
+  // Wire color inputs
+  document.querySelectorAll('#tweaksPanel input[type=color]').forEach(inp => {
+    inp.addEventListener('input', e => {
+      applyColors(inp.dataset.var, e.target.value);
+      if (window.__stand3d) window.__stand3d.refresh();
+      post({ [mapKey(inp.dataset.var)]: e.target.value });
+    });
+  });
+  function mapKey(v) {
+    return ({
+      '--accent-a': 'accentA', '--accent-b': 'accentB', '--accent-c': 'accentC',
+      '--accent-d': 'accentD', '--accent-e': 'accentE',
+      '--paper': 'paperBase', '--paper-2': 'paper2', '--ink': 'ink'
+    })[v] || v;
+  }
+  function post(edits) {
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits }, '*');
+  }
+
+  document.getElementById('tweakSpeed').addEventListener('input', e => {
+    const v = parseFloat(e.target.value);
+    if (window.__stand3d) window.__stand3d.setSpeed(v);
+    post({ spinSpeed: v });
+  });
+  document.getElementById('tweakStandType').addEventListener('change', e => {
+    if (window.__stand3d) window.__stand3d.setKind(e.target.value);
+    post({ standType: e.target.value });
+  });
+
+  const heroH1 = document.querySelector('.hero h1');
+  const heroVariants = [
+    null, // default
+    // variant 1: all one color
+    () => {
+      heroH1.querySelector('.c1').style.color = 'var(--accent-b)';
+      heroH1.querySelector('.c2').style.color = 'var(--accent-b)';
+    },
+    () => {
+      heroH1.querySelector('.c1').style.color = 'var(--ink)';
+      heroH1.querySelector('.c2').style.color = 'var(--ink)';
+    }
+  ];
+  document.getElementById('tweakHeroVariant').addEventListener('change', e => {
+    const idx = parseInt(e.target.value, 10);
+    // Reset
+    heroH1.querySelector('.c1').style.color = '';
+    heroH1.querySelector('.c2').style.color = '';
+    if (heroVariants[idx]) heroVariants[idx]();
+    post({ heroVariant: idx });
+  });
+
+  // Apply saved defaults on load
+  (function applyDefaults(){
+    const d = TWEAK_DEFAULTS;
+    applyColors('--accent-a', d.accentA);
+    applyColors('--accent-b', d.accentB);
+    applyColors('--accent-c', d.accentC);
+    applyColors('--accent-d', d.accentD);
+    applyColors('--accent-e', d.accentE);
+    applyColors('--paper', d.paperBase);
+    applyColors('--paper-2', d.paper2);
+    applyColors('--ink', d.ink);
+    document.getElementById('tweakSpeed').value = d.spinSpeed;
+    document.getElementById('tweakStandType').value = d.standType;
+    document.getElementById('tweakHeroVariant').value = d.heroVariant;
+    if (window.__stand3d) {
+      window.__stand3d.setSpeed(d.spinSpeed);
+      window.__stand3d.setKind(d.standType);
+    }
+    if (heroVariants[d.heroVariant]) heroVariants[d.heroVariant]();
+  })();
+
+  // Host protocol
+  window.addEventListener('message', e => {
+    const d = e.data;
+    if (!d || !d.type) return;
+    if (d.type === '__activate_edit_mode') panel.classList.add('open');
+    if (d.type === '__deactivate_edit_mode') panel.classList.remove('open');
+  });
+  // announce after listener registered
+  window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+})();
+</script>
+</body>
+</html>

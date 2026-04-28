@@ -1,0 +1,1002 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Events &amp; Brand Activations — EGS · Graduations · Product Launches</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  :root { --accent: var(--terracotta); }
+
+  /* ======= HERO ======= */
+  .ev-hero {
+    padding: 60px 0 0;
+    position: relative;
+  }
+  .ev-hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 0.9fr;
+    gap: clamp(32px, 4vw, 56px);
+    align-items: stretch;
+    min-height: 72vh;
+  }
+  .ev-hero-left {
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 20px 0 40px;
+  }
+  .ev-hero h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(52px, 8.2vw, 140px);
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    margin-top: 24px;
+  }
+  .ev-hero h1 .ital { font-style: italic; }
+  .ev-hero h1 .accent {
+    color: var(--terracotta);
+    position: relative;
+  }
+  .ev-hero h1 .accent::before {
+    content: '';
+    position: absolute;
+    left: -14px; top: 50%;
+    width: 8px; height: 8px;
+    background: var(--terracotta);
+    border-radius: 50%;
+  }
+  .ev-hero .lede {
+    font-family: var(--serif);
+    font-size: clamp(20px, 2vw, 26px);
+    line-height: 1.35;
+    color: var(--ink-2);
+    max-width: 36ch;
+    margin-top: 36px;
+  }
+  .ev-hero .lede em { color: var(--ink); }
+  .ev-hero-img {
+    position: relative;
+    overflow: hidden;
+  }
+  .ev-hero-img img { width: 100%; height: 100%; object-fit: cover; min-height: 400px; }
+  .ev-hero-img .tag-overlay {
+    position: absolute;
+    left: 20px; bottom: 20px;
+    background: var(--paper);
+    padding: 14px 18px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 17px;
+    max-width: 260px;
+    line-height: 1.3;
+  }
+  .ev-hero-img .tag-overlay::before {
+    content: '';
+    display: block;
+    width: 28px; height: 2px;
+    background: var(--terracotta);
+    margin-bottom: 10px;
+  }
+  .ev-hero .nums {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding-top: 28px;
+    margin-top: 28px;
+    border-top: 1px solid var(--rule);
+  }
+  .ev-hero .nums .n { font-family: var(--serif); font-size: 40px; line-height: 1; letter-spacing: -0.02em; }
+  .ev-hero .nums .l { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); margin-top: 4px; }
+  @media (max-width: 900px) {
+    .ev-hero-grid { grid-template-columns: 1fr; }
+    .ev-hero .nums { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ======= WHAT WE DO ======= */
+  .kinds {
+    padding: clamp(60px, 10vw, 140px) 0;
+    border-top: 1px solid var(--rule);
+  }
+  .kinds-head {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: clamp(24px, 4vw, 60px);
+    margin-bottom: 60px;
+  }
+  .kinds-head h2 {
+    font-family: var(--serif);
+    font-size: clamp(40px, 5.5vw, 88px);
+    line-height: 0.98; letter-spacing: -0.02em;
+  }
+  .kinds-head h2 .ital { font-style: italic; }
+  .kinds-head p { font-size: 18px; line-height: 1.55; color: var(--ink-2); }
+
+  .kind-rows { border-top: 1px solid var(--rule); }
+  .kind-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 1.2fr 1fr;
+    gap: clamp(20px, 3vw, 40px);
+    padding: 32px 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: start;
+    transition: background .3s;
+  }
+  .kind-row:hover { background: var(--paper-2); padding-left: 8px; padding-right: 8px; }
+  .kind-row .kn {
+    font-family: var(--serif); font-style: italic;
+    font-size: 22px;
+    color: var(--ink-faint);
+    padding-top: 8px;
+  }
+  .kind-row h3 {
+    font-family: var(--serif);
+    font-size: clamp(26px, 2.6vw, 40px);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.08;
+  }
+  .kind-row h3 .ital { font-style: italic; }
+  .kind-row .desc p {
+    font-size: 15px; color: var(--ink-2); line-height: 1.55; margin-bottom: 10px;
+  }
+  .kind-row .feat {
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .kind-row .feat span { display: block; padding: 3px 0; }
+  .kind-row .kimg {
+    overflow: hidden;
+    aspect-ratio: 5/4;
+  }
+  .kind-row .kimg img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s; }
+  .kind-row:hover .kimg img { transform: scale(1.04); }
+
+  @media (max-width: 900px) {
+    .kind-row { grid-template-columns: 1fr; }
+    .kinds-head { grid-template-columns: 1fr; }
+  }
+
+  /* ======= HCT FLAGSHIP MOMENT ======= */
+  .flagship {
+    background: #100e0d;
+    color: var(--paper);
+    padding: clamp(60px, 10vw, 140px) 0;
+    position: relative;
+  }
+  .flagship-head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(32px, 5vw, 80px);
+    margin-bottom: 56px;
+    align-items: end;
+  }
+  .flagship-head .chip {
+    background: transparent; color: rgba(245, 241, 234, 0.7);
+    border-color: rgba(245, 241, 234, 0.3);
+    margin-bottom: 28px;
+  }
+  .flagship h2 {
+    font-family: var(--serif);
+    font-size: clamp(48px, 7vw, 120px);
+    line-height: 0.93;
+    letter-spacing: -0.025em;
+  }
+  .flagship h2 .ital { font-style: italic; color: var(--terracotta); }
+  .flagship-head p {
+    font-size: 18px; line-height: 1.55;
+    color: rgba(245, 241, 234, 0.8);
+    max-width: 44ch;
+  }
+  .flagship-img {
+    aspect-ratio: 21/9;
+    overflow: hidden;
+    margin-bottom: 56px;
+    position: relative;
+  }
+  .flagship-img img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.9) brightness(0.88); }
+  .flagship-img .corner {
+    position: absolute;
+    left: 24px; top: 24px;
+    font-family: var(--serif); font-style: italic;
+    font-size: 16px; color: var(--paper);
+    background: rgba(26, 23, 21, 0.5);
+    backdrop-filter: blur(6px);
+    padding: 8px 14px;
+  }
+  .flagship-figs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+    border-top: 1px solid rgba(245, 241, 234, 0.18);
+    padding-top: 40px;
+  }
+  .fsfig {
+    border-right: 1px solid rgba(245, 241, 234, 0.18);
+    padding-right: 20px;
+  }
+  .fsfig:last-child { border-right: none; }
+  .fsfig .n {
+    font-family: var(--serif);
+    font-size: clamp(72px, 9vw, 140px);
+    line-height: 0.88;
+    letter-spacing: -0.025em;
+  }
+  .fsfig .l {
+    font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(245, 241, 234, 0.6);
+    margin-top: 12px; line-height: 1.4;
+  }
+  .flagship .quote-block {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: clamp(32px, 5vw, 80px);
+    margin-top: 80px;
+    align-items: start;
+  }
+  .flagship .quote-block .q {
+    font-family: var(--serif);
+    font-size: clamp(24px, 2.8vw, 38px);
+    line-height: 1.25;
+    letter-spacing: -0.005em;
+    color: var(--paper);
+  }
+  .flagship .quote-block .q::before {
+    content: '“';
+    color: var(--terracotta);
+    font-size: 1.3em;
+    vertical-align: -0.12em;
+    margin-right: 0.05em;
+  }
+  .flagship .quote-block aside {
+    border-top: 1px solid rgba(245, 241, 234, 0.18);
+    padding-top: 20px;
+    font-size: 14px;
+    color: rgba(245, 241, 234, 0.7);
+    line-height: 1.55;
+  }
+  .flagship .quote-block aside strong { display: block; color: var(--paper); font-family: var(--serif); font-style: italic; font-size: 18px; font-weight: 400; margin-bottom: 8px; }
+
+  @media (max-width: 900px) {
+    .flagship-head { grid-template-columns: 1fr; gap: 24px; }
+    .flagship-figs { grid-template-columns: 1fr 1fr; }
+    .fsfig { border-right: none; border-bottom: 1px solid rgba(245, 241, 234, 0.18); padding-bottom: 24px; }
+    .flagship .quote-block { grid-template-columns: 1fr; }
+  }
+
+  /* ======= THE CUE SHEET — tracking artifact ======= */
+  .cuesheet {
+    padding: clamp(60px, 9vw, 120px) 0;
+    background: var(--paper-2);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .cuesheet-inner {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: clamp(32px, 5vw, 80px);
+  }
+  .cuesheet-copy h2 {
+    font-family: var(--serif);
+    font-size: clamp(36px, 5vw, 72px);
+    line-height: 0.98; letter-spacing: -0.018em;
+    margin-bottom: 22px;
+  }
+  .cuesheet-copy h2 .ital { font-style: italic; }
+  .cuesheet-copy p { font-size: 17px; color: var(--ink-2); line-height: 1.55; max-width: 46ch; margin-bottom: 14px; }
+
+  .cue-doc {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 0;
+    font-family: var(--sans);
+    position: relative;
+    overflow: hidden;
+  }
+  .cue-doc-hd {
+    padding: 18px 26px;
+    background: var(--ink);
+    color: var(--paper);
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .cue-doc-hd .t {
+    font-family: var(--serif); font-size: 22px; font-style: italic;
+  }
+  .cue-doc-hd .s {
+    font-size: 10px; letter-spacing: 0.22em;
+    color: rgba(245, 241, 234, 0.6);
+  }
+  .cue-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 90px 120px;
+    gap: 14px;
+    padding: 14px 26px;
+    border-bottom: 1px dashed var(--rule);
+    font-size: 13px;
+    align-items: baseline;
+    transition: background .2s;
+  }
+  .cue-row:hover { background: var(--paper-2); }
+  .cue-row:last-child { border-bottom: none; }
+  .cue-row .tm {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 12px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .cue-row .what {
+    color: var(--ink);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 16px;
+  }
+  .cue-row .dept {
+    font-size: 10px; letter-spacing: 0.14em;
+    color: var(--ink-faint); text-transform: uppercase;
+  }
+  .cue-row .note {
+    font-size: 11px; color: var(--olive);
+    font-style: italic;
+    line-height: 1.3;
+  }
+  .cue-row.highlight {
+    background: rgba(198, 83, 46, 0.06);
+  }
+  .cue-row.highlight .note { color: var(--terracotta); font-weight: 500; }
+  .cue-doc-ft {
+    padding: 14px 26px;
+    background: var(--paper-2);
+    border-top: 1px solid var(--rule);
+    display: flex; justify-content: space-between;
+    font-size: 11px; letter-spacing: 0.08em; color: var(--ink-faint);
+  }
+  .cue-doc-ft .pulse {
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+
+  @media (max-width: 900px) {
+    .cuesheet-inner { grid-template-columns: 1fr; }
+    .cue-row { grid-template-columns: 60px 1fr; }
+    .cue-row .dept, .cue-row .note { display: none; }
+  }
+
+  /* ======= GALLERY STRIP ======= */
+  .evgallery {
+    padding: clamp(60px, 9vw, 120px) 0;
+    overflow: hidden;
+  }
+  .evgallery-head {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 48px; gap: 24px;
+  }
+  .evgallery-head h2 {
+    font-family: var(--serif);
+    font-size: clamp(40px, 5vw, 80px);
+    line-height: 0.98; letter-spacing: -0.018em;
+  }
+  .evgallery-head h2 .ital { font-style: italic; }
+  .eg-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    grid-auto-rows: 140px;
+  }
+  .eg { overflow: hidden; position: relative; }
+  .eg img { width: 100%; height: 100%; object-fit: cover; transition: transform .7s; }
+  .eg:hover img { transform: scale(1.06); }
+  .eg .lbl {
+    position: absolute; left: 10px; bottom: 10px;
+    font-family: var(--serif); font-style: italic;
+    font-size: 13px;
+    background: rgba(245, 241, 234, 0.92);
+    padding: 4px 10px;
+  }
+  .eg-a { grid-column: span 3; grid-row: span 3; }
+  .eg-b { grid-column: span 3; grid-row: span 2; }
+  .eg-c { grid-column: span 2; grid-row: span 2; }
+  .eg-d { grid-column: span 2; grid-row: span 1; }
+  .eg-e { grid-column: span 2; grid-row: span 2; }
+  .eg-f { grid-column: span 4; grid-row: span 2; }
+  @media (max-width: 900px) {
+    .eg-grid { grid-template-columns: 1fr 1fr; grid-auto-rows: 180px; }
+    .eg-a, .eg-b, .eg-c, .eg-d, .eg-e, .eg-f { grid-column: span 2; grid-row: span 1; }
+  }
+
+  /* ======= CAPABILITIES LIST ======= */
+  .caps {
+    padding: clamp(60px, 9vw, 120px) 0;
+    background: var(--paper-2);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .caps-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: clamp(32px, 5vw, 80px);
+  }
+  .caps-grid h2 {
+    font-family: var(--serif);
+    font-size: clamp(40px, 5vw, 72px);
+    line-height: 0.98; letter-spacing: -0.018em;
+  }
+  .caps-grid h2 .ital { font-style: italic; }
+  .cap-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  .cap-cell {
+    background: var(--paper);
+    padding: 24px 26px;
+    min-height: 140px;
+  }
+  .cap-cell .n {
+    font-family: var(--serif); font-style: italic;
+    color: var(--terracotta); font-size: 14px;
+    display: block; margin-bottom: 16px;
+  }
+  .cap-cell h3 {
+    font-family: var(--serif);
+    font-size: 22px;
+    letter-spacing: -0.005em;
+    font-weight: 400;
+    margin-bottom: 6px;
+  }
+  .cap-cell h3 .ital { font-style: italic; }
+  .cap-cell p { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+  @media (max-width: 900px) {
+    .caps-grid { grid-template-columns: 1fr; }
+    .cap-tabs { grid-template-columns: 1fr; }
+  }
+
+  /* ======= WHO FOR ======= */
+  .ev-who {
+    padding: clamp(60px, 9vw, 120px) 0;
+  }
+  .ev-who-head {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 48px; gap: 24px; flex-wrap: wrap;
+  }
+  .ev-who-head h2 {
+    font-family: var(--serif);
+    font-size: clamp(40px, 5vw, 72px);
+    line-height: 0.98; letter-spacing: -0.018em;
+  }
+  .ev-who-head h2 .ital { font-style: italic; }
+  .ev-who-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  .who-card {
+    background: var(--paper);
+    padding: 36px 32px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    min-height: 320px;
+  }
+  .who-card .ic {
+    width: 48px; height: 48px;
+    border: 1px solid var(--ink);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif); font-style: italic;
+    font-size: 20px;
+    margin-bottom: 22px;
+  }
+  .who-card h3 {
+    font-family: var(--serif);
+    font-size: 26px;
+    letter-spacing: -0.005em;
+    line-height: 1.1;
+    font-weight: 400;
+    margin-bottom: 12px;
+  }
+  .who-card h3 .ital { font-style: italic; }
+  .who-card p { font-size: 14px; color: var(--ink-soft); line-height: 1.55; }
+  .who-card ul { margin-top: 16px; list-style: none; font-size: 12px; color: var(--ink-faint); }
+  .who-card ul li { padding: 3px 0; letter-spacing: 0.06em; }
+  .who-card ul li::before { content: '— '; color: var(--terracotta); }
+  @media (max-width: 900px) {
+    .ev-who-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ======= QUOTE ======= */
+  .ev-quote {
+    padding: clamp(60px, 9vw, 120px) 0;
+    background: var(--paper-3);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .ev-quote .q {
+    font-family: var(--serif);
+    font-size: clamp(32px, 4vw, 56px);
+    line-height: 1.2;
+    letter-spacing: -0.012em;
+    max-width: 22ch;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .ev-quote .q::before, .ev-quote .q::after {
+    content: '“';
+    color: var(--terracotta); font-family: var(--serif);
+    font-size: 0.9em;
+    vertical-align: -0.1em;
+  }
+  .ev-quote .q::after { content: '”'; }
+  .ev-quote .by {
+    text-align: center;
+    margin-top: 36px;
+    font-family: var(--serif); font-style: italic;
+    font-size: 18px;
+  }
+  .ev-quote .by span { display: block; font-family: var(--sans); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); margin-top: 6px; font-style: normal; }
+
+  /* ======= CTA ======= */
+  .ev-cta {
+    padding: clamp(80px, 12vw, 160px) 0;
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .ev-cta h2 {
+    font-family: var(--serif);
+    font-size: clamp(56px, 8vw, 140px);
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    max-width: 18ch;
+  }
+  .ev-cta h2 .ital { font-style: italic; color: var(--terracotta); }
+  .ev-cta p { max-width: 52ch; font-size: 18px; color: rgba(245, 241, 234, 0.8); margin: 28px 0 44px; line-height: 1.5; }
+  .ev-cta .btn { border-color: var(--paper); color: var(--paper); }
+  .ev-cta .btn:hover { background: var(--paper); color: var(--ink); }
+  .ev-cta .btn-primary { background: var(--terracotta); border-color: var(--terracotta); color: var(--paper); }
+  .ev-cta .btn-primary:hover { background: #b14726; border-color: #b14726; }
+  .ev-cta .pledges {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    margin-top: 80px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(245, 241, 234, 0.18);
+  }
+  .ev-cta .pledges h4 {
+    font-family: var(--serif); font-style: italic;
+    color: var(--terracotta);
+    font-size: 18px; margin-bottom: 8px;
+  }
+  .ev-cta .pledges p { font-size: 13px; color: rgba(245, 241, 234, 0.7); margin: 0; }
+  @media (max-width: 900px) {
+    .ev-cta .pledges { grid-template-columns: 1fr; }
+  }
+
+  /* subnav */
+  .subnav {
+    background: var(--paper-2);
+    border-bottom: 1px solid var(--rule);
+    padding: 14px 0;
+  }
+  .subnav-inner { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .breadcrumb { font-family: var(--sans); font-size: 12px; color: var(--ink-soft); letter-spacing: 0.04em; }
+  .breadcrumb a { color: var(--ink-soft); }
+  .breadcrumb .sep { margin: 0 10px; color: var(--ink-faint); }
+  .breadcrumb strong { color: var(--ink); font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo"><span class="mark"><em>Exhibit</em>Graphic&nbsp;Sign</span><span class="tag">Est. 2010 · Dubai</span></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="exhibitions.html">Exhibitions</a>
+      <a href="events.html" class="active">Events</a>
+      <a href="fitouts.html">Fitouts</a>
+      <a href="retail.html">Retail</a>
+      <a href="hct-case-study.html">Case Study</a>
+    </div>
+    <a href="#cta" class="nav-cta">Brief us on your event <span>→</span></a>
+  </div>
+</nav>
+
+<div class="subnav">
+  <div class="container">
+    <div class="subnav-inner">
+      <div class="breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><strong>Events &amp; Brand Activations</strong></div>
+      <div class="aud-switcher">
+        <a href="exhibitions.html">Exhibitions</a>
+        <a href="events.html" class="active">Events</a>
+        <a href="fitouts.html">Fitouts</a>
+        <a href="retail.html">Retail</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="ev-hero">
+  <div class="container">
+    <div class="ev-hero-grid">
+      <div class="ev-hero-left">
+        <div>
+          <span class="chip"><span class="chip-dot" style="background: var(--terracotta);"></span>Audience 02 · Events &amp; Brand Activations</span>
+          <h1 class="reveal">A room full of <span class="ital">feeling</span>.<br>A <span class="accent ital">crew</span> in black.<br>Zero missed cues.</h1>
+          <p class="lede reveal">
+            Graduations where families cry. Product launches where the reveal lands on the frame. Activations where a shopper stops mid-stride. <em>We build these for a living</em> — and then we write down what made them work.
+          </p>
+        </div>
+        <div>
+          <div style="display: flex; gap: 14px; flex-wrap: wrap; margin-top: 32px;">
+            <a href="#cta" class="btn btn-primary" style="background: var(--terracotta); border-color: var(--terracotta); color: var(--paper);">Brief us on your event <span class="arrow">→</span></a>
+            <a href="hct-case-study.html" class="btn btn-ghost">Read HCT case study</a>
+          </div>
+          <div class="nums">
+            <div><div class="n">4,500</div><div class="l">graduates cued &amp; named</div></div>
+            <div><div class="n">13,500</div><div class="l">guests in the room</div></div>
+            <div><div class="n">0</div><div class="l">cues missed ·&nbsp;ever</div></div>
+            <div><div class="n">14 yrs</div><div class="l">of show-running</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="ev-hero-img">
+        <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg" alt="HCT Graduation Ceremony">
+        <div class="tag-overlay">
+          HCT Graduation · one of seven in a single season, across five emirates.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT WE DO -->
+<section class="kinds">
+  <div class="container">
+    <div class="kinds-head reveal">
+      <h2>Four kinds of <span class="ital">room</span>.<br>One quiet crew behind them.</h2>
+      <p style="align-self: end;">We started in graduations. That discipline — <em>the one thing you cannot re-shoot</em> — is now the spine of how we run every other kind of event. Corporate galas, brand reveals, roadshows, on-stage activations. Same clipboard.</p>
+    </div>
+    <div class="kind-rows">
+      <div class="kind-row reveal">
+        <div class="kn">— 01 —</div>
+        <div>
+          <h3>Graduation <span class="ital">ceremonies</span></h3>
+        </div>
+        <div class="desc">
+          <p>The flagship discipline. 4,500 graduates called in name, in order, in front of 13,500 family members. Tears, lasers, kabuki drops. Nothing improvised.</p>
+          <div class="feat">
+            <span>— Stage design &amp; 3D render</span>
+            <span>— LED walls · Sound · Laser · Kabuki</span>
+            <span>— Student registration &amp; seating</span>
+            <span>— Live streaming</span>
+          </div>
+        </div>
+        <div class="kimg"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg" alt=""></div>
+      </div>
+      <div class="kind-row reveal">
+        <div class="kn">— 02 —</div>
+        <div>
+          <h3>Brand <span class="ital">activations</span></h3>
+        </div>
+        <div class="desc">
+          <p>Pop-up experiences that turn foot-traffic into a crowd. Product reveals, influencer nights, road shows. We build the shell, you bring the story — or we help write it.</p>
+          <div class="feat">
+            <span>— Concept design &amp; spatial</span>
+            <span>— Stage &amp; set build</span>
+            <span>— AV, MC, ushers</span>
+            <span>— Crew + hostess management</span>
+          </div>
+        </div>
+        <div class="kimg"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Velocity-3.jpg" alt=""></div>
+      </div>
+      <div class="kind-row reveal">
+        <div class="kn">— 03 —</div>
+        <div>
+          <h3>Corporate <span class="ital">galas &amp; launches</span></h3>
+        </div>
+        <div class="desc">
+          <p>The annual dinner. The product unveiling. The 500-seat town hall. Rooms where the lights going down at the wrong cue kills a quarter of marketing work.</p>
+          <div class="feat">
+            <span>— LED, sound, lighting</span>
+            <span>— Photography &amp; videography</span>
+            <span>— Backdrop &amp; venue branding</span>
+            <span>— On-site event management</span>
+          </div>
+        </div>
+        <div class="kimg"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Meydan13.jpg" alt=""></div>
+      </div>
+      <div class="kind-row reveal">
+        <div class="kn">— 04 —</div>
+        <div>
+          <h3>Roadshows &amp; <span class="ital">tours</span></h3>
+        </div>
+        <div class="desc">
+          <p>One concept, multiple cities, rarely the same venue twice. Modular design that packs flat, unpacks identically, and lets your regional team present the same brand everywhere.</p>
+          <div class="feat">
+            <span>— Modular stage system</span>
+            <span>— Transport &amp; logistics</span>
+            <span>— Travelling crew</span>
+            <span>— Local hostess coordination</span>
+          </div>
+        </div>
+        <div class="kimg"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Cares.jpg" alt=""></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HCT FLAGSHIP -->
+<section class="flagship">
+  <div class="container">
+    <div class="flagship-head reveal">
+      <div>
+        <span class="chip"><span class="chip-dot"></span>Flagship · Case No. 001</span>
+        <h2>The graduation standard<br>we <span class="ital">hold ourselves to</span>.</h2>
+      </div>
+      <p>Seven ceremonies. Five emirates. A single season. Every graduate named, every family seated, every cue landed. It's the project that taught us what "production memory" actually means — and it's why universities and schools keep coming back.</p>
+    </div>
+
+    <div class="flagship-img reveal">
+      <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg" alt="HCT Graduation hall">
+      <div class="corner">HCT · Grand Ceremony</div>
+    </div>
+
+    <div class="flagship-figs reveal">
+      <div class="fsfig">
+        <div class="n">7</div>
+        <div class="l">Grand ceremonies across the UAE</div>
+      </div>
+      <div class="fsfig">
+        <div class="n">4,500</div>
+        <div class="l">Graduates, each named &amp; cued</div>
+      </div>
+      <div class="fsfig">
+        <div class="n">13,500</div>
+        <div class="l">Families &amp; friends in the rooms</div>
+      </div>
+      <div class="fsfig">
+        <div class="n">0</div>
+        <div class="l">Cues missed, across every show</div>
+      </div>
+    </div>
+
+    <div class="quote-block reveal">
+      <div class="q">A graduation is the loudest photograph a family ever takes. Ours get it right on the first try, because we've already gotten it wrong in our rehearsals.</div>
+      <aside>
+        <strong>What we handle end-to-end</strong>
+        Concept &amp; 3D rendering · stage design · LED, sound &amp; lighting · laser show &amp; kabuki drop · student registration &amp; seating · venue branding · backdrop &amp; stage graphics · videography, photography &amp; live streaming.
+      </aside>
+    </div>
+
+    <div style="margin-top: 56px; display: flex; gap: 14px; flex-wrap: wrap;">
+      <a href="hct-case-study.html" class="btn" style="border-color: var(--paper); color: var(--paper);">Read the full case study <span class="arrow">→</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- CUE SHEET -->
+<section class="cuesheet">
+  <div class="container">
+    <div class="cuesheet-inner">
+      <div class="cuesheet-copy reveal">
+        <span class="eyebrow"><span class="dot"></span>The quiet document</span>
+        <h2 style="margin-top: 16px;">Our cue sheets are <span class="ital">minute-by-minute</span>.</h2>
+        <p>Every ceremony, gala and launch we run has a master cue sheet. A single source of truth that the lighting desk, the sound engineer, the MC, the video director and the student registration desk are all reading from.</p>
+        <p>It looks ordinary. It is extraordinary. It's why the laser fires on the third chord and not the fourth. It's why the kabuki lands as the VP says the word "future."</p>
+        <p>After the show, this document gets one more column — <em>"what we'd change"</em>. That's the page we re-read when you call us for the next one.</p>
+      </div>
+
+      <div class="cue-doc reveal" aria-hidden="true">
+        <div class="cue-doc-hd">
+          <span class="t">Cue Sheet · HCT Grad <span style="font-family: var(--sans); font-size: 11px; font-style:normal; letter-spacing:0.14em; color: rgba(245,241,234,0.6);">DXB &middot; '24</span></span>
+          <span class="s">REV 04 · FINAL</span>
+        </div>
+        <div class="cue-row">
+          <div class="tm">T −05:00</div>
+          <div class="what">House lights down</div>
+          <div class="dept">Lx</div>
+          <div class="note">0.5s slower '23</div>
+        </div>
+        <div class="cue-row">
+          <div class="tm">T −00:30</div>
+          <div class="what">Processional music · up</div>
+          <div class="dept">Audio</div>
+          <div class="note">bed from '21 cue</div>
+        </div>
+        <div class="cue-row">
+          <div class="tm">T +00:00</div>
+          <div class="what">Chancellor enters · spot 1</div>
+          <div class="dept">Lx · FOH</div>
+          <div class="note">stage left per '23</div>
+        </div>
+        <div class="cue-row highlight">
+          <div class="tm">T +04:12</div>
+          <div class="what">LED wall · montage in</div>
+          <div class="dept">Video</div>
+          <div class="note">family reaction test · PASS</div>
+        </div>
+        <div class="cue-row">
+          <div class="tm">T +28:00</div>
+          <div class="what">First name called · Abu Dhabi block</div>
+          <div class="dept">MC · Reg</div>
+          <div class="note">alpha A-H seated block 1</div>
+        </div>
+        <div class="cue-row highlight">
+          <div class="tm">T +92:14</div>
+          <div class="what">Kabuki drop · stage right</div>
+          <div class="dept">Rig · Lx</div>
+          <div class="note">aligned to "future" keyword</div>
+        </div>
+        <div class="cue-row">
+          <div class="tm">T +92:16</div>
+          <div class="what">Laser burst · warm white</div>
+          <div class="dept">FX</div>
+          <div class="note">beam count: 18 · '23 count: 12</div>
+        </div>
+        <div class="cue-row">
+          <div class="tm">T +94:00</div>
+          <div class="what">Confetti · full stage</div>
+          <div class="dept">FX</div>
+          <div class="note">eco-confetti · new '24</div>
+        </div>
+        <div class="cue-row">
+          <div class="tm">T +95:30</div>
+          <div class="what">Live stream caps</div>
+          <div class="dept">Video</div>
+          <div class="note">42k concurrent peak</div>
+        </div>
+        <div class="cue-doc-ft">
+          <span>Illustrative format · 147 cues total in full sheet</span>
+          <span class="pulse"><span class="pulse-dot"></span>Logged to dossier</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="evgallery">
+  <div class="container">
+    <div class="evgallery-head reveal">
+      <div>
+        <span class="eyebrow"><span class="dot"></span>Selected moments</span>
+        <h2 style="margin-top: 12px;">Rooms we've <span class="ital">quietly run</span>.</h2>
+      </div>
+      <span class="body-sm">HCT · RAK American Academy · Velocity · Philips · Landmark Group</span>
+    </div>
+    <div class="eg-grid reveal">
+      <div class="eg eg-a"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg" alt=""><span class="lbl">HCT · Grand Ceremony</span></div>
+      <div class="eg eg-b"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/3-HCT-Fujeirah1.jpg" alt=""><span class="lbl">HCT · Fujairah</span></div>
+      <div class="eg eg-c"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Meydan6.jpg" alt=""><span class="lbl">Philips · Meydan launch</span></div>
+      <div class="eg eg-d"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Velocity-4.jpg" alt=""><span class="lbl">Velocity</span></div>
+      <div class="eg eg-e"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Velocity-12.jpg" alt=""><span class="lbl">Velocity · stage</span></div>
+      <div class="eg eg-f"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Cares.jpg" alt=""><span class="lbl">Corporate event</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CAPABILITIES -->
+<section class="caps">
+  <div class="container">
+    <div class="caps-grid">
+      <div class="reveal">
+        <span class="eyebrow"><span class="dot"></span>What's under the hood</span>
+        <h2 style="margin-top: 14px;">Everything you'd expect,<br>nothing <span class="ital">subcontracted</span> that shouldn't be.</h2>
+      </div>
+      <div class="cap-tabs reveal">
+        <div class="cap-cell"><span class="n">— 01 —</span><h3>LED walls &amp; <span class="ital">video</span></h3><p>Indoor, outdoor, curved, transparent. 42k concurrent live stream peak handled in-house.</p></div>
+        <div class="cap-cell"><span class="n">— 02 —</span><h3>Sound, <span class="ital">lighting</span>, rig</h3><p>Line-array, moving head, followspot. FOH and monitor engineers on our payroll.</p></div>
+        <div class="cap-cell"><span class="n">— 03 —</span><h3>Laser show &amp; <span class="ital">kabuki</span></h3><p>The moments people film on their phones. Every cue pre-choreographed to music and script.</p></div>
+        <div class="cap-cell"><span class="n">— 04 —</span><h3>Stage &amp; <span class="ital">set build</span></h3><p>In-house carpentry and joinery in Sharjah. We build, we transport, we install, we strike.</p></div>
+        <div class="cap-cell"><span class="n">— 05 —</span><h3>Registration &amp; <span class="ital">seating</span></h3><p>The operational choreography — the thousand people you need in the right seats before the chancellor walks in.</p></div>
+        <div class="cap-cell"><span class="n">— 06 —</span><h3>Photo, video, <span class="ital">stream</span></h3><p>Full-crew coverage. Multi-cam livestream, post-edit highlight reel, family photo distribution.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO FOR -->
+<section class="ev-who">
+  <div class="container">
+    <div class="ev-who-head reveal">
+      <h2>Who this <span class="ital">is for</span>.</h2>
+      <span class="body-sm">Three audiences we speak to differently</span>
+    </div>
+    <div class="ev-who-grid reveal">
+      <div class="who-card">
+        <div>
+          <div class="ic">01</div>
+          <h3>Universities &amp; <span class="ital">schools</span></h3>
+          <p>Chancellors, registrars, marketing heads with a graduation looming. You know the stakes; you just want a partner who's held graduation day more than once.</p>
+        </div>
+        <ul>
+          <li>Graduation ceremonies</li>
+          <li>Open days &amp; orientation</li>
+          <li>Campus branding</li>
+          <li>Convocations</li>
+        </ul>
+      </div>
+      <div class="who-card">
+        <div>
+          <div class="ic">02</div>
+          <h3>CMOs &amp; brand <span class="ital">marketing teams</span></h3>
+          <p>You're launching, activating, celebrating. You need the stage to match what you're paying the press to attend for. And you need it quietly, without 4am vendor chaos.</p>
+        </div>
+        <ul>
+          <li>Product launches</li>
+          <li>Brand activations</li>
+          <li>Influencer nights</li>
+          <li>Press events</li>
+        </ul>
+      </div>
+      <div class="who-card">
+        <div>
+          <div class="ic">03</div>
+          <h3>Corporate <span class="ital">event organisers</span></h3>
+          <p>Annual dinners, town halls, awards evenings. The rooms where the internal audience matters more than the external one — and where things going wrong becomes a management problem.</p>
+        </div>
+        <ul>
+          <li>Annual galas</li>
+          <li>Internal town halls</li>
+          <li>Awards evenings</li>
+          <li>Client appreciation nights</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<section class="ev-quote">
+  <div class="container">
+    <div class="reveal">
+      <p class="q">The things that matter in an event are the things you don't notice.</p>
+      <div class="by">— The house view at EGS<span>a note on how we work</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="ev-cta" id="cta">
+  <div class="container">
+    <span class="chip" style="background:transparent;border-color:rgba(245,241,234,0.3);color:rgba(245,241,234,0.7); margin-bottom: 32px;">
+      <span class="chip-dot" style="background: var(--terracotta);"></span>A brief, a walk-through, a run-sheet
+    </span>
+    <h2 class="reveal">Tell us the <span class="ital">moment</span>.<br>We'll show you the <span class="ital">run-sheet</span>.</h2>
+    <p>Send us a paragraph about what the night needs to feel like and who's in the room. We'll reply with stage options, a headline cost range, and the names of the team who'd run it. No forms. No gated downloads.</p>
+    <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+      <a href="mailto:info@exhibitgraphicsign.com?subject=Event%20Brief" class="btn btn-primary">Brief us on your event <span class="arrow">→</span></a>
+      <a href="hct-case-study.html" class="btn">Read HCT case study</a>
+    </div>
+
+    <div class="pledges">
+      <div><h4>No missed cues</h4><p>Fourteen years of ceremonies. We've never had to restart one.</p></div>
+      <div><h4>Same crew, each time</h4><p>The foreman you meet at kickoff is there on show night.</p></div>
+      <div><h4>A debrief, every time</h4><p>One page, seven days after load-out. What worked. What we'd change.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="color: var(--paper); margin-bottom: 20px;"><span class="mark"><em>Exhibit</em>Graphic&nbsp;Sign</span></div>
+        <p style="max-width: 40ch; font-size: 14px; opacity: 0.7; line-height: 1.5;">A Dubai production house for exhibitions, events, fitouts and retail branding. We build the moment — and we remember what worked.</p>
+      </div>
+      <div><h4>Audiences</h4><ul><li><a href="exhibitions.html">Exhibition Stands</a></li><li><a href="events.html">Events &amp; Activations</a></li><li><a href="fitouts.html">Interior Fitouts</a></li><li><a href="retail.html">Retail Branding</a></li></ul></div>
+      <div><h4>Services</h4><ul><li>Indoor &amp; Outdoor Signage</li><li>Large-Format Printing</li><li>Product Display Stands</li><li>Mall Kiosks</li><li>Vehicle Branding</li></ul></div>
+      <div><h4>Contact</h4><ul><li>info@exhibitgraphicsign.com</li><li>+971 4 238 3278</li><li>Al Qusais, Dubai</li><li>Industrial Area 11, Sharjah</li></ul></div>
+    </div>
+    <div class="footer-big"><em>We remember</em> every project.</div>
+    <div class="footer-bottom">
+      <span>© 2026 Exhibit Graphic Sign · Est. 2010</span>
+      <span>File No. 003 / Events</span>
+    </div>
+  </div>
+</footer>
+
+<script src="shared.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "egs-web-frontend",
+  "private": true,
+  "workspaces": [
+    "client"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace client",
+    "build": "npm run build --workspace client",
+    "start": "npm run preview --workspace client"
+  }
+}
