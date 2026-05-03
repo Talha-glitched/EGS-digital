@@ -3,9 +3,10 @@ import {
   EventsPage,
   ExhibitionsPage,
   FitoutsPage,
-  HctCaseStudyPage,
   HomePage,
   RetailPage,
+  CaseStudiesPage,
+  ContactPage,
 } from './pages/index.js';
 
 export default function App() {
@@ -16,7 +17,9 @@ export default function App() {
       <Route path="/events" element={<EventsPage />} />
       <Route path="/fitouts" element={<FitoutsPage />} />
       <Route path="/retail" element={<RetailPage />} />
-      <Route path="/hct-case-study" element={<HctCaseStudyPage />} />
+      <Route path="/case-studies" element={<CaseStudiesPage />} />
+      <Route path="/contact" element={<ContactPage />} />
+      <Route path="/hct-case-study" element={<Navigate to="/case-studies#hct-graduation-program" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

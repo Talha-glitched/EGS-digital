@@ -1,76 +1,70 @@
-import pageStyles from '../styles/pages/home.css?raw';
+import pageStyles from '../styles/pages/content-first.css?raw';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
-import { useStandPreview } from '../hooks/useStandPreview.js';
+import { ClientMarquee, FAQSection, Footer, InfoGrid, ProductionHub, ProofCard, SiteNav, Stepper } from './SiteChrome.jsx';
+import { images, processSteps, proofCards, services } from './siteData.js';
+
+const pressureItems = [
+  ['Move quickly', 'EGS moves when the requirement changes, but keeps the physical work tied to the client need.'],
+  ['Protect the standard', 'Fast is only useful when the finish, handover, and public moment still hold.'],
+  ['Keep control', 'Late changes should not become public chaos for the visitor, guest, customer, or sales team.'],
+  ['Remember the work', 'Repeat-client memory matters because each engagement should make the next one sharper.'],
+];
+
+const homeFaqs = [
+  ['What does EGS do?', 'EGS builds exhibition stands, graduation ceremonies, event environments, retail branding, signage, and branded interiors across Dubai and the UAE.'],
+  ['Can EGS handle urgent changes?', 'Yes, when the change is physically possible and the team can keep the standard intact. The proof includes Sadia, HCT Fujairah, Philips, and Kazakhstan Pavilion.'],
+  ['Who should contact EGS?', 'Marketing, events, procurement, retail, and institutional teams who need physical brand work delivered properly under real deadline pressure.'],
+  ['What should I send first?', 'Send the service type, deadline, venue or location, and any drawings, photos, location lists, or brand guidelines you already have.'],
+];
 
 export default function HomePage() {
-  usePageLifecycle('Exhibit Graphic Sign \u00b7 A creative partner that remembers');
-  useStandPreview();
+  usePageLifecycle('Exhibit Graphic Sign | Exhibition Stands, Events, Retail Branding Dubai');
 
   return (
     <>
       <style>{pageStyles}</style>
-      <div className="egs-page egs-home">
-        {/* NAV */}
-        <nav className="nav">
-          <div className="nav-inner">
-            <a href="/" className="logo" aria-label="Exhibit Graphic Sign home">
-              <img className="logo-img" src="https://exhibitgraphicsign.com/wp-content/uploads/2024/02/EGS-Logo-300x126.png" alt="EGS" />
-            </a>
-            <div className="nav-links">
-              <a href="/" className="active">Home</a>
-              <a href="/exhibitions">Exhibitions</a>
-              <a href="/events">Events</a>
-              <a href="/fitouts">Fitouts</a>
-              <a href="/retail">Retail</a>
-              <a href="/hct-case-study">Case Study</a>
-            </div>
-            <a href="#contact" className="nav-cta">Start a file <span>→</span></a>
-          </div>
-        </nav>
+      <div className="content-page" style={{ '--accent': 'var(--terracotta)' }}>
+        <SiteNav active="home" />
 
-        {/* HERO */}
-        <section className="hero">
+        <section className="content-hero">
           <div className="container">
-            <div className="hero-grid">
-              <div className="hero-l">
+            <div className="hero-board">
+              <div className="hero-copy">
                 <div>
-                  <div className="hero-chip-row">
-                    <span className="chip"><span className="chip-dot"></span>Dubai production house · since 2010</span>
-                    <span className="chip c-a"><span className="chip-dot"></span>We remember every project</span>
+                  <div className="chip-row">
+                    <span className="chip"><span className="chip-dot" />Dubai / UAE production house</span>
+                    <span className="chip"><span className="chip-dot" />Built for fixed deadlines</span>
                   </div>
-                  <h1>
-                    We build the <span className="ital c1">moment</span>.<br />
-                    We remember <span className="underlined ital">what&nbsp;worked</span>.<br />
-                    Next one&nbsp;is <span className="ital c2">better</span>.
-                  </h1>
-                  <p className="lede">Exhibition stands, events, fitouts, retail. A creative partner <em>who keeps a file on you</em>.</p>
+                  <h1 className="wide-title">Every deadline has moving parts. EGS keeps them moving.</h1>
+                  <p className="lede">
+                    EGS is a Dubai production house for high-stakes physical brand moments across the UAE. When the requirement changes late and the date cannot move, we keep the work moving until it is ready and correct.
+                  </p>
                 </div>
                 <div>
-                  <div className="hero-footer">
-                    <a href="#audiences" className="btn btn-primary">See our work <span className="arrow">→</span></a>
-                    <a href="#contact" className="btn btn-ghost">Start a project</a>
+                  <div className="hero-actions">
+                    <a href="/contact" className="btn btn-primary">Send us your brief <span className="arrow">→</span></a>
+                    <a href="/case-studies" className="btn btn-ghost">See case studies</a>
                   </div>
-                  <div className="hero-stats">
-                    <div className="hero-stat"><div className="n a1">14<span style={{ fontSize: '.55em', fontStyle: 'italic' }}>&nbsp;yrs</span></div><div className="l">making rooms</div></div>
-                    <div className="hero-stat"><div className="n a2">300+</div><div className="l">engagements</div></div>
-                    <div className="hero-stat"><div className="n a3">40+</div><div className="l">returning clients</div></div>
-                    <div className="hero-stat"><div className="n">8,000<span style={{ fontSize: '.55em', fontStyle: 'italic' }}>&nbsp;sqft</span></div><div className="l">joinery, Sharjah</div></div>
+                  <div className="proof-chip-strip">
+                    <div className="proof-chip"><strong>2010</strong><span>Founded in Dubai</span></div>
+                    <div className="proof-chip"><strong>25+</strong><span>Big projects/year</span></div>
+                    <div className="proof-chip"><strong>UAE</strong><span>Venue and install pressure</span></div>
                   </div>
                 </div>
               </div>
-              <div className="hero-img-stack">
-                <div className="cell">
-                  <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg" alt="HCT Grand Graduation" />
-                  <span className="lbl">HCT Grand Graduation &middot; '24</span>
+              <div className="hero-visual-stack">
+                <div className="image-cell hero-feature-image">
+                  <img src={images.graduationProfile} alt="HCT graduation ceremony production" />
+                  <span className="label">Seven HCT ceremonies · 4,500 graduates · 13,500 guests</span>
                 </div>
-                <div className="row">
-                  <div className="cell">
-                    <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Pairs.jpg" alt="Philips Pairs Arab Health" />
-                    <span className="lbl">Philips &middot; 240 sqm</span>
+                <div className="hero-thumb-row">
+                  <div className="image-cell">
+                    <img src={images.philips} alt="Philips exhibition stand" />
+                    <span className="label">200 sqm Philips stand adaptation</span>
                   </div>
-                  <div className="cell">
-                    <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/FAK-Properties1.jpg" alt="Fakhruddin Properties showroom" />
-                    <span className="lbl">Fakhruddin &middot; showroom</span>
+                  <div className="image-cell">
+                    <img src={images.retail} alt="Retail branding work" />
+                    <span className="label">Retail rollout pressure</span>
                   </div>
                 </div>
               </div>
@@ -78,447 +72,127 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* CLIENT MARQUEE */}
-        <div className="mq-wrap">
-          <div className="marquee">
-            <div className="marquee-track">
-              <div className="marquee-item">Philips</div>
-              <div className="marquee-item">Schindler</div>
-              <div className="marquee-item">Landmark Group</div>
-              <div className="marquee-item">Higher Colleges of Technology</div>
-              <div className="marquee-item">800 Pizza</div>
-              <div className="marquee-item">Serco</div>
-              <div className="marquee-item">ENH Media</div>
-              <div className="marquee-item">Fakhruddin Properties</div>
-              <div className="marquee-item">Abbott Nutrition</div>
-              <div className="marquee-item">GSK</div>
-              <div className="marquee-item">RAK American Academy</div>
-            </div>
-          </div>
-        </div>
+        <ClientMarquee />
 
-        {/* WHAT WE DO (image-led explainer) */}
-        <section className="quick">
+        <section className="section-band alt">
           <div className="container">
-            <div className="quick-head">
-              <h2>We do four <span className="ital cc1">kinds of work</span>. Each one <span className="ital cc2">remembered</span>, year after year.</h2>
-              <span className="chip c-a"><span className="chip-dot"></span>Plain English, no pitch</span>
+            <div className="section-head">
+              <h2>Start with the work that has to be ready.</h2>
+              <p>Each service has a different pressure: opening day, showtime, mall access, or handover. The site routes buyers by the physical problem they need solved.</p>
             </div>
-            <div className="quick-grid">
-              <a className="qcard" href="/exhibitions">
-                <div className="ci">
-                  <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Pairs.jpg" alt="" />
-                  <span className="swatch" style={{ background: 'var(--accent-a)', color: 'var(--ink)' }}>01 · STANDS</span>
-                </div>
-                <div className="body">
-                  <h3>Exhibition <span className="ital">stands</span></h3>
-                  <p>Arab Health. GITEX. ADIPEC. Stands that get re-skinned and re-used.</p>
-                  <span className="go"><span>For exhibitors</span><span className="arrow">→</span></span>
-                </div>
-              </a>
-              <a className="qcard" href="/events">
-                <div className="ci">
-                  <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg" alt="" />
-                  <span className="swatch" style={{ background: 'var(--accent-b)' }}>02 · EVENTS</span>
-                </div>
-                <div className="body">
-                  <h3>Events &amp; <span className="ital">activations</span></h3>
-                  <p>Graduations, galas, product launches. Lasers, kabuki, quiet crew.</p>
-                  <span className="go"><span>For CMOs &amp; registrars</span><span className="arrow">→</span></span>
-                </div>
-              </a>
-              <a className="qcard" href="/fitouts">
-                <div className="ci">
-                  <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/FAK-Properties1.jpg" alt="" />
-                  <span className="swatch" style={{ background: 'var(--accent-c)' }}>03 · FITOUTS</span>
-                </div>
-                <div className="body">
-                  <h3>Interior <span className="ital">fitouts</span></h3>
-                  <p>Showrooms and offices. Built once. Looked at for the next decade.</p>
-                  <span className="go"><span>For property &amp; HR</span><span className="arrow">→</span></span>
-                </div>
-              </a>
-              <a className="qcard" href="/retail">
-                <div className="ci">
-                  <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/800-Pizza.jpg" alt="" />
-                  <span className="swatch" style={{ background: 'var(--accent-d)' }}>04 · RETAIL</span>
-                </div>
-                <div className="body">
-                  <h3>Retail <span className="ital">branding</span></h3>
-                  <p>End-caps, kiosks, in-store theatre. 30+ mall locations, one week.</p>
-                  <span className="go"><span>For merchandisers</span><span className="arrow">→</span></span>
-                </div>
-              </a>
-            </div>
-          </div>
-        </section>
-
-        {/* 3D STAND */}
-        <section className="stand3d">
-          <div className="container">
-            <div className="stand3d-head reveal">
-              <div>
-                <span className="chip"><span className="chip-dot"></span>Live · From the drawing board</span>
-                <h2 style={{ marginTop: '18px' }}>Every stand <span className="ital cc1">starts</span> as<br />a <span className="ital cc2">wireframe</span>.</h2>
+            <div className="image-mosaic" style={{ marginBottom: '12px' }}>
+              <div className="image-cell">
+                <img src={images.hctProfile} alt="HCT graduation ceremony production" />
+                <span className="label">HCT ceremony production · UAE scale</span>
               </div>
-              <p>A rotating 3D sketch of a typical double-deck stand. Rendered every project before the first plywood gets cut. Meeting pods, LED wall, demo zone, pair zones.</p>
-            </div>
-
-            <div className="stand3d-stage reveal" id="stand3d-stage">
-              <div className="stand3d-overlay">Stand preview · wireframe</div>
-              <div className="stand3d-meta">
-                <span>Ref</span>
-                <em>Philips Pairs · 240 sqm</em>
-              </div>
-
-              <svg id="stand3d-svg" viewBox="-400 -260 800 520" preserveAspectRatio="xMidYMid meet">
-                <defs>
-                  <linearGradient id="floorGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="rgba(212,160,23,0.18)"/>
-                    <stop offset="100%" stopColor="rgba(212,160,23,0)"/>
-                  </linearGradient>
-                </defs>
-                <g id="stand-root">
-                  {/* Floor grid (rendered via JS for rotation) */}
-                </g>
-              </svg>
-
-              <div className="stand3d-ctrl">
-                <button data-spd="slow">Slow</button>
-                <button data-spd="med" className="on">Rotate</button>
-                <button data-spd="fast">Fast</button>
-                <button data-spd="pause">Pause</button>
+              <div className="stack">
+                <div className="image-cell">
+                  <img src={images.philips} alt="Philips exhibition stand" />
+                  <span className="label">Exhibition stand adaptation</span>
+                </div>
+                <div className="image-cell">
+                  <img src={images.fitout} alt="Branded interior and showroom work" />
+                  <span className="label">Branded spaces and fitouts</span>
+                </div>
               </div>
             </div>
-
-            <div className="stand3d-legend reveal">
-              <div className="lg"><strong><span className="c-dot" style={{ background: 'var(--accent-a)' }}></span>LED wall</strong>6m &middot; 4k</div>
-              <div className="lg"><strong><span className="c-dot" style={{ background: 'var(--accent-b)' }}></span>Meeting pods</strong>4 &times; semi-private</div>
-              <div className="lg"><strong><span className="c-dot" style={{ background: 'var(--accent-c)' }}></span>Demo zones</strong>2 &middot; pair-zone concept</div>
-              <div className="lg"><strong><span className="c-dot" style={{ background: '#b8c7cc' }}></span>Modular shell</strong>62% re-usable</div>
-            </div>
-          </div>
-        </section>
-
-        {/* AUDIENCE BLOCK (image-led) */}
-        <section className="aud-block" id="audiences">
-          <div className="container">
-            <div className="head">
-              <div>
-                <span className="chip"><span className="chip-dot"></span>Who are you building for</span>
-                <h2 style={{ marginTop: '14px' }}>Pick your <span className="ital c1">room</span>. We'll speak <span className="ital c2">your language</span>.</h2>
-              </div>
-              <span className="body-sm" style={{ maxWidth: '40ch' }}>A trade-show director and a retail merchandiser don't hear the same pitch. Click in.</span>
-            </div>
-            <div className="aud-grid">
-              <a className="au" href="/exhibitions" data-c="a">
-                <span className="stripe"></span>
-                <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Arab-Health.jpg" alt="" />
-                <div className="body">
-                  <div className="n">01 &middot; Stands</div>
-                  <h3><span className="ital">Exhibitions</span></h3>
-                  <div className="hook">Philips, Abbott, GSK. 240 sqm builds. 62% re-use.</div>
-                  <span className="go">Enter <span>→</span></span>
-                </div>
-              </a>
-              <a className="au" href="/events" data-c="b">
-                <span className="stripe"></span>
-                <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg" alt="" />
-                <div className="body">
-                  <div className="n">02 &middot; Events</div>
-                  <h3>Brand <span className="ital">activations</span></h3>
-                  <div className="hook">HCT, RAK American. 4,500 graduates. Zero missed cues.</div>
-                  <span className="go">Enter <span>→</span></span>
-                </div>
-              </a>
-              <a className="au" href="/fitouts" data-c="c">
-                <span className="stripe"></span>
-                <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/FAK-Properties1.jpg" alt="" />
-                <div className="body">
-                  <div className="n">03 &middot; Fitouts</div>
-                  <h3>Showroom <span className="ital">fitouts</span></h3>
-                  <div className="hook">Fakhruddin, Schindler. Built once. Ten-year surface.</div>
-                  <span className="go">Enter <span>→</span></span>
-                </div>
-              </a>
-              <a className="au" href="/retail" data-c="d">
-                <span className="stripe"></span>
-                <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/800-Pizza.jpg" alt="" />
-                <div className="body">
-                  <div className="n">04 &middot; Retail</div>
-                  <h3>Retail <span className="ital">branding</span></h3>
-                  <div className="hook">Landmark, 800 Pizza. 30+ sites. One-week rollout.</div>
-                  <span className="go">Enter <span>→</span></span>
-                </div>
-              </a>
-            </div>
-          </div>
-        </section>
-
-        {/* MEMORY / LEDGER */}
-        <section className="memory">
-          <div className="container">
-            <div className="memory-grid">
-              <div className="reveal">
-                <span className="eyebrow"><span className="dot"></span>The difference</span>
-                <h2 style={{ marginTop: '14px' }}>Most vendors <span className="ital c1">forget</span>.<br />We keep a <span className="ital c2">file</span>.</h2>
-                <p className="lede-m">Every show, we write down: what moved the room, what flopped, what to fix next year.</p>
-                <p className="sub-m">When you come back, we don't start from zero. Colours, hardware, traffic patterns, last year's mistakes, already in the room.</p>
-                <div className="chiprow">
-                  <span className="chip c-a"><span className="chip-dot"></span>Project memory</span>
-                  <span className="chip c-b"><span className="chip-dot"></span>Post-event notes</span>
-                  <span className="chip c-c"><span className="chip-dot"></span>Lead tracking</span>
-                  <span className="chip c-d"><span className="chip-dot"></span>Hardware re-use</span>
-                </div>
-              </div>
-
-              <div className="ledger reveal" aria-hidden="true">
-                <div className="ledger-hd">
-                  <div className="t">Client dossier <strong>Philips Healthcare</strong></div>
-                  <div className="sub">Engagement 06</div>
-                </div>
-                <div>
-                  <div className="ledger-row">
-                    <div className="year">'19</div>
-                    <div className="proj">Arab Health &middot; 120 sqm</div>
-                    <div className="what">Double-deck, pairs zone</div>
-                    <div className="note">first engagement</div>
-                    <div><span className="result mid">benchmark</span></div>
+            <div className="service-grid">
+              {services.map((service) => (
+                <a className="service-card" href={service.href} key={service.title} style={{ '--accent': service.accent }}>
+                  <div className="media">
+                    <img src={service.image} alt="" />
+                    <span className="caption-note">{service.label}</span>
                   </div>
-                  <div className="ledger-row">
-                    <div className="year">'20</div>
-                    <div className="proj">Arab Health &middot; 120 sqm</div>
-                    <div className="what">Re-skinned hardware, 18% less</div>
-                    <div className="note">kept meeting pods</div>
-                    <div><span className="result up">+34% leads</span></div>
+                  <div className="body">
+                    <small>{service.label} / Service</small>
+                    <h3>{service.title}</h3>
+                    <p>{service.copy}</p>
                   </div>
-                  <div className="ledger-row">
-                    <div className="year">'21</div>
-                    <div className="proj">Meydan Launch Event</div>
-                    <div className="what">Radiology reveal &middot; 380 guests</div>
-                    <div className="note">LED spec from '19</div>
-                    <div><span className="result up">NPS 72</span></div>
-                  </div>
-                  <div className="ledger-row">
-                    <div className="year">'22</div>
-                    <div className="proj">Arab Health &middot; 180 sqm</div>
-                    <div className="what">Pair-zone v2 &middot; VR demo</div>
-                    <div className="note">dead corner noted</div>
-                    <div><span className="result up">+41% leads</span></div>
-                  </div>
-                  <div className="ledger-row">
-                    <div className="year">'23</div>
-                    <div className="proj">Radiology roadshow</div>
-                    <div className="what">6 cities &middot; modular shell</div>
-                    <div className="note">same carpenters</div>
-                    <div><span className="result flat">on plan</span></div>
-                  </div>
-                  <div className="ledger-row">
-                    <div className="year">'24</div>
-                    <div className="proj">Arab Health &middot; 240 sqm</div>
-                    <div className="what">3-storey &middot; 62% re-used</div>
-                    <div className="note">booked '25</div>
-                    <div><span className="result best">+22% leads</span></div>
-                  </div>
-                </div>
-                <div className="ledger-ft">
-                  <span>Confidential &middot; illustrative format</span>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><span className="pulse-dot"></span>Still tracking</span>
-                </div>
-              </div>
+                </a>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* HCT FEATURE */}
-        <section className="hct">
+        <section className="section-band">
           <div className="container">
-            <div className="hct-head reveal">
-              <div>
-                <span className="chip" style={{ marginBottom: '20px' }}><span className="chip-dot" style={{ background: 'var(--accent-a)' }}></span>Case No. 001 &middot; Anchor project</span>
-                <h2>Seven nights, <span className="ital">five emirates</span>, 4,500 graduates.</h2>
-              </div>
-              <a href="/hct-case-study" className="btn" style={{ borderColor: 'rgba(245,241,234,0.5)', color: 'var(--paper)' }}>Read the full story <span className="arrow">→</span></a>
+            <div className="section-head">
+              <h2>What pressure-tested looks like.</h2>
+              <p>Proof should be quick to understand: client, deadline pressure, physical work, and result. Open any file to see the full story.</p>
             </div>
-
-            <div className="hct-hero reveal">
-              <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg" alt="HCT Graduation Ceremony" />
-              <div className="overlay-meta">
-                <span>Higher Colleges of Technology</span>
-                <span>Dubai &middot; Abu Dhabi &middot; Sharjah &middot; RAK &middot; Fujairah</span>
-                <span>Since 2018</span>
-              </div>
-            </div>
-
-            <div className="hct-stats">
-              <div className="hct-numbers reveal">
-                <div className="hct-num" data-c="a">
-                  <div className="fig">7</div>
-                  <div className="cap">Grand ceremonies, UAE</div>
-                </div>
-                <div className="hct-num">
-                  <div className="fig">4,500</div>
-                  <div className="cap">Graduates, each cued by name</div>
-                </div>
-                <div className="hct-num" data-c="b">
-                  <div className="fig">13,500</div>
-                  <div className="cap">Families in the rooms</div>
-                </div>
-                <div className="hct-num">
-                  <div className="fig">5</div>
-                  <div className="cap">Emirates, single season</div>
-                </div>
-                <div className="hct-num" data-c="a">
-                  <div className="fig">0</div>
-                  <div className="cap">Cues missed, ever</div>
-                </div>
-              </div>
-              <div className="hct-story reveal">
-                <h3>A graduation is the loudest photograph a family ever takes.</h3>
-                <p>HCT trusted us with seven, across five emirates, one season. Stage &amp; 3D render. LED walls, sound, laser, kabuki. Student registration, seating, live streaming. The unseen hundred things that make a four-second name-reading feel like a lifetime.</p>
-                <p>Year after year for HCT. The run-of-show template lives in our drive. We know which hall in RAK has tricky acoustics, which campus loves a big laser finish. Seventh ceremony is not like the first.</p>
-                <div style={{ marginTop: '24px' }}>
-                  <span className="chip c-a"><span className="chip-dot"></span>Concept &amp; 3D</span>
-                  <span className="chip c-b" style={{ marginLeft: '6px' }}><span className="chip-dot"></span>LED &middot; Sound &middot; Lighting</span>
-                  <span className="chip c-c" style={{ marginLeft: '6px' }}><span className="chip-dot"></span>Laser &middot; Kabuki</span>
-                  <span className="chip c-d" style={{ marginLeft: '6px' }}><span className="chip-dot"></span>Live stream</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="hct-footer reveal">
-              <a href="/hct-case-study" className="btn">Open the HCT dossier <span className="arrow">→</span></a>
-              <div className="scroll-strip">
-                <div className="hct-thumb"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/3-HCT-Fujeirah1.jpg" alt="" /></div>
-                <div className="hct-thumb"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-2-1-1.jpg" alt="" /></div>
-                <div className="hct-thumb"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-2-2.jpg" alt="" /></div>
-              </div>
+          </div>
+          <div className="proof-scroll">
+            <div className="proof-track">
+              {proofCards.map((card) => <ProofCard card={card} key={card.title} />)}
             </div>
           </div>
         </section>
 
-        {/* GALLERY WALL */}
-        <section className="gallery bg-paper-2">
+        <section className="section-band alt">
           <div className="container">
-            <div className="gallery-head reveal">
-              <div>
-                <span className="eyebrow"><span className="dot"></span>Selected works</span>
-                <h2 style={{ marginTop: '12px' }}>A wall of <span className="ital c1">what we've made</span>.</h2>
-              </div>
-              <span className="body-sm">Philips &middot; Schindler &middot; Landmark &middot; HCT &middot; 800 Pizza &middot; Fakhruddin</span>
+            <div className="section-head">
+              <h2>From brief to handover, the work stays physical.</h2>
+              <p>EGS works backwards from the opening date, showtime, launch window, or handover. The first job is to understand the hard constraint.</p>
             </div>
-            <div className="gallery-grid reveal">
-              <div className="gm g-a" data-c="b">
-                <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Pairs.jpg" alt="" />
-                <span className="yr">'24</span>
-                <span className="cap">Philips Pairs &middot; Arab Health</span>
-              </div>
-              <div className="gm g-b" data-c="c">
-                <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/FAK-Properties1.jpg" alt="" />
-                <span className="yr">'23</span>
-                <span className="cap">Fakhruddin showroom</span>
-              </div>
-              <div className="gm g-c" data-c="a">
-                <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Meydan13.jpg" alt="" />
-                <span className="yr">'21</span>
-                <span className="cap">Meydan launch</span>
-              </div>
-              <div className="gm g-d" data-c="d">
-                <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/800-Pizza.jpg" alt="" />
-                <span className="yr">'22</span>
-                <span className="cap">800 Pizza &middot; retail</span>
-              </div>
-              <div className="gm g-e" data-c="b">
-                <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Velocity-3.jpg" alt="" />
-                <span className="yr">'23</span>
-                <span className="cap">Velocity &middot; brand event</span>
-              </div>
-              <div className="gm g-f" data-c="e">
-                <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg" alt="" />
-                <span className="yr">'24</span>
-                <span className="cap">HCT &middot; grand ceremony</span>
-              </div>
+            <div className="process-with-hub">
+              <Stepper steps={processSteps} />
+              <ProductionHub
+                items={['client', 'venue', 'materials', 'crew', 'fabrication', 'graphics', 'installation', 'handover']}
+              />
             </div>
           </div>
         </section>
 
-        {/* TESTIMONIALS */}
-        <section className="testimonials">
+        <section className="section-band">
           <div className="container">
-            <div style={{ marginBottom: '40px' }}>
-              <span className="eyebrow"><span className="dot"></span>In clients' own words</span>
+            <div className="section-head">
+              <h2>Fast is only useful when the standard stays intact.</h2>
+              <p>The hard part is not saying yes. The hard part is sourcing material, moving crews, handling access, keeping the finish clean, and still delivering what the client asked for.</p>
             </div>
-            <div className="testi c-a reveal">
-              <div className="quote">EGS came up with a clean and elegant design. Our client was impressed. We used these boards at every backlog site.</div>
-              <div className="byline"><strong>Seby Cyriac</strong>Director &middot; Cube Innovators</div>
-            </div>
-            <div className="testi c-b reveal">
-              <div className="quote">Prompt response, quick turnaround, friendly service, fair pricing. That is how I recognize EGS.</div>
-              <div className="byline"><strong>K. Bala</strong>Director &middot; ENH Media</div>
-            </div>
-            <div className="testi c-c reveal">
-              <div className="quote">One company I can recommend with confidence. I have called at the most ungodly hour. The job got executed.</div>
-              <div className="byline"><strong>Amrita Kalra</strong>Director &middot; Media Mind</div>
-            </div>
+            <InfoGrid items={pressureItems} eyebrow="How EGS works" />
           </div>
         </section>
 
-        {/* CONTACT */}
-        <section className="contact-band" id="contact">
+        <section className="section-band dark-band">
           <div className="container">
-            <div className="reveal">
-              <span className="chip" style={{ background: 'transparent', borderColor: 'rgba(245,241,234,0.3)', color: 'rgba(245,241,234,0.7)', marginBottom: '28px' }}>
-                <span className="chip-dot" style={{ background: 'var(--accent-a)' }}></span>Let's open a file
-              </span>
-              <div className="lead">A <span className="ital c1">brief</span>, a <span className="ital c2">coffee</span>,<br />or a late-night <span className="ital c3">call</span>.</div>
+            <div className="section-head">
+              <h2>Seven ceremonies. 4,500 graduates. One public moment.</h2>
+              <p>In 2025, EGS delivered seven HCT grand ceremonies across the UAE for 4,500 graduates and 13,500 guests.</p>
             </div>
-            <div className="contact-grid">
-              <div className="contact-col">
-                <h4>Say hello</h4>
-                <p className="big">info@exhibitgraphicsign.com</p>
-                <p style={{ marginTop: '10px' }}>+971 4 238 3278 &middot; +971 52 458 7992</p>
-                <p style={{ marginTop: '20px' }}><a href="#" style={{ borderBottom: '1px solid currentColor', paddingBottom: '2px' }}>WhatsApp →</a></p>
-              </div>
-              <div className="contact-col">
-                <h4>Showroom</h4>
-                <p>Nasiriya Building<br />Baghdad Street<br />Al Qusais, Dubai</p>
-              </div>
-              <div className="contact-col">
-                <h4>Joinery</h4>
-                <p>Industrial Area 11<br />Sharjah<br />8,000 sqft under one roof</p>
-              </div>
+            <div className="image-cell" style={{ aspectRatio: '21 / 9', marginBottom: '34px' }}>
+              <img src={images.hct} alt="HCT graduation ceremony production" />
+              <span className="label">Higher Colleges of Technology · 2025 graduation season</span>
             </div>
+            <div className="stat-poem">
+              <div className="proof-chip"><strong>7</strong><span>Grand ceremonies</span></div>
+              <div className="proof-chip"><strong>4,500</strong><span>Graduates</span></div>
+              <div className="proof-chip"><strong>13,500</strong><span>Guests</span></div>
+            </div>
+            <a href="/case-studies#hct-graduation-program" className="btn btn-ghost" style={{ marginTop: '28px' }}>Read the HCT case study <span className="arrow">→</span></a>
           </div>
         </section>
 
-        {/* FOOTER */}
-        <footer className="footer">
+        <section className="section-band alt">
           <div className="container">
-            <div className="footer-grid">
-              <div>
-                <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/02/EGS-Logo-300x126.png" alt="EGS" style={{ height: '44px', filter: 'brightness(0) invert(1)', marginBottom: '20px' }} />
-                <p style={{ maxWidth: '40ch', fontSize: '14px', opacity: '0.7', lineHeight: '1.5' }}>A Dubai production house for exhibitions, events, fitouts and retail branding. We build the moment. We remember what worked.</p>
-              </div>
-              <div><h4>Audiences</h4><ul><li><a href="/exhibitions">Exhibition Stands</a></li><li><a href="/events">Events &amp; Activations</a></li><li><a href="/fitouts">Interior Fitouts</a></li><li><a href="/retail">Retail Branding</a></li></ul></div>
-              <div><h4>Services</h4><ul><li>Signage</li><li>Large-Format Printing</li><li>Product Display Stands</li><li>Mall Kiosks</li><li>Vehicle Branding</li></ul></div>
-              <div><h4>Contact</h4><ul><li>info@exhibitgraphicsign.com</li><li>+971 4 238 3278</li><li>Al Qusais, Dubai</li><li>Industrial Area 11, Sharjah</li></ul></div>
+            <div className="section-head">
+              <h2>Questions buyers ask first.</h2>
+              <p>Direct answers before a marketing manager, event lead, retail team, or procurement contact sends the first brief.</p>
             </div>
-            <div className="footer-big"><em>We remember</em> every project.</div>
-            <div className="footer-bottom">
-              <span>© 2026 Exhibit Graphic Sign &middot; Est. 2010</span>
-              <span>File No. 001 / Home</span>
-            </div>
+            <FAQSection faqs={homeFaqs} />
           </div>
-        </footer>
+        </section>
 
+        <section className="section-band">
+          <div className="container">
+            <div className="section-head">
+              <h2>Send the deadline, location, and what needs to happen.</h2>
+              <p>If the date is fixed or the requirement has changed, send the brief. EGS will look at what can be done and what needs to move first.</p>
+            </div>
+            <a href="/contact" className="btn btn-primary">Send us your brief <span className="arrow">→</span></a>
+          </div>
+        </section>
 
-
-
-
-        {/* 3D WIREFRAME */}
-
-
-        {/* TWEAKS WIRING */}
+        <Footer />
       </div>
     </>
   );
