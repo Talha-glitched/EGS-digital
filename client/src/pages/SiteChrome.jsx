@@ -1,8 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
-import { clientNames } from './siteData.js';
-
-const logoSrc = 'https://exhibitgraphicsign.com/wp-content/uploads/2024/02/EGS-Logo-300x126.png';
+import { clientLogos } from './siteData.js';
 
 export function SiteNav({ active = 'home', cta = 'Send a brief' }) {
   const items = [
@@ -44,8 +42,6 @@ export function SiteNav({ active = 'home', cta = 'Send a brief' }) {
   return (
     <CardNav
       active={active}
-      logo={logoSrc}
-      logoAlt="EGS"
       items={items}
       cta={cta}
       baseColor="var(--paper)"
@@ -58,8 +54,6 @@ export function SiteNav({ active = 'home', cta = 'Send a brief' }) {
 
 function CardNav({
   active = 'home',
-  logo,
-  logoAlt = 'Logo',
   items,
   cta = 'Send a brief',
   ease = 'power3.out',
@@ -190,9 +184,16 @@ function CardNav({
             <span className="hamburger-line" />
           </button>
 
-          <a href="/" className="card-logo" aria-label="Exhibit Graphic Sign home">
-            <img src={logo} alt={logoAlt} />
-            <span className="card-logo-status">{active === 'home' ? 'Home' : 'EGS'}</span>
+          <a
+            href="/"
+            className="card-logo"
+            aria-label="Exhibit Graphic Sign home"
+            aria-current={active === 'home' ? 'page' : undefined}
+          >
+            <span className="card-logo-wordmark">
+              <span>Exhibit Graphic</span>
+              <em>Sign</em>
+            </span>
           </a>
 
           <a
@@ -294,9 +295,20 @@ export function Footer() {
 export function ClientMarquee() {
   return (
     <div className="marquee">
-      <div className="marquee-track">
-        {[...clientNames, ...clientNames].map((name, index) => (
-          <div className="marquee-item" key={`${name}-${index}`}>{name}</div>
+      <div className="marquee-track" data-marquee-doubled="true">
+        {[...clientLogos, ...clientLogos].map((client, index) => (
+          <div className="marquee-item" key={`${client.name}-${index}`} aria-label={client.name}>
+            <img
+              src={client.logo}
+              alt=""
+              className="marquee-logo"
+              loading="lazy"
+              decoding="async"
+              onError={(event) => {
+                event.currentTarget.closest('.marquee-item')?.setAttribute('hidden', '');
+              }}
+            />
+          </div>
         ))}
       </div>
     </div>

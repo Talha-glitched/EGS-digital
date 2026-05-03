@@ -174,29 +174,43 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   overflow: hidden;
   border-top: 1px solid var(--rule-soft);
   border-bottom: 1px solid var(--rule-soft);
-  padding: 28px 0;
+  padding: 30px 0;
   background: var(--paper);
   position: relative;
 }
 .marquee-track {
-  display: flex; gap: 64px;
-  animation: marquee 50s linear infinite;
+  display: flex;
+  gap: clamp(30px, 4vw, 58px);
+  animation: marquee 80s linear infinite;
   width: max-content;
   will-change: transform;
 }
 .marquee-item {
-  font-family: var(--serif);
-  font-size: clamp(28px, 3vw, 44px);
-  color: var(--ink);
-  white-space: nowrap;
-  letter-spacing: -0.01em;
-  display: flex; align-items: center; gap: 64px;
+  width: clamp(132px, 15vw, 210px);
+  height: 78px;
+  color: var(--ink-faint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  position: relative;
 }
 .marquee-item::after {
   content: '✦';
-  font-size: 18px;
+  position: absolute;
+  left: calc(100% + clamp(13px, 2vw, 25px));
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
   color: var(--ochre);
   display: inline-block;
+}
+.marquee-logo {
+  width: auto;
+  max-width: 100%;
+  max-height: 66px;
+  object-fit: contain;
+  opacity: .9;
 }
 @keyframes marquee {
   from { transform: translateX(0); }

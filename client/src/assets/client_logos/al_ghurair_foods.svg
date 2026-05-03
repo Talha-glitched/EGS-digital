@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 100">
+  <circle cx="45" cy="50" r="32" fill="#E8A000"/>
+  <text x="45" y="45" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">AL</text>
+  <text x="45" y="58" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">GHURAIR</text>
+  <text x="90" y="38" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#1A1A1A">Al Ghurair</text>
+  <text x="90" y="58" font-family="Arial, sans-serif" font-size="14" fill="#E8A000">Foods</text>
+</svg>

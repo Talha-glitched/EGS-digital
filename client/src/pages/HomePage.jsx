@@ -1,5 +1,8 @@
 import pageStyles from '../styles/pages/content-first.css?raw';
+import { useRef } from 'react';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
+import { motion } from 'motion/react';
+import BlurText from '../components/BlurText.jsx';
 import { ClientMarquee, FAQSection, Footer, InfoGrid, ProductionHub, ProofCard, SiteNav, Stepper } from './SiteChrome.jsx';
 import { images, processSteps, proofCards, services } from './siteData.js';
 
@@ -17,13 +20,49 @@ const homeFaqs = [
   ['What should I send first?', 'Send the service type, deadline, venue or location, and any drawings, photos, location lists, or brand guidelines you already have.'],
 ];
 
+const homeRevealSelector = [
+  '.home-page .chip',
+  '.home-page .hero-actions .btn',
+  '.home-page .proof-chip',
+  '.home-page .hero-feature-image .label',
+  '.home-page .section-head h2',
+  '.home-page .section-head p',
+  '.home-page .service-card',
+  '.home-page .proof-file-card',
+  '.home-page .proof-carousel-controls',
+  '.home-page .step',
+  '.home-page .production-hub',
+  '.home-page .cap-card',
+  '.home-page .dark-band .image-cell',
+  '.home-page .stat-poem .proof-chip',
+  '.home-page .faq-item',
+  '.home-page .section-band > .container > .btn',
+  '.home-page .footer-grid > *',
+  '.home-page .footer-big',
+  '.home-page .footer-bottom',
+].join(', ');
+
 export default function HomePage() {
-  usePageLifecycle('Exhibit Graphic Sign | Exhibition Stands, Events, Retail Branding Dubai');
+  const proofScrollRef = useRef(null);
+
+  usePageLifecycle('Exhibit Graphic Sign | Exhibition Stands, Events, Retail Branding Dubai', {
+    revealSelector: homeRevealSelector,
+  });
+
+  const scrollProofCards = (direction) => {
+    const scroller = proofScrollRef.current;
+    if (!scroller) return;
+
+    scroller.scrollBy({
+      left: direction * Math.min(scroller.clientWidth * 0.86, 760),
+      behavior: 'smooth',
+    });
+  };
 
   return (
     <>
       <style>{pageStyles}</style>
-      <div className="content-page" style={{ '--accent': 'var(--terracotta)' }}>
+      <div className="content-page home-page" style={{ '--accent': 'var(--terracotta)' }}>
         <SiteNav active="home" />
 
         <section className="content-hero">
@@ -35,10 +74,23 @@ export default function HomePage() {
                     <span className="chip"><span className="chip-dot" />Dubai / UAE production house</span>
                     <span className="chip"><span className="chip-dot" />Built for fixed deadlines</span>
                   </div>
-                  <h1 className="wide-title">Every deadline has moving parts. EGS keeps them moving.</h1>
-                  <p className="lede">
+                  <BlurText
+                    text="Every deadline has moving parts. EGS keeps them moving."
+                    delay={150}
+                    animateBy="words"
+                    direction="bottom"
+                    className="wide-title"
+                    as="h1"
+                  />
+                  <motion.p
+                    className="lede"
+                    initial={{ filter: 'blur(10px)', opacity: 0, y: 20 }}
+                    whileInView={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{ duration: 0.8, ease: 'easeOut', delay: 0.18 }}
+                  >
                     EGS is a Dubai production house for high-stakes physical brand moments across the UAE. When the requirement changes late and the date cannot move, we keep the work moving until it is ready and correct.
-                  </p>
+                  </motion.p>
                 </div>
                 <div>
                   <div className="hero-actions">
@@ -54,18 +106,15 @@ export default function HomePage() {
               </div>
               <div className="hero-visual-stack">
                 <div className="image-cell hero-feature-image">
-                  <img src={images.graduationProfile} alt="HCT graduation ceremony production" />
+                  <motion.img
+                    src={images.graduationProfile}
+                    alt="HCT graduation ceremony production"
+                    initial={{ filter: 'blur(10px)', opacity: 0, y: 40 }}
+                    whileInView={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
+                  />
                   <span className="label">Seven HCT ceremonies · 4,500 graduates · 13,500 guests</span>
-                </div>
-                <div className="hero-thumb-row">
-                  <div className="image-cell">
-                    <img src={images.philips} alt="Philips exhibition stand" />
-                    <span className="label">200 sqm Philips stand adaptation</span>
-                  </div>
-                  <div className="image-cell">
-                    <img src={images.retail} alt="Retail branding work" />
-                    <span className="label">Retail rollout pressure</span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -79,22 +128,6 @@ export default function HomePage() {
             <div className="section-head">
               <h2>Start with the work that has to be ready.</h2>
               <p>Each service has a different pressure: opening day, showtime, mall access, or handover. The site routes buyers by the physical problem they need solved.</p>
-            </div>
-            <div className="image-mosaic" style={{ marginBottom: '12px' }}>
-              <div className="image-cell">
-                <img src={images.hctProfile} alt="HCT graduation ceremony production" />
-                <span className="label">HCT ceremony production · UAE scale</span>
-              </div>
-              <div className="stack">
-                <div className="image-cell">
-                  <img src={images.philips} alt="Philips exhibition stand" />
-                  <span className="label">Exhibition stand adaptation</span>
-                </div>
-                <div className="image-cell">
-                  <img src={images.fitout} alt="Branded interior and showroom work" />
-                  <span className="label">Branded spaces and fitouts</span>
-                </div>
-              </div>
             </div>
             <div className="service-grid">
               {services.map((service) => (
@@ -121,9 +154,19 @@ export default function HomePage() {
               <p>Proof should be quick to understand: client, deadline pressure, physical work, and result. Open any file to see the full story.</p>
             </div>
           </div>
-          <div className="proof-scroll">
+          <div className="proof-scroll" ref={proofScrollRef}>
             <div className="proof-track">
               {proofCards.map((card) => <ProofCard card={card} key={card.title} />)}
+            </div>
+          </div>
+          <div className="container">
+            <div className="proof-carousel-controls" aria-label="Proof card carousel controls">
+              <span className="proof-carousel-kicker">Proof files</span>
+              <span className="proof-carousel-rule" aria-hidden="true" />
+              <div className="proof-carousel-buttons">
+                <button type="button" onClick={() => scrollProofCards(-1)} aria-label="Scroll proof cards left">&larr;</button>
+                <button type="button" onClick={() => scrollProofCards(1)} aria-label="Scroll proof cards right">&rarr;</button>
+              </div>
             </div>
           </div>
         </section>

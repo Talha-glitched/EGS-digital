@@ -30,7 +30,7 @@ function shouldHandleLink(anchor) {
 }
 
 function hydrateMarquees() {
-  const tracks = Array.from(document.querySelectorAll('.marquee-track'));
+  const tracks = Array.from(document.querySelectorAll('.marquee-track:not([data-marquee-doubled="true"])'));
   const originals = tracks.map((track) => [track, track.innerHTML]);
 
   tracks.forEach((track) => {
@@ -46,12 +46,24 @@ function hydrateMarquees() {
   };
 }
 
-function hydrateReveals() {
+function hydrateReveals(revealSelector) {
+  const decoratedRevealEls = revealSelector
+    ? Array.from(document.querySelectorAll(revealSelector)).filter((el) => !el.classList.contains('reveal'))
+    : [];
+
+  decoratedRevealEls.forEach((el) => el.classList.add('reveal'));
+
   const revealEls = Array.from(document.querySelectorAll('.reveal'));
 
   if (!('IntersectionObserver' in window)) {
     revealEls.forEach((el) => el.classList.add('in'));
-    return () => {};
+    return () => {
+      decoratedRevealEls.forEach((el) => {
+        if (el.isConnected) {
+          el.classList.remove('reveal', 'in');
+        }
+      });
+    };
   }
 
   const observer = new IntersectionObserver(
@@ -67,10 +79,18 @@ function hydrateReveals() {
   );
 
   revealEls.forEach((el) => observer.observe(el));
-  return () => observer.disconnect();
+  return () => {
+    observer.disconnect();
+    decoratedRevealEls.forEach((el) => {
+      if (el.isConnected) {
+        el.classList.remove('reveal', 'in');
+      }
+    });
+  };
 }
 
-export function usePageLifecycle(title) {
+export function usePageLifecycle(title, options = {}) {
+  const { revealSelector } = options;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -80,13 +100,13 @@ export function usePageLifecycle(title) {
 
   useEffect(() => {
     const cleanupMarquees = hydrateMarquees();
-    const cleanupReveals = hydrateReveals();
+    const cleanupReveals = hydrateReveals(revealSelector);
 
     return () => {
       cleanupReveals();
       cleanupMarquees();
     };
-  }, []);
+  }, [revealSelector]);
 
   useEffect(() => {
     function handleDocumentClick(event) {

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 100">
+  <rect x="20" y="20" width="50" height="60" rx="5" fill="#006B3F"/>
+  <text x="20" y="52" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="white" dx="10">HCT</text>
+  <text x="85" y="40" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#006B3F">Higher Colleges</text>
+  <text x="85" y="58" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#006B3F">of Technology</text>
+  <text x="85" y="74" font-family="Arial, sans-serif" font-size="10" fill="#888">UAE</text>
+</svg>

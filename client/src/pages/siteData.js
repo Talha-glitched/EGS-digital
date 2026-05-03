@@ -1,22 +1,40 @@
-export const clientNames = [
-  'Philips',
-  'Schindler',
-  'Landmark Group',
-  'Higher Colleges of Technology',
-  'Dubai Police',
-  'Al Ghurair Foods',
-  'Marriott International MEA',
-  'University of Sharjah',
-  'American University of Sharjah',
-  'Heriot-Watt University Dubai',
-  'Payoneer',
-  'Shabab Al Ahli Dubai Club',
-  '800 Pizza',
-  'Serco',
-  'ENH Media',
-  'Fakhruddin Properties',
-  'Money Kicks / Money Kickz',
+import logo800Pizza from '../assets/client_logos/800_pizza.svg';
+import logoAlGhurairFoods from '../assets/client_logos/al_ghurair_foods.svg';
+import logoAmericanUniversityOfSharjah from '../assets/client_logos/american_university_of_sharjah.svg';
+import logoDubaiPolice from '../assets/client_logos/dubai_police.svg';
+import logoEnhMedia from '../assets/client_logos/enh_media.svg';
+import logoFakhruddinProperties from '../assets/client_logos/fakhruddin_properties.svg';
+import logoHeriotWattUniversityDubai from '../assets/client_logos/heriot_watt_university_dubai.svg';
+import logoHigherCollegesOfTechnology from '../assets/client_logos/higher_colleges_of_technology.svg';
+import logoLandmarkGroup from '../assets/client_logos/landmark_group.svg';
+import logoMarriottInternationalMea from '../assets/client_logos/marriott_international_mea.svg';
+import logoPayoneer from '../assets/client_logos/payoneer.svg';
+import logoPhilips from '../assets/client_logos/philips.svg';
+import logoSchindler from '../assets/client_logos/schindler.svg';
+import logoSerco from '../assets/client_logos/serco.svg';
+import logoShababAlAhliDubaiClub from '../assets/client_logos/shabab_al_ahli_dubai_club.svg';
+import logoUniversityOfSharjah from '../assets/client_logos/university_of_sharjah.svg';
+
+export const clientLogos = [
+  { name: 'Philips', logo: logoPhilips },
+  { name: 'Schindler', logo: logoSchindler },
+  { name: 'Landmark Group', logo: logoLandmarkGroup },
+  { name: 'Higher Colleges of Technology', logo: logoHigherCollegesOfTechnology },
+  { name: 'Dubai Police', logo: logoDubaiPolice },
+  { name: 'Al Ghurair Foods', logo: logoAlGhurairFoods },
+  { name: 'Marriott International MEA', logo: logoMarriottInternationalMea },
+  { name: 'University of Sharjah', logo: logoUniversityOfSharjah },
+  { name: 'American University of Sharjah', logo: logoAmericanUniversityOfSharjah },
+  { name: 'Heriot-Watt University Dubai', logo: logoHeriotWattUniversityDubai },
+  { name: 'Payoneer', logo: logoPayoneer },
+  { name: 'Shabab Al Ahli Dubai Club', logo: logoShababAlAhliDubaiClub },
+  { name: '800 Pizza', logo: logo800Pizza },
+  { name: 'Serco', logo: logoSerco },
+  { name: 'ENH Media', logo: logoEnhMedia },
+  { name: 'Fakhruddin Properties', logo: logoFakhruddinProperties },
 ];
+
+export const clientNames = clientLogos.map((client) => client.name);
 
 export const images = {
   hctProfile: '/assets/egs-profile/hct-graduation-stats.jpg',
