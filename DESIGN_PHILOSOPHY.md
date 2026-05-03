@@ -3,6 +3,7 @@
 This file is our working memory for future pages.
 
 It captures the visual system, voice, page structure, and decision rules established by the current `index`, `exhibitions`, and `events` pages.
+very good design
 
 ## Core Idea
 
