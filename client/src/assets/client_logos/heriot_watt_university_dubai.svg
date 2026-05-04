@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 100">
-  <rect x="15" y="20" width="55" height="60" rx="4" fill="#003087"/>
-  <text x="42" y="48" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">HW</text>
-  <text x="42" y="65" font-family="Arial, sans-serif" font-size="8" fill="#C8A84B" text-anchor="middle">DUBAI</text>
-  <text x="82" y="38" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#003087">Heriot-Watt</text>
-  <text x="82" y="55" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#003087">University</text>
-  <text x="82" y="70" font-family="Arial, sans-serif" font-size="10" fill="#888">Dubai Campus</text>
-</svg>

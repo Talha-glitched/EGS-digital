@@ -187,7 +187,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .marquee-item {
   width: clamp(132px, 15vw, 210px);
-  height: 78px;
+  height: 88px;
   color: var(--ink-faint);
   display: flex;
   align-items: center;
@@ -206,9 +206,10 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   display: inline-block;
 }
 .marquee-logo {
+  display: block;
+  height: 78px;
   width: auto;
   max-width: 100%;
-  max-height: 66px;
   object-fit: contain;
   opacity: .9;
 }

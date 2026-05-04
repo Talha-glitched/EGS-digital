@@ -1,19 +1,19 @@
 import logo800Pizza from '../assets/client_logos/800_pizza.svg';
-import logoAlGhurairFoods from '../assets/client_logos/al_ghurair_foods.svg';
-import logoAmericanUniversityOfSharjah from '../assets/client_logos/american_university_of_sharjah.svg';
-import logoDubaiPolice from '../assets/client_logos/dubai_police.svg';
-import logoEnhMedia from '../assets/client_logos/enh_media.svg';
-import logoFakhruddinProperties from '../assets/client_logos/fakhruddin_properties.svg';
-import logoHeriotWattUniversityDubai from '../assets/client_logos/heriot_watt_university_dubai.svg';
-import logoHigherCollegesOfTechnology from '../assets/client_logos/higher_colleges_of_technology.svg';
-import logoLandmarkGroup from '../assets/client_logos/landmark_group.svg';
+import logoAlGhurairFoods from '../assets/client_logos/alghurair.png';
+import logoAmericanUniversityOfSharjah from '../assets/client_logos/aus.png';
+import logoDubaiPolice from '../assets/client_logos/Dubai-police.png';
+import logoEnhMedia from '../assets/client_logos/enh.png';
+import logoFakhruddinProperties from '../assets/client_logos/fakhruddin_properties.png';
+import logoHeriotWattUniversityDubai from '../assets/client_logos/Heriot-Watt_University_logo.svg.png';
+import logoHigherCollegesOfTechnology from '../assets/client_logos/hct.png';
+import logoLandmarkGroup from '../assets/client_logos/landmark.png';
 import logoMarriottInternationalMea from '../assets/client_logos/marriott_international_mea.svg';
 import logoPayoneer from '../assets/client_logos/payoneer.svg';
-import logoPhilips from '../assets/client_logos/philips.svg';
-import logoSchindler from '../assets/client_logos/schindler.svg';
+import logoPhilips from '../assets/client_logos/philips.png';
+import logoSchindler from '../assets/client_logos/schindler.png';
 import logoSerco from '../assets/client_logos/serco.svg';
 import logoShababAlAhliDubaiClub from '../assets/client_logos/shabab_al_ahli_dubai_club.svg';
-import logoUniversityOfSharjah from '../assets/client_logos/university_of_sharjah.svg';
+import logoUniversityOfSharjah from '../assets/client_logos/univeristy_of_sharjah.png';
 
 export const clientLogos = [
   { name: 'Philips', logo: logoPhilips },
