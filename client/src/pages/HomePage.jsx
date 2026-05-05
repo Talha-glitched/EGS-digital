@@ -1,14 +1,12 @@
 import pageStyles from '../styles/pages/content-first.css?raw';
-import { Suspense, lazy, useRef } from 'react';
+import { useRef } from 'react';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 import { motion } from 'motion/react';
-import BlurText from '../components/BlurText.jsx';
-import { ClientMarquee, FAQSection, Footer, InfoGrid, ProductionHub, ProofCard, SiteNav, Stepper } from './SiteChrome.jsx';
+import HomeHero from '../components/HomeHero.jsx';
+import StickyProcessShowcase from '../components/StickyProcessShowcase.jsx';
+import { Navbar } from '../components/Navbar.jsx';
+import { ClientMarquee, FAQSection, Footer, InfoGrid, ProductionHub, ProofCard, Stepper } from './SiteChrome.jsx';
 import { images, processSteps, proofCards, services } from './siteData.js';
-import hctHeroPoster from '../assets/HCT.jpeg';
-import hctHeroVideo from '../assets/hctgraduation.mp4';
-
-const CircularGallery = lazy(() => import('../components/CircularGallery.jsx'));
 
 const pressureItems = [
   ['Move quickly', 'EGS moves when the requirement changes, but keeps the physical work tied to the client need.'],
@@ -24,23 +22,10 @@ const homeFaqs = [
   ['What should I send first?', 'Send the service type, deadline, venue or location, and any drawings, photos, location lists, or brand guidelines you already have.'],
 ];
 
-const serviceGalleryImages = [
-  '/assets/egs-profile/corporate-events-branding.jpg',
-  '/assets/egs-profile/graduation-ceremonies-overview.jpg',
-  '/assets/egs-profile/event-management-02.jpg',
-  '/assets/egs-profile/event-management-03.jpg',
-];
-
-const serviceGalleryItems = services.map((service, index) => ({
-  image: serviceGalleryImages[index] ?? service.image,
-  text: service.title,
-  href: service.href,
-}));
-
 const homeRevealSelector = [
   '.home-page .chip',
   '.home-page .hero-actions .btn',
-  '.home-page .home-video-hero-copy > *',
+  '.home-page .egs-home-video-copy > *',
   '.home-page .proof-chip',
   '.home-page .hero-feature-image .label',
   '.home-page .section-head h2',
@@ -59,118 +44,10 @@ const homeRevealSelector = [
   '.home-page .footer-grid > *',
   '.home-page .footer-big',
   '.home-page .footer-bottom',
+  '.home-page .egs-sticky-showcase-portfolio-head h2',
+  '.home-page .egs-sticky-showcase-card',
 ].join(', ');
 
-function LegacyHomeHero() {
-  return (
-    <section className="content-hero">
-      <div className="container">
-        <div className="hero-board">
-          <div className="hero-copy">
-            <div>
-              <div className="chip-row">
-                <span className="chip"><span className="chip-dot" />Dubai / UAE production house</span>
-                <span className="chip"><span className="chip-dot" />Built for fixed deadlines</span>
-              </div>
-              <BlurText
-                text="Every deadline has moving parts. EGS keeps them moving."
-                delay={150}
-                animateBy="words"
-                direction="bottom"
-                className="wide-title"
-                as="h1"
-              />
-              <motion.p
-                className="lede"
-                initial={{ filter: 'blur(10px)', opacity: 0, y: 20 }}
-                whileInView={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.8, ease: 'easeOut', delay: 0.18 }}
-              >
-                EGS is a Dubai production house for high-stakes physical brand moments across the UAE. When the requirement changes late and the date cannot move, we keep the work moving until it is ready and correct.
-              </motion.p>
-            </div>
-            <div>
-              <div className="hero-actions">
-                <a href="/contact" className="btn btn-primary">Send us your brief <span className="arrow">&rarr;</span></a>
-                <a href="/case-studies" className="btn btn-ghost">See case studies</a>
-              </div>
-              <div className="proof-chip-strip">
-                <div className="proof-chip"><strong>2010</strong><span>Founded in Dubai</span></div>
-                <div className="proof-chip"><strong>25+</strong><span>Big projects/year</span></div>
-                <div className="proof-chip"><strong>UAE</strong><span>Venue and install pressure</span></div>
-              </div>
-            </div>
-          </div>
-          <div className="hero-visual-stack">
-            <div className="image-cell hero-feature-image">
-              <motion.img
-                src={images.graduationProfile}
-                alt="HCT graduation ceremony production"
-                initial={{ filter: 'blur(10px)', opacity: 0, y: 40 }}
-                whileInView={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
-              />
-              <span className="label">Seven HCT ceremonies / 4,500 graduates / 13,500 guests</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function HomeVideoHero() {
-  return (
-    <section className="home-video-hero" aria-label="EGS hero">
-      <video
-        className="home-video-hero-media"
-        src={hctHeroVideo}
-        poster={hctHeroPoster}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        aria-hidden="true"
-      />
-      <div className="home-video-hero-shade" aria-hidden="true" />
-      <div className="home-video-hero-copy">
-        <span className="home-video-hero-kicker">Dubai / UAE production house for 15+ years</span>
-        <motion.h1
-          className="home-video-heading"
-          initial={{ filter: 'blur(10px)', opacity: 0, y: 18 }}
-          whileInView={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.35 }}
-          transition={{ duration: 0.78, ease: 'easeOut', delay: 0.1 }}
-        >
-          Shaping Brand Moments across the Gulf.
-        </motion.h1>
-        <motion.div
-          className="home-video-services"
-          aria-label="EGS services"
-          initial={{ filter: 'blur(10px)', opacity: 0, y: 18 }}
-          whileInView={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.35 }}
-          transition={{ duration: 0.78, ease: 'easeOut', delay: 0.24 }}
-        >
-          <span className="home-video-service-rotator" aria-hidden="true">
-            <span>Exhibitions &amp; Museums</span>
-            <span>Product Launches</span>
-            <span>Graduation Ceremonies</span>
-            <span>Events</span>
-            <span>Brand and Retail Activations</span>
-            <span>Interior Fitouts</span>
-          </span>
-          <span className="home-video-service-a11y">
-            Exhibitions and museums, product launches, graduation ceremonies, events, brand and retail activations, and interior fitouts.
-          </span>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
 
 export default function HomePage() {
   const proofScrollRef = useRef(null);
@@ -193,69 +70,13 @@ export default function HomePage() {
     <>
       <style>{pageStyles}</style>
       <div className="content-page home-page" style={{ '--accent': 'var(--terracotta)' }}>
-        <SiteNav active="home" />
+        <Navbar active="home" overlay />
 
-        <HomeVideoHero />
+        <HomeHero />
 
-        <section className="content-hero legacy-home-hero" aria-hidden="true">
-          <div className="container">
-            <div className="hero-board">
-              <div className="hero-copy">
-                <div>
-                  <div className="chip-row">
-                    <span className="chip"><span className="chip-dot" />Dubai / UAE production house</span>
-                    <span className="chip"><span className="chip-dot" />Built for fixed deadlines</span>
-                  </div>
-                  <BlurText
-                    text="Every deadline has moving parts. EGS keeps them moving."
-                    delay={150}
-                    animateBy="words"
-                    direction="bottom"
-                    className="wide-title"
-                    as="h1"
-                  />
-                  <motion.p
-                    className="lede"
-                    initial={{ filter: 'blur(10px)', opacity: 0, y: 20 }}
-                    whileInView={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
-                    transition={{ duration: 0.8, ease: 'easeOut', delay: 0.18 }}
-                  >
-                    EGS is a Dubai production house for high-stakes physical brand moments across the UAE. When the requirement changes late and the date cannot move, we keep the work moving until it is ready and correct.
-                  </motion.p>
-                </div>
-                <div>
-                  <div className="hero-actions">
-                    <a href="/contact" className="btn btn-primary">Send us your brief <span className="arrow">→</span></a>
-                    <a href="/case-studies" className="btn btn-ghost">See case studies</a>
-                  </div>
-                  <div className="proof-chip-strip">
-                    <div className="proof-chip"><strong>2010</strong><span>Founded in Dubai</span></div>
-                    <div className="proof-chip"><strong>25+</strong><span>Big projects/year</span></div>
-                    <div className="proof-chip"><strong>UAE</strong><span>Venue and install pressure</span></div>
-                  </div>
-                </div>
-              </div>
-              <div className="hero-visual-stack">
-                <div className="image-cell hero-feature-image">
-                  <motion.img
-                    src={images.graduationProfile}
-                    alt="HCT graduation ceremony production"
-                    initial={{ filter: 'blur(10px)', opacity: 0, y: 40 }}
-                    whileInView={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
-                    transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
-                  />
-                  <span className="label">Seven HCT ceremonies · 4,500 graduates · 13,500 guests</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <StickyProcessShowcase />
 
-        <ClientMarquee />
-
-        <section className="section-band alt">
+        <section className="section-band alt home-services-section">
           <div className="container">
             <div className="section-head">
               <h2 className="home-intro-title">We are EGS Shaping high stakes physical brand moments for 15+ years</h2>
@@ -263,20 +84,25 @@ export default function HomePage() {
 EGS is a Dubai production house for high-stakes physical brand moments across the UAE. When the requirement changes late and the date cannot move, we keep the work moving until it is ready and correct. Instead of images can we show the cards like this</p>
             </div>
             <div className="home-services-gallery">
-              <Suspense fallback={null}>
-                <CircularGallery
-                  items={serviceGalleryItems}
-                  bend={3.4}
-                  textColor="#1A1715"
-                  borderRadius={0.08}
-                  scrollSpeed={1.8}
-                  scrollEase={0.045}
-                  font={'400 34px "Instrument Serif", Georgia, serif'}
-                />
-              </Suspense>
+              <div className="service-grid">
+                {services.map((service) => (
+                  <a className="service-card" href={service.href} key={service.href}>
+                    <div className="media">
+                      <img src={service.image} alt={service.title} />
+                    </div>
+                    <div className="body">
+                      <small>{service.label}</small>
+                      <h3>{service.title}</h3>
+                      <p>{service.copy}</p>
+                    </div>
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
         </section>
+
+        <ClientMarquee />
 
         <section className="section-band">
           <div className="container">

@@ -1,0 +1,380 @@
+/* Sticky scroll + label sync + portfolio — EGS tokens */
+
+.egs-sticky-showcase {
+  --egs-sticky-label-h: 120px;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.egs-sticky-showcase-scroll {
+  position: relative;
+}
+
+.egs-sticky-showcase-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.egs-sticky-showcase-grid-bg {
+  background-image: radial-gradient(circle, rgba(245, 241, 234, 0.08) 1px, transparent 1px);
+  background-size: 40px 40px;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.egs-sticky-showcase-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 5vw, 56px);
+  height: 100vh;
+  gap: clamp(24px, 4vw, 48px);
+}
+
+.egs-sticky-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.egs-sticky-showcase-label-wrap {
+  position: relative;
+  flex: 0 0 35%;
+  max-width: 420px;
+  height: var(--egs-sticky-label-h);
+  overflow: hidden;
+}
+
+.egs-sticky-showcase-label-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  transition: transform 0.9s cubic-bezier(0.65, 0, 0.35, 1);
+  will-change: transform;
+}
+
+/* Scroll-scrubbed: transform updates every frame — no CSS transition */
+.egs-sticky-showcase--scrub .egs-sticky-showcase-label-track {
+  transition: none;
+}
+
+.egs-sticky-showcase-label {
+  height: var(--egs-sticky-label-h);
+  display: flex;
+  align-items: center;
+  font-family: var(--sans);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+  color: var(--paper);
+}
+
+.egs-sticky-showcase-label.is-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.egs-sticky-showcase-label.is-past {
+  opacity: 0;
+  transform: translateY(-40px);
+}
+
+/* Continuous scrub: labels stay visible; motion comes from the track only */
+.egs-sticky-showcase--scrub .egs-sticky-showcase-label {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+.egs-sticky-showcase-viewport {
+  --sticky-steps: 4;
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  width: 50vw;
+  height: 33vw;
+  max-width: 750px;
+  max-height: 500px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #0a0908;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+}
+
+.egs-sticky-showcase-stack {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: calc(var(--sticky-steps, 4) * 100%);
+  transition: transform 0.9s cubic-bezier(0.65, 0, 0.35, 1);
+  will-change: transform;
+}
+
+.egs-sticky-showcase--scrub .egs-sticky-showcase-stack {
+  transition: none;
+}
+
+.egs-sticky-showcase-slide {
+  flex: 0 0 calc(100% / var(--sticky-steps, 4));
+  min-height: 0;
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.egs-sticky-showcase-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.92) brightness(0.72) contrast(1.08);
+}
+
+.egs-sticky-showcase-slide-overlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(245, 241, 234, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(245, 241, 234, 0.06) 1px, transparent 1px);
+  background-size: 30px 30px;
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+}
+
+/* Portfolio */
+.egs-sticky-showcase-portfolio {
+  padding: clamp(64px, 10vw, 120px) clamp(20px, 5vw, 56px) clamp(80px, 12vw, 140px);
+  background: var(--ink);
+  border-top: 1px solid rgba(245, 241, 234, 0.08);
+}
+
+.egs-sticky-showcase-portfolio-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.egs-sticky-showcase-portfolio-head {
+  margin-bottom: clamp(40px, 6vw, 72px);
+}
+
+.egs-sticky-showcase-portfolio-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(245, 241, 234, 0.45);
+  margin-bottom: 12px;
+}
+
+.egs-sticky-showcase-portfolio-head h2 {
+  font-family: var(--sans);
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  max-width: 22ch;
+  margin-bottom: 24px;
+  color: var(--paper);
+}
+
+.egs-sticky-showcase-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(245, 241, 234, 0.35);
+  padding: 10px 22px;
+  border-radius: 2px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--paper);
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+.egs-sticky-showcase-btn-outline:hover {
+  border-color: var(--paper);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.egs-sticky-showcase-portfolio-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 5vw, 64px);
+}
+
+.egs-sticky-showcase-card {
+  display: block;
+  background: #0f0e0d;
+  overflow: hidden;
+  border-radius: 2px;
+  border: 1px solid rgba(245, 241, 234, 0.06);
+  transition: border-color 0.35s ease, transform 0.35s ease;
+}
+
+.egs-sticky-showcase-card:hover {
+  border-color: rgba(245, 241, 234, 0.18);
+  transform: translateY(-2px);
+}
+
+.egs-sticky-showcase-card-media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #1a1715;
+}
+
+.egs-sticky-showcase-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.82;
+  transition: opacity 0.5s ease, transform 0.65s ease;
+}
+
+.egs-sticky-showcase-card:hover .egs-sticky-showcase-card-media img {
+  opacity: 1;
+  transform: scale(1.04);
+}
+
+.egs-sticky-showcase-card-gradient {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(24px, 4vw, 40px);
+  background: linear-gradient(
+    to top,
+    rgba(26, 23, 21, 0.95) 0%,
+    rgba(26, 23, 21, 0.35) 45%,
+    transparent 100%
+  );
+}
+
+.egs-sticky-showcase-card-tag {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--terracotta);
+}
+
+.egs-sticky-showcase-card-gradient h3 {
+  font-family: var(--serif);
+  font-size: clamp(1.35rem, 2.4vw, 1.85rem);
+  font-weight: 400;
+  font-style: italic;
+  margin-top: 10px;
+  color: var(--paper);
+  line-height: 1.15;
+}
+
+.egs-sticky-showcase-card-gradient p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(245, 241, 234, 0.72);
+  margin-top: 12px;
+  max-width: 42ch;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+.egs-sticky-showcase-card:hover .egs-sticky-showcase-card-gradient p {
+  opacity: 1;
+}
+
+.egs-sticky-showcase-card-cta {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(245, 241, 234, 0.55);
+  opacity: 0;
+  transition: opacity 0.45s ease, color 0.2s ease;
+}
+
+.egs-sticky-showcase-card:hover .egs-sticky-showcase-card-cta {
+  opacity: 1;
+  color: var(--paper);
+}
+
+@media (max-width: 900px) {
+  .egs-sticky-showcase-inner {
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+
+  .egs-sticky-showcase-label-wrap {
+    flex: none;
+    width: 100%;
+    max-width: none;
+    text-align: center;
+  }
+
+  .egs-sticky-showcase-label-track {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .egs-sticky-showcase-label {
+    justify-content: center;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .egs-sticky-showcase-viewport {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    max-height: none;
+  }
+
+  .egs-sticky-showcase-portfolio-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .egs-sticky-showcase-card-gradient p,
+  .egs-sticky-showcase-card-cta {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .egs-sticky-showcase-card-media img {
+    transition: none;
+  }
+}
