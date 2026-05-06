@@ -788,6 +788,11 @@
   background: color-mix(in oklab, var(--accent, var(--ochre)) 5%, var(--paper));
 }
 
+.home-page .service-card:hover {
+  border-color: color-mix(in oklab, var(--accent, var(--ochre)) 54%, rgba(245, 241, 234, 0.16));
+  background: color-mix(in oklab, var(--accent, var(--ochre)) 12%, #0f0e0d);
+}
+
 .service-card .media {
   aspect-ratio: 4 / 3;
   overflow: hidden;

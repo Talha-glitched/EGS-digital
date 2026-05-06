@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import './Navbar.css';
 
@@ -52,7 +52,7 @@ function CardNav({
 }) {
   const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [overlaySolid, setOverlaySolid] = useState(false);
+  const overlaySolid = false;
   const navRef = useRef(null);
   const cardsRef = useRef([]);
   const tlRef = useRef(null);
@@ -133,28 +133,6 @@ function CardNav({
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [isExpanded]);
-
-  useEffect(() => {
-    if (!overlay) {
-      setOverlaySolid(false);
-      return undefined;
-    }
-
-    const thresholdPx = 56;
-
-    const updateOverlaySolid = () => {
-      setOverlaySolid(window.scrollY > thresholdPx);
-    };
-
-    updateOverlaySolid();
-    window.addEventListener('scroll', updateOverlaySolid, { passive: true });
-    window.addEventListener('resize', updateOverlaySolid);
-
-    return () => {
-      window.removeEventListener('scroll', updateOverlaySolid);
-      window.removeEventListener('resize', updateOverlaySolid);
-    };
-  }, [overlay]);
 
   const toggleMenu = () => {
     const tl = tlRef.current;
