@@ -113,6 +113,10 @@ class Media {
     textColor,
     borderRadius = 0,
     font,
+    showText = true,
+    planeWidth = 700,
+    planeHeight = 900,
+    fallbackImage,
   }) {
     this.extra = 0;
     this.geometry = geometry;
@@ -128,9 +132,13 @@ class Media {
     this.textColor = textColor;
     this.borderRadius = borderRadius;
     this.font = font;
+    this.showText = showText;
+    this.planeWidth = planeWidth;
+    this.planeHeight = planeHeight;
+    this.fallbackImage = fallbackImage;
     this.createShader();
     this.createMesh();
-    this.createTitle();
+    if (this.showText && this.text) this.createTitle();
     this.onResize();
   }
 
@@ -199,11 +207,29 @@ class Media {
     });
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    img.src = this.image;
+    let triedFallback = false;
     img.onload = () => {
       texture.image = img;
       this.program.uniforms.uImageSizes.value = [img.naturalWidth, img.naturalHeight];
     };
+    img.onerror = () => {
+      if (!triedFallback && this.fallbackImage && this.fallbackImage !== this.image) {
+        triedFallback = true;
+        img.src = this.fallbackImage;
+        return;
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = 4;
+      canvas.height = 4;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.fillStyle = '#1a1715';
+        ctx.fillRect(0, 0, 4, 4);
+      }
+      texture.image = canvas;
+      this.program.uniforms.uImageSizes.value = [4, 4];
+    };
+    img.src = this.image;
   }
 
   createMesh() {
@@ -269,8 +295,8 @@ class Media {
     if (screen) this.screen = screen;
     if (viewport) this.viewport = viewport;
     this.scale = this.screen.height / 1500;
-    this.plane.scale.y = (this.viewport.height * (900 * this.scale)) / this.screen.height;
-    this.plane.scale.x = (this.viewport.width * (700 * this.scale)) / this.screen.width;
+    this.plane.scale.y = (this.viewport.height * (this.planeHeight * this.scale)) / this.screen.height;
+    this.plane.scale.x = (this.viewport.width * (this.planeWidth * this.scale)) / this.screen.width;
     this.plane.program.uniforms.uPlaneSizes.value = [this.plane.scale.x, this.plane.scale.y];
     this.padding = 2;
     this.width = this.plane.scale.x + this.padding;
@@ -288,14 +314,22 @@ class GalleryApp {
       textColor = '#ffffff',
       borderRadius = 0,
       font = 'bold 30px sans-serif',
+      showText = true,
+      fallbackImage,
       scrollSpeed = 2,
       scrollEase = 0.05,
+      planeWidth = 700,
+      planeHeight = 900,
     } = {},
   ) {
     autoBind(this);
     this.container = container;
     this.items = items && items.length ? items : [];
     this.scrollSpeed = scrollSpeed;
+    this.showText = showText;
+    this.fallbackImage = fallbackImage;
+    this.planeWidth = planeWidth;
+    this.planeHeight = planeHeight;
     this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0 };
     this.onCheckDebounce = debounce(this.onCheck, 200);
     this.createRenderer();
@@ -303,7 +337,7 @@ class GalleryApp {
     this.createScene();
     this.onResize();
     this.createGeometry();
-    this.createMedias(items, bend, textColor, borderRadius, font);
+    this.createMedias(items, bend, textColor, borderRadius, font, this.fallbackImage);
     this.update();
     this.addEventListeners();
   }
@@ -336,7 +370,7 @@ class GalleryApp {
     });
   }
 
-  createMedias(items, bend = 1, textColor, borderRadius, font) {
+  createMedias(items, bend = 1, textColor, borderRadius, font, fallbackImage) {
     const defaultItems = [
       { image: 'https://picsum.photos/seed/1/800/600?grayscale', text: 'Bridge' },
       { image: 'https://picsum.photos/seed/2/800/600?grayscale', text: 'Desk Setup' },
@@ -362,6 +396,10 @@ class GalleryApp {
       textColor,
       borderRadius,
       font,
+      showText: this.showText,
+      planeWidth: this.planeWidth,
+      planeHeight: this.planeHeight,
+      fallbackImage,
     }));
   }
 
@@ -481,8 +519,12 @@ export default function CircularGallery({
   textColor = '#ffffff',
   borderRadius = 0.05,
   font = 'bold 30px sans-serif',
+  showText = true,
+  fallbackImage,
   scrollSpeed = 2,
   scrollEase = 0.05,
+  planeWidth = 700,
+  planeHeight = 900,
 }) {
   const containerRef = useRef(null);
 
@@ -497,8 +539,12 @@ export default function CircularGallery({
         textColor,
         borderRadius,
         font,
+        showText,
+        fallbackImage,
         scrollSpeed,
         scrollEase,
+        planeWidth,
+        planeHeight,
       });
     };
 
@@ -512,7 +558,7 @@ export default function CircularGallery({
       disposed = true;
       app?.destroy();
     };
-  }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase]);
+  }, [items, bend, textColor, borderRadius, font, showText, fallbackImage, scrollSpeed, scrollEase, planeWidth, planeHeight]);
 
   return <div className="circular-gallery" ref={containerRef} aria-label="Service gallery" />;
 }

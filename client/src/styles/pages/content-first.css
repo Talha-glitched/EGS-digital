@@ -608,8 +608,50 @@
 
 .section-band.alt { background: var(--paper-2); }
 
+/* Home sections: match StickyProcessShowcase background language */
+.home-page .section-band,
+.home-page .section-band.alt {
+  position: relative;
+  background: var(--ink);
+  color: var(--paper);
+  border-top: 1px solid rgba(245, 241, 234, 0.12);
+  isolation: isolate;
+}
+
+.home-page .section-band::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(245, 241, 234, 0.08) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.home-page .section-band .container::before {
+  background: rgba(245, 241, 234, 0.22);
+}
+
+.home-page .section-head h2 {
+  color: var(--paper);
+}
+
+.home-page .section-head p {
+  color: rgba(245, 241, 234, 0.72);
+}
+
+.home-page .marquee {
+  background: var(--ink);
+  border-top: 0;
+  border-bottom: 0;
+}
+
+.home-page .marquee-item::after {
+  color: rgba(245, 241, 234, 0.38);
+}
+
 .home-services-section {
-  padding-bottom: clamp(24px, 4vw, 40px);
+  padding-bottom: 0;
 }
 
 .section-head {
@@ -696,6 +738,32 @@
   transition: transform .25s, border-color .25s, background .25s;
 }
 
+.home-page .service-card,
+.home-page .cap-card,
+.home-page .brief-card,
+.home-page .faq-item,
+.home-page .proof-file-card {
+  background: #0f0e0d;
+  border-color: rgba(245, 241, 234, 0.16);
+}
+
+.home-page .service-card h3,
+.home-page .cap-card h3,
+.home-page .brief-card h3,
+.home-page .faq-item h3,
+.home-page .proof-file-card h3 {
+  color: var(--paper);
+}
+
+.home-page .service-card p,
+.home-page .cap-card p,
+.home-page .brief-card p,
+.home-page .faq-item p,
+.home-page .proof-file-card p,
+.home-page .proof-tag {
+  color: rgba(245, 241, 234, 0.72);
+}
+
 .cap-card::after,
 .brief-card::after,
 .faq-item::after,
@@ -772,9 +840,21 @@
 
 .home-services-gallery {
   position: relative;
-  min-height: clamp(430px, 50vw, 650px);
-  margin: clamp(22px, 4vw, 44px) calc(var(--gutter) * -1) 0;
+  min-height: clamp(380px, 46vw, 460px);
+  margin: 8px calc(var(--gutter) * -1) 0;
 }
+
+.home-circular-gallery-section {
+  overflow: hidden;
+}
+
+.home-circular-gallery {
+  position: relative;
+  height: clamp(480px, 54vw, 700px);
+  min-height: clamp(480px, 54vw, 700px);
+  margin: clamp(18px, 3.4vw, 36px) calc(var(--gutter) * -1) 0;
+}
+
 
 .faq-grid {
   grid-template-columns: repeat(12, 1fr);
@@ -1701,7 +1781,12 @@
     text-align: center;
   }
   .home-services-gallery {
-    height: 360px;
+    height: 320px;
+    margin: 6px -14px 0;
+  }
+  .home-circular-gallery {
+    height: 390px;
+    min-height: 390px;
     margin: 20px -14px 0;
   }
   .hero-board { gap: 12px; }
@@ -1785,3 +1870,4 @@
     transform: none;
   }
 }
+
