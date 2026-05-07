@@ -1,223 +1,108 @@
 import pageStyles from '../styles/pages/content-first.css?raw';
+import { Navbar } from '../components/Navbar.jsx';
+import {
+  MinimalCTASection,
+  MinimalFAQSection,
+  MinimalPhotoProofSection,
+  MinimalProcessSection,
+  MinimalScopeSection,
+  MinimalServiceHero,
+} from '../components/services/MinimalServiceSections.jsx';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
-import { AnnotatedImage, FAQSection, Footer, InfoGrid, SiteNav, Stepper } from './SiteChrome.jsx';
+import { Footer } from './SiteChrome.jsx';
 import { images } from './siteData.js';
 
-const eventSteps = [
-  ['Facts', 'Send date, venue, audience size, ceremony type, stage needs, branding, and what must be ready.'],
-  ['Room', 'EGS reviews access, stage position, guest flow, production constraints, and deadline risk.'],
-  ['Scope', 'Agree stage, branding, display areas, production environment, install timing, and handover responsibilities.'],
-  ['Source', 'Materials, graphics, carpentry, production items, and crew planning are lined up before site work.'],
-  ['Install', 'The room is built around venue access and any late physical changes.'],
-  ['Doors', 'Final checks happen before guests, graduates, VIPs, or leadership enter.'],
+const proofItems = [
+  { metric: '7', label: 'Grand ceremonies in 2025', image: images.hctProfile, href: '/case-studies#hct-graduation-program' },
+  { metric: '4,500', label: 'Graduates', image: images.graduationProfile, href: '/case-studies#hct-graduation-program' },
+  { metric: '10h', label: 'Fujairah stage change', image: images.graduationWide, href: '/case-studies#hct-fujairah-stage-extension' },
 ];
 
-const eventScope = [
-  ['Stage environment', 'Physical stage, ceremony environment, display areas, and visible production surfaces.'],
-  ['Production flow', 'The room has to support the sequence before graduates, guests, VIPs, or leadership enter.'],
-  ['Event branding', 'Branded backdrops, screens, graphics, and details that make the public moment feel controlled.'],
-  ['Guest experience', 'Movement, seating context, photo areas, and visible order for families and guests.'],
-  ['On-site adaptation', 'Physical changes handled around material, access, venue, and showtime pressure.'],
-  ['Before doors', 'Final checks before guests enter and the ceremony becomes public.'],
+const scopeItems = [
+  ['Stage environments', 'Stage, screen, branding, and public-facing ceremony surfaces.'],
+  ['Guest flow', 'Movement, arrival, sightlines, and room readiness.'],
+  ['Event branding', 'Backdrops, graphics, photo areas, and institutional details.'],
+  ['On-site changes', 'Physical adaptations before doors open.'],
 ];
 
-const eventReassurance = [
-  ['Ceremony leads', 'The stage and room need to be ready before arrivals, not almost ready.'],
-  ['Leadership offices', 'The event has to feel dignified, controlled, and public-safe.'],
-  ['Event managers', 'Changes need to be handled without visible confusion in the room.'],
-  ['Procurement', 'The vendor must understand fixed-showtime pressure and physical feasibility.'],
+const processSteps = [
+  ['Brief', 'Date, venue, audience.'],
+  ['Room', 'Access, stage, flow.'],
+  ['Scope', 'Branding and build needs.'],
+  ['Produce', 'Materials and crew.'],
+  ['Install', 'Site work and changes.'],
+  ['Doors', 'Ready before arrivals.'],
 ];
 
-const eventAudience = [
-  ['Universities and colleges', 'Need graduation environments ready across campuses, guests, graduates, and leadership moments.'],
-  ['Schools', 'Need ceremony setups that feel organised, dignified, and ready before families arrive.'],
-  ['Institutional teams', 'Need public events that feel controlled and appropriate for leadership and VIPs.'],
-  ['Event managers', 'Need one accountable production team when the showtime cannot move.'],
+const faqs = [
+  ['What does EGS handle?', 'The physical ceremony environment: stage, branding, room readiness, adaptation, and handover.'],
+  ['What should we send?', 'Date, venue, audience size, ceremony type, stage needs, branding, and VIP considerations.'],
+  ['Can EGS handle urgent event changes?', 'Yes, when physically possible. HCT Fujairah is the 10-hour proof story.'],
+  ['Is this only for graduations?', 'Graduations are the strongest proof; the same discipline applies to launches and institutional events.'],
 ];
 
-const eventFaqs = [
-  ['What does EGS handle for graduation ceremonies?', 'EGS handles the physical ceremony production environment: stage setting, event branding, room readiness, on-site adaptation, and delivery pressure around the event flow.'],
-  ['What should we send before discussing a ceremony?', 'Send the date, venue, expected audience size, ceremony type, stage needs, branding needs, guest or VIP considerations, and anything that has changed.'],
-  ['Can EGS handle urgent changes before an event?', 'Yes, when physically possible. The HCT Fujairah stage extension was requested 10 hours before the ceremony and delivered on time.'],
-  ['Does EGS work across the UAE?', 'Yes. HCT proof covers Dubai, Abu Dhabi, Sharjah, Ras Al Khaimah, Fujairah, and Baniyas across the 2024-2025 proof set.'],
-  ['Is this only for graduations?', 'Graduations are the strongest proof, but the same production discipline applies to corporate ceremonies, launches, and institutional events.'],
-];
+const revealSelector = [
+  '.minimal-service-page .minimal-service-kicker',
+  '.minimal-service-page .minimal-service-hero-copy h1',
+  '.minimal-service-page .minimal-service-hero-copy p',
+  '.minimal-service-page .minimal-service-actions .btn',
+  '.minimal-service-page .section-head h2',
+  '.minimal-service-page .section-head p',
+  '.minimal-service-page .minimal-proof-card',
+  '.minimal-service-page .cap-card',
+  '.minimal-service-page .step',
+  '.minimal-service-page .faq-item',
+  '.minimal-service-page .section-band > .container > .btn',
+  '.minimal-service-page .footer-grid > *',
+  '.minimal-service-page .footer-big',
+  '.minimal-service-page .footer-bottom',
+].join(', ');
 
 export default function EventsPage() {
-  usePageLifecycle('Graduation Ceremony Setup UAE | Event Production Company Dubai | EGS');
+  usePageLifecycle('Graduation Ceremony Setup UAE | Event Production Company Dubai | EGS', {
+    revealSelector,
+  });
 
   return (
     <>
       <style>{pageStyles}</style>
-      <div className="content-page" style={{ '--accent': 'var(--terracotta)' }}>
-        <SiteNav active="events" cta="Brief us on your ceremony" />
-
-        <section className="content-hero">
-          <div className="container">
-            <div className="hero-board">
-              <div className="hero-copy">
-                <div>
-                  <div className="chip-row">
-                    <span className="chip"><span className="chip-dot" />Graduation ceremony setup UAE</span>
-                    <span className="chip"><span className="chip-dot" />Fixed showtime</span>
-                  </div>
-                  <h1>A ceremony has no second take.</h1>
-                  <p className="lede">EGS builds ceremony and event environments where the stage, branding, guest movement, production flow, and timing all have to hold before families, VIPs, graduates, guests, or leadership walk in.</p>
-                </div>
-                <div>
-                  <div className="hero-actions">
-                    <a href="/contact" className="btn btn-primary">Brief us on your ceremony <span className="arrow">→</span></a>
-                    <a href="/case-studies#hct-graduation-program" className="btn btn-ghost">Read HCT proof</a>
-                  </div>
-                  <div className="proof-chip-strip">
-                    <div className="proof-chip"><strong>7</strong><span>Grand ceremonies in 2025</span></div>
-                    <div className="proof-chip"><strong>4,500</strong><span>Graduates</span></div>
-                    <div className="proof-chip"><strong>13,500</strong><span>Guests</span></div>
-                  </div>
-                </div>
-              </div>
-              <div className="image-mosaic ceremony-mosaic">
-                <div className="image-cell">
-                  <img src={images.hctProfile} alt="HCT graduation ceremony audience and stage production" />
-                  <span className="label">HCT graduation season · UAE scale</span>
-                </div>
-                <div className="stack">
-                  <div className="image-cell">
-                    <img src={images.graduationProfile} alt="Graduation ceremony stage and confetti moment" />
-                    <span className="label">Stage, screen, and cue pressure</span>
-                  </div>
-                  <div className="image-cell">
-                    <img src={images.eventProfile} alt="Graduation event production environment" />
-                    <span className="label">Room ready before doors</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="section-band dark-band">
-          <div className="container">
-            <div className="section-head">
-              <h2>HCT is the proof of scale.</h2>
-              <p>In 2025, EGS delivered seven HCT grand ceremonies across Dubai, Abu Dhabi, Sharjah, Ras Al Khaimah, and Fujairah for 4,500 graduates and 13,500 guests. In 2024, EGS delivered eight grand ceremonies for 3,500 graduates and 10,000 guests.</p>
-            </div>
-            <div className="stat-poem">
-              <div className="proof-chip"><strong>2025</strong><span>7 grand ceremonies</span></div>
-              <div className="proof-chip"><strong>2024</strong><span>8 grand ceremonies</span></div>
-              <div className="proof-chip"><strong>7 yrs</strong><span>Almost with HCT</span></div>
-            </div>
-          </div>
-        </section>
-
-        <section className="section-band">
-          <div className="container">
-            <div className="section-head">
-              <h2>Ten hours before showtime, the stage changed.</h2>
-              <p>At the 2025 HCT Fujairah ceremony at Zayed Sports Complex, the stage needed a 5-6 metre extension for a photo display area 10 hours before the event.</p>
-            </div>
-            <AnnotatedImage
-              src={images.graduationWide}
-              alt="HCT graduation ceremony stage production"
-              labels={['stage line', 'photo area', 'guest sightlines', 'showtime check']}
-            />
-            <div className="capability-grid">
-              {[
-                ['Material', 'EGS sourced material under deadline pressure.'],
-                ['Logistics', 'The team moved material to Fujairah.'],
-                ['Carpentry', 'The wooden/carpentered stage was extended.'],
-                ['Showtime', 'The ceremony was delivered on time.'],
-              ].map(([title, copy]) => (
-                <article className="cap-card" key={title}>
-                  <small>Fujairah stage extension</small>
-                  <h3>{title}</h3>
-                  <p>{copy}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="section-band alt">
-          <div className="container">
-            <div className="section-head">
-              <h2>What EGS handles.</h2>
-              <p>EGS handles the physical ceremony production environment: the parts of the room that need to be built, branded, arranged, adapted, checked, and ready before showtime.</p>
-            </div>
-            <InfoGrid items={eventScope} eyebrow="Ceremony scope" />
-          </div>
-        </section>
-
-        <section className="section-band">
-          <div className="container">
-            <div className="section-head">
-              <h2>The plan works backwards from showtime.</h2>
-              <p>The work has to be physically ready before guests enter. The process is practical: room, access, stage, branding, production constraints, and final handover.</p>
-            </div>
-            <Stepper steps={eventSteps} />
-          </div>
-        </section>
-
-        <section className="section-band alt">
-          <div className="container">
-            <div className="section-head">
-              <h2>Guests should feel the ceremony, not the production pressure.</h2>
-              <p>The buyer needs confidence that the public moment will feel dignified, ready, and controlled even if the work behind it was under pressure.</p>
-            </div>
-            <InfoGrid items={eventReassurance} eyebrow="Buyer reassurance" />
-          </div>
-        </section>
-
-        <section className="section-band">
-          <div className="container">
-            <div className="section-head">
-              <h2>Graduations are the proof. The discipline applies wider.</h2>
-              <p>HCT is the strongest confirmed proof, but the same production discipline applies to corporate ceremonies, product launches, institutional events, and leadership moments.</p>
-            </div>
-            <a href="/contact" className="btn btn-primary">Brief us on your ceremony <span className="arrow">→</span></a>
-          </div>
-        </section>
-
-        <section className="section-band alt">
-          <div className="container">
-            <div className="section-head">
-              <h2>Public context, project proof.</h2>
-              <p>HCT's 2025 graduation season was publicly reported across official HCT channels. Those sources confirm the ceremony context; EGS project proof confirms the production work behind it.</p>
-            </div>
-            <a href="/case-studies#hct-graduation-program" className="btn btn-ghost">Open HCT proof <span className="arrow">→</span></a>
-          </div>
-        </section>
-
-        <section className="section-band">
-          <div className="container">
-            <div className="section-head">
-              <h2>Questions ceremony teams ask first.</h2>
-              <p>Direct answers for universities, institutions, event managers, leadership offices, and procurement teams.</p>
-            </div>
-            <FAQSection faqs={eventFaqs} />
-          </div>
-        </section>
-
-        <section className="section-band alt">
-          <div className="container">
-            <div className="section-head">
-              <h2>Who this is for.</h2>
-              <p>Graduations are the strongest proof, but the same fixed-showtime discipline helps other public institutional and corporate moments.</p>
-            </div>
-            <InfoGrid items={eventAudience} eyebrow="Audience" />
-          </div>
-        </section>
-
-        <section className="section-band">
-          <div className="container">
-            <div className="section-head">
-              <h2>Send the date, venue, and what has to be ready.</h2>
-              <p>If the ceremony has a fixed showtime, send the event details. EGS will look at the room, the deadline, and what needs to happen first.</p>
-            </div>
-            <a href="/contact" className="btn btn-primary">Brief us on your ceremony <span className="arrow">→</span></a>
-          </div>
-        </section>
-
+      <div className="content-page minimal-service-page events-minimal-page" style={{ '--accent': 'var(--terracotta)' }}>
+        <Navbar active="events" cta="Brief us on your ceremony" overlay />
+        <MinimalServiceHero
+          image={images.hctProfile}
+          imageAlt="HCT graduation ceremony audience and stage production"
+          kicker="Graduation ceremony setup UAE"
+          title="Ceremonies built for showtime."
+          subline="Stage. Branding. Guest flow. Ready before doors."
+          primaryCta={{ href: '/contact', label: 'Brief us on your ceremony' }}
+          secondaryCta={{ href: '/case-studies#hct-graduation-program', label: 'Read HCT proof' }}
+        />
+        <MinimalPhotoProofSection
+          title="Proof at ceremony scale."
+          copy="Graduates, guests, fixed showtimes."
+          items={proofItems}
+        />
+        <MinimalScopeSection
+          title="What EGS handles."
+          copy="The physical environment behind the public moment."
+          eyebrow="Ceremony scope"
+          items={scopeItems}
+        />
+        <MinimalProcessSection
+          title="Work backwards from doors."
+          copy="The room has to be ready before people arrive."
+          steps={processSteps}
+        />
+        <MinimalFAQSection
+          title="Questions ceremony teams ask first."
+          copy="Short answers before the brief moves."
+          faqs={faqs}
+        />
+        <MinimalCTASection
+          title="Send the date, venue, and what has to be ready."
+          copy="EGS will read the room, the deadline, and what needs to move first."
+          cta={{ href: '/contact', label: 'Brief us on your ceremony' }}
+        />
         <Footer />
       </div>
     </>

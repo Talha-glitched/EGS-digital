@@ -77,7 +77,7 @@ export default function HomePage() {
 
         <HomeServicesSection services={services} />
         <ClientMarquee />
-         <section className="section-band alt home-circular-gallery-section">
+         {/* <section className="section-band alt home-circular-gallery-section">
           <div className="container">
             <div className="section-head">
               <h2>Explore services in motion.</h2>
@@ -101,7 +101,7 @@ export default function HomePage() {
           </div>
         </section>
 
-       
+        */}
 
         {/* <HomeProofSection
           proofScrollRef={proofScrollRef}
