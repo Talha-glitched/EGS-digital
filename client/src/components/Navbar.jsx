@@ -5,7 +5,7 @@ import './Navbar.css';
 const defaultItems = [
   {
     label: 'Services',
-    bgColor: 'var(--ink)',
+    bgColor: 'var(--paper)',
     textColor: 'var(--paper)',
     links: [
       { label: 'Exhibitions', href: '/exhibitions', ariaLabel: 'Open exhibitions page' },
@@ -27,8 +27,8 @@ const defaultItems = [
   },
   {
     label: 'Brief',
-    bgColor: 'var(--paper-2)',
-    textColor: 'var(--ink)',
+    bgColor: 'var(--ink-blue)',
+    textColor: 'var(--paper)',
     links: [
       { label: 'Send a Brief', href: '/contact', ariaLabel: 'Open contact page' },
       { label: 'Email EGS', href: 'mailto:info@exhibitgraphicsign.com', ariaLabel: 'Email EGS' },

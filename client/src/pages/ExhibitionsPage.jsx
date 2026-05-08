@@ -1,23 +1,47 @@
 import pageStyles from '../styles/pages/content-first.css?raw';
+import StickyProcessShowcase from '../components/StickyProcessShowcase.jsx';
 import { Navbar } from '../components/Navbar.jsx';
 import ExhibitionsAdaptationSection from '../components/exhibitions/ExhibitionsAdaptationSection.jsx';
 import ExhibitionsCTASection from '../components/exhibitions/ExhibitionsCTASection.jsx';
 import ExhibitionsFAQSection from '../components/exhibitions/ExhibitionsFAQSection.jsx';
 import ExhibitionsHeroSection from '../components/exhibitions/ExhibitionsHeroSection.jsx';
 import ExhibitionsProcessSection from '../components/exhibitions/ExhibitionsProcessSection.jsx';
-import ExhibitionsProofSection from '../components/exhibitions/ExhibitionsProofSection.jsx';
 import ExhibitionsScopeSection from '../components/exhibitions/ExhibitionsScopeSection.jsx';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 import { Footer } from './SiteChrome.jsx';
+import { images } from './siteData.js';
+
+const exhibitionsShowcaseSteps = [
+  {
+    label: '200 sqm healthcare stand',
+    image: images.philips,
+    alt: 'Philips exhibition stand built for Global Health Riyadh',
+  },
+  {
+    label: '10-12h stand adaptation',
+    image: images.philipsArab,
+    alt: 'Healthcare exhibition stand adapted under deadline pressure',
+  },
+  {
+    label: '168 sqm pavilion',
+    image: images.activation,
+    alt: 'Large pavilion and exhibition environment by EGS',
+  },
+  {
+    label: '5-6 product chillers',
+    image: images.retail,
+    alt: 'Branded product display chillers added before exhibition opening',
+  },
+];
 
 const exhibitionsRevealSelector = [
   '.exhibitions-page .exhibitions-kicker',
   '.exhibitions-page .exhibitions-hero-copy h1',
   '.exhibitions-page .exhibitions-hero-copy p',
   '.exhibitions-page .exhibitions-hero-actions .btn',
+  '.exhibitions-page .egs-sticky-showcase-label',
   '.exhibitions-page .section-head h2',
   '.exhibitions-page .section-head p',
-  '.exhibitions-page .exhibitions-metric-card',
   '.exhibitions-page .cap-card',
   '.exhibitions-page .step',
   '.exhibitions-page .exhibitions-adaptation-copy > *',
@@ -40,7 +64,11 @@ export default function ExhibitionsPage() {
       <div className="content-page exhibitions-page" style={{ '--accent': 'var(--ochre)' }}>
         <Navbar active="exhibitions" cta="Brief us on your stand" overlay />
         <ExhibitionsHeroSection />
-        <ExhibitionsProofSection />
+        <StickyProcessShowcase
+          steps={exhibitionsShowcaseSteps}
+          showPortfolio={false}
+          ariaLabel="Exhibition stand proof and process"
+        />
         <ExhibitionsScopeSection />
         <ExhibitionsProcessSection />
         <ExhibitionsAdaptationSection />

@@ -35,7 +35,7 @@
   }
   .fit-hero h1 .ital { font-style: italic; }
   .fit-hero h1 .band {
-    background: linear-gradient(transparent 62%, rgba(43, 58, 103, 0.2) 62%, rgba(43, 58, 103, 0.2) 90%, transparent 90%);
+    background: linear-gradient(transparent 62%, rgba(47, 49, 147, 0.2) 62%, rgba(47, 49, 147, 0.2) 90%, transparent 90%);
     padding: 0 4px;
   }
   .fit-hero .lede {

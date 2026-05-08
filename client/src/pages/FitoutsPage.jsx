@@ -1,9 +1,9 @@
 import pageStyles from '../styles/pages/content-first.css?raw';
+import StickyProcessShowcase from '../components/StickyProcessShowcase.jsx';
 import { Navbar } from '../components/Navbar.jsx';
 import {
   MinimalCTASection,
   MinimalFAQSection,
-  MinimalPhotoProofSection,
   MinimalProcessSection,
   MinimalScopeSection,
   MinimalServiceHero,
@@ -12,10 +12,27 @@ import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 import { Footer } from './SiteChrome.jsx';
 import { images } from './siteData.js';
 
-const proofItems = [
-  { metric: 'Brand', label: 'Visibility in the room', image: images.fitout, href: '/case-studies' },
-  { metric: 'Joinery', label: 'Built for daily use', image: images.fitout, href: '/case-studies' },
-  { metric: 'Signage', label: 'Not an afterthought', image: images.retail, href: '/case-studies' },
+const fitoutShowcaseSteps = [
+  {
+    label: 'Brand visibility',
+    image: images.fitout,
+    alt: 'Branded interior fitout and showroom visibility',
+  },
+  {
+    label: 'Joinery built for use',
+    image: images.fitout,
+    alt: 'Interior joinery and branded finish details',
+  },
+  {
+    label: 'Signage integrated early',
+    image: images.retail,
+    alt: 'Interior signage and brand graphics in a commercial space',
+  },
+  {
+    label: 'Daily-use handover',
+    image: images.activation,
+    alt: 'Finished branded space ready for daily customer use',
+  },
 ];
 
 const scopeItems = [
@@ -46,9 +63,9 @@ const revealSelector = [
   '.minimal-service-page .minimal-service-hero-copy h1',
   '.minimal-service-page .minimal-service-hero-copy p',
   '.minimal-service-page .minimal-service-actions .btn',
+  '.minimal-service-page .egs-sticky-showcase-label',
   '.minimal-service-page .section-head h2',
   '.minimal-service-page .section-head p',
-  '.minimal-service-page .minimal-proof-card',
   '.minimal-service-page .cap-card',
   '.minimal-service-page .step',
   '.minimal-service-page .faq-item',
@@ -77,10 +94,10 @@ export default function FitoutsPage() {
           primaryCta={{ href: '/contact', label: 'Start a fitout brief' }}
           secondaryCta={{ href: '/case-studies', label: 'See relevant work' }}
         />
-        <MinimalPhotoProofSection
-          title="Proof in the room."
-          copy="Brand details that have to keep working."
-          items={proofItems}
+        <StickyProcessShowcase
+          steps={fitoutShowcaseSteps}
+          showPortfolio={false}
+          ariaLabel="Interior fitout proof and process"
         />
         <MinimalScopeSection
           title="What EGS builds."

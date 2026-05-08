@@ -37,7 +37,7 @@ function rotateX(point, angle) {
 function getCssVariable(name) {
   return (
     getComputedStyle(document.documentElement).getPropertyValue(name).trim() ||
-    '#d4a017'
+    '#d9262e'
   );
 }
 
@@ -265,7 +265,7 @@ function buildStand(kind) {
         { x, y: wallY1, z: -depth + 8 },
         { x, y: wallY2, z: -depth + 8 },
       ],
-      color: 'rgba(212,160,23,0.25)',
+      color: 'rgba(217,38,46,0.25)',
       width: 0.6,
     });
   }
@@ -277,7 +277,7 @@ function buildStand(kind) {
         { x: wallX1, y, z: -depth + 8 },
         { x: wallX2, y, z: -depth + 8 },
       ],
-      color: 'rgba(212,160,23,0.25)',
+      color: 'rgba(217,38,46,0.25)',
       width: 0.6,
     });
   }

@@ -331,7 +331,7 @@
     line-height: 1.3;
   }
   .cue-row.highlight {
-    background: rgba(198, 83, 46, 0.06);
+    background: rgba(217, 38, 46, 0.06);
   }
   .cue-row.highlight .note { color: var(--terracotta); font-weight: 500; }
   .cue-doc-ft {

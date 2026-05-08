@@ -48,6 +48,8 @@ export default function StickyProcessShowcase({
   portfolioEyebrow = 'Proof',
   portfolioTitle = 'Physical brand work under real deadline pressure.',
   portfolioCta = { label: 'View all case studies', href: '/case-studies' },
+  showPortfolio = true,
+  ariaLabel = 'How EGS moves from brief to handover',
 }) {
   const wrapperRef = useRef(null);
   const labelWrapRef = useRef(null);
@@ -190,7 +192,7 @@ export default function StickyProcessShowcase({
         <div className="egs-sticky-showcase-sticky">
           <div className="egs-sticky-showcase-grid-bg" aria-hidden="true" />
 
-          <div className="egs-sticky-showcase-inner" role="region" aria-label="How EGS moves from brief to handover">
+          <div className="egs-sticky-showcase-inner" role="region" aria-label={ariaLabel}>
             <p className="egs-sticky-sr-only" aria-live="polite">
               {steps[activeStep]?.label}, step {activeStep + 1} of {stepCount}
             </p>
@@ -226,7 +228,7 @@ export default function StickyProcessShowcase({
         </div>
       </div>
 
-      <section className="egs-sticky-showcase-portfolio" aria-labelledby="egs-sticky-portfolio-heading">
+      {showPortfolio ? <section className="egs-sticky-showcase-portfolio" aria-labelledby="egs-sticky-portfolio-heading">
         <div className="egs-sticky-showcase-portfolio-inner">
           <div className="egs-sticky-showcase-portfolio-head">
             <p className="egs-sticky-showcase-portfolio-eyebrow">{portfolioEyebrow}</p>
@@ -252,7 +254,7 @@ export default function StickyProcessShowcase({
             ))}
           </div>
         </div>
-      </section>
+      </section> : null}
     </div>
   );
 }

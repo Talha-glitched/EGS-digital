@@ -1,9 +1,9 @@
 import pageStyles from '../styles/pages/content-first.css?raw';
+import StickyProcessShowcase from '../components/StickyProcessShowcase.jsx';
 import { Navbar } from '../components/Navbar.jsx';
 import {
   MinimalCTASection,
   MinimalFAQSection,
-  MinimalPhotoProofSection,
   MinimalProcessSection,
   MinimalScopeSection,
   MinimalServiceHero,
@@ -12,10 +12,27 @@ import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 import { Footer } from './SiteChrome.jsx';
 import { images } from './siteData.js';
 
-const proofItems = [
-  { metric: '33', label: 'Carrefour locations', image: images.retail, href: '/case-studies#sadia-carrefour-rollout' },
-  { metric: '13', label: 'Vehicles deployed', image: images.activation, href: '/case-studies#sadia-carrefour-rollout' },
-  { metric: '6am', label: 'Finished before morning', image: images.retail, href: '/case-studies#sadia-carrefour-rollout' },
+const retailShowcaseSteps = [
+  {
+    label: '33 Carrefour locations',
+    image: images.retail,
+    alt: 'Retail branding rollout at Carrefour locations',
+  },
+  {
+    label: '13 Vehicles deployed',
+    image: images.activation,
+    alt: 'Retail activation logistics and deployment work',
+  },
+  {
+    label: 'Before 6am launch',
+    image: images.retail,
+    alt: 'Retail branding completed before morning customer traffic',
+  },
+  {
+    label: 'QA/QC across teams',
+    image: images.activation,
+    alt: 'Retail rollout quality checks across installation teams',
+  },
 ];
 
 const scopeItems = [
@@ -46,9 +63,9 @@ const revealSelector = [
   '.minimal-service-page .minimal-service-hero-copy h1',
   '.minimal-service-page .minimal-service-hero-copy p',
   '.minimal-service-page .minimal-service-actions .btn',
+  '.minimal-service-page .egs-sticky-showcase-label',
   '.minimal-service-page .section-head h2',
   '.minimal-service-page .section-head p',
-  '.minimal-service-page .minimal-proof-card',
   '.minimal-service-page .cap-card',
   '.minimal-service-page .step',
   '.minimal-service-page .faq-item',
@@ -77,10 +94,10 @@ export default function RetailPage() {
           primaryCta={{ href: '/contact', label: 'Start a rollout brief' }}
           secondaryCta={{ href: '/case-studies#sadia-carrefour-rollout', label: 'See Sadia proof' }}
         />
-        <MinimalPhotoProofSection
-          title="Proof after closing time."
-          copy="Multi-location work with launch pressure."
-          items={proofItems}
+        <StickyProcessShowcase
+          steps={retailShowcaseSteps}
+          showPortfolio={false}
+          ariaLabel="Retail rollout proof and process"
         />
         <MinimalScopeSection
           title="What EGS installs."

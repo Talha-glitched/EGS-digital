@@ -1,9 +1,9 @@
 import pageStyles from '../styles/pages/content-first.css?raw';
+import StickyProcessShowcase from '../components/StickyProcessShowcase.jsx';
 import { Navbar } from '../components/Navbar.jsx';
 import {
   MinimalCTASection,
   MinimalFAQSection,
-  MinimalPhotoProofSection,
   MinimalProcessSection,
   MinimalScopeSection,
   MinimalServiceHero,
@@ -12,10 +12,27 @@ import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 import { Footer } from './SiteChrome.jsx';
 import { images } from './siteData.js';
 
-const proofItems = [
-  { metric: '7', label: 'Grand ceremonies in 2025', image: images.hctProfile, href: '/case-studies#hct-graduation-program' },
-  { metric: '4,500', label: 'Graduates', image: images.graduationProfile, href: '/case-studies#hct-graduation-program' },
-  { metric: '10h', label: 'Fujairah stage change', image: images.graduationWide, href: '/case-studies#hct-fujairah-stage-extension' },
+const ceremonyProofSteps = [
+  {
+    label: '7 Grand ceremonies',
+    image: images.hctProfile,
+    alt: 'HCT graduation ceremony audience and stage production by EGS',
+  },
+  {
+    label: '4,500+ Graduates',
+    image: images.graduationProfile,
+    alt: 'Graduation ceremony stage and audience production environment',
+  },
+  {
+    label: '13,500+ Guests',
+    image: images.graduationWide,
+    alt: 'Large graduation ceremony venue and guest seating',
+  },
+  {
+    label: '10h Stage change',
+    image: images.graduationStage,
+    alt: 'Graduation stage adaptation completed before ceremony start',
+  },
 ];
 
 const scopeItems = [
@@ -46,9 +63,9 @@ const revealSelector = [
   '.minimal-service-page .minimal-service-hero-copy h1',
   '.minimal-service-page .minimal-service-hero-copy p',
   '.minimal-service-page .minimal-service-actions .btn',
+  '.minimal-service-page .egs-sticky-showcase-label',
   '.minimal-service-page .section-head h2',
   '.minimal-service-page .section-head p',
-  '.minimal-service-page .minimal-proof-card',
   '.minimal-service-page .cap-card',
   '.minimal-service-page .step',
   '.minimal-service-page .faq-item',
@@ -77,10 +94,10 @@ export default function EventsPage() {
           primaryCta={{ href: '/contact', label: 'Brief us on your ceremony' }}
           secondaryCta={{ href: '/case-studies#hct-graduation-program', label: 'Read HCT proof' }}
         />
-        <MinimalPhotoProofSection
-          title="Proof at ceremony scale."
-          copy="Graduates, guests, fixed showtimes."
-          items={proofItems}
+        <StickyProcessShowcase
+          steps={ceremonyProofSteps}
+          showPortfolio={false}
+          ariaLabel="Graduation ceremony proof at scale"
         />
         <MinimalScopeSection
           title="What EGS handles."

@@ -293,7 +293,7 @@
 
 .content-hero h1 {
   font-family: var(--serif);
-  font-weight: 400;
+  font-weight: 600;
   font-size: clamp(46px, 6.8vw, 104px);
   line-height: 0.96;
   letter-spacing: 0;
@@ -378,7 +378,7 @@
 .home-video-hero-copy h1 {
   margin-top: 24px;
   max-width: 180ch;
-  font-family: var(--sans);
+  font-family: var(--serif);
   font-size: 4rem;
   font-weight: 600;
   line-height: 0.96;
@@ -806,7 +806,7 @@
 .exhibitions-hero-copy h1 {
   margin-top: 24px;
   max-width: 14ch;
-  font-family: var(--sans);
+  font-family: var(--serif);
   font-size: clamp(42px, 6.8vw, 104px);
   font-weight: 600;
   line-height: 0.96;
@@ -1175,7 +1175,7 @@
 .minimal-service-hero-copy h1 {
   margin-top: 24px;
   max-width: 15ch;
-  font-family: var(--sans);
+  font-family: var(--serif);
   font-size: clamp(42px, 6.8vw, 104px);
   font-weight: 600;
   line-height: 0.96;
@@ -1339,6 +1339,38 @@
 
 .minimal-service-page .step:nth-child(5) { --reveal-delay: 280ms; }
 .minimal-service-page .step:nth-child(6) { --reveal-delay: 350ms; }
+
+.events-minimal-page .egs-sticky-showcase-inner,
+.fitouts-minimal-page .egs-sticky-showcase-inner,
+.retail-minimal-page .egs-sticky-showcase-inner,
+.exhibitions-page .egs-sticky-showcase-inner {
+  max-width: 1360px;
+  justify-content: center;
+  gap: clamp(28px, 5vw, 72px);
+}
+
+.events-minimal-page .egs-sticky-showcase-label-wrap,
+.fitouts-minimal-page .egs-sticky-showcase-label-wrap,
+.retail-minimal-page .egs-sticky-showcase-label-wrap,
+.exhibitions-page .egs-sticky-showcase-label-wrap {
+  flex: 0 0 min(46vw, 580px);
+  max-width: 580px;
+}
+
+.events-minimal-page .egs-sticky-showcase-label,
+.fitouts-minimal-page .egs-sticky-showcase-label,
+.retail-minimal-page .egs-sticky-showcase-label,
+.exhibitions-page .egs-sticky-showcase-label {
+  font-size: clamp(2rem, 4.6vw, 3.4rem);
+}
+
+.events-minimal-page .egs-sticky-showcase-viewport,
+.fitouts-minimal-page .egs-sticky-showcase-viewport,
+.retail-minimal-page .egs-sticky-showcase-viewport,
+.exhibitions-page .egs-sticky-showcase-viewport {
+  flex: 0 1 620px;
+  width: min(44vw, 620px);
+}
 
 .home-services-section {
   padding-bottom: 0;
