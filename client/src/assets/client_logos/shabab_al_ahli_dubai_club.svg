@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 120">
+  <circle cx="150" cy="55" r="45" fill="#CC0000"/>
+  <circle cx="150" cy="55" r="38" fill="white"/>
+  <circle cx="150" cy="55" r="30" fill="#CC0000"/>
+  <text x="150" y="50" font-family="Arial, sans-serif" font-size="9" font-weight="bold" fill="white" text-anchor="middle">SHABAB</text>
+  <text x="150" y="62" font-family="Arial, sans-serif" font-size="9" font-weight="bold" fill="white" text-anchor="middle">AL AHLI</text>
+  <text x="150" y="110" font-family="Arial, sans-serif" font-size="10" fill="#888" text-anchor="middle">Dubai Football Club</text>
+</svg>

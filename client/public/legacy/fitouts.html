@@ -1,0 +1,939 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interior Fitouts — EGS · Offices, Showrooms, Branded Interiors</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  :root { --accent: var(--olive); }
+
+  .subnav {
+    border-bottom: 1px solid var(--rule);
+    background: color-mix(in oklab, var(--paper-2) 72%, transparent);
+  }
+  .subnav-inner {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 20px; padding: 14px 0; flex-wrap: wrap;
+  }
+  .breadcrumb {
+    font-size: 12px; text-transform: uppercase; color: var(--ink-soft); letter-spacing: 0.04em;
+  }
+  .breadcrumb a { color: var(--ink-soft); }
+  .breadcrumb .sep { margin: 0 10px; color: var(--ink-faint); }
+  .breadcrumb strong { color: var(--ink); font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 14px; text-transform: none; }
+
+  .fit-hero {
+    padding: 42px 0 84px;
+    position: relative;
+  }
+  .fit-hero-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: clamp(32px, 5vw, 78px);
+    align-items: end;
+    padding-top: 34px;
+  }
+  .fit-hero h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(54px, 8.4vw, 132px);
+    line-height: 0.94;
+    letter-spacing: -0.028em;
+  }
+  .fit-hero h1 .ital { font-style: italic; }
+  .fit-hero h1 .band {
+    background: linear-gradient(transparent 62%, rgba(43, 58, 103, 0.2) 62%, rgba(43, 58, 103, 0.2) 90%, transparent 90%);
+    padding: 0 4px;
+  }
+  .fit-hero .lede {
+    font-family: var(--serif);
+    font-size: clamp(19px, 1.9vw, 25px);
+    line-height: 1.36;
+    color: var(--ink-2);
+    max-width: 39ch;
+    margin-top: 28px;
+  }
+  .fit-hero .lede em { color: var(--ink); }
+  .fit-hero-cta {
+    display: flex; gap: 14px; margin-top: 36px; flex-wrap: wrap;
+  }
+  .fit-hero-visual {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 12px;
+    min-height: 560px;
+  }
+  .fit-hero-main,
+  .fit-hero-side {
+    position: relative;
+    overflow: hidden;
+    background: var(--paper-3);
+  }
+  .fit-hero-main img,
+  .fit-hero-side img {
+    width: 100%; height: 100%; object-fit: cover;
+    transform: scale(1.03);
+    animation: slowDrift 16s ease-in-out infinite alternate;
+  }
+  .fit-hero-side {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 12px;
+    background: transparent;
+  }
+  .fit-hero-side .cell {
+    position: relative;
+    overflow: hidden;
+    background: var(--paper-3);
+  }
+  .fit-hero-caption {
+    position: absolute;
+    left: 18px; right: 18px; bottom: 18px;
+    background: rgba(245, 241, 234, 0.92);
+    backdrop-filter: blur(6px);
+    padding: 14px 16px;
+    display: flex; justify-content: space-between; gap: 16px; align-items: end; flex-wrap: wrap;
+    animation: riseIn 1s ease 0.25s both;
+  }
+  .fit-hero-caption em {
+    font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ink);
+  }
+  .fit-hero-caption span,
+  .fit-mini-cap {
+    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint);
+  }
+  .fit-mini-cap {
+    position: absolute; left: 14px; bottom: 14px;
+    background: rgba(26, 23, 21, 0.72); color: var(--paper);
+    padding: 7px 10px;
+  }
+  .fit-specs {
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 18px 0;
+    margin-top: 58px;
+  }
+  .fit-specs-inner {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+  }
+  .fit-spec .k {
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint);
+  }
+  .fit-spec .v {
+    font-family: var(--serif);
+    font-size: 21px;
+    font-style: italic;
+    color: var(--ink);
+    margin-top: 4px;
+  }
+  .fit-spec {
+    transform: translateY(0);
+    transition: transform .3s ease;
+  }
+  .fit-spec:hover { transform: translateY(-3px); }
+  @media (max-width: 980px) {
+    .fit-hero-grid { grid-template-columns: 1fr; }
+    .fit-hero-visual { min-height: 440px; }
+    .fit-specs-inner { grid-template-columns: 1fr 1fr; }
+  }
+
+  .principle {
+    padding: clamp(60px, 9vw, 120px) 0;
+    background: var(--paper-2);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .principle-grid {
+    display: grid;
+    grid-template-columns: 0.95fr 1.05fr;
+    gap: clamp(32px, 5vw, 82px);
+  }
+  .principle h2 {
+    font-family: var(--serif);
+    font-size: clamp(38px, 4.7vw, 68px);
+    line-height: 1.0;
+    letter-spacing: -0.018em;
+    margin-top: 14px;
+  }
+  .principle p {
+    font-size: 17px; line-height: 1.58; color: var(--ink-2); max-width: 46ch;
+  }
+  .principle-list {
+    border-top: 1px solid var(--rule);
+  }
+  .principle-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: baseline;
+  }
+  .principle-row .bad {
+    color: var(--ink-faint);
+    text-decoration: line-through;
+    text-decoration-color: var(--ink-faint);
+    font-family: var(--serif); font-style: italic; font-size: 15px;
+  }
+  .principle-row .good {
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.42;
+  }
+  .principle-row .good::before {
+    content: '→';
+    margin-right: 10px;
+    color: var(--olive);
+    font-family: var(--serif);
+    font-style: italic;
+  }
+
+  .phases {
+    padding: clamp(80px, 11vw, 150px) 0;
+  }
+  .phases-head {
+    max-width: 72ch;
+    margin-bottom: 56px;
+  }
+  .phases-head h2 {
+    font-family: var(--serif);
+    font-size: clamp(42px, 5.5vw, 88px);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    margin: 18px 0 20px;
+  }
+  .phases-head p { font-size: 18px; line-height: 1.56; color: var(--ink-2); max-width: 56ch; }
+  .phase-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .phase-card {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 22px 20px 24px;
+    display: flex; flex-direction: column; gap: 14px;
+    min-height: 280px;
+    transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease;
+  }
+  .phase-card:hover {
+    transform: translateY(-6px);
+    border-color: color-mix(in oklab, var(--olive) 28%, var(--rule));
+    box-shadow: 0 18px 40px rgba(26, 23, 21, 0.06);
+  }
+  .phase-card .n {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink-faint);
+  }
+  .phase-card h3 {
+    font-family: var(--serif);
+    font-size: 29px;
+    line-height: 1.02;
+    font-weight: 400;
+    letter-spacing: -0.012em;
+  }
+  .phase-card p { font-size: 14px; line-height: 1.55; color: var(--ink-2); }
+  .phase-card .tagline {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px dashed var(--rule);
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint);
+  }
+  @media (max-width: 980px) {
+    .principle-grid { grid-template-columns: 1fr; }
+    .phase-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .phase-grid { grid-template-columns: 1fr; }
+  }
+
+  .ledger {
+    background: #121716;
+    color: var(--paper);
+    padding: clamp(64px, 10vw, 136px) 0;
+  }
+  .ledger-head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(32px, 5vw, 80px);
+    margin-bottom: 48px;
+    align-items: end;
+  }
+  .ledger-head .chip {
+    background: transparent;
+    color: rgba(245, 241, 234, 0.7);
+    border-color: rgba(245, 241, 234, 0.24);
+    margin-bottom: 20px;
+  }
+  .ledger-head h2 {
+    font-family: var(--serif);
+    font-size: clamp(44px, 6vw, 102px);
+    line-height: 0.95;
+    letter-spacing: -0.024em;
+  }
+  .ledger-head h2 .ital { color: var(--sky); }
+  .ledger-head p {
+    font-size: 17px;
+    line-height: 1.58;
+    color: rgba(245, 241, 234, 0.76);
+    max-width: 42ch;
+  }
+  .ledger-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: clamp(28px, 4vw, 56px);
+    align-items: start;
+  }
+  .ledger-board {
+    border: 1px solid rgba(245, 241, 234, 0.16);
+    background: rgba(255, 255, 255, 0.02);
+    padding: 22px;
+  }
+  .ledger-board-hd {
+    display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(245, 241, 234, 0.12);
+  }
+  .ledger-board-hd h3 {
+    font-family: var(--serif); font-size: 28px; font-weight: 400;
+  }
+  .ledger-board-hd span {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em; color: rgba(245, 241, 234, 0.52);
+  }
+  .ledger-row {
+    display: grid;
+    grid-template-columns: 1.2fr 0.7fr 0.7fr;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px dashed rgba(245, 241, 234, 0.12);
+    align-items: center;
+  }
+  .ledger-row:last-child { border-bottom: none; }
+  .ledger-row .k { color: rgba(245, 241, 234, 0.66); font-size: 14px; line-height: 1.4; }
+  .ledger-row .v {
+    font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--paper);
+  }
+  .ledger-row .delta {
+    text-align: right;
+    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .ledger-row .delta.up { color: #96b8a4; }
+  .ledger-row .delta.note { color: rgba(245, 241, 234, 0.46); }
+  .ledger-note {
+    padding-top: 16px;
+    font-size: 12px;
+    color: rgba(245, 241, 234, 0.56);
+    display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  .ledger-side {
+    display: grid;
+    gap: 14px;
+  }
+  .memo {
+    border: 1px solid rgba(245, 241, 234, 0.14);
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.02);
+    transition: transform .35s ease, border-color .35s ease, background .35s ease;
+  }
+  .memo:hover {
+    transform: translateY(-4px);
+    border-color: rgba(184, 199, 204, 0.34);
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .memo .eyebrow {
+    color: rgba(245, 241, 234, 0.54);
+  }
+  .memo h3 {
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 400;
+    line-height: 1.04;
+    margin: 12px 0 10px;
+  }
+  .memo p {
+    color: rgba(245, 241, 234, 0.78);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  @media (max-width: 980px) {
+    .ledger-head,
+    .ledger-grid { grid-template-columns: 1fr; }
+  }
+
+  .gallery {
+    padding: clamp(74px, 10vw, 136px) 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .gallery-head {
+    display: flex; justify-content: space-between; align-items: end;
+    gap: 20px; flex-wrap: wrap; margin-bottom: 28px;
+  }
+  .gallery-head h2 {
+    font-family: var(--serif);
+    font-size: clamp(40px, 5vw, 72px);
+    line-height: 0.98;
+    letter-spacing: -0.018em;
+    margin-top: 12px;
+  }
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 12px;
+  }
+  .gcard {
+    position: relative;
+    overflow: hidden;
+    min-height: 240px;
+    background: var(--paper-3);
+  }
+  .gcard img { width: 100%; height: 100%; object-fit: cover; transition: transform .7s; }
+  .gcard:hover img { transform: scale(1.04); }
+  .gcard .meta {
+    position: absolute; left: 14px; right: 14px; bottom: 14px;
+    display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+    background: rgba(245, 241, 234, 0.92);
+    padding: 12px 14px;
+  }
+  .gcard .meta h4 {
+    font-family: var(--serif); font-size: 22px; font-weight: 400;
+  }
+  .gcard .meta span {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink-faint);
+  }
+  .g-a { grid-column: span 5; min-height: 520px; }
+  .g-b { grid-column: span 3; min-height: 520px; }
+  .g-c { grid-column: span 4; min-height: 250px; }
+  .g-d { grid-column: span 4; min-height: 250px; }
+  .g-e { grid-column: span 4; min-height: 250px; }
+  .g-f { grid-column: span 6; min-height: 300px; }
+  .g-g { grid-column: span 6; min-height: 300px; }
+  @media (max-width: 980px) {
+    .gallery-grid { grid-template-columns: 1fr 1fr; }
+    .g-a, .g-b, .g-c, .g-d, .g-e, .g-f, .g-g { grid-column: auto; min-height: 280px; }
+  }
+  @media (max-width: 640px) {
+    .gallery-grid { grid-template-columns: 1fr; }
+  }
+
+  .fit-for {
+    padding: clamp(70px, 10vw, 132px) 0;
+    background: var(--paper-2);
+  }
+  .fit-for-head {
+    display: flex; justify-content: space-between; gap: 20px; align-items: end; flex-wrap: wrap;
+    margin-bottom: 36px;
+  }
+  .fit-for-head h2 {
+    font-family: var(--serif);
+    font-size: clamp(40px, 5vw, 70px);
+    line-height: 0.98;
+    letter-spacing: -0.018em;
+    margin-top: 12px;
+  }
+  .fit-for-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .fit-card {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 22px 20px 24px;
+    transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease;
+  }
+  .fit-card:hover {
+    transform: translateY(-5px);
+    border-color: color-mix(in oklab, var(--ink-blue) 24%, var(--rule));
+    box-shadow: 0 18px 44px rgba(26, 23, 21, 0.06);
+  }
+  .fit-card .ic {
+    width: 42px; height: 42px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--paper-3);
+    font-family: var(--serif); font-style: italic;
+    margin-bottom: 16px;
+  }
+  .fit-card h3 {
+    font-family: var(--serif);
+    font-size: 28px;
+    line-height: 1.04;
+    font-weight: 400;
+    margin-bottom: 12px;
+  }
+  .fit-card p {
+    font-size: 14px; line-height: 1.56; color: var(--ink-2); margin-bottom: 18px;
+  }
+  .fit-card ul {
+    list-style: none;
+    display: grid;
+    gap: 8px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-faint);
+  }
+  @media (max-width: 980px) {
+    .fit-for-grid { grid-template-columns: 1fr; }
+  }
+
+  .faq {
+    padding: clamp(68px, 9vw, 120px) 0;
+  }
+  .faq-inner {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: clamp(32px, 4vw, 64px);
+  }
+  .faq h2 {
+    font-family: var(--serif);
+    font-size: clamp(40px, 5vw, 72px);
+    line-height: 0.98;
+    letter-spacing: -0.018em;
+  }
+  .faq-list {
+    border-top: 1px solid var(--rule);
+  }
+  .faq-list details {
+    border-bottom: 1px solid var(--rule);
+    padding: 20px 0;
+  }
+  .faq-list summary {
+    list-style: none;
+    cursor: pointer;
+    font-family: var(--serif);
+    font-size: 28px;
+    line-height: 1.08;
+  }
+  .faq-list summary::-webkit-details-marker { display: none; }
+  .faq-list p {
+    margin-top: 12px;
+    max-width: 62ch;
+    font-size: 15px;
+    line-height: 1.58;
+    color: var(--ink-2);
+  }
+  @media (max-width: 980px) {
+    .faq-inner { grid-template-columns: 1fr; }
+  }
+
+  .cta-band {
+    background: linear-gradient(135deg, #14211c 0%, #22304f 100%);
+    color: var(--paper);
+    padding: clamp(64px, 10vw, 128px) 0;
+  }
+  .cta-band .chip {
+    background: transparent;
+    border-color: rgba(245, 241, 234, 0.28);
+    color: rgba(245, 241, 234, 0.74);
+    margin-bottom: 28px;
+  }
+  .cta-band h2 {
+    font-family: var(--serif);
+    font-size: clamp(48px, 6vw, 96px);
+    line-height: 0.95;
+    letter-spacing: -0.024em;
+    max-width: 10ch;
+    margin-bottom: 18px;
+  }
+  .cta-band p {
+    font-size: 18px; line-height: 1.58; color: rgba(245, 241, 234, 0.82); max-width: 52ch;
+    margin-bottom: 26px;
+  }
+  .cta-band .btn { border-color: var(--paper); color: var(--paper); }
+  .cta-band .btn.btn-primary { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+
+  .motion-delay-1 { transition-delay: .08s; }
+  .motion-delay-2 { transition-delay: .16s; }
+  .motion-delay-3 { transition-delay: .24s; }
+  .motion-delay-4 { transition-delay: .32s; }
+
+  @keyframes slowDrift {
+    0% { transform: scale(1.03) translate3d(0, 0, 0); }
+    100% { transform: scale(1.08) translate3d(-10px, -8px, 0); }
+  }
+  @keyframes riseIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo"><span class="mark"><em>Exhibit</em>Graphic&nbsp;Sign</span><span class="tag">Est. 2010 · Dubai</span></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="exhibitions.html">Exhibitions</a>
+      <a href="events.html">Events</a>
+      <a href="fitouts.html" class="active">Fitouts</a>
+      <a href="retail.html">Retail</a>
+      <a href="hct-case-study.html">Case Study</a>
+    </div>
+    <a href="#cta" class="nav-cta">Start a fitout brief <span>→</span></a>
+  </div>
+</nav>
+
+<div class="subnav">
+  <div class="container">
+    <div class="subnav-inner">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a><span class="sep">/</span><strong>Interior Fitouts</strong>
+      </div>
+      <div class="aud-switcher">
+        <a href="exhibitions.html">Exhibitions</a>
+        <a href="events.html">Events</a>
+        <a href="fitouts.html" class="active">Fitouts</a>
+        <a href="retail.html">Retail</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="fit-hero">
+  <div class="container">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;">
+      <span class="chip"><span class="chip-dot" style="background: var(--olive);"></span>Audience 03 · Interior Fitouts</span>
+      <span class="tick">For operations heads, brand teams, founders &amp; property stakeholders</span>
+    </div>
+
+    <div class="fit-hero-grid reveal">
+      <div>
+        <h1>A beautiful room is nice.<br>A room that <span class="ital band">still works on Monday</span> is better.</h1>
+        <p class="lede">We design and deliver fitouts for offices, showrooms and branded interiors that need more than a good handover photo. <em>Joinery that wears well. Circulation that makes sense. Signage, finishes and details that remember how the space will actually be used.</em></p>
+        <div class="fit-hero-cta">
+          <a href="#cta" class="btn btn-primary" style="background: var(--olive); border-color: var(--olive);">Start a fitout brief <span class="arrow">→</span></a>
+          <a href="#work" class="btn btn-ghost">See interior work</a>
+        </div>
+      </div>
+      <div class="fit-hero-visual">
+        <div class="fit-hero-main">
+          <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/FAK-Properties1.jpg" alt="Fakhruddin Properties showroom interior">
+          <div class="fit-hero-caption">
+            <em>Fakhruddin Properties · branded showroom</em>
+            <span>Dubai · reception, signage, display &amp; circulation</span>
+          </div>
+        </div>
+        <div class="fit-hero-side">
+          <div class="cell">
+            <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/800-Pizza.jpg" alt="Restaurant fitout and branded interior">
+            <span class="fit-mini-cap">Hospitality fitout · service-led layout</span>
+          </div>
+          <div class="cell">
+            <img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Meydan13.jpg" alt="Branded event and interior environment">
+            <span class="fit-mini-cap">Brand environment · material and message alignment</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fit-specs reveal">
+      <div class="fit-specs-inner">
+        <div class="fit-spec"><div class="k">Typical scope</div><div class="v">Reception to full floor</div></div>
+        <div class="fit-spec"><div class="k">Delivery mode</div><div class="v">Design → site → handover</div></div>
+        <div class="fit-spec"><div class="k">Core strength</div><div class="v">Joinery &amp; brand fidelity</div></div>
+        <div class="fit-spec"><div class="k">Site memory</div><div class="v">Snag log carried forward</div></div>
+        <div class="fit-spec"><div class="k">Finish logic</div><div class="v">Materials chosen to last</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee">
+  <div class="marquee-track">
+    <div class="marquee-item">Showrooms</div>
+    <div class="marquee-item">Offices</div>
+    <div class="marquee-item">Reception Areas</div>
+    <div class="marquee-item">Hospitality Spaces</div>
+    <div class="marquee-item">Sales Galleries</div>
+    <div class="marquee-item">Brand Environments</div>
+    <div class="marquee-item">Signage Systems</div>
+    <div class="marquee-item">Feature Joinery</div>
+  </div>
+</div>
+
+<section class="principle">
+  <div class="container">
+    <div class="principle-grid">
+      <div class="reveal">
+        <span class="eyebrow"><span class="dot"></span>The fitout default · vs. us</span>
+        <h2>A fitout shouldn't be finished when the contractor leaves.<br><span class="ital">It should be ready when your team arrives.</span></h2>
+        <p>Too many fitouts are sold as surface. A render, a handover date, a few polished photos. Then the signage lands too late, the storage is wrong, the joinery chips in three months, and your team starts solving problems the build should have solved already.</p>
+      </div>
+      <div class="principle-list reveal">
+        <div class="principle-row">
+          <div class="bad">Design sold in moodboard language</div>
+          <div class="good">Material, circulation and usage tested against the real brief</div>
+        </div>
+        <div class="principle-row">
+          <div class="bad">Handover ends the relationship</div>
+          <div class="good">Snag log and finish notes carried into the next phase</div>
+        </div>
+        <div class="principle-row">
+          <div class="bad">Signage treated as an afterthought</div>
+          <div class="good">Brand graphics integrated into the fitout from day one</div>
+        </div>
+        <div class="principle-row">
+          <div class="bad">Beautiful joinery, awkward workflow</div>
+          <div class="good">Front-of-house elegance with back-of-house practicality</div>
+        </div>
+        <div class="principle-row">
+          <div class="bad">Snags discovered by your staff</div>
+          <div class="good">A pre-handover walk with punch-list discipline</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="phases">
+  <div class="container">
+    <div class="phases-head reveal">
+      <span class="chip"><span class="chip-dot" style="background: var(--ink-blue);"></span>How we run a fitout</span>
+      <h2>The room is designed in <span class="ital">four passes</span>, not one.</h2>
+      <p>We treat fitouts like built systems. The visual language matters, but so do sightlines, maintenance, brand touchpoints, joinery tolerances, signage hierarchy and what the room feels like three months after opening.</p>
+    </div>
+    <div class="phase-grid">
+      <div class="phase-card reveal motion-delay-1">
+        <div class="n">— 01 —</div>
+        <h3>Read the room</h3>
+        <p>We start with the building, the team and the purpose. Who enters first. Where they pause. What must be seen, stored, signed, protected or quietly hidden.</p>
+        <div class="tagline">Brief · survey · operational read</div>
+      </div>
+      <div class="phase-card reveal motion-delay-2">
+        <div class="n">— 02 —</div>
+        <h3>Shape the system</h3>
+        <p>Layout, brand integration, finish palette and joinery logic are resolved together. We avoid the common trap of making the space look coherent while functioning badly.</p>
+        <div class="tagline">Plans · visuals · finish logic</div>
+      </div>
+      <div class="phase-card reveal motion-delay-3">
+        <div class="n">— 03 —</div>
+        <h3>Build cleanly</h3>
+        <p>Fabrication, site coordination, installation sequencing and brand graphics are managed as one delivery stream. The goal is a calm site and fewer last-minute decisions.</p>
+        <div class="tagline">Joinery · signage · site delivery</div>
+      </div>
+      <div class="phase-card reveal motion-delay-4">
+        <div class="n">— 04 —</div>
+        <h3>Hand over with memory</h3>
+        <p>We document snags, adjustments, graphics files, finish codes and what to carry into the next branch, floor or refresh. That continuity is part of the service.</p>
+        <div class="tagline">Snag log · codes · next-phase notes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="ledger">
+  <div class="container">
+    <div class="ledger-head reveal">
+      <div>
+        <span class="chip"><span class="chip-dot" style="background: var(--sky);"></span>Project memory · fitout ledger</span>
+        <h2>The quiet pages after handover are where the <span class="ital">next good room</span> begins.</h2>
+      </div>
+      <p>On a strong fitout, we don't just file drawings and move on. We log finishes, snag patterns, wear points, signage revisions and what the team learned once the space was actually in use. That's how the second space gets sharper.</p>
+    </div>
+
+    <div class="ledger-grid">
+      <div class="ledger-board reveal">
+        <div class="ledger-board-hd">
+          <h3>Showroom fitout · handover ledger</h3>
+          <span>Project file 03 / branded interior</span>
+        </div>
+        <div class="ledger-row">
+          <div class="k">Reception desk finish</div>
+          <div class="v">Oak veneer, matte seal</div>
+          <div class="delta note">approved</div>
+        </div>
+        <div class="ledger-row">
+          <div class="k">Feature signage sightline</div>
+          <div class="v">Raised 220 mm</div>
+          <div class="delta up">better entry read</div>
+        </div>
+        <div class="ledger-row">
+          <div class="k">Storage behind welcome wall</div>
+          <div class="v">+18% capacity</div>
+          <div class="delta up">ops request</div>
+        </div>
+        <div class="ledger-row">
+          <div class="k">Touch-up callouts first 30 days</div>
+          <div class="v">3</div>
+          <div class="delta note">all resolved</div>
+        </div>
+        <div class="ledger-row">
+          <div class="k">Branch-ready graphics files</div>
+          <div class="v">Filed &amp; versioned</div>
+          <div class="delta up">rollout ready</div>
+        </div>
+        <div class="ledger-row">
+          <div class="k">Material codebook</div>
+          <div class="v">12 finish refs</div>
+          <div class="delta note">kept for refresh</div>
+        </div>
+        <div class="ledger-note">
+          <span>Logged 5 days after handover walk</span>
+          <span>Used again on phase-two brief</span>
+        </div>
+      </div>
+
+      <div class="ledger-side reveal">
+        <div class="memo motion-delay-1">
+          <span class="eyebrow"><span class="dot"></span>What we record</span>
+          <h3>Finish logic</h3>
+          <p>Not just what looks good on opening day. What marks. What cleans well. What catches too much light. What ages with dignity.</p>
+        </div>
+        <div class="memo motion-delay-2">
+          <span class="eyebrow"><span class="dot"></span>What we carry</span>
+          <h3>Brand continuity</h3>
+          <p>Typography, signage positions, fabrication details and joinery proportions are documented so the next room feels related, not copied badly.</p>
+        </div>
+        <div class="memo motion-delay-3">
+          <span class="eyebrow"><span class="dot"></span>What we improve</span>
+          <h3>Operational friction</h3>
+          <p>Blind corners, cable paths, reception flow, hidden storage, queue points, service access. These are the notes that make a room feel easy.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="gallery" id="work">
+  <div class="container">
+    <div class="gallery-head reveal">
+      <div>
+        <span class="eyebrow"><span class="dot"></span>Selected interiors</span>
+        <h2>Rooms we've <span class="ital">helped settle properly</span>.</h2>
+      </div>
+      <span class="body-sm">Showrooms · hospitality spaces · brand environments · reception areas</span>
+    </div>
+
+    <div class="gallery-grid reveal">
+      <div class="gcard g-a"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/FAK-Properties1.jpg" alt="Property showroom interior"><div class="meta"><h4>Fakhruddin Properties</h4><span>Showroom</span></div></div>
+      <div class="gcard g-b"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/800-Pizza.jpg" alt="Hospitality interior"><div class="meta"><h4>800 Pizza</h4><span>Hospitality</span></div></div>
+      <div class="gcard g-c"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Pairs.jpg" alt="Branded consultation environment"><div class="meta"><h4>Philips Pairs</h4><span>Brand zone</span></div></div>
+      <div class="gcard g-d"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Arab-Health.jpg" alt="Reception and display environment"><div class="meta"><h4>Philips Arab Health</h4><span>Display logic</span></div></div>
+      <div class="gcard g-e"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Fosroc-Real-Image-3.jpeg" alt="Construction sector branded environment"><div class="meta"><h4>Fosroc</h4><span>Branded interior</span></div></div>
+      <div class="gcard g-f"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Microlink-3.jpeg" alt="Technology showroom and display"><div class="meta"><h4>Microlink</h4><span>Showroom</span></div></div>
+      <div class="gcard g-g"><img src="https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Buser.jpg" alt="Modular branded environment"><div class="meta"><h4>Buser</h4><span>Modular environment</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="fit-for">
+  <div class="container">
+    <div class="fit-for-head reveal">
+      <div>
+        <span class="eyebrow"><span class="dot"></span>Who this is for</span>
+        <h2>Fitouts for teams who need the room to <span class="ital">behave well</span>, not just photograph well.</h2>
+      </div>
+      <span class="body-sm">Three audiences we work especially well with</span>
+    </div>
+
+    <div class="fit-for-grid reveal">
+      <div class="fit-card motion-delay-1">
+        <div class="ic">01</div>
+        <h3>Developers &amp; showroom teams</h3>
+        <p>You need a room that sells trust before anyone sits down. Reception, display, model areas and signage all need to align without feeling theatrical.</p>
+        <ul>
+          <li>Sales galleries</li>
+          <li>Reception spaces</li>
+          <li>Display joinery</li>
+          <li>Wayfinding &amp; branding</li>
+        </ul>
+      </div>
+      <div class="fit-card motion-delay-2">
+        <div class="ic">02</div>
+        <h3>Office &amp; operations leads</h3>
+        <p>You are balancing brand, workflow, staff comfort and handover quality. You want a space that feels considered and keeps working after the first week.</p>
+        <ul>
+          <li>Front-of-house zones</li>
+          <li>Client-facing interiors</li>
+          <li>Meeting suites</li>
+          <li>Phased refreshes</li>
+        </ul>
+      </div>
+      <div class="fit-card motion-delay-3">
+        <div class="ic">03</div>
+        <h3>Hospitality &amp; brand owners</h3>
+        <p>You care about mood, yes, but also cleaning, durability, service flow and what your staff deal with when the room is busy. We design with that reality in view.</p>
+        <ul>
+          <li>Feature interiors</li>
+          <li>Menu and wall graphics</li>
+          <li>Counter and service zones</li>
+          <li>Brand refresh programs</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="container">
+    <div class="faq-inner">
+      <div>
+        <span class="eyebrow"><span class="dot"></span>Before you ask</span>
+        <h2>Questions fitout clients <span class="ital">actually ask us</span>.</h2>
+      </div>
+      <div class="faq-list">
+        <details open>
+          <summary>Can you handle both the interior build and the branded graphics?</summary>
+          <p>Yes. That's one of the advantages of working with us. Joinery, signage, wall graphics, feature elements and wayfinding are resolved together rather than passed between separate suppliers.</p>
+        </details>
+        <details>
+          <summary>Do you work from our designer's concept or lead the design yourselves?</summary>
+          <p>Either. Some clients arrive with a finished design language and need production rigor. Others need us to shape the layout, finish palette and branded details from scratch. We can fit around the brief either way.</p>
+        </details>
+        <details>
+          <summary>How do you reduce headaches after handover?</summary>
+          <p>We run a structured pre-handover walk, log snags, file finish references and keep a record of what should change in the next phase. That means fewer small problems becoming your team's daily annoyance.</p>
+        </details>
+        <details>
+          <summary>Can you deliver phased projects or future branch rollouts?</summary>
+          <p>Yes. That's where our documentation habit matters most. Signage positions, finish codes, joinery details and what worked on site can all be carried into phase two or the next branch.</p>
+        </details>
+        <details>
+          <summary>What kinds of spaces are the best fit?</summary>
+          <p>Reception areas, offices, showrooms, hospitality spaces, branded customer environments and any interior where design, production and graphics need to speak the same language.</p>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band" id="cta">
+  <div class="container">
+    <span class="chip"><span class="chip-dot" style="background: var(--sky);"></span>Let's start the room properly</span>
+    <h2>Tell us the space, <span class="ital">the use, the pressure points</span>.</h2>
+    <p>We'll come back with a layout direction, finish thinking, branded touchpoint logic and an honest view on what the room should solve first. Calmly, and in practical language.</p>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;">
+      <a href="mailto:info@exhibitgraphicsign.com?subject=Fitout%20Brief" class="btn btn-primary">Start a fitout brief <span class="arrow">→</span></a>
+      <a href="#work" class="btn">See interior examples</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="color: var(--paper); margin-bottom: 20px;"><span class="mark"><em>Exhibit</em>Graphic&nbsp;Sign</span></div>
+        <p style="max-width: 40ch; font-size: 14px; opacity: 0.7; line-height: 1.5;">A Dubai production house for exhibitions, events, fitouts and retail branding. We build the moment — and we remember what worked.</p>
+      </div>
+      <div><h4>Audiences</h4><ul><li><a href="exhibitions.html">Exhibition Stands</a></li><li><a href="events.html">Events &amp; Activations</a></li><li><a href="fitouts.html">Interior Fitouts</a></li><li><a href="retail.html">Retail Branding</a></li></ul></div>
+      <div><h4>Services</h4><ul><li>Interior Fitouts</li><li>Reception &amp; Showroom Design</li><li>Wayfinding &amp; Signage</li><li>Feature Joinery</li><li>Brand Graphics</li></ul></div>
+      <div><h4>Contact</h4><ul><li>info@exhibitgraphicsign.com</li><li>+971 4 238 3278</li><li>Al Qusais, Dubai</li><li>Industrial Area 11, Sharjah</li></ul></div>
+    </div>
+    <div class="footer-big"><em>We remember</em> every project.</div>
+    <div class="footer-bottom">
+      <span>© 2026 Exhibit Graphic Sign · Est. 2010</span>
+      <span>File No. 004 / Fitouts</span>
+    </div>
+  </div>
+</footer>
+
+<script src="shared.js"></script>
+</body>
+</html>

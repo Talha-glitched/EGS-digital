@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 100">
+  <circle cx="45" cy="50" r="32" fill="none" stroke="#006B3F" stroke-width="3"/>
+  <text x="45" y="44" font-family="Arial, sans-serif" font-size="9" font-weight="bold" fill="#006B3F" text-anchor="middle">UNIVERSITY</text>
+  <text x="45" y="56" font-family="Arial, sans-serif" font-size="9" font-weight="bold" fill="#006B3F" text-anchor="middle">OF SHARJAH</text>
+  <text x="90" y="40" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#006B3F">University of</text>
+  <text x="90" y="60" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#006B3F">Sharjah</text>
+</svg>

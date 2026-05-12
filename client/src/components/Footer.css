@@ -1,0 +1,24 @@
+.footer-logo-link {
+  display: inline-block;
+  margin-top: -6rem;
+  margin-bottom: -4rem;
+  line-height: 0;
+  opacity: 1;
+}
+
+.footer .footer-logo-link:hover {
+  opacity: 0.92;
+}
+
+.footer-logo {
+  display: block;
+  height: 244px;
+  width: auto;
+}
+
+.footer-tagline {
+  max-width: 42ch;
+  font-size: 14px;
+  opacity: 0.72;
+  line-height: 1.55;
+}

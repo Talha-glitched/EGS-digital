@@ -1,0 +1,133 @@
+.egs-home-video-hero {
+  position: relative;
+  width: 100%;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.egs-home-video-media {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.egs-home-video-shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(18, 17, 16, 0.32), rgba(18, 17, 16, 0.66)),
+    radial-gradient(circle at 50% 44%, rgba(245, 241, 234, 0.08), rgba(18, 17, 16, 0.44) 62%);
+}
+
+.egs-home-video-copy {
+  width: min(980px, calc(100% - (var(--gutter) * 2)));
+  margin: 0 auto;
+  padding: clamp(86px, 12vw, 150px) 0;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+.egs-home-video-kicker {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 14px;
+  border: 1px solid rgba(245, 241, 234, 0.38);
+  background: rgba(18, 17, 16, 0.2);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(245, 241, 234, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.egs-home-video-heading {
+  margin-top: 24px;
+  max-width: 180ch;
+  font-family: var(--sans);
+  font-size: 4rem;
+  font-weight: 800;
+  line-height: 0.96;
+  letter-spacing: 0;
+  color: var(--paper);
+  text-wrap: balance;
+}
+
+.egs-home-video-services {
+  margin-top: 20px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-style: italic;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: var(--serif);
+  color: var(--paper);
+  font-size: clamp(18px, 2vw, 30px);
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  text-transform: none;
+  text-shadow: 0 2px 18px rgba(18, 17, 16, 0.75);
+}
+
+.egs-home-video-service-rotator {
+  position: relative;
+  display: inline-grid;
+  min-width: 30ch;
+  height: 1.25em;
+  overflow: hidden;
+  color: var(--paper);
+  font-weight: 400;
+  text-align: center;
+}
+
+.egs-home-video-service-rotator span {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateX(-28px);
+  filter: blur(6px);
+  animation: egs-serviceCycle 20s cubic-bezier(.2, .8, .2, 1) infinite;
+}
+
+.egs-home-video-service-a11y {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@keyframes egs-serviceCycle {
+  0% {
+    opacity: 0;
+    transform: translateX(-28px);
+    filter: blur(6px);
+  }
+  5%,
+  13% {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+  }
+  16.66%,
+  100% {
+    opacity: 0;
+    transform: translateX(28px);
+    filter: blur(6px);
+  }
+}
