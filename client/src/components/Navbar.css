@@ -133,42 +133,16 @@
   align-items: center;
   justify-content: center;
   justify-self: center;
-<<<<<<< HEAD
   height: 100%;
   max-height: 48px;
-=======
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
   min-width: 0;
   color: var(--ink);
 }
 
-<<<<<<< HEAD
 .egs-navbar-logo-image {
-    /* display: block; */
-    height: 11rem;
-    /* max-height: 100%; */
-    width: auto;
-    /* max-width: 100%; */
-    object-fit: contain;
-=======
-.egs-navbar-wordmark {
-  display: inline-flex;
-  align-items: baseline;
-  gap: .25em;
-  max-width: 100%;
-  font-family: var(--serif);
-  font-size: 40px;
-  font-weight: 600;
-  line-height: .95;
-  letter-spacing: 0;
-  white-space: nowrap;
-  font-style: italic;
-}
-
-.egs-navbar-wordmark em {
-  color: var(--terracotta);
-  font-style: italic;
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
+  height: 11rem;
+  width: auto;
+  object-fit: contain;
 }
 
 .egs-navbar-cta-button {

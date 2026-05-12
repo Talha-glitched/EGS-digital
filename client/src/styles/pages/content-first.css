@@ -631,7 +631,6 @@
 .home-page .section-band .container::before {
   background: rgba(245, 241, 234, 0.22);
 }
-<<<<<<< HEAD
 .red-egs{
   color: var(--terracotta);
 }
@@ -639,11 +638,6 @@
 .home-page .section-head h2 {
   color: var(--paper);
   font-weight: 600;
-=======
-
-.home-page .section-head h2 {
-  color: var(--paper);
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
 }
 
 .home-page .section-head p {
@@ -1030,14 +1024,11 @@
 .exhibitions-page .step:nth-child(5) { --reveal-delay: 280ms; }
 .exhibitions-page .step:nth-child(6) { --reveal-delay: 350ms; }
 
-<<<<<<< HEAD
 .content-page .hero-actions .btn:nth-child(2),
 .content-page .footer-grid > *:nth-child(2) {
   --reveal-delay: 70ms;
 }
 
-=======
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
 .minimal-service-page {
   background: var(--ink);
   color: var(--paper);
@@ -1074,7 +1065,6 @@
   color: rgba(245, 241, 234, 0.72);
 }
 
-<<<<<<< HEAD
 /* CTA band: smaller headline than other section heads */
 .minimal-service-page .minimal-cta-section .section-head h2 {
   font-size: clamp(22px, 2.75vw, 38px);
@@ -1120,8 +1110,6 @@
   min-height: 52px;
 }
 
-=======
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
 .minimal-service-page .cap-card,
 .minimal-service-page .faq-item,
 .minimal-service-page .step {
@@ -1403,13 +1391,10 @@
   --reveal-delay: 210ms;
 }
 
-<<<<<<< HEAD
 .minimal-service-page .cap-card:nth-child(5) {
   --reveal-delay: 280ms;
 }
 
-=======
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
 .minimal-service-page .step:nth-child(5) { --reveal-delay: 280ms; }
 .minimal-service-page .step:nth-child(6) { --reveal-delay: 350ms; }
 
@@ -1445,7 +1430,6 @@
   width: min(44vw, 620px);
 }
 
-<<<<<<< HEAD
 /* Graduation ceremonies: fourth image fills viewport like steps 2-3 (not letterboxed contain) */
 .events-minimal-page .egs-sticky-showcase-slide--last {
   background: #0a0908;
@@ -1474,8 +1458,6 @@
   grid-column: span 6;
 }
 
-=======
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
 .home-services-section {
   padding-bottom: 0;
 }
@@ -1701,7 +1683,6 @@
   font-size: 26px;
 }
 
-<<<<<<< HEAD
 /* Single-column accordion: left-aligned, borderless, smooth expand */
 .faq-grid--accordion {
   display: flex;
@@ -1860,8 +1841,6 @@
   }
 }
 
-=======
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
 .bullet-list {
   border-top: 1px solid var(--rule);
   display: grid;
@@ -2663,15 +2642,12 @@
     grid-template-columns: 1fr 1fr;
   }
 
-<<<<<<< HEAD
   .faq-grid--accordion {
     display: flex;
     flex-direction: column;
     grid-template-columns: none;
   }
 
-=======
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
   .service-card,
   .cap-card,
   .brief-card,
@@ -2681,14 +2657,11 @@
     grid-column: auto;
   }
 
-<<<<<<< HEAD
   .events-minimal-page .minimal-scope-section .capability-grid .cap-card:nth-child(4),
   .events-minimal-page .minimal-scope-section .capability-grid .cap-card:nth-child(5) {
     grid-column: auto;
   }
 
-=======
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
   .notebook-stepper {
     grid-template-columns: 1fr 1fr 1fr;
     border-top: none;
@@ -2987,13 +2960,9 @@
   .exhibitions-page .reveal,
   .exhibitions-page .reveal.in,
   .minimal-service-page .reveal,
-<<<<<<< HEAD
   .minimal-service-page .reveal.in,
   .content-page .reveal,
   .content-page .reveal.in {
-=======
-  .minimal-service-page .reveal.in {
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
     opacity: 1;
     transform: none;
   }

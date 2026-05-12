@@ -113,7 +113,6 @@
   transition: none;
 }
 
-<<<<<<< HEAD
 /* Long step titles: two-line slots, same height per step (scroll sync uses label height). */
 .egs-sticky-showcase--wrap-labels {
   --egs-sticky-label-h: clamp(6.75rem, 16vw, 10.5rem);
@@ -126,8 +125,6 @@
   hyphens: auto;
 }
 
-=======
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
 .egs-sticky-showcase-viewport {
   --sticky-steps: 4;
   position: relative;
@@ -173,7 +170,6 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-<<<<<<< HEAD
   object-position: center;
   filter: saturate(0.92) brightness(0.72) contrast(1.08);
 }
@@ -198,18 +194,13 @@
   pointer-events: none;
 }
 
-/* Last step: no “frame” — letterboxing shows the same ink + dot grid as the section */
+/* Last step: no "frame" — letterboxing shows the same ink + dot grid as the section */
 .egs-sticky-showcase-viewport.is-last-active {
   background: transparent;
   box-shadow: none;
   border-radius: 0;
 }
 
-=======
-  filter: saturate(0.92) brightness(0.72) contrast(1.08);
-}
-
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
 .egs-sticky-showcase-slide-overlay {
   position: absolute;
   inset: 0;

@@ -1,4 +1,4 @@
-git fetch originimport crypto from 'crypto';
+import crypto from 'crypto';
 
 const COOKIE_NAME = 'egs_admin_session';
 const SESSION_TTL_MS = 1000 * 60 * 60 * 8;

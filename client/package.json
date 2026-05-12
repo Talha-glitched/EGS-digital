@@ -12,12 +12,8 @@
     "ogl": "^1.0.11",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-<<<<<<< HEAD
     "react-router-dom": "^6.30.0",
     "xlsx": "^0.18.5"
-=======
-    "react-router-dom": "^6.30.0"
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.4.1",

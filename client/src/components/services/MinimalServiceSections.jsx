@@ -59,7 +59,6 @@ export function MinimalScopeSection({ title, copy, eyebrow, items }) {
           <p>{copy}</p>
         </div>
         <div className="capability-grid">
-<<<<<<< HEAD
           {items.map((entry) => {
             const [itemTitle, itemCopy] = entry;
             const itemEyebrow = entry.length > 2 ? entry[2] : eyebrow;
@@ -71,15 +70,6 @@ export function MinimalScopeSection({ title, copy, eyebrow, items }) {
               </article>
             );
           })}
-=======
-          {items.map(([itemTitle, itemCopy]) => (
-            <article className="cap-card" key={itemTitle}>
-              <small>{eyebrow}</small>
-              <h3>{itemTitle}</h3>
-              <p>{itemCopy}</p>
-            </article>
-          ))}
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
         </div>
       </div>
     </section>
@@ -108,11 +98,7 @@ export function MinimalProcessSection({ title, copy, steps }) {
   );
 }
 
-<<<<<<< HEAD
 export function MinimalFAQSection({ title, copy, faqs, accordion = false }) {
-=======
-export function MinimalFAQSection({ title, copy, faqs }) {
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
   return (
     <section className="section-band minimal-faq-section">
       <div className="container">
@@ -120,11 +106,7 @@ export function MinimalFAQSection({ title, copy, faqs }) {
           <h2>{title}</h2>
           <p>{copy}</p>
         </div>
-<<<<<<< HEAD
         <FAQSection faqs={faqs} accordion={accordion} />
-=======
-        <FAQSection faqs={faqs} />
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
       </div>
     </section>
   );

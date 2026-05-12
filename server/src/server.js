@@ -1,9 +1,5 @@
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-<<<<<<< HEAD
-=======
-import app from './app.js';
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
 
 dotenv.config();
 
@@ -25,7 +21,6 @@ async function connectToDatabase() {
 }
 
 async function startServer() {
-<<<<<<< HEAD
   const [{ default: app }, { initializeCampaignRuntime }] = await Promise.all([
     import('./app.js'),
     import('./services/campaignService.js'),
@@ -33,9 +28,6 @@ async function startServer() {
 
   await connectToDatabase();
   initializeCampaignRuntime();
-=======
-  await connectToDatabase();
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
 
   app.listen(port, () => {
     console.info(`API server listening on http://localhost:${port}`);
@@ -43,7 +35,3 @@ async function startServer() {
 }
 
 startServer();
-<<<<<<< HEAD
-=======
-
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53

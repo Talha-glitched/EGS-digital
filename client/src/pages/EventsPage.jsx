@@ -4,17 +4,12 @@ import { Navbar } from '../components/Navbar.jsx';
 import {
   MinimalCTASection,
   MinimalFAQSection,
-<<<<<<< HEAD
-=======
-  MinimalProcessSection,
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
   MinimalScopeSection,
   MinimalServiceHero,
 } from '../components/services/MinimalServiceSections.jsx';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 import { Footer } from './SiteChrome.jsx';
 import { images } from './siteData.js';
-<<<<<<< HEAD
 import graduationCeremonialStaging from '../assets/Graduation/SHJ1.jpg';
 import graduationVipGuestStudent from '../assets/Graduation/SHJ3.jpg';
 import graduationOnsiteOperations from '../assets/Graduation/operation.jpeg';
@@ -39,34 +34,10 @@ const eventsStickyShowcaseSteps = [
     label: 'On-site Event Operations',
     image: graduationOnsiteOperations,
     alt: 'On-site ceremony operations and stage readiness before doors open',
-=======
-
-const ceremonyProofSteps = [
-  {
-    label: '7 Grand ceremonies',
-    image: images.hctProfile,
-    alt: 'HCT graduation ceremony audience and stage production by EGS',
-  },
-  {
-    label: '4,500+ Graduates',
-    image: images.graduationProfile,
-    alt: 'Graduation ceremony stage and audience production environment',
-  },
-  {
-    label: '13,500+ Guests',
-    image: images.graduationWide,
-    alt: 'Large graduation ceremony venue and guest seating',
-  },
-  {
-    label: '10h Stage change',
-    image: images.graduationStage,
-    alt: 'Graduation stage adaptation completed before ceremony start',
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
   },
 ];
 
 const scopeItems = [
-<<<<<<< HEAD
   [
     'Design',
     'Ceremony renders and room plans that lock stage setup, seating arrangements, venue branding, LED screen backdrops, and audio-video support before fabrication commits.',
@@ -142,28 +113,6 @@ const faqs = [
     'What happens after the ceremony: strike and venue handback?',
     'Removal is part of scope: controlled pack-down, asset recovery, and handover so the venue returns to use on schedule without loose ends in the room.',
   ],
-=======
-  ['Stage environments', 'Stage, screen, branding, and public-facing ceremony surfaces.'],
-  ['Guest flow', 'Movement, arrival, sightlines, and room readiness.'],
-  ['Event branding', 'Backdrops, graphics, photo areas, and institutional details.'],
-  ['On-site changes', 'Physical adaptations before doors open.'],
-];
-
-const processSteps = [
-  ['Brief', 'Date, venue, audience.'],
-  ['Room', 'Access, stage, flow.'],
-  ['Scope', 'Branding and build needs.'],
-  ['Produce', 'Materials and crew.'],
-  ['Install', 'Site work and changes.'],
-  ['Doors', 'Ready before arrivals.'],
-];
-
-const faqs = [
-  ['What does EGS handle?', 'The physical ceremony environment: stage, branding, room readiness, adaptation, and handover.'],
-  ['What should we send?', 'Date, venue, audience size, ceremony type, stage needs, branding, and VIP considerations.'],
-  ['Can EGS handle urgent event changes?', 'Yes, when physically possible. HCT Fujairah is the 10-hour proof story.'],
-  ['Is this only for graduations?', 'Graduations are the strongest proof; the same discipline applies to launches and institutional events.'],
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
 ];
 
 const revealSelector = [
@@ -175,10 +124,6 @@ const revealSelector = [
   '.minimal-service-page .section-head h2',
   '.minimal-service-page .section-head p',
   '.minimal-service-page .cap-card',
-<<<<<<< HEAD
-=======
-  '.minimal-service-page .step',
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
   '.minimal-service-page .faq-item',
   '.minimal-service-page .section-band > .container > .btn',
   '.minimal-service-page .footer-grid > *',
@@ -206,7 +151,6 @@ export default function EventsPage() {
           secondaryCta={{ href: '/case-studies#hct-graduation-program', label: 'Read HCT proof' }}
         />
         <StickyProcessShowcase
-<<<<<<< HEAD
           steps={eventsStickyShowcaseSteps}
           showPortfolio={false}
           wrapLabels
@@ -217,42 +161,17 @@ export default function EventsPage() {
           copy="Graduation ceremonies need the whole chain under one roof, from design through strike, with student registration support, stage setup, seating arrangements, venue branding, LED screen backdrops, lighting and sound system setup, and audio-video support ready before families and leadership walk in."
           items={scopeItems}
         />
-=======
-          steps={ceremonyProofSteps}
-          showPortfolio={false}
-          ariaLabel="Graduation ceremony proof at scale"
-        />
-        <MinimalScopeSection
-          title="What EGS handles."
-          copy="The physical environment behind the public moment."
-          eyebrow="Ceremony scope"
-          items={scopeItems}
-        />
-        <MinimalProcessSection
-          title="Work backwards from doors."
-          copy="The room has to be ready before people arrive."
-          steps={processSteps}
-        />
-        <MinimalFAQSection
-          title="Questions ceremony teams ask first."
-          copy="Short answers before the brief moves."
-          faqs={faqs}
-        />
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
         <MinimalCTASection
           title="Send the date, venue, and what has to be ready."
           copy="EGS will read the room, the deadline, and what needs to move first."
           cta={{ href: '/contact', label: 'Brief us on your ceremony' }}
         />
-<<<<<<< HEAD
-         <MinimalFAQSection
+        <MinimalFAQSection
           title="Questions ceremony teams ask first."
           copy="Grounded answers for university and institutional leads: dignity, timing, VIPs, AV, guest flow, and repeat seasons."
           faqs={faqs}
           accordion
         />
-=======
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
         <Footer />
       </div>
     </>

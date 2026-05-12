@@ -10,19 +10,11 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-<<<<<<< HEAD
     "imapflow": "^1.0.180",
     "mongoose": "^8.11.0",
     "nodemailer": "^6.10.0"
-=======
-    "mongoose": "^8.11.0"
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
   }
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
