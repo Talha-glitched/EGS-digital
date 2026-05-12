@@ -3,7 +3,11 @@ export default function HomeServicesSection({ services }) {
     <section className="section-band alt home-services-section">
       <div className="container">
         <div className="section-head">
+<<<<<<< HEAD
           <h2 className="home-intro-title">We are <span className="red-egs">EGS</span> Shaping high stakes physical brand moments for 15+ years</h2>
+=======
+          <h2 className="home-intro-title">We are EGS Shaping high stakes physical brand moments for 15+ years</h2>
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
           <p>Every deadline has moving parts. EGS keeps them moving.
 EGS is a Dubai production house for high-stakes physical brand moments across the UAE. When the requirement changes late and the date cannot move, we keep the work moving until it is ready and correct. Instead of images can we show the cards like this</p>
         </div>

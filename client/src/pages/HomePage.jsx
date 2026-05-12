@@ -72,8 +72,15 @@ export default function HomePage() {
 
         <HomeHero />
 
+<<<<<<< HEAD
         <StickyProcessShowcase afterScroll={<HomeServicesSection services={services} />} />
 
+=======
+        <StickyProcessShowcase />
+         
+
+        <HomeServicesSection services={services} />
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
         <ClientMarquee />
          {/* <section className="section-band alt home-circular-gallery-section">
           <div className="container">

@@ -1,30 +1,49 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { images } from '../pages/siteData.js';
+<<<<<<< HEAD
 import drawingImage from '../assets/Exhibition Stands/drawing.png';
 import drawingTwoImage from '../assets/Exhibition Stands/drawing2.png';
 import hp1Image from '../assets/Exhibition Stands/hp1.jpeg';
 import hp2Image from '../assets/Exhibition Stands/hp2.jpeg';
+=======
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
 import './StickyProcessShowcase.css';
 
 const DEFAULT_STEPS = [
   {
     label: 'Brief',
+<<<<<<< HEAD
     image: drawingTwoImage,
+=======
+    image: images.graduationProfile,
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
     alt: 'Event planning and briefing for physical brand work',
   },
   {
     label: 'Design',
+<<<<<<< HEAD
     image: drawingImage,
+=======
+    image: images.philips,
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
     alt: 'Exhibition stand design and visual development',
   },
   {
     label: 'Produce',
+<<<<<<< HEAD
     image: hp1Image,
+=======
+    image: images.fitout,
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
     alt: 'Fabrication, joinery, and production in Dubai and Sharjah',
   },
   {
     label: 'Handover',
+<<<<<<< HEAD
     image: hp2Image,
+=======
+    image: images.hct,
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
     alt: 'Graduation ceremony and live event delivery',
   },
 ];
@@ -35,6 +54,7 @@ const DEFAULT_PORTFOLIO = [
     tag: 'Graduations',
     title: 'HCT Graduation Program',
     copy: '4,500 graduates and 13,500 guests across the UAE in 2025.',
+<<<<<<< HEAD
     image: images.hctGraduationCard,
   },
   {
@@ -43,6 +63,16 @@ const DEFAULT_PORTFOLIO = [
     title: 'Philips / Global Health Riyadh',
     copy: 'Healthcare stand adapted in 10-12 hours for an ultrasound display.',
     image: images.philips,
+=======
+    image: images.hct,
+  },
+  {
+    href: '/case-studies#sadia-carrefour-rollout',
+    tag: 'Retail rollout',
+    title: 'Sadia / Carrefour UAE',
+    copy: 'Carrefour hypermarket locations completed between midnight and before 6am.',
+    image: images.retail,
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
   },
 ];
 
@@ -54,9 +84,12 @@ export default function StickyProcessShowcase({
   portfolioCta = { label: 'View all case studies', href: '/case-studies' },
   showPortfolio = true,
   ariaLabel = 'How EGS moves from brief to handover',
+<<<<<<< HEAD
   afterScroll = null,
   /** Taller label slots + wrapping; use on pages with long headline-style step labels (e.g. Events). */
   wrapLabels = false,
+=======
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
 }) {
   const wrapperRef = useRef(null);
   const labelWrapRef = useRef(null);
@@ -188,12 +221,17 @@ export default function StickyProcessShowcase({
 
   const scrollHeightVh = stepCount * 125;
 
+<<<<<<< HEAD
   const isLastStepActive = activeStep === stepCount - 1;
 
   return (
     <div
       className={`egs-sticky-showcase egs-sticky-showcase--scrub${isLastStepActive ? ' egs-sticky-showcase--last-step-active' : ''}${wrapLabels ? ' egs-sticky-showcase--wrap-labels' : ''}`}
     >
+=======
+  return (
+    <div className="egs-sticky-showcase egs-sticky-showcase--scrub">
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
       <div
         ref={wrapperRef}
         className="egs-sticky-showcase-scroll"
@@ -223,6 +261,7 @@ export default function StickyProcessShowcase({
 
             <div
               ref={viewportRef}
+<<<<<<< HEAD
               className={`egs-sticky-showcase-viewport${isLastStepActive ? ' is-last-active' : ''}`}
               style={{ '--sticky-steps': stepCount }}
             >
@@ -232,6 +271,14 @@ export default function StickyProcessShowcase({
                     key={step.label}
                     className={`egs-sticky-showcase-slide${idx === 0 ? ' egs-sticky-showcase-slide--first' : ''}${idx === stepCount - 1 ? ' egs-sticky-showcase-slide--last' : ''}`}
                   >
+=======
+              className="egs-sticky-showcase-viewport"
+              style={{ '--sticky-steps': stepCount }}
+            >
+              <div ref={imageStackRef} className="egs-sticky-showcase-stack">
+                {steps.map((step) => (
+                  <div key={step.label} className="egs-sticky-showcase-slide">
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
                     <img src={step.image} alt={step.alt} loading="lazy" />
                     <div className="egs-sticky-showcase-slide-overlay" aria-hidden="true" />
                   </div>
@@ -242,8 +289,11 @@ export default function StickyProcessShowcase({
         </div>
       </div>
 
+<<<<<<< HEAD
       {afterScroll}
 
+=======
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
       {showPortfolio ? <section className="egs-sticky-showcase-portfolio" aria-labelledby="egs-sticky-portfolio-heading">
         <div className="egs-sticky-showcase-portfolio-inner">
           <div className="egs-sticky-showcase-portfolio-head">

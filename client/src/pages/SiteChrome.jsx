@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { useId, useLayoutEffect, useRef, useState } from 'react';
+=======
+import { useLayoutEffect, useRef, useState } from 'react';
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
 import { gsap } from 'gsap';
 import { clientLogos } from './siteData.js';
 
@@ -239,7 +243,62 @@ function CardNav({
   );
 }
 
+<<<<<<< HEAD
 export { Footer } from '../components/Footer.jsx';
+=======
+export function Footer() {
+  return (
+    <footer className="footer">
+      <div className="container">
+        <div className="footer-grid">
+          <div>
+            <img
+              src="https://exhibitgraphicsign.com/wp-content/uploads/2024/02/EGS-Logo-300x126.png"
+              alt="EGS"
+              style={{ height: '44px', filter: 'brightness(0) invert(1)', marginBottom: '20px' }}
+            />
+            <p style={{ maxWidth: '42ch', fontSize: '14px', opacity: '0.72', lineHeight: '1.55' }}>
+              A Dubai production house for exhibition stands, ceremonies, retail branding, signage, and branded interiors.
+            </p>
+          </div>
+          <div>
+            <h4>Pages</h4>
+            <ul>
+              <li><a href="/exhibitions">Exhibitions</a></li>
+              <li><a href="/events">Events</a></li>
+              <li><a href="/retail">Retail</a></li>
+              <li><a href="/fitouts">Fitouts</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Proof</h4>
+            <ul>
+              <li><a href="/case-studies#hct-graduation-program">HCT program</a></li>
+              <li><a href="/case-studies#sadia-carrefour-rollout">Sadia rollout</a></li>
+              <li><a href="/case-studies#philips-global-health-riyadh">Philips Riyadh</a></li>
+              <li><a href="/case-studies#kazakhstan-pavilion-gulfood">Kazakhstan Pavilion</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Contact</h4>
+            <ul>
+              <li><a href="mailto:info@exhibitgraphicsign.com">info@exhibitgraphicsign.com</a></li>
+              <li>+971 4 238 3278</li>
+              <li>+971 52 458 7992</li>
+              <li>Al Qusais, Dubai</li>
+            </ul>
+          </div>
+        </div>
+        <div className="footer-big"><em>Built for</em> fixed deadlines.</div>
+        <div className="footer-bottom">
+          <span>© 2026 Exhibit Graphic Sign - Est. 2010</span>
+          <span>Dubai / UAE production house</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
 
 export function ClientMarquee() {
   return (
@@ -304,6 +363,7 @@ export function InfoGrid({ items, eyebrow = 'Details' }) {
   );
 }
 
+<<<<<<< HEAD
 function FAQAccordion({ faqs }) {
   const [openQuestion, setOpenQuestion] = useState(null);
   const baseId = useId();
@@ -353,6 +413,9 @@ export function FAQSection({ faqs, accordion = false }) {
     return <FAQAccordion faqs={faqs} />;
   }
 
+=======
+export function FAQSection({ faqs }) {
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
   return (
     <div className="faq-grid">
       {faqs.map(([question, answer]) => (

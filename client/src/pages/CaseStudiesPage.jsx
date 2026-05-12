@@ -91,6 +91,7 @@ const caseFaqs = [
   ['Can these proof cards link from the homepage?', 'Yes. The homepage proof cards link directly to the matching anchors on this page.'],
 ];
 
+<<<<<<< HEAD
 const caseStudiesRevealSelector = [
   '.content-page .chip',
   '.content-page .hero-copy h1',
@@ -109,6 +110,10 @@ export default function CaseStudiesPage() {
   usePageLifecycle('EGS Case Studies | Exhibition, Graduation, Retail And Event Proof UAE', {
     revealSelector: caseStudiesRevealSelector,
   });
+=======
+export default function CaseStudiesPage() {
+  usePageLifecycle('EGS Case Studies | Exhibition, Graduation, Retail And Event Proof UAE');
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
 
   return (
     <>

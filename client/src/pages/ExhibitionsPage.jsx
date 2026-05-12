@@ -9,6 +9,7 @@ import ExhibitionsProcessSection from '../components/exhibitions/ExhibitionsProc
 import ExhibitionsScopeSection from '../components/exhibitions/ExhibitionsScopeSection.jsx';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 import { Footer } from './SiteChrome.jsx';
+<<<<<<< HEAD
 import ausCaaStand from '../assets/Exhibition Stands/AUS-CAA.jpeg';
 import hctStand from '../assets/Exhibition Stands/HCT1.jpeg';
 import healthtechStand from '../assets/Exhibition Stands/healthtech.jpg';
@@ -34,6 +35,30 @@ const exhibitionsShowcaseSteps = [
     label: 'AUS-CAAD Exhibition',
     image: ausCaaStand,
     alt: 'AUS and CAA exhibition stand with branded meeting counters',
+=======
+import { images } from './siteData.js';
+
+const exhibitionsShowcaseSteps = [
+  {
+    label: '200 sqm healthcare stand',
+    image: images.philips,
+    alt: 'Philips exhibition stand built for Global Health Riyadh',
+  },
+  {
+    label: '10-12h stand adaptation',
+    image: images.philipsArab,
+    alt: 'Healthcare exhibition stand adapted under deadline pressure',
+  },
+  {
+    label: '168 sqm pavilion',
+    image: images.activation,
+    alt: 'Large pavilion and exhibition environment by EGS',
+  },
+  {
+    label: '5-6 product chillers',
+    image: images.retail,
+    alt: 'Branded product display chillers added before exhibition opening',
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
   },
 ];
 

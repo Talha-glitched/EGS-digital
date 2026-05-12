@@ -20,6 +20,7 @@ const contactFaqs = [
   ['Will EGS tell me if the deadline is not realistic?', 'Yes. EGS checks feasibility first: deadline, access, material availability, scope, and what needs to move before production starts.'],
 ];
 
+<<<<<<< HEAD
 const contactRevealSelector = [
   '.content-page .chip',
   '.content-page .hero-copy h1',
@@ -39,6 +40,10 @@ export default function ContactPage() {
   usePageLifecycle('Contact EGS Dubai | Brief Exhibition Stands, Events, Retail Rollouts', {
     revealSelector: contactRevealSelector,
   });
+=======
+export default function ContactPage() {
+  usePageLifecycle('Contact EGS Dubai | Brief Exhibition Stands, Events, Retail Rollouts');
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
 
   return (
     <>

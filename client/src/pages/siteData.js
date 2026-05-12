@@ -14,7 +14,10 @@ import logoSchindler from '../assets/client_logos/schindler.png';
 import logoSerco from '../assets/client_logos/serco.svg';
 import logoShababAlAhliDubaiClub from '../assets/client_logos/shabab_al_ahli_dubai_club.svg';
 import logoUniversityOfSharjah from '../assets/client_logos/univeristy_of_sharjah.png';
+<<<<<<< HEAD
 import hctGraduationCard from '../assets/Graduation/ADGRAD1.jpg';
+=======
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
 
 export const clientLogos = [
   { name: 'Philips', logo: logoPhilips },
@@ -42,7 +45,10 @@ export const images = {
   graduationProfile: '/assets/egs-profile/event-management-01.jpg',
   graduationWide: '/assets/egs-profile/event-management-03.jpg',
   graduationStage: '/assets/egs-profile/event-management-04.jpg',
+<<<<<<< HEAD
   hctGraduationCard,
+=======
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
   eventProfile: '/assets/egs-profile/event-management-02.jpg',
   hct: 'https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg',
   philips: 'https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Pairs.jpg',
@@ -103,6 +109,16 @@ export const proofCards = [
     copy: 'A 5-6 metre stage extension requested before ceremony at Zayed Sports Complex.',
   },
   {
+<<<<<<< HEAD
+=======
+    href: '/case-studies#sadia-carrefour-rollout',
+    tag: 'Retail rollout',
+    title: 'Sadia / Carrefour UAE',
+    stat: '33 locations',
+    copy: 'Carrefour hypermarket locations completed between midnight and before 6am.',
+  },
+  {
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
     href: '/case-studies#philips-global-health-riyadh',
     tag: 'Exhibitions',
     title: 'Philips / Global Health Riyadh',

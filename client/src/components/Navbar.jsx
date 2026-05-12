@@ -1,7 +1,10 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import './Navbar.css';
+<<<<<<< HEAD
 import egsLogo from '../assets/logo/EGS-Logo.png';
+=======
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
 
 const defaultItems = [
   {
@@ -199,7 +202,14 @@ function CardNav({
             aria-label="Exhibit Graphic Sign home"
             aria-current={active === 'home' ? 'page' : undefined}
           >
+<<<<<<< HEAD
             <img src={egsLogo} alt="Exhibit Graphic Sign" className="egs-navbar-logo-image" />
+=======
+            <span className="egs-navbar-wordmark">
+              <span>Exhibit Graphic</span>
+              <em>Sign</em>
+            </span>
+>>>>>>> 67f76e82f1c21460e724886377eab7e0a3251f53
           </a>
 
           <a
