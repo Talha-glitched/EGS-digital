@@ -1,3 +1,4 @@
+import { useCallback, useState } from 'react';
 import { FAQSection } from '../../pages/SiteChrome.jsx';
 
 export function MinimalServiceHero({
@@ -8,10 +9,35 @@ export function MinimalServiceHero({
   subline,
   primaryCta,
   secondaryCta,
+  backgroundVideo,
 }) {
+  const [videoReady, setVideoReady] = useState(false);
+  const onVideoCanPlay = useCallback(() => {
+    setVideoReady(true);
+  }, []);
+
   return (
     <section className="minimal-service-hero" aria-label={title}>
-      <img className="minimal-service-hero-media" src={image} alt={imageAlt} />
+      {backgroundVideo ? (
+        <div
+          className={`minimal-service-hero-media-stack${videoReady ? ' is-video-ready' : ''}`}
+        >
+          <img className="minimal-service-hero-media" src={image} alt={imageAlt} />
+          <video
+            className="minimal-service-hero-video"
+            src={backgroundVideo}
+            muted
+            playsInline
+            loop
+            autoPlay
+            preload="auto"
+            aria-hidden="true"
+            onCanPlay={onVideoCanPlay}
+          />
+        </div>
+      ) : (
+        <img className="minimal-service-hero-media" src={image} alt={imageAlt} />
+      )}
       <div className="minimal-service-hero-shade" aria-hidden="true" />
       <div className="minimal-service-hero-copy">
         <span className="minimal-service-kicker">{kicker}</span>

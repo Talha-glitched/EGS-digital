@@ -13,6 +13,7 @@ import { images } from './siteData.js';
 import graduationCeremonialStaging from '../assets/Graduation/SHJ1.jpg';
 import graduationVipGuestStudent from '../assets/Graduation/SHJ3.jpg';
 import graduationOnsiteOperations from '../assets/Graduation/operation.jpeg';
+import rakEditedVideo from '../assets/Rak-Edited.mp4';
 
 const eventsStickyShowcaseSteps = [
   {
@@ -143,6 +144,7 @@ export default function EventsPage() {
         <Navbar active="events" cta="Brief us on your ceremony" overlay />
         <MinimalServiceHero
           image={images.hctProfile}
+          backgroundVideo={rakEditedVideo}
           imageAlt="HCT graduation ceremony audience and stage production"
           kicker="Graduation ceremony setup UAE"
           title="Ceremonies built for showtime."

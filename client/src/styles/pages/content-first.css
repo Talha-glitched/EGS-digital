@@ -1193,6 +1193,38 @@
   animation: imageDrift 16s ease-in-out infinite alternate;
 }
 
+.minimal-service-hero-media-stack {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+}
+
+.minimal-service-hero-media-stack > .minimal-service-hero-media {
+  z-index: 0;
+}
+
+.minimal-service-hero-media-stack.is-video-ready > .minimal-service-hero-media {
+  animation: none;
+}
+
+.minimal-service-hero-video {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.78) brightness(0.7);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.75s ease;
+}
+
+.minimal-service-hero-media-stack.is-video-ready .minimal-service-hero-video {
+  opacity: 1;
+}
+
 .minimal-service-hero-shade {
   position: absolute;
   inset: 0;
