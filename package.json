@@ -8,8 +8,5 @@
     "dev": "npm run dev --workspace client",
     "build": "npm run build --workspace client",
     "start": "npm run preview --workspace client"
-  },
-  "dependencies": {
-    "gsap": "^3.15.0"
   }
 }
