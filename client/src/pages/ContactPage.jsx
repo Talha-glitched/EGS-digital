@@ -1,7 +1,32 @@
 import pageStyles from '../styles/pages/content-first.css?raw';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
+import InquiryBriefCard from '../components/inquiry/InquiryBriefCard.jsx';
+import InquiryCtaButton from '../components/inquiry/InquiryCtaButton.jsx';
 import { FAQSection, Footer, SiteNav, Stepper } from './SiteChrome.jsx';
 import { images } from './siteData.js';
+
+const briefPaths = [
+  {
+    title: 'Email about a stand',
+    copy: 'Send show name, stand size, location, deadline, and product/display needs.',
+    type: 'exhibitions',
+  },
+  {
+    title: 'Email about a ceremony',
+    copy: 'Send event date, venue, guest/graduation scale, stage needs, and what must be ready.',
+    type: 'events',
+  },
+  {
+    title: 'Email about a rollout',
+    copy: 'Send number of locations, access windows, launch date, asset types, and installation scope.',
+    type: 'retail',
+  },
+  {
+    title: 'Email about a fitout',
+    copy: 'Send space type, location, handover target, brand/signage needs, and photos or drawings.',
+    type: 'fitouts',
+  },
+];
 
 const nextSteps = [
   ['Review', 'EGS reviews the brief, date, location, and physical scope.'],
@@ -59,7 +84,7 @@ export default function ContactPage() {
                   <p className="lede">The fastest way to start is to tell us the service, venue or location, deadline, and what has changed or needs to be ready. If the job is urgent, say that first.</p>
                 </div>
                 <div className="hero-actions">
-                  <a href="mailto:info@exhibitgraphicsign.com" className="btn btn-primary">Email EGS <span className="arrow">→</span></a>
+                  <InquiryCtaButton inquiryType="general" className="btn btn-primary" />
                   <a href="tel:+971524587992" className="btn btn-ghost">Call / WhatsApp EGS</a>
                 </div>
               </div>
@@ -99,21 +124,12 @@ export default function ContactPage() {
         <section className="section-band alt">
           <div className="container">
             <div className="section-head">
-              <h2>Choose your brief.</h2>
-              <p>Pick the closest starting point. A perfect brief is not required; the deadline and location matter first.</p>
+              <h2>Choose your starting point.</h2>
+              <p>Pick the closest match. You do not need a full brief — deadline and location are enough to start.</p>
             </div>
             <div className="brief-grid">
-              {[
-                ['Brief us on a stand', 'Send show name, stand size, location, deadline, and product/display needs.'],
-                ['Brief us on a ceremony', 'Send event date, venue, guest/graduation scale, stage needs, and what must be ready.'],
-                ['Send a retail rollout list', 'Send number of locations, access windows, launch date, asset types, and installation scope.'],
-                ['Start a fitout brief', 'Send space type, location, handover target, brand/signage needs, and photos or drawings.'],
-              ].map(([title, copy]) => (
-                <article className="brief-card" key={title}>
-                  <small>Brief path</small>
-                  <h3>{title}</h3>
-                  <p>{copy}</p>
-                </article>
+              {briefPaths.map(({ title, copy, type }) => (
+                <InquiryBriefCard key={type} inquiryType={type} title={title} copy={copy} />
               ))}
             </div>
           </div>
@@ -190,7 +206,7 @@ export default function ContactPage() {
               <h2>Start with the constraint.</h2>
               <p>Tell EGS what has to be ready, where, and by when. The team will work from there.</p>
             </div>
-            <a href="mailto:info@exhibitgraphicsign.com" className="btn btn-primary">Send us your brief <span className="arrow">→</span></a>
+            <InquiryCtaButton inquiryType="general" className="btn btn-primary" />
           </div>
         </section>
 

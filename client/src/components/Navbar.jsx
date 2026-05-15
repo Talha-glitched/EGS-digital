@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import './Navbar.css';
 import egsLogo from '../assets/logo/EGS-Logo.png';
+import { useInquiryModal } from '../context/InquiryModalContext.jsx';
 
 const defaultItems = [
   {
@@ -27,12 +28,12 @@ const defaultItems = [
     ],
   },
   {
-    label: 'Brief',
+    label: 'Contact',
     bgColor: 'var(--ink-blue)',
     textColor: 'var(--paper)',
     links: [
-      { label: 'Send a Brief', href: '/contact', ariaLabel: 'Open contact page' },
-      { label: 'Email EGS', href: 'mailto:info@exhibitgraphicsign.com', ariaLabel: 'Email EGS' },
+      { label: 'Contact page', href: '/contact', ariaLabel: 'Open contact page' },
+      { label: 'Email EGS', inquiryType: 'general', ariaLabel: 'Email EGS' },
       { label: 'Call / WhatsApp', href: 'tel:+971524587992', ariaLabel: 'Call or WhatsApp EGS' },
       { label: 'Home', href: '/', ariaLabel: 'Open home page' },
     ],
@@ -42,7 +43,8 @@ const defaultItems = [
 function CardNav({
   active = 'home',
   items,
-  cta = 'Send a brief',
+  cta = 'Email EGS',
+  ctaInquiryType = 'general',
   ease = 'power3.out',
   baseColor = 'var(--paper)',
   menuColor = 'var(--ink)',
@@ -51,6 +53,7 @@ function CardNav({
   /** Full-bleed hero: fixed on top, transparent until user scrolls */
   overlay = false,
 }) {
+  const { openInquiry } = useInquiryModal();
   const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const overlaySolid = false;
@@ -202,13 +205,14 @@ function CardNav({
             <img src={egsLogo} alt="Exhibit Graphic Sign" className="egs-navbar-logo-image" />
           </a>
 
-          <a
-            href="/contact"
+          <button
+            type="button"
             className="egs-navbar-cta-button"
             style={ctaSurfaceStyle}
+            onClick={() => openInquiry(ctaInquiryType)}
           >
             {cta} <span>→</span>
-          </a>
+          </button>
         </div>
 
         <div className={`egs-navbar-content ${isExpanded ? 'visible' : ''}`} aria-hidden={!isExpanded}>
@@ -228,21 +232,43 @@ function CardNav({
             >
               <div className="egs-nav-card-label">{item.label}</div>
               <div className="egs-nav-card-links">
-                {item.links?.map((link) => (
-                  <a
-                    className="egs-nav-card-link"
-                    href={link.href}
-                    aria-label={link.ariaLabel}
-                    key={link.label}
-                    onClick={() => {
-                      setIsHamburgerOpen(false);
-                      setIsExpanded(false);
-                    }}
-                  >
-                    <span>↗</span>
-                    {link.label}
-                  </a>
-                ))}
+                {item.links?.map((link) => {
+                  const closeMenu = () => {
+                    setIsHamburgerOpen(false);
+                    setIsExpanded(false);
+                  };
+
+                  if (link.inquiryType) {
+                    return (
+                      <button
+                        type="button"
+                        className="egs-nav-card-link"
+                        aria-label={link.ariaLabel}
+                        key={link.label}
+                        onClick={() => {
+                          openInquiry(link.inquiryType);
+                          closeMenu();
+                        }}
+                      >
+                        <span>↗</span>
+                        {link.label}
+                      </button>
+                    );
+                  }
+
+                  return (
+                    <a
+                      className="egs-nav-card-link"
+                      href={link.href}
+                      aria-label={link.ariaLabel}
+                      key={link.label}
+                      onClick={closeMenu}
+                    >
+                      <span>↗</span>
+                      {link.label}
+                    </a>
+                  );
+                })}
               </div>
             </article>
           ))}

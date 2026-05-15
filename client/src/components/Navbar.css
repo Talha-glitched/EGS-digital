@@ -246,6 +246,13 @@
   line-height: 1.25;
   opacity: .86;
   transition: opacity .2s ease, transform .2s ease;
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
 }
 
 .egs-nav-card-link:hover {

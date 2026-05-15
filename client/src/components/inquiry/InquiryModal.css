@@ -1,0 +1,178 @@
+.inquiry-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: clamp(16px, 3vw, 32px);
+  background: rgba(18, 17, 16, 0.62);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.inquiry-modal {
+  width: min(720px, 100%);
+  max-height: min(92vh, 900px);
+  overflow: auto;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  box-shadow: 0 24px 80px rgba(18, 17, 16, 0.28);
+}
+
+.inquiry-modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  padding: clamp(24px, 4vw, 32px) clamp(24px, 4vw, 32px) 0;
+}
+
+.inquiry-modal-kicker {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.inquiry-modal-head h2 {
+  margin-top: 10px;
+  font-family: var(--serif);
+  font-size: clamp(28px, 4vw, 40px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.inquiry-modal-lede {
+  margin-top: 12px;
+  max-width: 48ch;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.inquiry-modal-aside {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  background: var(--paper-2);
+  max-width: 48ch;
+}
+
+.inquiry-modal-reassure {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-style: italic;
+  color: var(--ink);
+}
+
+.inquiry-modal-email {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.inquiry-modal-email a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.inquiry-modal-email a:hover {
+  color: var(--terracotta);
+}
+
+.inquiry-modal-close {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--rule);
+  font-size: 24px;
+  line-height: 1;
+  color: var(--ink-soft);
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.inquiry-modal-close:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.inquiry-form {
+  padding: 20px clamp(24px, 4vw, 32px) clamp(24px, 4vw, 32px);
+}
+
+.inquiry-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.inquiry-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.inquiry-field-wide {
+  grid-column: 1 / -1;
+}
+
+.inquiry-field label {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+.inquiry-required {
+  color: var(--terracotta);
+  margin-left: 4px;
+}
+
+.inquiry-field input,
+.inquiry-field select,
+.inquiry-field textarea {
+  width: 100%;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  padding: 11px 12px;
+  font: inherit;
+  color: var(--ink);
+  transition: border-color 0.2s;
+}
+
+.inquiry-field input:focus,
+.inquiry-field select:focus,
+.inquiry-field textarea:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+
+.inquiry-field textarea {
+  resize: vertical;
+  min-height: 96px;
+}
+
+.inquiry-form-error {
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--terracotta);
+}
+
+.inquiry-modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+}
+
+@media (max-width: 640px) {
+  .inquiry-form-grid {
+    grid-template-columns: 1fr;
+  }
+}

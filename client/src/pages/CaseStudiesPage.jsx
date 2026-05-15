@@ -2,6 +2,7 @@ import pageStyles from '../styles/pages/content-first.css?raw';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 import { FAQSection, Footer, ProofCard, SiteNav } from './SiteChrome.jsx';
 import { images, proofCards } from './siteData.js';
+import InquiryCtaButton from '../components/inquiry/InquiryCtaButton.jsx';
 
 const cases = [
   {
@@ -129,7 +130,7 @@ export default function CaseStudiesPage() {
                   <p className="lede">These are the moments that explain how EGS works: multi-campus ceremonies, overnight retail rollouts, urgent stand adaptations, pavilion changes, and public-facing mall activation work.</p>
                 </div>
                 <div className="hero-actions">
-                  <a href="/contact" className="btn btn-primary">Send us your brief <span className="arrow">→</span></a>
+                  <InquiryCtaButton inquiryType="general" className="btn btn-primary" />
                   <a href="#hct-graduation-program" className="btn btn-ghost">Start with HCT</a>
                 </div>
               </div>
@@ -210,7 +211,7 @@ export default function CaseStudiesPage() {
               <h2>Which pressure looks closest to yours?</h2>
               <p>Send the service, date, location, and what needs to happen. EGS will give you a clear read on what can be done.</p>
             </div>
-            <a href="/contact" className="btn btn-ghost">Send us your brief <span className="arrow">→</span></a>
+            <InquiryCtaButton inquiryType="general" className="btn btn-ghost" />
           </div>
         </section>
 

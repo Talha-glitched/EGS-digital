@@ -13,6 +13,9 @@ import ausCaaStand from '../assets/Exhibition Stands/AUS-CAA.jpeg';
 import hctStand from '../assets/Exhibition Stands/HCT1.jpeg';
 import healthtechStand from '../assets/Exhibition Stands/healthtech.jpg';
 import kazakhstanPavilion from '../assets/Exhibition Stands/Kazakhstan_Pavillion.jpeg';
+import { getProjectCta } from '../utils/contactInquiry.js';
+
+const exhibitionsCta = getProjectCta('exhibitions');
 
 const exhibitionsShowcaseSteps = [
   {
@@ -66,7 +69,7 @@ export default function ExhibitionsPage() {
     <>
       <style>{pageStyles}</style>
       <div className="content-page exhibitions-page" style={{ '--accent': 'var(--ochre)' }}>
-        <Navbar active="exhibitions" cta="Brief us on your stand" overlay />
+        <Navbar active="exhibitions" cta={exhibitionsCta.label} ctaInquiryType={exhibitionsCta.inquiryType} overlay />
         <ExhibitionsHeroSection />
         <StickyProcessShowcase
           steps={exhibitionsShowcaseSteps}

@@ -11,6 +11,9 @@ import {
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 import { Footer } from './SiteChrome.jsx';
 import { images } from './siteData.js';
+import { getProjectCta } from '../utils/contactInquiry.js';
+
+const fitoutsCta = getProjectCta('fitouts');
 
 const fitoutShowcaseSteps = [
   {
@@ -84,14 +87,14 @@ export default function FitoutsPage() {
     <>
       <style>{pageStyles}</style>
       <div className="content-page minimal-service-page fitouts-minimal-page" style={{ '--accent': 'var(--olive)' }}>
-        <Navbar active="fitouts" cta="Start a fitout brief" overlay />
+        <Navbar active="fitouts" cta={fitoutsCta.label} ctaInquiryType={fitoutsCta.inquiryType} overlay />
         <MinimalServiceHero
           image={images.fitout}
           imageAlt="Fakhruddin Properties branded showroom"
           kicker="Interior fitout branding Dubai"
           title="Spaces built beyond the handover photo."
           subline="Brand. Signage. Joinery. Ready for daily use."
-          primaryCta={{ href: '/contact', label: 'Start a fitout brief' }}
+          primaryCta={fitoutsCta}
           secondaryCta={{ href: '/case-studies', label: 'See relevant work' }}
         />
         <StickyProcessShowcase
@@ -118,7 +121,7 @@ export default function FitoutsPage() {
         <MinimalCTASection
           title="Send the room, deadline, and what has to work."
           copy="EGS will look at brand, signage, joinery, and handover together."
-          cta={{ href: '/contact', label: 'Start a fitout brief' }}
+          cta={fitoutsCta}
         />
         <Footer />
       </div>

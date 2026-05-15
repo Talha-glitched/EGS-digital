@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import InquiryCtaButton from '../inquiry/InquiryCtaButton.jsx';
 import { FAQSection } from '../../pages/SiteChrome.jsx';
 
 export function MinimalServiceHero({
@@ -44,7 +45,14 @@ export function MinimalServiceHero({
         <h1>{title}</h1>
         <p>{subline}</p>
         <div className="minimal-service-actions">
-          <a href={primaryCta.href} className="btn btn-primary">{primaryCta.label} <span className="arrow">-&gt;</span></a>
+          <InquiryCtaButton
+            inquiryType={primaryCta.inquiryType}
+            label={primaryCta.label}
+            className="btn btn-primary"
+            arrow={false}
+          >
+            {primaryCta.label} <span className="arrow">-&gt;</span>
+          </InquiryCtaButton>
           {secondaryCta ? (
             <a href={secondaryCta.href} className="btn btn-ghost">{secondaryCta.label}</a>
           ) : null}
@@ -146,7 +154,9 @@ export function MinimalCTASection({ title, copy, cta }) {
           <h2>{title}</h2>
           <p>{copy}</p>
         </div>
-        <a href={cta.href} className="btn btn-primary">{cta.label} <span className="arrow">-&gt;</span></a>
+        <InquiryCtaButton inquiryType={cta.inquiryType} label={cta.label} className="btn btn-primary" arrow={false}>
+          {cta.label} <span className="arrow">-&gt;</span>
+        </InquiryCtaButton>
       </div>
     </section>
   );

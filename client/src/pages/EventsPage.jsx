@@ -14,6 +14,9 @@ import graduationCeremonialStaging from '../assets/Graduation/SHJ1.jpg';
 import graduationVipGuestStudent from '../assets/Graduation/SHJ3.jpg';
 import graduationOnsiteOperations from '../assets/Graduation/operation.jpeg';
 import rakEditedVideo from '../assets/Rak-Edited.mp4';
+import { getProjectCta } from '../utils/contactInquiry.js';
+
+const eventsCta = getProjectCta('events');
 
 const eventsStickyShowcaseSteps = [
   {
@@ -141,7 +144,7 @@ export default function EventsPage() {
     <>
       <style>{pageStyles}</style>
       <div className="content-page minimal-service-page events-minimal-page" style={{ '--accent': 'var(--terracotta)' }}>
-        <Navbar active="events" cta="Brief us on your ceremony" overlay />
+        <Navbar active="events" cta={eventsCta.label} ctaInquiryType={eventsCta.inquiryType} overlay />
         <MinimalServiceHero
           image={images.hctProfile}
           backgroundVideo={rakEditedVideo}
@@ -149,7 +152,7 @@ export default function EventsPage() {
           kicker="Graduation ceremony setup UAE"
           title="Ceremonies built for showtime."
           subline="Stage. Branding. Guest flow. Ready before doors."
-          primaryCta={{ href: '/contact', label: 'Brief us on your ceremony' }}
+          primaryCta={eventsCta}
           secondaryCta={{ href: '/case-studies#hct-graduation-program', label: 'Read HCT proof' }}
         />
         <StickyProcessShowcase
@@ -166,7 +169,7 @@ export default function EventsPage() {
         <MinimalCTASection
           title="Send the date, venue, and what has to be ready."
           copy="EGS will read the room, the deadline, and what needs to move first."
-          cta={{ href: '/contact', label: 'Brief us on your ceremony' }}
+          cta={eventsCta}
         />
         <MinimalFAQSection
           title="Questions ceremony teams ask first."

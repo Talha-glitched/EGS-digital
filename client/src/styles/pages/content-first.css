@@ -1578,6 +1578,15 @@
   transition: transform .25s, border-color .25s, background .25s;
 }
 
+a.brief-card,
+button.brief-card {
+  color: inherit;
+  text-decoration: none;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+}
+
 .home-page .service-card,
 .home-page .cap-card,
 .home-page .brief-card,

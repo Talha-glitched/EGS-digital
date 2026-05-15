@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { InquiryModalProvider } from './context/InquiryModalContext.jsx';
 import {
   EventsPage,
   ExhibitionsPage,
@@ -12,6 +13,7 @@ import AdminEmailCampaignsPage from './pages/AdminEmailCampaignsPage.jsx';
 
 export default function App() {
   return (
+    <InquiryModalProvider>
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/exhibitions" element={<ExhibitionsPage />} />
@@ -25,5 +27,6 @@ export default function App() {
       <Route path="/hct-case-study" element={<Navigate to="/case-studies#hct-graduation-program" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </InquiryModalProvider>
   );
 }

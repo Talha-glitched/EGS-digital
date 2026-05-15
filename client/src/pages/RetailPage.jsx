@@ -11,6 +11,9 @@ import {
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 import { Footer } from './SiteChrome.jsx';
 import { images } from './siteData.js';
+import { getProjectCta } from '../utils/contactInquiry.js';
+
+const retailCta = getProjectCta('retail');
 
 const retailShowcaseSteps = [
   {
@@ -84,14 +87,14 @@ export default function RetailPage() {
     <>
       <style>{pageStyles}</style>
       <div className="content-page minimal-service-page retail-minimal-page" style={{ '--accent': 'var(--claret)' }}>
-        <Navbar active="retail" cta="Start a rollout brief" overlay />
+        <Navbar active="retail" cta={retailCta.label} ctaInquiryType={retailCta.inquiryType} overlay />
         <MinimalServiceHero
           image={images.retail}
           imageAlt="Retail branding installation work"
           kicker="Retail branding installation UAE"
           title="Retail rollouts built before customers arrive."
           subline="Stores. Assets. Access windows. Launch-ready."
-          primaryCta={{ href: '/contact', label: 'Start a rollout brief' }}
+          primaryCta={retailCta}
           secondaryCta={{ href: '/case-studies#sadia-carrefour-rollout', label: 'See Sadia proof' }}
         />
         <StickyProcessShowcase
@@ -118,7 +121,7 @@ export default function RetailPage() {
         <MinimalCTASection
           title="Send the location list and launch date."
           copy="EGS will look at access, assets, teams, and QA/QC together."
-          cta={{ href: '/contact', label: 'Start a rollout brief' }}
+          cta={retailCta}
         />
         <Footer />
       </div>

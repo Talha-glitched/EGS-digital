@@ -1,4 +1,5 @@
 import { images } from '../../pages/siteData.js';
+import InquiryCtaButton from '../inquiry/InquiryCtaButton.jsx';
 
 export default function ExhibitionsHeroSection() {
   return (
@@ -14,7 +15,9 @@ export default function ExhibitionsHeroSection() {
         <h1>Exhibition stands built for opening day.</h1>
         <p>Custom stands. Pavilion builds. Product display changes.</p>
         <div className="exhibitions-hero-actions">
-          <a href="/contact" className="btn btn-primary">Brief us on your stand <span className="arrow">-&gt;</span></a>
+          <InquiryCtaButton inquiryType="exhibitions" className="btn btn-primary" arrow={false}>
+            Email about your stand <span className="arrow">-&gt;</span>
+          </InquiryCtaButton>
           <a href="/case-studies#philips-global-health-riyadh" className="btn btn-ghost">See proof</a>
         </div>
       </div>
