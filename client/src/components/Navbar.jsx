@@ -35,7 +35,6 @@ const defaultItems = [
       { label: 'Tell us about your project', inquiryType: 'general', ariaLabel: 'Tell us about your project' },
       { label: 'Email EGS', href: 'mailto:info@exhibitgraphicsign.com', ariaLabel: 'Email EGS' },
       { label: 'Call / WhatsApp', href: 'tel:+971524587992', ariaLabel: 'Call or WhatsApp EGS' },
-      { label: 'Home', href: '/', ariaLabel: 'Open home page' },
     ],
   },
 ];
@@ -54,12 +53,47 @@ function CardNav({
   overlay = false,
 }) {
   const { openInquiry } = useInquiryModal();
-  const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const overlaySolid = false;
   const navRef = useRef(null);
-  const cardsRef = useRef([]);
   const tlRef = useRef(null);
+  const expandTimeoutRef = useRef(null);
+
+  const list = items || defaultItems;
+  const hoveredItem = hoveredIndex !== null ? list[hoveredIndex] : null;
+  // Mix the brand color with ink to darken, then make it highly transparent (30%)
+  const dynamicBg = isExpanded && hoveredItem 
+    ? `color-mix(in oklab, color-mix(in oklab, ${hoveredItem.bgColor} 84%, var(--ink)) 30%, transparent)` 
+    : '';
+
+  const handleMouseEnterItem = (index) => {
+    if (expandTimeoutRef.current) clearTimeout(expandTimeoutRef.current);
+    setHoveredIndex(index);
+    if (!isExpanded) {
+      setIsExpanded(true);
+      tlRef.current?.play(0);
+    }
+  };
+
+  const handleMouseLeaveNav = () => {
+    expandTimeoutRef.current = setTimeout(() => {
+      if (tlRef.current) {
+        tlRef.current.eventCallback('onReverseComplete', () => {
+          setIsExpanded(false);
+          setHoveredIndex(null);
+        });
+        tlRef.current.reverse();
+      } else {
+        setIsExpanded(false);
+        setHoveredIndex(null);
+      }
+    }, 150);
+  };
+
+  const handleMouseEnterNav = () => {
+    if (expandTimeoutRef.current) clearTimeout(expandTimeoutRef.current);
+  };
 
   const calculateHeight = () => {
     const navEl = navRef.current;
@@ -93,7 +127,11 @@ function CardNav({
     if (!navEl) return null;
 
     gsap.set(navEl, { height: 64, overflow: 'hidden' });
-    gsap.set(cardsRef.current, { y: 38, opacity: 0 });
+
+    const contentEl = navEl.querySelector('.egs-navbar-content');
+    if (contentEl) {
+      gsap.set(contentEl, { y: 20, opacity: 0 });
+    }
 
     const tl = gsap.timeline({ paused: true });
     tl.to(navEl, {
@@ -101,7 +139,10 @@ function CardNav({
       duration: 0.42,
       ease,
     });
-    tl.to(cardsRef.current, { y: 0, opacity: 1, duration: 0.42, ease, stagger: 0.075 }, '-=0.14');
+    
+    if (contentEl) {
+      tl.to(contentEl, { y: 0, opacity: 1, duration: 0.35, ease }, '-=0.2');
+    }
 
     return tl;
   };
@@ -138,23 +179,9 @@ function CardNav({
     return () => window.removeEventListener('resize', handleResize);
   }, [isExpanded]);
 
-  const toggleMenu = () => {
-    const tl = tlRef.current;
-    if (!tl) return;
-    if (!isExpanded) {
-      setIsHamburgerOpen(true);
-      setIsExpanded(true);
-      tl.play(0);
-    } else {
-      setIsHamburgerOpen(false);
-      tl.eventCallback('onReverseComplete', () => setIsExpanded(false));
-      tl.reverse();
-    }
-  };
+  // Toggle menu logic removed, handled by hover
 
-  const setCardRef = (index) => (el) => {
-    if (el) cardsRef.current[index] = el;
-  };
+  // setCardRef removed, cards are handled via CSS
 
   const navSurface =
     overlay && !overlaySolid ? 'transparent' : baseColor;
@@ -180,22 +207,15 @@ function CardNav({
         className={`egs-navbar ${isExpanded ? 'open' : ''}${
           overlay ? ' egs-navbar--overlay' : ''
         }${overlay && overlaySolid ? ' egs-navbar--overlay-solid' : ''}`}
-        style={{ backgroundColor: navSurface }}
+        style={{ 
+          backgroundColor: navSurface,
+          ...(dynamicBg ? { '--dynamic-bg': dynamicBg } : {})
+        }}
         aria-label="Primary navigation"
+        onMouseLeave={handleMouseLeaveNav}
+        onMouseEnter={handleMouseEnterNav}
       >
         <div className="egs-navbar-top">
-          <button
-            type="button"
-            className={`egs-hamburger-menu ${isHamburgerOpen ? 'open' : ''}`}
-            onClick={toggleMenu}
-            aria-label={isExpanded ? 'Close menu' : 'Open menu'}
-            aria-expanded={isExpanded}
-            style={{ color: menuIconColor }}
-          >
-            <span className="egs-hamburger-line" />
-            <span className="egs-hamburger-line" />
-          </button>
-
           <a
             href="/"
             className="egs-navbar-logo"
@@ -204,6 +224,22 @@ function CardNav({
           >
             <img src={egsLogo} alt="Exhibit Graphic Sign" className="egs-navbar-logo-image" />
           </a>
+
+          <div className="egs-desktop-nav-links">
+            {(items || []).slice(0, 3).map((item, index) => (
+              <span
+                key={item.label}
+                className={`egs-desktop-nav-item ${hoveredIndex === index ? 'active' : ''}`}
+                onMouseEnter={() => handleMouseEnterItem(index)}
+                style={{
+                  color: hoveredIndex === index ? item.textColor : '',
+                  opacity: isExpanded && hoveredIndex !== index ? 0.6 : 1
+                }}
+              >
+                {item.label}
+              </span>
+            ))}
+          </div>
 
           <button
             type="button"
@@ -218,24 +254,20 @@ function CardNav({
         <div className={`egs-navbar-content ${isExpanded ? 'visible' : ''}`} aria-hidden={!isExpanded}>
           {(items || []).slice(0, 3).map((item, index) => (
             <article
-              className="egs-nav-card"
+              className={`egs-nav-card ${hoveredIndex === index ? 'active-card' : ''}`}
               key={`${item.label}-${index}`}
-              ref={setCardRef(index)}
-              style={
-                overlay && !overlaySolid
-                  ? {
-                      '--egs-nav-card-base': item.bgColor,
-                      color: item.textColor,
-                    }
-                  : { backgroundColor: item.bgColor, color: item.textColor }
-              }
+              style={{ color: item.textColor }}
             >
-              <div className="egs-nav-card-label">{item.label}</div>
               <div className="egs-nav-card-links">
                 {item.links?.map((link) => {
                   const closeMenu = () => {
-                    setIsHamburgerOpen(false);
-                    setIsExpanded(false);
+                    if (tlRef.current) {
+                      tlRef.current.eventCallback('onReverseComplete', () => {
+                        setIsExpanded(false);
+                        setHoveredIndex(null);
+                      });
+                      tlRef.current.reverse();
+                    }
                   };
 
                   if (link.inquiryType) {
@@ -250,8 +282,8 @@ function CardNav({
                           closeMenu();
                         }}
                       >
-                        <span>↗</span>
-                        {link.label}
+                        <span className="link-arrow">↗</span>
+                        <span className="link-label">{link.label}</span>
                       </button>
                     );
                   }
@@ -264,8 +296,8 @@ function CardNav({
                       key={link.label}
                       onClick={closeMenu}
                     >
-                      <span>↗</span>
-                      {link.label}
+                      <span className="link-arrow">↗</span>
+                      <span className="link-label">{link.label}</span>
                     </a>
                   );
                 })}
