@@ -1,10 +1,10 @@
 const processSteps = [
-  ['Brief', 'Show, size, deadline.'],
-  ['Check', 'Venue, access, risk.'],
-  ['Design', 'Intent and production scope.'],
-  ['Produce', 'Fabrication and print.'],
-  ['Install', 'Build-up and finishing.'],
-  ['Handover', 'Ready before opening.'],
+  ['Brief', 'Show name, stand size, open sides, floorplan, products, deadlines, and organiser rules are gathered first.'],
+  ['Check', 'Venue access, approvals, electrical needs, rigging limits, storage, and late-change risks are reviewed before promises are made.'],
+  ['Design', 'Layouts, renders, counters, displays, lighting, and visitor flow are locked against what can actually be built.'],
+  ['Produce', 'Joinery, graphics, signage, finishes, and display elements move through production with the build-up window in mind.'],
+  ['Install', 'Crew sequence, electrical coordination, graphics placement, cleaning, and snagging happen on site before opening.'],
+  ['Handover', 'The stand is checked with the client, ready for visitors, and supported through show needs and removal planning.'],
 ];
 
 export default function ExhibitionsProcessSection() {

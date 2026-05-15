@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 100">
+  <circle cx="40" cy="50" r="30" fill="#E31837"/>
+  <circle cx="40" cy="50" r="18" fill="white"/>
+  <text x="80" y="62" font-family="Arial, sans-serif" font-size="38" font-weight="bold" fill="#1A1A1A">serco</text>
+</svg>

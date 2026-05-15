@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100">
+  <rect x="10" y="15" width="180" height="70" rx="10" fill="#CC0000"/>
+  <text x="100" y="45" font-family="Arial Black, sans-serif" font-size="22" font-weight="900" fill="white" text-anchor="middle">800</text>
+  <text x="100" y="70" font-family="Arial Black, sans-serif" font-size="20" font-weight="900" fill="#FFD700" text-anchor="middle">PIZZA</text>
+</svg>

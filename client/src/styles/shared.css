@@ -211,6 +211,17 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   padding: 30px 0;
   background: var(--paper);
   position: relative;
+  cursor: grab;
+  touch-action: pan-y;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.marquee::-webkit-scrollbar {
+  display: none;
+}
+.marquee.is-dragging {
+  cursor: grabbing;
+  user-select: none;
 }
 .marquee-track {
   display: flex;
@@ -218,6 +229,9 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   animation: marquee 80s linear infinite;
   width: max-content;
   will-change: transform;
+}
+.marquee.is-dragging .marquee-track {
+  animation-play-state: paused;
 }
 .marquee-item {
   width: clamp(132px, 15vw, 210px);
@@ -246,6 +260,8 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   max-width: 100%;
   object-fit: contain;
   opacity: .9;
+  pointer-events: none;
+  user-select: none;
 }
 @keyframes marquee {
   from { transform: translateX(0); }

@@ -648,10 +648,26 @@
   background: var(--ink);
   border-top: 0;
   border-bottom: 0;
+  margin-top: -54px;
+  padding: 6px 0 18px;
+}
+
+.home-page .marquee-item {
+  width: clamp(196px, 20vw, 290px);
+  height: 238px;
+}
+
+.home-page .marquee-logo {
+  height: 224px;
+}
+
+.home-page .marquee-track {
+  gap: 0;
 }
 
 .home-page .marquee-item::after {
-  color: rgba(245, 241, 234, 0.38);
+  left: calc(100% - clamp(16px, 1.6vw, 24px));
+  color: var(--paper);
 }
 
 .exhibitions-page {
@@ -938,11 +954,11 @@
 
 .exhibitions-adaptation-copy h2 {
   margin-top: 22px;
-  max-width: 12ch;
-  font-family: var(--sans);
-  font-size: clamp(42px, 5.8vw, 88px);
+  max-width: 18ch;
+  font-family: var(--serif);
+  font-size: clamp(34px, 4.2vw, 62px);
   font-weight: 600;
-  line-height: .98;
+  line-height: 1;
   letter-spacing: 0;
   color: var(--paper);
 }
@@ -1675,10 +1691,15 @@
   border-radius: 4px;
 }
 
-/* Events scope: five lifecycle cards — wide pair on second row */
-.events-minimal-page .minimal-scope-section .capability-grid .cap-card:nth-child(4),
-.events-minimal-page .minimal-scope-section .capability-grid .cap-card:nth-child(5) {
+/* Five-card scope sections — wide pair on second row */
+.minimal-service-page .minimal-scope-section .capability-grid .cap-card:nth-child(4),
+.minimal-service-page .minimal-scope-section .capability-grid .cap-card:nth-child(5) {
   grid-column: span 6;
+}
+
+.minimal-service-page .minimal-scope-section .capability-grid .cap-card:nth-child(1) h3,
+.exhibitions-scope-section .capability-grid .cap-card:nth-child(1) h3 {
+  font-size: 28px;
 }
 
 .exhibitions-scope-section .capability-grid .cap-card:nth-child(4),
@@ -1714,7 +1735,7 @@
 .section-head h2 {
   font-family: var(--serif);
   font-size: clamp(38px, 5vw, 76px);
-  font-weight: 400;
+  font-weight: 600;
   line-height: 1;
   letter-spacing: 0;
   max-width: 16ch;
@@ -2311,11 +2332,37 @@ button.brief-card {
 
 .step {
   position: relative;
-  padding-top: 18px;
+  padding: 22px 18px 18px;
+  border: 1px solid var(--rule);
   background:
     linear-gradient(180deg, color-mix(in oklab, var(--accent, var(--ochre)) 5%, transparent), transparent),
     transparent;
   min-height: 164px;
+  overflow: hidden;
+  transition:
+    transform .28s cubic-bezier(.2, .8, .2, 1),
+    border-color .28s ease,
+    background .28s ease,
+    box-shadow .28s ease;
+}
+
+.step:hover {
+  transform: translateY(-5px);
+  border-color: color-mix(in oklab, var(--accent, var(--ochre)) 46%, var(--rule));
+  background:
+    linear-gradient(135deg, color-mix(in oklab, var(--accent, var(--ochre)) 14%, transparent), transparent 62%),
+    color-mix(in oklab, var(--accent, var(--ochre)) 5%, transparent);
+  box-shadow: 0 18px 38px rgba(18, 17, 16, 0.12);
+}
+
+.exhibitions-page .step:hover,
+.minimal-service-page .step:hover {
+  transform: translateY(-5px);
+  border-color: color-mix(in oklab, var(--accent, var(--ochre)) 54%, rgba(245, 241, 234, 0.16));
+  background:
+    linear-gradient(135deg, color-mix(in oklab, var(--accent, var(--ochre)) 16%, transparent), transparent 62%),
+    color-mix(in oklab, var(--accent, var(--ochre)) 10%, #0f0e0d);
+  box-shadow: 0 22px 46px rgba(0, 0, 0, 0.3);
 }
 
 .step::before {
@@ -2343,7 +2390,7 @@ button.brief-card {
 }
 
 .step p {
-  margin-top: 8px;
+  margin-top: 10px;
   font-size: 13px;
   color: var(--ink-soft);
   line-height: 1.5;
@@ -2911,8 +2958,10 @@ button.brief-card {
     grid-column: auto;
   }
 
-  .events-minimal-page .minimal-scope-section .capability-grid .cap-card:nth-child(4),
-  .events-minimal-page .minimal-scope-section .capability-grid .cap-card:nth-child(5) {
+  .minimal-service-page .minimal-scope-section .capability-grid .cap-card:nth-child(4),
+  .minimal-service-page .minimal-scope-section .capability-grid .cap-card:nth-child(5),
+  .exhibitions-scope-section .capability-grid .cap-card:nth-child(4),
+  .exhibitions-scope-section .capability-grid .cap-card:nth-child(5) {
     grid-column: auto;
   }
 

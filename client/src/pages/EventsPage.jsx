@@ -55,12 +55,12 @@ const scopeItems = [
     'On-site stage setup, venue branding, LED screen backdrops, lighting and sound system setup, and audio-video support lined up, tuned, and checked before rehearsal and arrivals.',
   ],
   [
-    'Removal',
-    'Controlled strike after close: pack-down, asset recovery, and handover so the space returns to use on schedule.',
-  ],
-  [
     'Management',
     'Student registration support, crew sequencing, seating arrangements held against the plan through guest flow, and timings when thousands move through the building.',
+  ],
+  [
+    'Removal',
+    'Controlled strike after close: pack-down, asset recovery, and handover so the space returns to use on schedule.',
   ],
 ];
 
@@ -143,7 +143,7 @@ export default function EventsPage() {
   return (
     <>
       <style>{pageStyles}</style>
-      <div className="content-page minimal-service-page events-minimal-page" style={{ '--accent': 'var(--terracotta)' }}>
+      <div className="content-page minimal-service-page events-minimal-page" style={{ '--accent': '#482683' }}>
         <Navbar active="events" cta={eventsCta.label} ctaInquiryType={eventsCta.inquiryType} overlay />
         <MinimalServiceHero
           image={images.hctProfile}

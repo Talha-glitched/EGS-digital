@@ -39,19 +39,35 @@ const retailShowcaseSteps = [
 ];
 
 const scopeItems = [
-  ['Chiller branding', 'Confirmed Sadia proof includes chiller branding and install.'],
-  ['Island displays', 'Campaign displays ready before launch.'],
-  ['Retail graphics', 'Consistent branded assets across locations.'],
-  ['Mall activations', 'Public-facing retail environments and campaign builds.'],
+  [
+    'Rollout planning',
+    'Location lists, access windows, mall or hypermarket rules, launch dates, asset quantities, team routing, and store contacts mapped before crews move.',
+  ],
+  [
+    'Production',
+    'Chiller branding, island displays, retail graphics, product displays, activation assets, and fixture details prepared so every location receives the right kit.',
+  ],
+  [
+    'Installation',
+    'After-hours installation around closing times, security access, store readiness, asset placement, cleaning, and final visibility checks before customers arrive.',
+  ],
+  [
+    'QA and consistency',
+    'Cross-location QA/QC checks, photo confirmation, issue tracking, and brand consistency across stores so campaign work does not vary from branch to branch.',
+  ],
+  [
+    'Launch support',
+    'Team coordination, urgent fixes, client updates, pack-down where needed, and proof that the retail environment is ready for trading or campaign launch.',
+  ],
 ];
 
 const processSteps = [
-  ['List', 'Locations and assets.'],
-  ['Route', 'Teams and access windows.'],
-  ['Prepare', 'Displays, branding, tools.'],
-  ['Install', 'After closing time.'],
-  ['Check', 'QA/QC and consistency.'],
-  ['Launch', 'Ready before customers.'],
+  ['Locations', 'Store list, contacts, mall rules, access windows, and launch timing are confirmed before crews are assigned.'],
+  ['Asset map', 'Each branch gets the right displays, graphics, chiller branding, tools, and installation notes.'],
+  ['Routing', 'Vehicles, crew splits, supervisors, and QA coverage are planned around geography and closing times.'],
+  ['Night install', 'Teams install after trading hours, adapt to store realities, and keep disruption away from customers.'],
+  ['Proof check', 'Photos, snag notes, brand consistency, and urgent corrections are reviewed across every location.'],
+  ['Launch', 'Stores are left campaign-ready, with updates clear enough for marketing and operations teams to trust.'],
 ];
 
 const faqs = [
@@ -104,7 +120,7 @@ export default function RetailPage() {
         />
         <MinimalScopeSection
           title="What EGS installs."
-          copy="Campaign assets that need to look consistent everywhere."
+          copy="Retail rollouts need routing, production, installation, QA/QC, and launch support working together before customers arrive."
           eyebrow="Retail scope"
           items={scopeItems}
         />

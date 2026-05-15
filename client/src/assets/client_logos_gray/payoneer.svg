@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 100">
+  <circle cx="40" cy="50" r="28" fill="#FF4800"/>
+  <text x="40" y="56" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="white" text-anchor="middle">P</text>
+  <text x="80" y="58" font-family="Arial, sans-serif" font-size="30" font-weight="bold" fill="#FF4800">Payoneer</text>
+</svg>

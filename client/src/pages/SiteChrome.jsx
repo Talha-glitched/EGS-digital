@@ -242,9 +242,52 @@ function CardNav({
 export { Footer } from '../components/Footer.jsx';
 
 export function ClientMarquee() {
+  const marqueeRef = useRef(null);
+  const dragRef = useRef({
+    active: false,
+    startX: 0,
+    startScrollLeft: 0,
+  });
+
+  const handlePointerDown = (event) => {
+    const marquee = marqueeRef.current;
+    if (!marquee) return;
+    dragRef.current.active = true;
+    dragRef.current.startX = event.clientX;
+    dragRef.current.startScrollLeft = marquee.scrollLeft;
+    marquee.setPointerCapture?.(event.pointerId);
+    marquee.classList.add('is-dragging');
+  };
+
+  const handlePointerMove = (event) => {
+    const marquee = marqueeRef.current;
+    if (!dragRef.current.active || !marquee) return;
+    event.preventDefault();
+    marquee.scrollLeft = dragRef.current.startScrollLeft - (event.clientX - dragRef.current.startX);
+  };
+
+  const handlePointerEnd = (event) => {
+    const marquee = marqueeRef.current;
+    if (!dragRef.current.active) return;
+    dragRef.current.active = false;
+    marquee?.releasePointerCapture?.(event.pointerId);
+    marquee?.classList.remove('is-dragging');
+  };
+
   return (
-    <div className="marquee">
-      <div className="marquee-track" data-marquee-doubled="true">
+    <div
+      className="marquee"
+      ref={marqueeRef}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerEnd}
+      onPointerCancel={handlePointerEnd}
+      onPointerLeave={handlePointerEnd}
+    >
+      <div
+        className="marquee-track"
+        data-marquee-doubled="true"
+      >
         {[...clientLogos, ...clientLogos].map((client, index) => (
           <div className="marquee-item" key={`${client.name}-${index}`} aria-label={client.name}>
             <img
@@ -253,6 +296,7 @@ export function ClientMarquee() {
               className="marquee-logo"
               loading="lazy"
               decoding="async"
+              draggable="false"
               onError={(event) => {
                 event.currentTarget.closest('.marquee-item')?.setAttribute('hidden', '');
               }}

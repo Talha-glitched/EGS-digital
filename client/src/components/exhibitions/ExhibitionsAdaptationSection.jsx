@@ -6,7 +6,7 @@ export default function ExhibitionsAdaptationSection() {
       <div className="container exhibitions-adaptation-grid">
         <div className="exhibitions-adaptation-copy">
           <span className="exhibitions-kicker">Adaptation proof</span>
-          <h2>When the brief changes, the stand still has to open.</h2>
+          <h2>Last-minute stand changes, handled before opening.</h2>
           <p>Philips needed a 200 sqm healthcare stand adapted in 10-12 hours. Kazakhstan Pavilion needed product display chillers added before opening.</p>
           <div className="exhibitions-adaptation-actions">
             <a href="/case-studies#philips-global-health-riyadh" className="btn btn-primary">Open Philips proof <span className="arrow">-&gt;</span></a>

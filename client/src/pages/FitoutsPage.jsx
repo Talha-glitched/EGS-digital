@@ -39,19 +39,35 @@ const fitoutShowcaseSteps = [
 ];
 
 const scopeItems = [
-  ['Showrooms', 'Visitor spaces with brand, visibility, and sales use aligned.'],
-  ['Reception areas', 'First impressions with signage and movement considered together.'],
-  ['Interior signage', 'Brand graphics built into the room early.'],
-  ['Joinery details', 'Fixtures and surfaces made for daily use.'],
+  [
+    'Space planning',
+    'Photos, drawings, site measurements, customer flow, sightlines, brand moments, handover date, and daily-use requirements aligned before production starts.',
+  ],
+  [
+    'Brand integration',
+    'Reception walls, showroom graphics, wayfinding, feature surfaces, and signage planned as part of the room instead of being added as an afterthought.',
+  ],
+  [
+    'Joinery and production',
+    'Counters, display units, fixtures, branded surfaces, print, finishes, and material details produced for both visual impact and everyday use.',
+  ],
+  [
+    'Installation',
+    'Site coordination, access timing, wall conditions, adjustments, signage placement, cleaning, snagging, and final checks handled before handover.',
+  ],
+  [
+    'Handover support',
+    'Client walkthroughs, practical fixes, asset recovery, and post-install notes so the space keeps working after the first photo is taken.',
+  ],
 ];
 
 const processSteps = [
-  ['Space', 'Photos, drawings, location.'],
-  ['Use', 'Movement and sightlines.'],
-  ['Scope', 'Signage, joinery, finish.'],
-  ['Produce', 'Fabrication and print.'],
-  ['Install', 'Site work and adjustment.'],
-  ['Handover', 'Ready for daily use.'],
+  ['Site read', 'Photos, drawings, measurements, access, wall conditions, and handover target are checked before scope is fixed.'],
+  ['Daily use', 'Customer flow, staff movement, sightlines, durability, cleaning, and maintenance needs shape the design choices.'],
+  ['Scope lock', 'Signage, joinery, graphics, finishes, fixtures, and responsibilities are separated clearly before production.'],
+  ['Fabricate', 'Branded surfaces, counters, display units, print, and material details are produced for fit and finish.'],
+  ['Install', 'Site work, adjustments, signage placement, snagging, and cleaning are coordinated around the operating space.'],
+  ['Handover', 'The space is walked with the client, practical fixes are closed, and the room is ready for daily use.'],
 ];
 
 const faqs = [
@@ -104,7 +120,7 @@ export default function FitoutsPage() {
         />
         <MinimalScopeSection
           title="What EGS builds."
-          copy="Branded spaces where visibility and use matter together."
+          copy="Branded interiors need planning, signage, joinery, installation, and handover support connected from the start."
           eyebrow="Fitout scope"
           items={scopeItems}
         />
