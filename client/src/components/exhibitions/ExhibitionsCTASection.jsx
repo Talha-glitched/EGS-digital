@@ -9,7 +9,7 @@ export default function ExhibitionsCTASection() {
           <p>EGS will read the scope and tell you what needs to move first.</p>
         </div>
         <InquiryCtaButton inquiryType="exhibitions" className="btn btn-primary" arrow={false}>
-          Email about your stand <span className="arrow">-&gt;</span>
+          Tell us about your stand <span className="arrow">-&gt;</span>
         </InquiryCtaButton>
       </div>
     </section>

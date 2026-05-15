@@ -63,11 +63,11 @@ export const SPACE_TYPE_OPTIONS = [
 ];
 
 const CTA_LABELS = {
-  general: 'Email EGS',
-  exhibitions: 'Email about your stand',
-  events: 'Email about your ceremony',
-  retail: 'Email about your rollout',
-  fitouts: 'Email about your fitout',
+  general: 'Tell us about your project',
+  exhibitions: 'Tell us about your stand',
+  events: 'Tell us about your ceremony',
+  retail: 'Tell us about your rollout',
+  fitouts: 'Tell us about your fitout',
 };
 
 const SUBJECTS = {

@@ -16,7 +16,7 @@ export default function ExhibitionsHeroSection() {
         <p>Custom stands. Pavilion builds. Product display changes.</p>
         <div className="exhibitions-hero-actions">
           <InquiryCtaButton inquiryType="exhibitions" className="btn btn-primary" arrow={false}>
-            Email about your stand <span className="arrow">-&gt;</span>
+            Tell us about your stand <span className="arrow">-&gt;</span>
           </InquiryCtaButton>
           <a href="/case-studies#philips-global-health-riyadh" className="btn btn-ghost">See proof</a>
         </div>

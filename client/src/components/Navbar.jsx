@@ -33,7 +33,7 @@ const defaultItems = [
     textColor: 'var(--paper)',
     links: [
       { label: 'Contact page', href: '/contact', ariaLabel: 'Open contact page' },
-      { label: 'Email EGS', inquiryType: 'general', ariaLabel: 'Email EGS' },
+      { label: 'Tell us about your project', inquiryType: 'general', ariaLabel: 'Tell us about your project' },
       { label: 'Call / WhatsApp', href: 'tel:+971524587992', ariaLabel: 'Call or WhatsApp EGS' },
       { label: 'Home', href: '/', ariaLabel: 'Open home page' },
     ],
@@ -43,7 +43,7 @@ const defaultItems = [
 function CardNav({
   active = 'home',
   items,
-  cta = 'Email EGS',
+  cta = 'Tell us about your project',
   ctaInquiryType = 'general',
   ease = 'power3.out',
   baseColor = 'var(--paper)',

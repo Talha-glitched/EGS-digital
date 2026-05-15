@@ -32,7 +32,7 @@ export function SiteNav({ active = 'home', cta = 'Send a brief' }) {
       textColor: 'var(--ink)',
       links: [
         { label: 'Send a Brief', href: '/contact', ariaLabel: 'Open contact page' },
-        { label: 'Email EGS', href: 'mailto:info@exhibitgraphicsign.com', ariaLabel: 'Email EGS' },
+        { label: 'Tell us about your project', href: '/contact', ariaLabel: 'Tell us about your project' },
         { label: 'Call / WhatsApp', href: 'tel:+971524587992', ariaLabel: 'Call or WhatsApp EGS' },
         { label: 'Home', href: '/', ariaLabel: 'Open home page' },
       ],

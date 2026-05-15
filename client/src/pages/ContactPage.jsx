@@ -7,22 +7,22 @@ import { images } from './siteData.js';
 
 const briefPaths = [
   {
-    title: 'Email about a stand',
+    title: 'Tell us about a stand',
     copy: 'Send show name, stand size, location, deadline, and product/display needs.',
     type: 'exhibitions',
   },
   {
-    title: 'Email about a ceremony',
+    title: 'Tell us about a ceremony',
     copy: 'Send event date, venue, guest/graduation scale, stage needs, and what must be ready.',
     type: 'events',
   },
   {
-    title: 'Email about a rollout',
+    title: 'Tell us about a rollout',
     copy: 'Send number of locations, access windows, launch date, asset types, and installation scope.',
     type: 'retail',
   },
   {
-    title: 'Email about a fitout',
+    title: 'Tell us about a fitout',
     copy: 'Send space type, location, handover target, brand/signage needs, and photos or drawings.',
     type: 'fitouts',
   },
@@ -69,7 +69,7 @@ export default function ContactPage() {
     <>
       <style>{pageStyles}</style>
       <div className="content-page" style={{ '--accent': 'var(--ochre)' }}>
-        <SiteNav active="contact" cta="Email EGS" />
+        <SiteNav active="contact" cta="Tell us about your project" />
 
         <section className="content-hero">
           <div className="container">
