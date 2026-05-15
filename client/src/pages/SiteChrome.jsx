@@ -31,8 +31,8 @@ export function SiteNav({ active = 'home', cta = 'Send a brief' }) {
       bgColor: 'var(--paper-2)',
       textColor: 'var(--ink)',
       links: [
-        { label: 'Send a Brief', href: '/contact', ariaLabel: 'Open contact page' },
-        { label: 'Tell us about your project', href: '/contact', ariaLabel: 'Tell us about your project' },
+        { label: 'Email EGS', href: 'mailto:info@exhibitgraphicsign.com', ariaLabel: 'Email EGS' },
+        { label: 'Send a Brief', href: 'mailto:info@exhibitgraphicsign.com', ariaLabel: 'Email EGS about your brief' },
         { label: 'Call / WhatsApp', href: 'tel:+971524587992', ariaLabel: 'Call or WhatsApp EGS' },
         { label: 'Home', href: '/', ariaLabel: 'Open home page' },
       ],
@@ -197,7 +197,7 @@ function CardNav({
           </a>
 
           <a
-            href="/contact"
+            href="mailto:info@exhibitgraphicsign.com"
             className="card-nav-cta-button"
             style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
           >

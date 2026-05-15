@@ -151,7 +151,7 @@ export default function EventsPage() {
           imageAlt="HCT graduation ceremony audience and stage production"
           kicker="Graduation ceremony setup UAE"
           title="Ceremonies built for showtime."
-          subline="Stage. Branding. Guest flow. Ready before doors."
+          subline={['Stage', 'Branding', 'Guest flow', 'Ready before doors open']}
           primaryCta={eventsCta}
           secondaryCta={{ href: '/case-studies#hct-graduation-program', label: 'Read HCT proof' }}
         />

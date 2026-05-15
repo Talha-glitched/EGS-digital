@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { images } from '../pages/siteData.js';
 import drawingImage from '../assets/Exhibition Stands/drawing.png';
 import drawingTwoImage from '../assets/Exhibition Stands/drawing2.png';
+import healthtechImage from '../assets/Exhibition Stands/healthtech.jpg';
 import hp1Image from '../assets/Exhibition Stands/hp1.jpeg';
 import hp2Image from '../assets/Exhibition Stands/hp2.jpeg';
 import './StickyProcessShowcase.css';
@@ -42,7 +43,7 @@ const DEFAULT_PORTFOLIO = [
     tag: 'Exhibitions',
     title: 'Philips / Global Health Riyadh',
     copy: 'Healthcare stand adapted in 10-12 hours for an ultrasound display.',
-    image: images.philips,
+    image: healthtechImage,
   },
 ];
 

@@ -317,9 +317,10 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .footer ul { list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
 .footer-big {
   font-family: var(--serif);
-  font-size: clamp(60px, 8vw, 140px);
+  font-size: clamp(42px, 5.8vw, 92px);
+  font-weight: 600;
   line-height: 0.95;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   padding: 40px 0 60px;
 }
 .footer-bottom {

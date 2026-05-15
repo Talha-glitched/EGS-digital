@@ -93,7 +93,7 @@ export default function FitoutsPage() {
           imageAlt="Fakhruddin Properties branded showroom"
           kicker="Interior fitout branding Dubai"
           title="Spaces built beyond the handover photo."
-          subline="Brand. Signage. Joinery. Ready for daily use."
+          subline={['Brand', 'Signage', 'Joinery', 'Ready for daily use']}
           primaryCta={fitoutsCta}
           secondaryCta={{ href: '/case-studies', label: 'See relevant work' }}
         />

@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import InquiryCtaButton from '../inquiry/InquiryCtaButton.jsx';
+import { motion } from 'motion/react';
 import { FAQSection } from '../../pages/SiteChrome.jsx';
 
 export function MinimalServiceHero({
@@ -12,6 +13,7 @@ export function MinimalServiceHero({
   secondaryCta,
   backgroundVideo,
 }) {
+  const sublineItems = Array.isArray(subline) ? subline : null;
   const [videoReady, setVideoReady] = useState(false);
   const onVideoCanPlay = useCallback(() => {
     setVideoReady(true);
@@ -41,10 +43,57 @@ export function MinimalServiceHero({
       )}
       <div className="minimal-service-hero-shade" aria-hidden="true" />
       <div className="minimal-service-hero-copy">
-        <span className="minimal-service-kicker">{kicker}</span>
-        <h1>{title}</h1>
-        <p>{subline}</p>
-        <div className="minimal-service-actions">
+        <motion.span
+          className="minimal-service-kicker"
+          initial={{ filter: 'blur(10px)', opacity: 0, y: 18 }}
+          whileInView={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.35 }}
+          transition={{ duration: 0.78, ease: 'easeOut' }}
+        >
+          {kicker}
+        </motion.span>
+        <motion.h1
+          initial={{ filter: 'blur(10px)', opacity: 0, y: 18 }}
+          whileInView={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.35 }}
+          transition={{ duration: 0.78, ease: 'easeOut', delay: 0.1 }}
+        >
+          {title}
+        </motion.h1>
+        {sublineItems ? (
+          <motion.p
+            className="minimal-service-rotating-subline"
+            aria-label={sublineItems.join(', ')}
+            initial={{ filter: 'blur(10px)', opacity: 0, y: 18 }}
+            whileInView={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.35 }}
+            transition={{ duration: 0.78, ease: 'easeOut', delay: 0.24 }}
+          >
+            <span className="minimal-service-subline-rotator" aria-hidden="true">
+              {sublineItems.map((item, index) => (
+                <span key={item} style={{ animationDelay: `${index * 2.4}s` }}>
+                  {item}
+                </span>
+              ))}
+            </span>
+          </motion.p>
+        ) : (
+          <motion.p
+            initial={{ filter: 'blur(10px)', opacity: 0, y: 18 }}
+            whileInView={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.35 }}
+            transition={{ duration: 0.78, ease: 'easeOut', delay: 0.24 }}
+          >
+            {subline}
+          </motion.p>
+        )}
+        <motion.div
+          className="minimal-service-actions"
+          initial={{ filter: 'blur(10px)', opacity: 0, y: 18 }}
+          whileInView={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.35 }}
+          transition={{ duration: 0.78, ease: 'easeOut', delay: 0.34 }}
+        >
           <InquiryCtaButton
             inquiryType={primaryCta.inquiryType}
             label={primaryCta.label}
@@ -56,7 +105,7 @@ export function MinimalServiceHero({
           {secondaryCta ? (
             <a href={secondaryCta.href} className="btn btn-ghost">{secondaryCta.label}</a>
           ) : null}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

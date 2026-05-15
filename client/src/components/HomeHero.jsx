@@ -17,8 +17,8 @@ const defaultServices = [
 export default function HomeHero({
   videoSrc = hctHeroVideo,
   posterSrc = hctHeroPoster,
-  kicker = 'Dubai / UAE production house for 15+ years',
-  title = 'Shaping Brand Moments across the Gulf.',
+  kicker = 'UAE Design & production house for 15+ years',
+  title = 'Shaping Brand Moments across the UAE.',
   services = defaultServices,
 }) {
   return (

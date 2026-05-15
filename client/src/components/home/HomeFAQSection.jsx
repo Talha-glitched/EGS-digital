@@ -1,21 +1,22 @@
 import { FAQSection } from '../../pages/SiteChrome.jsx';
 
 const homeFaqs = [
-  ['What does EGS do?', 'EGS builds exhibition stands, graduation ceremonies, event environments, retail branding, signage, and branded interiors across Dubai and the UAE.'],
-  ['Can EGS handle urgent changes?', 'Yes, when the change is physically possible and the team can keep the standard intact. The proof includes Sadia, HCT Fujairah, Philips, and Kazakhstan Pavilion.'],
-  ['Who should contact EGS?', 'Marketing, events, procurement, retail, and institutional teams who need physical brand work delivered properly under real deadline pressure.'],
-  ['What should I send first?', 'Send the service type, deadline, venue or location, and any drawings, photos, location lists, or brand guidelines you already have.'],
+  ['How does EGS keep pricing transparent?', 'We clarify scope, materials, timelines, and change requests early, so customers understand what is included, what can move the cost, and what needs approval before work continues.'],
+  ['What does ethical business mean at EGS?', 'It means practical recommendations, honest feasibility checks, and commitments we can stand behind. If a deadline, budget, or late request needs a tradeoff, we say it clearly.'],
+  ['Can EGS manage last-minute hiccups?', 'Yes, when the change is physically possible and safe. The team focuses on solving the issue quickly, protecting the deadline, and keeping the final work presentable.'],
+  ['How adaptable is the team around fixed deadlines?', 'EGS plans backwards from the handover time, adjusts crew movement around venue realities, and keeps the work moving when requirements shift late.'],
+  ['How do you coordinate before, during, and after an event?', 'Design, production, installation, on-site response, and removal stay connected through one accountable team, so the customer experience feels looked after from first brief to final handback.'],
 ];
 
 export default function HomeFAQSection() {
   return (
-    <section className="section-band alt">
+    <section className="section-band alt minimal-faq-section">
       <div className="container">
         <div className="section-head">
-          <h2>Questions buyers ask first.</h2>
-          <p>Direct answers before a marketing manager, event lead, retail team, or procurement contact sends the first brief.</p>
+          <h2>Questions clients ask first.</h2>
+          <p>Short answers about how EGS works: clear pricing, ethical commitments, deadline pressure, and coordinated delivery before, during, and after the event.</p>
         </div>
-        <FAQSection faqs={homeFaqs} />
+        <FAQSection faqs={homeFaqs} accordion />
       </div>
     </section>
   );

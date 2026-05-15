@@ -11,7 +11,7 @@ export function Footer() {
               <img src={egsFooterLogo} alt="" className="footer-logo" width={160} height={160} />
             </a>
             <p className="footer-tagline">
-              A Dubai production house for exhibition stands, ceremonies, retail branding, signage, and branded interiors.
+              A Dubai Design & production house for exhibition stands, ceremonies, retail branding, signage, and branded interiors.
             </p>
           </div>
           <div>
@@ -45,7 +45,7 @@ export function Footer() {
         <div className="footer-big"><em>Built for</em> fixed deadlines.</div>
         <div className="footer-bottom">
           <span>© 2026 Exhibit Graphic Sign - Est. 2010</span>
-          <span>Dubai / UAE production house</span>
+          <span>UAE Design & production house</span>
         </div>
       </div>
     </footer>

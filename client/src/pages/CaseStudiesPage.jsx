@@ -1,8 +1,13 @@
 import pageStyles from '../styles/pages/content-first.css?raw';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
-import { FAQSection, Footer, ProofCard, SiteNav } from './SiteChrome.jsx';
+import { Navbar } from '../components/Navbar.jsx';
+import { FAQSection, Footer, ProofCard } from './SiteChrome.jsx';
 import { images, proofCards } from './siteData.js';
 import InquiryCtaButton from '../components/inquiry/InquiryCtaButton.jsx';
+import healthtechStand from '../assets/Exhibition Stands/healthtech.jpg';
+import kazakhstanPavilion from '../assets/Exhibition Stands/Kazakhstan_Pavillion.jpeg';
+
+const caseProofCards = proofCards.filter((card) => card.href !== '/case-studies#money-kicks-activation');
 
 const cases = [
   {
@@ -49,7 +54,7 @@ const cases = [
     tag: 'Exhibition stands / Healthcare',
     title: 'Philips Global Health Riyadh',
     stat: '200 sqm',
-    image: images.philips,
+    image: healthtechStand,
     situation: 'At Global Health Exhibition 2024 in Riyadh, Philips had a 20m x 10m / 200 sqm stand.',
     pressure: 'Philips needed to display an ultrasound machine, and EGS had 10-12 hours to adapt the stand.',
     did: 'EGS added a display counter setup with computers and a TV screen so the product could be shown properly.',
@@ -62,7 +67,7 @@ const cases = [
     tag: 'Exhibition stands / Pavilion adaptation',
     title: 'Kazakhstan Pavilion Gulfood',
     stat: '168 sqm',
-    image: images.philipsArab,
+    image: kazakhstanPavilion,
     situation: 'At Gulfood 2026 in Expo City, the Kazakhstan Pavilion stand was 28m x 6m / 168 sqm.',
     pressure: 'A last-minute additional exhibitor needed product display accommodation for meat and dairy products before opening.',
     did: 'EGS adapted the stand and added 5-6 branded product display chillers before opening.',
@@ -70,26 +75,14 @@ const cases = [
     proves: ['large pavilion adaptation', 'product display chiller integration', 'late exhibitor change handling', 'Gulfood/Expo City pressure'],
     takeaway: 'Pavilions need flexibility because exhibitor requirements can change close to opening.',
   },
-  {
-    id: 'money-kicks-activation',
-    tag: 'Mall activation / Credibility proof',
-    title: 'Money Kicks Activation',
-    stat: 'Activation',
-    image: images.activation,
-    situation: 'EGS has done mall activation work connected to Money Kicks / Money Kickz, the sneaker/lifestyle brand associated with Rashed Belhasa, the Dubai influencer and entrepreneur known online as Money Kicks.',
-    pressure: 'Details are not confirmed enough for a full operational case study. Treat this as public-facing brand credibility, not a detailed proof story.',
-    did: 'Mall activation work connected to the Money Kicks / Money Kickz brand.',
-    result: 'Use this as a name-recognition proof point for retail and mall activation capability.',
-    proves: ['mall activation exposure', 'youth/lifestyle brand credibility', 'public-facing retail activation work'],
-    takeaway: 'Use this as recognizable retail activation credibility, not as operational proof until more detail is confirmed.',
-  },
 ];
 
 const caseFaqs = [
-  ['Are these full case studies or proof summaries?', 'They are proof summaries designed for website visitors. Each one gives the situation, pressure, what EGS did, result, and what it proves without turning the page into a long proposal.'],
-  ['Do public articles mention EGS directly?', 'Not for every HCT ceremony. Public HCT articles confirm ceremony context and scale. EGS project proof confirms EGS production role.'],
-  ['Why include Money Kicks / Money Kickz if details are limited?', 'It is a recognizable mall activation credibility point, not a detailed case study. Do not add mall, date, visitor, sales, or extended influencer-family context unless confirmed.'],
-  ['Can these proof cards link from the homepage?', 'Yes. The homepage proof cards link directly to the matching anchors on this page.'],
+  ['Which case study should I look at first?', 'Start with the pressure closest to your project: HCT for ceremony scale, Sadia for overnight retail rollouts, Philips for exhibition stand adaptation, and Kazakhstan Pavilion for late product-display changes.'],
+  ['Do these examples show how EGS handles fixed deadlines?', 'Yes. Each case explains the situation, what changed, how the team responded, and what was delivered before opening, showtime, or handover.'],
+  ['Can EGS handle last-minute changes without hiding the tradeoffs?', 'When a change is physically possible and safe, EGS focuses on the fastest workable route. If timing, budget, access, or material availability creates a tradeoff, we make that clear before moving.'],
+  ['What should I send if my project looks similar?', 'Send the date, venue or locations, scope, drawings or photos, brand files, access window, and the issue you are trying to solve. That gives EGS enough context to respond with a practical next step.'],
+  ['How does EGS keep the customer experience coordinated?', 'Design, production, logistics, installation, on-site response, and handover stay connected through one accountable team, so the client is not left coordinating disconnected suppliers under pressure.'],
 ];
 
 const caseStudiesRevealSelector = [
@@ -114,8 +107,8 @@ export default function CaseStudiesPage() {
   return (
     <>
       <style>{pageStyles}</style>
-      <div className="content-page" style={{ '--accent': 'var(--terracotta)' }}>
-        <SiteNav active="case-studies" />
+      <div className="content-page case-studies-page" style={{ '--accent': 'var(--terracotta)' }}>
+        <Navbar active="case-studies" cta="Send us your brief" overlay />
 
         <section className="content-hero">
           <div className="container">
@@ -127,7 +120,7 @@ export default function CaseStudiesPage() {
                     <span className="chip"><span className="chip-dot" />Case files</span>
                   </div>
                   <h1>Proof before promises.</h1>
-                  <p className="lede">These are the moments that explain how EGS works: multi-campus ceremonies, overnight retail rollouts, urgent stand adaptations, pavilion changes, and public-facing mall activation work.</p>
+                  <p className="lede">These are the moments that explain how EGS works: multi-campus ceremonies, overnight retail rollouts, urgent stand adaptations, and pavilion changes under fixed deadline pressure.</p>
                 </div>
                 <div className="hero-actions">
                   <InquiryCtaButton inquiryType="general" className="btn btn-primary" />
@@ -135,7 +128,7 @@ export default function CaseStudiesPage() {
                 </div>
               </div>
               <div className="archive-board">
-                {proofCards.slice(0, 4).map((card) => <ProofCard card={card} key={card.title} />)}
+                {caseProofCards.slice(0, 4).map((card) => <ProofCard card={card} key={card.title} />)}
               </div>
             </div>
           </div>
@@ -150,7 +143,7 @@ export default function CaseStudiesPage() {
           </div>
           <div className="proof-scroll">
             <div className="proof-track">
-              {proofCards.map((card) => <ProofCard card={card} key={card.title} />)}
+              {caseProofCards.map((card) => <ProofCard card={card} key={card.title} />)}
             </div>
           </div>
         </section>
@@ -198,10 +191,10 @@ export default function CaseStudiesPage() {
         <section className="section-band alt">
           <div className="container">
             <div className="section-head">
-              <h2>How to read this proof.</h2>
-              <p>Each case separates public context, internal project proof, and what a buyer should take from it.</p>
+              <h2>Questions buyers ask before they trust the proof.</h2>
+              <p>Practical answers for exhibition, event, retail, and institutional teams comparing pressure, deadline fit, and delivery responsibility.</p>
             </div>
-            <FAQSection faqs={caseFaqs} />
+            <FAQSection faqs={caseFaqs} accordion />
           </div>
         </section>
 

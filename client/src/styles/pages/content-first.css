@@ -809,9 +809,9 @@
 
 .exhibitions-hero-copy h1 {
   margin-top: 24px;
-  max-width: 14ch;
+  max-width: 22ch;
   font-family: var(--serif);
-  font-size: clamp(42px, 6.8vw, 104px);
+  font-size: clamp(34px, 4.8vw, 70px);
   font-weight: 600;
   line-height: 0.96;
   letter-spacing: 0;
@@ -1023,6 +1023,149 @@
 
 .exhibitions-page .step:nth-child(5) { --reveal-delay: 280ms; }
 .exhibitions-page .step:nth-child(6) { --reveal-delay: 350ms; }
+
+.case-studies-page {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.case-studies-page .content-hero {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  align-items: center;
+  padding: clamp(112px, 13vw, 168px) 0 clamp(58px, 7vw, 96px);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.case-studies-page .content-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    linear-gradient(180deg, rgba(18, 17, 16, 0.36), rgba(18, 17, 16, 0.92)),
+    radial-gradient(circle at 72% 28%, color-mix(in oklab, var(--accent, var(--terracotta)) 22%, transparent), transparent 38%),
+    var(--ink);
+}
+
+.case-studies-page .content-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(circle, rgba(245, 241, 234, 0.07) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+.case-studies-page .hero-board {
+  align-items: center;
+}
+
+.case-studies-page .chip {
+  background: rgba(245, 241, 234, 0.06);
+  border-color: rgba(245, 241, 234, 0.2);
+  color: rgba(245, 241, 234, 0.78);
+}
+
+.case-studies-page .chip-dot {
+  background: var(--accent, var(--terracotta));
+}
+
+.case-studies-page .content-hero h1,
+.case-studies-page .section-head h2,
+.case-studies-page .case-meta h2 {
+  color: var(--paper);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.case-studies-page .content-hero .lede,
+.case-studies-page .section-head p,
+.case-studies-page .case-note p,
+.case-studies-page .case-note li {
+  color: rgba(245, 241, 234, 0.72);
+}
+
+.case-studies-page .section-band,
+.case-studies-page .section-band.alt,
+.case-studies-page .case-section {
+  position: relative;
+  background: var(--ink);
+  color: var(--paper);
+  border-top-color: rgba(245, 241, 234, 0.12);
+  isolation: isolate;
+}
+
+.case-studies-page .section-band .container::before,
+.case-studies-page .case-section .container::before {
+  background: rgba(245, 241, 234, 0.18);
+}
+
+.case-studies-page .archive-board .proof-file-card,
+.case-studies-page .proof-scroll .proof-file-card,
+.case-studies-page .case-note,
+.case-studies-page .faq-item {
+  background: #0f0e0d;
+  border-color: rgba(245, 241, 234, 0.16);
+}
+
+.case-studies-page .archive-board .proof-file-card {
+  min-height: 205px;
+  padding: 18px;
+}
+
+.case-studies-page .archive-board .proof-file-card strong {
+  margin-top: 14px;
+  font-size: 38px;
+}
+
+.case-studies-page .archive-board .proof-file-card h3 {
+  margin-top: 12px;
+  font-size: 22px;
+}
+
+.case-studies-page .archive-board .proof-file-card p {
+  font-size: 13px;
+  line-height: 1.42;
+}
+
+.case-studies-page .proof-file-card h3,
+.case-studies-page .case-note h3,
+.case-studies-page .faq-item h3 {
+  color: var(--paper);
+}
+
+.case-studies-page .proof-file-card p,
+.case-studies-page .faq-item p,
+.case-studies-page .proof-tag {
+  color: rgba(245, 241, 234, 0.68);
+}
+
+.case-studies-page .proof-file-card:hover,
+.case-studies-page .faq-item:hover {
+  border-color: color-mix(in oklab, var(--accent, var(--terracotta)) 54%, rgba(245, 241, 234, 0.16));
+  background: color-mix(in oklab, var(--accent, var(--terracotta)) 10%, #0f0e0d);
+}
+
+.case-studies-page .case-image {
+  border-color: rgba(245, 241, 234, 0.16);
+  background: #0f0e0d;
+}
+
+.case-studies-page .case-image img {
+  filter: saturate(0.86) brightness(0.86);
+}
+
+.case-studies-page .case-note h3 {
+  color: rgba(245, 241, 234, 0.48);
+}
+
+.case-studies-page .case-note li::before {
+  color: var(--accent, var(--terracotta));
+}
 
 .content-page .hero-actions .btn:nth-child(2),
 .content-page .footer-grid > *:nth-child(2) {
@@ -1262,12 +1405,18 @@
   margin-top: 24px;
   max-width: 15ch;
   font-family: var(--serif);
-  font-size: clamp(42px, 6.8vw, 104px);
+  font-size: clamp(34px, 4.8vw, 70px);
   font-weight: 600;
   line-height: 0.96;
   letter-spacing: 0;
   color: var(--paper);
   text-wrap: balance;
+}
+
+.events-minimal-page .minimal-service-hero-copy h1 {
+  max-width: 35ch;
+  text-wrap: nowrap;
+  white-space: nowrap;
 }
 
 .minimal-service-hero-copy p {
@@ -1278,6 +1427,48 @@
   font-style: italic;
   line-height: 1.25;
   color: rgba(245, 241, 234, 0.82);
+}
+
+.minimal-service-rotating-subline {
+  min-height: 1.35em;
+}
+
+.minimal-service-subline-rotator {
+  position: relative;
+  display: inline-grid;
+  min-width: 22ch;
+  height: 1.25em;
+  overflow: hidden;
+  color: var(--paper);
+  text-align: center;
+}
+
+.minimal-service-subline-rotator span {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateX(-24px);
+  filter: blur(6px);
+  animation: minimalServiceSublineCycle 9.6s cubic-bezier(.2, .8, .2, 1) infinite;
+}
+
+@keyframes minimalServiceSublineCycle {
+  0% {
+    opacity: 0;
+    transform: translateX(-24px);
+    filter: blur(6px);
+  }
+  8%,
+  20% {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+  }
+  25%,
+  100% {
+    opacity: 0;
+    transform: translateX(24px);
+    filter: blur(6px);
+  }
 }
 
 .minimal-service-actions {
@@ -1490,6 +1681,11 @@
   grid-column: span 6;
 }
 
+.exhibitions-scope-section .capability-grid .cap-card:nth-child(4),
+.exhibitions-scope-section .capability-grid .cap-card:nth-child(5) {
+  grid-column: span 6;
+}
+
 .home-services-section {
   padding-bottom: 0;
 }
@@ -1528,6 +1724,13 @@
   max-width: 24ch;
   font-size: clamp(28px, 3.1vw, 48px);
   line-height: 1.06;
+}
+
+.section-head .home-intro-subtitle {
+  display: block;
+  margin-top: 10px;
+  font-size: clamp(18px, 1.7vw, 28px);
+  line-height: 1.16;
 }
 
 .section-head p {
@@ -1640,6 +1843,16 @@ button.brief-card {
 .home-page .service-card:hover {
   border-color: color-mix(in oklab, var(--accent, var(--ochre)) 54%, rgba(245, 241, 234, 0.16));
   background: color-mix(in oklab, var(--accent, var(--ochre)) 12%, #0f0e0d);
+}
+
+.home-services-section .service-card h3 {
+  font-size: clamp(21px, 1.8vw, 24px);
+  line-height: 1.08;
+}
+
+.home-services-section .service-card p {
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .service-card .media {
@@ -2840,8 +3053,8 @@ button.brief-card {
   }
   .exhibitions-hero-copy h1 {
     margin-top: 18px;
-    max-width: 12ch;
-    font-size: 34px;
+    max-width: 18ch;
+    font-size: clamp(18px, 6vw, 27px);
     line-height: 1;
   }
   .exhibitions-hero-copy p {
@@ -2890,8 +3103,12 @@ button.brief-card {
   .minimal-service-hero-copy h1 {
     margin-top: 18px;
     max-width: 12.5ch;
-    font-size: 34px;
+    font-size: clamp(18px, 6vw, 27px);
     line-height: 1;
+  }
+  .events-minimal-page .minimal-service-hero-copy h1 {
+    max-width: none;
+    font-size: clamp(18px, 6vw, 27px);
   }
   .minimal-service-hero-copy p {
     margin-top: 16px;
@@ -3008,4 +3225,3 @@ button.brief-card {
     transform: none;
   }
 }
-

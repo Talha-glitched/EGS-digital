@@ -15,6 +15,8 @@ import logoSerco from '../assets/client_logos/serco.svg';
 import logoShababAlAhliDubaiClub from '../assets/client_logos/shabab_al_ahli_dubai_club.svg';
 import logoUniversityOfSharjah from '../assets/client_logos/univeristy_of_sharjah.png';
 import hctGraduationCard from '../assets/Graduation/ADGRAD1.jpg';
+import hctFitout from '../assets/hct-fitout.jpeg';
+import roastRetail from '../assets/roast-retail.jpeg';
 
 export const clientLogos = [
   { name: 'Philips', logo: logoPhilips },
@@ -47,8 +49,8 @@ export const images = {
   hct: 'https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg',
   philips: 'https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Pairs.jpg',
   philipsArab: 'https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Arab-Health.jpg',
-  fitout: 'https://exhibitgraphicsign.com/wp-content/uploads/2024/05/FAK-Properties1.jpg',
-  retail: 'https://exhibitgraphicsign.com/wp-content/uploads/2024/05/800-Pizza.jpg',
+  fitout: hctFitout,
+  retail: roastRetail,
   activation: 'https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Velocity-3.jpg',
 };
 

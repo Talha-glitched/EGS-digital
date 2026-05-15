@@ -32,8 +32,8 @@ const defaultItems = [
     bgColor: 'var(--ink-blue)',
     textColor: 'var(--paper)',
     links: [
-      { label: 'Contact page', href: '/contact', ariaLabel: 'Open contact page' },
       { label: 'Tell us about your project', inquiryType: 'general', ariaLabel: 'Tell us about your project' },
+      { label: 'Email EGS', href: 'mailto:info@exhibitgraphicsign.com', ariaLabel: 'Email EGS' },
       { label: 'Call / WhatsApp', href: 'tel:+971524587992', ariaLabel: 'Call or WhatsApp EGS' },
       { label: 'Home', href: '/', ariaLabel: 'Open home page' },
     ],

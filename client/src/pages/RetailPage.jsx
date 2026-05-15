@@ -93,7 +93,7 @@ export default function RetailPage() {
           imageAlt="Retail branding installation work"
           kicker="Retail branding installation UAE"
           title="Retail rollouts built before customers arrive."
-          subline="Stores. Assets. Access windows. Launch-ready."
+          subline={['Stores', 'Assets', 'Access windows', 'Launch-ready']}
           primaryCta={retailCta}
           secondaryCta={{ href: '/case-studies#sadia-carrefour-rollout', label: 'See Sadia proof' }}
         />
