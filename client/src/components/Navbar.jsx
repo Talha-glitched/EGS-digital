@@ -2,6 +2,17 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { gsap } from 'gsap';
 import './Navbar.css';
 import egsLogo from '../assets/logo/New_Logo/Logo-01.png';
+import exhibitionIcon from '../assets/exhibition.png';
+import eventIcon from '../assets/event.png';
+import retailIcon from '../assets/retail.png';
+import interiorIcon from '../assets/interior.png';
+import caseStudyIcon from '../assets/case study.png';
+import hctLogo from '../assets/client_logos_gray/done/9.png';
+import sadiaLogo from '../assets/client_logos_gray/done/16.png';
+import philipsLogo from '../assets/client_logos_gray/done/4.png';
+import projectIcon from '../assets/tell us about ur project.png';
+import mailIcon from '../assets/mail.png';
+import whatsappIcon from '../assets/whatsapp.png';
 import { useInquiryModal } from '../context/InquiryModalContext.jsx';
 
 const MOBILE_BREAKPOINT = 768;
@@ -12,10 +23,10 @@ const defaultItems = [
     bgColor: 'var(--paper)',
     textColor: 'var(--paper)',
     links: [
-      { label: 'Exhibitions', href: '/exhibitions', ariaLabel: 'Open exhibitions page' },
-      { label: 'Events / Graduations', href: '/events', ariaLabel: 'Open events and graduations page' },
-      { label: 'Retail Rollouts', href: '/retail', ariaLabel: 'Open retail rollouts page' },
-      { label: 'Fitouts', href: '/fitouts', ariaLabel: 'Open fitouts page' },
+      { label: 'Exhibitions', href: '/exhibitions', ariaLabel: 'Open exhibitions page', icon: exhibitionIcon },
+      { label: 'Events / Graduations', href: '/events', ariaLabel: 'Open events and graduations page', icon: eventIcon },
+      { label: 'Retail Rollouts', href: '/retail', ariaLabel: 'Open retail rollouts page', icon: retailIcon },
+      { label: 'Fitouts', href: '/fitouts', ariaLabel: 'Open fitouts page', icon: interiorIcon },
     ],
   },
   {
@@ -23,10 +34,10 @@ const defaultItems = [
     bgColor: 'var(--terracotta)',
     textColor: 'var(--paper)',
     links: [
-      { label: 'HCT Graduation Program', href: '/case-studies#hct-graduation-program', ariaLabel: 'Open HCT graduation case study' },
-      { label: 'Sadia / Carrefour UAE', href: '/case-studies#sadia-carrefour-rollout', ariaLabel: 'Open Sadia Carrefour case study' },
-      { label: 'Philips Riyadh', href: '/case-studies#philips-global-health-riyadh', ariaLabel: 'Open Philips Riyadh case study' },
-      { label: 'All Case Studies', href: '/case-studies', ariaLabel: 'Open all case studies' },
+      { label: 'HCT Graduation Program', href: '/case-studies#hct-graduation-program', ariaLabel: 'Open HCT graduation case study', icon: hctLogo, iconVariant: 'logo', iconScale: 2 },
+      { label: 'Sadia / Carrefour UAE', href: '/case-studies#sadia-carrefour-rollout', ariaLabel: 'Open Sadia Carrefour case study', icon: sadiaLogo, iconVariant: 'logo', iconScale: 1.5 },
+      { label: 'Philips Riyadh', href: '/case-studies#philips-global-health-riyadh', ariaLabel: 'Open Philips Riyadh case study', icon: philipsLogo, iconVariant: 'logo', iconScale: 1.75 },
+      { label: 'All Case Studies', href: '/case-studies', ariaLabel: 'Open all case studies', icon: caseStudyIcon },
     ],
   },
   {
@@ -34,12 +45,24 @@ const defaultItems = [
     bgColor: 'var(--ink-blue)',
     textColor: 'var(--paper)',
     links: [
-      { label: 'Tell us about your project', inquiryType: 'general', ariaLabel: 'Tell us about your project' },
-      { label: 'Email EGS', href: 'mailto:info@exhibitgraphicsign.com', ariaLabel: 'Email EGS' },
-      { label: 'Call / WhatsApp', href: 'tel:+971524587992', ariaLabel: 'Call or WhatsApp EGS' },
+      { label: 'Tell us about your project', inquiryType: 'general', ariaLabel: 'Tell us about your project', icon: projectIcon },
+      { label: 'Email EGS', href: 'mailto:info@exhibitgraphicsign.com', ariaLabel: 'Email EGS', icon: mailIcon },
+      { label: 'Call / WhatsApp', href: 'tel:+971524587992', ariaLabel: 'Call or WhatsApp EGS', icon: whatsappIcon },
     ],
   },
 ];
+
+function getLinkIconStyle(link) {
+  if (!link.iconScale) return undefined;
+
+  const baseHeight = 40;
+  const baseMaxWidth = 132;
+
+  return {
+    height: `${baseHeight * link.iconScale}px`,
+    maxWidth: `min(100%, ${baseMaxWidth * link.iconScale}px)`,
+  };
+}
 
 function MobileNavLink({ link, onNavigate }) {
   const { openInquiry } = useInquiryModal();
@@ -352,7 +375,7 @@ function CardNav({
           >
             {list.slice(0, 3).map((item, index) => (
               <article
-                className={`egs-nav-card${hoveredIndex === index ? ' active-card' : ''}`}
+                className={`egs-nav-card egs-nav-card--${item.label.toLowerCase()}${hoveredIndex === index ? ' active-card' : ''}`}
                 key={`${item.label}-${index}`}
                 style={{ color: item.textColor }}
               >
@@ -370,7 +393,15 @@ function CardNav({
                             closeMenu();
                           }}
                         >
-                          <span className="link-arrow">↗</span>
+                          {link.icon ? (
+                            <img
+                              src={link.icon}
+                              alt=""
+                              className={`link-icon${link.iconVariant === 'logo' ? ' link-icon--logo' : ''}`}
+                              style={getLinkIconStyle(link)}
+                              aria-hidden="true"
+                            />
+                          ) : null}
                           <span className="link-label">{link.label}</span>
                         </button>
                       );
@@ -384,7 +415,15 @@ function CardNav({
                         key={link.label}
                         onClick={() => closeMenu()}
                       >
-                        <span className="link-arrow">↗</span>
+                        {link.icon ? (
+                          <img
+                            src={link.icon}
+                            alt=""
+                            className={`link-icon${link.iconVariant === 'logo' ? ' link-icon--logo' : ''}`}
+                            style={getLinkIconStyle(link)}
+                            aria-hidden="true"
+                          />
+                        ) : null}
                         <span className="link-label">{link.label}</span>
                       </a>
                     );
