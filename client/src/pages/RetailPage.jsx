@@ -1,4 +1,6 @@
 import pageStyles from '../styles/pages/content-first.css?raw';
+import minimalServiceResponsiveStyles from '../styles/pages/minimal-service-responsive.css?raw';
+import stickyShowcaseResponsiveStyles from '../styles/pages/sticky-showcase-responsive.css?raw';
 import StickyProcessShowcase from '../components/StickyProcessShowcase.jsx';
 import { Navbar } from '../components/Navbar.jsx';
 import {
@@ -102,6 +104,8 @@ export default function RetailPage() {
   return (
     <>
       <style>{pageStyles}</style>
+      <style>{minimalServiceResponsiveStyles}</style>
+      <style>{stickyShowcaseResponsiveStyles}</style>
       <div className="content-page minimal-service-page retail-minimal-page" style={{ '--accent': 'var(--claret)' }}>
         <Navbar active="retail" cta={retailCta.label} ctaInquiryType={retailCta.inquiryType} overlay />
         <MinimalServiceHero

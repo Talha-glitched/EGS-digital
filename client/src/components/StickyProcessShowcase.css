@@ -370,11 +370,30 @@
 }
 
 @media (max-width: 900px) {
+  .egs-sticky-showcase {
+    --egs-sticky-label-h: clamp(48px, 13vw, 72px);
+  }
+
+  .egs-sticky-showcase--wrap-labels {
+    --egs-sticky-label-h: clamp(52px, 14vw, 76px);
+  }
+
+  .egs-sticky-showcase-sticky {
+    height: auto;
+    min-height: 0;
+    align-items: flex-start;
+    padding-top: clamp(56px, 10vw, 72px);
+    padding-bottom: clamp(12px, 3vw, 20px);
+  }
+
   .egs-sticky-showcase-inner {
     flex-direction: column;
-    justify-content: center;
-    padding-top: 24px;
-    padding-bottom: 24px;
+    justify-content: flex-start;
+    height: auto;
+    min-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    gap: clamp(10px, 2.5vw, 16px);
   }
 
   .egs-sticky-showcase-label-wrap {
@@ -394,13 +413,16 @@
     justify-content: center;
     white-space: normal;
     text-align: center;
+    font-size: clamp(1.55rem, 8vw, 2.35rem);
+    line-height: 1.05;
   }
 
   .egs-sticky-showcase-viewport {
-    width: 100%;
+    flex: none;
+    width: min(100%, 520px);
     height: auto;
     aspect-ratio: 16 / 10;
-    max-height: none;
+    max-height: min(44svh, 340px);
   }
 
   .egs-sticky-showcase-portfolio-grid {
@@ -410,6 +432,64 @@
   .egs-sticky-showcase-card-gradient p,
   .egs-sticky-showcase-card-cta {
     opacity: 1;
+  }
+}
+
+@media (max-width: 560px) {
+  .egs-sticky-showcase {
+    --egs-sticky-label-h: clamp(44px, 12vw, 60px);
+  }
+
+  .egs-sticky-showcase--wrap-labels {
+    --egs-sticky-label-h: clamp(52px, 14vw, 68px);
+  }
+
+  .egs-sticky-showcase-sticky {
+    padding-top: 52px;
+    padding-bottom: 10px;
+  }
+
+  .egs-sticky-showcase-inner {
+    padding-left: 16px;
+    padding-right: 16px;
+    gap: 10px;
+  }
+
+  .egs-sticky-showcase-label {
+    font-size: clamp(1.25rem, 7vw, 1.9rem);
+  }
+
+  .egs-sticky-showcase-viewport {
+    width: min(92vw, 380px);
+    aspect-ratio: 4 / 3;
+    max-height: min(38svh, 280px);
+  }
+
+  .egs-sticky-showcase-portfolio {
+    padding: 48px 16px 56px;
+  }
+
+  .egs-sticky-showcase-portfolio-head {
+    margin-bottom: 28px;
+  }
+
+  .egs-sticky-showcase-portfolio-head h2 {
+    max-width: none;
+    font-size: clamp(1.35rem, 6.5vw, 1.75rem);
+    margin-bottom: 16px;
+  }
+
+  .egs-sticky-showcase-card-gradient {
+    padding: 18px;
+  }
+
+  .egs-sticky-showcase-card-gradient h3 {
+    font-size: 1.2rem;
+  }
+
+  .egs-sticky-showcase-card-gradient p {
+    font-size: 13px;
+    max-width: none;
   }
 }
 

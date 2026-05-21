@@ -1,8 +1,10 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import './Navbar.css';
-import egsLogo from '../assets/logo/EGS-Logo.png';
+import egsLogo from '../assets/logo/New_Logo/Logo-01.png';
 import { useInquiryModal } from '../context/InquiryModalContext.jsx';
+
+const MOBILE_BREAKPOINT = 768;
 
 const defaultItems = [
   {
@@ -39,6 +41,41 @@ const defaultItems = [
   },
 ];
 
+function MobileNavLink({ link, onNavigate }) {
+  const { openInquiry } = useInquiryModal();
+
+  if (link.inquiryType) {
+    return (
+      <li>
+        <button
+          type="button"
+          className="egs-mobile-nav__link"
+          aria-label={link.ariaLabel}
+          onClick={() => {
+            openInquiry(link.inquiryType);
+            onNavigate();
+          }}
+        >
+          {link.label}
+        </button>
+      </li>
+    );
+  }
+
+  return (
+    <li>
+      <a
+        className="egs-mobile-nav__link"
+        href={link.href}
+        aria-label={link.ariaLabel}
+        onClick={onNavigate}
+      >
+        {link.label}
+      </a>
+    </li>
+  );
+}
+
 function CardNav({
   active = 'home',
   items,
@@ -49,12 +86,13 @@ function CardNav({
   menuColor = 'var(--ink)',
   buttonBgColor = 'var(--ink)',
   buttonTextColor = 'var(--paper)',
-  /** Full-bleed hero: fixed on top, transparent until user scrolls */
   overlay = false,
 }) {
   const { openInquiry } = useInquiryModal();
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const overlaySolid = false;
   const navRef = useRef(null);
   const tlRef = useRef(null);
@@ -62,12 +100,76 @@ function CardNav({
 
   const list = items || defaultItems;
   const hoveredItem = hoveredIndex !== null ? list[hoveredIndex] : null;
-  // Mix the brand color with ink to darken, then make it highly transparent (30%)
-  const dynamicBg = isExpanded && hoveredItem 
-    ? `color-mix(in oklab, color-mix(in oklab, ${hoveredItem.bgColor} 84%, var(--ink)) 30%, transparent)` 
-    : '';
+
+  const closeMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(false);
+  }, []);
+
+  const closeDesktopMenu = useCallback(() => {
+    if (expandTimeoutRef.current) clearTimeout(expandTimeoutRef.current);
+    if (tlRef.current) {
+      tlRef.current.eventCallback('onReverseComplete', () => {
+        setIsExpanded(false);
+        setHoveredIndex(null);
+      });
+      tlRef.current.reverse();
+    } else {
+      setIsExpanded(false);
+      setHoveredIndex(null);
+    }
+  }, []);
+
+  const closeMenu = useCallback(() => {
+    if (isMobile) {
+      closeMobileMenu();
+      return;
+    }
+    closeDesktopMenu();
+  }, [isMobile, closeMobileMenu, closeDesktopMenu]);
+
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`);
+    const update = () => {
+      const mobile = mq.matches;
+      setIsMobile(mobile);
+      if (mobile) {
+        setIsExpanded(false);
+        setHoveredIndex(null);
+        closeDesktopMenu();
+      } else {
+        closeMobileMenu();
+      }
+    };
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, [closeDesktopMenu, closeMobileMenu]);
+
+  useEffect(() => {
+    if (!isMobile || !isMobileMenuOpen) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isMobile, isMobileMenuOpen]);
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) return undefined;
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') closeMenu();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isMobileMenuOpen, closeMenu]);
+
+  const dynamicBg =
+    !isMobile && isExpanded && hoveredItem
+      ? `color-mix(in oklab, color-mix(in oklab, ${hoveredItem.bgColor} 84%, var(--ink)) 30%, transparent)`
+      : '';
 
   const handleMouseEnterItem = (index) => {
+    if (isMobile) return;
     if (expandTimeoutRef.current) clearTimeout(expandTimeoutRef.current);
     setHoveredIndex(index);
     if (!isExpanded) {
@@ -77,17 +179,9 @@ function CardNav({
   };
 
   const handleMouseLeaveNav = () => {
+    if (isMobile) return;
     expandTimeoutRef.current = setTimeout(() => {
-      if (tlRef.current) {
-        tlRef.current.eventCallback('onReverseComplete', () => {
-          setIsExpanded(false);
-          setHoveredIndex(null);
-        });
-        tlRef.current.reverse();
-      } else {
-        setIsExpanded(false);
-        setHoveredIndex(null);
-      }
+      closeDesktopMenu();
     }, 150);
   };
 
@@ -95,36 +189,15 @@ function CardNav({
     if (expandTimeoutRef.current) clearTimeout(expandTimeoutRef.current);
   };
 
-  const calculateHeight = () => {
-    const navEl = navRef.current;
-    if (!navEl) return 292;
-    const isMobile = window.matchMedia('(max-width: 768px)').matches;
-    if (isMobile) {
-      const contentEl = navEl.querySelector('.egs-navbar-content');
-      if (!contentEl) return 292;
-      const previous = {
-        visibility: contentEl.style.visibility,
-        pointerEvents: contentEl.style.pointerEvents,
-        position: contentEl.style.position,
-        height: contentEl.style.height,
-      };
-      contentEl.style.visibility = 'visible';
-      contentEl.style.pointerEvents = 'auto';
-      contentEl.style.position = 'static';
-      contentEl.style.height = 'auto';
-      const contentHeight = contentEl.scrollHeight;
-      contentEl.style.visibility = previous.visibility;
-      contentEl.style.pointerEvents = previous.pointerEvents;
-      contentEl.style.position = previous.position;
-      contentEl.style.height = previous.height;
-      return 64 + contentHeight + 18;
-    }
-    return 300;
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen((open) => !open);
   };
+
+  const calculateDesktopHeight = () => 300;
 
   const createTimeline = () => {
     const navEl = navRef.current;
-    if (!navEl) return null;
+    if (!navEl || isMobile) return null;
 
     gsap.set(navEl, { height: 64, overflow: 'hidden' });
 
@@ -135,11 +208,11 @@ function CardNav({
 
     const tl = gsap.timeline({ paused: true });
     tl.to(navEl, {
-      height: calculateHeight,
+      height: calculateDesktopHeight,
       duration: 0.42,
       ease,
     });
-    
+
     if (contentEl) {
       tl.to(contentEl, { y: 0, opacity: 1, duration: 0.35, ease }, '-=0.2');
     }
@@ -148,20 +221,32 @@ function CardNav({
   };
 
   useLayoutEffect(() => {
+    const navEl = navRef.current;
+    if (!navEl) return undefined;
+
+    if (isMobile) {
+      tlRef.current?.kill();
+      tlRef.current = null;
+      gsap.set(navEl, { height: 64, overflow: 'visible', clearProps: 'height' });
+      return undefined;
+    }
+
     const tl = createTimeline();
     tlRef.current = tl;
     return () => {
       tl?.kill();
       tlRef.current = null;
     };
-  }, [ease, items]);
+  }, [ease, items, isMobile]);
 
   useLayoutEffect(() => {
+    if (isMobile || !tlRef.current) return undefined;
+
     const handleResize = () => {
       if (!tlRef.current) return;
 
       if (isExpanded) {
-        const newHeight = calculateHeight();
+        const newHeight = calculateDesktopHeight();
         gsap.set(navRef.current, { height: newHeight });
         tlRef.current.kill();
         const newTl = createTimeline();
@@ -177,20 +262,15 @@ function CardNav({
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [isExpanded]);
+  }, [isExpanded, isMobile]);
 
-  // Toggle menu logic removed, handled by hover
-
-  // setCardRef removed, cards are handled via CSS
-
-  const navSurface =
-    overlay && !overlaySolid ? 'transparent' : baseColor;
+  const navSurface = overlay && !overlaySolid ? 'transparent' : baseColor;
 
   const menuIconColor =
-    overlay && !overlaySolid ? 'var(--paper)' : menuColor || 'var(--ink)';
+    overlay && !overlaySolid && !isMobileMenuOpen ? 'var(--paper)' : menuColor || 'var(--ink)';
 
   const ctaSurfaceStyle =
-    overlay && !overlaySolid
+    overlay && !overlaySolid && !isMobileMenuOpen
       ? {
           backgroundColor: 'transparent',
           color: 'var(--paper)',
@@ -200,40 +280,54 @@ function CardNav({
 
   return (
     <div
-      className={`egs-navbar-container${overlay ? ' egs-navbar-container--overlay' : ''}`}
+      className={`egs-navbar-container${overlay ? ' egs-navbar-container--overlay' : ''}${isMobileMenuOpen ? ' egs-navbar-container--menu-open' : ''}`}
     >
       <nav
         ref={navRef}
-        className={`egs-navbar ${isExpanded ? 'open' : ''}${
+        className={`egs-navbar${isExpanded ? ' open' : ''}${isMobile ? ' egs-navbar--mobile-bar' : ''}${
           overlay ? ' egs-navbar--overlay' : ''
-        }${overlay && overlaySolid ? ' egs-navbar--overlay-solid' : ''}`}
-        style={{ 
+        }${overlay && overlaySolid ? ' egs-navbar--overlay-solid' : ''}${isMobileMenuOpen ? ' egs-navbar--menu-open' : ''}`}
+        style={{
           backgroundColor: navSurface,
-          ...(dynamicBg ? { '--dynamic-bg': dynamicBg } : {})
+          ...(dynamicBg ? { '--dynamic-bg': dynamicBg } : {}),
         }}
         aria-label="Primary navigation"
         onMouseLeave={handleMouseLeaveNav}
         onMouseEnter={handleMouseEnterNav}
       >
         <div className="egs-navbar-top">
+          <button
+            type="button"
+            className={`egs-hamburger-menu${isMobileMenuOpen ? ' open' : ''}`}
+            onClick={isMobile ? toggleMobileMenu : undefined}
+            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isMobile ? isMobileMenuOpen : false}
+            aria-controls={isMobile ? 'egs-mobile-nav-panel' : undefined}
+            style={{ color: isMobile ? menuIconColor : undefined }}
+          >
+            <span className="egs-hamburger-line" aria-hidden="true" />
+            <span className="egs-hamburger-line" aria-hidden="true" />
+          </button>
+
           <a
             href="/"
             className="egs-navbar-logo"
             aria-label="Exhibit Graphic Sign home"
             aria-current={active === 'home' ? 'page' : undefined}
+            onClick={closeMenu}
           >
-            <img src={egsLogo} alt="Exhibit Graphic Sign" className="egs-navbar-logo-image" />
+            <img src={egsLogo} alt="" className="egs-navbar-logo-image" />
           </a>
 
           <div className="egs-desktop-nav-links">
-            {(items || []).slice(0, 3).map((item, index) => (
+            {list.slice(0, 3).map((item, index) => (
               <span
                 key={item.label}
                 className={`egs-desktop-nav-item ${hoveredIndex === index ? 'active' : ''}`}
                 onMouseEnter={() => handleMouseEnterItem(index)}
                 style={{
                   color: hoveredIndex === index ? item.textColor : '',
-                  opacity: isExpanded && hoveredIndex !== index ? 0.6 : 1
+                  opacity: isExpanded && hoveredIndex !== index ? 0.6 : 1,
                 }}
               >
                 {item.label}
@@ -251,61 +345,109 @@ function CardNav({
           </button>
         </div>
 
-        <div className={`egs-navbar-content ${isExpanded ? 'visible' : ''}`} aria-hidden={!isExpanded}>
-          {(items || []).slice(0, 3).map((item, index) => (
-            <article
-              className={`egs-nav-card ${hoveredIndex === index ? 'active-card' : ''}`}
-              key={`${item.label}-${index}`}
-              style={{ color: item.textColor }}
-            >
-              <div className="egs-nav-card-links">
-                {item.links?.map((link) => {
-                  const closeMenu = () => {
-                    if (tlRef.current) {
-                      tlRef.current.eventCallback('onReverseComplete', () => {
-                        setIsExpanded(false);
-                        setHoveredIndex(null);
-                      });
-                      tlRef.current.reverse();
+        {!isMobile ? (
+          <div
+            className={`egs-navbar-content${isExpanded ? ' visible' : ''}`}
+            aria-hidden={!isExpanded}
+          >
+            {list.slice(0, 3).map((item, index) => (
+              <article
+                className={`egs-nav-card${hoveredIndex === index ? ' active-card' : ''}`}
+                key={`${item.label}-${index}`}
+                style={{ color: item.textColor }}
+              >
+                <div className="egs-nav-card-links">
+                  {item.links?.map((link) => {
+                    if (link.inquiryType) {
+                      return (
+                        <button
+                          type="button"
+                          className="egs-nav-card-link"
+                          aria-label={link.ariaLabel}
+                          key={link.label}
+                          onClick={() => {
+                            openInquiry(link.inquiryType);
+                            closeMenu();
+                          }}
+                        >
+                          <span className="link-arrow">↗</span>
+                          <span className="link-label">{link.label}</span>
+                        </button>
+                      );
                     }
-                  };
 
-                  if (link.inquiryType) {
                     return (
-                      <button
-                        type="button"
+                      <a
                         className="egs-nav-card-link"
+                        href={link.href}
                         aria-label={link.ariaLabel}
                         key={link.label}
-                        onClick={() => {
-                          openInquiry(link.inquiryType);
-                          closeMenu();
-                        }}
+                        onClick={() => closeMenu()}
                       >
                         <span className="link-arrow">↗</span>
                         <span className="link-label">{link.label}</span>
-                      </button>
+                      </a>
                     );
-                  }
-
-                  return (
-                    <a
-                      className="egs-nav-card-link"
-                      href={link.href}
-                      aria-label={link.ariaLabel}
-                      key={link.label}
-                      onClick={closeMenu}
-                    >
-                      <span className="link-arrow">↗</span>
-                      <span className="link-label">{link.label}</span>
-                    </a>
-                  );
-                })}
-              </div>
-            </article>
-          ))}
-        </div>
+                  })}
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : null}
       </nav>
+
+      {isMobile ? (
+        <div
+          className={`egs-mobile-nav${isMobileMenuOpen ? ' is-open' : ''}${overlay ? ' egs-mobile-nav--overlay' : ''}`}
+          aria-hidden={!isMobileMenuOpen}
+        >
+          <button
+            type="button"
+            className="egs-mobile-nav__backdrop"
+            aria-label="Close menu"
+            tabIndex={isMobileMenuOpen ? 0 : -1}
+            onClick={closeMobileMenu}
+          />
+
+          <div
+            id="egs-mobile-nav-panel"
+            className="egs-mobile-nav__panel"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site menu"
+          >
+            <div className="egs-mobile-nav__scroll">
+              {list.map((item) => (
+                <section className="egs-mobile-nav__group" key={item.label}>
+                  <h2 className="egs-mobile-nav__group-title">{item.label}</h2>
+                  <ul className="egs-mobile-nav__list">
+                    {item.links?.map((link) => (
+                      <MobileNavLink
+                        key={link.label}
+                        link={link}
+                        onNavigate={closeMobileMenu}
+                      />
+                    ))}
+                  </ul>
+                </section>
+              ))}
+            </div>
+
+            <div className="egs-mobile-nav__footer">
+              <button
+                type="button"
+                className="egs-mobile-nav__cta"
+                onClick={() => {
+                  openInquiry(ctaInquiryType);
+                  closeMobileMenu();
+                }}
+              >
+                {cta}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

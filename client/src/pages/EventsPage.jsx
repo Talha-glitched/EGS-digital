@@ -1,4 +1,6 @@
 import pageStyles from '../styles/pages/content-first.css?raw';
+import minimalServiceResponsiveStyles from '../styles/pages/minimal-service-responsive.css?raw';
+import stickyShowcaseResponsiveStyles from '../styles/pages/sticky-showcase-responsive.css?raw';
 import StickyProcessShowcase from '../components/StickyProcessShowcase.jsx';
 import { Navbar } from '../components/Navbar.jsx';
 import {
@@ -143,6 +145,8 @@ export default function EventsPage() {
   return (
     <>
       <style>{pageStyles}</style>
+      <style>{minimalServiceResponsiveStyles}</style>
+      <style>{stickyShowcaseResponsiveStyles}</style>
       <div className="content-page minimal-service-page events-minimal-page" style={{ '--accent': '#482683' }}>
         <Navbar active="events" cta={eventsCta.label} ctaInquiryType={eventsCta.inquiryType} overlay />
         <MinimalServiceHero

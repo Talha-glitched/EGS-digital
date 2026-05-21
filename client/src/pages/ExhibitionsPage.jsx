@@ -1,4 +1,6 @@
 import pageStyles from '../styles/pages/content-first.css?raw';
+import exhibitionsResponsiveStyles from '../styles/pages/exhibitions-responsive.css?raw';
+import stickyShowcaseResponsiveStyles from '../styles/pages/sticky-showcase-responsive.css?raw';
 import StickyProcessShowcase from '../components/StickyProcessShowcase.jsx';
 import { Navbar } from '../components/Navbar.jsx';
 import ExhibitionsAdaptationSection from '../components/exhibitions/ExhibitionsAdaptationSection.jsx';
@@ -68,6 +70,8 @@ export default function ExhibitionsPage() {
   return (
     <>
       <style>{pageStyles}</style>
+      <style>{exhibitionsResponsiveStyles}</style>
+      <style>{stickyShowcaseResponsiveStyles}</style>
       <div className="content-page exhibitions-page" style={{ '--accent': 'var(--ochre)' }}>
         <Navbar active="exhibitions" cta={exhibitionsCta.label} ctaInquiryType={exhibitionsCta.inquiryType} overlay />
         <ExhibitionsHeroSection />

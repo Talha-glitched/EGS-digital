@@ -1,0 +1,135 @@
+/* StickyProcessShowcase — tablet & mobile (same behavior as Home; overrides page desktop rules) */
+
+@media (max-width: 900px) {
+  .content-page .egs-sticky-showcase-inner {
+    max-width: none;
+    width: 100%;
+    justify-content: flex-start;
+    gap: clamp(10px, 2.5vw, 16px);
+  }
+
+  .content-page .egs-sticky-showcase-sticky {
+    height: auto;
+    min-height: 0;
+    align-items: flex-start;
+    padding-top: clamp(56px, 10vw, 72px);
+    padding-bottom: clamp(12px, 3vw, 20px);
+  }
+
+  .content-page .egs-sticky-showcase--wrap-labels {
+    --egs-sticky-label-h: clamp(52px, 14vw, 76px);
+  }
+
+  .content-page .egs-sticky-showcase-label-wrap {
+    flex: none;
+    width: 100%;
+    max-width: none;
+    text-align: center;
+  }
+
+  .content-page .egs-sticky-showcase-label {
+    justify-content: center;
+    white-space: normal;
+    text-align: center;
+    font-size: clamp(1.45rem, 7vw, 2.1rem);
+    line-height: 1.05;
+  }
+
+  .content-page .egs-sticky-showcase-viewport {
+    flex: none;
+    width: min(100%, 520px);
+    max-width: none;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    max-height: min(44svh, 340px);
+  }
+
+  /* Events desktop last-step treatment — mobile matches Home defaults */
+  .events-minimal-page .egs-sticky-showcase-slide--last {
+    background: transparent;
+  }
+
+  .events-minimal-page .egs-sticky-showcase-slide--last img {
+    object-fit: contain;
+    object-position: center;
+    background: transparent;
+    filter: none;
+  }
+
+  .events-minimal-page .egs-sticky-showcase-slide--last .egs-sticky-showcase-slide-overlay {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .events-minimal-page .egs-sticky-showcase-viewport.is-last-active {
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .content-page .egs-sticky-showcase-portfolio {
+    padding: clamp(40px, 8vw, 56px) clamp(16px, 4vw, 24px) clamp(44px, 8vw, 56px);
+  }
+
+  .content-page .egs-sticky-showcase-portfolio-head h2 {
+    max-width: none;
+  }
+
+  .content-page .egs-sticky-showcase-portfolio-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .content-page .egs-sticky-showcase-card-gradient p,
+  .content-page .egs-sticky-showcase-card-cta {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 680px) {
+  .content-page .egs-sticky-showcase-sticky {
+    padding-top: 52px;
+    padding-bottom: 10px;
+  }
+
+  .content-page .egs-sticky-showcase-inner {
+    padding-left: 16px;
+    padding-right: 16px;
+    gap: 10px;
+  }
+
+  .content-page .egs-sticky-showcase-label {
+    font-size: clamp(1.2rem, 6.5vw, 1.75rem);
+  }
+
+  .content-page .egs-sticky-showcase-viewport {
+    width: min(92vw, 380px);
+    aspect-ratio: 4 / 3;
+    max-height: min(38svh, 280px);
+  }
+
+  .content-page .egs-sticky-showcase-portfolio {
+    padding: 40px 16px 44px;
+  }
+
+  .content-page .egs-sticky-showcase-portfolio-head {
+    margin-bottom: 24px;
+  }
+
+  .content-page .egs-sticky-showcase-portfolio-head h2 {
+    font-size: clamp(1.35rem, 6.5vw, 1.75rem);
+    margin-bottom: 14px;
+  }
+
+  .content-page .egs-sticky-showcase-card-gradient {
+    padding: 18px;
+  }
+
+  .content-page .egs-sticky-showcase-card-gradient h3 {
+    font-size: 1.2rem;
+  }
+
+  .content-page .egs-sticky-showcase-card-gradient p {
+    font-size: 13px;
+    max-width: none;
+  }
+}

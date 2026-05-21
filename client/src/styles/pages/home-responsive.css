@@ -1,0 +1,251 @@
+/* Home page — tablet & mobile */
+
+@media (max-width: 900px) {
+  .home-page .section-band {
+    padding: clamp(48px, 9vw, 72px) 0;
+  }
+
+  .home-page .section-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: clamp(20px, 4vw, 32px);
+  }
+
+  .home-page .section-head::before {
+    writing-mode: horizontal-tb;
+    transform: none;
+    padding-top: 0;
+    margin-bottom: 2px;
+  }
+
+  .home-page .section-head h2,
+  .home-page .section-head .home-intro-title {
+    max-width: none;
+    font-size: clamp(26px, 6.2vw, 38px);
+    line-height: 1.06;
+  }
+
+  .home-page .section-head p {
+    max-width: none;
+    margin-top: 0;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .home-page .home-services-section .service-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .home-page .home-services-section .service-card {
+    grid-column: auto;
+    min-height: 0;
+  }
+
+  .home-page .home-services-gallery {
+    min-height: 0;
+    margin-inline: calc(var(--gutter) * -0.35);
+  }
+
+  .home-page .marquee {
+    margin-top: -36px;
+    padding: 4px 0 16px;
+  }
+
+  .home-page .marquee-item {
+    width: clamp(132px, 26vw, 190px);
+    height: clamp(140px, 22vw, 180px);
+  }
+
+  .home-page .marquee-logo {
+    height: clamp(120px, 20vw, 160px);
+  }
+
+  .home-page .faq-item__trigger h3 {
+    font-size: 16px;
+  }
+
+  .home-page .minimal-faq-section .section-head h2 {
+    max-width: none;
+  }
+
+  .home-page .home-services-section {
+    padding-top: clamp(40px, 8vw, 56px);
+  }
+
+  .home-page .home-services-section .section-head .home-intro-title {
+    max-width: none;
+    line-height: 1.08;
+  }
+
+  .home-page .home-services-section .section-head .home-intro-subtitle {
+    font-size: clamp(16px, 3.5vw, 22px);
+  }
+}
+
+@media (max-width: 680px) {
+  .home-page .section-band {
+    padding: clamp(36px, 10vw, 52px) 0;
+  }
+
+  .home-page .section-head h2,
+  .home-page .section-head .home-intro-title {
+    font-size: clamp(22px, 7.2vw, 30px);
+  }
+
+  .home-page .section-head p {
+    font-size: 14px;
+  }
+
+  .home-page .home-services-section .service-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .home-page .home-services-section .service-card h3 {
+    font-size: 20px;
+  }
+
+  /* content-first sets .home-services-gallery { height: 320px } here — layout height
+     ignores overflowing cards (overflow:visible), so the proof band stacks on top */
+  .home-page .home-services-gallery {
+    height: auto;
+    margin-top: 4px;
+    margin-inline: calc(var(--gutter) * -0.35);
+  }
+
+  .home-page .marquee {
+    margin-top: -18px;
+    padding: 2px 0 12px;
+  }
+
+  .home-page .marquee-item {
+    width: min(68vw, 200px);
+    height: 108px;
+  }
+
+  .home-page .marquee-logo {
+    height: 92px;
+  }
+
+  .home-page .faq-item__trigger {
+    padding: 14px 0;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .home-page .faq-item__trigger h3 {
+    font-size: 15px;
+    line-height: 1.3;
+  }
+
+  .home-page .faq-item__panel-inner p {
+    padding: 0 0 14px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .home-page .section-band > .container > .btn,
+  .home-page .minimal-cta-section .btn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .home-page .egs-home-video-copy {
+    width: min(calc(100% - 24px), 100%);
+  }
+
+  .home-page .egs-home-video-heading {
+    max-width: none;
+    font-size: clamp(1.65rem, 7.5vw, 2.15rem);
+    line-height: 1.04;
+  }
+
+  .home-page .egs-home-video-services {
+    max-width: 100%;
+  }
+
+  .home-page .egs-home-video-service-rotator {
+    min-width: 0;
+    width: 100%;
+    max-width: 28ch;
+  }
+
+  .home-page .home-services-section {
+    padding-top: clamp(32px, 9vw, 48px);
+    padding-bottom: clamp(8px, 2vw, 16px);
+  }
+
+  .home-page .home-services-section .section-head .home-intro-title {
+    font-size: clamp(20px, 6.5vw, 26px);
+  }
+
+  .home-page .home-services-section .section-head p {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .home-page .minimal-faq-section .section-head h2 {
+    font-size: clamp(22px, 7.2vw, 30px);
+  }
+
+  .home-page .minimal-faq-section .section-head p {
+    font-size: 14px;
+  }
+
+  .home-page .btn-primary {
+    background: var(--paper);
+    color: var(--ink);
+    border-color: var(--paper);
+  }
+
+  .home-page .btn-primary:hover {
+    background: transparent;
+    color: var(--paper);
+    border-color: rgba(245, 241, 234, 0.42);
+  }
+
+  .home-page .footer {
+    padding-top: clamp(40px, 10vw, 56px);
+  }
+
+  .home-page .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding-bottom: 40px;
+  }
+
+  .home-page .footer-big {
+    font-size: clamp(32px, 10vw, 48px);
+    padding: 24px 0 32px;
+  }
+
+  .home-page .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 400px) {
+  .home-page .egs-home-video-heading {
+    max-width: none;
+    font-size: clamp(1.4rem, 7vw, 1.75rem);
+  }
+
+  .home-page .egs-home-video-service-rotator {
+    max-width: 100%;
+  }
+
+  .home-page .marquee-item {
+    width: min(76vw, 180px);
+    height: 96px;
+  }
+
+  .home-page .marquee-logo {
+    height: 80px;
+  }
+}

@@ -131,3 +131,62 @@
     filter: blur(6px);
   }
 }
+
+@media (max-width: 900px) {
+  .egs-home-video-copy {
+    padding: clamp(96px, 16vw, 120px) 0 clamp(64px, 10vw, 88px);
+  }
+
+  .egs-home-video-heading {
+    font-size: clamp(2rem, 6.5vw, 2.85rem);
+    max-width: 15ch;
+  }
+}
+
+@media (max-width: 680px) {
+  .egs-home-video-hero {
+    min-height: 100svh;
+    min-height: 100dvh;
+  }
+
+  .egs-home-video-copy {
+    width: min(100% - 28px, 520px);
+    padding: clamp(80px, 22vw, 100px) 0 clamp(56px, 14vw, 72px);
+  }
+
+  .egs-home-video-kicker {
+    min-height: 28px;
+    padding: 0 10px;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+  }
+
+  .egs-home-video-heading {
+    margin-top: 18px;
+    font-size: clamp(1.6rem, 8vw, 2.1rem);
+    max-width: 12ch;
+    line-height: 1;
+  }
+
+  .egs-home-video-services {
+    margin-top: 14px;
+    min-height: 32px;
+    font-size: clamp(14px, 4.2vw, 17px);
+  }
+
+  .egs-home-video-service-rotator {
+    min-width: min(26ch, 100%);
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 400px) {
+  .egs-home-video-heading {
+    max-width: 11ch;
+    font-size: clamp(1.45rem, 7.5vw, 1.85rem);
+  }
+
+  .egs-home-video-service-rotator {
+    min-width: 22ch;
+  }
+}

@@ -1,4 +1,5 @@
 import pageStyles from '../styles/pages/content-first.css?raw';
+import caseStudiesResponsiveStyles from '../styles/pages/case-studies-responsive.css?raw';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 import { Navbar } from '../components/Navbar.jsx';
 import { FAQSection, Footer, ProofCard } from './SiteChrome.jsx';
@@ -107,6 +108,7 @@ export default function CaseStudiesPage() {
   return (
     <>
       <style>{pageStyles}</style>
+      <style>{caseStudiesResponsiveStyles}</style>
       <div className="content-page case-studies-page" style={{ '--accent': 'var(--terracotta)' }}>
         <Navbar active="case-studies" cta="Send us your brief" overlay />
 

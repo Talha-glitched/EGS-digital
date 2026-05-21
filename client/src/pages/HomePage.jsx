@@ -1,4 +1,6 @@
 import pageStyles from '../styles/pages/content-first.css?raw';
+import homeResponsiveStyles from '../styles/pages/home-responsive.css?raw';
+import stickyShowcaseResponsiveStyles from '../styles/pages/sticky-showcase-responsive.css?raw';
 import { useRef } from 'react';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 import { motion } from 'motion/react';
@@ -67,6 +69,8 @@ export default function HomePage() {
   return (
     <>
       <style>{pageStyles}</style>
+      <style>{homeResponsiveStyles}</style>
+      <style>{stickyShowcaseResponsiveStyles}</style>
       <div className="content-page home-page" style={{ '--accent': 'var(--terracotta)' }}>
         <Navbar active="home" overlay />
 

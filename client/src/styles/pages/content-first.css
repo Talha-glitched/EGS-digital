@@ -1637,58 +1637,61 @@
 .minimal-service-page .step:nth-child(5) { --reveal-delay: 280ms; }
 .minimal-service-page .step:nth-child(6) { --reveal-delay: 350ms; }
 
-.events-minimal-page .egs-sticky-showcase-inner,
-.fitouts-minimal-page .egs-sticky-showcase-inner,
-.retail-minimal-page .egs-sticky-showcase-inner,
-.exhibitions-page .egs-sticky-showcase-inner {
-  max-width: 1360px;
-  justify-content: center;
-  gap: clamp(28px, 5vw, 72px);
-}
+/* StickyProcessShowcase — desktop-only layout tweaks (mobile uses StickyProcessShowcase.css like Home) */
+@media (min-width: 901px) {
+  .events-minimal-page .egs-sticky-showcase-inner,
+  .fitouts-minimal-page .egs-sticky-showcase-inner,
+  .retail-minimal-page .egs-sticky-showcase-inner,
+  .exhibitions-page .egs-sticky-showcase-inner {
+    max-width: 1360px;
+    justify-content: center;
+    gap: clamp(28px, 5vw, 72px);
+  }
 
-.events-minimal-page .egs-sticky-showcase-label-wrap,
-.fitouts-minimal-page .egs-sticky-showcase-label-wrap,
-.retail-minimal-page .egs-sticky-showcase-label-wrap,
-.exhibitions-page .egs-sticky-showcase-label-wrap {
-  flex: 0 0 min(46vw, 580px);
-  max-width: 580px;
-}
+  .events-minimal-page .egs-sticky-showcase-label-wrap,
+  .fitouts-minimal-page .egs-sticky-showcase-label-wrap,
+  .retail-minimal-page .egs-sticky-showcase-label-wrap,
+  .exhibitions-page .egs-sticky-showcase-label-wrap {
+    flex: 0 0 min(46vw, 580px);
+    max-width: 580px;
+  }
 
-.events-minimal-page .egs-sticky-showcase-label,
-.fitouts-minimal-page .egs-sticky-showcase-label,
-.retail-minimal-page .egs-sticky-showcase-label,
-.exhibitions-page .egs-sticky-showcase-label {
-  font-size: clamp(2rem, 4.6vw, 3.4rem);
-}
+  .events-minimal-page .egs-sticky-showcase-label,
+  .fitouts-minimal-page .egs-sticky-showcase-label,
+  .retail-minimal-page .egs-sticky-showcase-label,
+  .exhibitions-page .egs-sticky-showcase-label {
+    font-size: clamp(2rem, 4.6vw, 3.4rem);
+  }
 
-.events-minimal-page .egs-sticky-showcase-viewport,
-.fitouts-minimal-page .egs-sticky-showcase-viewport,
-.retail-minimal-page .egs-sticky-showcase-viewport,
-.exhibitions-page .egs-sticky-showcase-viewport {
-  flex: 0 1 620px;
-  width: min(44vw, 620px);
-}
+  .events-minimal-page .egs-sticky-showcase-viewport,
+  .fitouts-minimal-page .egs-sticky-showcase-viewport,
+  .retail-minimal-page .egs-sticky-showcase-viewport,
+  .exhibitions-page .egs-sticky-showcase-viewport {
+    flex: 0 1 620px;
+    width: min(44vw, 620px);
+  }
 
-/* Graduation ceremonies: fourth image fills viewport like steps 2-3 (not letterboxed contain) */
-.events-minimal-page .egs-sticky-showcase-slide--last {
-  background: #0a0908;
-}
+  /* Graduation ceremonies: fourth image fills viewport like steps 2-3 (not letterboxed contain) */
+  .events-minimal-page .egs-sticky-showcase-slide--last {
+    background: #0a0908;
+  }
 
-.events-minimal-page .egs-sticky-showcase-slide--last img {
-  object-fit: cover;
-  object-position: center;
-  background: #0a0908;
-  filter: saturate(0.92) brightness(0.72) contrast(1.08);
-}
+  .events-minimal-page .egs-sticky-showcase-slide--last img {
+    object-fit: cover;
+    object-position: center;
+    background: #0a0908;
+    filter: saturate(0.92) brightness(0.72) contrast(1.08);
+  }
 
-.events-minimal-page .egs-sticky-showcase-slide--last .egs-sticky-showcase-slide-overlay {
-  opacity: 1;
-}
+  .events-minimal-page .egs-sticky-showcase-slide--last .egs-sticky-showcase-slide-overlay {
+    opacity: 1;
+  }
 
-.events-minimal-page .egs-sticky-showcase-viewport.is-last-active {
-  background: #0a0908;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
-  border-radius: 4px;
+  .events-minimal-page .egs-sticky-showcase-viewport.is-last-active {
+    background: #0a0908;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+    border-radius: 4px;
+  }
 }
 
 /* Five-card scope sections — wide pair on second row */
