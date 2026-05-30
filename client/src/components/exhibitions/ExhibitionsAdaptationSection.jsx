@@ -14,7 +14,7 @@ export default function ExhibitionsAdaptationSection() {
           </div>
         </div>
         <div className="exhibitions-adaptation-image">
-          <img src={images.philips} alt="Philips exhibition stand detail" />
+          <img src={images.philipsMri} alt="Philips exhibition stand detail" />
         </div>
       </div>
     </section>

@@ -977,9 +977,9 @@
 
 .exhibitions-adaptation-image {
   min-height: min(620px, 70vh);
-  border: 1px solid rgba(245, 241, 234, 0.16);
+  border: none;
   overflow: hidden;
-  background: #0f0e0d;
+  background: transparent;
 }
 
 .exhibitions-adaptation-image img {

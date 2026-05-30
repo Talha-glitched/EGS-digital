@@ -379,21 +379,24 @@
   }
 
   .egs-sticky-showcase-sticky {
-    height: auto;
-    min-height: 0;
-    align-items: flex-start;
-    padding-top: clamp(56px, 10vw, 72px);
-    padding-bottom: clamp(12px, 3vw, 20px);
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 0;
+    padding-bottom: 0;
   }
 
   .egs-sticky-showcase-inner {
     flex-direction: column;
-    justify-content: flex-start;
-    height: auto;
-    min-height: 0;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
     padding-top: 0;
     padding-bottom: 0;
-    gap: clamp(10px, 2.5vw, 16px);
+    gap: clamp(16px, 4vw, 24px);
   }
 
   .egs-sticky-showcase-label-wrap {
@@ -445,14 +448,14 @@
   }
 
   .egs-sticky-showcase-sticky {
-    padding-top: 52px;
-    padding-bottom: 10px;
+    padding-top: 0;
+    padding-bottom: 0;
   }
 
   .egs-sticky-showcase-inner {
     padding-left: 16px;
     padding-right: 16px;
-    gap: 10px;
+    gap: 12px;
   }
 
   .egs-sticky-showcase-label {

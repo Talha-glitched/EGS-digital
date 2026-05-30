@@ -9,7 +9,7 @@ export default function ExhibitionsHeroSection() {
     <section className="exhibitions-hero" aria-label="Exhibitions hero">
       <img
         className="exhibitions-hero-media"
-        src={images.philipsArab}
+        src={images.phillips2}
         alt="Philips exhibition stand"
       />
       <div className="exhibitions-hero-shade" aria-hidden="true" />

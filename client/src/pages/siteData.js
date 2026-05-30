@@ -1,6 +1,9 @@
 import hctGraduationCard from '../assets/Graduation/ADGRAD1.jpg';
 import hctFitout from '../assets/hct-fitout.jpeg';
 import roastRetail from '../assets/roast-retail.jpeg';
+import microlink from '../assets/Exhibition Stands/Microlink1.jpeg';
+import phillips2 from '../assets/Exhibition Stands/Phillips_2.jpeg';
+import philipsMri from '../assets/Exhibition Stands/Philips_MRI.jpg';
 
 const grayClientLogoModules = import.meta.glob('../assets/client_logos_gray/done/*.png', {
   eager: true,
@@ -29,6 +32,9 @@ export const images = {
   fitout: hctFitout,
   retail: roastRetail,
   activation: 'https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Velocity-3.jpg',
+  microlink,
+  phillips2,
+  philipsMri,
 };
 
 export const services = [
@@ -37,7 +43,7 @@ export const services = [
     label: '01',
     title: 'Exhibitions',
     copy: 'Custom exhibition stands for opening-day pressure, product changes, and venue realities.',
-    image: images.philips,
+    image: images.microlink,
     accent: 'var(--ochre)',
   },
   {
