@@ -308,14 +308,14 @@ export function ClientMarquee() {
   );
 }
 
-export function ProofCard({ card }) {
+export function ProofCard({ card, actionLabel }) {
   return (
     <a className="proof-file-card" href={card.href}>
       <span className="proof-tag">{card.tag}</span>
       <strong>{card.stat}</strong>
       <h3>{card.title}</h3>
       <p>{card.copy}</p>
-      <em>Open proof →</em>
+      <em>{actionLabel || 'Open proof →'}</em>
     </a>
   );
 }

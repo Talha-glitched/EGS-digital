@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import pageStyles from '../styles/pages/content-first.css?raw';
 import caseStudiesResponsiveStyles from '../styles/pages/case-studies-responsive.css?raw';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
@@ -42,7 +43,9 @@ const cases = [
     tag: 'Retail rollout',
     title: 'Sadia Carrefour Rollout',
     stat: '33 locations',
-    image: images.retail,
+    image: images.retailSadiaChiller,
+    imagesList: [images.retailSadiaChiller, images.retailSadiaBusDisplay],
+    captions: ['Sadia Chiller Branding installation at Carrefour', 'Sadia Custom POSM Product Bus Display'],
     situation: 'In 2019, Sadia had planned its Carrefour hypermarket retail installations for Friday.',
     pressure: 'On Wednesday, the client asked EGS to move the rollout forward and complete all 33 Carrefour hypermarket locations across the UAE that same night. Mall work could only begin after closing.',
     did: 'EGS started around midnight and finished before 6am. Scope included chiller branding and installation, plus island displays. The rollout used 13 vehicles, one labourer per vehicle, and 8-10 QA/QC people moving across teams, with approximately 25-30 people involved overall.',
@@ -85,6 +88,92 @@ const caseFaqs = [
   ['What should I send if my project looks similar?', 'Send the date, venue or locations, scope, drawings or photos, brand files, access window, and the issue you are trying to solve. That gives EGS enough context to respond with a practical next step.'],
   ['How does EGS keep the customer experience coordinated?', 'Design, production, logistics, installation, on-site response, and handover stay connected through one accountable team, so the client is not left coordinating disconnected suppliers under pressure.'],
 ];
+
+function CaseImageGallery({ imagesList, captions, title }) {
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  if (!imagesList || imagesList.length === 0) return null;
+
+  if (imagesList.length === 1) {
+    return (
+      <div className="case-image animate-on-hover">
+        <img src={imagesList[0]} alt={`${title} visual proof`} loading="lazy" />
+      </div>
+    );
+  }
+
+  const handleNext = () => {
+    setActiveIdx((prev) => (prev + 1) % imagesList.length);
+  };
+
+  const handlePrev = () => {
+    setActiveIdx((prev) => (prev - 1 + imagesList.length) % imagesList.length);
+  };
+
+  return (
+    <div className="case-image-gallery">
+      <div className="case-image multiple">
+        {imagesList.map((imgUrl, idx) => (
+          <img
+            key={imgUrl}
+            src={imgUrl}
+            alt={`${title} visual proof ${idx + 1}`}
+            className={`gallery-img ${idx === activeIdx ? 'active' : ''}`}
+            loading="lazy"
+          />
+        ))}
+        <div className="gallery-caption">
+          <span>{captions[activeIdx] || `${title} proof ${activeIdx + 1}`}</span>
+        </div>
+        <div className="gallery-nav">
+          <button type="button" onClick={handlePrev} aria-label="Previous image" className="gallery-btn">
+            &larr;
+          </button>
+          <span className="gallery-indicator">{activeIdx + 1} / {imagesList.length}</span>
+          <button type="button" onClick={handleNext} aria-label="Next image" className="gallery-btn">
+            &rarr;
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CaseDirectory({ casesList }) {
+  return (
+    <div className="case-directory">
+      <div className="case-directory-body">
+        {casesList.map((item, idx) => {
+          let accentColor = 'var(--terracotta)';
+          if (item.tag.toLowerCase().includes('retail')) {
+            accentColor = 'var(--claret)';
+          } else if (item.tag.toLowerCase().includes('exhibition') || item.tag.toLowerCase().includes('pavilion')) {
+            accentColor = 'var(--purple)';
+          }
+
+          return (
+            <a
+              key={item.id}
+              href={`#${item.id}`}
+              className="case-directory-row reveal"
+              style={{ '--accent-row': accentColor }}
+            >
+              <span className="col-num">{String(idx + 1).padStart(2, '0')}</span>
+              <span className="col-tag">
+                <span className="tag-dot" />
+                {item.tag.split(' / ')[0]}
+              </span>
+              <span className="col-title">{item.title}</span>
+              <span className="col-action">
+                Scroll down <span className="arrow">↓</span>
+              </span>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 const caseStudiesRevealSelector = [
   '.content-page .chip',
@@ -129,66 +218,63 @@ export default function CaseStudiesPage() {
                   <a href="#hct-graduation-program" className="btn btn-ghost">Start with HCT</a>
                 </div>
               </div>
-              <div className="archive-board">
-                {caseProofCards.slice(0, 4).map((card) => <ProofCard card={card} key={card.title} />)}
+              <div className="archive-board reveal">
+                <CaseDirectory casesList={cases} />
               </div>
             </div>
           </div>
         </section>
 
-        <section className="section-band alt">
-          <div className="container">
-            <div className="section-head">
-              <h2>Jump to a case file.</h2>
-              <p>Each case is kept short: situation, pressure, what EGS did, result, and what it proves.</p>
-            </div>
-          </div>
-          <div className="proof-scroll">
-            <div className="proof-track">
-              {caseProofCards.map((card) => <ProofCard card={card} key={card.title} />)}
-            </div>
-          </div>
-        </section>
+        {cases.map((item) => {
+          let caseAccent = 'var(--terracotta)';
+          if (item.tag.toLowerCase().includes('retail')) {
+            caseAccent = 'var(--claret)';
+          } else if (item.tag.toLowerCase().includes('exhibition') || item.tag.toLowerCase().includes('pavilion')) {
+            caseAccent = 'var(--purple)';
+          }
 
-        {cases.map((item) => (
-          <section className="case-section" id={item.id} key={item.id}>
-            <div className="container">
-              <div className="case-layout">
-                <aside className="case-meta">
-                  <span className="chip"><span className="chip-dot" />{item.tag}</span>
-                  <h2>{item.title}</h2>
-                  <strong>{item.stat}</strong>
-                  <div className="case-image">
-                    <img src={item.image} alt={`${item.title} visual proof`} />
-                  </div>
-                </aside>
-                <div className="case-body">
-                  {[
-                    ['Situation', item.situation],
-                    ['Pressure', item.pressure],
-                    ['What EGS Did', item.did],
-                    ['Result', item.result],
-                  ].map(([title, copy]) => (
-                    <article className="case-note" key={title}>
-                      <h3>{title}</h3>
-                      <p>{copy}</p>
+          return (
+            <section className="case-section" id={item.id} key={item.id} style={{ '--accent': caseAccent }}>
+              <div className="container">
+                <div className="case-layout">
+                  <aside className="case-meta reveal">
+                    <span className="chip"><span className="chip-dot" />{item.tag}</span>
+                    <h2>{item.title}</h2>
+                    <strong>{item.stat}</strong>
+                    <CaseImageGallery
+                      imagesList={item.imagesList || [item.image]}
+                      captions={item.captions || [`${item.title} visual proof`]}
+                      title={item.title}
+                    />
+                  </aside>
+                  <div className="case-body reveal">
+                    {[
+                      ['Situation', item.situation],
+                      ['Pressure', item.pressure],
+                      ['What EGS Did', item.did],
+                      ['Result', item.result],
+                    ].map(([title, copy]) => (
+                      <article className="case-note reveal" key={title}>
+                        <h3>{title}</h3>
+                        <p>{copy}</p>
+                      </article>
+                    ))}
+                    <article className="case-note reveal">
+                      <h3>What It Proves</h3>
+                      <ul>
+                        {item.proves.map((proof) => <li key={proof}>{proof}</li>)}
+                      </ul>
                     </article>
-                  ))}
-                  <article className="case-note">
-                    <h3>What It Proves</h3>
-                    <ul>
-                      {item.proves.map((proof) => <li key={proof}>{proof}</li>)}
-                    </ul>
-                  </article>
-                  <article className="case-note">
-                    <h3>Buyer Takeaway</h3>
-                    <p>{item.takeaway}</p>
-                  </article>
+                    <article className="case-note reveal">
+                      <h3>Buyer Takeaway</h3>
+                      <p>{item.takeaway}</p>
+                    </article>
+                  </div>
                 </div>
               </div>
-            </div>
-          </section>
-        ))}
+            </section>
+          );
+        })}
 
         <section className="section-band alt">
           <div className="container">
