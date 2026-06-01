@@ -7,9 +7,9 @@ import eventIcon from '../assets/event.png';
 import retailIcon from '../assets/retail.png';
 import interiorIcon from '../assets/interior.png';
 import caseStudyIcon from '../assets/case study.png';
-import hctLogo from '../assets/client_logos_gray/done/9.png';
-import sadiaLogo from '../assets/client_logos_gray/done/16.png';
-import philipsLogo from '../assets/client_logos_gray/done/4.png';
+import hctLogo from '../assets/client_logos_gray/done/9-removebg-preview.png';
+import sadiaLogo from '../assets/client_logos_gray/done/16-removebg-preview.png';
+import philipsLogo from '../assets/client_logos_gray/done/4-removebg-preview.png';
 import projectIcon from '../assets/tell us about ur project.png';
 import mailIcon from '../assets/mail.png';
 import whatsappIcon from '../assets/whatsapp.png';
@@ -34,9 +34,9 @@ const defaultItems = [
     bgColor: 'var(--terracotta)',
     textColor: 'var(--paper)',
     links: [
-      { label: 'HCT Graduation Program', href: '/case-studies#hct-graduation-program', ariaLabel: 'Open HCT graduation case study', icon: hctLogo, iconVariant: 'logo', iconScale: 2 },
-      { label: 'Sadia / Carrefour UAE', href: '/case-studies#sadia-carrefour-rollout', ariaLabel: 'Open Sadia Carrefour case study', icon: sadiaLogo, iconVariant: 'logo', iconScale: 1.5 },
-      { label: 'Philips Riyadh', href: '/case-studies#philips-global-health-riyadh', ariaLabel: 'Open Philips Riyadh case study', icon: philipsLogo, iconVariant: 'logo', iconScale: 1.75 },
+      { label: 'HCT Graduation Program', href: '/case-studies#hct-graduation-program', ariaLabel: 'Open HCT graduation case study', icon: hctLogo, iconVariant: 'logo', iconHeight: 90 },
+      { label: 'Sadia / Carrefour UAE', href: '/case-studies#sadia-carrefour-rollout', ariaLabel: 'Open Sadia Carrefour case study', icon: sadiaLogo, iconVariant: 'logo', iconHeight: 72 },
+      { label: 'Philips Riyadh', href: '/case-studies#philips-global-health-riyadh', ariaLabel: 'Open Philips Riyadh case study', icon: philipsLogo, iconVariant: 'logo', iconHeight: 81 },
       { label: 'All Case Studies', href: '/case-studies', ariaLabel: 'Open all case studies', icon: caseStudyIcon },
     ],
   },
@@ -53,15 +53,10 @@ const defaultItems = [
 ];
 
 function getLinkIconStyle(link) {
-  if (!link.iconScale) return undefined;
-
-  const baseHeight = 40;
-  const baseMaxWidth = 132;
-
-  return {
-    height: `${baseHeight * link.iconScale}px`,
-    maxWidth: `min(100%, ${baseMaxWidth * link.iconScale}px)`,
-  };
+  if (link.iconVariant === 'logo' && link.iconHeight) {
+    return { maxHeight: `${link.iconHeight}px` };
+  }
+  return undefined;
 }
 
 function MobileNavLink({ link, onNavigate }) {

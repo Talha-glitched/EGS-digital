@@ -265,10 +265,23 @@
 }
 
 .egs-nav-card-link .link-icon--logo {
-  width: auto;
-  max-width: min(100%, 132px);
-  height: 40px;
+  width: 100%;
+  height: auto;
+  max-height: 60px;
+  object-fit: contain;
+  object-position: left center;
   filter: none;
+}
+
+/* Logo cards — tighter top padding (60 % reduction: 24 → 10px) */
+.egs-nav-card-link:has(.link-icon--logo) {
+  background: transparent;
+  border-color: color-mix(in oklab, currentColor 10%, transparent);
+  padding-top: 10px;
+}
+
+.egs-nav-card-link:has(.link-icon--logo):hover {
+  background: color-mix(in oklab, currentColor 6%, transparent);
 }
 
 .egs-nav-card-link:hover .link-icon {
