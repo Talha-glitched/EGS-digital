@@ -78,6 +78,10 @@
   transition: none;
 }
 
+.egs-sticky-showcase--scrub.egs-sticky-showcase--wrap-labels .egs-sticky-showcase-label-track {
+  transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .egs-sticky-showcase-label {
   height: var(--egs-sticky-label-h);
   display: flex;

@@ -1,5 +1,96 @@
 :root { --accent: var(--olive); }
 
+.fitouts-minimal-page .minimal-service-hero-copy h1 {
+  max-width: 16ch;
+  font-size: clamp(32px, 4.1vw, 58px);
+  line-height: 1.02;
+}
+
+.fitouts-minimal-page .minimal-service-rotating-subline {
+  min-height: 1.5em;
+}
+
+.fitouts-minimal-page .minimal-service-subline-rotator {
+  min-width: min(29ch, calc(100vw - 40px));
+  height: 1.35em;
+}
+
+.fitouts-minimal-page .minimal-service-subline-rotator span {
+  white-space: nowrap;
+}
+
+.fitouts-minimal-page .egs-sticky-showcase {
+  --egs-sticky-label-h: clamp(8.25rem, 13vw, 10.5rem);
+}
+
+.fitouts-minimal-page .egs-sticky-showcase-label {
+  max-width: 17ch;
+  font-size: clamp(2rem, 4.2vw, 3rem);
+  white-space: pre-line;
+  line-height: 1.04;
+}
+
+.fitouts-minimal-page .minimal-scope-section .capability-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.fitouts-minimal-page .minimal-scope-section .capability-grid .cap-card,
+.fitouts-minimal-page .minimal-scope-section .capability-grid .cap-card:nth-child(1),
+.fitouts-minimal-page .minimal-scope-section .capability-grid .cap-card:nth-child(4),
+.fitouts-minimal-page .minimal-scope-section .capability-grid .cap-card:nth-child(5) {
+  grid-column: auto;
+}
+
+.fitouts-minimal-page .minimal-scope-section .cap-card {
+  min-height: 300px;
+  padding: clamp(22px, 2vw, 28px);
+}
+
+.fitouts-minimal-page .minimal-scope-section .cap-card h3,
+.fitouts-minimal-page .minimal-scope-section .capability-grid .cap-card:nth-child(1) h3 {
+  font-size: clamp(25px, 2.1vw, 34px);
+  line-height: 1.08;
+}
+
+@media (max-width: 900px) {
+  .fitouts-minimal-page .minimal-service-hero-copy h1 {
+    max-width: 16ch;
+    font-size: clamp(29px, 6vw, 38px);
+  }
+
+  .fitouts-minimal-page .egs-sticky-showcase-label {
+    max-width: 16ch;
+  }
+
+  .fitouts-minimal-page .minimal-scope-section .capability-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fitouts-minimal-page .minimal-scope-section .cap-card {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .fitouts-minimal-page .minimal-service-hero-copy h1 {
+    max-width: 18ch;
+    font-size: clamp(25px, 7.2vw, 30px);
+  }
+
+  .fitouts-minimal-page .minimal-service-subline-rotator {
+    min-width: min(25ch, calc(100vw - 28px));
+  }
+
+  .fitouts-minimal-page .minimal-scope-section .capability-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fitouts-minimal-page .minimal-scope-section .cap-card h3,
+  .fitouts-minimal-page .minimal-scope-section .capability-grid .cap-card:nth-child(1) h3 {
+    font-size: 22px;
+  }
+}
+
   .subnav {
     border-bottom: 1px solid var(--rule);
     background: color-mix(in oklab, var(--paper-2) 72%, transparent);

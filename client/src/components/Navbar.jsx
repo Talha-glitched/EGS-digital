@@ -360,12 +360,14 @@ function CardNav({
 
           <button
             type="button"
-            className="egs-navbar-cta-button"
+            className="egs-navbar-cta-button egs-navbar-cta-button--desktop"
             style={ctaSurfaceStyle}
             onClick={() => openInquiry(ctaInquiryType)}
           >
             {cta} <span>→</span>
           </button>
+
+          {isMobile && <div className="egs-navbar-mobile-spacer" aria-hidden="true" />}
         </div>
 
         {!isMobile ? (
@@ -434,6 +436,19 @@ function CardNav({
           </div>
         ) : null}
       </nav>
+
+      {isMobile && !isMobileMenuOpen && (
+        <div className="egs-mobile-outside-cta-container">
+          <button
+            type="button"
+            className="egs-navbar-cta-button egs-navbar-cta-button--mobile-outside"
+            style={ctaSurfaceStyle}
+            onClick={() => openInquiry(ctaInquiryType)}
+          >
+            {cta} <span>→</span>
+          </button>
+        </div>
+      )}
 
       {isMobile ? (
         <div
