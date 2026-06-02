@@ -47,7 +47,7 @@ const defaultItems = [
     links: [
       { label: 'Tell us about your project', inquiryType: 'general', ariaLabel: 'Tell us about your project', icon: projectIcon },
       { label: 'Email EGS', href: 'mailto:info@exhibitgraphicsign.com', ariaLabel: 'Email EGS', icon: mailIcon },
-      { label: 'Call / WhatsApp', href: 'tel:+971524587992', ariaLabel: 'Call or WhatsApp EGS', icon: whatsappIcon },
+      { label: 'Call / WhatsApp', href: 'https://wa.me/971565348700', ariaLabel: 'Call or WhatsApp EGS', icon: whatsappIcon, target: '_blank', rel: 'noopener noreferrer' },
     ],
   },
 ];
@@ -86,6 +86,8 @@ function MobileNavLink({ link, onNavigate }) {
         className="egs-mobile-nav__link"
         href={link.href}
         aria-label={link.ariaLabel}
+        target={link.target}
+        rel={link.rel}
         onClick={onNavigate}
       >
         {link.label}
@@ -410,6 +412,8 @@ function CardNav({
                         href={link.href}
                         aria-label={link.ariaLabel}
                         key={link.label}
+                        target={link.target}
+                        rel={link.rel}
                         onClick={() => closeMenu()}
                       >
                         {link.icon ? (
