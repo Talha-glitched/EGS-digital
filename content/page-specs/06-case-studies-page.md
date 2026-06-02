@@ -93,10 +93,10 @@ Use clickable cards linking to anchors:
 Card copy:
 
 - HCT Graduation Program: `7 ceremonies, 4,500 graduates, 13,500 guests in 2025.`
-- HCT Fujairah: `Stage extension requested 10 hours before ceremony.`
-- Sadia / Carrefour UAE: `33 locations completed between midnight and before 6am.`
-- Philips / Global Health Riyadh: `200 sqm stand adapted in 10-12 hours.`
-- Kazakhstan Pavilion / Gulfood: `168 sqm pavilion adapted with 5-6 added chillers.`
+- HCT Fujairah: `Full Fujairah ceremony production plus a stage extension requested 10 hours before ceremony.`
+- Sadia / Carrefour UAE: `Full 33-location rollout completed between midnight and before 6am after the deadline moved forward.`
+- Philips / Global Health Riyadh: `Full 200 sqm stand delivery plus a 10-12 hour ultrasound display adaptation.`
+- Kazakhstan Pavilion / Gulfood: `Full 168 sqm pavilion production plus 5-6 added chillers before opening.`
 - Money Kicks / Money Kickz: `Mall activation credibility for Dubai sneaker/lifestyle brand.`
 
 Visual direction: show these as compact proof cards near the top. Each card needs a service tag, one metric or pressure point, and a link to the anchored section. Do not stack all case details immediately without navigation.
@@ -205,7 +205,7 @@ Service tag: `Urgent stage work / Graduations`
 Proof line:
 
 ```text
-A 5-6 metre stage extension requested 10 hours before ceremony at Zayed Sports Complex.
+Full Fujairah ceremony production plus a 5-6 metre stage extension requested 10 hours before showtime at Zayed Sports Complex.
 ```
 
 Image direction: ceremony/stage image from Fujairah if available. If not, use HCT ceremony imagery with a factual caption that does not imply it shows the exact extension.
@@ -213,25 +213,25 @@ Image direction: ceremony/stage image from Fujairah if available. If not, use HC
 Situation:
 
 ```text
-The 2025 HCT Fujairah ceremony took place at Zayed Sports Complex.
+EGS designed and executed the full 2025 HCT Fujairah ceremony at Zayed Sports Complex, including the core stage and event production setup.
 ```
 
 Pressure:
 
 ```text
-Ten hours before the ceremony, the stage needed a 5-6 metre extension for a photo display/frame area. The ceremony time could not move.
+With only 10 hours left before showtime, the approved setup needed a further 5-6 metre stage extension for a photo display/frame area. The deadline stayed fixed and the ceremony time could not move.
 ```
 
 What EGS Did:
 
 ```text
-EGS sourced material, moved it to Fujairah, extended the wooden/carpentered stage, and finished before the ceremony started.
+EGS kept the wider ceremony delivery on track while sourcing materials, moving them to Fujairah, extending the wooden/carpentered stage, and finishing the added scope before the ceremony started.
 ```
 
 Result:
 
 ```text
-The ceremony was delivered on time.
+The full ceremony setup and the additional stage extension were both delivered on time.
 ```
 
 What It Proves:
@@ -260,7 +260,7 @@ Service tag: `Retail rollout`
 Proof line:
 
 ```text
-33 Carrefour hypermarket locations completed between midnight and before 6am.
+Full Carrefour rollout moved forward last minute and completed across 33 hypermarket locations between midnight and before 6am.
 ```
 
 Image direction: chiller branding, island display, hypermarket/mall installation, or retail campaign imagery if available.
@@ -268,13 +268,13 @@ Image direction: chiller branding, island display, hypermarket/mall installation
 Situation:
 
 ```text
-In 2019, Sadia had planned its Carrefour hypermarket retail installations for Friday.
+In 2019, EGS owned the Sadia Carrefour hypermarket retail installation rollout across 33 UAE locations, not a single-store add-on.
 ```
 
 Pressure:
 
 ```text
-On Wednesday, the client asked EGS to move the rollout forward and complete all 33 Carrefour hypermarket locations across the UAE that same night. Mall work could only begin after closing.
+The rollout was originally planned for Friday. On Wednesday, while the program was already in motion, the client asked EGS to move the full 33-location Carrefour UAE scope forward and complete it that same night. Mall work could only begin after closing.
 ```
 
 What EGS Did:
@@ -286,7 +286,7 @@ EGS started around midnight and finished before 6am. Scope included chiller bran
 Result:
 
 ```text
-All 33 locations were completed before morning.
+The full rollout, not only a small add-on, was completed across all 33 locations before morning.
 ```
 
 What It Proves:
@@ -309,7 +309,7 @@ Service tag: `Exhibition stands / Healthcare`
 Proof line:
 
 ```text
-A 200 sqm healthcare stand adapted within 10-12 hours for an ultrasound display.
+Full 200 sqm healthcare stand delivery plus a 10-12 hour adaptation for an ultrasound display.
 ```
 
 Image direction: Philips stand imagery, healthcare exhibition imagery, product display counter, or close-up of display area if available.
@@ -317,25 +317,25 @@ Image direction: Philips stand imagery, healthcare exhibition imagery, product d
 Situation:
 
 ```text
-At Global Health Exhibition 2024 in Riyadh, Philips had a 20m x 10m / 200 sqm stand.
+At Global Health Exhibition 2024 in Riyadh, EGS delivered the full Philips 20m x 10m / 200 sqm healthcare exhibition stand.
 ```
 
 Pressure:
 
 ```text
-Philips needed to display an ultrasound machine, and EGS had 10-12 hours to adapt the stand.
+After the main stand scope was underway, Philips needed to add an ultrasound machine display, and EGS had 10-12 hours to adapt the stand without compromising the original delivery.
 ```
 
 What EGS Did:
 
 ```text
-EGS added a display counter setup with computers and a TV screen so the product could be shown properly.
+EGS protected the full stand program while adding a display counter setup with computers and a TV screen so the product could be shown properly.
 ```
 
 Result:
 
 ```text
-The stand supported the added ultrasound display requirement.
+The completed stand carried the original healthcare exhibition brief and the late ultrasound display requirement.
 ```
 
 What It Proves:
@@ -358,7 +358,7 @@ Service tag: `Exhibition stands / Pavilion adaptation`
 Proof line:
 
 ```text
-A 168 sqm pavilion adapted with 5-6 branded product display chillers before opening.
+Full 168 sqm pavilion production plus 5-6 branded product display chillers added before opening.
 ```
 
 Image direction: pavilion image, Gulfood/Expo City stand imagery, branded chillers, or product display details if available.
@@ -366,25 +366,25 @@ Image direction: pavilion image, Gulfood/Expo City stand imagery, branded chille
 Situation:
 
 ```text
-At Gulfood 2026 in Expo City, the Kazakhstan Pavilion stand was 28m x 6m / 168 sqm.
+At Gulfood 2026 in Expo City, EGS produced the full Kazakhstan Pavilion stand: 28m x 6m / 168 sqm.
 ```
 
 Pressure:
 
 ```text
-A last-minute additional exhibitor needed product display accommodation for meat and dairy products before opening.
+After the pavilion production was already committed, a last-minute additional exhibitor needed meat and dairy product display accommodation before opening.
 ```
 
 What EGS Did:
 
 ```text
-EGS adapted the stand and added 5-6 branded product display chillers before opening.
+EGS kept the full pavilion build moving while adapting the stand plan and adding 5-6 branded product display chillers before opening.
 ```
 
 Result:
 
 ```text
-The pavilion could accommodate the additional exhibitor and product display requirement.
+The finished pavilion delivered the original Kazakhstan Pavilion scope and absorbed the additional exhibitor requirement.
 ```
 
 What It Proves:

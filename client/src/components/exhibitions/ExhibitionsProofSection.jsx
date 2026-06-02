@@ -3,7 +3,7 @@ import { images } from '../../pages/siteData.js';
 const proofItems = [
   {
     metric: '200 sqm',
-    label: 'Philips Riyadh stand',
+    label: 'Full Philips Riyadh stand',
     image: images.philipsArab,
     href: '/case-studies#philips-global-health-riyadh',
   },
@@ -15,7 +15,7 @@ const proofItems = [
   },
   {
     metric: '168 sqm',
-    label: 'Kazakhstan Pavilion',
+    label: 'Full Kazakhstan Pavilion',
     image: images.philipsArab,
     href: '/case-studies#kazakhstan-pavilion-gulfood',
   },
