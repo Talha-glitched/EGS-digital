@@ -4,6 +4,16 @@ import roastRetail from '../assets/roast-retail.jpeg';
 import microlink from '../assets/Exhibition Stands/Microlink1.jpeg';
 import phillips2 from '../assets/Exhibition Stands/Phillips_2.jpeg';
 import philipsMri from '../assets/Exhibition Stands/Philips_MRI.jpg';
+import fitoutVelocityInterior from '../assets/Existing Website Shortlist/5Showroom & Office Branding/Velocity (6).jpg';
+import fitoutReceptionArea from '../assets/Uniestate/Uniestate Retail_1_8.jpeg';
+import fitoutOfficeGraphics from '../assets/Existing Website Shortlist/5Showroom & Office Branding/BIG FM Printing (25).jpg';
+import fitoutInteriorSignage from '../assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Indoor/20140807_103538.jpg';
+import fitoutKiosk from '../assets/Galadari Motor Driving Centre Mall_1_2 (1).jpeg';
+import retailHypermarketDisplay from '../assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/2015-09-02 03.26.06.jpg';
+import retailSadiaChiller from '../assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/20160915_021559.jpg';
+import retailSadiaBusDisplay from '../assets/Existing Website Shortlist/3Retail Branding & Displays/20160810_080238.jpg';
+import retailMallActivation from '../assets/Existing Website Shortlist/9BTL Mall Installation/20210104_112707.jpg';
+import retailCampaignGraphics from '../assets/Existing Website Shortlist/3Retail Branding & Displays/20170301_071537.jpg';
 
 const grayClientLogoModules = import.meta.glob('../assets/client_logos_gray/done/*.png', {
   eager: true,
@@ -31,6 +41,16 @@ export const images = {
   philipsArab: 'https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Arab-Health.jpg',
   fitout: hctFitout,
   retail: roastRetail,
+  fitoutVelocityInterior,
+  fitoutReceptionArea,
+  fitoutOfficeGraphics,
+  fitoutInteriorSignage,
+  fitoutKiosk,
+  retailHypermarketDisplay,
+  retailSadiaChiller,
+  retailSadiaBusDisplay,
+  retailMallActivation,
+  retailCampaignGraphics,
   activation: 'https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Velocity-3.jpg',
   microlink,
   phillips2,
@@ -78,35 +98,35 @@ export const proofCards = [
     tag: 'Graduations',
     title: 'HCT Graduation Program',
     stat: '7 ceremonies',
-    copy: '4,500 graduates and 13,500 guests across the UAE in 2025.',
+    copy: 'Full graduation ceremony production across the UAE for 4,500 graduates and 13,500 guests in 2025.',
   },
   {
     href: '/case-studies#hct-fujairah-stage-extension',
     tag: 'Urgent stage work',
     title: 'HCT Fujairah Stage Extension',
     stat: '10 hours',
-    copy: 'A 5-6 metre stage extension requested before ceremony at Zayed Sports Complex.',
+    copy: 'Full Fujairah ceremony production plus a 5-6 metre stage extension requested 10 hours before showtime.',
   },
   {
     href: '/case-studies#sadia-carrefour-rollout',
     tag: 'Retail rollout',
     title: 'Sadia / Carrefour UAE',
     stat: '33 locations',
-    copy: 'Carrefour hypermarket locations completed between midnight and before 6am.',
+    copy: 'Full 33-location Carrefour rollout moved forward last minute and completed between midnight and before 6am.',
   },
   {
     href: '/case-studies#philips-global-health-riyadh',
     tag: 'Exhibitions',
     title: 'Philips / Global Health Riyadh',
     stat: '200 sqm',
-    copy: 'Healthcare stand adapted in 10-12 hours for an ultrasound display.',
+    copy: 'Full 200 sqm healthcare stand delivery plus a 10-12 hour adaptation for an ultrasound display.',
   },
   {
     href: '/case-studies#kazakhstan-pavilion-gulfood',
     tag: 'Pavilion',
     title: 'Kazakhstan Pavilion / Gulfood',
     stat: '168 sqm',
-    copy: 'Pavilion adapted for 5-6 added branded product display chillers before opening.',
+    copy: 'Full 168 sqm pavilion production plus 5-6 branded product display chillers added before opening.',
   },
   {
     href: '/case-studies#money-kicks-activation',

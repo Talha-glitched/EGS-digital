@@ -107,7 +107,9 @@ export default function StickyProcessShowcase({
       labelHeightRef.current;
     labelHeightRef.current = labelH;
 
-    const labelTravelPx = scrub * (stepCount - 1) * labelH;
+    const nearest = Math.round(scrub * (stepCount - 1));
+    const labelStep = wrapLabels ? nearest : scrub * (stepCount - 1);
+    const labelTravelPx = labelStep * labelH;
     labelTrack.style.transform = `translateY(-${labelTravelPx}px)`;
 
     const slideViewportH = viewport?.clientHeight ?? 0;
@@ -116,12 +118,11 @@ export default function StickyProcessShowcase({
       imageStack.style.transform = `translateY(-${imageTravelPx}px)`;
     }
 
-    const nearest = Math.round(scrub * (stepCount - 1));
     if (nearest !== lastStepRef.current) {
       lastStepRef.current = nearest;
       setActiveStep(nearest);
     }
-  }, [stepCount]);
+  }, [stepCount, wrapLabels]);
 
   const scheduleSync = useCallback(() => {
     if (rafRef.current !== 0) return;

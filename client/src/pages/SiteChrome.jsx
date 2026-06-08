@@ -33,7 +33,7 @@ export function SiteNav({ active = 'home', cta = 'Send a brief' }) {
       links: [
         { label: 'Email EGS', href: 'mailto:info@exhibitgraphicsign.com', ariaLabel: 'Email EGS' },
         { label: 'Send a Brief', href: 'mailto:info@exhibitgraphicsign.com', ariaLabel: 'Email EGS about your brief' },
-        { label: 'Call / WhatsApp', href: 'tel:+971524587992', ariaLabel: 'Call or WhatsApp EGS' },
+        { label: 'Call / WhatsApp', href: 'https://wa.me/971565348700', ariaLabel: 'Call or WhatsApp EGS', target: '_blank', rel: 'noopener noreferrer' },
         { label: 'Home', href: '/', ariaLabel: 'Open home page' },
       ],
     },
@@ -221,6 +221,8 @@ function CardNav({
                     href={link.href}
                     aria-label={link.ariaLabel}
                     key={link.label}
+                    target={link.target}
+                    rel={link.rel}
                     onClick={() => {
                       setIsHamburgerOpen(false);
                       setIsExpanded(false);
@@ -308,14 +310,14 @@ export function ClientMarquee() {
   );
 }
 
-export function ProofCard({ card }) {
+export function ProofCard({ card, actionLabel }) {
   return (
     <a className="proof-file-card" href={card.href}>
       <span className="proof-tag">{card.tag}</span>
       <strong>{card.stat}</strong>
       <h3>{card.title}</h3>
       <p>{card.copy}</p>
-      <em>Open proof →</em>
+      <em>{actionLabel || 'Open proof →'}</em>
     </a>
   );
 }

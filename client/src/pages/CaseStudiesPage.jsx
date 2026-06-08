@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import pageStyles from '../styles/pages/content-first.css?raw';
 import caseStudiesResponsiveStyles from '../styles/pages/case-studies-responsive.css?raw';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
@@ -17,10 +18,10 @@ const cases = [
     title: 'HCT Graduation Program',
     stat: '7 ceremonies',
     image: images.hctProfile,
-    situation: 'HCT is the anchor proof for EGS graduation ceremony production. EGS has worked with HCT for almost seven years.',
-    pressure: 'Graduation ceremonies are public, emotional, and fixed in time. Families, graduates, leadership, and VIPs arrive expecting the room to be ready.',
+    situation: 'HCT is the anchor proof for EGS graduation ceremony production. EGS has worked with HCT for almost seven years, managing full ceremony environments rather than isolated decor items.',
+    pressure: 'Graduation ceremonies are public, emotional, and fixed in time. Families, graduates, leadership, and VIPs arrive expecting every stage, backdrop, print, signage, and production detail to be ready.',
     did: 'In 2025, EGS delivered seven HCT grand ceremonies across Dubai, Abu Dhabi, Sharjah, Ras Al Khaimah, and Fujairah for 4,500 graduates and 13,500 guests. In 2024, EGS delivered eight grand ceremonies across Dubai, Abu Dhabi, Sharjah, Ras Al Khaimah, Fujairah, and Baniyas for 3,500 graduates and 10,000 guests.',
-    result: 'HCT remains the flagship proof that EGS can support multi-campus institutional ceremony seasons at UAE scale.',
+    result: 'HCT remains the flagship proof that EGS can take responsibility for multi-campus institutional ceremony seasons at UAE scale.',
     proves: ['institutional event scale', 'repeat-client trust', 'ceremony pressure handling', 'full-room production responsibility'],
     takeaway: 'If your ceremony has public stakes, multiple stakeholders, and no room for delay, EGS has handled that scale before.',
   },
@@ -30,10 +31,10 @@ const cases = [
     title: 'HCT Fujairah Stage Extension',
     stat: '10 hours',
     image: images.graduationWide,
-    situation: 'The 2025 HCT Fujairah ceremony took place at Zayed Sports Complex.',
-    pressure: 'Ten hours before the ceremony, the stage needed a 5-6 metre extension for a photo display/frame area. The ceremony time could not move.',
-    did: 'EGS sourced material, moved it to Fujairah, extended the wooden/carpentered stage, and finished before the ceremony started.',
-    result: 'The ceremony was delivered on time.',
+    situation: 'EGS designed and executed the full 2025 HCT Fujairah ceremony at Zayed Sports Complex, including the core stage and event production setup.',
+    pressure: 'With only 10 hours left before showtime, the approved setup needed a further 5-6 metre stage extension for a photo display/frame area. The deadline stayed fixed and the ceremony time could not move.',
+    did: 'EGS kept the wider ceremony delivery on track while sourcing materials, moving them to Fujairah, extending the wooden/carpentered stage, and finishing the added scope before the ceremony started.',
+    result: 'The full ceremony setup and the additional stage extension were both delivered on time.',
     proves: ['urgent stage adaptation', 'material sourcing under pressure', 'logistics outside Dubai', 'fixed showtime recovery'],
     takeaway: 'Urgent event changes require material availability, transport, site access, carpentry, and a team that can finish before doors open.',
   },
@@ -42,11 +43,13 @@ const cases = [
     tag: 'Retail rollout',
     title: 'Sadia Carrefour Rollout',
     stat: '33 locations',
-    image: images.retail,
-    situation: 'In 2019, Sadia had planned its Carrefour hypermarket retail installations for Friday.',
-    pressure: 'On Wednesday, the client asked EGS to move the rollout forward and complete all 33 Carrefour hypermarket locations across the UAE that same night. Mall work could only begin after closing.',
+    image: images.retailSadiaChiller,
+    imagesList: [images.retailSadiaChiller, images.retailSadiaBusDisplay],
+    captions: ['Sadia Chiller Branding installation at Carrefour', 'Sadia Custom POSM Product Bus Display'],
+    situation: 'In 2019, EGS owned the Sadia Carrefour hypermarket retail installation rollout across 33 UAE locations, not a single-store add-on.',
+    pressure: 'The rollout was originally planned for Friday. On Wednesday, while the program was already in motion, the client asked EGS to move the full 33-location Carrefour UAE scope forward and complete it that same night. Mall work could only begin after closing.',
     did: 'EGS started around midnight and finished before 6am. Scope included chiller branding and installation, plus island displays. The rollout used 13 vehicles, one labourer per vehicle, and 8-10 QA/QC people moving across teams, with approximately 25-30 people involved overall.',
-    result: 'All 33 locations were completed before morning.',
+    result: 'The full rollout, not only a small add-on, was completed across all 33 locations before morning.',
     proves: ['multi-location rollout capacity', 'overnight retail execution', 'QA/QC coordination', 'hypermarket/mall access discipline'],
     takeaway: 'For retail teams, the reassurance is not only speed. It is vehicles, access timing, team split, and QA/QC across locations before customers arrive.',
   },
@@ -56,10 +59,10 @@ const cases = [
     title: 'Philips Global Health Riyadh',
     stat: '200 sqm',
     image: healthtechStand,
-    situation: 'At Global Health Exhibition 2024 in Riyadh, Philips had a 20m x 10m / 200 sqm stand.',
-    pressure: 'Philips needed to display an ultrasound machine, and EGS had 10-12 hours to adapt the stand.',
-    did: 'EGS added a display counter setup with computers and a TV screen so the product could be shown properly.',
-    result: 'The stand supported the added ultrasound display requirement.',
+    situation: 'At Global Health Exhibition 2024 in Riyadh, EGS delivered the full Philips 20m x 10m / 200 sqm healthcare exhibition stand.',
+    pressure: 'After the main stand scope was underway, Philips needed to add an ultrasound machine display, and EGS had 10-12 hours to adapt the stand without compromising the original delivery.',
+    did: 'EGS protected the full stand program while adding a display counter setup with computers and a TV screen so the product could be shown properly.',
+    result: 'The completed stand carried the original healthcare exhibition brief and the late ultrasound display requirement.',
     proves: ['healthcare exhibition adaptation', 'product display problem solving', '200 sqm stand experience', 'multinational client pressure handling'],
     takeaway: 'Exhibition stands have to serve the actual product story on the floor, even when the display requirement changes late.',
   },
@@ -69,10 +72,10 @@ const cases = [
     title: 'Kazakhstan Pavilion Gulfood',
     stat: '168 sqm',
     image: kazakhstanPavilion,
-    situation: 'At Gulfood 2026 in Expo City, the Kazakhstan Pavilion stand was 28m x 6m / 168 sqm.',
-    pressure: 'A last-minute additional exhibitor needed product display accommodation for meat and dairy products before opening.',
-    did: 'EGS adapted the stand and added 5-6 branded product display chillers before opening.',
-    result: 'The pavilion could accommodate the additional exhibitor and product display requirement.',
+    situation: 'At Gulfood 2026 in Expo City, EGS produced the full Kazakhstan Pavilion stand: 28m x 6m / 168 sqm.',
+    pressure: 'After the pavilion production was already committed, a last-minute additional exhibitor needed meat and dairy product display accommodation before opening.',
+    did: 'EGS kept the full pavilion build moving while adapting the stand plan and adding 5-6 branded product display chillers before opening.',
+    result: 'The finished pavilion delivered the original Kazakhstan Pavilion scope and absorbed the additional exhibitor requirement.',
     proves: ['large pavilion adaptation', 'product display chiller integration', 'late exhibitor change handling', 'Gulfood/Expo City pressure'],
     takeaway: 'Pavilions need flexibility because exhibitor requirements can change close to opening.',
   },
@@ -85,6 +88,92 @@ const caseFaqs = [
   ['What should I send if my project looks similar?', 'Send the date, venue or locations, scope, drawings or photos, brand files, access window, and the issue you are trying to solve. That gives EGS enough context to respond with a practical next step.'],
   ['How does EGS keep the customer experience coordinated?', 'Design, production, logistics, installation, on-site response, and handover stay connected through one accountable team, so the client is not left coordinating disconnected suppliers under pressure.'],
 ];
+
+function CaseImageGallery({ imagesList, captions, title }) {
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  if (!imagesList || imagesList.length === 0) return null;
+
+  if (imagesList.length === 1) {
+    return (
+      <div className="case-image animate-on-hover">
+        <img src={imagesList[0]} alt={`${title} visual proof`} loading="lazy" />
+      </div>
+    );
+  }
+
+  const handleNext = () => {
+    setActiveIdx((prev) => (prev + 1) % imagesList.length);
+  };
+
+  const handlePrev = () => {
+    setActiveIdx((prev) => (prev - 1 + imagesList.length) % imagesList.length);
+  };
+
+  return (
+    <div className="case-image-gallery">
+      <div className="case-image multiple">
+        {imagesList.map((imgUrl, idx) => (
+          <img
+            key={imgUrl}
+            src={imgUrl}
+            alt={`${title} visual proof ${idx + 1}`}
+            className={`gallery-img ${idx === activeIdx ? 'active' : ''}`}
+            loading="lazy"
+          />
+        ))}
+        <div className="gallery-caption">
+          <span>{captions[activeIdx] || `${title} proof ${activeIdx + 1}`}</span>
+        </div>
+        <div className="gallery-nav">
+          <button type="button" onClick={handlePrev} aria-label="Previous image" className="gallery-btn">
+            &larr;
+          </button>
+          <span className="gallery-indicator">{activeIdx + 1} / {imagesList.length}</span>
+          <button type="button" onClick={handleNext} aria-label="Next image" className="gallery-btn">
+            &rarr;
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CaseDirectory({ casesList }) {
+  return (
+    <div className="case-directory">
+      <div className="case-directory-body">
+        {casesList.map((item, idx) => {
+          let accentColor = 'var(--terracotta)';
+          if (item.tag.toLowerCase().includes('retail')) {
+            accentColor = 'var(--claret)';
+          } else if (item.tag.toLowerCase().includes('exhibition') || item.tag.toLowerCase().includes('pavilion')) {
+            accentColor = 'var(--purple)';
+          }
+
+          return (
+            <a
+              key={item.id}
+              href={`#${item.id}`}
+              className="case-directory-row reveal"
+              style={{ '--accent-row': accentColor }}
+            >
+              <span className="col-num">{String(idx + 1).padStart(2, '0')}</span>
+              <span className="col-tag">
+                <span className="tag-dot" />
+                {item.tag.split(' / ')[0]}
+              </span>
+              <span className="col-title">{item.title}</span>
+              <span className="col-action">
+                Scroll down <span className="arrow">↓</span>
+              </span>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 const caseStudiesRevealSelector = [
   '.content-page .chip',
@@ -129,66 +218,63 @@ export default function CaseStudiesPage() {
                   <a href="#hct-graduation-program" className="btn btn-ghost">Start with HCT</a>
                 </div>
               </div>
-              <div className="archive-board">
-                {caseProofCards.slice(0, 4).map((card) => <ProofCard card={card} key={card.title} />)}
+              <div className="archive-board reveal">
+                <CaseDirectory casesList={cases} />
               </div>
             </div>
           </div>
         </section>
 
-        <section className="section-band alt">
-          <div className="container">
-            <div className="section-head">
-              <h2>Jump to a case file.</h2>
-              <p>Each case is kept short: situation, pressure, what EGS did, result, and what it proves.</p>
-            </div>
-          </div>
-          <div className="proof-scroll">
-            <div className="proof-track">
-              {caseProofCards.map((card) => <ProofCard card={card} key={card.title} />)}
-            </div>
-          </div>
-        </section>
+        {cases.map((item) => {
+          let caseAccent = 'var(--terracotta)';
+          if (item.tag.toLowerCase().includes('retail')) {
+            caseAccent = 'var(--claret)';
+          } else if (item.tag.toLowerCase().includes('exhibition') || item.tag.toLowerCase().includes('pavilion')) {
+            caseAccent = 'var(--purple)';
+          }
 
-        {cases.map((item) => (
-          <section className="case-section" id={item.id} key={item.id}>
-            <div className="container">
-              <div className="case-layout">
-                <aside className="case-meta">
-                  <span className="chip"><span className="chip-dot" />{item.tag}</span>
-                  <h2>{item.title}</h2>
-                  <strong>{item.stat}</strong>
-                  <div className="case-image">
-                    <img src={item.image} alt={`${item.title} visual proof`} />
-                  </div>
-                </aside>
-                <div className="case-body">
-                  {[
-                    ['Situation', item.situation],
-                    ['Pressure', item.pressure],
-                    ['What EGS Did', item.did],
-                    ['Result', item.result],
-                  ].map(([title, copy]) => (
-                    <article className="case-note" key={title}>
-                      <h3>{title}</h3>
-                      <p>{copy}</p>
+          return (
+            <section className="case-section" id={item.id} key={item.id} style={{ '--accent': caseAccent }}>
+              <div className="container">
+                <div className="case-layout">
+                  <aside className="case-meta reveal">
+                    <span className="chip"><span className="chip-dot" />{item.tag}</span>
+                    <h2>{item.title}</h2>
+                    <strong>{item.stat}</strong>
+                    <CaseImageGallery
+                      imagesList={item.imagesList || [item.image]}
+                      captions={item.captions || [`${item.title} visual proof`]}
+                      title={item.title}
+                    />
+                  </aside>
+                  <div className="case-body reveal">
+                    {[
+                      ['Situation', item.situation],
+                      ['Pressure', item.pressure],
+                      ['What EGS Did', item.did],
+                      ['Result', item.result],
+                    ].map(([title, copy]) => (
+                      <article className="case-note reveal" key={title}>
+                        <h3>{title}</h3>
+                        <p>{copy}</p>
+                      </article>
+                    ))}
+                    <article className="case-note reveal">
+                      <h3>What It Proves</h3>
+                      <ul>
+                        {item.proves.map((proof) => <li key={proof}>{proof}</li>)}
+                      </ul>
                     </article>
-                  ))}
-                  <article className="case-note">
-                    <h3>What It Proves</h3>
-                    <ul>
-                      {item.proves.map((proof) => <li key={proof}>{proof}</li>)}
-                    </ul>
-                  </article>
-                  <article className="case-note">
-                    <h3>Buyer Takeaway</h3>
-                    <p>{item.takeaway}</p>
-                  </article>
+                    <article className="case-note reveal">
+                      <h3>Buyer Takeaway</h3>
+                      <p>{item.takeaway}</p>
+                    </article>
+                  </div>
                 </div>
               </div>
-            </div>
-          </section>
-        ))}
+            </section>
+          );
+        })}
 
         <section className="section-band alt">
           <div className="container">

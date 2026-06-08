@@ -7,9 +7,9 @@ import eventIcon from '../assets/event.png';
 import retailIcon from '../assets/retail.png';
 import interiorIcon from '../assets/interior.png';
 import caseStudyIcon from '../assets/case study.png';
-import hctLogo from '../assets/client_logos_gray/done/9.png';
-import sadiaLogo from '../assets/client_logos_gray/done/16.png';
-import philipsLogo from '../assets/client_logos_gray/done/4.png';
+import hctLogo from '../assets/client_logos_gray/done/9-removebg-preview.png';
+import sadiaLogo from '../assets/client_logos_gray/done/16-removebg-preview.png';
+import philipsLogo from '../assets/client_logos_gray/done/4-removebg-preview.png';
 import projectIcon from '../assets/tell us about ur project.png';
 import mailIcon from '../assets/mail.png';
 import whatsappIcon from '../assets/whatsapp.png';
@@ -34,9 +34,9 @@ const defaultItems = [
     bgColor: 'var(--terracotta)',
     textColor: 'var(--paper)',
     links: [
-      { label: 'HCT Graduation Program', href: '/case-studies#hct-graduation-program', ariaLabel: 'Open HCT graduation case study', icon: hctLogo, iconVariant: 'logo', iconScale: 2 },
-      { label: 'Sadia / Carrefour UAE', href: '/case-studies#sadia-carrefour-rollout', ariaLabel: 'Open Sadia Carrefour case study', icon: sadiaLogo, iconVariant: 'logo', iconScale: 1.5 },
-      { label: 'Philips Riyadh', href: '/case-studies#philips-global-health-riyadh', ariaLabel: 'Open Philips Riyadh case study', icon: philipsLogo, iconVariant: 'logo', iconScale: 1.75 },
+      { label: 'HCT Graduation Program', href: '/case-studies#hct-graduation-program', ariaLabel: 'Open HCT graduation case study', icon: hctLogo, iconVariant: 'logo', iconHeight: 90 },
+      { label: 'Sadia / Carrefour UAE', href: '/case-studies#sadia-carrefour-rollout', ariaLabel: 'Open Sadia Carrefour case study', icon: sadiaLogo, iconVariant: 'logo', iconHeight: 72 },
+      { label: 'Philips Riyadh', href: '/case-studies#philips-global-health-riyadh', ariaLabel: 'Open Philips Riyadh case study', icon: philipsLogo, iconVariant: 'logo', iconHeight: 81 },
       { label: 'All Case Studies', href: '/case-studies', ariaLabel: 'Open all case studies', icon: caseStudyIcon },
     ],
   },
@@ -47,21 +47,16 @@ const defaultItems = [
     links: [
       { label: 'Tell us about your project', inquiryType: 'general', ariaLabel: 'Tell us about your project', icon: projectIcon },
       { label: 'Email EGS', href: 'mailto:info@exhibitgraphicsign.com', ariaLabel: 'Email EGS', icon: mailIcon },
-      { label: 'Call / WhatsApp', href: 'tel:+971524587992', ariaLabel: 'Call or WhatsApp EGS', icon: whatsappIcon },
+      { label: 'Call / WhatsApp', href: 'https://wa.me/971565348700', ariaLabel: 'Call or WhatsApp EGS', icon: whatsappIcon, target: '_blank', rel: 'noopener noreferrer' },
     ],
   },
 ];
 
 function getLinkIconStyle(link) {
-  if (!link.iconScale) return undefined;
-
-  const baseHeight = 40;
-  const baseMaxWidth = 132;
-
-  return {
-    height: `${baseHeight * link.iconScale}px`,
-    maxWidth: `min(100%, ${baseMaxWidth * link.iconScale}px)`,
-  };
+  if (link.iconVariant === 'logo' && link.iconHeight) {
+    return { maxHeight: `${link.iconHeight}px` };
+  }
+  return undefined;
 }
 
 function MobileNavLink({ link, onNavigate }) {
@@ -91,6 +86,8 @@ function MobileNavLink({ link, onNavigate }) {
         className="egs-mobile-nav__link"
         href={link.href}
         aria-label={link.ariaLabel}
+        target={link.target}
+        rel={link.rel}
         onClick={onNavigate}
       >
         {link.label}
@@ -360,12 +357,14 @@ function CardNav({
 
           <button
             type="button"
-            className="egs-navbar-cta-button"
+            className="egs-navbar-cta-button egs-navbar-cta-button--desktop"
             style={ctaSurfaceStyle}
             onClick={() => openInquiry(ctaInquiryType)}
           >
             {cta} <span>→</span>
           </button>
+
+          {isMobile && <div className="egs-navbar-mobile-spacer" aria-hidden="true" />}
         </div>
 
         {!isMobile ? (
@@ -413,6 +412,8 @@ function CardNav({
                         href={link.href}
                         aria-label={link.ariaLabel}
                         key={link.label}
+                        target={link.target}
+                        rel={link.rel}
                         onClick={() => closeMenu()}
                       >
                         {link.icon ? (
@@ -434,6 +435,19 @@ function CardNav({
           </div>
         ) : null}
       </nav>
+
+      {isMobile && !isMobileMenuOpen && (
+        <div className="egs-mobile-outside-cta-container">
+          <button
+            type="button"
+            className="egs-navbar-cta-button egs-navbar-cta-button--mobile-outside"
+            style={ctaSurfaceStyle}
+            onClick={() => openInquiry(ctaInquiryType)}
+          >
+            {cta} <span>→</span>
+          </button>
+        </div>
+      )}
 
       {isMobile ? (
         <div

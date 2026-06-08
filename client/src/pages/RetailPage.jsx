@@ -1,15 +1,21 @@
 import pageStyles from '../styles/pages/content-first.css?raw';
 import minimalServiceResponsiveStyles from '../styles/pages/minimal-service-responsive.css?raw';
 import stickyShowcaseResponsiveStyles from '../styles/pages/sticky-showcase-responsive.css?raw';
+import retailStyles from '../styles/pages/retail.css?raw';
 import StickyProcessShowcase from '../components/StickyProcessShowcase.jsx';
 import { Navbar } from '../components/Navbar.jsx';
 import {
   MinimalCTASection,
   MinimalFAQSection,
   MinimalProcessSection,
-  MinimalScopeSection,
   MinimalServiceHero,
 } from '../components/services/MinimalServiceSections.jsx';
+
+// Custom ICP-Focused Components
+import RetailProofSection from '../components/retail/RetailProofSection.jsx';
+import RetailScopeSection from '../components/retail/RetailScopeSection.jsx';
+import RetailFailurePointsSection from '../components/retail/RetailFailurePointsSection.jsx';
+
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 import { Footer } from './SiteChrome.jsx';
 import { images } from './siteData.js';
@@ -19,64 +25,65 @@ const retailCta = getProjectCta('retail');
 
 const retailShowcaseSteps = [
   {
-    label: '33 Carrefour locations',
-    image: images.retail,
-    alt: 'Retail branding rollout at Carrefour locations',
+    label: 'Supermarket &\nHypermarket',
+    image: images.retailHypermarketDisplay,
+    alt: 'Chiller branding and island displays at Carrefour locations',
   },
   {
-    label: '13 Vehicles deployed',
-    image: images.activation,
-    alt: 'Retail activation logistics and deployment work',
+    label: 'Product Display Stands',
+    image: images.retailSadiaBusDisplay,
+    alt: 'Custom product displays and POSM fabricated in-house',
   },
   {
-    label: 'Before 6am launch',
-    image: images.retail,
-    alt: 'Retail branding completed before morning customer traffic',
+    label: 'Mall Activations',
+    image: images.retailMallActivation,
+    alt: 'High-stakes mall activations and temporary installations',
   },
   {
-    label: 'QA/QC across teams',
-    image: images.activation,
-    alt: 'Retail rollout quality checks across installation teams',
+    label: 'Campaign Graphics\nAnd Store Branding',
+    image: images.retailCampaignGraphics,
+    alt: 'Installed retail campaign graphics and branded chiller panels',
   },
-];
-
-const scopeItems = [
-  [
-    'Rollout planning',
-    'Location lists, access windows, mall or hypermarket rules, launch dates, asset quantities, team routing, and store contacts mapped before crews move.',
-  ],
-  [
-    'Production',
-    'Chiller branding, island displays, retail graphics, product displays, activation assets, and fixture details prepared so every location receives the right kit.',
-  ],
-  [
-    'Installation',
-    'After-hours installation around closing times, security access, store readiness, asset placement, cleaning, and final visibility checks before customers arrive.',
-  ],
-  [
-    'QA and consistency',
-    'Cross-location QA/QC checks, photo confirmation, issue tracking, and brand consistency across stores so campaign work does not vary from branch to branch.',
-  ],
-  [
-    'Launch support',
-    'Team coordination, urgent fixes, client updates, pack-down where needed, and proof that the retail environment is ready for trading or campaign launch.',
-  ],
 ];
 
 const processSteps = [
-  ['Locations', 'Store list, contacts, mall rules, access windows, and launch timing are confirmed before crews are assigned.'],
-  ['Asset map', 'Each branch gets the right displays, graphics, chiller branding, tools, and installation notes.'],
-  ['Routing', 'Vehicles, crew splits, supervisors, and QA coverage are planned around geography and closing times.'],
-  ['Night install', 'Teams install after trading hours, adapt to store realities, and keep disruption away from customers.'],
-  ['Proof check', 'Photos, snag notes, brand consistency, and urgent corrections are reviewed across every location.'],
-  ['Launch', 'Stores are left campaign-ready, with updates clear enough for marketing and operations teams to trust.'],
+  ['Rollout Brief', 'Share the location list, launch date, asset specs, and store contacts.'],
+  ['Route Mapping', 'EGS maps vehicles, crew splits, and supervisors around geography and access windows.'],
+  ['Print & Pack', 'Graphics, POSM, and display units are produced, checked, packed, and labelled by location.'],
+  ['After-Hours Install', 'Crews deploy after store or mall access opens, with teams split by route.'],
+  ['QA & Completion', 'Supervisors check placement, finish, and photos before the campaign goes live.'],
+  ['Campaign Launch', 'Each location opens with the same brand standard, not a different version of the campaign.'],
 ];
 
 const faqs = [
-  ['What should we send?', 'Location list, access windows, launch date, asset types, scope, contacts, and display photos.'],
-  ['Can EGS handle 33 locations overnight?', 'Yes. Sadia / Carrefour UAE is the proof story.'],
-  ['What retail assets can EGS install?', 'Chiller branding, island displays, retail graphics, product displays, and activation assets.'],
-  ['Does EGS provide QA/QC?', 'For Sadia, EGS used install teams plus 8-10 QA/QC people moving across teams.'],
+  [
+    'Can EGS keep every branch ready by launch morning?',
+    'That is the point of the rollout plan. EGS maps production status, route order, access windows, crew splits, supervisors, and completion photos before teams move, so launch readiness is checked branch by branch.',
+  ],
+  [
+    'How do you keep branding consistent across all locations?',
+    'Printing, fabrication, packing, installation, and QA/QC stay under one team. That reduces color drift, wrong dimensions, uneven placement, and the small finish differences that make one store look off-brand.',
+  ],
+  [
+    'Can you work around mall and hypermarket access restrictions?',
+    'Yes. EGS plans around closing times, loading docks, gate passes, security procedures, store contacts, and mall approval requirements so installers are ready when the access window opens.',
+  ],
+  [
+    'What proof do you have for urgent multi-location work?',
+    'For Sadia, EGS completed 33 Carrefour hypermarket locations across the UAE between midnight and before 6am, using 13 vehicles with QA/QC supervisors moving across teams.',
+  ],
+  [
+    'What should we send for a serious estimate?',
+    'Send the branch list, launch date, access windows, asset types, quantities, dimensions, artwork status, and store or mall contacts. Site photos help EGS catch fit, access, and placement issues earlier.',
+  ],
+  [
+    'Can EGS produce the assets as well as install them?',
+    'Yes. EGS handles large-format printing, POSM, display units, joinery, metalwork, packing, dispatch, installation, and supervisor checks so every location receives the right assets.',
+  ],
+  [
+    'What happens if branches, quantities, or timing change late?',
+    'EGS reviews the change against material readiness, production load, access windows, and crew availability, then separates what can be compressed from what would risk the launch standard.',
+  ],
 ];
 
 const revealSelector = [
@@ -91,6 +98,9 @@ const revealSelector = [
   '.minimal-service-page .step',
   '.minimal-service-page .faq-item',
   '.minimal-service-page .section-band > .container > .btn',
+  '.minimal-service-page .retail-proof-copy > *',
+  '.minimal-service-page .retail-proof-image',
+  '.minimal-service-page .retail-failure-card',
   '.minimal-service-page .footer-grid > *',
   '.minimal-service-page .footer-big',
   '.minimal-service-page .footer-bottom',
@@ -106,43 +116,54 @@ export default function RetailPage() {
       <style>{pageStyles}</style>
       <style>{minimalServiceResponsiveStyles}</style>
       <style>{stickyShowcaseResponsiveStyles}</style>
+      <style>{retailStyles}</style>
       <div className="content-page minimal-service-page retail-minimal-page" style={{ '--accent': 'var(--claret)' }}>
         <Navbar active="retail" cta={retailCta.label} ctaInquiryType={retailCta.inquiryType} overlay />
+
         <MinimalServiceHero
-          image={images.retail}
+          image={images.retailSadiaChiller}
           imageAlt="Retail branding installation work"
           kicker="Retail branding installation UAE"
-          title="Retail rollouts built before customers arrive."
-          subline={['Stores', 'Assets', 'Access windows', 'Launch-ready']}
+          title="Retail rollouts ready before shoppers arrive."
+          subline={['Location list checked', 'Access windows mapped', 'Assets matched by store', 'Launch photos confirmed']}
           primaryCta={retailCta}
-          secondaryCta={{ href: '/case-studies#sadia-carrefour-rollout', label: 'See Sadia proof' }}
+          secondaryCta={{ href: '#sadia-proof', label: 'See Sadia proof' }}
         />
+
         <StickyProcessShowcase
           steps={retailShowcaseSteps}
           showPortfolio={false}
           ariaLabel="Retail rollout proof and process"
+          wrapLabels
         />
-        <MinimalScopeSection
-          title="What EGS installs."
-          copy="Retail rollouts need routing, production, installation, QA/QC, and launch support working together before customers arrive."
-          eyebrow="Retail scope"
-          items={scopeItems}
-        />
+
+        <div id="sadia-proof">
+          <RetailProofSection />
+        </div>
+
+        <RetailScopeSection />
+
         <MinimalProcessSection
           title="From list to launch."
-          copy="Retail work is a routing and readiness problem."
+          copy="Retail work is a logistics and routing problem. Here is how EGS secures the process:"
           steps={processSteps}
         />
+
+        <RetailFailurePointsSection />
+
         <MinimalFAQSection
           title="Questions retail teams ask first."
-          copy="Short answers before the location list moves."
+          copy="Short, grounded answers before the location list moves."
           faqs={faqs}
+          accordion
         />
+
         <MinimalCTASection
           title="Send the location list and launch date."
-          copy="EGS will look at access, assets, teams, and QA/QC together."
+          copy="EGS will look at access, assets, teams, and QA/QC together to ensure your campaign opens on time."
           cta={retailCta}
         />
+
         <Footer />
       </div>
     </>

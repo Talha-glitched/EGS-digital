@@ -265,10 +265,23 @@
 }
 
 .egs-nav-card-link .link-icon--logo {
-  width: auto;
-  max-width: min(100%, 132px);
-  height: 40px;
+  width: 100%;
+  height: auto;
+  max-height: 60px;
+  object-fit: contain;
+  object-position: left center;
   filter: none;
+}
+
+/* Logo cards — tighter top padding (60 % reduction: 24 → 10px) */
+.egs-nav-card-link:has(.link-icon--logo) {
+  background: transparent;
+  border-color: color-mix(in oklab, currentColor 10%, transparent);
+  padding-top: 10px;
+}
+
+.egs-nav-card-link:has(.link-icon--logo):hover {
+  background: color-mix(in oklab, currentColor 6%, transparent);
 }
 
 .egs-nav-card-link:hover .link-icon {
@@ -362,9 +375,9 @@
   }
 
   .egs-navbar-top {
-    grid-template-columns: 44px minmax(0, 1fr) minmax(0, auto);
+    grid-template-columns: 44px 1fr 44px;
     gap: 6px;
-    padding: 6px 8px;
+    padding: 2px 8px;
   }
 
   .egs-hamburger-menu {
@@ -376,6 +389,7 @@
     flex-shrink: 0;
     border-radius: 12px;
     transition: background 0.2s ease;
+    transform: translateY(-4px);
   }
 
   .egs-hamburger-menu:active {
@@ -393,28 +407,67 @@
   .egs-navbar-logo {
     justify-self: center;
     max-width: 100%;
+    max-height: 72px !important;
+    margin-left: 28px;
+    transform: translateY(-4px);
   }
 
   .egs-navbar-logo-image {
-    height: 2rem;
-    max-width: min(36vw, 130px);
+    height: 4.25rem;
+    max-width: min(85vw, 340px);
   }
 
-  .egs-navbar-cta-button {
-    justify-self: end;
-    max-width: min(46vw, 168px);
-    padding: 0 10px;
-    font-size: 11px;
-    letter-spacing: 0.02em;
-    height: 40px;
-    border-radius: 12px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .egs-navbar-cta-button--desktop {
+    display: none !important;
   }
 
-  .egs-navbar-cta-button span {
-    display: none;
+  .egs-navbar-mobile-spacer {
+    display: block;
+    width: 44px;
+    height: 44px;
+  }
+
+  .egs-mobile-outside-cta-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    margin-top: 12px;
+    padding: 0;
+  }
+
+  .egs-navbar-cta-button--mobile-outside {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    height: 46px !important;
+    border-radius: 14px !important;
+    padding: 0 18px !important;
+    font-size: 13px !important;
+    max-width: none !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    width: auto !important;
+    box-shadow: 0 8px 32px rgba(18, 17, 16, 0.15) !important;
+    
+    /* Frosted glass backdrop blur */
+    background-color: color-mix(in oklab, var(--ink) 80%, transparent) !important;
+    color: var(--paper) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(8px) saturate(120%) !important;
+    -webkit-backdrop-filter: blur(8px) saturate(120%) !important;
+  }
+
+  .egs-navbar-container--overlay .egs-navbar-cta-button--mobile-outside {
+    background-color: rgba(18, 17, 16, 0.4) !important;
+    border: 1px solid rgba(245, 241, 234, 0.25) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .egs-navbar-cta-button--mobile-outside span {
+    display: inline !important;
   }
 
   /* —— Mobile full-screen menu (separate from desktop hover panel) —— */
@@ -641,21 +694,24 @@
 
 @media (max-width: 400px) {
   .egs-navbar-top {
-    grid-template-columns: 40px minmax(0, 1fr) minmax(0, auto);
+    grid-template-columns: 40px 1fr 40px;
     gap: 4px;
-    padding: 6px;
+    padding: 2px 6px;
   }
 
-  .egs-navbar-cta-button {
-    max-width: min(52vw, 132px);
-    font-size: 10px;
-    height: 38px;
-    padding: 0 8px;
+  .egs-navbar-logo {
+    max-height: 64px !important;
+    margin-left: 16px;
   }
 
   .egs-navbar-logo-image {
-    height: 2rem;
-    max-width: 120px;
+    height: 3.75rem;
+    max-width: min(80vw, 280px);
+  }
+
+  .egs-navbar-mobile-spacer {
+    width: 40px;
+    height: 40px;
   }
 
   .egs-mobile-nav__panel {
