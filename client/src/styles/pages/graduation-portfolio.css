@@ -21,8 +21,11 @@
   z-index: 0;
 }
 
-/* Ensure child elements sit above background */
-.graduation-portfolio-page > * {
+/* Ensure content sections sit above background overlay */
+.graduation-portfolio-page .content-hero,
+.graduation-portfolio-page .filter-search-container,
+.graduation-portfolio-page .portfolio-gallery-section,
+.graduation-portfolio-page .footer {
   position: relative;
   z-index: 1;
 }
@@ -54,7 +57,23 @@
   color: rgba(245, 241, 234, 0.5);
 }
 
+.graduation-portfolio-redirect .btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper);
+}
+
+.graduation-portfolio-redirect .btn-primary:hover {
+  background: var(--paper);
+  border-color: var(--paper);
+  color: var(--ink);
+}
+
+
 /* Hero elements in Dark Theme */
+.graduation-portfolio-page .content-hero {
+  padding-top: clamp(120px, 12vw, 160px);
+}
 .graduation-portfolio-page .content-hero h1 {
   color: var(--paper);
 }
@@ -95,8 +114,7 @@
   padding: 30px 0;
   background: #0f0e0d;
   border-bottom: 1px solid rgba(245, 241, 234, 0.08);
-  position: sticky;
-  top: 64px;
+  position: relative;
   z-index: 30;
 }
 
@@ -373,8 +391,8 @@
   position: fixed;
   inset: 0;
   background: rgba(18, 17, 16, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
   z-index: 100;
   display: flex;
   align-items: center;
@@ -382,12 +400,16 @@
   padding: clamp(16px, 4vw, 40px);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              backdrop-filter 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              -webkit-backdrop-filter 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .portfolio-modal-overlay.is-open {
   opacity: 1;
   pointer-events: auto;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .portfolio-modal-container {
@@ -400,14 +422,17 @@
   border: 1px solid rgba(245, 241, 234, 0.1);
   overflow-y: auto;
   box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
-  transform: scale3d(0.96, 0.96, 1);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0;
+  transform: translate3d(0, 24px, 0) scale3d(0.97, 0.97, 1);
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
 }
 
 .portfolio-modal-overlay.is-open .portfolio-modal-container {
-  transform: scale3d(1, 1, 1);
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
 }
 
 /* Modal Header in Dark Theme */
@@ -669,7 +694,6 @@
 
 @media (max-width: 768px) {
   .filter-search-container {
-    top: 56px;
     padding: 16px 0;
   }
   
@@ -710,3 +734,148 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Dashboard stats grid and featured ceremony banner inside Hero section */
+.hero-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, rgba(245, 241, 234, 0.03) 0%, rgba(245, 241, 234, 0.01) 100%);
+  border: 1px solid rgba(245, 241, 234, 0.08);
+  border-radius: 12px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 128px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease, background 0.35s ease, box-shadow 0.35s ease;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--page-accent, #482683);
+  opacity: 0.15;
+  transition: opacity 0.35s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(245, 241, 234, 0.18);
+  background: linear-gradient(135deg, rgba(245, 241, 234, 0.05) 0%, rgba(245, 241, 234, 0.02) 100%);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.stat-card:hover::before {
+  opacity: 1;
+}
+
+.stat-num {
+  font-family: var(--serif);
+  font-size: clamp(26px, 2.8vw, 34px);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--paper);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  display: flex;
+  align-items: baseline;
+}
+
+.stat-unit {
+  font-size: 0.55em;
+  font-weight: 400;
+  color: rgba(245, 241, 234, 0.55);
+  margin-left: 4px;
+  letter-spacing: -0.01em;
+}
+
+.stat-label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(245, 241, 234, 0.45);
+  font-weight: 500;
+  line-height: 1.3;
+  margin-top: 12px;
+}
+
+.featured-ceremony-banner {
+  position: relative;
+  background: linear-gradient(135deg, rgba(72, 38, 131, 0.15) 0%, rgba(72, 38, 131, 0.04) 100%);
+  border: 1px solid rgba(72, 38, 131, 0.28);
+  border-radius: 12px;
+  padding: 24px;
+  overflow: hidden;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease;
+  text-align: left;
+}
+
+.featured-ceremony-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--page-accent, #482683);
+}
+
+.featured-ceremony-banner:hover {
+  transform: translateY(-4px);
+  border-color: rgba(72, 38, 131, 0.45);
+  box-shadow: 0 12px 30px rgba(72, 38, 131, 0.12);
+}
+
+.banner-badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: rgba(72, 38, 131, 0.45);
+  padding: 4px 10px;
+  border-radius: 99px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(245, 241, 234, 0.1);
+}
+
+.featured-ceremony-banner h3 {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--paper);
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+
+.featured-ceremony-banner p {
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(245, 241, 234, 0.72);
+}
+
+@media (max-width: 900px) {
+  .hero-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

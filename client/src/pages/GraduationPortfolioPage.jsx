@@ -245,6 +245,63 @@ const GRADUATION_PROJECTS = [
     }
   },
   {
+    id: 'rak-aa-2025',
+    title: 'RAK American Academy Ceremony 2025',
+    year: 2025,
+    shortDesc: 'Campus-wide school ceremony setup featuring custom stage backdrop woodwork, carpeting, registration lobby, and VIP protocol routing.',
+    location: 'RAK American Academy, Ras Al Khaimah',
+    image: shj3,
+    video: hctGraduationVideo,
+    stats: '320 Graduates | 1,200 Guests',
+    tags: ['Stage', 'Branding', 'Seating'],
+    facts: {
+      'Venue': 'RAK American Academy Auditorium',
+      'Graduates': '320 Students',
+      'Guests': '1,200 Audience members',
+      'VIP Attendee': 'Royal Family Representatives',
+      'Production': 'Premium Campus Staging',
+    },
+    scope: [
+      'Custom stage backdrop woodwork & carpentry build',
+      'Lobby registration counters & print signages',
+      'Auditorium sound tuning & visual setup',
+      'VIP protocol seating layout & carpet run',
+      'On-site event operations & cue checks'
+    ],
+    tabsContent: {
+      'Stage': {
+        'title': 'Custom Stage Woodwork',
+        'desc': 'Designed and fabricated a custom wooden backdrop matching the Academy’s branding, complete with integrated spot lighting and royal protocol walkways.',
+        'images': [shj3, adgrad1]
+      },
+      'LED & AV': {
+        'title': 'Auditorium AV & Lighting',
+        'desc': 'Configured and tuned the localized audio speaker setups to fit hall acoustics, delivering crystal-clear announcer names and music playback.',
+        'images': [adgrad2, shj2]
+      },
+      'Branding': {
+        'title': 'Lobby & Facade Prints',
+        'desc': 'Installed exterior facade arches, lobby welcome banner backdrops, and media zones for students and parents photo ops.',
+        'images': [shj3, operation]
+      },
+      'Seating': {
+        'title': 'VIP Protocol Seating',
+        'desc': 'Structured the auditorium layout dividing student classes and family guests, maintaining safety and protocol compliance.',
+        'images': [operation, shj1]
+      },
+      'Behind the Scenes': {
+        'title': 'Technical Call & QC',
+        'desc': 'Riggers and carpenters completing woodwork installations and checking cue sheets 18 hours before show start.',
+        'images': [operation, adgrad2]
+      },
+      'Videos': {
+        'title': 'RAK AA Ceremony Reel',
+        'desc': 'Announcer queue sheets, motion graphics background templates, and transition media loops.',
+        'images': []
+      }
+    }
+  },
+  {
     id: 'abudhabi-2025',
     title: 'HCT Abu Dhabi Ceremony 2025',
     year: 2025,
@@ -775,6 +832,20 @@ export default function GraduationPortfolioPage() {
     };
   }, [selectedProject]);
 
+  // Track the last active project to support fluid close animations without React null-errors
+  const lastProjectRef = useRef(null);
+  if (selectedProject) {
+    lastProjectRef.current = selectedProject;
+  }
+  const modalProject = selectedProject || lastProjectRef.current || GRADUATION_PROJECTS[0];
+
+  // Pause video immediately when modal starts to close
+  useEffect(() => {
+    if (!selectedProject && videoRef.current) {
+      videoRef.current.pause();
+    }
+  }, [selectedProject]);
+
   // Auto-update active gallery image when modal tab changes
   useEffect(() => {
     if (selectedProject && activeModalTab !== 'Videos') {
@@ -811,22 +882,30 @@ export default function GraduationPortfolioPage() {
               </div>
               
               <div className="archive-board reveal">
-                <div className="dossier" data-label="Institutional Track Record">
-                  <div className="dossier-row">
-                    <span className="k">Total Ceremonies</span>
-                    <span className="v">25+ Grand Ceremonies</span>
+                <div className="hero-stats-grid">
+                  <div className="stat-card">
+                    <div className="stat-num">
+                      25<span className="stat-unit">+</span>
+                    </div>
+                    <span className="stat-label">Grand Ceremonies</span>
                   </div>
-                  <div className="dossier-row">
-                    <span className="k">Graduates Setup</span>
-                    <span className="v">12,000+ Students</span>
+                  <div className="stat-card">
+                    <div className="stat-num">
+                      12,000<span className="stat-unit">+</span>
+                    </div>
+                    <span className="stat-label">Graduates Staged</span>
                   </div>
-                  <div className="dossier-row">
-                    <span className="k">Ceremony Locations</span>
-                    <span className="v">All major UAE Emirates</span>
+                  <div className="stat-card">
+                    <div className="stat-num">
+                      7<span className="stat-unit">+ Yrs</span>
+                    </div>
+                    <span className="stat-label">Consecutive Trust</span>
                   </div>
-                  <div className="dossier-row">
-                    <span className="k">Key Partner Trust</span>
-                    <span className="v">7 consecutive years</span>
+                  <div className="stat-card">
+                    <div className="stat-num">
+                      All <span className="stat-unit">UAE</span>
+                    </div>
+                    <span className="stat-label">Emirates Staged</span>
                   </div>
                 </div>
               </div>
@@ -938,7 +1017,7 @@ export default function GraduationPortfolioPage() {
         <Footer />
 
         {/* Dynamic Detail Modal */}
-        {selectedProject && (
+        {(selectedProject || lastProjectRef.current) && (
           <div
             className={`portfolio-modal-overlay ${selectedProject ? 'is-open' : ''}`}
             onClick={(e) => {
@@ -952,10 +1031,10 @@ export default function GraduationPortfolioPage() {
               {/* Modal Header */}
               <div className="portfolio-modal-header">
                 <div className="modal-header-left">
-                  <h2>{selectedProject.title}</h2>
+                  <h2>{modalProject.title}</h2>
                   <div className="modal-header-meta">
-                    <span className="modal-location-badge">📍 {selectedProject.location}</span>
-                    <span className="modal-year-badge">{selectedProject.year}</span>
+                    <span className="modal-location-badge">📍 {modalProject.location}</span>
+                    <span className="modal-year-badge">{modalProject.year}</span>
                   </div>
                 </div>
                 <button
@@ -977,7 +1056,7 @@ export default function GraduationPortfolioPage() {
                     {activeModalTab === 'Videos' ? (
                       <video
                         ref={videoRef}
-                        src={selectedProject.video}
+                        src={modalProject.video}
                         controls
                         autoPlay
                         muted
@@ -985,8 +1064,8 @@ export default function GraduationPortfolioPage() {
                       />
                     ) : (
                       <img
-                        src={activeGalleryImage || selectedProject.image}
-                        alt={`${selectedProject.title} category visual`}
+                        src={activeGalleryImage || modalProject.image}
+                        alt={`${modalProject.title} category visual`}
                       />
                     )}
                   </div>
@@ -1013,16 +1092,16 @@ export default function GraduationPortfolioPage() {
                         <p>Watch EGS's official ceremony video highlights showcasing stage execution, crowd dynamics, VIP seating, and live LED media backdrop transitions in real-time.</p>
                       </div>
                     ) : (
-                      selectedProject.tabsContent[activeModalTab] && (
+                      modalProject.tabsContent[activeModalTab] && (
                         <div>
-                          <h4>{selectedProject.tabsContent[activeModalTab].title}</h4>
-                          <p>{selectedProject.tabsContent[activeModalTab].desc}</p>
+                          <h4>{modalProject.tabsContent[activeModalTab].title}</h4>
+                          <p>{modalProject.tabsContent[activeModalTab].desc}</p>
                           
                           {/* Mini Gallery Grid */}
-                          {selectedProject.tabsContent[activeModalTab].images && 
-                           selectedProject.tabsContent[activeModalTab].images.length > 0 && (
+                          {modalProject.tabsContent[activeModalTab].images && 
+                           modalProject.tabsContent[activeModalTab].images.length > 0 && (
                             <div className="modal-tab-gallery-grid">
-                              {selectedProject.tabsContent[activeModalTab].images.map((img, index) => (
+                              {modalProject.tabsContent[activeModalTab].images.map((img, index) => (
                                 <div
                                   key={index}
                                   className={`modal-tab-gallery-item ${activeGalleryImage === img ? 'active' : ''}`}
@@ -1046,7 +1125,7 @@ export default function GraduationPortfolioPage() {
                   <div>
                     <span className="facts-section-title">Quick Facts</span>
                     <div className="dossier" data-label="Ceremony Profile">
-                      {Object.entries(selectedProject.facts).map(([key, val]) => (
+                      {Object.entries(modalProject.facts).map(([key, val]) => (
                         <div className="dossier-row" key={key}>
                           <span className="k">{key}</span>
                           <span className="v">{val}</span>
@@ -1059,7 +1138,7 @@ export default function GraduationPortfolioPage() {
                   <div>
                     <span className="facts-section-title">Scope of Work</span>
                     <div className="modal-scope-list">
-                      {selectedProject.scope.map((item, index) => (
+                      {modalProject.scope.map((item, index) => (
                         <div key={index} className="modal-scope-item">
                           <span>{item}</span>
                         </div>
