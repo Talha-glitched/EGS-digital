@@ -3,6 +3,7 @@ import minimalServiceResponsiveStyles from '../styles/pages/minimal-service-resp
 import stickyShowcaseResponsiveStyles from '../styles/pages/sticky-showcase-responsive.css?raw';
 import StickyProcessShowcase from '../components/StickyProcessShowcase.jsx';
 import { Navbar } from '../components/Navbar.jsx';
+import { useNavigate } from 'react-router-dom';
 import {
   MinimalCTASection,
   MinimalFAQSection,
@@ -127,6 +128,10 @@ const revealSelector = [
   '.minimal-service-page .minimal-service-hero-copy p',
   '.minimal-service-page .minimal-service-actions .btn',
   '.minimal-service-page .egs-sticky-showcase-label',
+  '.minimal-service-page .graduation-portfolio-redirect',
+  '.minimal-service-page .graduation-portfolio-redirect h2',
+  '.minimal-service-page .graduation-portfolio-redirect p',
+  '.minimal-service-page .graduation-portfolio-redirect .btn',
   '.minimal-service-page .section-head h2',
   '.minimal-service-page .section-head p',
   '.minimal-service-page .cap-card',
@@ -138,6 +143,7 @@ const revealSelector = [
 ].join(', ');
 
 export default function EventsPage() {
+  const navigate = useNavigate();
   usePageLifecycle('Graduation Ceremony Setup UAE | Event Production Company Dubai | EGS', {
     revealSelector,
   });
@@ -164,6 +170,28 @@ export default function EventsPage() {
           showPortfolio={false}
           wrapLabels
           ariaLabel="Ceremony and event production capabilities"
+          afterScroll={
+            <div className="graduation-portfolio-redirect reveal">
+              <div className="container">
+                <span className="eyebrow" style={{ color: 'rgba(245, 241, 234, 0.45)' }}>
+                  <span className="dot" style={{ backgroundColor: 'var(--accent)' }} />Ceremony Archives
+                </span>
+                <h2>Physical proof at UAE university scale.</h2>
+                <p>Browse the full list of campuses, stages, LED backdrops, guest flows, and operational stats.</p>
+                <a
+                  href="/graduation-portfolio"
+                  className="btn btn-primary"
+                  style={{ backgroundColor: 'var(--accent)', borderColor: 'var(--accent)' }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/graduation-portfolio');
+                  }}
+                >
+                  View graduation portfolio <span className="arrow">→</span>
+                </a>
+              </div>
+            </div>
+          }
         />
         <MinimalScopeSection
           title="What EGS handles."
