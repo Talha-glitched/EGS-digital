@@ -358,6 +358,110 @@ export default function GraduationPortfolioPage() {
 
   usePageLifecycle('Graduation Portfolio | EGS Ceremony Staging Dubai & UAE', {
     revealSelector,
+    description: 'Explore our extensive portfolio of graduation ceremonies produced for the Higher Colleges of Technology (HCT) and schools across Dubai, Abu Dhabi, and the Northern Emirates.',
+    ogImage: 'https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg',
+    structuredData: {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "EGS Graduation Ceremony Portfolio",
+      "description": "Explore the extensive physical staging, AV, and venue branding portfolio for university and school graduation ceremonies executed across the UAE.",
+      "url": "https://exhibitgraphicsign.com/graduation-portfolio",
+      "mainEntity": {
+        "@type": "ItemList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "item": {
+              "@type": "Event",
+              "name": "HCT Abu Dhabi Graduation Ceremony",
+              "description": "Mega-scale staging and high-definition LED video wall production at ADNEC for HCT Abu Dhabi.",
+              "location": {
+                "@type": "Place",
+                "name": "ADNEC, Abu Dhabi",
+                "address": {
+                  "@type": "PostalAddress",
+                  "addressLocality": "Abu Dhabi",
+                  "addressCountry": "AE"
+                }
+              }
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "item": {
+              "@type": "Event",
+              "name": "HCT Dubai Graduation Ceremony",
+              "description": "ballroom staging and venue branding coordination for HCT Dubai campuses at Grand Hyatt Dubai.",
+              "location": {
+                "@type": "Place",
+                "name": "Grand Hyatt Dubai",
+                "address": {
+                  "@type": "PostalAddress",
+                  "addressLocality": "Dubai",
+                  "addressCountry": "AE"
+                }
+              }
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "item": {
+              "@type": "Event",
+              "name": "HCT Fujairah Graduation Ceremony",
+              "description": "Complete campus ceremony production plus custom carpentered staging built at Zayed Sports Complex.",
+              "location": {
+                "@type": "Place",
+                "name": "Zayed Sports Complex, Fujairah",
+                "address": {
+                  "@type": "PostalAddress",
+                  "addressLocality": "Fujairah",
+                  "addressCountry": "AE"
+                }
+              }
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 4,
+            "item": {
+              "@type": "Event",
+              "name": "HCT Ras Al Khaimah Graduation Ceremony",
+              "description": "Campus-wide ceremony setup featuring stage carpentry and outdoor lobby branding.",
+              "location": {
+                "@type": "Place",
+                "name": "Ras Al Khaimah Campus Sports Hall",
+                "address": {
+                  "@type": "PostalAddress",
+                  "addressLocality": "Ras Al Khaimah",
+                  "addressCountry": "AE"
+                }
+              }
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 5,
+            "item": {
+              "@type": "Event",
+              "name": "HCT Sharjah Graduation Ceremony",
+              "description": "Double ceremony production and visitor flow management at University City Hall, Sharjah.",
+              "location": {
+                "@type": "Place",
+                "name": "University City Hall, Sharjah",
+                "address": {
+                  "@type": "PostalAddress",
+                  "addressLocality": "Sharjah",
+                  "addressCountry": "AE"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
   });
 
   // Modal handlers

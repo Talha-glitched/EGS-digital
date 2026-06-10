@@ -54,6 +54,35 @@ export default function HomePage() {
 
   usePageLifecycle('Exhibit Graphic Sign | Exhibition Stands, Events, Retail Branding Dubai', {
     revealSelector: homeRevealSelector,
+    description: 'Dubai production partner for high-stakes physical brand moments since 2010. We build custom exhibition stands, graduation ceremonies, retail activations, and office fitouts in the UAE.',
+    ogImage: 'https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg',
+    structuredData: {
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      "@id": "https://exhibitgraphicsign.com/#organization",
+      "name": "Exhibit Graphic Sign (EGS)",
+      "url": "https://exhibitgraphicsign.com/",
+      "logo": "https://exhibitgraphicsign.com/wp-content/uploads/2024/02/EGS-Logo-300x126.png",
+      "image": "https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg",
+      "description": "Dubai production partner for high-stakes physical brand moments: custom exhibition stands, graduation ceremonies, events, retail branding, and office fitouts.",
+      "foundingDate": "2010",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Sharjah & Dubai",
+        "addressRegion": "Dubai",
+        "addressCountry": "AE"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+971565348700",
+        "contactType": "customer service",
+        "email": "info@exhibitgraphicsign.com",
+        "availableLanguage": ["English", "Arabic"]
+      },
+      "sameAs": [
+        "https://www.nstands.com/companies/exhibit-graphic-sign/"
+      ]
+    }
   });
 
   const scrollProofCards = (direction) => {

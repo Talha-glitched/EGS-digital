@@ -110,14 +110,92 @@ function hydrateReveals(revealSelector) {
   };
 }
 
+function setMetaTag(name, content, attribute = 'name') {
+  if (!content) return;
+  let element = document.querySelector(`meta[${attribute}="${name}"]`);
+  if (!element) {
+    element = document.createElement('meta');
+    element.setAttribute(attribute, name);
+    document.head.appendChild(element);
+  }
+  element.setAttribute('content', content);
+}
+
+function setCanonicalLink(href) {
+  if (!href) return;
+  let element = document.querySelector('link[rel="canonical"]');
+  if (!element) {
+    element = document.createElement('link');
+    element.setAttribute('rel', 'canonical');
+    document.head.appendChild(element);
+  }
+  element.setAttribute('href', href);
+}
+
+function setStructuredData(data) {
+  if (!data) return;
+  let element = document.getElementById('json-ld-structured-data');
+  if (!element) {
+    element = document.createElement('script');
+    element.setAttribute('type', 'application/ld+json');
+    element.setAttribute('id', 'json-ld-structured-data');
+    document.head.appendChild(element);
+  }
+  element.textContent = JSON.stringify(data);
+}
+
 export function usePageLifecycle(title, options = {}) {
-  const { revealSelector } = options;
+  const { revealSelector, description, canonical, ogImage, ogType, structuredData } = options;
   const navigate = useNavigate();
+  const structuredDataStr = structuredData ? JSON.stringify(structuredData) : '';
 
   useEffect(() => {
     document.title = title;
     window.scrollTo({ top: 0, behavior: 'auto' });
-  }, [title]);
+
+    // Update description tag
+    if (description) {
+      setMetaTag('description', description);
+    }
+
+    // Update canonical link
+    const canonicalUrl = canonical || `${window.location.origin}${window.location.pathname}`;
+    setCanonicalLink(canonicalUrl);
+
+    // Update Open Graph (og:) tags
+    setMetaTag('og:title', title, 'property');
+    if (description) {
+      setMetaTag('og:description', description, 'property');
+    }
+    setMetaTag('og:url', canonicalUrl, 'property');
+    setMetaTag('og:type', ogType || 'website', 'property');
+    if (ogImage) {
+      setMetaTag('og:image', ogImage, 'property');
+    }
+
+    // Update Twitter Card tags
+    setMetaTag('twitter:card', 'summary_large_image');
+    setMetaTag('twitter:title', title);
+    if (description) {
+      setMetaTag('twitter:description', description);
+    }
+    if (ogImage) {
+      setMetaTag('twitter:image', ogImage);
+    }
+
+    // Update JSON-LD Structured Data
+    if (structuredDataStr) {
+      setStructuredData(JSON.parse(structuredDataStr));
+    }
+
+    return () => {
+      // Clean up script tag on unmount or route change
+      const element = document.getElementById('json-ld-structured-data');
+      if (element) {
+        element.remove();
+      }
+    };
+  }, [title, description, canonical, ogImage, ogType, structuredDataStr]);
 
   useEffect(() => {
     const cleanupMarquees = hydrateMarquees();

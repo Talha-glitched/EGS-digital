@@ -197,6 +197,118 @@ const caseStudiesRevealSelector = [
 export default function CaseStudiesPage() {
   usePageLifecycle('EGS Case Studies | Exhibition, Graduation, Retail And Event Proof UAE', {
     revealSelector: caseStudiesRevealSelector,
+    description: 'See how EGS delivers physical builds under pressure: overnight retail rollouts, late-stage exhibition stand changes, and last-minute graduation stage extensions.',
+    ogImage: 'https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg',
+    structuredData: [
+      {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "EGS Production Case Studies",
+        "description": "A collection of verified case files demonstrating high-stakes physical builds executed under tight deadline pressure across the UAE.",
+        "url": "https://exhibitgraphicsign.com/case-studies",
+        "mainEntity": {
+          "@type": "ItemList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "item": {
+                "@type": "CreativeWork",
+                "name": "HCT Graduation Program",
+                "headline": "Full graduation ceremony production across the UAE for 4,500 graduates and 13,500 guests in 2025.",
+                "url": "https://exhibitgraphicsign.com/case-studies#hct-graduation-program"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "item": {
+                "@type": "CreativeWork",
+                "name": "HCT Fujairah Stage Extension",
+                "headline": "Fujairah ceremony wooden stage extended by 5-6 metres 10 hours before showtime.",
+                "url": "https://exhibitgraphicsign.com/case-studies#hct-fujairah-stage-extension"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "item": {
+                "@type": "CreativeWork",
+                "name": "Sadia Carrefour Rollout",
+                "headline": "Campaign rollout across 33 hypermarket locations completed overnight between midnight and 6am.",
+                "url": "https://exhibitgraphicsign.com/case-studies#sadia-carrefour-rollout"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 4,
+              "item": {
+                "@type": "CreativeWork",
+                "name": "Philips Global Health Riyadh",
+                "headline": "200 sqm healthcare exhibition stand adapted to display an ultrasound machine with 10-12 hours notice.",
+                "url": "https://exhibitgraphicsign.com/case-studies#philips-global-health-riyadh"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 5,
+              "item": {
+                "@type": "CreativeWork",
+                "name": "Kazakhstan Pavilion Gulfood",
+                "headline": "168 sqm stand adapted to add 5-6 branded displays before show opening.",
+                "url": "https://exhibitgraphicsign.com/case-studies#kazakhstan-pavilion-gulfood"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Which case study should I look at first?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Start with the pressure closest to your project: HCT for ceremony scale, Sadia for overnight retail rollouts, Philips for exhibition stand adaptation, and Kazakhstan Pavilion for late product-display changes."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do these examples show how EGS handles fixed deadlines?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Each case explains the situation, what changed, how the team responded, and what was delivered before opening, showtime, or handover."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can EGS handle last-minute changes without hiding the tradeoffs?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "When a change is physically possible and safe, EGS focuses on the fastest workable route. If timing, budget, access, or material availability creates a tradeoff, we make that clear before moving."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What should I send if my project looks similar?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Send the date, venue or locations, scope, drawings or photos, brand files, access window, and the issue you are trying to solve. That gives EGS enough context to respond with a practical next step."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does EGS keep the customer experience coordinated?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Design, production, logistics, installation, on-site response, and handover stay connected through one team, so the client is not left coordinating disconnected suppliers under pressure."
+            }
+          }
+        ]
+      }
+    ]
   });
 
   return (

@@ -124,6 +124,76 @@ const revealSelector = [
 export default function FitoutsPage() {
   usePageLifecycle('Interior Fitout Branding Dubai | Branded Interiors And Signage | EGS', {
     revealSelector,
+    description: 'High-quality commercial interior fitouts, corporate office branding, custom joinery, and indoor/outdoor signage in Dubai and Sharjah.',
+    ogImage: 'https://exhibitgraphicsign.com/wp-content/uploads/2024/05/FAK-Properties1.jpg',
+    structuredData: [
+      {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "serviceType": "Branded Interior Fitouts and Commercial Signage",
+        "provider": {
+          "@type": "LocalBusiness",
+          "name": "Exhibit Graphic Sign (EGS)",
+          "url": "https://exhibitgraphicsign.com/"
+        },
+        "areaServed": ["AE"],
+        "description": "Premium office fitouts, showroom reception branding, custom wood joinery, and wayfinding signage built for everyday durability."
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is EGS right for a full fitout or a branded upgrade?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "EGS is strongest where the space needs physical brand execution: reception areas, showrooms, office branding, interior signage, counters, fixtures, graphics, and compact retail units. For pure interior design without production or branding, EGS is not the best fit."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Should mall kiosks sit under fitouts or retail rollouts?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "A fixed or semi-permanent mall kiosk belongs here because it behaves like a small fitout: joinery, signage, durability, approvals, and handover. Temporary campaign installs and BTL mall activations belong on the retail rollouts side."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does large-format printing belong in a fitout brief?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, when the print affects the room: wall graphics, glazing, feature panels, wayfinding, privacy film, or branded surfaces. Standalone print orders are different from interior fitout branding."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What does EGS need before estimating?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Send photos or drawings, location, measurements, handover target, brand files, signage needs, fixture requirements, access restrictions, and any problem areas the space has to solve."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do you stop the space looking good only on handover day?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "EGS checks the daily-use details early: staff flow, visitor movement, storage, cleaning, edge wear, sign visibility, fixture strength, and what has to be easy to maintain."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can EGS coordinate signage, graphics, and joinery together?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. That is the advantage. Brand graphics, signs, counters, display elements, and finish details are planned together so they feel built into the space instead of patched on late."
+            }
+          }
+        ]
+      }
+    ]
   });
 
   return (
