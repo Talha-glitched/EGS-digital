@@ -47,41 +47,62 @@ function hydrateMarquees() {
 }
 
 function hydrateReveals(revealSelector) {
-  const decoratedRevealEls = revealSelector
-    ? Array.from(document.querySelectorAll(revealSelector)).filter((el) => !el.classList.contains('reveal'))
-    : [];
+  if (!revealSelector) return () => {};
 
-  decoratedRevealEls.forEach((el) => el.classList.add('reveal'));
+  const observerOptions = { threshold: 0.08, rootMargin: '0px 0px -40px 0px' };
 
-  const revealEls = Array.from(document.querySelectorAll('.reveal'));
-
-  if (!('IntersectionObserver' in window)) {
-    revealEls.forEach((el) => el.classList.add('in'));
-    return () => {
-      decoratedRevealEls.forEach((el) => {
-        if (el.isConnected) {
-          el.classList.remove('reveal', 'in');
-        }
-      });
-    };
+  let observer;
+  if ('IntersectionObserver' in window) {
+    observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      observerOptions
+    );
   }
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in');
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
-  );
+  // Track the elements we have decorated to clean them up on unmount
+  const observedEls = new Set();
 
-  revealEls.forEach((el) => observer.observe(el));
+  function checkAndObserve() {
+    const els = document.querySelectorAll(revealSelector);
+    els.forEach((el) => {
+      if (!el.classList.contains('reveal')) {
+        el.classList.add('reveal');
+      }
+      if (observer && !observedEls.has(el)) {
+        observer.observe(el);
+        observedEls.add(el);
+      } else if (!observer) {
+        el.classList.add('in');
+      }
+    });
+  }
+
+  // Run initial check
+  checkAndObserve();
+
+  // Set up MutationObserver to watch for additions of matching elements dynamically
+  const mutationObserver = new MutationObserver(() => {
+    checkAndObserve();
+  });
+
+  mutationObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
+
   return () => {
-    observer.disconnect();
-    decoratedRevealEls.forEach((el) => {
+    mutationObserver.disconnect();
+    if (observer) {
+      observer.disconnect();
+    }
+    observedEls.forEach((el) => {
       if (el.isConnected) {
         el.classList.remove('reveal', 'in');
       }

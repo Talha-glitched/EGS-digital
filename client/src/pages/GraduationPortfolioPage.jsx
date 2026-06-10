@@ -4,768 +4,332 @@ import portfolioStyles from '../styles/pages/graduation-portfolio.css?raw';
 import { Navbar } from '../components/Navbar.jsx';
 import { Footer } from './SiteChrome.jsx';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
+import hero2021 from '../assets/Graduation/2021-hero.jpg';
 
-// Import Assets
-import adgrad1 from '../assets/Graduation/ADGRAD1.jpg';
-import adgrad2 from '../assets/Graduation/ADGRAD2.jpg';
-import shj1 from '../assets/Graduation/SHJ1.jpg';
-import shj2 from '../assets/Graduation/SHJ2.jpg';
-import shj3 from '../assets/Graduation/SHJ3.jpg';
-import operation from '../assets/Graduation/operation.jpeg';
-import hctGraduationVideo from '../assets/hctgraduation.mp4';
+// Scan all files in the graduation assets gallery (note the trailing space in the directory name)
+const graduationAssets = import.meta.glob('../assets/Graduation/Websites Gallery Graduations /**/*', {
+  eager: true,
+  import: 'default'
+});
 
-// Project Dataset
-const GRADUATION_PROJECTS = [
-  {
-    id: 'fujairah-2025',
-    title: 'HCT Fujairah Ceremony 2025',
-    year: 2025,
-    shortDesc: 'Full Zayed Sports Complex ceremony production plus an urgent carpenters stage extension delivered in 10 hours before showtime.',
-    location: 'Zayed Sports Complex, Fujairah',
-    image: shj1,
-    video: hctGraduationVideo,
-    stats: '535 Graduates | 1,800 Guests',
-    tags: ['Stage', 'LED & AV', 'Branding'],
-    facts: {
-      'Venue': 'Zayed Sports Complex, Fujairah',
-      'Graduates': '535 Students',
-      'Guests': '1,800 Audience members',
-      'VIP Attendee': 'H.H. Sheikh Mohammed bin Hamad Al Sharqi, Crown Prince of Fujairah',
-      'Stage Adaptation': '5-6 Metre Extension (Built in 10 Hours)',
-    },
-    scope: [
-      'Stage design, structural engineering & carpentry build',
-      'Full venue perimeter & facade branding',
-      'LED video wall backdrops & live AV control',
-      'VIP protocol seating layout & carpet run',
-      'On-site event operations support & sequence callouts'
-    ],
-    tabsContent: {
-      'Stage': {
-        'title': 'Staging & Stage Extensions',
-        'desc': 'Custom carpentered staging engineered for VIP protocol and student walkthrough. At Fujairah, EGS extended the stage by 5-6 metres within a 10-hour window to accommodate late-requested photo display builds without delaying the rehearsal schedule.',
-        'images': [shj1, adgrad1]
-      },
-      'LED & AV': {
-        'title': 'LED Backdrop & AV Production',
-        'desc': 'High-definition LED backdrops configured to run multi-feed displays for student names, live video broadcast, and ceremonial visual theme templates. Audio arrays tuned specifically for acoustics of larger sports halls and convention centres.',
-        'images': [adgrad2, shj2]
-      },
-      'Branding': {
-        'title': 'Full Venue Perimeter Branding',
-        'desc': 'Consistent brand rollout across main venue facade, entry gates, registration desks, and internal walls. High-quality print finishes that photograph perfectly under stage lighting, eliminating glare in media photos.',
-        'images': [shj3, operation]
-      },
-      'Seating': {
-        'title': 'Guest Flow & Seating Layouts',
-        'desc': 'Structured guest seating plans dividing graduates, parents, and VIP protocol zones. Coordinated with floor management to direct registration flows, keeping pathways clear as thousands of visitors transition through the building.',
-        'images': [operation, shj1]
-      },
-      'Behind the Scenes': {
-        'title': 'On-Site Operations & QC',
-        'desc': 'EGS project managers and supervisors coordinating carpenters, printers, and technician crews. Operations are scheduled backwards from the fixed showtime, leaving a clear buffer window for client walk-throughs and rehearsals.',
-        'images': [operation, adgrad2]
-      },
-      'Videos': {
-        'title': 'Ceremonial Video & Playback',
-        'desc': 'Playback reels and custom motion graphic templates loaded on the server. Tested for latency and timing cues to sync with student walkups and announcer callouts.',
-        'images': []
-      }
-    }
-  },
-  {
-    id: 'dubai-2025',
-    title: 'HCT Dubai Campus Ceremony 2025',
-    year: 2025,
-    shortDesc: 'Premium ballroom staging and coordination for Dubai campuses at the Grand Hyatt, accommodating VIP protocol and massive visitor flow.',
-    location: 'Grand Hyatt Dubai, UAE',
-    image: adgrad1,
-    video: hctGraduationVideo,
-    stats: '602 Graduates | 2,200 Guests',
-    tags: ['Stage', 'Branding', 'Seating'],
-    facts: {
-      'Venue': 'Grand Hyatt Dubai',
-      'Graduates': '602 Students',
-      'Guests': '2,200 Audience members',
-      'VIP Attendee': 'H.H. Sheikh Mansoor bin Mohammed bin Rashid Al Maktoum',
-      'Setup Window': 'Overnight Venue Access',
-    },
-    scope: [
-      'Ballroom stage layout & custom VIP seating structure',
-      'High-resolution LED screen backdrop installation',
-      'Entrance archways & branded registration counters',
-      'Audio arrays and stage lighting configuration',
-      'Rehearsal timing checks & cue callouts'
-    ],
-    tabsContent: {
-      'Stage': {
-        'title': 'Staging & VIP Backdrop',
-        'desc': 'Custom ballroom stage setup with multi-level steps, designed to integrate with Hyatt venue aesthetics. Finished in premium materials with zero visible seams to support royal VIP presence.',
-        'images': [adgrad1, shj1]
-      },
-      'LED & AV': {
-        'title': 'LED Screen Backdrop & Lights',
-        'desc': 'Staged multi-layered LED screens for immersive dynamic backdrops. Lighting system calibrated for crystal-clear photography of students receiving scrolls.',
-        'images': [adgrad2, shj2]
-      },
-      'Branding': {
-        'title': 'Ballroom Entrance & Foyer Branding',
-        'desc': 'Sleek entryways, step-and-repeat media walls, and registration counters matching the institutional color theme. Large fabric banners hung from ceiling truss points.',
-        'images': [shj3, operation]
-      },
-      'Seating': {
-        'title': 'Graduates & VIP Seating Layout',
-        'desc': 'Strict seating charts managed under protocol specifications. Seat numbers and row indicators designed to direct student alignment during queue-up calls.',
-        'images': [operation, shj1]
-      },
-      'Behind the Scenes': {
-        'title': 'Overnight Install Operations',
-        'desc': 'Crews mobilizing immediately upon ballroom release to install rigging, lighting, stage carpentry, and prints before the 8:00 AM protocol walkthrough.',
-        'images': [operation, adgrad1]
-      },
-      'Videos': {
-        'title': 'Dubai Ceremony Playback',
-        'desc': 'Dynamic countdown reels, student name queues, and motion backdrops loaded and run during the ceremony.',
-        'images': []
-      }
-    }
-  },
-  {
-    id: 'sharjah-2025',
-    title: 'HCT Sharjah Ceremonies 2025',
-    year: 2025,
-    shortDesc: 'Double ceremony production at University City Hall, handling complex back-to-back student rotations in a classical venue.',
-    location: 'University City Hall, Sharjah',
-    image: shj2,
-    video: hctGraduationVideo,
-    stats: '937 Graduates (2 sessions) | 3,000 Guests',
-    tags: ['LED & AV', 'Branding', 'Behind the Scenes'],
-    facts: {
-      'Venue': 'University City Hall, Sharjah',
-      'Graduates': '937 Students (Double Session)',
-      'Guests': '3,000 Audience members total',
-      'VIP Attendee': 'Sheikh Salem bin Abdulrahman / Sheikh Mohammed bin Humaid',
-      'Format': 'Back-to-Back Ceremonies',
-    },
-    scope: [
-      'Scale-matched stage layouts for double ceremonies',
-      'Integrated classical lighting and stage spot configs',
-      'Main lobby registration setups & visitor flow guides',
-      'Custom fabricated backdrop matching auditorium dimensions',
-      'On-site operations & crowd control'
-    ],
-    tabsContent: {
-      'Stage': {
-        'title': 'Classical Stage Backdrop',
-        'desc': 'Designed to complement the classical architectural style of University City Hall, merging wooden finishes with modern structural branding and seamless fabric backdrops.',
-        'images': [shj2, adgrad1]
-      },
-      'LED & AV': {
-        'title': 'Broadcast Feeds & Stage Sound',
-        'desc': 'Setup of dual side-projectors and central LED walls. Sound arrays adjusted to manage echoes in the high-ceiling dome of the hall.',
-        'images': [adgrad2, shj1]
-      },
-      'Branding': {
-        'title': 'Sharjah Campus Branding',
-        'desc': 'Exterior entrance flags, large lobby banners, media backdrops, and registration kiosks designed for fast student processing.',
-        'images': [shj3, operation]
-      },
-      'Seating': {
-        'title': 'Lobby & Auditorium Queue Management',
-        'desc': 'Detailed staging lines and queue barriers to coordinate back-to-back sessions: empty one ceremony audience while the second session queues in.',
-        'images': [operation, shj2]
-      },
-      'Behind the Scenes': {
-        'title': 'Crew Rotation & Reset',
-        'desc': '12-hour build window and mid-day stage reset between sessions to refresh branding, clean surfaces, and replace name placards.',
-        'images': [operation, adgrad2]
-      },
-      'Videos': {
-        'title': 'Sharjah Ceremonial Videos',
-        'desc': 'Official institution footage, transition graphics, and scroll presenter media loops.',
-        'images': []
-      }
-    }
-  },
-  {
-    id: 'rak-2025',
-    title: 'HCT Ras Al Khaimah Ceremony 2025',
-    year: 2025,
-    shortDesc: 'Campus-wide ceremony setup featuring high-stakes stage carpentry and extensive outdoor lobby branding.',
-    location: 'HCT Ras Al Khaimah Campus, UAE',
-    image: shj3,
-    video: hctGraduationVideo,
-    stats: '576 Graduates | 1,800 Guests',
-    tags: ['Stage', 'Branding'],
-    facts: {
-      'Venue': 'Ras Al Khaimah Campus Sports Hall',
-      'Graduates': '576 Students',
-      'Guests': '1,800 Audience members',
-      'VIP Attendee': 'Sheikh Saqr bin Saud bin Saqr Al Qasimi',
-      'Production': 'Full Venue Transformation',
-    },
-    scope: [
-      'Sports hall flooring protection & full carpet setup',
-      'Modular carpentry staging & VIP protocol stairs',
-      'Outdoor entrance arches & registration desks',
-      'Sound reinforcement & stage illumination design',
-      'Event day operations & schedule calling'
-    ],
-    tabsContent: {
-      'Stage': {
-        'title': 'Sports Hall Stage Transformation',
-        'desc': 'Transforming a raw sports hall into a premium ceremonial stage. Fitted with structural steps and custom safety railings, and finished in dark velvet fabric overlays.',
-        'images': [shj3, shj1]
-      },
-      'LED & AV': {
-        'title': 'Video Integration & Sports Hall Acoustics',
-        'desc': 'Overcoming sports hall acoustics with highly localized audio arrays. Standard LED backdrop running campus-specific student lists.',
-        'images': [adgrad2, shj2]
-      },
-      'Branding': {
-        'title': 'Ras Al Khaimah Outdoor Branding',
-        'desc': 'Giant campus entrance arches, exterior wind-resistant banners, and interior partition walls to hide raw building structures.',
-        'images': [shj3, operation]
-      },
-      'Seating': {
-        'title': 'Flat-Floor Seating Coordination',
-        'desc': 'Deploying 1,800 seats on a flat-floor sports court with clear viewing angles and separate channels for VIP arrival lines.',
-        'images': [operation, shj1]
-      },
-      'Behind the Scenes': {
-        'title': 'Floor Protection & Install Logistics',
-        'desc': 'Laying floor protection tiles across the entire sports court surface before structural staging is built or lighting trusses are erected.',
-        'images': [operation, shj3]
-      },
-      'Videos': {
-        'title': 'RAK Ceremony Loop',
-        'desc': 'Custom campus video highlights and scroll collection cues.',
-        'images': []
-      }
-    }
-  },
-  {
-    id: 'rak-aa-2025',
-    title: 'RAK American Academy Ceremony 2025',
-    year: 2025,
-    shortDesc: 'Campus-wide school ceremony setup featuring custom stage backdrop woodwork, carpeting, registration lobby, and VIP protocol routing.',
-    location: 'RAK American Academy, Ras Al Khaimah',
-    image: shj3,
-    video: hctGraduationVideo,
-    stats: '320 Graduates | 1,200 Guests',
-    tags: ['Stage', 'Branding', 'Seating'],
-    facts: {
-      'Venue': 'RAK American Academy Auditorium',
-      'Graduates': '320 Students',
-      'Guests': '1,200 Audience members',
-      'VIP Attendee': 'Royal Family Representatives',
-      'Production': 'Premium Campus Staging',
-    },
-    scope: [
-      'Custom stage backdrop woodwork & carpentry build',
-      'Lobby registration counters & print signages',
-      'Auditorium sound tuning & visual setup',
-      'VIP protocol seating layout & carpet run',
-      'On-site event operations & cue checks'
-    ],
-    tabsContent: {
-      'Stage': {
-        'title': 'Custom Stage Woodwork',
-        'desc': 'Designed and fabricated a custom wooden backdrop matching the Academy’s branding, complete with integrated spot lighting and royal protocol walkways.',
-        'images': [shj3, adgrad1]
-      },
-      'LED & AV': {
-        'title': 'Auditorium AV & Lighting',
-        'desc': 'Configured and tuned the localized audio speaker setups to fit hall acoustics, delivering crystal-clear announcer names and music playback.',
-        'images': [adgrad2, shj2]
-      },
-      'Branding': {
-        'title': 'Lobby & Facade Prints',
-        'desc': 'Installed exterior facade arches, lobby welcome banner backdrops, and media zones for students and parents photo ops.',
-        'images': [shj3, operation]
-      },
-      'Seating': {
-        'title': 'VIP Protocol Seating',
-        'desc': 'Structured the auditorium layout dividing student classes and family guests, maintaining safety and protocol compliance.',
-        'images': [operation, shj1]
-      },
-      'Behind the Scenes': {
-        'title': 'Technical Call & QC',
-        'desc': 'Riggers and carpenters completing woodwork installations and checking cue sheets 18 hours before show start.',
-        'images': [operation, adgrad2]
-      },
-      'Videos': {
-        'title': 'RAK AA Ceremony Reel',
-        'desc': 'Announcer queue sheets, motion graphics background templates, and transition media loops.',
-        'images': []
-      }
-    }
-  },
-  {
-    id: 'abudhabi-2025',
-    title: 'HCT Abu Dhabi Ceremony 2025',
-    year: 2025,
-    shortDesc: 'The largest single graduation setup of the season, managing over 1,600 graduates and 5,000 guests in a convention centre environment.',
-    location: 'ADNEC, Abu Dhabi',
-    image: adgrad2,
-    video: hctGraduationVideo,
-    stats: '1,668 Graduates | 5,000 Guests',
-    tags: ['Stage', 'LED & AV', 'Branding', 'Seating'],
-    facts: {
-      'Venue': 'ADNEC Halls, Abu Dhabi',
-      'Graduates': '1,668 Students',
-      'Guests': '5,000 Audience members',
-      'VIP Attendee': 'Dr. Ahmad Belhoul Al Falasi, Minister of Education',
-      'Scale': '5,000 sqm Exhibition Hall Build',
-    },
-    scope: [
-      'Mega-scale stage layout (40m width setup)',
-      'Dual massive side LED screens & center high-def display',
-      '5,000-seat layout configuration & floor planning',
-      'Lobby registration zones & media backdrops',
-      'Technical production coordination'
-    ],
-    tabsContent: {
-      'Stage': {
-        'title': '40-Metre Wide Staging',
-        'desc': 'Custom wide stage designed for large student cohorts. Built using steel deck understructures and finished in EGS signature woodwork and carpeting.',
-        'images': [adgrad2, shj1]
-      },
-      'LED & AV': {
-        'title': 'Mega Video Walls & Line Array Sound',
-        'desc': 'Central high-resolution LED screens flanked by secondary projection screens. Line array sound systems suspended from overhead venue trusses to reach 5,000 attendees.',
-        'images': [adgrad2, shj2]
-      },
-      'Branding': {
-        'title': 'Convention Foyer Branding',
-        'desc': 'Branded partition walls, 12-meter tall fabric drops, photo backdrops, and media zones designed for immediate family photos.',
-        'images': [shj3, operation]
-      },
-      'Seating': {
-        'title': '5,000-Seat Floor Management',
-        'desc': 'Planning and deploying 5,000 seats with strict row alignments and protocol zones. Flow pathways designed for fast, safe graduate egress.',
-        'images': [operation, shj1]
-      },
-      'Behind the Scenes': {
-        'title': 'Logistics & 48-Hour Build',
-        'desc': 'Deploying a team of 45 carpenters, riggers, and installers to construct the entire setup within ADNEC\'s strict 48-hour move-in window.',
-        'images': [operation, adgrad2]
-      },
-      'Videos': {
-        'title': 'Abu Dhabi Ceremony Playback',
-        'desc': 'Complex multicamera feed switcher integration, slide countdowns, and student name scrolls.',
-        'images': []
-      }
-    }
-  },
-  {
-    id: 'baniyas-2024',
-    title: 'HCT Baniyas Ceremony 2024',
-    year: 2024,
-    shortDesc: 'Complete campus event staging, AV, and visitor flow management for the 2024 graduation program.',
-    location: 'HCT Baniyas Campus, Abu Dhabi',
-    image: operation,
-    video: hctGraduationVideo,
-    stats: '450 Graduates | 1,500 Guests',
-    tags: ['Stage', 'Branding', 'Behind the Scenes'],
-    facts: {
-      'Venue': 'Baniyas Campus Auditorium',
-      'Graduates': '450 Students',
-      'Guests': '1,500 Audience members',
-      'VIP Attendee': 'HCT Director General & Campus Leadership',
-      'Production': 'Overnight Campus setup',
-    },
-    scope: [
-      'Custom auditorium stage design & build',
-      'Lobby registration desks & queue setups',
-      'LED screen background & local sound tuning',
-      'Campus branding boards & outdoor signages',
-      'Event sequence checks & operator control'
-    ],
-    tabsContent: {
-      'Stage': {
-        'title': 'Baniyas Auditorium Stage',
-        'desc': 'Custom wooden backdrop with structural pillars built on the existing campus auditorium stage, creating a corporate institutional setup.',
-        'images': [operation, adgrad1]
-      },
-      'LED & AV': {
-        'title': 'Stage AV Integration',
-        'desc': 'Local sound arrays adjusted to fit auditorium acoustics, preventing feedback during announcer speeches. Central screen displaying student reels.',
-        'images': [adgrad2, shj2]
-      },
-      'Branding': {
-        'title': 'Outdoor Campus Signage',
-        'desc': 'Heavy-duty outdoor signage boards and flag setups directing parking traffic and guest arrivals across campus lanes.',
-        'images': [shj3, operation]
-      },
-      'Seating': {
-        'title': 'Auditorium Seating Coordination',
-        'desc': 'Seating charts color-coded by graduation discipline to guide students in order of scroll distribution.',
-        'images': [operation, shj1]
-      },
-      'Behind the Scenes': {
-        'title': 'Overnight Venue Handover',
-        'desc': 'Fast overnight setup to deliver stage, screens, and branding before rehearsals begin at 9:00 AM.',
-        'images': [operation, shj2]
-      },
-      'Videos': {
-        'title': 'Baniyas 2024 Video Reels',
-        'desc': 'Campus highlights reel, sponsor presentation playbacks, and scroll distribution cue videos.',
-        'images': []
-      }
-    }
-  },
-  {
-    id: 'sharjah-2024',
-    title: 'HCT Sharjah Ceremony 2024',
-    year: 2024,
-    shortDesc: 'Full ceremony production at Sharjah University City Hall, managing 820 graduates and strict protocol guidelines.',
-    location: 'University City Hall, Sharjah',
-    image: shj1,
-    video: hctGraduationVideo,
-    stats: '820 Graduates | 2,500 Guests',
-    tags: ['Stage', 'LED & AV', 'Branding'],
-    facts: {
-      'Venue': 'University City Hall, Sharjah',
-      'Graduates': '820 Students',
-      'Guests': '2,500 Audience members',
-      'VIP Attendee': 'Sharjah Royal Family Representatives',
-      'Project': 'Classical Venue Setup',
-    },
-    scope: [
-      'Auditorium stage branding panels',
-      'Central LED backdrop wall & sound tuning',
-      'Lobby entry arches & registration desks',
-      'VIP lounge partition setups & branding',
-      'Operational support & stage callouts'
-    ],
-    tabsContent: {
-      'Stage': {
-        'title': 'Royal Protocol Staging',
-        'desc': 'A classical staging design built to accommodate local royal presence. Velvet carpeting, solid handrails, and clean lines.',
-        'images': [shj1, adgrad1]
-      },
-      'LED & AV': {
-        'title': 'Backdrop Display & Spotlights',
-        'desc': 'Visual mapping of student credentials on the center LED screen, backed by soft spotlights to match video broadcast requirements.',
-        'images': [adgrad2, shj2]
-      },
-      'Branding': {
-        'title': 'Foyer Step-and-Repeat Walls',
-        'desc': 'Giant institutional logo walls in the lobby foyer for graduation photography and media interviews.',
-        'images': [shj3, operation]
-      },
-      'Seating': {
-        'title': 'Auditorium Seating Guides',
-        'desc': 'Graduate rows marked with color codes to keep students organized as they walk up to the stage.',
-        'images': [operation, shj1]
-      },
-      'Behind the Scenes': {
-        'title': 'Rigging & Backdrop Setup',
-        'desc': '24-hour setup window starting immediately upon hall release, handled by our dedicated event carpentry team.',
-        'images': [operation, shj1]
-      },
-      'Videos': {
-        'title': 'Sharjah 2024 Playback',
-        'desc': 'Announcer cues, student lists, and transition audio effects.',
-        'images': []
-      }
-    }
-  },
-  {
-    id: 'dubai-2024',
-    title: 'HCT Dubai Ceremony 2024',
-    year: 2024,
-    shortDesc: 'Overnight ballroom staging and lobby branding at Grand Hyatt Dubai for the 2024 cohort.',
-    location: 'Grand Hyatt Dubai, UAE',
-    image: adgrad1,
-    video: hctGraduationVideo,
-    stats: '580 Graduates | 2,000 Guests',
-    tags: ['Stage', 'Branding', 'Seating'],
-    facts: {
-      'Venue': 'Grand Hyatt Dubai',
-      'Graduates': '580 Students',
-      'Guests': '2,000 Audience members',
-      'VIP Attendee': 'Dubai Government Representatives',
-      'Setup': 'Overnight Build (12 Hours)',
-    },
-    scope: [
-      'Ballroom stage carpet & carpentry build',
-      'Foyer registration desks & queue setups',
-      'LED screen background & local sound tuning',
-      'Media backdrops & step-and-repeat walls',
-      'Rehearsal checks & show call support'
-    ],
-    tabsContent: {
-      'Stage': {
-        'title': 'Grand Hyatt Ballroom Stage',
-        'desc': 'Custom wooden backdrop with integrated lighting strips, designed to complement the luxury environment of the Hyatt ballroom.',
-        'images': [adgrad1, shj1]
-      },
-      'LED & AV': {
-        'title': 'LED Screen & Audio arrays',
-        'desc': 'High-resolution LED walls sync\'d with local ballroom sound loops. Balanced to give clear speaker audio across the room.',
-        'images': [adgrad2, shj2]
-      },
-      'Branding': {
-        'title': 'Foyer Registration branding',
-        'desc': 'Clean, branded registration booths and signages welcoming students and VIP guests.',
-        'images': [shj3, operation]
-      },
-      'Seating': {
-        'title': 'Graduates Seating plans',
-        'desc': 'Row planning with row tags and student name slips to ensure correct walking order during scroll delivery.',
-        'images': [operation, shj1]
-      },
-      'Behind the Scenes': {
-        'title': 'Rapid Overnight Install',
-        'desc': 'Executing the entire build in less than 12 hours between venue release and morning rehearsal.',
-        'images': [operation, adgrad1]
-      },
-      'Videos': {
-        'title': 'Dubai 2024 Ceremony Reels',
-        'desc': 'Official institution footage, transition graphics, and scroll presenter media loops.',
-        'images': []
-      }
-    }
-  },
-  {
-    id: 'sharjah-2023',
-    title: 'HCT Sharjah Ceremony 2023',
-    year: 2023,
-    shortDesc: 'Staging, branding, and event production at University City Hall for the 2023 graduates.',
-    location: 'University City Hall, Sharjah',
-    image: shj2,
-    video: hctGraduationVideo,
-    stats: '780 Graduates | 2,200 Guests',
-    tags: ['Stage', 'LED & AV', 'Branding'],
-    facts: {
-      'Venue': 'University City Hall, Sharjah',
-      'Graduates': '780 Students',
-      'Guests': '2,200 Audience members',
-      'VIP Attendee': 'Sheikh Salem bin Abdulrahman Al Qasimi',
-      'Project': 'Annual Ceremony Staging',
-    },
-    scope: [
-      'Auditorium stage wooden backdrop installation',
-      'Lobby entry arches & registration desks',
-      'LED screen background & local sound tuning',
-      'Media backdrops & step-and-repeat walls',
-      'On-site event operational support'
-    ],
-    tabsContent: {
-      'Stage': {
-        'title': 'Classic Stage Wooden Backdrop',
-        'desc': 'Elegant wooden staging panels built on the hall stage, incorporating institutional emblems and decorative lighting columns.',
-        'images': [shj2, adgrad1]
-      },
-      'LED & AV': {
-        'title': 'Broadcast Video & sound checks',
-        'desc': 'Calibrating the sound arrays to avoid echo under the high dome. Center LED screen running motion graphic loop.',
-        'images': [adgrad2, shj1]
-      },
-      'Branding': {
-        'title': 'University Hall Entrance Branding',
-        'desc': 'Flag setups on the main entrance stairs, lobby foyer banners, and branded registration desks.',
-        'images': [shj3, operation]
-      },
-      'Seating': {
-        'title': 'Visitor Flow & Seating plans',
-        'desc': 'Lobby queue markers and seat maps separating student cohorts from families.',
-        'images': [operation, shj2]
-      },
-      'Behind the Scenes': {
-        'title': 'Stage Rigging & Setup',
-        'desc': 'Installation teams running checks on stage carpentry and LED panel setups 24 hours before doors open.',
-        'images': [operation, adgrad2]
-      },
-      'Videos': {
-        'title': 'Sharjah 2023 Video Loops',
-        'desc': 'Countdown video, campus presentation playback, and announcer cues.',
-        'images': []
-      }
-    }
-  },
-  {
-    id: 'abudhabi-2023',
-    title: 'HCT Abu Dhabi Ceremony 2023',
-    year: 2023,
-    shortDesc: 'Convention center ceremony production at ADNEC Abu Dhabi, managing scale and protocol requirements.',
-    location: 'ADNEC, Abu Dhabi',
-    image: adgrad2,
-    video: hctGraduationVideo,
-    stats: '1,400 Graduates | 4,200 Guests',
-    tags: ['Stage', 'LED & AV', 'Seating'],
-    facts: {
-      'Venue': 'ADNEC Halls, Abu Dhabi',
-      'Graduates': '1,400 Students',
-      'Guests': '4,200 Audience members',
-      'VIP Attendee': 'Federal Government Representatives',
-      'Scale': '4,000 sqm Exhibition Hall Build',
-    },
-    scope: [
-      'Wide deck staging & protocol ramp build',
-      'Lobby entry arches & registration desks',
-      'Mega LED video walls & line array sound',
-      'VIP protocol seating layout & carpet run',
-      'Technical production coordination'
-    ],
-    tabsContent: {
-      'Stage': {
-        'title': 'Mega-Scale Staging',
-        'desc': 'Wide carpentered stage built to hold multiple student departments simultaneously, complete with ramps for protocol access.',
-        'images': [adgrad2, shj1]
-      },
-      'LED & AV': {
-        'title': 'Mega Screen AV Config',
-        'desc': 'Line array speakers suspended from ADNEC ceilings. Central and side LED panels displaying student names and live feeds.',
-        'images': [adgrad2, shj2]
-      },
-      'Branding': {
-        'title': 'ADNEC Foyer Branding',
-        'desc': 'Step-and-repeat media walls and large branded divider partitions in the main convention foyer.',
-        'images': [shj3, operation]
-      },
-      'Seating': {
-        'title': '4,200 Floor Seating Setup',
-        'desc': 'Arranging over 4,000 seats with perfect alignment and clear walkthrough routes for graduates.',
-        'images': [operation, shj1]
-      },
-      'Behind the Scenes': {
-        'title': 'Large Team Deployment',
-        'desc': 'Coordinating 35 carpenters and installers during the 48-hour build slot in ADNEC.',
-        'images': [operation, adgrad2]
-      },
-      'Videos': {
-        'title': 'Abu Dhabi 2023 Ceremony Playback',
-        'desc': 'Countdown timers, announcer scripts, and campus background videos.',
-        'images': []
-      }
-    }
-  },
-  {
-    id: 'dubai-2022',
-    title: 'HCT Dubai Ceremony 2022',
-    year: 2022,
-    shortDesc: 'Overnight ballroom ceremony installation at Grand Hyatt Dubai for the 2022 graduation program.',
-    location: 'Grand Hyatt Dubai, UAE',
-    image: adgrad1,
-    video: hctGraduationVideo,
-    stats: '520 Graduates | 1,800 Guests',
-    tags: ['Stage', 'Branding', 'Behind the Scenes'],
-    facts: {
-      'Venue': 'Grand Hyatt Dubai',
-      'Graduates': '520 Students',
-      'Guests': '1,800 Audience members',
-      'VIP Attendee': 'Dubai Government Representatives',
-      'Setup': 'Overnight Build (12 Hours)',
-    },
-    scope: [
-      'Custom ballroom stage design & build',
-      'Lobby registration desks & queue setups',
-      'LED screen background & local sound tuning',
-      'Media backdrops & step-and-repeat walls',
-      'Rehearsal checks & show call support'
-    ],
-    tabsContent: {
-      'Stage': {
-        'title': 'Ballroom Stage carpentry',
-        'desc': 'Overnight carpentry build for the Hyatt ballroom stage, matching high-stakes government event standards.',
-        'images': [adgrad1, shj1]
-      },
-      'LED & AV': {
-        'title': 'Video & Sound Setup',
-        'desc': 'Setting up central LED walls and secondary projectors, calibrated to Hyatt ballroom dimensions and lighting.',
-        'images': [adgrad2, shj2]
-      },
-      'Branding': {
-        'title': 'Hyatt Foyer Branding',
-        'desc': 'Branded registration counters and entry arches welcomes attendees at the hotel mezzanine level.',
-        'images': [shj3, operation]
-      },
-      'Seating': {
-        'title': 'Graduates seating lines',
-        'desc': 'Aligning rows and chairs under strict government guidelines to respect student protocols.',
-        'images': [operation, shj1]
-      },
-      'Behind the Scenes': {
-        'title': 'Overnight installation crew',
-        'desc': 'Riggers, printers, and carpenters working under a strict 12-hour build slot to hand over the room before morning rehearsals.',
-        'images': [operation, adgrad1]
-      },
-      'Videos': {
-        'title': 'Dubai 2022 Video Loops',
-        'desc': 'Official institution footage, transition graphics, and scroll presenter media loops.',
-        'images': []
-      }
-    }
-  },
-  {
-    id: 'fujairah-2022',
-    title: 'HCT Fujairah Ceremony 2022',
-    year: 2022,
-    shortDesc: 'Staging, branding, and event production at Zayed Sports Complex for the 2022 graduation program.',
-    location: 'Zayed Sports Complex, Fujairah',
-    image: shj1,
-    video: hctGraduationVideo,
-    stats: '410 Graduates | 1,500 Guests',
-    tags: ['Stage', 'Branding', 'Seating'],
-    facts: {
-      'Venue': 'Zayed Sports Complex, Fujairah',
-      'Graduates': '410 Students',
-      'Guests': '1,500 Audience members',
-      'VIP Attendee': 'Crown Prince of Fujairah Representative',
-      'Project': 'Sports Hall setup',
-    },
-    scope: [
-      'Sports hall flat flooring tiling & carpeting',
-      'Carp carpentry staging & VIP protocol stairs',
-      'Outdoor entrance arches & registration desks',
-      'Sound reinforcement & stage illumination design',
-      'Event day operations & schedule calling'
-    ],
-    tabsContent: {
-      'Stage': {
-        'title': 'Sports Hall Staging',
-        'desc': 'Carpentry staging built from scratch in the Zayed Sports Complex hall, including custom protocol steps for VIP guests.',
-        'images': [shj1, adgrad1]
-      },
-      'LED & AV': {
-        'title': 'Sports Hall AV tuning',
-        'desc': 'Acoustic tuning to manage sound reflections on flat concrete walls. Central LED backdrop wall showing ceremonial graphic files.',
-        'images': [adgrad2, shj2]
-      },
-      'Branding': {
-        'title': 'Sports Complex Exterior branding',
-        'desc': 'Heavy-duty fabric arches and campus registration flags to route graduates from the gate to the hall entry.',
-        'images': [shj3, operation]
-      },
-      'Seating': {
-        'title': 'Flat-floor seat layouts',
-        'desc': 'Row charts marked clearly to handle student alignment and ensure clear pathways for protocol entries.',
-        'images': [operation, shj1]
-      },
-      'Behind the Scenes': {
-        'title': 'Floor protection & Build logistics',
-        'desc': 'Deploying protective court floor tiles before staging structures are built, preventing venue damages.',
-        'images': [operation, shj1]
-      },
-      'Videos': {
-        'title': 'Fujairah 2022 playback loop',
-        'desc': 'Countdown visual files, name slide queues, and scroll presenter graphic loops.',
-        'images': []
-      }
+// Build projects map by year and campus key
+const projectsMap = {};
+
+Object.entries(graduationAssets).forEach(([path, url]) => {
+  if (path.includes('.DS_Store')) return;
+
+  const prefix = '../assets/Graduation/Websites Gallery Graduations /';
+  const relativePath = path.substring(path.indexOf(prefix) + prefix.length);
+  const parts = relativePath.split('/');
+
+  let year = null;
+  let campusFolder = null;
+  const filename = parts[parts.length - 1];
+
+  if (relativePath.startsWith('2021 Videos')) {
+    year = 2021;
+    campusFolder = 'hct';
+  } else if (relativePath.startsWith('RAK AA -Pics Vids')) {
+    year = 2025;
+    campusFolder = 'rak-aa';
+  } else {
+    year = parseInt(parts[0], 10);
+    const folder = parts[1] || '';
+    const norm = folder.toLowerCase().trim();
+    if (norm.includes('abu dhabi') || norm === 'aud') {
+      campusFolder = 'abu-dhabi';
+    } else if (norm.includes('dubai') || norm === 'dxb' || norm.includes('coca')) {
+      campusFolder = 'dubai';
+    } else if (norm.includes('fujairah')) {
+      campusFolder = 'fujairah';
+    } else if (norm.includes('ras') || norm === 'rak') {
+      campusFolder = 'ras-al-khaimah';
+    } else if (norm.includes('sharjah')) {
+      campusFolder = 'sharjah';
+    } else {
+      campusFolder = folder;
     }
   }
-];
+
+  if (!year || !campusFolder || !filename) return;
+
+  const ext = filename.split('.').pop().toLowerCase();
+  const isVideo = ['mp4', 'mov', 'avi', 'mkv', 'webm'].includes(ext);
+  const isPhoto = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'].includes(ext);
+
+  if (!isVideo && !isPhoto) return;
+
+  const key = `${year}-${campusFolder}`;
+  if (!projectsMap[key]) {
+    projectsMap[key] = {
+      year,
+      campusFolder,
+      photos: [],
+      videos: []
+    };
+  }
+
+  if (isVideo) {
+    projectsMap[key].videos.push({ name: filename, url });
+  } else {
+    projectsMap[key].photos.push({ name: filename, url });
+  }
+});
+
+// Metadata config map for campuses and years
+const CAMPUS_METADATA = {
+  'rak-aa': {
+    title: 'RAK American Academy Ceremony 2025',
+    location: 'Ras Al Khaimah, UAE',
+    institution: 'RAK American Academy',
+    shortDesc: 'Premium school graduation setup featuring custom stage backdrop woodwork, carpeting, registration lobby, and VIP protocol routing.',
+    venue: 'RAK American Academy Auditorium',
+    vip: 'Royal Family Representatives',
+    stats: '320 Graduates | 1,200 Guests'
+  },
+  'abu-dhabi': {
+    title: 'HCT Abu Dhabi Ceremony',
+    location: 'ADNEC, Abu Dhabi',
+    institution: 'Higher Colleges of Technology (HCT)',
+    shortDesc: 'Mega-scale staging and high-definition LED video wall production at ADNEC.',
+    venue: 'ADNEC Halls, Abu Dhabi',
+    vip: 'Dr. Ahmad Belhoul Al Falasi, Minister of Education',
+    stats: '1,668 Graduates | 5,000 Guests'
+  },
+  'dubai': {
+    title: 'HCT Dubai Ceremony',
+    location: 'Dubai, UAE',
+    institution: 'Higher Colleges of Technology (HCT)',
+    shortDesc: 'Premium ballroom staging and venue branding coordination for HCT Dubai campuses.',
+    venue: 'Grand Hyatt Dubai, UAE',
+    vip: 'H.H. Sheikh Mansoor bin Mohammed bin Rashid Al Maktoum',
+    stats: '602 Graduates | 2,200 Guests'
+  },
+  'fujairah': {
+    title: 'HCT Fujairah Ceremony',
+    location: 'Fujairah, UAE',
+    institution: 'Higher Colleges of Technology (HCT)',
+    shortDesc: 'Complete campus ceremony production plus custom carpentered staging built for the HCT Fujairah graduation program.',
+    venue: 'Zayed Sports Complex, Fujairah',
+    vip: 'H.H. Sheikh Mohammed bin Hamad Al Sharqi, Crown Prince of Fujairah',
+    stats: '535 Graduates | 1,800 Guests'
+  },
+  'ras-al-khaimah': {
+    title: 'HCT Ras Al Khaimah Ceremony',
+    location: 'HCT Ras Al Khaimah Campus, UAE',
+    institution: 'Higher Colleges of Technology (HCT)',
+    shortDesc: 'Campus-wide ceremony setup featuring high-stakes stage carpentry and extensive outdoor lobby branding.',
+    venue: 'Ras Al Khaimah Campus Sports Hall',
+    vip: 'Sheikh Saqr bin Saud bin Saqr Al Qasimi',
+    stats: '576 Graduates | 1,800 Guests'
+  },
+  'sharjah': {
+    title: 'HCT Sharjah Ceremony',
+    location: 'University City Hall, Sharjah',
+    institution: 'Higher Colleges of Technology (HCT)',
+    shortDesc: 'Double ceremony production and visitor flow management at University City Hall.',
+    venue: 'University City Hall, Sharjah',
+    vip: 'Sheikh Salem bin Abdulrahman / Sheikh Mohammed bin Humaid',
+    stats: '937 Graduates (2 sessions) | 3,000 Guests'
+  },
+  'hct-2021': {
+    title: 'HCT Graduation Ceremony 2021',
+    location: 'HCT Campuses, UAE',
+    institution: 'Higher Colleges of Technology (HCT)',
+    shortDesc: 'Official graduation ceremony video highlights for HCT campuses across the UAE for the class of 2021.',
+    venue: 'HCT Campuses, UAE',
+    vip: 'HCT Leadership & Government Officials',
+    stats: 'Class of 2021'
+  }
+};
+
+const getCampusMetadata = (campusKey, year) => {
+  if (campusKey === 'hct' && year === 2021) {
+    return CAMPUS_METADATA['hct-2021'];
+  }
+  
+  const meta = CAMPUS_METADATA[campusKey] || {
+    title: `HCT ${campusKey.toUpperCase()} Ceremony ${year}`,
+    location: 'UAE',
+    institution: 'Higher Colleges of Technology (HCT)',
+    shortDesc: `HCT graduation ceremony production in ${year}.`,
+    venue: `${campusKey.toUpperCase()} Campus`,
+    vip: 'Institutional Leadership',
+    stats: 'Graduation Ceremony'
+  };
+
+  // Customize dynamic attributes per year
+  if (campusKey === 'abu-dhabi') {
+    return {
+      ...meta,
+      title: `HCT Abu Dhabi Ceremony ${year}`,
+      shortDesc: `Mega-scale staging and high-definition LED video wall production at ADNEC for the HCT Abu Dhabi ${year} cohort.`,
+      vip: year === 2025 ? 'Dr. Ahmad Belhoul Al Falasi, Minister of Education' : 'HCT Director General & Campus Leadership',
+      stats: year === 2025 ? '1,668 Graduates | 5,000 Guests' : '1,500 Graduates | 4,500 Guests'
+    };
+  }
+
+  if (campusKey === 'dubai') {
+    return {
+      ...meta,
+      title: `HCT Dubai Ceremony ${year}`,
+      location: year === 2025 ? 'Grand Hyatt Dubai, UAE' : 'Coca-Cola Arena, Dubai',
+      venue: year === 2025 ? 'Grand Hyatt Dubai' : 'Coca-Cola Arena, Dubai',
+      shortDesc: `Premium ballroom staging and venue branding coordination for HCT Dubai campuses at ${year === 2025 ? 'Grand Hyatt' : 'Coca-Cola Arena'}.`,
+      vip: year === 2025 ? 'H.H. Sheikh Mansoor bin Mohammed bin Rashid Al Maktoum' : 'Dubai Government Representatives',
+      stats: year === 2025 ? '602 Graduates | 2,200 Guests' : '580 Graduates | 2,000 Guests'
+    };
+  }
+
+  if (campusKey === 'fujairah') {
+    return {
+      ...meta,
+      title: `HCT Fujairah Ceremony ${year}`,
+      location: year === 2025 ? 'Zayed Sports Complex, Fujairah' : 'Fujairah, UAE',
+      shortDesc: `Complete campus ceremony production plus custom carpentered staging built for the HCT Fujairah ${year} ceremony.`,
+      stats: year === 2025 ? '535 Graduates | 1,800 Guests' : '450 Graduates | 1,500 Guests'
+    };
+  }
+
+  if (campusKey === 'ras-al-khaimah') {
+    return {
+      ...meta,
+      title: `HCT Ras Al Khaimah Ceremony ${year}`,
+      shortDesc: `Campus-wide ceremony setup featuring high-stakes stage carpentry and extensive outdoor lobby branding for HCT RAK in ${year}.`,
+      stats: year === 2025 ? '576 Graduates | 1,800 Guests' : '480 Graduates | 1,600 Guests'
+    };
+  }
+
+  if (campusKey === 'sharjah') {
+    return {
+      ...meta,
+      title: `HCT Sharjah Ceremony ${year}`,
+      shortDesc: `Double ceremony production and visitor flow management at University City Hall for HCT Sharjah ${year}.`,
+      stats: year === 2025 ? '937 Graduates (2 sessions) | 3,000 Guests' : '820 Graduates | 2,500 Guests'
+    };
+  }
+
+  return meta;
+};
+
+// Map scanner results into GRADUATION_PROJECTS
+const GRADUATION_PROJECTS = Object.entries(projectsMap).map(([key, data]) => {
+  const { year, campusFolder, photos, videos } = data;
+
+  // Clone lists to apply modifications
+  let customVideos = [...videos];
+  let customPhotos = [...photos];
+
+  // Specific removals
+  if (year === 2025 && campusFolder === 'dubai') {
+    customVideos = customVideos.filter(v => v.name !== 'Dxb Promo.mp4');
+  }
+  if (year === 2024 && campusFolder === 'fujairah') {
+    customVideos = customVideos.filter(v => v.name !== '20240929_103534.mp4');
+  }
+
+  // Sort photos alphabetically
+  customPhotos.sort((a, b) => a.name.localeCompare(b.name));
+
+  // Sort videos (default alphabetical)
+  customVideos.sort((a, b) => a.name.localeCompare(b.name));
+
+  // Apply custom video sorting overrides
+  if (year === 2025 && campusFolder === 'abu-dhabi') {
+    // Hero: "HCT Abu Dhabi Promo.mp4", Last: "20251113_124651.mp4"
+    const heroVideo = customVideos.find(v => v.name === 'HCT Abu Dhabi Promo.mp4');
+    const lastVideo = customVideos.find(v => v.name === '20251113_124651.mp4');
+    const restVideos = customVideos.filter(v => v.name !== 'HCT Abu Dhabi Promo.mp4' && v.name !== '20251113_124651.mp4');
+    
+    customVideos = [];
+    if (heroVideo) customVideos.push(heroVideo);
+    customVideos.push(...restVideos);
+    if (lastVideo) customVideos.push(lastVideo);
+  }
+
+  if (year === 2025 && campusFolder === 'rak-aa') {
+    // Last: "RAK Stage Setup - Timelapse.mp4"
+    const lastVideo = customVideos.find(v => v.name === 'RAK Stage Setup - Timelapse.mp4');
+    const restVideos = customVideos.filter(v => v.name !== 'RAK Stage Setup - Timelapse.mp4');
+    
+    customVideos = [];
+    customVideos.push(...restVideos);
+    if (lastVideo) customVideos.push(lastVideo);
+  }
+
+  if (year === 2024 && campusFolder === 'fujairah') {
+    // Hero: "Fujairah Highlights.mp4"
+    const heroVideo = customVideos.find(v => v.name === 'Fujairah Highlights.mp4');
+    const restVideos = customVideos.filter(v => v.name !== 'Fujairah Highlights.mp4');
+    
+    customVideos = [];
+    if (heroVideo) customVideos.push(heroVideo);
+    customVideos.push(...restVideos);
+  }
+
+  const meta = getCampusMetadata(campusFolder, year);
+
+  // Group photos and videos into a single mediaItems list
+  const mediaItems = [];
+  customVideos.forEach(v => {
+    mediaItems.push({ type: 'video', url: v.url, name: v.name });
+  });
+  customPhotos.forEach(p => {
+    mediaItems.push({ type: 'photo', url: p.url, name: p.name });
+  });
+
+  let image = customPhotos.length > 0 ? customPhotos[0].url : null;
+  if (year === 2021) {
+    image = hero2021;
+  }
+  const video = customVideos.length > 0 ? customVideos[0].url : null;
+
+  return {
+    id: `${campusFolder}-${year}`,
+    title: meta.title,
+    year,
+    campus: campusFolder,
+    shortDesc: meta.shortDesc,
+    location: meta.location,
+    image,
+    video,
+    stats: meta.stats,
+    tags: campusFolder === 'rak-aa' ? ['Stage', 'Branding', 'Woodwork'] : ['Stage', 'LED & AV', 'Branding'],
+    facts: {
+      'Venue': meta.venue,
+      'Graduates': meta.stats.includes('|') ? meta.stats.split('|')[0].trim() : meta.stats,
+      'Guests': meta.stats.includes('|') ? meta.stats.split('|')[1].trim() : 'Audience',
+      'VIP Attendee': meta.vip,
+      'Institution': meta.institution
+    },
+    scope: meta.institution.includes('HCT') ? [
+      'Custom stage design, structural engineering & carpentry build',
+      'High-resolution LED video wall backdrops & live AV control',
+      'VIP protocol seating layouts & carpet runs',
+      'Venue facade & entry perimeter branding setup',
+      'On-site production operation & timing coordination'
+    ] : [
+      'Custom stage backdrop woodwork & carpentry setup',
+      'Lobby registration counters & print signage installation',
+      'Auditorium sound tuning & lighting configuration',
+      'VIP protocol seating & carpet alignment',
+      'On-site event operations & cue sheets orchestration'
+    ],
+    mediaItems
+  };
+});
+
+// Sort projects by year descending, then alphabetically by title
+GRADUATION_PROJECTS.sort((a, b) => {
+  if (b.year !== a.year) return b.year - a.year;
+  return a.title.localeCompare(b.title);
+});
 
 export default function GraduationPortfolioPage() {
   const [activeYear, setActiveYear] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProject, setSelectedProject] = useState(null);
-  const [activeModalTab, setActiveModalTab] = useState('Stage');
-  const [activeGalleryImage, setActiveGalleryImage] = useState(null);
-  const videoRef = useRef(null);
+  const [cinemaIndex, setCinemaIndex] = useState(null);
 
   // Filter projects based on Year and Search query
   const filteredProjects = useMemo(() => {
@@ -775,8 +339,7 @@ export default function GraduationPortfolioPage() {
         project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         project.shortDesc.toLowerCase().includes(searchQuery.toLowerCase()) ||
         project.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        project.stats.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        project.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+        project.stats.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesYear && matchesSearch;
     });
   }, [activeYear, searchQuery]);
@@ -787,6 +350,7 @@ export default function GraduationPortfolioPage() {
     '.content-page .hero-copy h1',
     '.content-page .hero-copy .lede',
     '.filter-search-container',
+    '.portfolio-card',
     '.footer-grid > *',
     '.footer-big',
     '.footer-bottom'
@@ -799,26 +363,34 @@ export default function GraduationPortfolioPage() {
   // Modal handlers
   const handleOpenModal = (project) => {
     setSelectedProject(project);
-    setActiveModalTab('Stage');
-    setActiveGalleryImage(null);
+    setCinemaIndex(null);
   };
 
   const handleCloseModal = () => {
     setSelectedProject(null);
-    setActiveModalTab('Stage');
-    setActiveGalleryImage(null);
+    setCinemaIndex(null);
   };
 
-  // Close modal when pressing Escape key
+  // Close modal/cinema when pressing Escape, navigate with Arrow keys in Cinema mode
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
-        handleCloseModal();
+        if (cinemaIndex !== null) {
+          setCinemaIndex(null);
+        } else {
+          handleCloseModal();
+        }
+      } else if (cinemaIndex !== null && selectedProject) {
+        if (e.key === 'ArrowLeft') {
+          setCinemaIndex((prev) => (prev === 0 ? selectedProject.mediaItems.length - 1 : prev - 1));
+        } else if (e.key === 'ArrowRight') {
+          setCinemaIndex((prev) => (prev === selectedProject.mediaItems.length - 1 ? 0 : prev + 1));
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [cinemaIndex, selectedProject]);
 
   // Sync scroll lock on body when modal is open
   useEffect(() => {
@@ -838,25 +410,6 @@ export default function GraduationPortfolioPage() {
     lastProjectRef.current = selectedProject;
   }
   const modalProject = selectedProject || lastProjectRef.current || GRADUATION_PROJECTS[0];
-
-  // Pause video immediately when modal starts to close
-  useEffect(() => {
-    if (!selectedProject && videoRef.current) {
-      videoRef.current.pause();
-    }
-  }, [selectedProject]);
-
-  // Auto-update active gallery image when modal tab changes
-  useEffect(() => {
-    if (selectedProject && activeModalTab !== 'Videos') {
-      const tabData = selectedProject.tabsContent[activeModalTab];
-      if (tabData && tabData.images && tabData.images.length > 0) {
-        setActiveGalleryImage(tabData.images[0]);
-      } else {
-        setActiveGalleryImage(selectedProject.image);
-      }
-    }
-  }, [activeModalTab, selectedProject]);
 
   return (
     <>
@@ -919,7 +472,7 @@ export default function GraduationPortfolioPage() {
             <div className="filter-search-inner">
               {/* Year Filter Buttons */}
               <div className="filters-group">
-                {['All', '2025', '2024', '2023', '2022'].map((year) => (
+                {['All', '2025', '2024', '2021'].map((year) => (
                   <button
                     key={year}
                     type="button"
@@ -935,7 +488,7 @@ export default function GraduationPortfolioPage() {
               <div className="search-box-wrap">
                 <input
                   type="text"
-                  placeholder="Search ceremony, location, or tag..."
+                  placeholder="Search ceremony, location..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="search-input-field"
@@ -964,32 +517,35 @@ export default function GraduationPortfolioPage() {
           <div className="container">
             <div className="portfolio-grid">
               {filteredProjects.length > 0 ? (
-                filteredProjects.map((project) => (
+                filteredProjects.map((project, index) => (
                   <article
                     key={project.id}
                     className="portfolio-card"
+                    style={{ '--reveal-delay': `${(index % 4) * 80}ms` }}
                     onClick={() => handleOpenModal(project)}
                   >
-                    <div className="portfolio-card-media">
-                      <img src={project.image} alt={project.title} loading="lazy" />
-                      <span className="card-year-badge">{project.year}</span>
-                    </div>
-
-                    <div className="portfolio-card-body">
-                      <h3>{project.title}</h3>
-                      <div className="portfolio-card-location">
-                        📍 <span>{project.location}</span>
-                      </div>
-                      <p className="portfolio-card-desc">{project.shortDesc}</p>
-                      
-                      <div className="portfolio-card-stats">
-                        📊 <span>{project.stats}</span>
+                    <div className="portfolio-card-inner">
+                      <div className="portfolio-card-media">
+                        {project.image ? (
+                          <img src={project.image} alt={project.title} loading="lazy" />
+                        ) : (
+                          <div className="empty-image-placeholder">
+                            <span className="placeholder-year">Class of {project.year}</span>
+                            <span className="play-icon-overlay">▶ Video Highlights</span>
+                          </div>
+                        )}
+                        <span className="card-year-badge">{project.year}</span>
                       </div>
 
-                      <div className="portfolio-card-tags">
-                        {project.tags.map((tag) => (
-                          <span key={tag} className="card-service-tag">{tag}</span>
-                        ))}
+                      <div className="portfolio-card-body">
+                        <h3>{project.title}</h3>
+                        <div className="portfolio-card-location">
+                          📍 <span>{project.location}</span>
+                        </div>
+                        
+                        <div className="portfolio-card-stats">
+                          🎓 <span>{project.facts['Graduates'] || 'HCT Graduates'}</span>
+                        </div>
                       </div>
                     </div>
                   </article>
@@ -1050,106 +606,167 @@ export default function GraduationPortfolioPage() {
               {/* Modal Content */}
               <div className="portfolio-modal-body">
                 
-                {/* Left Column: Visual Showcase & Tabs */}
-                <div className="modal-showcase-column">
-                  <div className="modal-media-viewport">
-                    {activeModalTab === 'Videos' ? (
+                {/* Top Section: Hero Viewport and Facts Dossier (2 columns) */}
+                <div className="modal-top-section">
+                  <div 
+                    className="modal-media-viewport"
+                    onClick={() => {
+                      if (modalProject.mediaItems.length > 0) {
+                        setCinemaIndex(0);
+                      }
+                    }}
+                  >
+                    {modalProject.video ? (
                       <video
-                        ref={videoRef}
+                        key={modalProject.video}
                         src={modalProject.video}
                         controls
                         autoPlay
                         muted
                         playsInline
+                        loop
                       />
-                    ) : (
+                    ) : modalProject.image ? (
                       <img
-                        src={activeGalleryImage || modalProject.image}
-                        alt={`${modalProject.title} category visual`}
+                        src={modalProject.image}
+                        alt={`${modalProject.title} cover`}
                       />
-                    )}
-                  </div>
-
-                  {/* Category Tabs */}
-                  <div className="modal-category-tabs">
-                    {['Stage', 'LED & AV', 'Branding', 'Seating', 'Behind the Scenes', 'Videos'].map((tab) => (
-                      <button
-                        key={tab}
-                        type="button"
-                        className={`category-tab-btn ${activeModalTab === tab ? 'active' : ''}`}
-                        onClick={() => setActiveModalTab(tab)}
-                      >
-                        {tab}
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Tab Details */}
-                  <div className="modal-tab-content-panel">
-                    {activeModalTab === 'Videos' ? (
-                      <div>
-                        <h4>Ceremony Highlights Reel</h4>
-                        <p>Watch EGS's official ceremony video highlights showcasing stage execution, crowd dynamics, VIP seating, and live LED media backdrop transitions in real-time.</p>
-                      </div>
                     ) : (
-                      modalProject.tabsContent[activeModalTab] && (
-                        <div>
-                          <h4>{modalProject.tabsContent[activeModalTab].title}</h4>
-                          <p>{modalProject.tabsContent[activeModalTab].desc}</p>
-                          
-                          {/* Mini Gallery Grid */}
-                          {modalProject.tabsContent[activeModalTab].images && 
-                           modalProject.tabsContent[activeModalTab].images.length > 0 && (
-                            <div className="modal-tab-gallery-grid">
-                              {modalProject.tabsContent[activeModalTab].images.map((img, index) => (
-                                <div
-                                  key={index}
-                                  className={`modal-tab-gallery-item ${activeGalleryImage === img ? 'active' : ''}`}
-                                  onClick={() => setActiveGalleryImage(img)}
-                                >
-                                  <img src={img} alt={`Gallery item ${index + 1}`} />
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      )
+                      <div className="empty-image-placeholder-large">
+                        <span>Class of {modalProject.year}</span>
+                        <span>▶ Click below to watch videos</span>
+                      </div>
                     )}
+                    
+                    <div className="media-viewport-overlay">
+                      <span>🔍 Click to enter Cinema Mode</span>
+                    </div>
+                  </div>
+
+                  {/* Right Column: Facts Dossier & Scope of Work */}
+                  <div className="modal-facts-column">
+                    
+                    {/* Quick Facts */}
+                    <div>
+                      <span className="facts-section-title">Quick Facts</span>
+                      <div className="dossier" data-label="Ceremony Profile">
+                        {Object.entries(modalProject.facts).map(([key, val]) => (
+                          <div className="dossier-row" key={key}>
+                            <span className="k">{key}</span>
+                            <span className="v">{val}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Scope of Work */}
+                    <div>
+                      <span className="facts-section-title">Scope of Work</span>
+                      <div className="modal-scope-list">
+                        {modalProject.scope.map((item, index) => (
+                          <div key={index} className="modal-scope-item">
+                            <span>{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
                   </div>
                 </div>
 
-                {/* Right Column: Facts Dossier & Scope of Work */}
-                <div className="modal-facts-column">
-                  
-                  {/* Quick Facts */}
-                  <div>
-                    <span className="facts-section-title">Quick Facts</span>
-                    <div className="dossier" data-label="Ceremony Profile">
-                      {Object.entries(modalProject.facts).map(([key, val]) => (
-                        <div className="dossier-row" key={key}>
-                          <span className="k">{key}</span>
-                          <span className="v">{val}</span>
-                        </div>
-                      ))}
-                    </div>
+                {/* Bottom Section: Full-Width Ceremony Gallery Grid */}
+                <div className="modal-media-grid-section">
+                  <span className="media-grid-title">Ceremony Gallery ({modalProject.mediaItems.length} items)</span>
+                  <div className="modal-media-grid">
+                    {modalProject.mediaItems.map((item, index) => (
+                      <div
+                        key={index}
+                        className="modal-media-grid-item"
+                        onClick={() => setCinemaIndex(index)}
+                      >
+                        {item.type === 'video' ? (
+                          <div className="grid-item-video-wrapper">
+                            <video src={item.url} preload="metadata" muted playsInline />
+                            <div className="video-play-overlay">
+                              <span className="play-icon">▶</span>
+                              <span className="video-duration">{item.name.replace(/\.[^/.]+$/, "")}</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <img src={item.url} alt={`${modalProject.title} media ${index + 1}`} loading="lazy" />
+                        )}
+                      </div>
+                    ))}
                   </div>
-
-                  {/* Scope of Work */}
-                  <div>
-                    <span className="facts-section-title">Scope of Work</span>
-                    <div className="modal-scope-list">
-                      {modalProject.scope.map((item, index) => (
-                        <div key={index} className="modal-scope-item">
-                          <span>{item}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
                 </div>
 
               </div>
 
+            </div>
+          </div>
+        )}
+
+        {/* Cinema Lightbox Overlay */}
+        {cinemaIndex !== null && selectedProject && selectedProject.mediaItems[cinemaIndex] && (
+          <div 
+            className="cinema-lightbox-overlay"
+            onClick={() => setCinemaIndex(null)}
+          >
+            <div className="cinema-lightbox-container" onClick={(e) => e.stopPropagation()}>
+              <button 
+                type="button" 
+                className="cinema-close-btn" 
+                onClick={() => setCinemaIndex(null)}
+                aria-label="Close Cinema Mode"
+              >
+                ✕
+              </button>
+
+              <button 
+                type="button" 
+                className="cinema-arrow-btn prev" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCinemaIndex((prev) => (prev === 0 ? selectedProject.mediaItems.length - 1 : prev - 1));
+                }}
+                aria-label="Previous Media"
+              >
+                ⟨
+              </button>
+
+              <div className="cinema-lightbox-content">
+                {selectedProject.mediaItems[cinemaIndex].type === 'video' ? (
+                  <video
+                    key={selectedProject.mediaItems[cinemaIndex].url}
+                    src={selectedProject.mediaItems[cinemaIndex].url}
+                    controls
+                    autoPlay
+                    playsInline
+                  />
+                ) : (
+                  <img 
+                    src={selectedProject.mediaItems[cinemaIndex].url} 
+                    alt={`${selectedProject.title} large gallery`} 
+                  />
+                )}
+              </div>
+
+              <button 
+                type="button" 
+                className="cinema-arrow-btn next" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCinemaIndex((prev) => (prev === selectedProject.mediaItems.length - 1 ? 0 : prev + 1));
+                }}
+                aria-label="Next Media"
+              >
+                ⟩
+              </button>
+
+              <div className="cinema-lightbox-footer">
+                <span className="cinema-media-name">{selectedProject.mediaItems[cinemaIndex].name.replace(/\.[^/.]+$/, "")}</span>
+                <span className="cinema-counter">{cinemaIndex + 1} / {selectedProject.mediaItems.length}</span>
+              </div>
             </div>
           </div>
         )}
