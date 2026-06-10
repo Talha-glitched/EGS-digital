@@ -187,6 +187,11 @@ const caseStudiesRevealSelector = [
   '.content-page .footer-grid > *',
   '.content-page .footer-big',
   '.content-page .footer-bottom',
+  '.case-studies-page .archive-board',
+  '.case-studies-page .case-directory-row',
+  '.case-studies-page .case-meta',
+  '.case-studies-page .case-body',
+  '.case-studies-page .case-note',
 ].join(', ');
 
 export default function CaseStudiesPage() {

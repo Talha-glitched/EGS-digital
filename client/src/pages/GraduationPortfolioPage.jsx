@@ -85,7 +85,7 @@ const CAMPUS_METADATA = {
     shortDesc: 'Premium school graduation setup featuring custom stage backdrop woodwork, carpeting, registration lobby, and VIP protocol routing.',
     venue: 'RAK American Academy Auditorium',
     vip: 'Royal Family Representatives',
-    stats: '320 Graduates | 1,200 Guests'
+    stats: '60 Graduates | 1,200 Guests'
   },
   'abu-dhabi': {
     title: 'HCT Abu Dhabi Ceremony',
