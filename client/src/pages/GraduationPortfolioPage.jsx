@@ -6,8 +6,8 @@ import { Footer } from './SiteChrome.jsx';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 import hero2021 from '../assets/Graduation/2021-hero.jpg';
 
-// Scan all files in the graduation assets gallery (note the trailing space in the directory name)
-const graduationAssets = import.meta.glob('../assets/Graduation/Websites Gallery Graduations /**/*', {
+// Scan all files in the graduation assets gallery
+const graduationAssets = import.meta.glob('../assets/Graduation/Websites Gallery Graduations/**/*', {
   eager: true,
   import: 'default'
 });
@@ -18,7 +18,7 @@ const projectsMap = {};
 Object.entries(graduationAssets).forEach(([path, url]) => {
   if (path.includes('.DS_Store')) return;
 
-  const prefix = '../assets/Graduation/Websites Gallery Graduations /';
+  const prefix = '../assets/Graduation/Websites Gallery Graduations/';
   const relativePath = path.substring(path.indexOf(prefix) + prefix.length);
   const parts = relativePath.split('/');
 
