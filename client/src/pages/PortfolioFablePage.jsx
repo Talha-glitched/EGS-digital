@@ -75,7 +75,22 @@ Object.entries(graduationAssets).forEach(([path, url]) => {
   gradGroups[key].push({ type: isVideo ? 'video' : 'photo', url, name: filename, year });
 });
 
-function buildClient({ id, name, category, location, year, items }) {
+// Ceremony stats, mirrored from the graduation-portfolio page
+const GRAD_FACTS = {
+  'abu-dhabi|2025': { venue: 'ADNEC Halls, Abu Dhabi', graduates: '1,668', guests: '5,000' },
+  'abu-dhabi|2024': { venue: 'ADNEC Halls, Abu Dhabi', graduates: '1,500', guests: '4,500' },
+  'dubai|2025': { venue: 'Grand Hyatt Dubai', graduates: '602', guests: '2,200' },
+  'dubai|2024': { venue: 'Coca-Cola Arena, Dubai', graduates: '580', guests: '2,000' },
+  'fujairah|2025': { venue: 'Zayed Sports Complex, Fujairah', graduates: '535', guests: '1,800' },
+  'fujairah|2024': { venue: 'Fujairah, UAE', graduates: '450', guests: '1,500' },
+  'ras-al-khaimah|2025': { venue: 'RAK Campus Sports Hall', graduates: '576', guests: '1,800' },
+  'ras-al-khaimah|2024': { venue: 'RAK Campus Sports Hall', graduates: '480', guests: '1,600' },
+  'sharjah|2025': { venue: 'University City Hall, Sharjah', graduates: '937 (2 sessions)', guests: '3,000' },
+  'sharjah|2024': { venue: 'University City Hall, Sharjah', graduates: '820', guests: '2,500' },
+  'rak-aa|2025': { venue: 'RAK American Academy Auditorium', graduates: '60', guests: '1,200' },
+};
+
+function buildClient({ id, name, category, location, year, items, facts }) {
   const photos = items
     .filter((m) => m.type === 'photo')
     .sort((a, b) => a.name.localeCompare(b.name));
@@ -88,7 +103,7 @@ function buildClient({ id, name, category, location, year, items }) {
   const media = videos.length > 0 ? [videos[0], ...photos, ...videos.slice(1)] : [...photos];
   const cover = photos[0] || hero;
 
-  return { id, name, category, location, year, media, hero, cover, meta: `${location} · ${year}` };
+  return { id, name, category, location, year, media, hero, cover, facts, meta: `${location} · ${year}` };
 }
 
 // One entry per ceremony (campus × year) so every gallery only carries
@@ -106,6 +121,7 @@ const GRAD_CLIENTS = Object.entries(gradGroups)
       location,
       year,
       items,
+      facts: GRAD_FACTS[`${campus}|${year}`],
     });
   })
   .sort((a, b) => a.name.localeCompare(b.name) || b.year - a.year);
@@ -130,12 +146,10 @@ const IDEA_CLIENTS = [
   })
 );
 
-const ALL_CLIENTS = [
-  ...IDEA_CLIENTS.filter((c) => c.category === 'exhibitions'),
-  ...GRAD_CLIENTS,
-  ...IDEA_CLIENTS.filter((c) => c.category === 'retail'),
-  ...IDEA_CLIENTS.filter((c) => c.category === 'fitouts'),
-];
+// Newest work first; the cyclical list reads year by year
+const ALL_CLIENTS = [...IDEA_CLIENTS, ...GRAD_CLIENTS].sort(
+  (a, b) => b.year - a.year || a.name.localeCompare(b.name)
+);
 
 const CATEGORIES = [
   { key: 'all', label: 'All' },
@@ -187,12 +201,14 @@ function GalleryVideo({ src, name }) {
     v.currentTime = ((e.clientX - rect.left) / rect.width) * v.duration;
   };
 
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = muted;
+    }
+  }, [muted]);
+
   const toggleMute = () => {
-    const v = videoRef.current;
-    setMuted((m) => {
-      if (v) v.muted = !m;
-      return !m;
-    });
+    setMuted((m) => !m);
   };
 
   return (
@@ -241,19 +257,20 @@ function GalleryVideo({ src, name }) {
 export default function PortfolioFablePage() {
   const [activeCat, setActiveCat] = useState('all');
   const [activeYear, setActiveYear] = useState('all');
-  const [viewer, setViewer] = useState(null); // { name, sub, media }
-  const [viewerIndex, setViewerIndex] = useState(0);
+  const [viewerIdx, setViewerIdx] = useState(null); // project index in the filtered list
+  const [mediaIdx, setMediaIdx] = useState(0); // media index inside the open project
+  const [navDir, setNavDir] = useState(0); // -1 came from below, 1 came from above
   const [hoverClient, setHoverClient] = useState(null);
   const [activeIdx, setActiveIdx] = useState(0);
 
+  const viewerRef = useRef(null);
   const listRef = useRef(null);
   const itemRefs = useRef([]);
   const activeIdxRef = useRef(0);
   const clientsRef = useRef([]);
   const engine = useRef({ offset: 0, target: 0, lastInput: 0 });
-  const scrollRef = useRef(null);
-  const progressRef = useRef(null);
-  const sectionRefs = useRef([]);
+  const wheelGate = useRef(0);
+  const touchStart = useRef(null);
 
   const clients = useMemo(
     () =>
@@ -416,70 +433,115 @@ export default function PortfolioFablePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const viewerProject = viewerIdx !== null ? clients[viewerIdx] : null;
+
   const openViewer = (client) => {
     setHoverClient(null);
-    setViewerIndex(0);
-    setViewer({ name: client.name, sub: client.meta, media: client.media });
+    setMediaIdx(0);
+    setNavDir(0);
+    setViewerIdx(Math.max(0, clients.indexOf(client)));
   };
-  const closeViewer = () => setViewer(null);
+  const closeViewer = () => setViewerIdx(null);
 
-  // Scroll-driven gallery: track the section in view, reveal media,
-  // autoplay/pause videos, and drive keyboard navigation.
+  // vertical axis: previous / next project (wraps around the list)
+  const goProject = (dir) => {
+    if (clients.length === 0) return;
+    setMediaIdx(0);
+    setNavDir(dir);
+    setViewerIdx((i) => (i === null ? i : (i + dir + clients.length) % clients.length));
+  };
+
+  // horizontal axis: through the open project's photos and videos (wraps)
+  const stepMedia = (dir) => {
+    if (!viewerProject) return;
+    const len = viewerProject.media.length;
+    setMediaIdx((m) => (m + dir + len) % len);
+  };
+
+  // keyboard: left/right = media, up/down = project, esc = close
   useEffect(() => {
-    if (!viewer) return undefined;
-
-    const root = scrollRef.current;
-    if (root) root.scrollTop = 0;
-    const sections = sectionRefs.current.filter(Boolean);
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const idx = Number(entry.target.dataset.index);
-          const video = entry.target.querySelector('video');
-          if (entry.isIntersecting) {
-            entry.target.classList.add('in-view');
-            setViewerIndex(idx);
-            if (video) video.play().catch(() => {});
-          } else if (video) {
-            video.pause();
-          }
-        });
-      },
-      { root, threshold: 0.5 }
-    );
-    sections.forEach((section) => observer.observe(section));
-
+    if (viewerIdx === null) return undefined;
     const onKey = (e) => {
       if (e.key === 'Escape') {
-        setViewer(null);
+        setViewerIdx(null);
         return;
       }
-      let dir = 0;
-      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') dir = 1;
-      if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') dir = -1;
-      if (!dir || !root || sections.length === 0) return;
-      e.preventDefault();
-      const current = Math.round(root.scrollTop / root.clientHeight);
-      const target = Math.min(Math.max(current + dir, 0), sections.length - 1);
-      sections[target].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        stepMedia(1);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        stepMedia(-1);
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        goProject(1);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        goProject(-1);
+      }
     };
     window.addEventListener('keydown', onKey);
     document.body.style.overflow = 'hidden';
-
     return () => {
-      observer.disconnect();
       window.removeEventListener('keydown', onKey);
       document.body.style.overflow = '';
     };
-  }, [viewer]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewerIdx, clients]);
 
-  const handleViewerScroll = (e) => {
-    const el = e.currentTarget;
-    const max = el.scrollHeight - el.clientHeight;
-    if (progressRef.current && max > 0) {
-      progressRef.current.style.transform = `scaleX(${el.scrollTop / max})`;
-    }
+  // play only the media currently in frame
+  useEffect(() => {
+    if (viewerIdx === null) return;
+    document.querySelectorAll('.pf-viewer-cell').forEach((cell, i) => {
+      const video = cell.querySelector('video');
+      if (!video) return;
+      if (i === mediaIdx) video.play().catch(() => {});
+      else video.pause();
+    });
+  }, [viewerIdx, mediaIdx]);
+
+  // wheel: dominant axis decides — down/up changes project, left/right changes
+  // media. Attached natively with passive:false so preventDefault stops the
+  // browser back/forward swipe gesture on horizontal scrolls.
+  useEffect(() => {
+    if (viewerIdx === null) return undefined;
+    const el = viewerRef.current;
+    if (!el) return undefined;
+
+    const onWheel = (e) => {
+      e.preventDefault();
+      const now = performance.now();
+      if (now - wheelGate.current < 550) return;
+      const ax = Math.abs(e.deltaX);
+      const ay = Math.abs(e.deltaY);
+      if (Math.max(ax, ay) < 12) return;
+      wheelGate.current = now;
+      if (ax > ay) stepMedia(e.deltaX > 0 ? 1 : -1);
+      else goProject(e.deltaY > 0 ? 1 : -1);
+    };
+    const onTouchMove = (e) => e.preventDefault();
+
+    el.addEventListener('wheel', onWheel, { passive: false });
+    el.addEventListener('touchmove', onTouchMove, { passive: false });
+    return () => {
+      el.removeEventListener('wheel', onWheel);
+      el.removeEventListener('touchmove', onTouchMove);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewerIdx, clients]);
+
+  const onViewerTouchStart = (e) => {
+    touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  };
+  const onViewerTouchEnd = (e) => {
+    const s = touchStart.current;
+    touchStart.current = null;
+    if (!s) return;
+    const dx = e.changedTouches[0].clientX - s.x;
+    const dy = e.changedTouches[0].clientY - s.y;
+    if (Math.max(Math.abs(dx), Math.abs(dy)) < 40) return;
+    if (Math.abs(dx) > Math.abs(dy)) stepMedia(dx < 0 ? 1 : -1);
+    else goProject(dy < 0 ? 1 : -1);
   };
 
   return (
@@ -593,52 +655,111 @@ export default function PortfolioFablePage() {
           </main>
         </div>
 
-        {/* Fullscreen scroll-through project gallery */}
-        {viewer && (
-          <div className="pf-viewer" role="dialog" aria-modal="true" aria-label={`${viewer.name} gallery`}>
-            <div className="pf-viewer-progress" ref={progressRef} />
+        {/* Fullscreen gallery: scroll down = next project, left/right = media */}
+        {viewerProject && (
+          <div
+            ref={viewerRef}
+            className="pf-viewer"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${viewerProject.name} gallery`}
+            onTouchStart={onViewerTouchStart}
+            onTouchEnd={onViewerTouchEnd}
+          >
+            <div
+              className="pf-viewer-progress"
+              style={{ transform: `scaleX(${(mediaIdx + 1) / viewerProject.media.length})` }}
+            />
+
+            <button
+              type="button"
+              className="pf-viewer-hint-top"
+              onClick={() => goProject(-1)}
+            >
+              Previous project
+            </button>
 
             <div className="pf-viewer-head">
               <div className="pf-viewer-titles">
-                <span className="pf-viewer-title">{viewer.name}</span>
-                <span className="pf-viewer-sub">{viewer.sub}</span>
+                <span className="pf-viewer-title">{viewerProject.name}</span>
+                <span className="pf-viewer-sub">{viewerProject.meta}</span>
               </div>
               <span className="pf-viewer-counter">
-                {pad2(viewerIndex + 1)} / {pad2(viewer.media.length)}
+                {pad2(mediaIdx + 1)} / {pad2(viewerProject.media.length)}
               </span>
               <button type="button" className="pf-viewer-close" onClick={closeViewer} aria-label="Close gallery">
                 ✕
               </button>
             </div>
 
-            <div className="pf-viewer-scroll" ref={scrollRef} onScroll={handleViewerScroll}>
-              {viewer.media.map((item, index) => (
-                <section
-                  key={`${item.url}-${index}`}
-                  className="pf-viewer-item"
-                  data-index={index}
-                  ref={(el) => {
-                    sectionRefs.current[index] = el;
-                  }}
-                >
-                  <div className="pf-viewer-media">
+            {viewerProject.facts && (
+              <aside className="pf-viewer-facts">
+                <div>
+                  <span>Venue</span>
+                  <strong>{viewerProject.facts.venue}</strong>
+                </div>
+                <div>
+                  <span>Graduates</span>
+                  <strong>{viewerProject.facts.graduates}</strong>
+                </div>
+                <div>
+                  <span>Guests</span>
+                  <strong>{viewerProject.facts.guests}</strong>
+                </div>
+              </aside>
+            )}
+
+            <div
+              className={`pf-viewer-stage ${
+                navDir === 1 ? 'nav-dir-next' : navDir === -1 ? 'nav-dir-prev' : 'nav-dir-none'
+              }`}
+              key={viewerProject.id}
+            >
+              <div className="pf-viewer-strip" style={{ transform: `translateX(-${mediaIdx * 100}%)` }}>
+                {viewerProject.media.map((item, index) => (
+                  <div className="pf-viewer-cell" key={`${item.url}-${index}`}>
                     {item.type === 'video' ? (
                       <GalleryVideo src={item.url} name={item.name} />
                     ) : (
                       <img
                         src={item.url}
-                        alt={`${viewer.name} — ${item.name}`}
+                        alt={`${viewerProject.name} — ${item.name}`}
                         loading={index < 2 ? 'eager' : 'lazy'}
                       />
                     )}
                   </div>
-                </section>
-              ))}
+                ))}
+              </div>
             </div>
 
-            {viewer.media.length > 1 && (
-              <div className={`pf-viewer-hint ${viewerIndex > 0 ? 'is-hidden' : ''}`}>Scroll</div>
+            {viewerProject.media.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  className="pf-arrow pf-arrow-left"
+                  onClick={() => stepMedia(-1)}
+                  aria-label="Previous media"
+                >
+                  <svg viewBox="0 0 64 12" aria-hidden="true">
+                    <path d="M64 6H2M8 1L2 6l6 5" fill="none" stroke="currentColor" strokeWidth="1" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  className="pf-arrow pf-arrow-right"
+                  onClick={() => stepMedia(1)}
+                  aria-label="Next media"
+                >
+                  <svg viewBox="0 0 64 12" aria-hidden="true">
+                    <path d="M0 6h62M56 1l6 5-6 5" fill="none" stroke="currentColor" strokeWidth="1" />
+                  </svg>
+                </button>
+              </>
             )}
+
+            <button type="button" className="pf-viewer-hint" onClick={() => goProject(1)}>
+              Next project
+            </button>
           </div>
         )}
       </div>
