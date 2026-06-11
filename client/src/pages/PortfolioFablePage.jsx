@@ -300,9 +300,9 @@ export default function PortfolioFablePage() {
     return () => clearTimeout(t);
   }, [displayClient, bgShown]);
 
-  usePageLifecycle('Portfolio | EGS — Exhibit Graphic Sign', {
+  usePageLifecycle('Exhibition & Event Staging Portfolio | EGS Dubai & UAE', {
     description:
-      'Client index of EGS production work across the UAE — exhibition stands, graduation ceremonies, retail rollouts, and fitouts.',
+      'Explore the EGS interactive client work index across the UAE, featuring custom exhibition stands, graduation ceremonies, retail branding, and corporate fitouts.',
   });
 
   // Lay every item out around the center line. The list cycles (modular wrap)

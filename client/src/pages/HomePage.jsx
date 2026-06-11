@@ -64,21 +64,32 @@ export default function HomePage() {
       "url": "https://exhibitgraphicsign.com/",
       "logo": "https://exhibitgraphicsign.com/wp-content/uploads/2024/02/EGS-Logo-300x126.png",
       "image": "https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg",
-      "description": "Dubai production partner for high-stakes physical brand moments: custom exhibition stands, graduation ceremonies, events, retail branding, and office fitouts.",
+      "description": "Dubai design & production partner for custom exhibition stands, event staging, retail branding, and office fitouts. Operating across the UAE since 2010.",
       "foundingDate": "2010",
       "address": {
         "@type": "PostalAddress",
-        "addressLocality": "Sharjah & Dubai",
+        "streetAddress": "Al Qusais",
+        "addressLocality": "Dubai",
         "addressRegion": "Dubai",
         "addressCountry": "AE"
       },
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "telephone": "+971565348700",
-        "contactType": "customer service",
-        "email": "info@exhibitgraphicsign.com",
-        "availableLanguage": ["English", "Arabic"]
-      },
+      "telephone": "+97142383278",
+      "contactPoint": [
+        {
+          "@type": "ContactPoint",
+          "telephone": "+97142383278",
+          "contactType": "sales",
+          "email": "info@exhibitgraphicsign.com",
+          "availableLanguage": ["English", "Arabic"]
+        },
+        {
+          "@type": "ContactPoint",
+          "telephone": "+971565348700",
+          "contactType": "customer service",
+          "email": "info@exhibitgraphicsign.com",
+          "availableLanguage": ["English", "Arabic"]
+        }
+      ],
       "sameAs": [
         "https://www.nstands.com/companies/exhibit-graphic-sign/"
       ]
