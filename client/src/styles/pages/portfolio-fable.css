@@ -1,0 +1,622 @@
+/* EGS — Portfolio (t11-style index, dark theme, cyclical list) */
+
+.pf-page {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  background: #0f0d0c;
+  color: var(--paper);
+}
+
+/* entrance animation — pure CSS so React class updates can never cancel it */
+@keyframes pf-rise {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.pf-side > * {
+  animation: pf-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.pf-side > *:nth-child(2) { animation-delay: 70ms; }
+.pf-side > *:nth-child(3) { animation-delay: 140ms; }
+.pf-side > *:nth-child(4) { animation-delay: 210ms; }
+.pf-side > *:nth-child(5) { animation-delay: 280ms; }
+
+.pf-list {
+  animation: pf-rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 150ms;
+}
+
+/* ---------- Always-on crossfading background ---------- */
+
+.pf-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: #0f0d0c;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* quick fade to black, then the next job fades in */
+.pf-bg-layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+}
+
+.pf-bg-layer.is-visible {
+  opacity: 1;
+  transition: opacity 0.45s ease;
+}
+
+.pf-bg-layer img,
+.pf-bg-layer video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.28;
+  animation: pf-bg-zoom 18s ease-out both;
+}
+
+@keyframes pf-bg-zoom {
+  from { transform: scale(1.02); }
+  to { transform: scale(1.1); }
+}
+
+.pf-layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: clamp(260px, 24vw, 340px) 1fr;
+  align-items: stretch;
+  height: 100%;
+}
+
+/* ---------- Left rail ---------- */
+
+.pf-side {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: clamp(24px, 3vw, 44px);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.pf-side::-webkit-scrollbar {
+  display: none;
+}
+
+.pf-side-logo {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  flex: 0 0 auto;
+}
+
+.pf-side-logo img {
+  width: 100%;
+  height: auto;
+}
+
+.pf-side-blurb {
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(245, 241, 234, 0.65);
+  max-width: 30ch;
+}
+
+.pf-side-label {
+  display: block;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(245, 241, 234, 0.35);
+  margin-bottom: 10px;
+}
+
+.pf-cats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+}
+
+.pf-cat {
+  position: relative;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(245, 241, 234, 0.45);
+  padding-left: 0;
+  transition: color 0.3s ease, padding-left 0.25s ease;
+}
+
+.pf-cat:hover {
+  color: var(--paper);
+}
+
+.pf-cat.active {
+  color: var(--paper);
+  padding-left: 22px;
+}
+
+/* t11-style arrow on the selected category */
+.pf-cat.active::before {
+  content: '\2192';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: var(--ochre);
+}
+
+.pf-cat-count {
+  margin-left: 8px;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: rgba(245, 241, 234, 0.35);
+  vertical-align: 4px;
+}
+
+.pf-years {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pf-year {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(245, 241, 234, 0.45);
+  border: 1px solid rgba(245, 241, 234, 0.2);
+  border-radius: 999px;
+  padding: 5px 12px;
+  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+
+.pf-year:hover {
+  color: var(--paper);
+  border-color: rgba(245, 241, 234, 0.5);
+}
+
+.pf-year.active {
+  color: var(--paper);
+  background: var(--ochre);
+  border-color: var(--ochre);
+}
+
+/* contact block lives in the rail */
+.pf-side-contact {
+  margin-top: auto;
+  padding-top: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(245, 241, 234, 0.75);
+}
+
+.pf-side-contact a {
+  transition: color 0.25s ease;
+}
+
+.pf-side-contact a:hover {
+  color: var(--ochre);
+}
+
+.pf-side-copy {
+  margin-top: 12px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(245, 241, 234, 0.3);
+}
+
+/* ---------- Cyclical client list ---------- */
+
+.pf-list {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  touch-action: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+}
+
+/* items are positioned around the center line by the carousel loop —
+   each client exists exactly once in the DOM */
+.pf-list-track {
+  position: absolute;
+  inset: 0;
+}
+
+.pf-item {
+  position: absolute;
+  top: 0;
+  left: clamp(20px, 4vw, 64px);
+  right: clamp(20px, 4vw, 64px);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 18px;
+  text-align: left;
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: clamp(20px, 2.3vw, 36px);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: rgba(245, 241, 234, 0.28);
+  padding: clamp(4px, 0.6vw, 8px) 0;
+  border: none;
+  will-change: transform;
+  transition: color 0.35s ease;
+}
+
+.pf-item.is-active,
+.pf-item:hover {
+  color: var(--paper);
+}
+
+.pf-item-meta {
+  flex: 0 0 auto;
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(245, 241, 234, 0.3);
+  transition: color 0.35s ease;
+}
+
+.pf-item.is-active .pf-item-meta,
+.pf-item:hover .pf-item-meta {
+  color: rgba(245, 241, 234, 0.6);
+}
+
+/* ---------- Fullscreen scroll gallery ---------- */
+
+.pf-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #0f0d0c;
+  color: var(--paper);
+  animation: pf-viewer-in 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes pf-viewer-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.pf-viewer-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 7;
+  background: var(--ochre);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.pf-viewer-head {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px clamp(18px, 3vw, 40px) 26px;
+  background: linear-gradient(to bottom, rgba(15, 13, 12, 0.75), transparent);
+  pointer-events: none;
+}
+
+.pf-viewer-head > * {
+  pointer-events: auto;
+}
+
+.pf-viewer-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.pf-viewer-title {
+  font-size: clamp(15px, 1.8vw, 20px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.pf-viewer-sub {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(245, 241, 234, 0.55);
+}
+
+.pf-viewer-counter {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: rgba(245, 241, 234, 0.65);
+  font-variant-numeric: tabular-nums;
+}
+
+.pf-viewer-close {
+  font-size: 22px;
+  line-height: 1;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--paper);
+  transition: background 0.2s ease, transform 0.25s ease;
+}
+
+.pf-viewer-close:hover {
+  background: rgba(245, 241, 234, 0.12);
+  transform: rotate(90deg);
+}
+
+.pf-viewer-scroll {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+}
+
+.pf-viewer-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* media stacked edge to edge, one viewport each */
+.pf-viewer-item {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  overflow: hidden;
+}
+
+.pf-viewer-media {
+  height: 100%;
+  opacity: 0;
+  transform: scale(1.05);
+  transition: opacity 0.9s ease, transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pf-viewer-item.in-view .pf-viewer-media {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.pf-viewer-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pf-viewer-hint {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(245, 241, 234, 0.75);
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+
+.pf-viewer-hint.is-hidden {
+  opacity: 0;
+}
+
+.pf-viewer-hint::after {
+  content: '';
+  width: 1px;
+  height: 30px;
+  background: rgba(245, 241, 234, 0.6);
+  animation: pf-hint-drop 1.6s ease-in-out infinite;
+}
+
+@keyframes pf-hint-drop {
+  0% { transform: scaleY(0); transform-origin: top; }
+  45% { transform: scaleY(1); transform-origin: top; }
+  55% { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+/* ---------- Custom video player ---------- */
+
+.pf-video {
+  position: relative;
+  height: 100%;
+}
+
+.pf-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #0f0d0c;
+  cursor: pointer;
+}
+
+.pf-video-ui {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px clamp(18px, 3vw, 40px) 20px;
+  background: linear-gradient(to top, rgba(15, 13, 12, 0.7), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.pf-video:hover .pf-video-ui,
+.pf-video.is-paused .pf-video-ui {
+  opacity: 1;
+}
+
+.pf-video-btn {
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper);
+  padding: 8px 0;
+  transition: color 0.25s ease;
+}
+
+.pf-video-btn:hover {
+  color: var(--ochre);
+}
+
+.pf-video-play {
+  font-size: 14px;
+  width: 30px;
+  text-align: left;
+}
+
+.pf-video-track {
+  position: relative;
+  flex: 1;
+  height: 18px;
+  cursor: pointer;
+}
+
+.pf-video-track::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  background: rgba(245, 241, 234, 0.25);
+}
+
+.pf-video-track-fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  background: var(--ochre);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* big center play state when paused */
+.pf-video-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  color: var(--paper);
+  border: 1px solid rgba(245, 241, 234, 0.5);
+  border-radius: 50%;
+  background: rgba(15, 13, 12, 0.35);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.pf-video.is-paused .pf-video-center {
+  opacity: 1;
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 860px) {
+  .pf-layout {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pf-side {
+    flex: 0 0 auto;
+    overflow: visible;
+    gap: 14px;
+    padding-bottom: 10px;
+  }
+
+  .pf-side-blurb,
+  .pf-side-contact {
+    display: none;
+  }
+
+  .pf-side-logo {
+    max-width: 240px;
+  }
+
+  .pf-cats {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+  }
+
+  .pf-cat.active {
+    padding-left: 16px;
+  }
+
+  .pf-list {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .pf-item {
+    font-size: clamp(20px, 5.6vw, 28px);
+  }
+
+  .pf-item-meta {
+    display: none;
+  }
+
+  .pf-viewer-head {
+    padding: 14px 16px 22px;
+  }
+
+  .pf-video-ui {
+    opacity: 1;
+    padding: 12px 16px 14px;
+  }
+}

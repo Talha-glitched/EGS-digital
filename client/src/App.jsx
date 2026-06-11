@@ -8,6 +8,7 @@ import {
   RetailPage,
   CaseStudiesPage,
   GraduationPortfolioPage,
+  PortfolioFablePage,
 } from './pages/index.js';
 import AdminEmailCampaignsPage from './pages/AdminEmailCampaignsPage.jsx';
 
@@ -19,6 +20,7 @@ export default function App() {
       <Route path="/exhibitions" element={<ExhibitionsPage />} />
       <Route path="/events" element={<EventsPage />} />
       <Route path="/graduation-portfolio" element={<GraduationPortfolioPage />} />
+      <Route path="/portfolio-fable" element={<PortfolioFablePage />} />
       <Route path="/fitouts" element={<FitoutsPage />} />
       <Route path="/retail" element={<RetailPage />} />
       <Route path="/case-studies" element={<CaseStudiesPage />} />

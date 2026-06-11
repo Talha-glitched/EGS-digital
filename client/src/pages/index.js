@@ -6,3 +6,4 @@ export { default as RetailPage } from './RetailPage.jsx';
 export { default as HctCaseStudyPage } from './HctCaseStudyPage.jsx';
 export { default as CaseStudiesPage } from './CaseStudiesPage.jsx';
 export { default as GraduationPortfolioPage } from './GraduationPortfolioPage.jsx';
+export { default as PortfolioFablePage } from './PortfolioFablePage.jsx';
