@@ -4,10 +4,10 @@ export default function RetailKicksCredibility() {
   return (
     <section className="section-band retail-kicks-section">
       <div className="container retail-proof-grid">
-        <div className="retail-proof-image reveal">
+        <div className="retail-proof-image">
           <img src={images.activation} alt="Money Kicks mall activation by EGS" loading="lazy" />
         </div>
-        <div className="retail-proof-copy reveal">
+        <div className="retail-proof-copy">
           <span className="minimal-service-kicker">Activation Credibility</span>
           <h2>Mall activations for public-facing sneaker brands.</h2>
           <p>

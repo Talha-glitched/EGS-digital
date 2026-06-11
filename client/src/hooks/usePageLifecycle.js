@@ -50,6 +50,8 @@ function hydrateReveals(revealSelector) {
   if (!revealSelector) return () => {};
 
   const observerOptions = { threshold: 0.08, rootMargin: '0px 0px -40px 0px' };
+  const observedEls = new Set();
+  const intersectedEls = new Set();
 
   let observer;
   if ('IntersectionObserver' in window) {
@@ -58,6 +60,7 @@ function hydrateReveals(revealSelector) {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('in');
+            intersectedEls.add(entry.target);
             observer.unobserve(entry.target);
           }
         });
@@ -66,16 +69,15 @@ function hydrateReveals(revealSelector) {
     );
   }
 
-  // Track the elements we have decorated to clean them up on unmount
-  const observedEls = new Set();
-
   function checkAndObserve() {
     const els = document.querySelectorAll(revealSelector);
     els.forEach((el) => {
       if (!el.classList.contains('reveal')) {
         el.classList.add('reveal');
       }
-      if (observer && !observedEls.has(el)) {
+      if (intersectedEls.has(el)) {
+        el.classList.add('in');
+      } else if (observer && !observedEls.has(el)) {
         observer.observe(el);
         observedEls.add(el);
       } else if (!observer) {
@@ -87,14 +89,31 @@ function hydrateReveals(revealSelector) {
   // Run initial check
   checkAndObserve();
 
-  // Set up MutationObserver to watch for additions of matching elements dynamically
-  const mutationObserver = new MutationObserver(() => {
-    checkAndObserve();
+  // Set up MutationObserver to watch for additions and updates of matching elements dynamically
+  const mutationObserver = new MutationObserver((mutations) => {
+    const hasExternalChanges = mutations.some((mutation) => {
+      if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+        const el = mutation.target;
+        const matches = typeof el.matches === 'function' && el.matches(revealSelector);
+        if (matches) {
+          const missingReveal = !el.classList.contains('reveal');
+          const missingIn = intersectedEls.has(el) && !el.classList.contains('in');
+          return missingReveal || missingIn;
+        }
+      }
+      return mutation.type === 'childList';
+    });
+
+    if (hasExternalChanges) {
+      checkAndObserve();
+    }
   });
 
   mutationObserver.observe(document.body, {
     childList: true,
     subtree: true,
+    attributes: true,
+    attributeFilter: ['class'],
   });
 
   return () => {

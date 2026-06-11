@@ -21,13 +21,13 @@ export default function RetailFailurePointsSection() {
   return (
     <section className="section-band alt retail-failures-section">
       <div className="container">
-        <div className="section-head reveal">
+        <div className="section-head">
           <h2>Where retail campaigns usually break.</h2>
           <p>
             Vague promises don't survive a multi-location campaign rollout. Here are the failure points EGS actively prevents at the last mile:
           </p>
         </div>
-        <div className="retail-failures-grid reveal">
+        <div className="retail-failures-grid">
           {failurePoints.map(({ title, copy }, index) => (
             <div className="retail-failure-card" key={title}>
               <div className="retail-failure-header">

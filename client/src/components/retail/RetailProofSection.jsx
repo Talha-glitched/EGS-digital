@@ -4,7 +4,7 @@ export default function RetailProofSection() {
   return (
     <section className="section-band alt retail-proof-section">
       <div className="container retail-proof-grid">
-        <div className="retail-proof-copy reveal">
+        <div className="retail-proof-copy">
           <span className="minimal-service-kicker">Campaign Proof</span>
           <h2>33 Carrefour locations. Midnight to before 6am.</h2>
           <p>
@@ -22,7 +22,7 @@ export default function RetailProofSection() {
             </a>
           </div>
         </div>
-        <div className="retail-proof-image reveal">
+        <div className="retail-proof-image">
           <img src={images.retailSadiaChiller} alt="Sadia retail branding installation at Carrefour" loading="lazy" />
         </div>
       </div>

@@ -29,13 +29,13 @@ export default function RetailScopeSection() {
   return (
     <section className="section-band alt retail-scope-section">
       <div className="container">
-        <div className="section-head reveal">
+        <div className="section-head">
           <h2>What EGS builds.</h2>
           <p>
             The retail execution chain under one roof: campaign assets, production, routing, installation, and QA/QC managed by one accountable team.
           </p>
         </div>
-        <div className="capability-grid reveal">
+        <div className="capability-grid">
           {scopeItems.map(({ title, copy }) => (
             <article className="cap-card" key={title}>
               <small>Scope</small>

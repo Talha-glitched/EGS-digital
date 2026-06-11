@@ -25,13 +25,13 @@ export default function RetailReassuranceSection() {
   return (
     <section className="section-band retail-reassurance-section">
       <div className="container">
-        <div className="section-head reveal">
+        <div className="section-head">
           <h2>The campaign has to look consistent in every location.</h2>
           <p>
             We eliminate the standard BTL implementation bottlenecks that make trade marketing and FMCG managers lose sleep.
           </p>
         </div>
-        <div className="capability-grid reveal">
+        <div className="capability-grid">
           {reassuranceCards.map(({ role, title, copy }) => (
             <article className="cap-card" key={role}>
               <small>{role}</small>
