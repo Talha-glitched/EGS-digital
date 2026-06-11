@@ -57,6 +57,46 @@
       "source": "/hct-case-study",
       "destination": "/case-studies#hct-graduation-program",
       "permanent": true
+    },
+    {
+      "source": "/about-us",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/about",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/contact-us",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/contact",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/furniture-rental",
+      "destination": "/exhibitions",
+      "permanent": true
+    },
+    {
+      "source": "/blog",
+      "destination": "/case-studies",
+      "permanent": true
+    },
+    {
+      "source": "/portfolio",
+      "destination": "/graduation-portfolio",
+      "permanent": true
+    },
+    {
+      "source": "/gallery",
+      "destination": "/graduation-portfolio",
+      "permanent": true
     }
   ],
   "rewrites": [
