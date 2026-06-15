@@ -4,6 +4,7 @@ import pageStyles from '../styles/pages/portfolio-fable.css?raw';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 import { images } from './siteData.js';
 import egsLogo from '../assets/logo/New_Logo/Logo-03.png'; // plain white variant
+import lightbulbGif from '../assets/Icons/lightbulb.gif';
 
 // Scan the graduation gallery — these are the real, accurate projects on this page
 const graduationAssets = import.meta.glob('../assets/Graduation/Websites Gallery Graduations/**/*', {
@@ -117,7 +118,7 @@ const GRAD_CLIENTS = Object.entries(gradGroups)
     return buildClient({
       id: `grad-${campus}-${year}`,
       name: meta.name,
-      category: 'graduations',
+      category: 'graduation-ceremonies',
       location,
       year,
       items,
@@ -129,16 +130,20 @@ const GRAD_CLIENTS = Object.entries(gradGroups)
 // Indicative entries for the other service categories — names, years, locations,
 // and imagery are placeholders to show the shape of the page, not accurate records.
 const IDEA_CLIENTS = [
-  { id: 'ex-philips', name: 'Philips', category: 'exhibitions', location: 'Riyadh, KSA', year: 2024, urls: [images.phillips2, images.philipsMri, images.philips, images.philipsArab] },
-  { id: 'ex-microlink', name: 'Microlink', category: 'exhibitions', location: 'Dubai, UAE', year: 2023, urls: [images.microlink] },
-  { id: 'ex-hct', name: 'HCT Helsinki', category: 'exhibitions', location: 'Helsinki, Finland', year: 2024, urls: [images.hct] },
-  { id: 're-sadia', name: 'Sadia', category: 'retail', location: 'Carrefour, UAE', year: 2023, urls: [images.retailSadiaChiller, images.retailSadiaBusDisplay, images.retailCampaignGraphics] },
-  { id: 're-carrefour', name: 'Carrefour', category: 'retail', location: 'Dubai, UAE', year: 2023, urls: [images.retailHypermarketDisplay, images.retailMallActivation] },
-  { id: 're-roast', name: 'Roast', category: 'retail', location: 'Dubai, UAE', year: 2024, urls: [images.retail] },
-  { id: 'fi-velocity', name: 'Velocity', category: 'fitouts', location: 'Dubai, UAE', year: 2025, urls: [images.fitoutVelocityInterior, images.activation] },
-  { id: 'fi-uniestate', name: 'Uniestate', category: 'fitouts', location: 'Dubai, UAE', year: 2024, urls: [images.fitoutReceptionArea] },
-  { id: 'fi-bigfm', name: 'BIG FM', category: 'fitouts', location: 'Dubai, UAE', year: 2023, urls: [images.fitoutOfficeGraphics] },
-  { id: 'fi-galadari', name: 'Galadari', category: 'fitouts', location: 'Dubai, UAE', year: 2025, urls: [images.fitoutKiosk, images.fitoutInteriorSignage] },
+  { id: 'ex-philips', name: 'Philips Stand', category: 'exhibitions-expos-tradeshows', location: 'Riyadh, KSA', year: 2024, urls: [images.phillips2, images.philipsMri, images.philips, images.philipsArab] },
+  { id: 'ex-microlink', name: 'Microlink Stand', category: 'exhibitions-expos-tradeshows', location: 'Dubai, UAE', year: 2023, urls: [images.microlink] },
+  { id: 'ex-hct', name: 'HCT Helsinki', category: 'exhibitions-expos-tradeshows', location: 'Helsinki, Finland', year: 2024, urls: [images.hct] },
+  { id: 're-sadia', name: 'Sadia Brand Display', category: 'retail-branding-displays', location: 'Carrefour, UAE', year: 2023, urls: [images.retailSadiaBusDisplay, images.retailCampaignGraphics] },
+  { id: 're-carrefour', name: 'Carrefour Mall Rollout', category: 'retail-branding-displays', location: 'Dubai, UAE', year: 2023, urls: [images.retailHypermarketDisplay, images.retailMallActivation] },
+  { id: 're-roast', name: 'Roast Coffee Retail', category: 'retail-branding-displays', location: 'Dubai, UAE', year: 2024, urls: [images.retail] },
+  { id: 'fi-velocity', name: 'Velocity Showroom', category: 'showroom-office-branding', location: 'Dubai, UAE', year: 2025, urls: [images.fitoutVelocityInterior, images.activation] },
+  { id: 'fi-uniestate', name: 'Uniestate Office', category: 'showroom-office-branding', location: 'Dubai, UAE', year: 2024, urls: [images.fitoutReceptionArea] },
+  { id: 'fi-bigfm', name: 'BIG FM Office', category: 'showroom-office-branding', location: 'Dubai, UAE', year: 2023, urls: [images.fitoutOfficeGraphics] },
+  { id: 'pr-bigfm', name: 'BIG FM Printing', category: 'large-format-printing', location: 'Dubai, UAE', year: 2023, urls: [images.fitoutOfficeGraphics] },
+  { id: 'ki-galadari', name: 'Galadari Kiosk', category: 'mall-kiosks', location: 'Dubai Mall, UAE', year: 2025, urls: [images.fitoutKiosk] },
+  { id: 'ds-sadia', name: 'Sadia Display Stand', category: 'product-display-stand', location: 'Dubai, UAE', year: 2023, urls: [images.retailSadiaChiller] },
+  { id: 'sg-indoor-outdoor', name: 'EGS Signage Project', category: 'signages-indoor-outdoor', location: 'Dubai, UAE', year: 2024, urls: [images.fitoutInteriorSignage] },
+  { id: 'ev-corporate', name: 'HCT Corporate Event', category: 'corporate-events-branding', location: 'ADNEC, Abu Dhabi', year: 2024, urls: [images.eventProfile, images.graduationWide] },
 ].map(({ urls, ...client }) =>
   buildClient({
     ...client,
@@ -152,16 +157,81 @@ const ALL_CLIENTS = [...IDEA_CLIENTS, ...GRAD_CLIENTS].sort(
 );
 
 const CATEGORIES = [
-  { key: 'all', label: 'All' },
-  { key: 'exhibitions', label: 'Exhibitions' },
-  { key: 'graduations', label: 'Events & Graduations' },
-  { key: 'retail', label: 'Retail' },
-  { key: 'fitouts', label: 'Fitouts' },
+  { key: 'all', label: 'All Services' },
+  { key: 'graduation-ceremonies', label: 'Graduation Ceremonies' },
+  { key: 'exhibitions-expos-tradeshows', label: 'Exhibitions, Expos & Tradeshows' },
+  { key: 'corporate-events-branding', label: 'Corporate Events Branding' },
+  { key: 'retail-branding-displays', label: 'Retail Branding & Displays' },
+  { key: 'large-format-printing', label: 'Large Format Printing' },
+  { key: 'product-display-stand', label: 'Product Display Stand' },
+  { key: 'signages-indoor-outdoor', label: 'Signages Indoor & Outdoor' },
+  { key: 'mall-kiosks', label: 'Mall Kiosks' },
+  { key: 'showroom-office-branding', label: 'Showroom & Office Branding' },
 ];
 
 const YEARS = [...new Set(ALL_CLIENTS.map((c) => c.year))].sort((a, b) => b - a);
 
 const pad2 = (n) => String(n).padStart(2, '0');
+
+const ABOUT_SLIDES = [
+  {
+    id: 'intro',
+    stageLabel: 'THE EGS EDGE',
+    headline: 'WHY CLIENTS CHOOSE EGS',
+    copy: 'We bring design, production, and installation together to create branded spaces that are built well, delivered reliably, and made to stand out.',
+    images: [images.phillips2],
+    values: [
+      { title: 'Craft', text: 'We care about the finish, the details, and the quality people notice up close.' },
+      { title: 'Clarity', text: 'We keep the process transparent, from timelines and budgets to production updates.' },
+      { title: 'Reliability', text: 'We respect deadlines because exhibitions, launches, and events do not wait.' },
+      { title: 'Ingenuity', text: 'We find practical, creative ways to bring each brand idea to life.' },
+      { title: 'Value', text: 'We focus on impact, durability, and cost-effectiveness without cutting corners.' }
+    ]
+  },
+  {
+    id: 'usps',
+    images: [images.fitoutKiosk, images.retailMallActivation],
+    pillars: [
+      {
+        title: 'In-House Fabrication',
+        description: 'Design, printing, and fabrication managed directly inside our Dubai production facility.'
+      },
+      {
+        title: '14 Years of Experience',
+        description: 'Trusted corporate space supplier and event contractor across the UAE and GCC since 2010.'
+      },
+      {
+        title: 'Pressure-Tested Execution',
+        description: 'Sourcing materials and adapting physical structures overnight when timelines are critical.'
+      },
+      {
+        title: 'End-to-End Responsibility',
+        description: 'Design, production, logistics, installation, and snag closure managed by a single team.'
+      },
+      {
+        title: 'Tier-1 Brand Portfolio',
+        description: 'Consistent delivery for multinational market leaders like Philips, Abbott, GSK, and HCT.'
+      },
+      {
+        title: 'UAE-Wide & GCC Scale',
+        description: 'Sourcing, transporting, and installing on-site at any major regional venue.'
+      },
+      {
+        title: 'Bespoke Customization',
+        description: 'Millwork, custom finishes, and configurations tailored precisely to brand guidelines.'
+      },
+      {
+        title: 'Cost-Effective Builds',
+        description: 'Maximizing visual impact and durability within your target budget without compromise.'
+      }
+    ]
+  }
+];
+
+const BOTTOM_NAV_ITEMS = [
+  { label: 'THE EDGE', slideIdx: 0 },
+  { label: 'CAPABILITIES', slideIdx: 1 }
+];
 
 function BgMedia({ client }) {
   if (!client) return null;
@@ -255,8 +325,78 @@ function GalleryVideo({ src, name }) {
 }
 
 export default function PortfolioFablePage() {
-  const [activeCat, setActiveCat] = useState('all');
+  const [activeCat, setActiveCat] = useState('about-us');
   const [activeYear, setActiveYear] = useState('all');
+  const [loaderStep, setLoaderStep] = useState('blank'); // 'blank', 'logo-fade-in', 'logo-shrink', 'quote-fade-in', 'quote-fade-out', 'overlay-fade-out', 'done'
+  const [aboutScrolled, setAboutScrolled] = useState(false);
+  const [aboutScrollProgress, setAboutScrollProgress] = useState(0);
+  const aboutRef = useRef(null);
+
+  const activeSlideIdx = useMemo(() => {
+    // 2 slides total (index 0 to 1).
+    // The horizontal translation goes from progress 0 to 0.85.
+    const progressForIdx = Math.min(1, aboutScrollProgress / 0.85);
+    return Math.min(1, Math.max(0, Math.round(progressForIdx * 1)));
+  }, [aboutScrollProgress]);
+
+const getPillNumbers = (activeIdx, total) => {
+  return [0, 1];
+};
+
+  const translateX = useMemo(() => {
+    const x = Math.min(1.15, aboutScrollProgress / 0.85); // Allow up to 1.15 for overscroll reveal
+    const rawIdx = Math.min(1, x);
+    const baseIdx = Math.floor(rawIdx);
+    const frac = rawIdx - baseIdx;
+    
+    // Smooth step transition: 35% dead-zone (sticky), 30% transition
+    let smoothedFrac;
+    if (frac < 0.35) {
+      smoothedFrac = 0;
+    } else if (frac > 0.65) {
+      smoothedFrac = 1;
+    } else {
+      const t = (frac - 0.35) / 0.3;
+      smoothedFrac = t * t * (3 - 2 * t);
+    }
+    
+    let smoothedIdx = baseIdx + smoothedFrac;
+    if (x > 1) {
+      smoothedIdx = 1 + (x - 1); // linear transition past slide 2 to pull in next panel
+    }
+    return smoothedIdx * 100; // translate in vw!
+  }, [aboutScrollProgress]);
+
+  const scrollToSlide = (targetIdx) => {
+    const el = aboutRef.current;
+    if (!el) return;
+    const maxScroll = el.scrollHeight - el.clientHeight;
+    if (maxScroll <= 0) return;
+    const targetProgress = (targetIdx / 1) * 0.85;
+    el.scrollTo({
+      top: targetProgress * maxScroll,
+      behavior: 'smooth',
+    });
+  };
+
+  useEffect(() => {
+    const t0 = setTimeout(() => setLoaderStep('logo-fade-in'), 1000);
+    const t1 = setTimeout(() => setLoaderStep('logo-shrink'), 3000);
+    const t2 = setTimeout(() => setLoaderStep('quote-fade-in'), 3500);
+    const t3 = setTimeout(() => setLoaderStep('quote-fade-out'), 8500);
+    const t4 = setTimeout(() => setLoaderStep('overlay-fade-out'), 9000);
+    const t5 = setTimeout(() => setLoaderStep('done'), 10000);
+
+    return () => {
+      clearTimeout(t0);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      clearTimeout(t4);
+      clearTimeout(t5);
+    };
+  }, []);
+
   const [viewerIdx, setViewerIdx] = useState(null); // project index in the filtered list
   const [mediaIdx, setMediaIdx] = useState(0); // media index inside the open project
   const [navDir, setNavDir] = useState(0); // -1 came from below, 1 came from above
@@ -271,6 +411,78 @@ export default function PortfolioFablePage() {
   const engine = useRef({ offset: 0, target: 0, lastInput: 0 });
   const wheelGate = useRef(0);
   const touchStart = useRef(null);
+  const aboutTouchY = useRef(null);
+
+  const handleAboutScroll = (e, isLayout) => {
+    const isMobile = window.innerWidth <= 860;
+    if (isLayout !== isMobile) return;
+    const el = e.currentTarget;
+    const maxScroll = el.scrollHeight - el.clientHeight;
+    const progress = maxScroll > 0 ? el.scrollTop / maxScroll : 0;
+    setAboutScrollProgress(progress);
+
+    if (el.scrollTop > 20) {
+      setAboutScrolled(true);
+    } else {
+      setAboutScrolled(false);
+    }
+
+    // Auto-transition to projects listing when scrolled past the buffer on desktop
+    if (progress >= 0.995 && !isMobile) {
+      setActiveCat('all');
+      setAboutScrollProgress(0);
+      setAboutScrolled(false);
+    }
+  };
+
+  const handleAboutWheel = (e, isLayout) => {
+    const isMobile = window.innerWidth <= 860;
+    if (isLayout !== isMobile) return;
+    const el = e.currentTarget;
+    if (e.deltaY > 0) {
+      setAboutScrolled(true);
+      const isAtBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 10;
+      if (isAtBottom && isMobile) {
+        setActiveCat('all');
+      }
+    } else if (e.deltaY < 0) {
+      if (el.scrollTop <= 5) {
+        setAboutScrolled(false);
+      }
+    }
+  };
+
+  const handleAboutTouchStart = (e, isLayout) => {
+    const isMobile = window.innerWidth <= 860;
+    if (isLayout !== isMobile) return;
+    aboutTouchY.current = e.touches[0].clientY;
+  };
+
+  const handleAboutTouchMove = (e, isLayout) => {
+    const isMobile = window.innerWidth <= 860;
+    if (isLayout !== isMobile) return;
+    if (aboutTouchY.current === null) return;
+    const dy = aboutTouchY.current - e.touches[0].clientY;
+    const el = e.currentTarget;
+    if (dy > 10) {
+      setAboutScrolled(true);
+      const isAtBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 10;
+      if (isAtBottom && isMobile) {
+        setActiveCat('all');
+        aboutTouchY.current = null;
+      }
+    } else if (dy < -10) {
+      if (el.scrollTop <= 5) {
+        setAboutScrolled(false);
+      }
+    }
+  };
+
+  const handleAboutTouchEnd = (e, isLayout) => {
+    const isMobile = window.innerWidth <= 860;
+    if (isLayout !== isMobile) return;
+    aboutTouchY.current = null;
+  };
 
   const clients = useMemo(
     () =>
@@ -281,9 +493,19 @@ export default function PortfolioFablePage() {
       ),
     [activeCat, activeYear]
   );
-  clientsRef.current = clients;
 
-  const activeClient = clients.length ? clients[Math.min(activeIdx, clients.length - 1)] : null;
+  const displayClients = useMemo(() => {
+    if (clients.length === 0) return [];
+    let list = [...clients];
+    while (list.length < 15) {
+      list = [...list, ...clients.map((c, i) => ({ ...c, id: `${c.id}-dup-${list.length}-${i}` }))];
+    }
+    return list;
+  }, [clients]);
+
+  clientsRef.current = displayClients;
+
+  const activeClient = displayClients.length ? displayClients[Math.min(activeIdx, displayClients.length - 1)] : null;
   const displayClient = hoverClient || activeClient || ALL_CLIENTS[0];
 
   // Background: quick fade to black, swap the media, then fade the next job in
@@ -335,7 +557,7 @@ export default function PortfolioFablePage() {
 
   // Reset the carousel whenever the filtered list changes
   useEffect(() => {
-    itemRefs.current.length = clients.length;
+    itemRefs.current.length = displayClients.length;
     const eng = engine.current;
     eng.offset = 0;
     eng.target = 0;
@@ -343,7 +565,7 @@ export default function PortfolioFablePage() {
     activeIdxRef.current = 0;
     setActiveIdx(0);
     layoutItems();
-  }, [clients]);
+  }, [displayClients]);
 
   // Carousel loop: ease toward the target, snap to the nearest row when idle
   useEffect(() => {
@@ -362,11 +584,11 @@ export default function PortfolioFablePage() {
         if (!cyclic) {
           eng.target = Math.max(-(n - 1) * h, Math.min(0, eng.target));
         }
-        if (performance.now() - eng.lastInput > 120) {
+        if (performance.now() - eng.lastInput > 100) {
           const snapped = Math.round(eng.target / h) * h;
-          eng.target += (snapped - eng.target) * 0.2;
+          eng.target += (snapped - eng.target) * 0.55;
         }
-        eng.offset += (eng.target - eng.offset) * 0.12;
+        eng.offset += (eng.target - eng.offset) * 0.38;
         layoutItems();
 
         const raw = Math.round(-eng.offset / h);
@@ -398,7 +620,7 @@ export default function PortfolioFablePage() {
     const onWheel = (e) => {
       e.preventDefault();
       const d = e.deltaY * (e.deltaMode === 1 ? 16 : 1);
-      eng.target -= Math.max(-60, Math.min(60, d * 0.5));
+      eng.target -= d * 0.35;
       capLead();
       eng.lastInput = performance.now();
     };
@@ -411,7 +633,7 @@ export default function PortfolioFablePage() {
       if (touchY === null) return;
       e.preventDefault();
       const y = e.touches[0].clientY;
-      eng.target += y - touchY;
+      eng.target += (y - touchY) * 0.75;
       touchY = y;
       capLead();
       eng.lastInput = performance.now();
@@ -431,7 +653,7 @@ export default function PortfolioFablePage() {
       list.removeEventListener('touchend', onTouchEnd);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [activeCat, displayClients]);
 
   const viewerProject = viewerIdx !== null ? clients[viewerIdx] : null;
 
@@ -439,7 +661,9 @@ export default function PortfolioFablePage() {
     setHoverClient(null);
     setMediaIdx(0);
     setNavDir(0);
-    setViewerIdx(Math.max(0, clients.indexOf(client)));
+    const originalId = client.id.split('-dup-')[0];
+    const origIndex = clients.findIndex((c) => c.id === originalId);
+    setViewerIdx(Math.max(0, origIndex));
   };
   const closeViewer = () => setViewerIdx(null);
 
@@ -549,6 +773,47 @@ export default function PortfolioFablePage() {
       <style>{pageStyles}</style>
 
       <div className="pf-page">
+        {/* Persistent Centered/Top Logo Wrapper */}
+        <div className={`pf-persistent-logo-wrap ${loaderStep} ${activeCat === 'about-us' ? 'is-about' : 'is-projects'}`}>
+          <Link to="/" className="pf-persistent-logo-link" aria-label="EGS home">
+            <img src={egsLogo} alt="EGS — Exhibit Graphic Sign" />
+          </Link>
+          {activeCat !== 'about-us' && loaderStep === 'done' && (
+            <button
+              type="button"
+              className="pf-go-back-btn"
+              onClick={() => {
+                setActiveCat('about-us');
+                setHoverClient(null);
+                setAboutScrolled(false);
+                setAboutScrollProgress(0);
+                setTimeout(() => {
+                  if (aboutRef.current) {
+                    aboutRef.current.scrollTop = 0;
+                  }
+                }, 50);
+              }}
+              aria-label="Go back to About Us"
+            >
+              <span className="pf-back-arrow">↑</span> Go back
+            </button>
+          )}
+        </div>
+
+        {/* Loading Screen Overlay */}
+        {loaderStep !== 'done' && (
+          <div className={`pf-loader-overlay ${loaderStep === 'overlay-fade-out' ? 'fade-out' : ''}`}>
+            {(loaderStep === 'quote-fade-in' || loaderStep === 'quote-fade-out') && (
+              <div className={`pf-loader-quote-container ${loaderStep === 'quote-fade-out' ? 'fade-out' : ''}`}>
+                <img src={lightbulbGif} className="pf-loader-gif" alt="Lightbulb animation" />
+                <div className="pf-loader-quote">
+                  “An idea is only as good as its execution.”
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Always-on background for the selected job */}
         <div className="pf-bg" aria-hidden="true">
           <div className={`pf-bg-layer ${bgVisible ? 'is-visible' : ''}`}>
@@ -556,32 +821,43 @@ export default function PortfolioFablePage() {
           </div>
         </div>
 
-        <div className="pf-layout">
-          <aside className="pf-side">
-            <Link to="/" className="pf-side-logo" aria-label="EGS home">
-              <img src={egsLogo} alt="EGS — Exhibit Graphic Sign" />
-            </Link>
+        <div
+          className={`pf-layout ${activeCat === 'about-us' ? 'about-mode' : ''}`}
+          onScroll={(e) => handleAboutScroll(e, true)}
+          onWheel={(e) => handleAboutWheel(e, true)}
+          onTouchStart={(e) => handleAboutTouchStart(e, true)}
+          onTouchMove={(e) => handleAboutTouchMove(e, true)}
+          onTouchEnd={(e) => handleAboutTouchEnd(e, true)}
+        >
+          <aside className={`pf-nav-col ${activeCat === 'about-us' ? 'is-hidden' : ''}`}>
 
-            <p className="pf-side-blurb">
-              Dubai production partner for high-stakes physical brand moments
-              since 2010. We build custom exhibition stands, graduation
-              ceremonies, retail activations, and office fitouts in the UAE.
-            </p>
+            <div className="pf-nav-section">
+              <button
+                type="button"
+                className={`pf-nav-about-btn ${activeCat === 'about-us' ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveCat('about-us');
+                  setHoverClient(null);
+                }}
+              >
+                About Us
+              </button>
+            </div>
 
-            <nav aria-label="Service categories">
+            <nav aria-label="Service categories" className="pf-nav-section">
               <span className="pf-side-label">Services</span>
               <div className="pf-cats">
                 {CATEGORIES.map((cat) => {
-                  const count =
-                    cat.key === 'all'
-                      ? ALL_CLIENTS.length
-                      : ALL_CLIENTS.filter((c) => c.category === cat.key).length;
+                  const count = ALL_CLIENTS.filter((c) => c.category === cat.key).length;
                   return (
                     <button
                       key={cat.key}
                       type="button"
                       className={`pf-cat ${activeCat === cat.key ? 'active' : ''}`}
-                      onClick={() => setActiveCat(cat.key)}
+                      onClick={() => {
+                        setActiveCat(cat.key);
+                        setActiveYear('all');
+                      }}
                     >
                       {cat.label}
                       <span className="pf-cat-count">{count}</span>
@@ -591,30 +867,31 @@ export default function PortfolioFablePage() {
               </div>
             </nav>
 
-            <nav aria-label="Year filter">
-              <span className="pf-side-label">Year</span>
-              <div className="pf-years">
-                <button
-                  type="button"
-                  className={`pf-year ${activeYear === 'all' ? 'active' : ''}`}
-                  onClick={() => setActiveYear('all')}
-                >
-                  All
-                </button>
-                {YEARS.map((year) => (
+            {activeCat !== 'about-us' && (
+              <nav aria-label="Year filter" className="pf-nav-section">
+                <span className="pf-side-label">Year</span>
+                <div className="pf-years">
                   <button
-                    key={year}
                     type="button"
-                    className={`pf-year ${activeYear === year ? 'active' : ''}`}
-                    onClick={() => setActiveYear(year)}
+                    className={`pf-year ${activeYear === 'all' ? 'active' : ''}`}
+                    onClick={() => setActiveYear('all')}
                   >
-                    {year}
+                    All
                   </button>
-                ))}
-              </div>
-            </nav>
+                  {YEARS.map((year) => (
+                    <button
+                      key={year}
+                      type="button"
+                      className={`pf-year ${activeYear === year ? 'active' : ''}`}
+                      onClick={() => setActiveYear(year)}
+                    >
+                      {year}
+                    </button>
+                  ))}
+                </div>
+              </nav>
+            )}
 
-            {/* Contact — gathered from across the site, lives in the rail */}
             <div className="pf-side-contact">
               <span className="pf-side-label">Contact</span>
               <a href="mailto:info@exhibitgraphicsign.com">info@exhibitgraphicsign.com</a>
@@ -627,32 +904,239 @@ export default function PortfolioFablePage() {
             </div>
           </aside>
 
-          <main className="pf-list" ref={listRef}>
-            <div className="pf-list-track">
-              {clients.length === 0 ? (
-                <p className="pf-item" style={{ top: '45%' }}>No projects for this filter</p>
-              ) : (
-                clients.map((client, i) => (
-                  <button
-                    key={client.id}
-                    type="button"
-                    className={`pf-item ${i === activeIdx ? 'is-active' : ''}`}
-                    ref={(el) => {
-                      itemRefs.current[i] = el;
-                    }}
-                    onClick={() => openViewer(client)}
-                    onMouseEnter={() => setHoverClient(client)}
-                    onMouseLeave={() => setHoverClient(null)}
-                    onFocus={() => setHoverClient(client)}
-                    onBlur={() => setHoverClient(null)}
+          {activeCat === 'about-us' ? (
+            <section
+              ref={aboutRef}
+              className="pf-about-section"
+              onScroll={(e) => handleAboutScroll(e, false)}
+              onWheel={(e) => handleAboutWheel(e, false)}
+              onTouchStart={(e) => handleAboutTouchStart(e, false)}
+              onTouchMove={(e) => handleAboutTouchMove(e, false)}
+              onTouchEnd={(e) => handleAboutTouchEnd(e, false)}
+            >
+              <div className="pf-about-viewport-scroll">
+                <div className="pf-horizontal-scroll-sticky">
+                  <div
+                    className="pf-horizontal-scroll-track"
+                    style={{ transform: `translate3d(-${translateX}vw, 0px, 0px)` }}
                   >
-                    <span className="pf-item-name">{client.name}</span>
-                    <span className="pf-item-meta">{client.meta}</span>
-                  </button>
-                ))
-              )}
-            </div>
-          </main>
+                    {ABOUT_SLIDES.map((slide, idx) => {
+                      if (slide.id === 'intro') {
+                        return (
+                          <div
+                            key={slide.id}
+                            className={`pf-about-slide pf-slide-intro ${idx === activeSlideIdx ? 'is-active' : ''}`}
+                          >
+                            {/* Slide Background Image Layer */}
+                            <div className="pf-slide-bg-image-wrapper">
+                              <img src={slide.images[0]} className="pf-slide-bg-image" alt="" />
+                            </div>
+
+                            <div className="pf-slide-intro-container">
+                              {/* Top Left Title Group */}
+                              <div className="pf-intro-top-left">
+                                <span className="pf-slide-stage">DISCOVER</span>
+                                <h2 className="pf-slide-headline">THE WAY<br />WE WORK</h2>
+                              </div>
+
+                              {/* Middle/Left Image */}
+                              <div className="pf-intro-media">
+                                <img
+                                  src={slide.images[0]}
+                                  className="pf-intro-img"
+                                  alt="EGS Exhibition Stand"
+                                  loading="eager"
+                                />
+                              </div>
+
+                              {/* Bottom Middle Headline */}
+                              <div className="pf-intro-bottom-mid">
+                                <h3 className="pf-intro-passion-headline">
+                                  WE BUILD WITH PASSION &amp;<br />UNCOMPROMISING DETAIL
+                                </h3>
+                              </div>
+
+                              {/* Bottom Left Copy */}
+                              <div className="pf-intro-bottom-left">
+                                <span className="pf-intro-visit-tag">THE MANIFESTO</span>
+                                <p className="pf-intro-visit-copy">
+                                  Every stand, kiosk, display, and branded space is built to help clients show up clearly, confidently, and professionally.
+                                </p>
+                              </div>
+
+                              {/* Right Column: Core Values list */}
+                              <div className="pf-intro-right-col">
+                                <span className="pf-intro-values-title">CORE VALUES</span>
+                                <div className="pf-intro-values-list">
+                                  {slide.values.map((val) => (
+                                    <div className="pf-intro-value-item" key={val.title}>
+                                      <strong className="pf-intro-val-name">{val.title}</strong>
+                                      <p className="pf-intro-val-desc">{val.text}</p>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+
+                              {/* Bottom Right: Contact Button */}
+                              <div className="pf-intro-bottom-right">
+                                <a
+                                  href="mailto:info@exhibitgraphicsign.com"
+                                  className="pf-intro-contact-btn"
+                                >
+                                  <span>CONTACT</span>
+                                  <span className="pf-contact-arrow-circle">→</span>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+
+                      if (slide.id === 'usps') {
+                        return (
+                          <div
+                            key={slide.id}
+                            className={`pf-about-slide pf-slide-usps ${idx === activeSlideIdx ? 'is-active' : ''}`}
+                          >
+                            {/* Slide Background Image Layer */}
+                            <div className="pf-slide-bg-image-wrapper">
+                              <img src={slide.images[0]} className="pf-slide-bg-image" alt="" />
+                            </div>
+
+                            <div className="pf-slide-usps-container">
+                              {/* Top Left: Detailing info */}
+                              <div className="pf-usps-top-left">
+                                <span className="pf-usps-section-tag">CAPABILITY MANIFESTO</span>
+                                <p className="pf-usps-section-intro">
+                                  We manage design, printing, custom fabrication, and on-site setup under one roof. This keeps our timelines fast, our quality consistent, and your launch dates secure.
+                                </p>
+                              </div>
+
+                              {/* MECE Columns (Middle Left) */}
+                              <div className="pf-usps-columns">
+                                {slide.pillars.map((pillar, pIdx) => (
+                                  <div className="pf-usps-pillar" key={pIdx}>
+                                    <span className="pf-usps-pillar-num">0{pIdx + 1}</span>
+                                    <strong className="pf-usps-pillar-title">{pillar.title}</strong>
+                                    <p className="pf-usps-pillar-desc">{pillar.description}</p>
+                                  </div>
+                                ))}
+                              </div>
+
+                              {/* Bottom Left Title Group */}
+                              <div className="pf-usps-bottom-left">
+                                <span className="pf-slide-stage">OPERATIONAL PILLARS</span>
+                                <h2 className="pf-slide-headline">
+                                  WE DESIGN, FABRICATE, AND INSTALL YOUR SPACES ACROSS THE UAE
+                                </h2>
+                              </div>
+
+                              {/* Middle/Right Offset Images */}
+                              <div className="pf-usps-media">
+                                <img
+                                  src={slide.images[0]}
+                                  className="pf-usps-img img-top"
+                                  alt="EGS Kiosk Build"
+                                  loading="lazy"
+                                />
+                                <img
+                                  src={slide.images[1]}
+                                  className="pf-usps-img img-bottom"
+                                  alt="EGS Mall Installation"
+                                  loading="lazy"
+                                />
+                              </div>
+
+                              {/* Keep scrolling hint */}
+                              <div className="pf-usps-scroll-hint">
+                                <span>Keep scrolling for projects</span>
+                                <span className="pf-scroll-arrow-down">↓</span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+
+                      return null;
+                    })}
+
+                    {/* Transition panel revealed when scrolling past slide 2 */}
+                    <div className="pf-about-slide pf-slide-reveal-panel">
+                      <div className="pf-reveal-panel-content">
+                        <span className="pf-reveal-label">NEXT UP</span>
+                        <h3 className="pf-reveal-title">VIEW PROJECTS</h3>
+                        <div className="pf-reveal-indicator">
+                          <span className="pf-reveal-arrow-right">→</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bottom Progress/Navigation Bar */}
+                  <div className="pf-bottom-nav-bar">
+                    <div className="pf-bottom-nav-container">
+                      <div className="pf-bottom-nav-items">
+                        {BOTTOM_NAV_ITEMS.map((item, idx) => {
+                          const isActive = activeSlideIdx === item.slideIdx;
+                          return (
+                            <button
+                              key={item.label}
+                              type="button"
+                              className={`pf-bottom-nav-item ${isActive ? 'is-active' : ''}`}
+                              onClick={() => scrollToSlide(item.slideIdx)}
+                            >
+                              <span className="pf-nav-text">{item.label}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <div className="pf-bottom-nav-pill">
+                        {getPillNumbers(activeSlideIdx, ABOUT_SLIDES.length).map((idx) => {
+                          const isActive = idx === activeSlideIdx;
+                          return (
+                            <span
+                              key={idx}
+                              className={`pf-pill-num ${isActive ? 'is-active' : ''}`}
+                              onClick={() => scrollToSlide(idx)}
+                            >
+                              {pad2(idx + 1)}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          ) : (
+            <main className="pf-list" ref={listRef}>
+              <div className="pf-list-track">
+                {displayClients.length === 0 ? (
+                  <p className="pf-item" style={{ top: '45%' }}>No projects for this filter</p>
+                ) : (
+                  displayClients.map((client, i) => (
+                    <button
+                      key={client.id}
+                      type="button"
+                      className={`pf-item ${i === activeIdx ? 'is-active' : ''}`}
+                      ref={(el) => {
+                        itemRefs.current[i] = el;
+                      }}
+                      onClick={() => openViewer(client)}
+                      onMouseEnter={() => setHoverClient(client)}
+                      onMouseLeave={() => setHoverClient(null)}
+                      onFocus={() => setHoverClient(client)}
+                      onBlur={() => setHoverClient(null)}
+                    >
+                      <span className="pf-item-name">{client.name}</span>
+                      <span className="pf-item-meta">{client.meta}</span>
+                    </button>
+                  ))
+                )}
+              </div>
+            </main>
+          )}
         </div>
 
         {/* Fullscreen gallery: scroll down = next project, left/right = media */}
