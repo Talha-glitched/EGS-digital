@@ -17,4 +17,4 @@ Allow: /
 User-agent: PerplexityBot
 Allow: /
 
-Sitemap: https://exhibitgraphicsign.com/sitemap.xml
+Sitemap: https://www.exhibitgraphicsign.com/sitemap.xml

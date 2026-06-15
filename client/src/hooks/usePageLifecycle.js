@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { siteUrl } from '../config/site.js';
 
 function isPlainLeftClick(event) {
   return (
@@ -178,7 +179,7 @@ export function usePageLifecycle(title, options = {}) {
     }
 
     // Update canonical link
-    const canonicalUrl = canonical || `${window.location.origin}${window.location.pathname}`;
+    const canonicalUrl = canonical || siteUrl(window.location.pathname);
     setCanonicalLink(canonicalUrl);
 
     // Update Open Graph (og:) tags
