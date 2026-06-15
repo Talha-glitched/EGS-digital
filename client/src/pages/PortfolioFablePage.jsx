@@ -331,12 +331,13 @@ export default function PortfolioFablePage() {
   const [aboutScrolled, setAboutScrolled] = useState(false);
   const [aboutScrollProgress, setAboutScrollProgress] = useState(0);
   const aboutRef = useRef(null);
+  const lastWheelTime = useRef(0);
+  const scrollTimeoutRef = useRef(null);
+  const transitionedInThisGestureRef = useRef(false);
 
   const activeSlideIdx = useMemo(() => {
-    // 2 slides total (index 0 to 1).
-    // The horizontal translation goes from progress 0 to 0.85.
-    const progressForIdx = Math.min(1, aboutScrollProgress / 0.85);
-    return Math.min(1, Math.max(0, Math.round(progressForIdx * 1)));
+    // 3 stops total (index 0, 1, or 2).
+    return Math.min(2, Math.max(0, Math.round(aboutScrollProgress * 2)));
   }, [aboutScrollProgress]);
 
 const getPillNumbers = (activeIdx, total) => {
@@ -344,27 +345,8 @@ const getPillNumbers = (activeIdx, total) => {
 };
 
   const translateX = useMemo(() => {
-    const x = Math.min(1.15, aboutScrollProgress / 0.85); // Allow up to 1.15 for overscroll reveal
-    const rawIdx = Math.min(1, x);
-    const baseIdx = Math.floor(rawIdx);
-    const frac = rawIdx - baseIdx;
-    
-    // Smooth step transition: 35% dead-zone (sticky), 30% transition
-    let smoothedFrac;
-    if (frac < 0.35) {
-      smoothedFrac = 0;
-    } else if (frac > 0.65) {
-      smoothedFrac = 1;
-    } else {
-      const t = (frac - 0.35) / 0.3;
-      smoothedFrac = t * t * (3 - 2 * t);
-    }
-    
-    let smoothedIdx = baseIdx + smoothedFrac;
-    if (x > 1) {
-      smoothedIdx = 1 + (x - 1); // linear transition past slide 2 to pull in next panel
-    }
-    return smoothedIdx * 100; // translate in vw!
+    // 3 slide panels, so translate goes from 0vw to 200vw
+    return aboutScrollProgress * 200;
   }, [aboutScrollProgress]);
 
   const scrollToSlide = (targetIdx) => {
@@ -372,7 +354,7 @@ const getPillNumbers = (activeIdx, total) => {
     if (!el) return;
     const maxScroll = el.scrollHeight - el.clientHeight;
     if (maxScroll <= 0) return;
-    const targetProgress = (targetIdx / 1) * 0.85;
+    const targetProgress = targetIdx / 2;
     el.scrollTo({
       top: targetProgress * maxScroll,
       behavior: 'smooth',
@@ -380,12 +362,12 @@ const getPillNumbers = (activeIdx, total) => {
   };
 
   useEffect(() => {
-    const t0 = setTimeout(() => setLoaderStep('logo-fade-in'), 1000);
-    const t1 = setTimeout(() => setLoaderStep('logo-shrink'), 3000);
-    const t2 = setTimeout(() => setLoaderStep('quote-fade-in'), 3500);
-    const t3 = setTimeout(() => setLoaderStep('quote-fade-out'), 8500);
-    const t4 = setTimeout(() => setLoaderStep('overlay-fade-out'), 9000);
-    const t5 = setTimeout(() => setLoaderStep('done'), 10000);
+    const t0 = setTimeout(() => setLoaderStep('logo-fade-in'), 500);
+    const t1 = setTimeout(() => setLoaderStep('logo-shrink'), 1500);
+    const t2 = setTimeout(() => setLoaderStep('quote-fade-in'), 1800);
+    const t3 = setTimeout(() => setLoaderStep('quote-fade-out'), 4000);
+    const t4 = setTimeout(() => setLoaderStep('overlay-fade-out'), 4500);
+    const t5 = setTimeout(() => setLoaderStep('done'), 5000);
 
     return () => {
       clearTimeout(t0);
@@ -396,6 +378,96 @@ const getPillNumbers = (activeIdx, total) => {
       clearTimeout(t5);
     };
   }, []);
+
+  useEffect(() => {
+    const el = aboutRef.current;
+    if (!el || activeCat !== 'about-us') return undefined;
+
+    const handleWheel = (e) => {
+      const isMobile = window.innerWidth <= 860;
+      if (isMobile) return; // let native scroll handle it on mobile
+
+      e.preventDefault();
+
+      // Clear the timeout for resetting gesture state
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+
+      // Debounce: when scroll wheel activity stops for 250ms, reset the gesture lock
+      scrollTimeoutRef.current = setTimeout(() => {
+        transitionedInThisGestureRef.current = false;
+        scrollTimeoutRef.current = null;
+      }, 250);
+
+      // If we already transitioned in this continuous gesture/swipe, ignore further input
+      if (transitionedInThisGestureRef.current) {
+        return;
+      }
+
+      const maxScroll = el.scrollHeight - el.clientHeight;
+      if (maxScroll <= 0) return;
+
+      const currentScroll = el.scrollTop;
+      const slide1Scroll = 0.5 * maxScroll;
+      const slide2Scroll = maxScroll;
+
+      // Identify current slide index
+      let currentIdx = 0;
+      if (currentScroll > (slide1Scroll + slide2Scroll) / 2) {
+        currentIdx = 2;
+      } else if (currentScroll > slide1Scroll / 2) {
+        currentIdx = 1;
+      }
+
+      if (e.deltaY > 0) {
+        // Scrolling down
+        if (currentIdx === 0) {
+          transitionedInThisGestureRef.current = true;
+          setAboutScrolled(true);
+          el.scrollTo({
+            top: slide1Scroll,
+            behavior: 'smooth',
+          });
+        } else if (currentIdx === 1) {
+          transitionedInThisGestureRef.current = true;
+          el.scrollTo({
+            top: slide2Scroll,
+            behavior: 'smooth',
+          });
+        } else if (currentIdx === 2) {
+          transitionedInThisGestureRef.current = true;
+          setActiveCat('all');
+          setAboutScrollProgress(0);
+          setAboutScrolled(false);
+        }
+      } else if (e.deltaY < 0) {
+        // Scrolling up
+        if (currentIdx === 2) {
+          transitionedInThisGestureRef.current = true;
+          el.scrollTo({
+            top: slide1Scroll,
+            behavior: 'smooth',
+          });
+        } else if (currentIdx === 1) {
+          transitionedInThisGestureRef.current = true;
+          setAboutScrolled(false);
+          el.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+          });
+        }
+      }
+    };
+
+    el.addEventListener('wheel', handleWheel, { passive: false });
+    return () => {
+      el.removeEventListener('wheel', handleWheel);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, [activeCat]);
 
   const [viewerIdx, setViewerIdx] = useState(null); // project index in the filtered list
   const [mediaIdx, setMediaIdx] = useState(0); // media index inside the open project
@@ -428,11 +500,8 @@ const getPillNumbers = (activeIdx, total) => {
     }
 
     // Auto-transition to projects listing when scrolled past the buffer on desktop
-    if (progress >= 0.995 && !isMobile) {
-      setActiveCat('all');
-      setAboutScrollProgress(0);
-      setAboutScrolled(false);
-    }
+    // Disabled on desktop to allow explicit step navigation to slide 3.
+
   };
 
   const handleAboutWheel = (e, isLayout) => {
@@ -1004,31 +1073,31 @@ const getPillNumbers = (activeIdx, total) => {
                             </div>
 
                             <div className="pf-slide-usps-container">
-                              {/* Top Left: Detailing info */}
-                              <div className="pf-usps-top-left">
-                                <span className="pf-usps-section-tag">CAPABILITY MANIFESTO</span>
-                                <p className="pf-usps-section-intro">
-                                  We manage design, printing, custom fabrication, and on-site setup under one roof. This keeps our timelines fast, our quality consistent, and your launch dates secure.
-                                </p>
-                              </div>
+                              {/* Left column content wrapper */}
+                              <div className="pf-usps-left-col">
+                                {/* Top Left: Detailing info */}
+                                <div className="pf-usps-top-left">
+                                  <span className="pf-usps-section-tag">CAPABILITY MANIFESTO</span>
+                                </div>
 
-                              {/* MECE Columns (Middle Left) */}
-                              <div className="pf-usps-columns">
-                                {slide.pillars.map((pillar, pIdx) => (
-                                  <div className="pf-usps-pillar" key={pIdx}>
-                                    <span className="pf-usps-pillar-num">0{pIdx + 1}</span>
-                                    <strong className="pf-usps-pillar-title">{pillar.title}</strong>
-                                    <p className="pf-usps-pillar-desc">{pillar.description}</p>
-                                  </div>
-                                ))}
-                              </div>
+                                {/* MECE Columns (Middle Left) */}
+                                <div className="pf-usps-columns">
+                                  {slide.pillars.map((pillar, pIdx) => (
+                                    <div className="pf-usps-pillar" key={pIdx}>
+                                      <span className="pf-usps-pillar-num">0{pIdx + 1}</span>
+                                      <strong className="pf-usps-pillar-title">{pillar.title}</strong>
+                                      <p className="pf-usps-pillar-desc">{pillar.description}</p>
+                                    </div>
+                                  ))}
+                                </div>
 
-                              {/* Bottom Left Title Group */}
-                              <div className="pf-usps-bottom-left">
-                                <span className="pf-slide-stage">OPERATIONAL PILLARS</span>
-                                <h2 className="pf-slide-headline">
-                                  WE DESIGN, FABRICATE, AND INSTALL YOUR SPACES ACROSS THE UAE
-                                </h2>
+                                {/* Bottom Left Title Group */}
+                                <div className="pf-usps-bottom-left">
+                                  <span className="pf-slide-stage">OPERATIONAL PILLARS</span>
+                                  <h2 className="pf-slide-headline">
+                                    WE DESIGN, FABRICATE, AND INSTALL YOUR SPACES ACROSS THE UAE
+                                  </h2>
+                                </div>
                               </div>
 
                               {/* Middle/Right Offset Images */}

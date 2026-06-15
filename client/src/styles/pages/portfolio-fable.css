@@ -312,7 +312,7 @@
 }
 
 .pf-about-viewport-scroll {
-  height: 220vh;
+  height: 320vh;
   position: relative;
   width: 100%;
 }
@@ -585,8 +585,8 @@
   position: absolute;
   top: 24%;
   left: 5%;
-  width: 52%;
-  height: 48%;
+  width: 44%;
+  height: 40%;
   overflow: hidden;
   border-radius: 4px;
   border: 1px solid rgba(245, 241, 234, 0.08);
@@ -646,7 +646,7 @@
 .pf-intro-right-col {
   position: absolute;
   top: 5%;
-  right: 5%;
+  right: 10%;
   width: 32%;
   height: 75%;
   display: flex;
@@ -662,7 +662,7 @@
 
 .pf-intro-values-title {
   font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-  font-size: 10px;
+  font-size: 15px;
   font-weight: 600;
   letter-spacing: 0.2em;
   color: rgba(245, 241, 234, 0.45);
@@ -686,16 +686,16 @@
 
 .pf-intro-val-name {
   font-family: var(--sans);
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 25px;
+  font-weight: 900!important;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ochre);
+  color: #3c83f6;
 }
 
 .pf-intro-val-desc {
-  font-size: 12px;
-  line-height: 1.4;
+  font-size: 15px;
+  line-height: 1.45;
   color: rgba(245, 241, 234, 0.55);
   margin: 0;
 }
@@ -837,8 +837,8 @@
   position: absolute;
   top: 24%;
   left: 3vw;
-  width: 58vw;
-  height: 50%;
+  width: 48vw;
+  height: 42%;
   overflow: hidden;
   border-radius: 4px;
   border: 1px solid rgba(245, 241, 234, 0.08);
@@ -898,7 +898,7 @@
 .pf-intro-right-col {
   position: absolute;
   top: 5%;
-  right: 3vw;
+  right: 8vw;
   width: 34vw;
   height: 78%;
   display: flex;
@@ -914,7 +914,7 @@
 
 .pf-intro-values-title {
   font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-  font-size: 10px;
+  font-size: 15px;
   font-weight: 600;
   letter-spacing: 0.2em;
   color: rgba(245, 241, 234, 0.45);
@@ -938,16 +938,16 @@
 
 .pf-intro-val-name {
   font-family: var(--sans);
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 25px;
+  font-weight: 900!important;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ochre);
+  color: #3c83f6;
 }
 
 .pf-intro-val-desc {
-  font-size: 12px;
-  line-height: 1.4;
+  font-size: 15px;
+  line-height: 1.45;
   color: rgba(245, 241, 234, 0.55);
   margin: 0;
 }
@@ -1055,11 +1055,19 @@
   box-sizing: border-box;
 }
 
-.pf-usps-top-left {
+.pf-usps-left-col {
   position: absolute;
-  top: 5%;
+  top: calc(5% - 10px);
+  bottom: calc(5% + 10px);
   left: 3vw;
-  width: 54vw;
+  width: 58vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: clamp(16px, 3vh, 48px);
+}
+
+.pf-usps-top-left {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1067,7 +1075,7 @@
 
 .pf-usps-section-tag {
   font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.16em;
   color: rgba(245, 241, 234, 0.4);
@@ -1075,7 +1083,7 @@
 }
 
 .pf-usps-section-intro {
-  font-size: clamp(12px, 1.2vw, 14px);
+  font-size: clamp(14px, 1.4vw, 16px);
   line-height: 1.5;
   color: rgba(245, 241, 234, 0.65);
   margin: 0;
@@ -1083,10 +1091,6 @@
 
 /* MECE Columns (Middle Left) - Styled as 2-column grid to hold all 8 USPs cleanly */
 .pf-usps-columns {
-  position: absolute;
-  top: 24%;
-  left: 3vw;
-  width: 54vw;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px 32px;
@@ -1107,7 +1111,7 @@
 
 .pf-usps-pillar-num {
   font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.1em;
   color: var(--ochre);
@@ -1115,7 +1119,7 @@
 
 .pf-usps-pillar-title {
   font-family: var(--sans);
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -1123,26 +1127,23 @@
 }
 
 .pf-usps-pillar-desc {
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.45;
   color: rgba(245, 241, 234, 0.55);
   margin: 0;
 }
 
-/* Bottom Left Title Group */
 .pf-usps-bottom-left {
-  position: absolute;
-  bottom: 5%;
-  left: 3vw;
-  width: 54vw;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  position: relative;
+  z-index: 10;
 }
 
 .pf-usps-bottom-left .pf-slide-stage {
   font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.25em;
   color: var(--ochre);
@@ -1151,22 +1152,24 @@
 
 .pf-usps-bottom-left .pf-slide-headline {
   font-family: var(--sans);
-  font-size: clamp(26px, 2.5vw, 40px);
+  font-size: clamp(30px, 2.8vw, 46px);
   font-weight: 800;
   line-height: 1.05;
   letter-spacing: -0.02em;
   text-transform: uppercase;
   color: var(--paper);
   margin: 0;
+  position: relative;
+  z-index: 10;
 }
 
 /* Middle/Right Offset Images */
 .pf-usps-media {
   position: absolute;
-  top: 5%;
+  top: 10%;
   right: 3vw;
-  width: 40vw;
-  height: 90%;
+  width: 32vw;
+  height: 80%;
 }
 
 .pf-usps-img {
@@ -1552,7 +1555,7 @@
 .pf-item-meta {
   flex: 0 0 auto;
   font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-  font-size: 10px;
+  font-size: 19px;
   font-weight: 400;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -2285,8 +2288,8 @@
   transition: top 0.85s cubic-bezier(0.76, 0, 0.24, 1),
               left 0.85s cubic-bezier(0.76, 0, 0.24, 1),
               transform 0.85s cubic-bezier(0.76, 0, 0.24, 1),
-              opacity 2s cubic-bezier(0.25, 1, 0.5, 1),
-              filter 2s cubic-bezier(0.25, 1, 0.5, 1);
+              opacity 1s cubic-bezier(0.25, 1, 0.5, 1),
+              filter 1s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .pf-persistent-logo-link {
