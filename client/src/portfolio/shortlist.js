@@ -1,4 +1,5 @@
 import { CUSTOM_LABELS, ensureCategory } from './categories.js';
+import { isExcludedAsset } from './exclusions.js';
 import { buildClient, mediaTypeForFilename } from './media.js';
 import { getProjectDetails } from './resolveProject.js';
 
@@ -25,6 +26,8 @@ export function buildShortlistClients() {
 
     const folderName = parts[0];
     const filename = parts[parts.length - 1];
+    if (isExcludedAsset(filename)) return;
+
     const mediaType = mediaTypeForFilename(filename);
     if (!mediaType) return;
 

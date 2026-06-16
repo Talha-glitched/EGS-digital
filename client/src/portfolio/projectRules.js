@@ -102,18 +102,6 @@ export const PROJECT_RULES = [
     result: { name: 'Emicool Showroom', groupKey: 'emicool-showroom' },
   },
   {
-    match: ({ nameLower }) => nameLower.includes('fosroc'),
-    result: { name: 'Fosroc Stand', groupKey: 'fosroc-stand' },
-  },
-  {
-    match: ({ nameLower }) => nameLower.includes('buser'),
-    result: { name: 'Buser Stand', groupKey: 'buser-stand' },
-  },
-  {
-    match: ({ nameLower }) => nameLower.includes('cares'),
-    result: { name: 'Cares Stand', groupKey: 'cares-stand' },
-  },
-  {
     match: ({ nameLower }) => nameLower.includes('fakhruddin'),
     result: { name: 'Fakhruddin Office', groupKey: 'fakhruddin-office' },
   },
