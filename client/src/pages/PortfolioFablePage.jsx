@@ -1,464 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+﻿import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import pageStyles from '../styles/pages/portfolio-fable.css?raw';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 import { images } from './siteData.js';
 import egsLogo from '../assets/logo/New_Logo/Logo-03.png'; // plain white variant
 import lightbulbGif from '../assets/Icons/lightbulb.gif';
+import audGraduation from '../assets/Graduation/Websites Gallery Graduations/2025/AUD/DSC02388.JPG';
+import shjGraduation from '../assets/Graduation/SHJ1.jpg';
+import { ALL_CLIENTS, CATEGORIES, YEARS, filterClients } from '../portfolio/buildIndex.js';
 
-// Scan the graduation gallery — these are the real, accurate projects on this page
-const graduationAssets = import.meta.glob('../assets/Graduation/Websites Gallery Graduations/**/*', {
-  eager: true,
-  import: 'default',
-});
-
-// Scan the shortlist gallery
-const shortlistAssets = import.meta.glob('../assets/Existing Website Shortlist/**/*', {
-  eager: true,
-  import: 'default',
-});
-
-const PHOTO_EXTS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'];
-const VIDEO_EXTS = ['mp4', 'mov', 'webm'];
-
-const CAMPUS_META = {
-  'abu-dhabi': { name: 'HCT Abu Dhabi', location: 'ADNEC, Abu Dhabi' },
-  'dubai': { name: 'HCT Dubai', locationByYear: { 2025: 'Grand Hyatt Dubai', 2024: 'Coca-Cola Arena, Dubai' } },
-  'fujairah': { name: 'HCT Fujairah', locationByYear: { 2025: 'Zayed Sports Complex, Fujairah', 2024: 'Fujairah, UAE' } },
-  'ras-al-khaimah': { name: 'HCT Ras Al Khaimah', location: 'HCT RAK Campus, Ras Al Khaimah' },
-  'sharjah': { name: 'HCT Sharjah', location: 'University City Hall, Sharjah' },
-  'rak-aa': { name: 'RAK American Academy', location: 'Ras Al Khaimah' },
-};
-
-function campusKeyFor(folder) {
-  const norm = folder.toLowerCase().trim();
-  if (norm.includes('abu dhabi') || norm === 'aud') return 'abu-dhabi';
-  if (norm.includes('dubai') || norm === 'dxb' || norm.includes('coca')) return 'dubai';
-  if (norm.includes('fujairah')) return 'fujairah';
-  if (norm.includes('ras') || norm === 'rak') return 'ras-al-khaimah';
-  if (norm.includes('sharjah')) return 'sharjah';
-  return null;
-}
-
-// Promo-style cuts lead each ceremony's gallery and back its hover background
-const heroRank = (name) => {
-  const n = name.toLowerCase();
-  if (n.includes('promo')) return 0;
-  if (n.includes('highlight')) return 1;
-  if (n.includes('ceremony')) return 2;
-  if (n.includes('teaser') || n.includes('opener')) return 3;
-  return 4;
-};
-
-const gradGroups = {};
-
-Object.entries(graduationAssets).forEach(([path, url]) => {
-  if (path.includes('.DS_Store')) return;
-
-  const prefix = '../assets/Graduation/Websites Gallery Graduations/';
-  const rel = path.substring(path.indexOf(prefix) + prefix.length);
-  const parts = rel.split('/');
-  const filename = parts[parts.length - 1];
-  const ext = filename.split('.').pop().toLowerCase();
-  const isPhoto = PHOTO_EXTS.includes(ext);
-  const isVideo = VIDEO_EXTS.includes(ext);
-  if (!isPhoto && !isVideo) return;
-
-  let year;
-  let campus;
-  if (rel.startsWith('2021 Videos')) {
-    return; // video-only archive, no stills to show in the gallery
-  } else if (rel.startsWith('RAK AA -Pics Vids')) {
-    year = 2025;
-    campus = 'rak-aa';
-  } else {
-    year = parseInt(parts[0], 10);
-    campus = campusKeyFor(parts[1] || '');
-  }
-  if (!year || !campus) return;
-
-  const key = `${campus}|${year}`;
-  if (!gradGroups[key]) gradGroups[key] = [];
-  gradGroups[key].push({ type: isVideo ? 'video' : 'photo', url, name: filename, year });
-});
-
-// Ceremony stats, mirrored from the graduation-portfolio page
-const GRAD_FACTS = {
-  'abu-dhabi|2025': { venue: 'ADNEC Halls, Abu Dhabi', graduates: '1,668', guests: '5,000' },
-  'abu-dhabi|2024': { venue: 'ADNEC Halls, Abu Dhabi', graduates: '1,500', guests: '4,500' },
-  'dubai|2025': { venue: 'Grand Hyatt Dubai', graduates: '602', guests: '2,200' },
-  'dubai|2024': { venue: 'Coca-Cola Arena, Dubai', graduates: '580', guests: '2,000' },
-  'fujairah|2025': { venue: 'Zayed Sports Complex, Fujairah', graduates: '535', guests: '1,800' },
-  'fujairah|2024': { venue: 'Fujairah, UAE', graduates: '450', guests: '1,500' },
-  'ras-al-khaimah|2025': { venue: 'RAK Campus Sports Hall', graduates: '576', guests: '1,800' },
-  'ras-al-khaimah|2024': { venue: 'RAK Campus Sports Hall', graduates: '480', guests: '1,600' },
-  'sharjah|2025': { venue: 'University City Hall, Sharjah', graduates: '937 (2 sessions)', guests: '3,000' },
-  'sharjah|2024': { venue: 'University City Hall, Sharjah', graduates: '820', guests: '2,500' },
-  'rak-aa|2025': { venue: 'RAK American Academy Auditorium', graduates: '60', guests: '1,200' },
-};
-
-function buildClient({ id, name, category, location, year, items, facts }) {
-  const photos = items
-    .filter((m) => m.type === 'photo')
-    .sort((a, b) => a.name.localeCompare(b.name));
-  const videos = items
-    .filter((m) => m.type === 'video')
-    .sort((a, b) => heroRank(a.name) - heroRank(b.name) || a.name.localeCompare(b.name));
-
-  // Hero is the promo video when one exists, then photos, then the remaining videos
-  const hero = videos[0] || photos[0] || null;
-  const media = videos.length > 0 ? [videos[0], ...photos, ...videos.slice(1)] : [...photos];
-  const cover = photos[0] || hero;
-
-  return { id, name, category, location, year, media, hero, cover, facts, meta: `${location} · ${year}` };
-}
-
-// One entry per ceremony (campus × year) so every gallery only carries
-// that year's photos and that year's promo video
-const GRAD_CLIENTS = Object.entries(gradGroups)
-  .map(([key, items]) => {
-    const [campus, yearStr] = key.split('|');
-    const year = Number(yearStr);
-    const meta = CAMPUS_META[campus];
-    const location = meta.locationByYear?.[year] || meta.location;
-    return buildClient({
-      id: `grad-${campus}-${year}`,
-      name: meta.name,
-      category: 'graduation',
-      location,
-      year,
-      items,
-      facts: GRAD_FACTS[`${campus}|${year}`],
-    });
-  })
-  .sort((a, b) => a.name.localeCompare(b.name) || b.year - a.year);
-
-// Smart project details resolver based on filename and folder
-const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-function getCategorySingular(categoryKey) {
-  const mapping = {
-    'exhibition-stand': 'Exhibition Stand',
-    'corporate-events-branding': 'Corporate Event',
-    'retail-branding-displays': 'Retail Display',
-    'signage-indoor-outdoor': 'Signage Project',
-    'showroom-office-branding': 'Showroom Fitout',
-    'large-format-printing': 'Print Project',
-    'vehicle-branding': 'Vehicle Graphics',
-    'product-display-stands': 'Display Stand',
-    'btl-mall-installation': 'Mall Installation',
-    'btl-supermarket-hypermarket': 'Supermarket Branding',
-    'mall-kiosk': 'Mall Kiosk',
-    'graduation': 'Graduation Ceremony',
-  };
-  return mapping[categoryKey] || 'Project';
-}
-
-function extractDate(filename) {
-  const dateMatch = filename.match(/(201\d|202\d)[-_](\d{2})[-_](\d{2})/);
-  if (dateMatch) {
-    return {
-      year: parseInt(dateMatch[1], 10),
-      month: parseInt(dateMatch[2], 10),
-      day: parseInt(dateMatch[3], 10),
-      monthStr: MONTHS[parseInt(dateMatch[2], 10) - 1],
-      groupKey: `${dateMatch[1]}-${dateMatch[2]}`
-    };
-  }
-  
-  const compactMatch = filename.match(/(201\d|202\d)(\d{2})(\d{2})/);
-  if (compactMatch) {
-    const m = parseInt(compactMatch[2], 10);
-    if (m >= 1 && m <= 12) {
-      return {
-        year: parseInt(compactMatch[1], 10),
-        month: m,
-        day: parseInt(compactMatch[3], 10),
-        monthStr: MONTHS[m - 1],
-        groupKey: `${compactMatch[1]}-${compactMatch[2]}`
-      };
-    }
-  }
-
-  const yearMatch = filename.match(/(201\d|202\d)/);
-  if (yearMatch) {
-    return {
-      year: parseInt(yearMatch[1], 10),
-      month: null,
-      day: null,
-      monthStr: null,
-      groupKey: `${yearMatch[1]}`
-    };
-  }
-
-  return null;
-}
-
-function getProjectDetails(filename, folderName, categoryKey) {
-  const nameLower = filename.toLowerCase();
-  let projectName = '';
-  let location = 'Dubai, UAE';
-  let year = 2024;
-  let facts = null;
-  let groupKey = '';
-
-  if (nameLower.includes('philips') || nameLower.includes('phillips')) {
-    projectName = 'Philips Stand';
-    groupKey = 'philips-stand';
-    if (nameLower.includes('mri')) {
-      projectName = 'Philips MRI Room';
-      groupKey = 'philips-mri';
-    }
-    if (nameLower.includes('arab health')) {
-      projectName = 'Philips Arab Health';
-      location = 'DWTC, Dubai';
-      groupKey = 'philips-arab-health';
-    }
-    if (nameLower.includes('pairs')) {
-      projectName = 'Philips Paris';
-      groupKey = 'philips-paris';
-    }
-    if (nameLower.includes('meydan')) {
-      projectName = 'Philips Meydan Event';
-      location = 'Meydan, Dubai';
-      groupKey = 'philips-meydan';
-    }
-  } else if (nameLower.includes('velocity')) {
-    projectName = 'Velocity Showroom';
-    year = 2025;
-    groupKey = 'velocity-showroom';
-  } else if (nameLower.includes('uniestate') || nameLower.includes('uni estate')) {
-    projectName = 'Uniestate Office';
-    year = 2024;
-    groupKey = 'uniestate-office';
-  } else if (nameLower.includes('big fm') || nameLower.includes('bigfm')) {
-    projectName = 'BIG FM Office';
-    year = 2023;
-    groupKey = 'bigfm-office';
-  } else if (nameLower.includes('coop') || nameLower.includes('co-op')) {
-    projectName = 'Union Coop Supermarket';
-    year = 2016;
-    groupKey = 'union-coop';
-  } else if (nameLower.includes('geant') || nameLower.includes('géant')) {
-    projectName = 'Géant Hypermarket';
-    year = 2016;
-    groupKey = 'geant-hypermarket';
-  } else if (nameLower.includes('carrefour')) {
-    projectName = 'Carrefour Rollout';
-    year = 2023;
-    groupKey = 'carrefour-rollout';
-  } else if (nameLower.includes('sadia')) {
-    projectName = 'Sadia Brand Display';
-    year = 2023;
-    groupKey = 'sadia-display';
-  } else if (nameLower.includes('dunkin')) {
-    projectName = 'Dunkin\' Kiosk';
-    year = 2024;
-    groupKey = 'dunkin-kiosk';
-  } else if (nameLower.includes('bubble tea')) {
-    projectName = 'Bubble Tea Kiosk';
-    year = 2023;
-    groupKey = 'bubble-tea-kiosk';
-  } else if (nameLower.includes('crepe')) {
-    projectName = 'Crepe & Go Kiosk';
-    year = 2023;
-    groupKey = 'crepe-go-kiosk';
-  } else if (nameLower.includes('galadari')) {
-    projectName = 'Galadari Kiosk';
-    year = 2025;
-    location = 'Dubai Mall, UAE';
-    groupKey = 'galadari-kiosk';
-  } else if (nameLower.includes('vitro')) {
-    projectName = 'Vitro Printing';
-    groupKey = 'vitro-printing';
-  } else if (nameLower.includes('emi cool') || nameLower.includes('emicool')) {
-    projectName = 'Emicool Showroom';
-    groupKey = 'emicool-showroom';
-  } else if (nameLower.includes('fosroc')) {
-    projectName = 'Fosroc Stand';
-    groupKey = 'fosroc-stand';
-  } else if (nameLower.includes('buser')) {
-    projectName = 'Buser Stand';
-    groupKey = 'buser-stand';
-  } else if (nameLower.includes('cares')) {
-    projectName = 'Cares Stand';
-    groupKey = 'cares-stand';
-  } else if (nameLower.includes('fakhruddin')) {
-    projectName = 'Fakhruddin Office';
-    groupKey = 'fakhruddin-office';
-  } else if (nameLower.includes('hum yum')) {
-    projectName = 'Hum Yum Dubai Mall';
-    location = 'Dubai Mall, UAE';
-    groupKey = 'hum-yum';
-  } else if (nameLower.includes('van spark')) {
-    projectName = 'Van Spark Branding';
-    groupKey = 'van-spark';
-  } else if (nameLower.includes('hct') || nameLower.includes('helsinki')) {
-    projectName = 'HCT Showcase';
-    groupKey = 'hct-showcase';
-  }
-
-  if (!projectName) {
-    const cleanBase = filename
-      .replace(/\.[^/.]+$/, "") 
-      .replace(/[\d\s\(\)\-\_]+$/, "") 
-      .replace(/^(IMG|DSC|MAC|WhatsApp Image)\b.*/i, "") 
-      .trim();
-
-    const testBase = cleanBase.replace(/copy/i, '').trim();
-    const hasLetters = /[a-zA-Z]/.test(testBase);
-    if (cleanBase && cleanBase.length > 2 && hasLetters) {
-      projectName = cleanBase.split(/[\s\-_]+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
-      groupKey = projectName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    }
-  }
-
-  const parsedDate = extractDate(filename);
-  if (parsedDate) {
-    year = parsedDate.year;
-    if (!projectName) {
-      const categorySingular = getCategorySingular(categoryKey);
-      if (parsedDate.monthStr) {
-        projectName = `${categorySingular} - ${parsedDate.monthStr} ${parsedDate.year}`;
-      } else {
-        projectName = `${categorySingular} - ${parsedDate.year}`;
-      }
-      groupKey = `date-${categoryKey}-${parsedDate.groupKey}`;
-    }
-  }
-
-  if (!projectName) {
-    const categorySingular = getCategorySingular(categoryKey);
-    projectName = `${categorySingular} Showcase`;
-    groupKey = `showcase-${categoryKey}-${year}`;
-  }
-
-  return { name: projectName, location, year, facts, groupKey };
-}
-
-const CUSTOM_LABELS = {
-  'graduation': 'Graduation Ceremonies',
-  'exhibition-stand': 'Exhibition Stands',
-  'corporate-events-branding': 'Corporate Events Branding',
-  'retail-branding-displays': 'Retail Branding & Displays',
-  'signage-indoor-outdoor': 'Signage Indoor & Outdoor',
-  'showroom-office-branding': 'Showroom & Office Branding',
-  'large-format-printing': 'Large Format Printing',
-  'vehicle-branding': 'Vehicle Branding',
-  'product-display-stands': 'Product Display Stands',
-  'btl-mall-installation': 'BTL Mall Installations',
-  'btl-supermarket-hypermarket': 'BTL Supermarket & Hypermarket',
-  'mall-kiosk': 'Mall Kiosks',
-};
-
-const categoriesMap = {
-  'graduation': { key: 'graduation', label: CUSTOM_LABELS['graduation'], sortOrder: 0.5 }
-};
-
-const projectGroups = {};
-
-// Parse shortlist assets
-Object.entries(shortlistAssets).forEach(([path, url]) => {
-  if (path.includes('.DS_Store')) return;
-
-  const prefix = '../assets/Existing Website Shortlist/';
-  if (!path.startsWith(prefix)) return;
-  const relPath = path.substring(prefix.length);
-  const parts = relPath.split('/');
-  if (parts.length < 2) return;
-  const folderName = parts[0];
-  const filename = parts[parts.length - 1];
-  const ext = filename.split('.').pop().toLowerCase();
-  
-  const isPhoto = PHOTO_EXTS.includes(ext);
-  const isVideo = VIDEO_EXTS.includes(ext);
-  if (!isPhoto && !isVideo) return;
-  
-  let categoryKey = folderName.toLowerCase().replace(/^\d+/, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-  
-  // Map FU-Graduation into graduation category key
-  if (categoryKey === 'fu-graduation') {
-    categoryKey = 'graduation';
-  }
-  
-  const categoryName = CUSTOM_LABELS[categoryKey] || folderName.replace(/^\d+/, '').replace(/-/g, ' ').trim();
-  
-  const sortMatch = folderName.match(/^(\d+)/);
-  const sortOrder = sortMatch ? parseInt(sortMatch[1], 10) : 999;
-  
-  if (!categoriesMap[categoryKey]) {
-    categoriesMap[categoryKey] = {
-      key: categoryKey,
-      label: categoryName,
-      sortOrder,
-    };
-  }
-  
-  let pName = '';
-  let pLoc = 'Dubai, UAE';
-  let pYear = 2024;
-  let pFacts = null;
-  let details;
-  
-  if (folderName === 'FU-Graduation') {
-    pName = 'Fujairah University Graduation';
-    pLoc = 'Fujairah, UAE';
-    pYear = 2026;
-    pFacts = { venue: 'Fujairah University', graduates: 'Class of 2026', guests: '2,500' };
-    details = { groupKey: 'fu-graduation' };
-  } else {
-    details = getProjectDetails(filename, folderName, categoryKey);
-    pName = details.name;
-    pLoc = details.location;
-    pYear = details.year;
-    pFacts = details.facts;
-  }
-  
-  const projectKey = `${categoryKey}|${details.groupKey}`;
-  if (!projectGroups[projectKey]) {
-    projectGroups[projectKey] = {
-      id: `shortlist-${categoryKey}-${details.groupKey}`,
-      name: pName,
-      category: categoryKey,
-      location: pLoc,
-      year: pYear,
-      facts: pFacts,
-      items: []
-    };
-  }
-  
-  projectGroups[projectKey].items.push({
-    type: isVideo ? 'video' : 'photo',
-    url,
-    name: filename,
-    year: pYear
-  });
-});
-
-const SHORTLIST_CLIENTS = Object.values(projectGroups).map(group => buildClient(group));
-
-// Newest work first
-const ALL_CLIENTS = [...SHORTLIST_CLIENTS, ...GRAD_CLIENTS].sort(
-  (a, b) => b.year - a.year || a.name.localeCompare(b.name)
-);
-
-const CATEGORY_ORDER = {
-  'graduation': 1,
-  'exhibition-stand': 2,
-  'corporate-events-branding': 3
-};
-
-const CATEGORIES = [
-  { key: 'all', label: 'All Services' },
-  ...Object.values(categoriesMap).sort((a, b) => {
-    const orderA = CATEGORY_ORDER[a.key] || 999;
-    const orderB = CATEGORY_ORDER[b.key] || 999;
-    if (orderA !== orderB) return orderA - orderB;
-    return a.sortOrder - b.sortOrder;
-  })
-];
-
-const YEARS = [...new Set(ALL_CLIENTS.map((c) => c.year))].sort((a, b) => b - a);
 
 const pad2 = (n) => String(n).padStart(2, '0');
 
@@ -468,7 +18,7 @@ const ABOUT_SLIDES = [
     stageLabel: 'THE EGS EDGE',
     headline: 'WHY CLIENTS CHOOSE EGS',
     copy: 'We bring design, production, and installation together to create branded spaces that are built well, delivered reliably, and made to stand out.',
-    images: [images.phillips2],
+    images: [audGraduation],
     values: [
       { title: 'Craft', text: 'We care about the finish, the details, and the quality people notice up close.' },
       { title: 'Clarity', text: 'We keep the process transparent, from timelines and budgets to production updates.' },
@@ -479,7 +29,7 @@ const ABOUT_SLIDES = [
   },
   {
     id: 'usps',
-    images: [images.fitoutKiosk, images.retailMallActivation],
+    images: [images.philipsMri, shjGraduation],
     pillars: [
       {
         title: 'In-House Fabrication',
@@ -563,7 +113,7 @@ function BgMedia({ client }) {
   return client.cover ? <BgImage src={client.cover.url} /> : null;
 }
 
-// Minimal player: play/pause + seek + sound only — no settings, no download
+// Minimal player: play/pause + seek + sound only â€” no settings, no download
 function GalleryVideo({ src, name }) {
   const videoRef = useRef(null);
   const trackRef = useRef(null);
@@ -573,7 +123,7 @@ function GalleryVideo({ src, name }) {
   const togglePlay = () => {
     const v = videoRef.current;
     if (!v) return;
-    if (v.paused) v.play().catch(() => {});
+    if (v.paused) v.play().catch(() => { });
     else v.pause();
   };
 
@@ -616,7 +166,7 @@ function GalleryVideo({ src, name }) {
           }
         }}
       />
-      <span className="pf-video-center" aria-hidden="true">▶</span>
+      <span className="pf-video-center" aria-hidden="true">â–¶</span>
       <div className="pf-video-ui">
         <button
           type="button"
@@ -624,7 +174,7 @@ function GalleryVideo({ src, name }) {
           onClick={togglePlay}
           aria-label={playing ? `Pause ${name}` : `Play ${name}`}
         >
-          {playing ? '❚❚' : '▶'}
+          {playing ? 'âšâš' : 'â–¶'}
         </button>
         <div className="pf-video-track" onClick={seek} aria-hidden="true">
           <span className="pf-video-track-fill" ref={trackRef} />
@@ -653,9 +203,9 @@ export default function PortfolioFablePage() {
     return Math.min(2, Math.max(0, Math.round(aboutScrollProgress * 2)));
   }, [aboutScrollProgress]);
 
-const getPillNumbers = (activeIdx, total) => {
-  return [0, 1];
-};
+  const getPillNumbers = (activeIdx, total) => {
+    return [0, 1];
+  };
 
   const translateX = useMemo(() => {
     // 3 slide panels, so translate goes from 0vw to 200vw
@@ -750,7 +300,7 @@ const getPillNumbers = (activeIdx, total) => {
           });
         } else if (currentIdx === 2) {
           transitionedInThisGestureRef.current = true;
-          setActiveCat('graduation');
+          setActiveCat('all');
           setAboutScrollProgress(0);
           setAboutScrolled(false);
         }
@@ -825,7 +375,7 @@ const getPillNumbers = (activeIdx, total) => {
       setAboutScrolled(true);
       const isAtBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 10;
       if (isAtBottom && isMobile) {
-        setActiveCat('graduation');
+        setActiveCat('all');
       }
     } else if (e.deltaY < 0) {
       if (el.scrollTop <= 5) {
@@ -850,7 +400,7 @@ const getPillNumbers = (activeIdx, total) => {
       setAboutScrolled(true);
       const isAtBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 10;
       if (isAtBottom && isMobile) {
-        setActiveCat('graduation');
+        setActiveCat('all');
         aboutTouchY.current = null;
       }
     } else if (dy < -10) {
@@ -867,12 +417,7 @@ const getPillNumbers = (activeIdx, total) => {
   };
 
   const clients = useMemo(
-    () =>
-      ALL_CLIENTS.filter(
-        (c) =>
-          (activeCat === 'all' || c.category === activeCat) &&
-          (activeYear === 'all' || c.year === activeYear)
-      ),
+    () => filterClients({ category: activeCat, year: activeYear }),
     [activeCat, activeYear]
   );
 
@@ -1096,12 +641,12 @@ const getPillNumbers = (activeIdx, total) => {
     document.querySelectorAll('.pf-viewer-cell').forEach((cell, i) => {
       const video = cell.querySelector('video');
       if (!video) return;
-      if (i === mediaIdx) video.play().catch(() => {});
+      if (i === mediaIdx) video.play().catch(() => { });
       else video.pause();
     });
   }, [viewerIdx, mediaIdx]);
 
-  // wheel: dominant axis decides — down/up changes project, left/right changes
+  // wheel: dominant axis decides â€” down/up changes project, left/right changes
   // media. Attached natively with passive:false so preventDefault stops the
   // browser back/forward swipe gesture on horizontal scrolls.
   useEffect(() => {
@@ -1153,7 +698,7 @@ const getPillNumbers = (activeIdx, total) => {
         {/* Persistent Centered/Top Logo Wrapper */}
         <div className={`pf-persistent-logo-wrap ${loaderStep} ${activeCat === 'about-us' ? 'is-about' : 'is-projects'}`}>
           <Link to="/" className="pf-persistent-logo-link" aria-label="EGS home">
-            <img src={egsLogo} alt="EGS — Exhibit Graphic Sign" />
+            <img src={egsLogo} alt="EGS â€” Exhibit Graphic Sign" />
           </Link>
           {activeCat !== 'about-us' && loaderStep === 'done' && (
             <button
@@ -1172,7 +717,7 @@ const getPillNumbers = (activeIdx, total) => {
               }}
               aria-label="Go back to About Us"
             >
-              <span className="pf-back-arrow">↑</span> Go back
+              <span className="pf-back-arrow">â†‘</span> Go back
             </button>
           )}
         </div>
@@ -1184,7 +729,7 @@ const getPillNumbers = (activeIdx, total) => {
               <div className={`pf-loader-quote-container ${loaderStep === 'quote-fade-out' ? 'fade-out' : ''}`}>
                 <img src={lightbulbGif} className="pf-loader-gif" alt="Lightbulb animation" />
                 <div className="pf-loader-quote">
-                  “An idea is only as good as its execution.”
+                  â€œAn idea is only as good as its execution.â€
                 </div>
               </div>
             )}
@@ -1277,7 +822,7 @@ const getPillNumbers = (activeIdx, total) => {
                 +971 56 534 8700 (WhatsApp)
               </a>
               <span>Al Qusais, Dubai, UAE</span>
-              <span className="pf-side-copy">© 2026 Exhibit Graphic Sign, Est. 2010</span>
+              <span className="pf-side-copy">Â© 2026 Exhibit Graphic Sign, Est. 2010</span>
             </div>
           </aside>
 
@@ -1321,7 +866,7 @@ const getPillNumbers = (activeIdx, total) => {
                                 <img
                                   src={slide.images[0]}
                                   className="pf-intro-img"
-                                  alt="EGS Exhibition Stand"
+                                  alt="EGS Graduation Ceremony"
                                   loading="eager"
                                 />
                               </div>
@@ -1361,7 +906,7 @@ const getPillNumbers = (activeIdx, total) => {
                                   className="pf-intro-contact-btn"
                                 >
                                   <span>CONTACT</span>
-                                  <span className="pf-contact-arrow-circle">→</span>
+                                  <span className="pf-contact-arrow-circle">â†’</span>
                                 </a>
                               </div>
                             </div>
@@ -1413,13 +958,13 @@ const getPillNumbers = (activeIdx, total) => {
                                 <img
                                   src={slide.images[0]}
                                   className="pf-usps-img img-top"
-                                  alt="EGS Kiosk Build"
+                                  alt="EGS Exhibition Stand (Philips MRI)"
                                   loading="lazy"
                                 />
                                 <img
                                   src={slide.images[1]}
                                   className="pf-usps-img img-bottom"
-                                  alt="EGS Mall Installation"
+                                  alt="EGS Graduation Ceremony (Sharjah)"
                                   loading="lazy"
                                 />
                               </div>
@@ -1427,7 +972,7 @@ const getPillNumbers = (activeIdx, total) => {
                               {/* Keep scrolling hint */}
                               <div className="pf-usps-scroll-hint">
                                 <span>Keep scrolling for projects</span>
-                                <span className="pf-scroll-arrow-down">↓</span>
+                                <span className="pf-scroll-arrow-down">â†“</span>
                               </div>
                             </div>
                           </div>
@@ -1443,7 +988,7 @@ const getPillNumbers = (activeIdx, total) => {
                         <span className="pf-reveal-label">NEXT UP</span>
                         <h3 className="pf-reveal-title">VIEW PROJECTS</h3>
                         <div className="pf-reveal-indicator">
-                          <span className="pf-reveal-arrow-right">→</span>
+                          <span className="pf-reveal-arrow-right">â†’</span>
                         </div>
                       </div>
                     </div>
@@ -1549,7 +1094,7 @@ const getPillNumbers = (activeIdx, total) => {
                 {pad2(mediaIdx + 1)} / {pad2(viewerProject.media.length)}
               </span>
               <button type="button" className="pf-viewer-close" onClick={closeViewer} aria-label="Close gallery">
-                ✕
+                âœ•
               </button>
             </div>
 
@@ -1571,9 +1116,8 @@ const getPillNumbers = (activeIdx, total) => {
             )}
 
             <div
-              className={`pf-viewer-stage ${
-                navDir === 1 ? 'nav-dir-next' : navDir === -1 ? 'nav-dir-prev' : 'nav-dir-none'
-              }`}
+              className={`pf-viewer-stage ${navDir === 1 ? 'nav-dir-next' : navDir === -1 ? 'nav-dir-prev' : 'nav-dir-none'
+                }`}
               key={viewerProject.id}
             >
               <div className="pf-viewer-strip" style={{ transform: `translateX(-${mediaIdx * 100}%)` }}>
@@ -1584,7 +1128,7 @@ const getPillNumbers = (activeIdx, total) => {
                     ) : (
                       <img
                         src={item.url}
-                        alt={`${viewerProject.name} — ${item.name}`}
+                        alt={`${viewerProject.name} â€” ${item.name}`}
                         loading={index < 2 ? 'eager' : 'lazy'}
                       />
                     )}
