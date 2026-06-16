@@ -55,12 +55,43 @@
 }
 
 .pf-bg-layer img,
-.pf-bg-layer video {
+.pf-bg-layer video,
+.pf-bg-landscape {
   width: 100%;
   height: 100%;
   object-fit: cover;
   opacity: 0.28;
   animation: pf-bg-zoom 18s ease-out both;
+}
+
+.pf-bg-portrait-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.pf-bg-portrait-blur {
+  position: absolute;
+  inset: -30px;
+  width: calc(100% + 60px);
+  height: calc(100% + 60px);
+  object-fit: cover;
+  filter: blur(25px);
+  opacity: 0.22;
+  animation: pf-bg-zoom 18s ease-out both;
+}
+
+.pf-bg-portrait-clean {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0.45;
+  z-index: 1;
 }
 
 @keyframes pf-bg-zoom {
@@ -1764,7 +1795,7 @@
 .pf-viewer-cell img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 /* thin, wide media arrows */

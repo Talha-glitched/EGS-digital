@@ -12,6 +12,12 @@ const graduationAssets = import.meta.glob('../assets/Graduation/Websites Gallery
   import: 'default',
 });
 
+// Scan the shortlist gallery
+const shortlistAssets = import.meta.glob('../assets/Existing Website Shortlist/**/*', {
+  eager: true,
+  import: 'default',
+});
+
 const PHOTO_EXTS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'];
 const VIDEO_EXTS = ['mp4', 'mov', 'webm'];
 
@@ -118,7 +124,7 @@ const GRAD_CLIENTS = Object.entries(gradGroups)
     return buildClient({
       id: `grad-${campus}-${year}`,
       name: meta.name,
-      category: 'graduation-ceremonies',
+      category: 'graduation',
       location,
       year,
       items,
@@ -127,46 +133,329 @@ const GRAD_CLIENTS = Object.entries(gradGroups)
   })
   .sort((a, b) => a.name.localeCompare(b.name) || b.year - a.year);
 
-// Indicative entries for the other service categories — names, years, locations,
-// and imagery are placeholders to show the shape of the page, not accurate records.
-const IDEA_CLIENTS = [
-  { id: 'ex-philips', name: 'Philips Stand', category: 'exhibitions-expos-tradeshows', location: 'Riyadh, KSA', year: 2024, urls: [images.phillips2, images.philipsMri, images.philips, images.philipsArab] },
-  { id: 'ex-microlink', name: 'Microlink Stand', category: 'exhibitions-expos-tradeshows', location: 'Dubai, UAE', year: 2023, urls: [images.microlink] },
-  { id: 'ex-hct', name: 'HCT Helsinki', category: 'exhibitions-expos-tradeshows', location: 'Helsinki, Finland', year: 2024, urls: [images.hct] },
-  { id: 're-sadia', name: 'Sadia Brand Display', category: 'retail-branding-displays', location: 'Carrefour, UAE', year: 2023, urls: [images.retailSadiaBusDisplay, images.retailCampaignGraphics] },
-  { id: 're-carrefour', name: 'Carrefour Mall Rollout', category: 'retail-branding-displays', location: 'Dubai, UAE', year: 2023, urls: [images.retailHypermarketDisplay, images.retailMallActivation] },
-  { id: 're-roast', name: 'Roast Coffee Retail', category: 'retail-branding-displays', location: 'Dubai, UAE', year: 2024, urls: [images.retail] },
-  { id: 'fi-velocity', name: 'Velocity Showroom', category: 'showroom-office-branding', location: 'Dubai, UAE', year: 2025, urls: [images.fitoutVelocityInterior, images.activation] },
-  { id: 'fi-uniestate', name: 'Uniestate Office', category: 'showroom-office-branding', location: 'Dubai, UAE', year: 2024, urls: [images.fitoutReceptionArea] },
-  { id: 'fi-bigfm', name: 'BIG FM Office', category: 'showroom-office-branding', location: 'Dubai, UAE', year: 2023, urls: [images.fitoutOfficeGraphics] },
-  { id: 'pr-bigfm', name: 'BIG FM Printing', category: 'large-format-printing', location: 'Dubai, UAE', year: 2023, urls: [images.fitoutOfficeGraphics] },
-  { id: 'ki-galadari', name: 'Galadari Kiosk', category: 'mall-kiosks', location: 'Dubai Mall, UAE', year: 2025, urls: [images.fitoutKiosk] },
-  { id: 'ds-sadia', name: 'Sadia Display Stand', category: 'product-display-stand', location: 'Dubai, UAE', year: 2023, urls: [images.retailSadiaChiller] },
-  { id: 'sg-indoor-outdoor', name: 'EGS Signage Project', category: 'signages-indoor-outdoor', location: 'Dubai, UAE', year: 2024, urls: [images.fitoutInteriorSignage] },
-  { id: 'ev-corporate', name: 'HCT Corporate Event', category: 'corporate-events-branding', location: 'ADNEC, Abu Dhabi', year: 2024, urls: [images.eventProfile, images.graduationWide] },
-].map(({ urls, ...client }) =>
-  buildClient({
-    ...client,
-    items: urls.filter(Boolean).map((url, i) => ({ type: 'photo', url, name: `${client.name} ${i + 1}`, year: client.year })),
-  })
-);
+// Smart project details resolver based on filename and folder
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-// Newest work first; the cyclical list reads year by year
-const ALL_CLIENTS = [...IDEA_CLIENTS, ...GRAD_CLIENTS].sort(
+function getCategorySingular(categoryKey) {
+  const mapping = {
+    'exhibition-stand': 'Exhibition Stand',
+    'corporate-events-branding': 'Corporate Event',
+    'retail-branding-displays': 'Retail Display',
+    'signage-indoor-outdoor': 'Signage Project',
+    'showroom-office-branding': 'Showroom Fitout',
+    'large-format-printing': 'Print Project',
+    'vehicle-branding': 'Vehicle Graphics',
+    'product-display-stands': 'Display Stand',
+    'btl-mall-installation': 'Mall Installation',
+    'btl-supermarket-hypermarket': 'Supermarket Branding',
+    'mall-kiosk': 'Mall Kiosk',
+    'graduation': 'Graduation Ceremony',
+  };
+  return mapping[categoryKey] || 'Project';
+}
+
+function extractDate(filename) {
+  const dateMatch = filename.match(/(201\d|202\d)[-_](\d{2})[-_](\d{2})/);
+  if (dateMatch) {
+    return {
+      year: parseInt(dateMatch[1], 10),
+      month: parseInt(dateMatch[2], 10),
+      day: parseInt(dateMatch[3], 10),
+      monthStr: MONTHS[parseInt(dateMatch[2], 10) - 1],
+      groupKey: `${dateMatch[1]}-${dateMatch[2]}`
+    };
+  }
+  
+  const compactMatch = filename.match(/(201\d|202\d)(\d{2})(\d{2})/);
+  if (compactMatch) {
+    const m = parseInt(compactMatch[2], 10);
+    if (m >= 1 && m <= 12) {
+      return {
+        year: parseInt(compactMatch[1], 10),
+        month: m,
+        day: parseInt(compactMatch[3], 10),
+        monthStr: MONTHS[m - 1],
+        groupKey: `${compactMatch[1]}-${compactMatch[2]}`
+      };
+    }
+  }
+
+  const yearMatch = filename.match(/(201\d|202\d)/);
+  if (yearMatch) {
+    return {
+      year: parseInt(yearMatch[1], 10),
+      month: null,
+      day: null,
+      monthStr: null,
+      groupKey: `${yearMatch[1]}`
+    };
+  }
+
+  return null;
+}
+
+function getProjectDetails(filename, folderName, categoryKey) {
+  const nameLower = filename.toLowerCase();
+  let projectName = '';
+  let location = 'Dubai, UAE';
+  let year = 2024;
+  let facts = null;
+  let groupKey = '';
+
+  if (nameLower.includes('philips') || nameLower.includes('phillips')) {
+    projectName = 'Philips Stand';
+    groupKey = 'philips-stand';
+    if (nameLower.includes('mri')) {
+      projectName = 'Philips MRI Room';
+      groupKey = 'philips-mri';
+    }
+    if (nameLower.includes('arab health')) {
+      projectName = 'Philips Arab Health';
+      location = 'DWTC, Dubai';
+      groupKey = 'philips-arab-health';
+    }
+    if (nameLower.includes('pairs')) {
+      projectName = 'Philips Paris';
+      groupKey = 'philips-paris';
+    }
+    if (nameLower.includes('meydan')) {
+      projectName = 'Philips Meydan Event';
+      location = 'Meydan, Dubai';
+      groupKey = 'philips-meydan';
+    }
+  } else if (nameLower.includes('velocity')) {
+    projectName = 'Velocity Showroom';
+    year = 2025;
+    groupKey = 'velocity-showroom';
+  } else if (nameLower.includes('uniestate') || nameLower.includes('uni estate')) {
+    projectName = 'Uniestate Office';
+    year = 2024;
+    groupKey = 'uniestate-office';
+  } else if (nameLower.includes('big fm') || nameLower.includes('bigfm')) {
+    projectName = 'BIG FM Office';
+    year = 2023;
+    groupKey = 'bigfm-office';
+  } else if (nameLower.includes('coop') || nameLower.includes('co-op')) {
+    projectName = 'Union Coop Supermarket';
+    year = 2016;
+    groupKey = 'union-coop';
+  } else if (nameLower.includes('geant') || nameLower.includes('géant')) {
+    projectName = 'Géant Hypermarket';
+    year = 2016;
+    groupKey = 'geant-hypermarket';
+  } else if (nameLower.includes('carrefour')) {
+    projectName = 'Carrefour Rollout';
+    year = 2023;
+    groupKey = 'carrefour-rollout';
+  } else if (nameLower.includes('sadia')) {
+    projectName = 'Sadia Brand Display';
+    year = 2023;
+    groupKey = 'sadia-display';
+  } else if (nameLower.includes('dunkin')) {
+    projectName = 'Dunkin\' Kiosk';
+    year = 2024;
+    groupKey = 'dunkin-kiosk';
+  } else if (nameLower.includes('bubble tea')) {
+    projectName = 'Bubble Tea Kiosk';
+    year = 2023;
+    groupKey = 'bubble-tea-kiosk';
+  } else if (nameLower.includes('crepe')) {
+    projectName = 'Crepe & Go Kiosk';
+    year = 2023;
+    groupKey = 'crepe-go-kiosk';
+  } else if (nameLower.includes('galadari')) {
+    projectName = 'Galadari Kiosk';
+    year = 2025;
+    location = 'Dubai Mall, UAE';
+    groupKey = 'galadari-kiosk';
+  } else if (nameLower.includes('vitro')) {
+    projectName = 'Vitro Printing';
+    groupKey = 'vitro-printing';
+  } else if (nameLower.includes('emi cool') || nameLower.includes('emicool')) {
+    projectName = 'Emicool Showroom';
+    groupKey = 'emicool-showroom';
+  } else if (nameLower.includes('fosroc')) {
+    projectName = 'Fosroc Stand';
+    groupKey = 'fosroc-stand';
+  } else if (nameLower.includes('buser')) {
+    projectName = 'Buser Stand';
+    groupKey = 'buser-stand';
+  } else if (nameLower.includes('cares')) {
+    projectName = 'Cares Stand';
+    groupKey = 'cares-stand';
+  } else if (nameLower.includes('fakhruddin')) {
+    projectName = 'Fakhruddin Office';
+    groupKey = 'fakhruddin-office';
+  } else if (nameLower.includes('hum yum')) {
+    projectName = 'Hum Yum Dubai Mall';
+    location = 'Dubai Mall, UAE';
+    groupKey = 'hum-yum';
+  } else if (nameLower.includes('van spark')) {
+    projectName = 'Van Spark Branding';
+    groupKey = 'van-spark';
+  } else if (nameLower.includes('hct') || nameLower.includes('helsinki')) {
+    projectName = 'HCT Showcase';
+    groupKey = 'hct-showcase';
+  }
+
+  if (!projectName) {
+    const cleanBase = filename
+      .replace(/\.[^/.]+$/, "") 
+      .replace(/[\d\s\(\)\-\_]+$/, "") 
+      .replace(/^(IMG|DSC|MAC|WhatsApp Image)\b.*/i, "") 
+      .trim();
+
+    const testBase = cleanBase.replace(/copy/i, '').trim();
+    const hasLetters = /[a-zA-Z]/.test(testBase);
+    if (cleanBase && cleanBase.length > 2 && hasLetters) {
+      projectName = cleanBase.split(/[\s\-_]+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+      groupKey = projectName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    }
+  }
+
+  const parsedDate = extractDate(filename);
+  if (parsedDate) {
+    year = parsedDate.year;
+    if (!projectName) {
+      const categorySingular = getCategorySingular(categoryKey);
+      if (parsedDate.monthStr) {
+        projectName = `${categorySingular} - ${parsedDate.monthStr} ${parsedDate.year}`;
+      } else {
+        projectName = `${categorySingular} - ${parsedDate.year}`;
+      }
+      groupKey = `date-${categoryKey}-${parsedDate.groupKey}`;
+    }
+  }
+
+  if (!projectName) {
+    const categorySingular = getCategorySingular(categoryKey);
+    projectName = `${categorySingular} Showcase`;
+    groupKey = `showcase-${categoryKey}-${year}`;
+  }
+
+  return { name: projectName, location, year, facts, groupKey };
+}
+
+const CUSTOM_LABELS = {
+  'graduation': 'Graduation Ceremonies',
+  'exhibition-stand': 'Exhibition Stands',
+  'corporate-events-branding': 'Corporate Events Branding',
+  'retail-branding-displays': 'Retail Branding & Displays',
+  'signage-indoor-outdoor': 'Signage Indoor & Outdoor',
+  'showroom-office-branding': 'Showroom & Office Branding',
+  'large-format-printing': 'Large Format Printing',
+  'vehicle-branding': 'Vehicle Branding',
+  'product-display-stands': 'Product Display Stands',
+  'btl-mall-installation': 'BTL Mall Installations',
+  'btl-supermarket-hypermarket': 'BTL Supermarket & Hypermarket',
+  'mall-kiosk': 'Mall Kiosks',
+};
+
+const categoriesMap = {
+  'graduation': { key: 'graduation', label: CUSTOM_LABELS['graduation'], sortOrder: 0.5 }
+};
+
+const projectGroups = {};
+
+// Parse shortlist assets
+Object.entries(shortlistAssets).forEach(([path, url]) => {
+  if (path.includes('.DS_Store')) return;
+
+  const prefix = '../assets/Existing Website Shortlist/';
+  if (!path.startsWith(prefix)) return;
+  const relPath = path.substring(prefix.length);
+  const parts = relPath.split('/');
+  if (parts.length < 2) return;
+  const folderName = parts[0];
+  const filename = parts[parts.length - 1];
+  const ext = filename.split('.').pop().toLowerCase();
+  
+  const isPhoto = PHOTO_EXTS.includes(ext);
+  const isVideo = VIDEO_EXTS.includes(ext);
+  if (!isPhoto && !isVideo) return;
+  
+  let categoryKey = folderName.toLowerCase().replace(/^\d+/, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  
+  // Map FU-Graduation into graduation category key
+  if (categoryKey === 'fu-graduation') {
+    categoryKey = 'graduation';
+  }
+  
+  const categoryName = CUSTOM_LABELS[categoryKey] || folderName.replace(/^\d+/, '').replace(/-/g, ' ').trim();
+  
+  const sortMatch = folderName.match(/^(\d+)/);
+  const sortOrder = sortMatch ? parseInt(sortMatch[1], 10) : 999;
+  
+  if (!categoriesMap[categoryKey]) {
+    categoriesMap[categoryKey] = {
+      key: categoryKey,
+      label: categoryName,
+      sortOrder,
+    };
+  }
+  
+  let pName = '';
+  let pLoc = 'Dubai, UAE';
+  let pYear = 2024;
+  let pFacts = null;
+  let details;
+  
+  if (folderName === 'FU-Graduation') {
+    pName = 'Fujairah University Graduation';
+    pLoc = 'Fujairah, UAE';
+    pYear = 2026;
+    pFacts = { venue: 'Fujairah University', graduates: 'Class of 2026', guests: '2,500' };
+    details = { groupKey: 'fu-graduation' };
+  } else {
+    details = getProjectDetails(filename, folderName, categoryKey);
+    pName = details.name;
+    pLoc = details.location;
+    pYear = details.year;
+    pFacts = details.facts;
+  }
+  
+  const projectKey = `${categoryKey}|${details.groupKey}`;
+  if (!projectGroups[projectKey]) {
+    projectGroups[projectKey] = {
+      id: `shortlist-${categoryKey}-${details.groupKey}`,
+      name: pName,
+      category: categoryKey,
+      location: pLoc,
+      year: pYear,
+      facts: pFacts,
+      items: []
+    };
+  }
+  
+  projectGroups[projectKey].items.push({
+    type: isVideo ? 'video' : 'photo',
+    url,
+    name: filename,
+    year: pYear
+  });
+});
+
+const SHORTLIST_CLIENTS = Object.values(projectGroups).map(group => buildClient(group));
+
+// Newest work first
+const ALL_CLIENTS = [...SHORTLIST_CLIENTS, ...GRAD_CLIENTS].sort(
   (a, b) => b.year - a.year || a.name.localeCompare(b.name)
 );
 
+const CATEGORY_ORDER = {
+  'graduation': 1,
+  'exhibition-stand': 2,
+  'corporate-events-branding': 3
+};
+
 const CATEGORIES = [
   { key: 'all', label: 'All Services' },
-  { key: 'graduation-ceremonies', label: 'Graduation Ceremonies' },
-  { key: 'exhibitions-expos-tradeshows', label: 'Exhibitions, Expos & Tradeshows' },
-  { key: 'corporate-events-branding', label: 'Corporate Events Branding' },
-  { key: 'retail-branding-displays', label: 'Retail Branding & Displays' },
-  { key: 'large-format-printing', label: 'Large Format Printing' },
-  { key: 'product-display-stand', label: 'Product Display Stand' },
-  { key: 'signages-indoor-outdoor', label: 'Signages Indoor & Outdoor' },
-  { key: 'mall-kiosks', label: 'Mall Kiosks' },
-  { key: 'showroom-office-branding', label: 'Showroom & Office Branding' },
+  ...Object.values(categoriesMap).sort((a, b) => {
+    const orderA = CATEGORY_ORDER[a.key] || 999;
+    const orderB = CATEGORY_ORDER[b.key] || 999;
+    if (orderA !== orderB) return orderA - orderB;
+    return a.sortOrder - b.sortOrder;
+  })
 ];
 
 const YEARS = [...new Set(ALL_CLIENTS.map((c) => c.year))].sort((a, b) => b - a);
@@ -233,6 +522,30 @@ const BOTTOM_NAV_ITEMS = [
   { label: 'CAPABILITIES', slideIdx: 1 }
 ];
 
+function BgImage({ src }) {
+  const [isPortrait, setIsPortrait] = useState(false);
+
+  useEffect(() => {
+    if (!src) return;
+    const img = new window.Image();
+    img.src = src;
+    img.onload = () => {
+      setIsPortrait(img.naturalHeight > img.naturalWidth);
+    };
+  }, [src]);
+
+  if (isPortrait) {
+    return (
+      <div className="pf-bg-portrait-wrap">
+        <img src={src} className="pf-bg-portrait-blur" alt="" />
+        <img src={src} className="pf-bg-portrait-clean" alt="" />
+      </div>
+    );
+  }
+
+  return <img src={src} className="pf-bg-landscape" alt="" />;
+}
+
 function BgMedia({ client }) {
   if (!client) return null;
   if (client.hero?.type === 'video') {
@@ -247,7 +560,7 @@ function BgMedia({ client }) {
       />
     );
   }
-  return client.cover ? <img src={client.cover.url} alt="" /> : null;
+  return client.cover ? <BgImage src={client.cover.url} /> : null;
 }
 
 // Minimal player: play/pause + seek + sound only — no settings, no download
@@ -437,7 +750,7 @@ const getPillNumbers = (activeIdx, total) => {
           });
         } else if (currentIdx === 2) {
           transitionedInThisGestureRef.current = true;
-          setActiveCat('all');
+          setActiveCat('graduation');
           setAboutScrollProgress(0);
           setAboutScrolled(false);
         }
@@ -512,7 +825,7 @@ const getPillNumbers = (activeIdx, total) => {
       setAboutScrolled(true);
       const isAtBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 10;
       if (isAtBottom && isMobile) {
-        setActiveCat('all');
+        setActiveCat('graduation');
       }
     } else if (e.deltaY < 0) {
       if (el.scrollTop <= 5) {
@@ -537,7 +850,7 @@ const getPillNumbers = (activeIdx, total) => {
       setAboutScrolled(true);
       const isAtBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 10;
       if (isAtBottom && isMobile) {
-        setActiveCat('all');
+        setActiveCat('graduation');
         aboutTouchY.current = null;
       }
     } else if (dy < -10) {
@@ -564,12 +877,7 @@ const getPillNumbers = (activeIdx, total) => {
   );
 
   const displayClients = useMemo(() => {
-    if (clients.length === 0) return [];
-    let list = [...clients];
-    while (list.length < 15) {
-      list = [...list, ...clients.map((c, i) => ({ ...c, id: `${c.id}-dup-${list.length}-${i}` }))];
-    }
-    return list;
+    return clients;
   }, [clients]);
 
   clientsRef.current = displayClients;
@@ -610,7 +918,7 @@ const getPillNumbers = (activeIdx, total) => {
     const h = items[0].offsetHeight || 1;
     const ch = list.clientHeight;
     const total = n * h;
-    const cyclic = total >= ch + h * 2;
+    const cyclic = false;
 
     for (let i = 0; i < n; i += 1) {
       const node = items[i];
@@ -648,7 +956,7 @@ const getPillNumbers = (activeIdx, total) => {
         const h = items[0].offsetHeight || 1;
         const ch = list.clientHeight;
         const total = n * h;
-        const cyclic = total >= ch + h * 2;
+        const cyclic = false;
 
         if (!cyclic) {
           eng.target = Math.max(-(n - 1) * h, Math.min(0, eng.target));
@@ -917,7 +1225,7 @@ const getPillNumbers = (activeIdx, total) => {
               <span className="pf-side-label">Services</span>
               <div className="pf-cats">
                 {CATEGORIES.map((cat) => {
-                  const count = ALL_CLIENTS.filter((c) => c.category === cat.key).length;
+                  const count = cat.key === 'all' ? ALL_CLIENTS.length : ALL_CLIENTS.filter((c) => c.category === cat.key).length;
                   return (
                     <button
                       key={cat.key}
