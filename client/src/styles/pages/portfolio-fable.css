@@ -2367,7 +2367,7 @@
 }
 
 .pf-persistent-logo-wrap.done.is-about .pf-persistent-logo-link {
-  width: 140px;
+  /* Keep original size */
 }
 
 /* When done AND in projects/services section: shrink at top middle */
@@ -2381,7 +2381,7 @@
 }
 
 .pf-persistent-logo-wrap.done.is-projects .pf-persistent-logo-link {
-  width: clamp(140px, 18vw, 220px);
+  /* Keep original size */
 }
 
 /* Floating "Go back" button below logo */
@@ -2507,11 +2507,11 @@
   }
 
   .pf-persistent-logo-wrap.is-about .pf-persistent-logo-link {
-    width: 140px;
+    /* Keep original size */
   }
 
   .pf-persistent-logo-wrap.is-projects .pf-persistent-logo-link {
-    width: clamp(110px, 15vw, 150px);
+    /* Keep original size */
   }
 
   .pf-about-section {

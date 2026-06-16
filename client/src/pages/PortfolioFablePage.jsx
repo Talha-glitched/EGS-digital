@@ -113,7 +113,7 @@ function BgMedia({ client }) {
   return client.cover ? <BgImage src={client.cover.url} /> : null;
 }
 
-// Minimal player: play/pause + seek + sound only â€” no settings, no download
+// Minimal player: play/pause + seek + sound only — no settings, no download
 function GalleryVideo({ src, name }) {
   const videoRef = useRef(null);
   const trackRef = useRef(null);
@@ -166,7 +166,7 @@ function GalleryVideo({ src, name }) {
           }
         }}
       />
-      <span className="pf-video-center" aria-hidden="true">â–¶</span>
+      <span className="pf-video-center" aria-hidden="true">▶</span>
       <div className="pf-video-ui">
         <button
           type="button"
@@ -174,7 +174,7 @@ function GalleryVideo({ src, name }) {
           onClick={togglePlay}
           aria-label={playing ? `Pause ${name}` : `Play ${name}`}
         >
-          {playing ? 'âšâš' : 'â–¶'}
+          {playing ? '❚❚' : '▶'}
         </button>
         <div className="pf-video-track" onClick={seek} aria-hidden="true">
           <span className="pf-video-track-fill" ref={trackRef} />
@@ -646,7 +646,7 @@ export default function PortfolioFablePage() {
     });
   }, [viewerIdx, mediaIdx]);
 
-  // wheel: dominant axis decides â€” down/up changes project, left/right changes
+  // wheel: dominant axis decides — down/up changes project, left/right changes
   // media. Attached natively with passive:false so preventDefault stops the
   // browser back/forward swipe gesture on horizontal scrolls.
   useEffect(() => {
@@ -698,7 +698,7 @@ export default function PortfolioFablePage() {
         {/* Persistent Centered/Top Logo Wrapper */}
         <div className={`pf-persistent-logo-wrap ${loaderStep} ${activeCat === 'about-us' ? 'is-about' : 'is-projects'}`}>
           <Link to="/" className="pf-persistent-logo-link" aria-label="EGS home">
-            <img src={egsLogo} alt="EGS â€” Exhibit Graphic Sign" />
+            <img src={egsLogo} alt="EGS — Exhibit Graphic Sign" />
           </Link>
           {activeCat !== 'about-us' && loaderStep === 'done' && (
             <button
@@ -717,7 +717,7 @@ export default function PortfolioFablePage() {
               }}
               aria-label="Go back to About Us"
             >
-              <span className="pf-back-arrow">â†‘</span> Go back
+              <span className="pf-back-arrow">↑</span> Go back
             </button>
           )}
         </div>
@@ -729,7 +729,7 @@ export default function PortfolioFablePage() {
               <div className={`pf-loader-quote-container ${loaderStep === 'quote-fade-out' ? 'fade-out' : ''}`}>
                 <img src={lightbulbGif} className="pf-loader-gif" alt="Lightbulb animation" />
                 <div className="pf-loader-quote">
-                  â€œAn idea is only as good as its execution.â€
+                  “An idea is only as good as its execution.”
                 </div>
               </div>
             )}
@@ -906,7 +906,7 @@ export default function PortfolioFablePage() {
                                   className="pf-intro-contact-btn"
                                 >
                                   <span>CONTACT</span>
-                                  <span className="pf-contact-arrow-circle">â†’</span>
+                                  <span className="pf-contact-arrow-circle">→</span>
                                 </a>
                               </div>
                             </div>
@@ -972,7 +972,7 @@ export default function PortfolioFablePage() {
                               {/* Keep scrolling hint */}
                               <div className="pf-usps-scroll-hint">
                                 <span>Keep scrolling for projects</span>
-                                <span className="pf-scroll-arrow-down">â†“</span>
+                                <span className="pf-scroll-arrow-down">↓</span>
                               </div>
                             </div>
                           </div>
@@ -988,7 +988,7 @@ export default function PortfolioFablePage() {
                         <span className="pf-reveal-label">NEXT UP</span>
                         <h3 className="pf-reveal-title">VIEW PROJECTS</h3>
                         <div className="pf-reveal-indicator">
-                          <span className="pf-reveal-arrow-right">â†’</span>
+                          <span className="pf-reveal-arrow-right">→</span>
                         </div>
                       </div>
                     </div>
@@ -1094,7 +1094,7 @@ export default function PortfolioFablePage() {
                 {pad2(mediaIdx + 1)} / {pad2(viewerProject.media.length)}
               </span>
               <button type="button" className="pf-viewer-close" onClick={closeViewer} aria-label="Close gallery">
-                âœ•
+                ✕
               </button>
             </div>
 
@@ -1128,7 +1128,7 @@ export default function PortfolioFablePage() {
                     ) : (
                       <img
                         src={item.url}
-                        alt={`${viewerProject.name} â€” ${item.name}`}
+                        alt={`${viewerProject.name} — ${item.name}`}
                         loading={index < 2 ? 'eager' : 'lazy'}
                       />
                     )}
