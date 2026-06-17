@@ -178,6 +178,8 @@ export default function PortfolioFablePage() {
   const [loaderStep, setLoaderStep] = useState('blank'); // 'blank', 'logo-fade-in', 'logo-shrink', 'quote-fade-in', 'quote-fade-out', 'overlay-fade-out', 'done'
   const [aboutScrolled, setAboutScrolled] = useState(false);
   const [activeSlideIdx, setActiveSlideIdx] = useState(0);
+  const [lastInteraction, setLastInteraction] = useState('mouse'); // 'mouse' or 'keyboard'
+  const lastMousePos = useRef({ x: 0, y: 0 });
   const aboutRef = useRef(null);
   const lastWheelTime = useRef(0);
 
@@ -288,7 +290,7 @@ export default function PortfolioFablePage() {
     };
   }, [activeCat]);
 
-  // Keyboard navigation: ArrowUp/Right = next slide, ArrowDown/Left = prev slide
+  // Keyboard navigation: ArrowRight = next slide, ArrowLeft = prev slide
   useEffect(() => {
     if (activeCat !== 'about-us') return undefined;
 
@@ -296,7 +298,7 @@ export default function PortfolioFablePage() {
       const now = performance.now();
       if (now - lastWheelTime.current < 450) return;
 
-      if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+      if (e.key === 'ArrowRight') {
         e.preventDefault();
         lastWheelTime.current = now;
         setActiveSlideIdx((prev) => {
@@ -304,7 +306,7 @@ export default function PortfolioFablePage() {
           setActiveCat('all');
           return prev;
         });
-      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+      } else if (e.key === 'ArrowLeft') {
         e.preventDefault();
         lastWheelTime.current = now;
         setActiveSlideIdx((prev) => (prev > 0 ? prev - 1 : prev));
@@ -466,7 +468,7 @@ export default function PortfolioFablePage() {
   clientsRef.current = displayClients;
 
   const activeClient = displayClients.length ? displayClients[Math.min(activeIdx, displayClients.length - 1)] : null;
-  const displayClient = hoverClient || activeClient || ALL_CLIENTS[0];
+  const displayClient = (lastInteraction === 'mouse' ? hoverClient : null) || activeClient || ALL_CLIENTS[0];
 
   // Background: quick fade to black, swap the media, then fade the next job in
   const [bgShown, setBgShown] = useState(ALL_CLIENTS[0]);
@@ -676,11 +678,13 @@ export default function PortfolioFablePage() {
             const nextIdx = Math.min(idx + 1, n - 1);
             engine.current.target = -nextIdx * h;
             engine.current.lastInput = performance.now();
+            setLastInteraction('keyboard');
           } else if (e.key === 'ArrowUp') {
             e.preventDefault();
             const prevIdx = Math.max(idx - 1, 0);
             engine.current.target = -prevIdx * h;
             engine.current.lastInput = performance.now();
+            setLastInteraction('keyboard');
           } else if (e.key === 'Enter') {
             e.preventDefault();
             const activeClient = displayClients[idx];
@@ -701,6 +705,24 @@ export default function PortfolioFablePage() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewerIdx, activeCat, displayClients]);
+
+  // Detect active mouse movement to switch interaction mode to 'mouse'
+  useEffect(() => {
+    if (activeCat === 'about-us') return undefined;
+
+    const handleMouseMove = (e) => {
+      const { clientX, clientY } = e;
+      if (clientX !== lastMousePos.current.x || clientY !== lastMousePos.current.y) {
+        lastMousePos.current = { x: clientX, y: clientY };
+        if (lastInteraction !== 'mouse') {
+          setLastInteraction('mouse');
+        }
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [activeCat, lastInteraction]);
 
   // play only the media currently in frame
   useEffect(() => {
