@@ -211,6 +211,83 @@ export default function PortfolioFablePage() {
     };
   }, []);
 
+  // Preload project media in the background while the user is viewing the slides (about-us active)
+  useEffect(() => {
+    if (activeCat !== 'about-us') return undefined;
+
+    let isCancelled = false;
+    const activeVideoElements = [];
+
+    // Pre-calculate the background assets to preload from the clients list
+    const preloadAssets = ALL_CLIENTS.map((client) => {
+      if (client.hero?.type === 'video' && client.hero.url) {
+        return { id: client.id, type: 'video', url: client.hero.url };
+      } else if (client.cover?.url) {
+        return { id: client.id, type: 'image', url: client.cover.url };
+      }
+      return null;
+    }).filter(Boolean);
+
+    const preloadNext = (index) => {
+      if (index >= preloadAssets.length || isCancelled) return;
+
+      const asset = preloadAssets[index];
+      
+      if (asset.type === 'image') {
+        const img = new window.Image();
+        
+        const handleImageLoad = () => {
+          if (!isCancelled) preloadNext(index + 1);
+        };
+        
+        img.src = asset.url;
+        if (img.complete) {
+          handleImageLoad();
+        } else {
+          img.onload = handleImageLoad;
+          img.onerror = handleImageLoad; // Continue to next even on failure
+        }
+      } else if (asset.type === 'video') {
+        const video = document.createElement('video');
+        video.src = asset.url;
+        video.preload = 'auto';
+        video.muted = true;
+        activeVideoElements.push(video);
+
+        let timeoutId;
+        
+        const handleVideoLoad = () => {
+          clearTimeout(timeoutId);
+          video.removeEventListener('loadeddata', handleVideoLoad);
+          video.removeEventListener('error', handleVideoLoad);
+          if (!isCancelled) preloadNext(index + 1);
+        };
+
+        // Fallback timeout of 2 seconds per video to ensure slow videos do not block the queue
+        timeoutId = setTimeout(handleVideoLoad, 2000);
+
+        video.addEventListener('loadeddata', handleVideoLoad);
+        video.addEventListener('error', handleVideoLoad);
+        video.load();
+      }
+    };
+
+    // Stagger the start slightly so it doesn't compete with the initial page load transitions
+    const startTimeout = setTimeout(() => {
+      preloadNext(0);
+    }, 2000);
+
+    return () => {
+      isCancelled = true;
+      clearTimeout(startTimeout);
+      // Cancel/unload any video preloads currently in progress to free network resources
+      activeVideoElements.forEach((video) => {
+        video.src = '';
+        video.load();
+      });
+    };
+  }, [activeCat]);
+
   // Keyboard navigation: ArrowUp/Right = next slide, ArrowDown/Left = prev slide
   useEffect(() => {
     if (activeCat !== 'about-us') return undefined;
