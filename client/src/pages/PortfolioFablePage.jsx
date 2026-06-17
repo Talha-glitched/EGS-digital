@@ -37,16 +37,8 @@ const ABOUT_SLIDES = [
     images: [fuGraduationSpeaker],
     pillars: [
       {
-        title: 'End-to-End Responsibility',
-        description: 'Design, printing, and fabrication managed directly inside our Dubai production facility, with logistics, installation, and snag closure overseen by a single team.'
-      },
-      {
         title: '14 Years of Experience',
         description: 'We have pressure-tested execution consistently over 14 years as a trusted corporate space supplier and event contractor across the UAE and GCC, adapting structures overnight when timelines are critical.'
-      },
-      {
-        title: 'UAE-Wide & GCC Scale',
-        description: 'Sourcing, transporting, and installing on-site at any major regional venue, delivering consistent quality for multinational market leaders like Philips, Abbott, GSK, and HCT.'
       },
       {
         title: 'Cost-Effective Builds',
@@ -54,6 +46,20 @@ const ABOUT_SLIDES = [
       }
     ]
   }
+];
+
+const GRADUATION_SERVICE_HEADINGS = [
+  'Event Planning & Management',
+  'Venue Branding & Wayfinding',
+  'Registration & Guest Management',
+  'Stage, Seating & Infrastructure',
+  'Audio, Video & Lighting',
+  'LED Screens & Content Management',
+  'Photography, Videography & Live Streaming',
+  'Protocol & VIP Hospitality',
+  'Floral Décor & Event Styling',
+  'Special Effects & Show Elements',
+  'Post-Event Deliverables'
 ];
 
 
@@ -1145,6 +1151,20 @@ export default function PortfolioFablePage() {
                                       <p className="pf-usps-pillar-desc">{pillar.description}</p>
                                     </div>
                                   ))}
+                                </div>
+
+                                <div className="pf-graduation-services">
+                                  <h3 className="pf-graduation-services-title">Summary of Services Offered</h3>
+                                  <div className="pf-graduation-services-grid">
+                                    {GRADUATION_SERVICE_HEADINGS.map((heading, headingIdx) => (
+                                      <span className="pf-graduation-service-heading" key={heading}>
+                                        <span className="pf-graduation-service-num">
+                                          {String(headingIdx + 1).padStart(2, '0')}
+                                        </span>
+                                        {heading}
+                                      </span>
+                                    ))}
+                                  </div>
                                 </div>
                               </div>
 

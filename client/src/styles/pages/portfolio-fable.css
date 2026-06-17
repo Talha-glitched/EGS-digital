@@ -928,13 +928,13 @@
 .pf-usps-left-col {
   position: absolute;
   top: 4%;
-  bottom: 12%;
+  bottom: 10%;
   left: 3vw;
-  width: 58vw;
+  width: 60vw;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: clamp(16px, 3vh, 48px);
+  gap: clamp(14px, 2.2vh, 28px);
 }
 
 .pf-usps-top-left {
@@ -954,11 +954,11 @@
   display: block;
 }
 
-/* USPs grid columns (2-column grid layout for 4 USPs) */
+/* USPs grid columns */
 .pf-usps-columns {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px 32px;
+  gap: 18px 28px;
 }
 
 .pf-usps-pillar {
@@ -996,6 +996,55 @@
   line-height: 1.45;
   color: rgba(255, 255, 255, 0.9);
   margin: 0;
+}
+
+.pf-graduation-services {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.pf-graduation-services-title {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: clamp(12px, 1vw, 14px);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ochre);
+  margin: 0;
+}
+
+.pf-graduation-services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.pf-graduation-service-heading {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(245, 241, 234, 0.12);
+  border-radius: 4px;
+  background: rgba(245, 241, 234, 0.035);
+  padding: 8px 10px;
+  font-family: var(--sans);
+  font-size: clamp(11px, 0.8vw, 13px);
+  font-weight: 700;
+  line-height: 1.18;
+  color: rgba(255, 255, 255, 0.88);
+  box-sizing: border-box;
+}
+
+.pf-graduation-service-num {
+  flex: 0 0 auto;
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ochre);
 }
 
 /* Single graduation image occupying the vertical space */
@@ -1068,7 +1117,8 @@
 /* Staggered entrance animations for USPs slide elements */
 .pf-slide-usps .pf-usps-top-left,
 .pf-slide-usps .pf-usps-columns,
-.pf-slide-usps .pf-usps-media {
+.pf-slide-usps .pf-usps-media,
+.pf-slide-usps .pf-graduation-services {
   opacity: 0;
   transform: translateY(24px);
   transition: opacity 0.85s cubic-bezier(0.25, 1, 0.5, 1),
@@ -1087,10 +1137,16 @@
   transition-delay: 0.22s;
 }
 
-.pf-slide-usps.is-active .pf-usps-media {
+.pf-slide-usps.is-active .pf-graduation-services {
   opacity: 1;
   transform: translateY(0);
   transition-delay: 0.28s;
+}
+
+.pf-slide-usps.is-active .pf-usps-media {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.34s;
 }
 
 
@@ -2063,6 +2119,78 @@
     grid-template-columns: 1fr !important;
     gap: 16px !important;
     margin-top: 16px !important;
+  }
+
+  .pf-slide-usps-container {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+  }
+
+  .pf-usps-left-col {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 18px !important;
+  }
+
+  .pf-slide-usps .pf-usps-top-left,
+  .pf-slide-usps .pf-usps-columns,
+  .pf-slide-usps .pf-graduation-services,
+  .pf-slide-usps .pf-usps-media {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .pf-usps-section-tag {
+    font-size: 12px !important;
+  }
+
+  .pf-usps-columns {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  .pf-usps-pillar-title {
+    font-size: 15px !important;
+  }
+
+  .pf-usps-pillar-desc {
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+  }
+
+  .pf-graduation-services-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .pf-graduation-service-heading {
+    min-height: 38px !important;
+    font-size: 12px !important;
+  }
+
+  .pf-usps-media {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 1.35 !important;
+  }
+
+  .pf-usps-img-single {
+    height: 100% !important;
+  }
+
+  .pf-usps-scroll-hint {
+    display: none !important;
   }
 
   .pf-viewer-head {
