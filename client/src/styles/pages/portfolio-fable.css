@@ -1024,18 +1024,18 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(15, 13, 12, 0.85);
-  border: 1px solid rgba(245, 241, 234, 0.2);
+  background: rgba(20, 18, 17, 0.95);
+  border: 1px solid rgba(245, 241, 234, 0.45);
   border-radius: 999px;
-  padding: 8px 16px;
+  padding: 12px 24px;
   font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-  font-size: 10px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
   letter-spacing: 0.18em;
   color: var(--paper);
   text-transform: uppercase;
   z-index: 101;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   opacity: 0;
@@ -1061,7 +1061,7 @@
 }
 
 .pf-scroll-arrow-right {
-  font-size: 12px;
+  font-size: 15px;
   color: var(--ochre);
 }
 
@@ -2075,16 +2075,16 @@
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: #0a0909;
+  background-color: #0a0909;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: opacity 1s ease-in-out;
+  transition: background-color 1s ease-in-out;
 }
 
 .pf-loader-overlay.fade-out {
-  opacity: 0;
+  background-color: rgba(10, 9, 9, 0);
   pointer-events: none;
 }
 
@@ -2133,6 +2133,7 @@
 /* Logo shrink and quote steps: moves to top middle, stays big */
 .pf-persistent-logo-wrap.logo-shrink,
 .pf-persistent-logo-wrap.quote-fade-in,
+.pf-persistent-logo-wrap.quote-move-down,
 .pf-persistent-logo-wrap.quote-fade-out,
 .pf-persistent-logo-wrap.overlay-fade-out {
   top: clamp(24px, 3vw, 44px) !important;
@@ -2234,6 +2235,28 @@
   opacity: 0;
   filter: blur(12px);
   animation: pf-quote-in 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  transition: top 1.2s cubic-bezier(0.25, 1, 0.5, 1),
+              transform 1.2s cubic-bezier(0.25, 1, 0.5, 1),
+              opacity 0.8s ease,
+              filter 0.8s ease;
+}
+
+.pf-loader-quote-container.quote-in {
+  opacity: 1;
+  filter: blur(0);
+}
+
+.pf-loader-quote-container.move-down {
+  animation: none;
+  top: calc(100% - clamp(115px, 15vh, 135px)) !important;
+  transform: translate(-50%, -100%) !important;
+  opacity: 1 !important;
+  filter: blur(0) !important;
+}
+
+.pf-loader-quote-container.move-down .pf-loader-gif {
+  opacity: 0;
+  transform: scale(0.8);
 }
 
 .pf-loader-quote-container.fade-out {
@@ -2247,6 +2270,7 @@
   display: block;
   filter: invert(1);
   mix-blend-mode: screen;
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 /* Quote style: no local animation, handles text spacing */
@@ -2284,6 +2308,7 @@
 @media (max-width: 860px) {
   .pf-persistent-logo-wrap.logo-shrink,
   .pf-persistent-logo-wrap.quote-fade-in,
+  .pf-persistent-logo-wrap.quote-move-down,
   .pf-persistent-logo-wrap.quote-fade-out,
   .pf-persistent-logo-wrap.overlay-fade-out,
   .pf-persistent-logo-wrap.done {
@@ -2302,5 +2327,115 @@
 
   .pf-about-section {
     padding: clamp(120px, 15vw, 160px) 20px 40px !important;
+  }
+}
+
+/* ---------- Slide 0: Hero Quote slide ---------- */
+.pf-slide-hero {
+  background: #080808 !important;
+}
+
+.pf-slide-hero-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.pf-hero-image-wrap {
+  width: 100%;
+  height: 65vh;
+  margin-top: clamp(90px, 11vh, 120px);
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid rgba(245, 241, 234, 0.08);
+  border-bottom: 1px solid rgba(245, 241, 234, 0.08);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
+}
+
+.pf-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.03);
+  transition: opacity 1.5s cubic-bezier(0.25, 1, 0.5, 1),
+              transform 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.pf-slide-hero.is-active .pf-hero-img {
+  opacity: 0.85;
+  transform: scale(1);
+}
+
+.pf-hero-quote-wrap {
+  position: absolute;
+  bottom: clamp(115px, 15vh, 135px);
+  left: 0;
+  right: 0;
+  z-index: 10;
+  text-align: center;
+  pointer-events: none;
+}
+
+.pf-page:not(.loader-done) .pf-hero-quote-wrap {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+.pf-hero-quote {
+  font-family: var(--serif);
+  font-size: clamp(16px, 2.5vw, 32px);
+  font-style: italic;
+  font-weight: 300;
+  letter-spacing: -0.04em;
+  color: var(--paper);
+  text-align: center;
+  white-space: nowrap;
+  max-width: 90vw;
+  line-height: 1.4;
+  margin: 0 auto;
+}
+
+@media (max-width: 860px) {
+  /* Mobile overrides for Hero slide */
+  .pf-slide-hero-container {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 24px !important;
+    width: 100% !important;
+    position: relative !important;
+  }
+
+  .pf-hero-image-wrap {
+    width: 100% !important;
+    height: 45vh !important;
+    min-height: 280px !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+
+  .pf-hero-img {
+    opacity: 0.85 !important;
+  }
+
+  .pf-hero-quote-wrap {
+    position: static !important;
+    transform: none !important;
+    width: 100% !important;
+    padding: 0 16px !important;
+    box-sizing: border-box !important;
+  }
+
+  .pf-hero-quote {
+    opacity: 1 !important;
+    transform: none !important;
+    font-size: clamp(16px, 4.5vw, 22px) !important;
+    white-space: normal !important;
+    max-width: 100% !important;
   }
 }

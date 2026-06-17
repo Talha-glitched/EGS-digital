@@ -7,12 +7,17 @@ import egsLogo from '../assets/logo/New_Logo/Logo-03.png'; // plain white varian
 import lightbulbGif from '../assets/Icons/lightbulb.gif';
 import audGraduation from '../assets/Graduation/Websites Gallery Graduations/2025/AUD/DSC02388.JPG';
 import fuGraduationSpeaker from '../assets/Existing Website Shortlist/FU-Graduation/DSC08234.jpg.jpeg';
+import cocaColaArenaGraduation from '../assets/Graduation/Websites Gallery Graduations/2024/Dubai-CocaCola Arena/IZM09305.jpg';
 import { ALL_CLIENTS, CATEGORIES, YEARS, filterClients } from '../portfolio/buildIndex.js';
 
 
 const pad2 = (n) => String(n).padStart(2, '0');
 
 const ABOUT_SLIDES = [
+  {
+    id: 'hero',
+    image: cocaColaArenaGraduation
+  },
   {
     id: 'intro',
     stageLabel: 'THE EGS EDGE',
@@ -53,8 +58,9 @@ const ABOUT_SLIDES = [
 
 
 const BOTTOM_NAV_ITEMS = [
-  { label: 'THE EDGE', slideIdx: 0 },
-  { label: 'CAPABILITIES', slideIdx: 1 }
+  { label: 'EXECUTION', slideIdx: 0 },
+  { label: 'THE EDGE', slideIdx: 1 },
+  { label: 'CAPABILITIES', slideIdx: 2 }
 ];
 
 function BgImage({ src }) {
@@ -184,7 +190,7 @@ export default function PortfolioFablePage() {
   const lastWheelTime = useRef(0);
 
   const getPillNumbers = (activeIdx, total) => {
-    return [0, 1];
+    return Array.from({ length: total }, (_, i) => i);
   };
 
   const translateX = useMemo(() => {
@@ -199,9 +205,9 @@ export default function PortfolioFablePage() {
     const t0 = setTimeout(() => setLoaderStep('logo-fade-in'), 500);
     const t1 = setTimeout(() => setLoaderStep('logo-shrink'), 1500);
     const t2 = setTimeout(() => setLoaderStep('quote-fade-in'), 1800);
-    const t3 = setTimeout(() => setLoaderStep('quote-fade-out'), 4000);
-    const t4 = setTimeout(() => setLoaderStep('overlay-fade-out'), 4500);
-    const t5 = setTimeout(() => setLoaderStep('done'), 5000);
+    const t3 = setTimeout(() => setLoaderStep('quote-move-down'), 4000);
+    const t4 = setTimeout(() => setLoaderStep('overlay-fade-out'), 5200);
+    const t5 = setTimeout(() => setLoaderStep('done'), 5800);
 
     return () => {
       clearTimeout(t0);
@@ -302,7 +308,7 @@ export default function PortfolioFablePage() {
         e.preventDefault();
         lastWheelTime.current = now;
         setActiveSlideIdx((prev) => {
-          if (prev < 2) return prev + 1;
+          if (prev < ABOUT_SLIDES.length - 1) return prev + 1;
           setActiveCat('all');
           return prev;
         });
@@ -342,7 +348,7 @@ export default function PortfolioFablePage() {
       if (goForward) {
         lastWheelTime.current = now;
         setActiveSlideIdx((prev) => {
-          if (prev < 2) return prev + 1;
+          if (prev < ABOUT_SLIDES.length - 1) return prev + 1;
           setActiveCat('all');
           return prev;
         });
@@ -387,7 +393,7 @@ export default function PortfolioFablePage() {
             if (dx > 0) {
               lastWheelTime.current = now;
               setActiveSlideIdx((prev) => {
-                if (prev < 2) return prev + 1;
+                if (prev < ABOUT_SLIDES.length - 1) return prev + 1;
                 setActiveCat('all');
                 return prev;
               });
@@ -783,7 +789,7 @@ export default function PortfolioFablePage() {
     <>
       <style>{pageStyles}</style>
 
-      <div className="pf-page">
+      <div className={`pf-page ${loaderStep === 'done' ? 'loader-done' : ''}`}>
         {/* Persistent Centered/Top Logo Wrapper */}
         <div className={`pf-persistent-logo-wrap ${loaderStep} ${activeCat === 'about-us' ? 'is-about' : 'is-projects'}`}>
           <Link to="/" className="pf-persistent-logo-link" aria-label="EGS home">
@@ -808,9 +814,9 @@ export default function PortfolioFablePage() {
 
         {/* Loading Screen Overlay */}
         {loaderStep !== 'done' && (
-          <div className={`pf-loader-overlay ${loaderStep === 'overlay-fade-out' ? 'fade-out' : ''}`}>
-            {(loaderStep === 'quote-fade-in' || loaderStep === 'quote-fade-out') && (
-              <div className={`pf-loader-quote-container ${loaderStep === 'quote-fade-out' ? 'fade-out' : ''}`}>
+          <div className={`pf-loader-overlay ${loaderStep === 'overlay-fade-out' || loaderStep === 'quote-move-down' ? 'fade-out' : ''}`}>
+            {(loaderStep === 'quote-fade-in' || loaderStep === 'quote-move-down' || loaderStep === 'overlay-fade-out') && (
+              <div className={`pf-loader-quote-container ${loaderStep === 'quote-move-down' || loaderStep === 'overlay-fade-out' ? 'move-down' : 'quote-in'}`}>
                 <img src={lightbulbGif} className="pf-loader-gif" alt="Lightbulb animation" />
                 <div className="pf-loader-quote">
                   “An idea is only as good as its execution.”
@@ -967,6 +973,36 @@ export default function PortfolioFablePage() {
                     style={{ transform: `translate3d(-${translateX}vw, 0px, 0px)` }}
                   >
                     {ABOUT_SLIDES.map((slide, idx) => {
+                      if (slide.id === 'hero') {
+                        return (
+                          <div
+                            key={slide.id}
+                            className={`pf-about-slide pf-slide-hero ${idx === activeSlideIdx ? 'is-active' : ''}`}
+                          >
+                            {/* Slide Background Image Layer */}
+                            <div className="pf-slide-bg-image-wrapper">
+                              <img src={slide.image} className="pf-slide-bg-image" alt="" />
+                            </div>
+
+                            <div className="pf-slide-hero-container">
+                              <div className="pf-hero-image-wrap">
+                                <img
+                                  src={slide.image}
+                                  className="pf-hero-img"
+                                  alt="Coca-Cola Arena Graduation"
+                                  loading="eager"
+                                />
+                              </div>
+                              <div className="pf-hero-quote-wrap">
+                                <div className="pf-hero-quote">
+                                  “An idea is only as good as its execution.”
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+
                       if (slide.id === 'intro') {
                         return (
                           <div
@@ -1084,7 +1120,7 @@ export default function PortfolioFablePage() {
 
                               {/* Horizontal scroll hint */}
                               <div className="pf-usps-scroll-hint">
-                                <span>Next for projects</span>
+                                <span>Scroll or Press Right for projects</span>
                                 <span className="pf-scroll-arrow-right">→</span>
                               </div>
                             </div>
