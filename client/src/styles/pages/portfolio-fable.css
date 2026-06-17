@@ -2288,9 +2288,15 @@
 }
 
 @keyframes pf-quote-in {
+  from {
+    opacity: 0;
+    filter: blur(12px);
+    transform: translate(-50%, -50%) scale(0.96);
+  }
   to {
     opacity: 1;
     filter: blur(0);
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 
