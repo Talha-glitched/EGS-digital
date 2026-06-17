@@ -109,7 +109,7 @@ function GalleryVideo({ src, name }) {
   const videoRef = useRef(null);
   const trackRef = useRef(null);
   const [playing, setPlaying] = useState(false);
-  const [muted, setMuted] = useState(true);
+  const [muted, setMuted] = useState(false);
 
   const togglePlay = () => {
     const v = videoRef.current;
@@ -425,6 +425,8 @@ export default function PortfolioFablePage() {
   }, [activeCat]);
 
   const [viewerIdx, setViewerIdx] = useState(null); // project index in the filtered list
+  const [galleryUiVisible, setGalleryUiVisible] = useState(false);
+  const galleryUiTimer = useRef(null);
   const [mediaIdx, setMediaIdx] = useState(0); // media index inside the open project
   const [navDir, setNavDir] = useState(0); // -1 came from below, 1 came from above
   const [hoverClient, setHoverClient] = useState(null);
@@ -730,6 +732,40 @@ export default function PortfolioFablePage() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [activeCat, lastInteraction]);
 
+  // Handle gallery UI visibility fade-out on idle
+  useEffect(() => {
+    if (viewerIdx === null) {
+      setGalleryUiVisible(false);
+      if (galleryUiTimer.current) clearTimeout(galleryUiTimer.current);
+      return;
+    }
+
+    setGalleryUiVisible(true);
+
+    const resetTimer = () => {
+      setGalleryUiVisible(true);
+      if (galleryUiTimer.current) clearTimeout(galleryUiTimer.current);
+      galleryUiTimer.current = setTimeout(() => {
+        setGalleryUiVisible(false);
+      }, 3000);
+    };
+
+    resetTimer();
+
+    const handleActivity = () => {
+      resetTimer();
+    };
+
+    window.addEventListener('mousemove', handleActivity);
+    window.addEventListener('touchstart', handleActivity);
+
+    return () => {
+      window.removeEventListener('mousemove', handleActivity);
+      window.removeEventListener('touchstart', handleActivity);
+      if (galleryUiTimer.current) clearTimeout(galleryUiTimer.current);
+    };
+  }, [viewerIdx]);
+
   // play only the media currently in frame
   useEffect(() => {
     if (viewerIdx === null) return;
@@ -791,7 +827,7 @@ export default function PortfolioFablePage() {
 
       <div className={`pf-page ${loaderStep === 'done' ? 'loader-done' : ''}`}>
         {/* Persistent Centered/Top Logo Wrapper */}
-        <div className={`pf-persistent-logo-wrap ${loaderStep} ${activeCat === 'about-us' ? 'is-about' : 'is-projects'}`}>
+        <div className={`pf-persistent-logo-wrap ${loaderStep} ${activeCat === 'about-us' ? 'is-about' : 'is-projects'} ${viewerProject ? 'is-viewer-open' : ''}`}>
           <Link to="/" className="pf-persistent-logo-link" aria-label="EGS home">
             <img src={egsLogo} alt="EGS — Exhibit Graphic Sign" />
           </Link>
@@ -800,12 +836,16 @@ export default function PortfolioFablePage() {
               type="button"
               className="pf-go-back-btn"
               onClick={() => {
-                setActiveCat('about-us');
-                setHoverClient(null);
-                setAboutScrolled(false);
-                setActiveSlideIdx(0);
+                if (viewerIdx !== null) {
+                  closeViewer();
+                } else {
+                  setActiveCat('about-us');
+                  setHoverClient(null);
+                  setAboutScrolled(false);
+                  setActiveSlideIdx(0);
+                }
               }}
-              aria-label="Go back to About Us"
+              aria-label={viewerIdx !== null ? "Go back to projects list" : "Go back to About Us"}
             >
               <span className="pf-back-arrow">↑</span> Go back
             </button>
@@ -1217,7 +1257,7 @@ export default function PortfolioFablePage() {
         {viewerProject && (
           <div
             ref={viewerRef}
-            className="pf-viewer"
+            className={`pf-viewer ${!galleryUiVisible ? 'ui-hidden' : ''}`}
             role="dialog"
             aria-modal="true"
             aria-label={`${viewerProject.name} gallery`}
@@ -1234,17 +1274,17 @@ export default function PortfolioFablePage() {
               className="pf-viewer-hint-top"
               onClick={() => goProject(-1)}
             >
-              Previous project
+              Scroll up for previous project
             </button>
 
             <div className="pf-viewer-head">
               <div className="pf-viewer-titles">
                 <span className="pf-viewer-title">{viewerProject.name}</span>
                 <span className="pf-viewer-sub">{viewerProject.meta}</span>
+                <span className="pf-viewer-counter">
+                  {pad2(mediaIdx + 1)} / {pad2(viewerProject.media.length)}
+                </span>
               </div>
-              <span className="pf-viewer-counter">
-                {pad2(mediaIdx + 1)} / {pad2(viewerProject.media.length)}
-              </span>
               <button type="button" className="pf-viewer-close" onClick={closeViewer} aria-label="Close gallery">
                 ✕
               </button>
@@ -1297,6 +1337,7 @@ export default function PortfolioFablePage() {
                   onClick={() => stepMedia(-1)}
                   aria-label="Previous media"
                 >
+                  <span className="pf-arrow-label">Prev Photo / Video</span>
                   <svg viewBox="0 0 64 12" aria-hidden="true">
                     <path d="M64 6H2M8 1L2 6l6 5" fill="none" stroke="currentColor" strokeWidth="1" />
                   </svg>
@@ -1307,6 +1348,7 @@ export default function PortfolioFablePage() {
                   onClick={() => stepMedia(1)}
                   aria-label="Next media"
                 >
+                  <span className="pf-arrow-label">Next Photo / Video</span>
                   <svg viewBox="0 0 64 12" aria-hidden="true">
                     <path d="M0 6h62M56 1l6 5-6 5" fill="none" stroke="currentColor" strokeWidth="1" />
                   </svg>
@@ -1315,7 +1357,7 @@ export default function PortfolioFablePage() {
             )}
 
             <button type="button" className="pf-viewer-hint" onClick={() => goProject(1)}>
-              Next project
+              Scroll down for next project
             </button>
           </div>
         )}
