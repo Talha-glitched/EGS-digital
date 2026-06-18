@@ -4,6 +4,66 @@
  */
 export const PROJECT_RULES = [
   {
+    // Rename Corporate event - January 2024 to Philips Arab Health
+    match: ({ filename }) => filename.includes('20240128_081000'),
+    result: {
+      name: 'Philips Arab Health',
+      year: 2024,
+      groupKey: 'philips-arab-health',
+      category: 'corporate-events-branding',
+    },
+  },
+  {
+    // Move the pictures from Philips Stand to Philips Meydan Event
+    match: ({ filename }) => filename.includes('Philips (1)') || filename.includes('Philips (5)'),
+    result: {
+      name: 'Philips Meydan Event',
+      location: 'Meydan, Dubai',
+      groupKey: 'philips-meydan',
+      category: 'corporate-events-branding',
+      year: 2024,
+    },
+  },
+  {
+    // Rename Corporate event January 2023 to Philips KSA Branding,
+    // and move the second image of Corporate event January 2020 (20200129_161955.jpg) to it.
+    match: ({ filename }) =>
+      filename.includes('20230130_000758') ||
+      filename.includes('20230130_002807') ||
+      filename.includes('20230130_002845') ||
+      filename.includes('20200129_161955'),
+    result: {
+      name: 'Philips KSA Branding',
+      year: 2023,
+      groupKey: 'philips-ksa-branding',
+      category: 'corporate-events-branding',
+    },
+  },
+  {
+    // Rename Corporate event January 2020 to Philips Live!,
+    // and move pictures from corporate event 2018 (20180131_084228.jpg and IMG-20180129-WA0107.jpg) to it.
+    match: ({ filename }) =>
+      filename.includes('20200128_033520') ||
+      filename.includes('20180131_084228') ||
+      filename.includes('IMG-20180129-WA0107'),
+    result: {
+      name: 'Philips Live!',
+      year: 2020,
+      groupKey: 'philips-live',
+      category: 'corporate-events-branding',
+    },
+  },
+  {
+    // Rename Corporate Event 2017 to Philips Avent
+    match: ({ filename }) => filename.includes('20171005_022118') || filename.includes('20171005_033230'),
+    result: {
+      name: 'Philips Avent',
+      year: 2017,
+      groupKey: 'philips-avent',
+      category: 'corporate-events-branding',
+    },
+  },
+  {
     match: ({ nameLower }) =>
       (nameLower.includes('philips') || nameLower.includes('phillips')) && nameLower.includes('meydan'),
     result: {
@@ -144,8 +204,16 @@ export const PROJECT_RULES = [
     },
   },
   {
-    match: ({ nameLower }) => nameLower.includes('20170103'),
-    result: { name: 'HCT Faculty Event', year: 2017, groupKey: 'hct-faculty-event' },
+    match: ({ filename }) =>
+      filename.includes('20170103') ||
+      filename.includes('20180422_030925') ||
+      filename.includes('20180508_130641'),
+    result: {
+      name: 'HCT Faculty Event',
+      year: 2017,
+      groupKey: 'hct-faculty-event',
+      category: 'corporate-events-branding',
+    },
   },
   {
     match: ({ nameLower }) => nameLower.includes('20170129') || nameLower.includes('20170131'),

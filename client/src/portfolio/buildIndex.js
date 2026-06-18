@@ -14,9 +14,10 @@ export const YEARS = [...new Set(ALL_CLIENTS.map((c) => c.year))].sort((a, b) =>
 export const sortByMenuOrder = compareByMenuOrder(categoriesMap);
 
 export function filterClients({ category, year }) {
+  const allowedAll = ['graduation', 'exhibition-stand', 'corporate-events-branding'];
   const filtered = ALL_CLIENTS.filter(
     (c) =>
-      (category === 'all' || c.category === category) &&
+      (category === 'all' ? allowedAll.includes(c.category) : c.category === category) &&
       (year === 'all' || c.year === year)
   );
 

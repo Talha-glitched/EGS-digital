@@ -12,6 +12,7 @@ const CAMPUS_META = {
   'ras-al-khaimah': { name: 'HCT Ras Al Khaimah', location: 'HCT RAK Campus, Ras Al Khaimah' },
   sharjah: { name: 'HCT Sharjah', location: 'University City Hall, Sharjah' },
   'rak-aa': { name: 'RAK American Academy', location: 'Ras Al Khaimah' },
+  'hct-graduation': { name: 'HCT Graduation Ceremonies', location: 'Dubai ExpoCity Exhibition Center' },
 };
 
 const GRAD_FACTS = {
@@ -26,6 +27,7 @@ const GRAD_FACTS = {
   'sharjah|2025': { venue: 'University City Hall, Sharjah', graduates: '937 (2 sessions)', guests: '3,000' },
   'sharjah|2024': { venue: 'University City Hall, Sharjah', graduates: '820', guests: '2,500' },
   'rak-aa|2025': { venue: 'RAK American Academy Auditorium', graduates: '60', guests: '1,200' },
+  'hct-graduation|2021': { venue: 'Dubai ExpoCity Exhibition Center', graduates: 'N/A', guests: 'N/A' },
 };
 
 function campusKeyFor(folder) {
@@ -54,7 +56,8 @@ export function buildGradClients() {
     let year;
     let campus;
     if (rel.startsWith('2021 Videos')) {
-      return;
+      year = 2021;
+      campus = 'hct-graduation';
     } else if (rel.startsWith('RAK AA -Pics Vids')) {
       year = 2025;
       campus = 'rak-aa';

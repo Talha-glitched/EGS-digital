@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import pageStyles from '../styles/pages/portfolio-fable.css?raw';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
@@ -6,13 +6,18 @@ import { images } from './siteData.js';
 import egsLogo from '../assets/logo/New_Logo/Logo-03.png'; // plain white variant
 import lightbulbGif from '../assets/Icons/lightbulb.gif';
 import audGraduation from '../assets/Graduation/Websites Gallery Graduations/2025/AUD/DSC02388.JPG';
-import shjGraduation from '../assets/Graduation/SHJ1.jpg';
+import fuGraduationSpeaker from '../assets/Existing Website Shortlist/FU-Graduation/DSC08234.jpg.jpeg';
+import cocaColaArenaGraduation from '../assets/Graduation/Websites Gallery Graduations/2024/Dubai-CocaCola Arena/IZM09305.jpg';
 import { ALL_CLIENTS, CATEGORIES, YEARS, filterClients } from '../portfolio/buildIndex.js';
 
 
 const pad2 = (n) => String(n).padStart(2, '0');
 
 const ABOUT_SLIDES = [
+  {
+    id: 'hero',
+    image: cocaColaArenaGraduation
+  },
   {
     id: 'intro',
     stageLabel: 'THE EGS EDGE',
@@ -23,41 +28,17 @@ const ABOUT_SLIDES = [
       { title: 'Craft', text: 'We care about the finish, the details, and the quality people notice up close.' },
       { title: 'Clarity', text: 'We keep the process transparent, from timelines and budgets to production updates.' },
       { title: 'Reliability', text: 'We respect deadlines because exhibitions, launches, and events do not wait.' },
-      { title: 'Ingenuity', text: 'We find practical, creative ways to bring each brand idea to life.' },
+      { title: 'Creativity', text: 'We find practical, creative ways to bring each brand idea to life.' },
       { title: 'Value', text: 'We focus on impact, durability, and cost-effectiveness without cutting corners.' }
     ]
   },
   {
     id: 'usps',
-    images: [images.philipsMri, shjGraduation],
+    images: [fuGraduationSpeaker],
     pillars: [
       {
-        title: 'In-House Fabrication',
-        description: 'Design, printing, and fabrication managed directly inside our Dubai production facility.'
-      },
-      {
         title: '14 Years of Experience',
-        description: 'Trusted corporate space supplier and event contractor across the UAE and GCC since 2010.'
-      },
-      {
-        title: 'Pressure-Tested Execution',
-        description: 'Sourcing materials and adapting physical structures overnight when timelines are critical.'
-      },
-      {
-        title: 'End-to-End Responsibility',
-        description: 'Design, production, logistics, installation, and snag closure managed by a single team.'
-      },
-      {
-        title: 'Tier-1 Brand Portfolio',
-        description: 'Consistent delivery for multinational market leaders like Philips, Abbott, GSK, and HCT.'
-      },
-      {
-        title: 'UAE-Wide & GCC Scale',
-        description: 'Sourcing, transporting, and installing on-site at any major regional venue.'
-      },
-      {
-        title: 'Bespoke Customization',
-        description: 'Millwork, custom finishes, and configurations tailored precisely to brand guidelines.'
+        description: 'We have pressure-tested execution consistently over 14 years as a trusted corporate space supplier and event contractor across the UAE and GCC, adapting structures overnight when timelines are critical.'
       },
       {
         title: 'Cost-Effective Builds',
@@ -67,9 +48,25 @@ const ABOUT_SLIDES = [
   }
 ];
 
+const GRADUATION_SERVICE_HEADINGS = [
+  'Event Planning & Management',
+  'Venue Branding & Wayfinding',
+  'Registration & Guest Management',
+  'Stage, Seating & Infrastructure',
+  'Audio, Video & Lighting',
+  'LED Screens & Content Management',
+  'Photography, Videography & Live Streaming',
+  'Protocol & VIP Hospitality',
+  'Floral Décor & Event Styling',
+  'Special Effects & Show Elements',
+  'Post-Event Deliverables'
+];
+
+
 const BOTTOM_NAV_ITEMS = [
-  { label: 'THE EDGE', slideIdx: 0 },
-  { label: 'CAPABILITIES', slideIdx: 1 }
+  { label: 'EXECUTION', slideIdx: 0 },
+  { label: 'THE EDGE', slideIdx: 1 },
+  { label: 'CAPABILITIES', slideIdx: 2 }
 ];
 
 function BgImage({ src }) {
@@ -118,7 +115,7 @@ function GalleryVideo({ src, name }) {
   const videoRef = useRef(null);
   const trackRef = useRef(null);
   const [playing, setPlaying] = useState(false);
-  const [muted, setMuted] = useState(true);
+  const [muted, setMuted] = useState(false);
 
   const togglePlay = () => {
     const v = videoRef.current;
@@ -192,45 +189,31 @@ export default function PortfolioFablePage() {
   const [activeYear, setActiveYear] = useState('all');
   const [loaderStep, setLoaderStep] = useState('blank'); // 'blank', 'logo-fade-in', 'logo-shrink', 'quote-fade-in', 'quote-fade-out', 'overlay-fade-out', 'done'
   const [aboutScrolled, setAboutScrolled] = useState(false);
-  const [aboutScrollProgress, setAboutScrollProgress] = useState(0);
+  const [activeSlideIdx, setActiveSlideIdx] = useState(0);
+  const [lastInteraction, setLastInteraction] = useState('mouse'); // 'mouse' or 'keyboard'
+  const lastMousePos = useRef({ x: 0, y: 0 });
   const aboutRef = useRef(null);
   const lastWheelTime = useRef(0);
-  const scrollTimeoutRef = useRef(null);
-  const transitionedInThisGestureRef = useRef(false);
-
-  const activeSlideIdx = useMemo(() => {
-    // 3 stops total (index 0, 1, or 2).
-    return Math.min(2, Math.max(0, Math.round(aboutScrollProgress * 2)));
-  }, [aboutScrollProgress]);
 
   const getPillNumbers = (activeIdx, total) => {
-    return [0, 1];
+    return Array.from({ length: total }, (_, i) => i);
   };
 
   const translateX = useMemo(() => {
-    // 3 slide panels, so translate goes from 0vw to 200vw
-    return aboutScrollProgress * 200;
-  }, [aboutScrollProgress]);
+    return activeSlideIdx * 100;
+  }, [activeSlideIdx]);
 
   const scrollToSlide = (targetIdx) => {
-    const el = aboutRef.current;
-    if (!el) return;
-    const maxScroll = el.scrollHeight - el.clientHeight;
-    if (maxScroll <= 0) return;
-    const targetProgress = targetIdx / 2;
-    el.scrollTo({
-      top: targetProgress * maxScroll,
-      behavior: 'smooth',
-    });
+    setActiveSlideIdx(targetIdx);
   };
 
   useEffect(() => {
     const t0 = setTimeout(() => setLoaderStep('logo-fade-in'), 500);
     const t1 = setTimeout(() => setLoaderStep('logo-shrink'), 1500);
     const t2 = setTimeout(() => setLoaderStep('quote-fade-in'), 1800);
-    const t3 = setTimeout(() => setLoaderStep('quote-fade-out'), 4000);
-    const t4 = setTimeout(() => setLoaderStep('overlay-fade-out'), 4500);
-    const t5 = setTimeout(() => setLoaderStep('done'), 5000);
+    const t3 = setTimeout(() => setLoaderStep('quote-move-down'), 4000);
+    const t4 = setTimeout(() => setLoaderStep('overlay-fade-out'), 5200);
+    const t5 = setTimeout(() => setLoaderStep('done'), 5800);
 
     return () => {
       clearTimeout(t0);
@@ -242,101 +225,240 @@ export default function PortfolioFablePage() {
     };
   }, []);
 
+  // Preload project media in the background while the user is viewing the slides (about-us active)
+  useEffect(() => {
+    if (activeCat !== 'about-us') return undefined;
+
+    let isCancelled = false;
+    const activeVideoElements = [];
+
+    // Pre-calculate the background assets to preload from the clients list
+    const preloadAssets = ALL_CLIENTS.map((client) => {
+      if (client.hero?.type === 'video' && client.hero.url) {
+        return { id: client.id, type: 'video', url: client.hero.url };
+      } else if (client.cover?.url) {
+        return { id: client.id, type: 'image', url: client.cover.url };
+      }
+      return null;
+    }).filter(Boolean);
+
+    const preloadNext = (index) => {
+      if (index >= preloadAssets.length || isCancelled) return;
+
+      const asset = preloadAssets[index];
+      
+      if (asset.type === 'image') {
+        const img = new window.Image();
+        
+        const handleImageLoad = () => {
+          if (!isCancelled) preloadNext(index + 1);
+        };
+        
+        img.src = asset.url;
+        if (img.complete) {
+          handleImageLoad();
+        } else {
+          img.onload = handleImageLoad;
+          img.onerror = handleImageLoad; // Continue to next even on failure
+        }
+      } else if (asset.type === 'video') {
+        const video = document.createElement('video');
+        video.src = asset.url;
+        video.preload = 'auto';
+        video.muted = true;
+        activeVideoElements.push(video);
+
+        let timeoutId;
+        
+        const handleVideoLoad = () => {
+          clearTimeout(timeoutId);
+          video.removeEventListener('loadeddata', handleVideoLoad);
+          video.removeEventListener('error', handleVideoLoad);
+          if (!isCancelled) preloadNext(index + 1);
+        };
+
+        // Fallback timeout of 2 seconds per video to ensure slow videos do not block the queue
+        timeoutId = setTimeout(handleVideoLoad, 2000);
+
+        video.addEventListener('loadeddata', handleVideoLoad);
+        video.addEventListener('error', handleVideoLoad);
+        video.load();
+      }
+    };
+
+    // Stagger the start slightly so it doesn't compete with the initial page load transitions
+    const startTimeout = setTimeout(() => {
+      preloadNext(0);
+    }, 2000);
+
+    return () => {
+      isCancelled = true;
+      clearTimeout(startTimeout);
+      // Cancel/unload any video preloads currently in progress to free network resources
+      activeVideoElements.forEach((video) => {
+        video.src = '';
+        video.load();
+      });
+    };
+  }, [activeCat]);
+
+  // Keyboard navigation: ArrowRight = next slide, ArrowLeft = prev slide
+  useEffect(() => {
+    if (activeCat !== 'about-us') return undefined;
+
+    const onKey = (e) => {
+      const now = performance.now();
+      if (now - lastWheelTime.current < 450) return;
+
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        lastWheelTime.current = now;
+        setActiveSlideIdx((prev) => {
+          if (prev < ABOUT_SLIDES.length - 1) return prev + 1;
+          setActiveCat('all');
+          return prev;
+        });
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        lastWheelTime.current = now;
+        setActiveSlideIdx((prev) => (prev > 0 ? prev - 1 : prev));
+      }
+    };
+
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [activeCat]);
+
+  // Mouse wheel slide switching
   useEffect(() => {
     const el = aboutRef.current;
     if (!el || activeCat !== 'about-us') return undefined;
 
     const handleWheel = (e) => {
-      const isMobile = window.innerWidth <= 860;
-      if (isMobile) return; // let native scroll handle it on mobile
-
       e.preventDefault();
 
-      // Clear the timeout for resetting gesture state
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
+      const now = performance.now();
+      if (now - lastWheelTime.current < 450) return;
 
-      // Debounce: when scroll wheel activity stops for 250ms, reset the gesture lock
-      scrollTimeoutRef.current = setTimeout(() => {
-        transitionedInThisGestureRef.current = false;
-        scrollTimeoutRef.current = null;
-      }, 250);
+      const dx = e.deltaX;
+      const dy = e.deltaY;
+      const absX = Math.abs(dx);
+      const absY = Math.abs(dy);
+      const threshold = 15;
 
-      // If we already transitioned in this continuous gesture/swipe, ignore further input
-      if (transitionedInThisGestureRef.current) {
-        return;
-      }
+      if (Math.max(absX, absY) < threshold) return;
 
-      const maxScroll = el.scrollHeight - el.clientHeight;
-      if (maxScroll <= 0) return;
+      const goForward = dx > 0 || (absY > absX && dy > 0);
+      const goBackward = dx < 0 || (absY > absX && dy < 0);
 
-      const currentScroll = el.scrollTop;
-      const slide1Scroll = 0.5 * maxScroll;
-      const slide2Scroll = maxScroll;
-
-      // Identify current slide index
-      let currentIdx = 0;
-      if (currentScroll > (slide1Scroll + slide2Scroll) / 2) {
-        currentIdx = 2;
-      } else if (currentScroll > slide1Scroll / 2) {
-        currentIdx = 1;
-      }
-
-      if (e.deltaY > 0) {
-        // Scrolling down
-        if (currentIdx === 0) {
-          transitionedInThisGestureRef.current = true;
-          setAboutScrolled(true);
-          el.scrollTo({
-            top: slide1Scroll,
-            behavior: 'smooth',
-          });
-        } else if (currentIdx === 1) {
-          transitionedInThisGestureRef.current = true;
-          el.scrollTo({
-            top: slide2Scroll,
-            behavior: 'smooth',
-          });
-        } else if (currentIdx === 2) {
-          transitionedInThisGestureRef.current = true;
+      if (goForward) {
+        lastWheelTime.current = now;
+        setActiveSlideIdx((prev) => {
+          if (prev < ABOUT_SLIDES.length - 1) return prev + 1;
           setActiveCat('all');
-          setAboutScrollProgress(0);
-          setAboutScrolled(false);
-        }
-      } else if (e.deltaY < 0) {
-        // Scrolling up
-        if (currentIdx === 2) {
-          transitionedInThisGestureRef.current = true;
-          el.scrollTo({
-            top: slide1Scroll,
-            behavior: 'smooth',
-          });
-        } else if (currentIdx === 1) {
-          transitionedInThisGestureRef.current = true;
-          setAboutScrolled(false);
-          el.scrollTo({
-            top: 0,
-            behavior: 'smooth',
-          });
-        }
+          return prev;
+        });
+      } else if (goBackward) {
+        lastWheelTime.current = now;
+        setActiveSlideIdx((prev) => (prev > 0 ? prev - 1 : prev));
       }
     };
 
     el.addEventListener('wheel', handleWheel, { passive: false });
-    return () => {
-      el.removeEventListener('wheel', handleWheel);
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
+    return () => el.removeEventListener('wheel', handleWheel);
+  }, [activeCat]);
+
+  // Mobile touch swipe slide switching
+  useEffect(() => {
+    const el = aboutRef.current;
+    if (!el || activeCat !== 'about-us') return undefined;
+
+    let touchStartX = null;
+    let touchStartY = null;
+
+    const onTouchStart = (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const onTouchMove = (e) => {
+      if (touchStartX === null || touchStartY === null) return;
+      const dx = touchStartX - e.touches[0].clientX;
+      const dy = touchStartY - e.touches[0].clientY;
+      const absX = Math.abs(dx);
+      const absY = Math.abs(dy);
+
+      if (absX > absY && absX > 10) {
+        e.preventDefault();
       }
+
+      if (Math.max(absX, absY) > 40) {
+        const now = performance.now();
+        if (now - lastWheelTime.current > 450) {
+          if (absX > absY) {
+            if (dx > 0) {
+              lastWheelTime.current = now;
+              setActiveSlideIdx((prev) => {
+                if (prev < ABOUT_SLIDES.length - 1) return prev + 1;
+                setActiveCat('all');
+                return prev;
+              });
+            } else {
+              lastWheelTime.current = now;
+              setActiveSlideIdx((prev) => (prev > 0 ? prev - 1 : prev));
+            }
+          }
+        }
+        touchStartX = null;
+        touchStartY = null;
+      }
+    };
+
+    const onTouchEnd = () => {
+      touchStartX = null;
+      touchStartY = null;
+    };
+
+    el.addEventListener('touchstart', onTouchStart, { passive: true });
+    el.addEventListener('touchmove', onTouchMove, { passive: false });
+    el.addEventListener('touchend', onTouchEnd, { passive: true });
+
+    return () => {
+      el.removeEventListener('touchstart', onTouchStart);
+      el.removeEventListener('touchmove', onTouchMove);
+      el.removeEventListener('touchend', onTouchEnd);
     };
   }, [activeCat]);
 
   const [viewerIdx, setViewerIdx] = useState(null); // project index in the filtered list
+  const [galleryUiVisible, setGalleryUiVisible] = useState(false);
+  const galleryUiTimer = useRef(null);
   const [mediaIdx, setMediaIdx] = useState(0); // media index inside the open project
   const [navDir, setNavDir] = useState(0); // -1 came from below, 1 came from above
   const [hoverClient, setHoverClient] = useState(null);
   const [activeIdx, setActiveIdx] = useState(0);
+  const [islandOffset, setIslandOffset] = useState({ x: 0, y: 0 });
+  const [moreServicesOpen, setMoreServicesOpen] = useState(false);
+
+  useEffect(() => {
+    const isSecondary = !['about-us', 'all', 'graduation', 'exhibition-stand', 'corporate-events-branding'].includes(activeCat);
+    if (isSecondary) {
+      setMoreServicesOpen(true);
+    }
+  }, [activeCat]);
+
+  const handleIslandMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    const shiftX = (x / (rect.width / 2)) * 25;
+    const shiftY = (y / (rect.height / 2)) * 25;
+    setIslandOffset({ x: shiftX, y: shiftY });
+  };
+
+  const handleIslandMouseLeave = () => {
+    setIslandOffset({ x: 0, y: 0 });
+  };
 
   const viewerRef = useRef(null);
   const listRef = useRef(null);
@@ -346,75 +468,7 @@ export default function PortfolioFablePage() {
   const engine = useRef({ offset: 0, target: 0, lastInput: 0 });
   const wheelGate = useRef(0);
   const touchStart = useRef(null);
-  const aboutTouchY = useRef(null);
 
-  const handleAboutScroll = (e, isLayout) => {
-    const isMobile = window.innerWidth <= 860;
-    if (isLayout !== isMobile) return;
-    const el = e.currentTarget;
-    const maxScroll = el.scrollHeight - el.clientHeight;
-    const progress = maxScroll > 0 ? el.scrollTop / maxScroll : 0;
-    setAboutScrollProgress(progress);
-
-    if (el.scrollTop > 20) {
-      setAboutScrolled(true);
-    } else {
-      setAboutScrolled(false);
-    }
-
-    // Auto-transition to projects listing when scrolled past the buffer on desktop
-    // Disabled on desktop to allow explicit step navigation to slide 3.
-
-  };
-
-  const handleAboutWheel = (e, isLayout) => {
-    const isMobile = window.innerWidth <= 860;
-    if (isLayout !== isMobile) return;
-    const el = e.currentTarget;
-    if (e.deltaY > 0) {
-      setAboutScrolled(true);
-      const isAtBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 10;
-      if (isAtBottom && isMobile) {
-        setActiveCat('all');
-      }
-    } else if (e.deltaY < 0) {
-      if (el.scrollTop <= 5) {
-        setAboutScrolled(false);
-      }
-    }
-  };
-
-  const handleAboutTouchStart = (e, isLayout) => {
-    const isMobile = window.innerWidth <= 860;
-    if (isLayout !== isMobile) return;
-    aboutTouchY.current = e.touches[0].clientY;
-  };
-
-  const handleAboutTouchMove = (e, isLayout) => {
-    const isMobile = window.innerWidth <= 860;
-    if (isLayout !== isMobile) return;
-    if (aboutTouchY.current === null) return;
-    const dy = aboutTouchY.current - e.touches[0].clientY;
-    const el = e.currentTarget;
-    if (dy > 10) {
-      setAboutScrolled(true);
-      const isAtBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 10;
-      if (isAtBottom && isMobile) {
-        setActiveCat('all');
-        aboutTouchY.current = null;
-      }
-    } else if (dy < -10) {
-      if (el.scrollTop <= 5) {
-        setAboutScrolled(false);
-      }
-    }
-  };
-
-  const handleAboutTouchEnd = (e, isLayout) => {
-    const isMobile = window.innerWidth <= 860;
-    if (isLayout !== isMobile) return;
-    aboutTouchY.current = null;
-  };
 
   const clients = useMemo(
     () => filterClients({ category: activeCat, year: activeYear }),
@@ -428,7 +482,7 @@ export default function PortfolioFablePage() {
   clientsRef.current = displayClients;
 
   const activeClient = displayClients.length ? displayClients[Math.min(activeIdx, displayClients.length - 1)] : null;
-  const displayClient = hoverClient || activeClient || ALL_CLIENTS[0];
+  const displayClient = (lastInteraction === 'mouse' ? hoverClient : null) || activeClient || ALL_CLIENTS[0];
 
   // Background: quick fade to black, swap the media, then fade the next job in
   const [bgShown, setBgShown] = useState(ALL_CLIENTS[0]);
@@ -604,36 +658,119 @@ export default function PortfolioFablePage() {
     setMediaIdx((m) => (m + dir + len) % len);
   };
 
-  // keyboard: left/right = media, up/down = project, esc = close
+  // keyboard: left/right = media, up/down = project, esc = close (when viewer open)
+  // keyboard: up/down = scroll list, enter = open project (when viewer closed & list open)
   useEffect(() => {
-    if (viewerIdx === null) return undefined;
     const onKey = (e) => {
-      if (e.key === 'Escape') {
-        setViewerIdx(null);
-        return;
-      }
-      if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        stepMedia(1);
-      } else if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        stepMedia(-1);
-      } else if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        goProject(1);
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        goProject(-1);
+      if (viewerIdx !== null) {
+        if (e.key === 'Escape') {
+          setViewerIdx(null);
+          return;
+        }
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          stepMedia(1);
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          stepMedia(-1);
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          goProject(1);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          goProject(-1);
+        }
+      } else if (activeCat !== 'about-us') {
+        const n = displayClients.length;
+        if (n > 0) {
+          const items = itemRefs.current;
+          const h = items[0]?.offsetHeight || 40;
+          const idx = activeIdxRef.current;
+
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            const nextIdx = Math.min(idx + 1, n - 1);
+            engine.current.target = -nextIdx * h;
+            engine.current.lastInput = performance.now();
+            setLastInteraction('keyboard');
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            const prevIdx = Math.max(idx - 1, 0);
+            engine.current.target = -prevIdx * h;
+            engine.current.lastInput = performance.now();
+            setLastInteraction('keyboard');
+          } else if (e.key === 'Enter') {
+            e.preventDefault();
+            const activeClient = displayClients[idx];
+            if (activeClient) {
+              openViewer(activeClient);
+            }
+          }
+        }
       }
     };
     window.addEventListener('keydown', onKey);
-    document.body.style.overflow = 'hidden';
+    if (viewerIdx !== null) {
+      document.body.style.overflow = 'hidden';
+    }
     return () => {
       window.removeEventListener('keydown', onKey);
       document.body.style.overflow = '';
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [viewerIdx, clients]);
+  }, [viewerIdx, activeCat, displayClients]);
+
+  // Detect active mouse movement to switch interaction mode to 'mouse'
+  useEffect(() => {
+    if (activeCat === 'about-us') return undefined;
+
+    const handleMouseMove = (e) => {
+      const { clientX, clientY } = e;
+      if (clientX !== lastMousePos.current.x || clientY !== lastMousePos.current.y) {
+        lastMousePos.current = { x: clientX, y: clientY };
+        if (lastInteraction !== 'mouse') {
+          setLastInteraction('mouse');
+        }
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [activeCat, lastInteraction]);
+
+  // Handle gallery UI visibility fade-out on idle
+  useEffect(() => {
+    if (viewerIdx === null) {
+      setGalleryUiVisible(false);
+      if (galleryUiTimer.current) clearTimeout(galleryUiTimer.current);
+      return;
+    }
+
+    setGalleryUiVisible(true);
+
+    const resetTimer = () => {
+      setGalleryUiVisible(true);
+      if (galleryUiTimer.current) clearTimeout(galleryUiTimer.current);
+      galleryUiTimer.current = setTimeout(() => {
+        setGalleryUiVisible(false);
+      }, 3000);
+    };
+
+    resetTimer();
+
+    const handleActivity = () => {
+      resetTimer();
+    };
+
+    window.addEventListener('mousemove', handleActivity);
+    window.addEventListener('touchstart', handleActivity);
+
+    return () => {
+      window.removeEventListener('mousemove', handleActivity);
+      window.removeEventListener('touchstart', handleActivity);
+      if (galleryUiTimer.current) clearTimeout(galleryUiTimer.current);
+    };
+  }, [viewerIdx]);
 
   // play only the media currently in frame
   useEffect(() => {
@@ -694,9 +831,9 @@ export default function PortfolioFablePage() {
     <>
       <style>{pageStyles}</style>
 
-      <div className="pf-page">
+      <div className={`pf-page ${loaderStep === 'done' ? 'loader-done' : ''}`}>
         {/* Persistent Centered/Top Logo Wrapper */}
-        <div className={`pf-persistent-logo-wrap ${loaderStep} ${activeCat === 'about-us' ? 'is-about' : 'is-projects'}`}>
+        <div className={`pf-persistent-logo-wrap ${loaderStep} ${activeCat === 'about-us' ? 'is-about' : 'is-projects'} ${viewerProject ? 'is-viewer-open' : ''}`}>
           <Link to="/" className="pf-persistent-logo-link" aria-label="EGS home">
             <img src={egsLogo} alt="EGS — Exhibit Graphic Sign" />
           </Link>
@@ -705,17 +842,16 @@ export default function PortfolioFablePage() {
               type="button"
               className="pf-go-back-btn"
               onClick={() => {
-                setActiveCat('about-us');
-                setHoverClient(null);
-                setAboutScrolled(false);
-                setAboutScrollProgress(0);
-                setTimeout(() => {
-                  if (aboutRef.current) {
-                    aboutRef.current.scrollTop = 0;
-                  }
-                }, 50);
+                if (viewerIdx !== null) {
+                  closeViewer();
+                } else {
+                  setActiveCat('about-us');
+                  setHoverClient(null);
+                  setAboutScrolled(false);
+                  setActiveSlideIdx(0);
+                }
               }}
-              aria-label="Go back to About Us"
+              aria-label={viewerIdx !== null ? "Go back to projects list" : "Go back to About Us"}
             >
               <span className="pf-back-arrow">↑</span> Go back
             </button>
@@ -724,9 +860,9 @@ export default function PortfolioFablePage() {
 
         {/* Loading Screen Overlay */}
         {loaderStep !== 'done' && (
-          <div className={`pf-loader-overlay ${loaderStep === 'overlay-fade-out' ? 'fade-out' : ''}`}>
-            {(loaderStep === 'quote-fade-in' || loaderStep === 'quote-fade-out') && (
-              <div className={`pf-loader-quote-container ${loaderStep === 'quote-fade-out' ? 'fade-out' : ''}`}>
+          <div className={`pf-loader-overlay ${loaderStep === 'overlay-fade-out' || loaderStep === 'quote-move-down' ? 'fade-out' : ''}`}>
+            {(loaderStep === 'quote-fade-in' || loaderStep === 'quote-move-down' || loaderStep === 'overlay-fade-out') && (
+              <div className={`pf-loader-quote-container ${loaderStep === 'quote-move-down' || loaderStep === 'overlay-fade-out' ? 'move-down' : 'quote-in'}`}>
                 <img src={lightbulbGif} className="pf-loader-gif" alt="Lightbulb animation" />
                 <div className="pf-loader-quote">
                   “An idea is only as good as its execution.”
@@ -743,14 +879,7 @@ export default function PortfolioFablePage() {
           </div>
         </div>
 
-        <div
-          className={`pf-layout ${activeCat === 'about-us' ? 'about-mode' : ''}`}
-          onScroll={(e) => handleAboutScroll(e, true)}
-          onWheel={(e) => handleAboutWheel(e, true)}
-          onTouchStart={(e) => handleAboutTouchStart(e, true)}
-          onTouchMove={(e) => handleAboutTouchMove(e, true)}
-          onTouchEnd={(e) => handleAboutTouchEnd(e, true)}
-        >
+        <div className={`pf-layout ${activeCat === 'about-us' ? 'about-mode' : ''}`}>
           <aside className={`pf-nav-col ${activeCat === 'about-us' ? 'is-hidden' : ''}`}>
 
             <div className="pf-nav-section">
@@ -769,23 +898,77 @@ export default function PortfolioFablePage() {
             <nav aria-label="Service categories" className="pf-nav-section">
               <span className="pf-side-label">Services</span>
               <div className="pf-cats">
-                {CATEGORIES.map((cat) => {
-                  const count = cat.key === 'all' ? ALL_CLIENTS.length : ALL_CLIENTS.filter((c) => c.category === cat.key).length;
+                {(() => {
+                  const primaryKeys = ['all', 'graduation', 'exhibition-stand', 'corporate-events-branding'];
+                  const primaryCats = CATEGORIES.filter((cat) => primaryKeys.includes(cat.key));
+                  const secondaryCats = CATEGORIES.filter((cat) => !primaryKeys.includes(cat.key));
+                  const allowedAll = ['graduation', 'exhibition-stand', 'corporate-events-branding'];
+                  const getCatCount = (catKey) => {
+                    if (catKey === 'all') {
+                      return ALL_CLIENTS.filter((c) => allowedAll.includes(c.category)).length;
+                    }
+                    return ALL_CLIENTS.filter((c) => c.category === catKey).length;
+                  };
+
                   return (
-                    <button
-                      key={cat.key}
-                      type="button"
-                      className={`pf-cat ${activeCat === cat.key ? 'active' : ''}`}
-                      onClick={() => {
-                        setActiveCat(cat.key);
-                        setActiveYear('all');
-                      }}
-                    >
-                      {cat.label}
-                      <span className="pf-cat-count">{count}</span>
-                    </button>
+                    <>
+                      {primaryCats.map((cat) => {
+                        const count = getCatCount(cat.key);
+                        return (
+                          <button
+                            key={cat.key}
+                            type="button"
+                            className={`pf-cat ${activeCat === cat.key ? 'active' : ''}`}
+                            onClick={() => {
+                              setActiveCat(cat.key);
+                              setActiveYear('all');
+                            }}
+                          >
+                            {cat.label}
+                            <span className="pf-cat-count">{count}</span>
+                          </button>
+                        );
+                      })}
+
+                      {secondaryCats.length > 0 && (
+                        <>
+                          <button
+                            type="button"
+                            className="pf-more-services-toggle"
+                            onClick={() => setMoreServicesOpen((prev) => !prev)}
+                            aria-expanded={moreServicesOpen}
+                          >
+                            More Services
+                            <span className={`pf-more-services-icon ${moreServicesOpen ? 'is-open' : ''}`}>▼</span>
+                          </button>
+                          <div className={`pf-more-cats-container ${moreServicesOpen ? 'is-open' : ''}`}>
+                            <div style={{ minHeight: '0' }}>
+                              <div className="pf-more-cats-inner">
+                                {secondaryCats.map((cat) => {
+                                  const count = getCatCount(cat.key);
+                                  return (
+                                    <button
+                                      key={cat.key}
+                                      type="button"
+                                      className={`pf-cat ${activeCat === cat.key ? 'active' : ''}`}
+                                      onClick={() => {
+                                        setActiveCat(cat.key);
+                                        setActiveYear('all');
+                                      }}
+                                    >
+                                      {cat.label}
+                                      <span className="pf-cat-count">{count}</span>
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </>
                   );
-                })}
+                })()}
               </div>
             </nav>
 
@@ -818,11 +1001,9 @@ export default function PortfolioFablePage() {
               <span className="pf-side-label">Contact</span>
               <a href="mailto:info@exhibitgraphicsign.com">info@exhibitgraphicsign.com</a>
               <a href="tel:+97142383278">+971 4 238 3278</a>
-              <a href="https://wa.me/971565348700" target="_blank" rel="noopener noreferrer">
-                +971 56 534 8700 (WhatsApp)
-              </a>
+              <a href="tel:+971524587992">+971 52 458 7992</a>
               <span>Al Qusais, Dubai, UAE</span>
-              <span className="pf-side-copy">Â© 2026 Exhibit Graphic Sign, Est. 2010</span>
+              <span className="pf-side-copy">© 2026 Exhibit Graphic Sign, Est. 2010</span>
             </div>
           </aside>
 
@@ -830,11 +1011,6 @@ export default function PortfolioFablePage() {
             <section
               ref={aboutRef}
               className="pf-about-section"
-              onScroll={(e) => handleAboutScroll(e, false)}
-              onWheel={(e) => handleAboutWheel(e, false)}
-              onTouchStart={(e) => handleAboutTouchStart(e, false)}
-              onTouchMove={(e) => handleAboutTouchMove(e, false)}
-              onTouchEnd={(e) => handleAboutTouchEnd(e, false)}
             >
               <div className="pf-about-viewport-scroll">
                 <div className="pf-horizontal-scroll-sticky">
@@ -843,6 +1019,36 @@ export default function PortfolioFablePage() {
                     style={{ transform: `translate3d(-${translateX}vw, 0px, 0px)` }}
                   >
                     {ABOUT_SLIDES.map((slide, idx) => {
+                      if (slide.id === 'hero') {
+                        return (
+                          <div
+                            key={slide.id}
+                            className={`pf-about-slide pf-slide-hero ${idx === activeSlideIdx ? 'is-active' : ''}`}
+                          >
+                            {/* Slide Background Image Layer */}
+                            <div className="pf-slide-bg-image-wrapper">
+                              <img src={slide.image} className="pf-slide-bg-image" alt="" />
+                            </div>
+
+                            <div className="pf-slide-hero-container">
+                              <div className="pf-hero-image-wrap">
+                                <img
+                                  src={slide.image}
+                                  className="pf-hero-img"
+                                  alt="Coca-Cola Arena Graduation"
+                                  loading="eager"
+                                />
+                              </div>
+                              <div className="pf-hero-quote-wrap">
+                                <div className="pf-hero-quote">
+                                  “An idea is only as good as its execution.”
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+
                       if (slide.id === 'intro') {
                         return (
                           <div
@@ -857,7 +1063,6 @@ export default function PortfolioFablePage() {
                             <div className="pf-slide-intro-container">
                               {/* Top Left Title Group */}
                               <div className="pf-intro-top-left">
-                                <span className="pf-slide-stage">DISCOVER</span>
                                 <h2 className="pf-slide-headline">THE WAY<br />WE WORK</h2>
                               </div>
 
@@ -871,21 +1076,6 @@ export default function PortfolioFablePage() {
                                 />
                               </div>
 
-                              {/* Bottom Middle Headline */}
-                              <div className="pf-intro-bottom-mid">
-                                <h3 className="pf-intro-passion-headline">
-                                  WE BUILD WITH PASSION &amp;<br />UNCOMPROMISING DETAIL
-                                </h3>
-                              </div>
-
-                              {/* Bottom Left Copy */}
-                              <div className="pf-intro-bottom-left">
-                                <span className="pf-intro-visit-tag">THE MANIFESTO</span>
-                                <p className="pf-intro-visit-copy">
-                                  Every stand, kiosk, display, and branded space is built to help clients show up clearly, confidently, and professionally.
-                                </p>
-                              </div>
-
                               {/* Right Column: Core Values list */}
                               <div className="pf-intro-right-col">
                                 <span className="pf-intro-values-title">CORE VALUES</span>
@@ -897,17 +1087,33 @@ export default function PortfolioFablePage() {
                                     </div>
                                   ))}
                                 </div>
+                                <div className="pf-intro-passion-subtext">
+                                  WE BUILD WITH PASSION &amp; UNCOMPROMISING DETAIL
+                                </div>
                               </div>
 
-                              {/* Bottom Right: Contact Button */}
-                              <div className="pf-intro-bottom-right">
-                                <a
-                                  href="mailto:info@exhibitgraphicsign.com"
-                                  className="pf-intro-contact-btn"
-                                >
+                              {/* Bottom Right: Contact Us Hovering Island */}
+                              <div
+                                className="pf-contact-island"
+                                onMouseMove={handleIslandMouseMove}
+                                onMouseLeave={handleIslandMouseLeave}
+                                style={{
+                                  transform: `translate3d(${islandOffset.x}px, ${islandOffset.y}px, 0)`
+                                }}
+                              >
+                                <div className="pf-contact-island-collapsed">
                                   <span>CONTACT</span>
                                   <span className="pf-contact-arrow-circle">→</span>
-                                </a>
+                                </div>
+                                <div className="pf-contact-island-expanded">
+                                  <div className="pf-contact-details">
+                                    <span className="pf-contact-label">EMAIL</span>
+                                    <a href="mailto:info@exhibitgraphicsign.com">info@exhibitgraphicsign.com</a>
+                                    <span className="pf-contact-label">PHONE</span>
+                                    <a href="tel:+97142383278">+971 4 238 3278</a>
+                                    <a href="tel:+971524587992">+971 52 458 7992</a>
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -930,7 +1136,10 @@ export default function PortfolioFablePage() {
                               <div className="pf-usps-left-col">
                                 {/* Top Left: Detailing info */}
                                 <div className="pf-usps-top-left">
-                                  <span className="pf-usps-section-tag">CAPABILITY MANIFESTO</span>
+                                  <span className="pf-usps-section-tag">OUR UNIQUE SELLING PROPOSITIONS</span>
+                                  <h2 className="pf-slide-headline">
+                                    WE DESIGN, FABRICATE, AND INSTALL YOUR SPACES ACROSS THE UAE
+                                  </h2>
                                 </div>
 
                                 {/* MECE Columns (Middle Left) */}
@@ -944,12 +1153,18 @@ export default function PortfolioFablePage() {
                                   ))}
                                 </div>
 
-                                {/* Bottom Left Title Group */}
-                                <div className="pf-usps-bottom-left">
-                                  <span className="pf-slide-stage">OPERATIONAL PILLARS</span>
-                                  <h2 className="pf-slide-headline">
-                                    WE DESIGN, FABRICATE, AND INSTALL YOUR SPACES ACROSS THE UAE
-                                  </h2>
+                                <div className="pf-graduation-services">
+                                  <h3 className="pf-graduation-services-title">Summary of Services Offered</h3>
+                                  <div className="pf-graduation-services-grid">
+                                    {GRADUATION_SERVICE_HEADINGS.map((heading, headingIdx) => (
+                                      <span className="pf-graduation-service-heading" key={heading}>
+                                        <span className="pf-graduation-service-num">
+                                          {String(headingIdx + 1).padStart(2, '0')}
+                                        </span>
+                                        {heading}
+                                      </span>
+                                    ))}
+                                  </div>
                                 </div>
                               </div>
 
@@ -957,22 +1172,16 @@ export default function PortfolioFablePage() {
                               <div className="pf-usps-media">
                                 <img
                                   src={slide.images[0]}
-                                  className="pf-usps-img img-top"
-                                  alt="EGS Exhibition Stand (Philips MRI)"
-                                  loading="lazy"
-                                />
-                                <img
-                                  src={slide.images[1]}
-                                  className="pf-usps-img img-bottom"
-                                  alt="EGS Graduation Ceremony (Sharjah)"
+                                  className="pf-usps-img-single"
+                                  alt="EGS Graduation Ceremony Speaker"
                                   loading="lazy"
                                 />
                               </div>
 
-                              {/* Keep scrolling hint */}
+                              {/* Horizontal scroll hint */}
                               <div className="pf-usps-scroll-hint">
-                                <span>Keep scrolling for projects</span>
-                                <span className="pf-scroll-arrow-down">↓</span>
+                                <span>Scroll or Press Right for projects</span>
+                                <span className="pf-scroll-arrow-right">→</span>
                               </div>
                             </div>
                           </div>
@@ -1051,8 +1260,11 @@ export default function PortfolioFablePage() {
                       onFocus={() => setHoverClient(client)}
                       onBlur={() => setHoverClient(null)}
                     >
-                      <span className="pf-item-name">{client.name}</span>
-                      <span className="pf-item-meta">{client.meta}</span>
+                      <span className="pf-item-name">
+                        {client.name}
+                        <span className="pf-item-year"> · {client.year}</span>
+                      </span>
+                      <span className="pf-item-meta">{client.location}</span>
                     </button>
                   ))
                 )}
@@ -1065,7 +1277,7 @@ export default function PortfolioFablePage() {
         {viewerProject && (
           <div
             ref={viewerRef}
-            className="pf-viewer"
+            className={`pf-viewer ${!galleryUiVisible ? 'ui-hidden' : ''}`}
             role="dialog"
             aria-modal="true"
             aria-label={`${viewerProject.name} gallery`}
@@ -1082,17 +1294,17 @@ export default function PortfolioFablePage() {
               className="pf-viewer-hint-top"
               onClick={() => goProject(-1)}
             >
-              Previous project
+              Scroll up for previous project
             </button>
 
             <div className="pf-viewer-head">
               <div className="pf-viewer-titles">
                 <span className="pf-viewer-title">{viewerProject.name}</span>
                 <span className="pf-viewer-sub">{viewerProject.meta}</span>
+                <span className="pf-viewer-counter">
+                  {pad2(mediaIdx + 1)} / {pad2(viewerProject.media.length)}
+                </span>
               </div>
-              <span className="pf-viewer-counter">
-                {pad2(mediaIdx + 1)} / {pad2(viewerProject.media.length)}
-              </span>
               <button type="button" className="pf-viewer-close" onClick={closeViewer} aria-label="Close gallery">
                 ✕
               </button>
@@ -1145,6 +1357,7 @@ export default function PortfolioFablePage() {
                   onClick={() => stepMedia(-1)}
                   aria-label="Previous media"
                 >
+                  <span className="pf-arrow-label">Prev Photo / Video</span>
                   <svg viewBox="0 0 64 12" aria-hidden="true">
                     <path d="M64 6H2M8 1L2 6l6 5" fill="none" stroke="currentColor" strokeWidth="1" />
                   </svg>
@@ -1155,6 +1368,7 @@ export default function PortfolioFablePage() {
                   onClick={() => stepMedia(1)}
                   aria-label="Next media"
                 >
+                  <span className="pf-arrow-label">Next Photo / Video</span>
                   <svg viewBox="0 0 64 12" aria-hidden="true">
                     <path d="M0 6h62M56 1l6 5-6 5" fill="none" stroke="currentColor" strokeWidth="1" />
                   </svg>
@@ -1163,7 +1377,7 @@ export default function PortfolioFablePage() {
             )}
 
             <button type="button" className="pf-viewer-hint" onClick={() => goProject(1)}>
-              Next project
+              Scroll down for next project
             </button>
           </div>
         )}
