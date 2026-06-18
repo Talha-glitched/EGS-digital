@@ -21,13 +21,13 @@ async function connectToDatabase() {
 }
 
 async function startServer() {
-  const [{ default: app }, { initializeCampaignRuntime }] = await Promise.all([
+  const [{ default: app }, { initializeCrmRuntime }] = await Promise.all([
     import('./app.js'),
-    import('./services/campaignService.js'),
+    import('./services/crmRuntime.js'),
   ]);
 
   await connectToDatabase();
-  initializeCampaignRuntime();
+  initializeCrmRuntime();
 
   app.listen(port, () => {
     console.info(`API server listening on http://localhost:${port}`);

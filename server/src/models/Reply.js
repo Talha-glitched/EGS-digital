@@ -1,16 +1,28 @@
 import mongoose from 'mongoose';
 
+const threadMessageSchema = new mongoose.Schema(
+  {
+    type: { type: String, enum: ['outbound', 'inbound'], required: true },
+    step: { type: Number, default: null },
+    body: { type: String, default: '' },
+    subject: { type: String, default: '' },
+    timestamp: { type: Date, default: () => new Date() },
+    messageId: { type: String, default: '' },
+  },
+  { _id: false }
+);
+
 const replySchema = new mongoose.Schema(
   {
     campaignId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Campaign',
+      ref: 'ProjectCampaign',
       required: true,
       index: true,
     },
-    recipientId: {
+    leadId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Recipient',
+      ref: 'Lead',
       required: true,
       index: true,
     },
@@ -20,6 +32,12 @@ const replySchema = new mongoose.Schema(
     text: { type: String, default: '' },
     messageId: { type: String, required: true, unique: true },
     receivedAt: { type: Date, required: true, index: true },
+    intent: {
+      type: String,
+      enum: ['Interested', 'Opt Out', 'Neutral', 'Bounce'],
+      default: 'Neutral',
+    },
+    threadHistory: [threadMessageSchema],
   },
   {
     timestamps: true,

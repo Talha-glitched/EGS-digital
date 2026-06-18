@@ -5,7 +5,7 @@ import express from 'express';
 import cors from 'cors';
 import adminRoutes from './routes/adminRoutes.js';
 import pageRoutes from './routes/pageRoutes.js';
-import unsubscribeRoutes from './routes/unsubscribeRoutes.js';
+import trackRoutes from './routes/trackRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -35,7 +35,7 @@ app.get('/api/health', (_req, res) => {
 
 app.use('/api/admin', adminRoutes);
 app.use('/api/pages', pageRoutes);
-app.use('/api/unsubscribe', unsubscribeRoutes);
+app.use('/api/track', trackRoutes);
 
 if (existsSync(clientDistDir) && existsSync(clientIndexPath)) {
   app.use(express.static(clientDistDir));

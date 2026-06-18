@@ -5,17 +5,17 @@ const suppressionSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, trim: true, lowercase: true },
     reason: {
       type: String,
-      enum: ['unsubscribe', 'hard-fail'],
+      enum: ['opted_out', 'bounced', 'blacklisted', 'unsubscribe', 'hard-fail'],
       required: true,
     },
     campaignId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Campaign',
+      ref: 'ProjectCampaign',
       default: null,
     },
-    recipientId: {
+    leadId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Recipient',
+      ref: 'Lead',
       default: null,
     },
   },

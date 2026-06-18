@@ -1,0 +1,215 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800&display=swap");
+
+/* Tailwind v4 — import theme + preflight in cascade layers, but import the
+   UTILITIES UNLAYERED. The marketing site loads a global, unlayered reset
+   (`* { margin:0; padding:0 }` + element rules in shared.css) app-wide.
+   Unlayered rules always beat layered ones, so a layered `@layer utilities`
+   would lose its padding/margin to that `*` reset. Keeping utilities
+   unlayered lets CRM classes win by specificity (.px-4 > *) without
+   touching the marketing stylesheet. */
+@layer theme, base, components;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --color-brand: #d9262e;
+  --color-brand-hover: #bb1f26;
+  --color-brand-soft: #fef2f2;
+
+  --color-ink: #15171c;
+  --color-ink-muted: #646b78;
+
+  --color-canvas: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-line: #e7e9ee;
+  --color-line-strong: #d7dae1;
+  --color-sidebar: #14161c;
+}
+
+/* ── Scoped baseline ─────────────────────────────────────────────
+   The marketing site ships a global reset (`* { margin:0 }`, element
+   rules for button/a/body). We re-establish a clean, predictable
+   baseline inside the CRM so layout is never inherited from it. */
+.crm-root {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-ink);
+  background: var(--color-canvas);
+  letter-spacing: -0.005em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.crm-root *,
+.crm-root *::before,
+.crm-root *::after {
+  box-sizing: border-box;
+}
+
+.crm-root h1,
+.crm-root h2,
+.crm-root h3,
+.crm-root h4 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.crm-root input,
+.crm-root select,
+.crm-root textarea,
+.crm-root button {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.crm-root ::selection {
+  background: #fdd9da;
+  color: #15171c;
+}
+
+/* ── Scrollbars ──────────────────────────────────────────────── */
+.crm-scroll::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.crm-scroll::-webkit-scrollbar-thumb {
+  background: #cbd0d8;
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: 999px;
+}
+.crm-scroll::-webkit-scrollbar-thumb:hover {
+  background: #aeb4bf;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+.crm-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ── Surfaces ────────────────────────────────────────────────── */
+.crm-card {
+  @apply rounded-2xl border border-[var(--color-line)] bg-white;
+  box-shadow: 0 1px 2px rgba(20, 22, 28, 0.04), 0 1px 3px rgba(20, 22, 28, 0.03);
+}
+
+.crm-card-hover {
+  transition: box-shadow 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+.crm-card-hover:hover {
+  box-shadow: 0 4px 12px rgba(20, 22, 28, 0.07), 0 2px 4px rgba(20, 22, 28, 0.04);
+  border-color: var(--color-line-strong);
+}
+
+/* ── Form controls ───────────────────────────────────────────── */
+.crm-input {
+  @apply w-full rounded-lg border border-[var(--color-line-strong)] bg-white px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition placeholder:text-neutral-400;
+}
+.crm-input:focus {
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px rgba(217, 38, 46, 0.12);
+}
+
+.crm-select {
+  @apply w-full appearance-none rounded-lg border border-[var(--color-line-strong)] bg-white px-3.5 py-2.5 pr-9 text-sm text-[var(--color-ink)] outline-none transition;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23646b78' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.65rem center;
+}
+.crm-select:focus {
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px rgba(217, 38, 46, 0.12);
+}
+
+/* ── Buttons ─────────────────────────────────────────────────── */
+.crm-btn-primary {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-white transition disabled:pointer-events-none disabled:opacity-50;
+  box-shadow: 0 1px 2px rgba(217, 38, 46, 0.25);
+}
+.crm-btn-primary:hover {
+  background: var(--color-brand-hover);
+}
+.crm-btn-primary:active {
+  transform: translateY(0.5px);
+}
+
+.crm-btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg border border-[var(--color-line-strong)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--color-ink)] transition hover:bg-neutral-50 hover:border-[var(--color-line-strong)] disabled:opacity-50;
+}
+
+.crm-btn-ghost {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-[var(--color-ink-muted)] transition hover:bg-neutral-100 hover:text-[var(--color-ink)];
+}
+
+/* ── Tables ──────────────────────────────────────────────────── */
+.crm-table-head {
+  @apply border-b border-[var(--color-line)] bg-neutral-50/70 text-[11px] font-semibold uppercase tracking-[0.06em] text-neutral-500;
+}
+.crm-table-row {
+  @apply border-b border-[var(--color-line)] transition-colors last:border-0 hover:bg-neutral-50/70;
+}
+
+/* ── Sidebar nav ─────────────────────────────────────────────── */
+.crm-nav-active {
+  @apply bg-white/[0.08] text-white;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+.crm-nav-idle {
+  @apply text-neutral-400 hover:bg-white/[0.04] hover:text-neutral-100;
+}
+
+/* ── Tabs ────────────────────────────────────────────────────── */
+.crm-tab-active {
+  @apply bg-white text-[var(--color-ink)];
+  box-shadow: 0 1px 2px rgba(20, 22, 28, 0.08), inset 0 0 0 1px var(--color-line);
+}
+.crm-tab-idle {
+  @apply text-neutral-500 hover:text-[var(--color-ink)];
+}
+
+/* ── Bits ────────────────────────────────────────────────────── */
+.crm-stat-icon {
+  @apply flex h-10 w-10 items-center justify-center rounded-xl;
+}
+
+.crm-info-panel {
+  @apply rounded-xl border border-sky-200/70 bg-sky-50/70 px-4 py-3.5 text-sm leading-relaxed text-sky-950;
+}
+
+.crm-modal-overlay {
+  @apply fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[rgba(15,17,22,0.55)] p-4 backdrop-blur-[2px] sm:p-8;
+}
+.crm-modal-panel {
+  @apply my-auto flex max-h-[92vh] w-full flex-col overflow-hidden rounded-2xl border border-[var(--color-line)] bg-white;
+  box-shadow: 0 24px 60px rgba(15, 17, 22, 0.24);
+  animation: crm-pop 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── Animations ──────────────────────────────────────────────── */
+@keyframes crm-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes crm-pop {
+  from { opacity: 0; transform: translateY(12px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.crm-animate-in {
+  animation: crm-fade-in 0.28s ease-out both;
+}
+
+@keyframes crm-spin {
+  to { transform: rotate(360deg); }
+}
+.crm-spinner {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2.5px solid #e5e7eb;
+  border-top-color: var(--color-brand);
+  border-radius: 50%;
+  animation: crm-spin 0.7s linear infinite;
+}
