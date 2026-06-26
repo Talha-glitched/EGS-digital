@@ -1,4 +1,11 @@
 import crypto from 'crypto';
+import {
+  buildSessionFromUser,
+  validateUserCredentials,
+  recordUserLogin,
+} from '../services/authService.js';
+import { attachUserToRequest } from './actor.js';
+import { ROLES, getPermissionsForRole } from '../constants/userRoles.js';
 
 const COOKIE_NAME = 'egs_admin_session';
 const SESSION_TTL_MS = 1000 * 60 * 60 * 8;
@@ -33,24 +40,75 @@ function parseCookies(cookieHeader = '') {
 }
 
 export function isAdminConfigured() {
-  return Boolean(process.env.ADMIN_USERNAME && process.env.ADMIN_PASSWORD && getSecret());
+  return Boolean(getSecret());
 }
 
-export function validateAdminCredentials(username, password) {
-  if (!isAdminConfigured()) {
+/** @deprecated env-only fallback; DB users are preferred */
+export function validateEnvAdminCredentials(username, password) {
+  if (!process.env.ADMIN_USERNAME || !process.env.ADMIN_PASSWORD || !getSecret()) {
     return false;
   }
-
   return (
     timingSafeEqualString(username, process.env.ADMIN_USERNAME) &&
     timingSafeEqualString(password, process.env.ADMIN_PASSWORD)
   );
 }
 
-export function createAdminCookie(username) {
+export async function validateAdminCredentials(username, password) {
+  const user = await validateUserCredentials(username, password);
+  if (user) return buildSessionFromUser(user);
+
+  if (validateEnvAdminCredentials(username, password)) {
+    const role = ROLES.SUPER_ADMIN;
+    return {
+      userId: null,
+      email: process.env.ADMIN_USERNAME,
+      displayName: process.env.ADMIN_USERNAME,
+      username: process.env.ADMIN_USERNAME,
+      role,
+      permissions: getPermissionsForRole(role),
+      mustChangePassword: false,
+      expiresAt: null,
+    };
+  }
+  return null;
+}
+
+export async function loginAdmin(username, password, ip) {
+  const user = await validateUserCredentials(username, password);
+  if (user) {
+    await recordUserLogin(user, ip);
+    return buildSessionFromUser(user);
+  }
+
+  if (validateEnvAdminCredentials(username, password)) {
+    const role = ROLES.SUPER_ADMIN;
+    return {
+      userId: null,
+      email: process.env.ADMIN_USERNAME,
+      displayName: process.env.ADMIN_USERNAME,
+      username: process.env.ADMIN_USERNAME,
+      role,
+      permissions: getPermissionsForRole(role),
+      mustChangePassword: false,
+      expiresAt: null,
+    };
+  }
+  return null;
+}
+
+export function createAdminCookie(session) {
   const expiresAt = Date.now() + SESSION_TTL_MS;
-  const payload = Buffer.from(JSON.stringify({ username, expiresAt })).toString('base64url');
+  const payload = Buffer.from(JSON.stringify({ ...session, expiresAt })).toString('base64url');
   return `${payload}.${sign(payload)}`;
+}
+
+function enrichSession(session) {
+  if (!session) return null;
+  if ((!session.permissions || !session.permissions.length) && session.role) {
+    return { ...session, permissions: getPermissionsForRole(session.role) };
+  }
+  return session;
 }
 
 export function readAdminCookie(req) {
@@ -70,14 +128,14 @@ export function readAdminCookie(req) {
     if (!session.expiresAt || session.expiresAt < Date.now()) {
       return null;
     }
-    return session;
+    return enrichSession(session);
   } catch {
     return null;
   }
 }
 
-export function setAdminCookie(res, username) {
-  const cookie = createAdminCookie(username);
+export function setAdminCookie(res, session) {
+  const cookie = createAdminCookie(session);
   const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
   res.setHeader(
     'Set-Cookie',
@@ -95,6 +153,6 @@ export function requireAdmin(req, res, next) {
   if (!session) {
     return res.status(401).json({ message: 'Admin login required.' });
   }
-  req.admin = session;
+  attachUserToRequest(req, session);
   return next();
 }

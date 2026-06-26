@@ -27,6 +27,12 @@ async function startServer() {
   ]);
 
   await connectToDatabase();
+
+  const { bootstrapAdminUser } = await import('./services/bootstrapUsers.js');
+  const { initializeRevisionModels } = await import('./services/revisionRegistry.js');
+  await bootstrapAdminUser();
+  initializeRevisionModels();
+
   initializeCrmRuntime();
 
   app.listen(port, () => {

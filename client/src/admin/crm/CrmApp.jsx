@@ -4,11 +4,29 @@ import './crm.css';
 import { crmApiFetch } from './crmApi.js';
 import Sidebar from './components/layout/Sidebar.jsx';
 import TopNavbar from './components/layout/TopNavbar.jsx';
+import SpotlightSearch, { useSpotlightShortcut } from './components/layout/SpotlightSearch.jsx';
+import PreviewWorkspaceModal, { isPreviewNoticeDismissed } from './components/ui/PreviewWorkspaceModal.jsx';
 import GlobalDashboard from './pages/GlobalDashboard.jsx';
 import ProjectDetailWorkspace from './pages/ProjectDetailWorkspace.jsx';
 import InboxPage from './pages/InboxPage.jsx';
+import PeoplePage from './pages/PeoplePage.jsx';
+import CompaniesPage from './pages/CompaniesPage.jsx';
+import AdvancedAnalyticsPage from './pages/AdvancedAnalyticsPage.jsx';
+import FinancePage from './pages/FinancePage.jsx';
+import ProjectsPage from './pages/ProjectsPage.jsx';
+import SalesPipelinePage from './pages/SalesPipelinePage.jsx';
+import TasksPage from './pages/TasksPage.jsx';
+import SequencesPage from './pages/SequencesPage.jsx';
+import RelationshipsPage from './pages/RelationshipsPage.jsx';
+import TeamSettingsPage from './pages/TeamSettingsPage.jsx';
+import UserActivityPage from './pages/UserActivityPage.jsx';
+import DataRecoveryPage from './pages/DataRecoveryPage.jsx';
+import { UndoToastProvider } from './context/UndoToastContext.jsx';
+import { ConfirmDeleteProvider } from './context/ConfirmDeleteContext.jsx';
+import DeleteUndoToastStack from './components/ui/DeleteUndoToastStack.jsx';
 import { Alert, Field, LoadingState } from './components/ui/primitives.jsx';
 import { Lock } from 'lucide-react';
+import egsLogo from '../../assets/logo/New_Logo/Logo-01.png';
 
 function LoginPanel({ onLogin, status }) {
   const [username, setUsername] = useState('');
@@ -34,51 +52,53 @@ function LoginPanel({ onLogin, status }) {
   }
 
   return (
-    <main className="crm-root min-h-screen bg-[var(--color-canvas)]">
-      <div className="mx-auto grid min-h-screen max-w-6xl lg:grid-cols-2">
-        <section className="hidden flex-col justify-between border-r border-[var(--color-line)] bg-[var(--color-sidebar)] p-10 text-white lg:flex">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand">Exhibit Graphic Sign</p>
-            <h1 className="mt-6 max-w-sm text-4xl font-bold leading-[1.1] tracking-tight">
-              Lead Engine & ROI CRM
-            </h1>
-            <p className="mt-4 max-w-md text-sm leading-relaxed text-neutral-400">
-              Manage exhibition outreach, multi-source lead ingestion, drip sequences, and closed-deal ROI — built for UAE campaign ops.
-            </p>
+    <main className="crm-root crm-login-shell min-h-screen">
+      <div className="grid min-h-screen lg:grid-cols-[minmax(460px,0.9fr)_minmax(560px,1.1fr)]">
+        <section className="crm-login-brand-panel hidden flex-col justify-between overflow-hidden p-12 text-white lg:flex xl:p-16">
+          <div className="relative z-10">
+            <img src={egsLogo} alt="Exhibit Graphic Sign" className="h-auto w-[290px] max-w-full object-contain" />
           </div>
-          <p className="text-xs text-neutral-500">Internal operations console · Authorized staff only</p>
+          <div className="relative z-10 max-w-xl crm-login-copy">
+            <span className="crm-login-eyebrow">Commercial workspace</span>
+            <h1 className="mt-5 max-w-lg text-[clamp(2.75rem,4vw,4.75rem)] font-bold leading-[0.98] tracking-[-0.055em]">Turn conversations into contracts.</h1>
+            <p className="mt-6 max-w-lg text-[15px] leading-7 text-white/60">One place for target companies, sales opportunities, follow-ups, controlled outreach, and commercial performance.</p>
+            <div className="mt-10 grid max-w-lg grid-cols-3 gap-3">
+              <LoginProof value="Companies" label="Relationship history" />
+              <LoginProof value="Pipeline" label="Deal progression" />
+              <LoginProof value="Actions" label="Nothing forgotten" />
+            </div>
+          </div>
+          <div className="relative z-10 flex items-center justify-between text-[11px] text-white/35"><span>Internal operations console</span><span>Authorized staff only</span></div>
         </section>
 
-        <section className="flex items-center justify-center p-6 sm:p-10">
-          <form onSubmit={submit} className="crm-animate-in w-full max-w-md space-y-6">
-            <div className="lg:hidden">
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand">EGS Lead Engine</p>
-              <h2 className="mt-2 text-2xl font-bold text-[var(--color-ink)]">Sign in</h2>
+        <section className="crm-login-form-panel flex items-center justify-center p-6 sm:p-10 lg:p-14">
+          <form onSubmit={submit} className="crm-login-form w-full max-w-[440px]">
+            <div className="mb-8">
+              <img src={egsLogo} alt="Exhibit Graphic Sign" className="mb-10 h-auto w-[220px] object-contain lg:hidden" />
+              <span className="crm-login-eyebrow text-brand">EGS Commercial CRM</span>
+              <h2 className="mt-3 text-[32px] font-bold tracking-[-0.04em] text-[var(--color-ink)]">Welcome back</h2>
+              <p className="mt-2 text-sm leading-6 text-neutral-500">Sign in to continue to your commercial workspace.</p>
             </div>
 
-            <div className="crm-card space-y-5 p-8">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-soft text-brand">
-                <Lock className="h-5 w-5" strokeWidth={1.75} />
-              </div>
-
+            <div className="crm-login-card">
               {!status?.adminConfigured && (
                 <Alert tone="warning">Admin credentials are not configured on the server.</Alert>
               )}
               {error && <Alert>{error}</Alert>}
 
-              <Field label="Username">
+              <Field label="Email">
                 <input
-                  className="crm-input"
+                  className="crm-input crm-login-input"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   autoComplete="username"
-                  placeholder="admin"
+                  placeholder="you@company.com"
                 />
               </Field>
               <Field label="Password">
                 <input
                   type="password"
-                  className="crm-input"
+                  className="crm-input crm-login-input"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete="current-password"
@@ -86,7 +106,8 @@ function LoginPanel({ onLogin, status }) {
                 />
               </Field>
 
-              <button type="submit" disabled={busy || !status?.adminConfigured} className="crm-btn-primary w-full">
+              <div className="flex items-center justify-between text-xs text-neutral-400"><span className="flex items-center gap-1.5"><Lock className="h-3.5 w-3.5" />Secure staff access</span><span>8-hour session</span></div>
+              <button type="submit" disabled={busy || !status?.adminConfigured} className="crm-btn-primary w-full !py-3">
                 {busy ? 'Signing in…' : 'Sign in to CRM'}
               </button>
             </div>
@@ -97,29 +118,121 @@ function LoginPanel({ onLogin, status }) {
   );
 }
 
-function CrmShell({ projects, onLogout }) {
+function LoginProof({ value, label }) {
+  return <div className="rounded-xl border border-white/10 bg-white/[0.045] px-3.5 py-3 backdrop-blur-sm"><p className="text-sm font-semibold text-white">{value}</p><p className="mt-1 text-[10px] leading-4 text-white/35">{label}</p></div>;
+}
+
+function CrmShell({ projects, onLogout, status }) {
   const location = useLocation();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [spotlightOpen, setSpotlightOpen] = useState(false);
+  const [previewNoticeOpen, setPreviewNoticeOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem('crm-sidebar-collapsed') === '1';
+    } catch {
+      return false;
+    }
+  });
+
+  function toggleSidebarCollapse() {
+    setSidebarCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('crm-sidebar-collapsed', next ? '1' : '0');
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  }
+
   const titles = {
-    '/admin/crm': ['Dashboard', 'Portfolio performance and active campaigns'],
+    '/admin/crm': ['Dashboard', 'Priority follow-ups, pipeline movement, and active campaigns'],
+    '/admin/crm/projects': ['Campaigns', 'Exhibition outreach, target companies, and sequence performance'],
+    '/admin/crm/sequences': ['Sequence Studio', 'Whiteboard builder for multi-step outreach flows'],
+    '/admin/crm/pipeline': ['Sales Pipeline', 'Qualified opportunities from first response to contract award'],
+    '/admin/crm/tasks': ['Tasks', 'Calls, meetings, proposals, and overdue next actions'],
+    '/admin/crm/relationships': ['Key Relationships', 'Confirmed right POCs, service fit, and follow-up timing'],
+    '/admin/crm/people': ['Contacts', 'Search and manage every point of contact'],
+    '/admin/crm/companies': ['Companies', 'Target companies, clients, and relationship history'],
     '/admin/crm/inbox': ['Inbox', 'Replies and sales follow-up workspace'],
+    '/admin/crm/analytics': ['Reports', 'Campaign ROI, response performance, and source quality'],
+    '/admin/crm/finance': ['Finances', 'Campaign budgets, fixed costs, and logged revenue'],
+    '/admin/crm/settings/team': ['Team', 'User accounts, roles, and CRM access'],
+    '/admin/crm/settings/activity': ['Activity log', 'Who did what across the CRM'],
+    '/admin/crm/settings/recovery': ['Data recovery', 'Roll back recent changes'],
   };
-  const match = titles[location.pathname] || ['Project', 'Leads, sequences, and campaign analytics'];
+  const projectMatch = location.pathname.match(/^\/admin\/crm\/projects\/([^/]+)$/);
+  const isSequenceStudio = location.pathname.startsWith('/admin/crm/sequences');
+  const activeProject = projectMatch ? projects.find((p) => p._id === projectMatch[1]) : null;
+  const match = titles[location.pathname] || (activeProject
+    ? [activeProject.projectName, activeProject.milestone || 'Campaign workspace for target companies, contacts, sequences, and live outreach metrics.']
+    : ['Project', 'Leads, sequences, and campaign analytics']);
+
+  const toggleSpotlight = useCallback(() => setSpotlightOpen((prev) => !prev), []);
+  const closeSpotlight = useCallback(() => setSpotlightOpen(false), []);
+  useSpotlightShortcut(toggleSpotlight);
+
+  useEffect(() => {
+    if (isPreviewNoticeDismissed()) return;
+    crmApiFetch('/api/admin/workspace/summary')
+      .then((summary) => {
+        const isPreview = !summary?.metrics?.activeOpportunities && !summary?.openTasks?.length;
+        if (isPreview) setPreviewNoticeOpen(true);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
-    <div className="crm-root flex min-h-screen bg-[var(--color-canvas)]">
-      <Sidebar projects={projects} onLogout={onLogout} />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <TopNavbar title={match[0]} subtitle={match[1]} />
-        <main className="crm-scroll flex-1 overflow-auto">
-          <Routes>
-            <Route index element={<GlobalDashboard />} />
-            <Route path="projects/:id" element={<ProjectDetailWorkspace />} />
-            <Route path="inbox" element={<InboxPage />} />
-            <Route path="*" element={<Navigate to="/admin/crm" replace />} />
-          </Routes>
-        </main>
+    <ConfirmDeleteProvider>
+      <UndoToastProvider>
+        <div className="crm-root flex min-h-screen bg-[var(--color-canvas)]">
+        <Sidebar
+          activeProject={activeProject}
+          onLogout={onLogout}
+          mobileOpen={mobileNavOpen}
+          onClose={() => setMobileNavOpen(false)}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={toggleSidebarCollapse}
+          status={status}
+        />
+        <div className="flex min-w-0 flex-1 flex-col">
+          <TopNavbar
+            title={match[0]}
+            pageInfo={match[1]}
+            onMenu={() => setMobileNavOpen(true)}
+            onOpenSearch={toggleSpotlight}
+            status={status}
+          />
+          <SpotlightSearch open={spotlightOpen} onClose={closeSpotlight} projects={projects} />
+          <PreviewWorkspaceModal open={previewNoticeOpen} onClose={() => setPreviewNoticeOpen(false)} />
+          <main className={`crm-scroll flex-1 ${isSequenceStudio ? 'overflow-hidden' : 'overflow-auto'}`}>
+            <Routes>
+              <Route index element={<GlobalDashboard />} />
+              <Route path="pipeline" element={<SalesPipelinePage />} />
+              <Route path="tasks" element={<TasksPage />} />
+              <Route path="relationships" element={<RelationshipsPage />} />
+              <Route path="projects" element={<ProjectsPage />} />
+              <Route path="projects/:id" element={<ProjectDetailWorkspace />} />
+              <Route path="sequences" element={<SequencesPage />} />
+              <Route path="people" element={<PeoplePage />} />
+              <Route path="companies" element={<CompaniesPage />} />
+              <Route path="inbox" element={<InboxPage />} />
+              <Route path="analytics" element={<AdvancedAnalyticsPage />} />
+              <Route path="finance" element={<FinancePage />} />
+              <Route path="settings/team" element={<TeamSettingsPage />} />
+              <Route path="settings/activity" element={<UserActivityPage />} />
+              <Route path="settings/recovery" element={<DataRecoveryPage />} />
+              <Route path="flows" element={<Navigate to="/admin/crm/sequences" replace />} />
+              <Route path="*" element={<Navigate to="/admin/crm" replace />} />
+            </Routes>
+          </main>
+        </div>
+        <DeleteUndoToastStack />
       </div>
-    </div>
+      </UndoToastProvider>
+    </ConfirmDeleteProvider>
   );
 }
 
@@ -143,6 +256,15 @@ export default function CrmApp() {
     checkAuth().catch(() => setStatus({ adminConfigured: false }));
   }, [checkAuth]);
 
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      setAuthenticated(false);
+      navigate('/admin/crm');
+    };
+    window.addEventListener('crm:unauthorized', handleUnauthorized);
+    return () => window.removeEventListener('crm:unauthorized', handleUnauthorized);
+  }, [navigate]);
+
   async function logout() {
     await crmApiFetch('/api/admin/logout', { method: 'POST' });
     setAuthenticated(false);
@@ -161,5 +283,5 @@ export default function CrmApp() {
     return <LoginPanel status={status} onLogin={checkAuth} />;
   }
 
-  return <CrmShell projects={projects} onLogout={logout} />;
+  return <CrmShell projects={projects} onLogout={logout} status={status} />;
 }

@@ -1,6 +1,12 @@
 import { formatCurrency } from '../../crmApi.js';
 import { Card, CardHeader, EmptyState } from '../ui/primitives.jsx';
 import { BarChart3 } from 'lucide-react';
+import {
+  AdvancedFilterPopover,
+  AdvancedFilterChips,
+  useTableFilters,
+  VENDOR_FILTER_SCHEMA,
+} from '../ui/advancedFilter/index.js';
 
 const SOURCE_DOT = {
   Apollo: 'bg-violet-500',
@@ -10,13 +16,20 @@ const SOURCE_DOT = {
 };
 
 export default function VendorPerformanceGrid({ vendorMatrix = [] }) {
+  const {
+    filtered: visibleRows,
+    filters: advancedFilters,
+    setFilters: setAdvancedFilters,
+    matchMode: advancedMatchMode,
+  } = useTableFilters(vendorMatrix, VENDOR_FILTER_SCHEMA);
+
   if (!vendorMatrix.length) {
     return (
       <Card>
         <EmptyState
           icon={BarChart3}
           title="No vendor analytics yet"
-          description="Performance by Apollo, Hunter, and Lusha appears after the analytics job runs (every 4 hours)."
+          description="Apollo, Hunter, Lusha, and Manual rows appear as soon as the campaign is created. Metrics update when contacts are imported or outreach runs."
         />
       </Card>
     );
@@ -25,6 +38,20 @@ export default function VendorPerformanceGrid({ vendorMatrix = [] }) {
   return (
     <Card>
       <CardHeader title="Source performance" subtitle="Leads, engagement, and revenue by discovery tool" />
+      <div className="flex flex-wrap items-center gap-2 border-b border-[var(--color-line)] px-5 py-3">
+        <AdvancedFilterPopover
+          schema={VENDOR_FILTER_SCHEMA}
+          filters={advancedFilters}
+          matchMode={advancedMatchMode}
+          onChange={setAdvancedFilters}
+        />
+      </div>
+      <AdvancedFilterChips
+        schema={VENDOR_FILTER_SCHEMA}
+        filters={advancedFilters}
+        onChange={setAdvancedFilters}
+        className="px-5 pb-3"
+      />
       <div className="crm-scroll overflow-x-auto">
         <table className="w-full min-w-[640px] text-sm">
           <thead>
@@ -38,7 +65,7 @@ export default function VendorPerformanceGrid({ vendorMatrix = [] }) {
             </tr>
           </thead>
           <tbody>
-            {vendorMatrix.map((row) => (
+            {visibleRows.map((row) => (
               <tr key={row.source} className="crm-table-row">
                 <td className="px-5 py-3.5">
                   <span className="inline-flex items-center gap-2 font-semibold text-[var(--color-ink)]">

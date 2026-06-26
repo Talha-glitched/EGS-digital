@@ -1,4 +1,4 @@
-import { Mail, CheckCircle, AlertTriangle, XCircle, Send } from 'lucide-react';
+import { Mail, CheckCircle, AlertTriangle, XCircle, Send, MessageCircle } from 'lucide-react';
 import { cn } from '../ui/primitives.jsx';
 
 const STATUS_CONFIG = {
@@ -26,6 +26,45 @@ export function DeliveryStatusBadge({ status }) {
     >
       {Icon && <Icon className="h-3 w-3" strokeWidth={2} />}
       {config.short}
+    </span>
+  );
+}
+
+const CHANNEL_LABELS = {
+  email: 'Email',
+  linkedin: 'LinkedIn',
+  phone: 'Phone',
+  whatsapp: 'WhatsApp',
+  manual: 'Logged interaction',
+};
+
+export function ResponseStatusBadge({ hasResponded, respondedAt, responseChannels = [], compact = false }) {
+  if (!hasResponded) {
+    return (
+      <span className="inline-flex items-center rounded-full bg-neutral-100 px-2.5 py-1 text-[11px] font-semibold text-neutral-500 ring-1 ring-inset ring-neutral-200/70">
+        No response
+      </span>
+    );
+  }
+
+  const channelText = responseChannels
+    .map((channel) => CHANNEL_LABELS[channel] || channel)
+    .join(', ');
+  const dateText = respondedAt
+    ? new Date(respondedAt).toLocaleDateString('en-AE', { day: 'numeric', month: 'short', year: 'numeric' })
+    : null;
+  const title = [channelText, dateText ? `First response ${dateText}` : ''].filter(Boolean).join(' · ');
+
+  return (
+    <span
+      title={title}
+      className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-800 ring-1 ring-inset ring-emerald-200/70"
+    >
+      <MessageCircle className="h-3 w-3" strokeWidth={2} />
+      {compact ? 'Yes' : 'Responded'}
+      {!compact && channelText ? (
+        <span className="font-normal text-emerald-700/80">· {channelText}</span>
+      ) : null}
     </span>
   );
 }

@@ -1,0 +1,359 @@
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { fetchComprehensiveAnalytics, formatCurrency, formatPercent } from '../crmApi.js';
+import {
+  PageShell,
+  PageSection,
+  MetricGrid,
+  SplitGrid,
+  StatCard,
+  Card,
+  CardHeader,
+  LoadingState,
+  Badge,
+} from '../components/ui/primitives.jsx';
+import { TrendingUp, Coins, Users, Building2, HelpCircle } from 'lucide-react';
+import ClickableTableRow from '../components/ui/ClickableTableRow.jsx';
+import {
+  AdvancedFilterPopover,
+  AdvancedFilterChips,
+  useTableFilters,
+  CAMPAIGN_ROI_FILTER_SCHEMA,
+} from '../components/ui/advancedFilter/index.js';
+
+export default function AdvancedAnalyticsPage() {
+  const navigate = useNavigate();
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchComprehensiveAnalytics()
+      .then(setData)
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <PageShell>
+        <LoadingState label="Computing advanced analytics & ROI snapshots..." />
+      </PageShell>
+    );
+  }
+
+  const {
+    totalLeads = 0,
+    totalCompanies = 0,
+    totalCampaigns = 0,
+    outcomes = {},
+    statuses = {},
+    stepsPerformance = [],
+    vendorPerformance = [],
+    financials = {},
+    campaignMetrics = []
+  } = data;
+
+  // 1. Calculations for Doughnut Chart - Outcomes
+  const totalOutcomes = Object.values(outcomes).reduce((a, b) => a + b, 0) || 1;
+  const outcomeSegments = [
+    { label: 'Won', count: outcomes.Won || 0, color: '#10b981' },
+    { label: 'Call Scheduled', count: outcomes['Call Scheduled'] || 0, color: '#3b82f6' },
+    { label: 'Pending', count: outcomes.Pending || 0, color: '#6b7280' },
+    { label: 'Opted Out', count: outcomes['Opted Out'] || 0, color: '#f59e0b' },
+    { label: 'Lost', count: outcomes.Lost || 0, color: '#ef4444' }
+  ].filter(s => s.count > 0);
+
+  let accumulatedPercent = 0;
+  const outcomeDoughnut = outcomeSegments.map(seg => {
+    const percent = (seg.count / totalOutcomes) * 100;
+    const strokeDash = 251.2; // 2 * pi * r (r=40)
+    const dashOffset = strokeDash - (strokeDash * percent) / 100;
+    const rotation = (accumulatedPercent / 100) * 360;
+    accumulatedPercent += percent;
+    return { ...seg, percent, dashOffset, rotation };
+  });
+
+  // 2. Calculations for Doughnut Chart - Data Vendors
+  const totalVendorLeads = vendorPerformance.reduce((sum, v) => sum + (v.leadsCount || 0), 0) || 1;
+  const vendorColors = {
+    Apollo: '#f43f5e', // EGS Red Soft/Accent
+    Hunter: '#fb923c', // Orange
+    Lusha: '#06b6d4',  // Cyan
+    Manual: '#64748b'  // Slate
+  };
+  let accumVendorPercent = 0;
+  const vendorDoughnut = vendorPerformance.map(v => {
+    const percent = (v.leadsCount / totalVendorLeads) * 100;
+    const strokeDash = 251.2;
+    const dashOffset = strokeDash - (strokeDash * percent) / 100;
+    const rotation = (accumVendorPercent / 100) * 360;
+    accumVendorPercent += percent;
+    return { 
+      label: v.source, 
+      count: v.leadsCount, 
+      color: vendorColors[v.source] || '#64748b', 
+      percent, 
+      dashOffset, 
+      rotation 
+    };
+  }).filter(v => v.count > 0);
+
+  // 3. Bar Chart Calculations - Campaign Revenue
+  const maxRevenue = Math.max(...campaignMetrics.map(c => c.revenueWon || 0), 10000);
+  
+  // 4. Bar Chart Calculations - Sequence Steps Response Rates
+  const maxReplyRate = Math.max(...stepsPerformance.map(s => s.rate || 0), 20);
+
+  return (
+    <PageShell>
+      <PageSection>
+        <MetricGrid>
+          <StatCard compact label="Overall Yield ROI" value={formatPercent(financials.roiPercent)} helpText={`ROI on total cost of ${formatCurrency(financials.totalCost)}`} icon={TrendingUp} tone="brand" />
+          <StatCard compact label="Total Revenue Won" value={formatCurrency(financials.totalRevenue)} helpText="From validated client contracts" icon={Coins} tone="success" />
+          <StatCard compact label="Global POC Count" value={totalLeads} helpText="Individual contacts in database" icon={Users} tone="info" />
+          <StatCard compact label="Company Coverage" value={totalCompanies} helpText={`Target companies across ${totalCampaigns} campaigns`} icon={Building2} />
+        </MetricGrid>
+      </PageSection>
+
+      <PageSection>
+        <SplitGrid>
+        
+        {/* Graph 1: Campaign Revenue Won */}
+        <Card className="flex flex-col min-h-[340px]">
+          <CardHeader 
+            title="Revenue Won by Campaign (AED)" 
+            subtitle="Validated revenue generated across campaign projects" 
+          />
+          <div className="flex flex-1 items-end gap-6 px-6 pb-6 pt-2">
+            {campaignMetrics.length === 0 ? (
+              <div className="w-full text-center text-xs text-neutral-400 py-16">No campaign data yet.</div>
+            ) : (
+              campaignMetrics.slice(0, 5).map((c, i) => {
+                const heightPercent = Math.max((c.revenueWon / maxRevenue) * 100, 4);
+                return (
+                  <div key={c._id || i} className="flex-1 flex flex-col items-center group relative h-full justify-end">
+                    {/* Tooltip */}
+                    <div className="absolute bottom-full mb-1 opacity-0 group-hover:opacity-100 bg-neutral-800 text-white text-[10px] font-bold py-1 px-2 rounded pointer-events-none transition z-10 whitespace-nowrap">
+                      {formatCurrency(c.revenueWon)}
+                    </div>
+                    {/* Bar */}
+                    <div 
+                      className="w-12 bg-gradient-to-t from-red-700 to-brand hover:to-brand-hover rounded-t-md transition-all duration-500 ease-out cursor-pointer shadow-sm"
+                      style={{ height: `${heightPercent}%` }}
+                    />
+                    {/* Label */}
+                    <p className="text-[10px] font-bold text-neutral-600 mt-2 truncate w-full text-center" title={c.projectName}>
+                      {c.projectName.replace('Exhibition', '').replace('Campaign', '').trim()}
+                    </p>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </Card>
+
+        {/* Graph 2: Lead Outcome Segmentations */}
+        <Card className="flex flex-col min-h-[340px]">
+          <CardHeader 
+            title="Lead Segment Outcomes" 
+            subtitle="Proportional breakdown of point of contact status states" 
+          />
+          <div className="flex flex-1 items-center justify-around px-6 pb-6 pt-2">
+            {outcomeDoughnut.length === 0 ? (
+              <div className="text-xs text-neutral-400">No outcomes tracked yet.</div>
+            ) : (
+              <>
+                {/* SVG Doughnut */}
+                <div className="relative h-40 w-40 shrink-0">
+                  <svg className="h-full w-full" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f1f5f9" strokeWidth="10" />
+                    {outcomeDoughnut.map((seg, i) => (
+                      <circle
+                        key={i}
+                        cx="50"
+                        cy="50"
+                        r="40"
+                        fill="transparent"
+                        stroke={seg.color}
+                        strokeWidth="10"
+                        strokeDasharray="251.2"
+                        strokeDashoffset={seg.dashOffset}
+                        transform={`rotate(${seg.rotation - 90} 50 50)`}
+                        className="transition-all duration-700 ease-out origin-center"
+                      />
+                    ))}
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                    <span className="text-xl font-extrabold text-neutral-800 tabular-nums">{totalLeads}</span>
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-neutral-400">POCs</span>
+                  </div>
+                </div>
+
+                {/* Legend */}
+                <div className="space-y-2.5 max-w-[200px]">
+                  {outcomeDoughnut.map((seg, i) => (
+                    <div key={i} className="flex items-center gap-2 text-xs">
+                      <span className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: seg.color }} />
+                      <span className="text-neutral-500 font-semibold truncate max-w-[100px]">{seg.label}:</span>
+                      <span className="font-bold text-neutral-800 tabular-nums">{seg.count} ({seg.percent.toFixed(0)}%)</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        </Card>
+
+        {/* Graph 3: Sequence Performance (Reply Rates %) */}
+        <Card className="flex flex-col min-h-[340px]">
+          <CardHeader 
+            title="Step-by-Step Response Rate (%)" 
+            subtitle="Which message step index yields the highest reply conversions" 
+          />
+          <div className="flex flex-1 items-end gap-6 px-6 pb-6 pt-4">
+            {stepsPerformance.map((step, i) => {
+              const heightPercent = Math.max((step.rate / maxReplyRate) * 100, 4);
+              return (
+                <div key={i} className="flex-1 flex flex-col items-center group relative h-full justify-end">
+                  <div className="absolute bottom-full mb-1 opacity-0 group-hover:opacity-100 bg-neutral-800 text-white text-[10px] font-bold py-1 px-2 rounded pointer-events-none transition whitespace-nowrap">
+                    {step.rate.toFixed(1)}% ({step.replies} replies)
+                  </div>
+                  <div 
+                    className="w-10 bg-gradient-to-t from-blue-700 to-sky-400 hover:from-blue-600 hover:to-sky-300 rounded-t-md transition-all duration-500 ease-out cursor-pointer"
+                    style={{ height: `${heightPercent}%` }}
+                  />
+                  <p className="text-[10px] font-bold text-neutral-500 mt-2">Step {step.step}</p>
+                  <p className="text-[9px] text-neutral-400 font-mono">Sent: {step.sent}</p>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+
+        {/* Graph 4: Data Discovery Vendors Coverage */}
+        <Card className="flex flex-col min-h-[340px]">
+          <CardHeader 
+            title="Discovery Source Contribution" 
+            subtitle="Percentage of point of contact profiles added by source vendor" 
+          />
+          <div className="flex flex-1 items-center justify-around px-6 pb-6 pt-2">
+            {vendorDoughnut.length === 0 ? (
+              <div className="text-xs text-neutral-400">No vendor metrics loaded.</div>
+            ) : (
+              <>
+                <div className="relative h-40 w-40 shrink-0">
+                  <svg className="h-full w-full" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f1f5f9" strokeWidth="8" />
+                    {vendorDoughnut.map((seg, i) => (
+                      <circle
+                        key={i}
+                        cx="50"
+                        cy="50"
+                        r="40"
+                        fill="transparent"
+                        stroke={seg.color}
+                        strokeWidth="8"
+                        strokeDasharray="251.2"
+                        strokeDashoffset={seg.dashOffset}
+                        transform={`rotate(${seg.rotation - 90} 50 50)`}
+                        className="transition-all duration-700 ease-out origin-center"
+                      />
+                    ))}
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                    <span className="text-xl font-extrabold text-neutral-800 tabular-nums">{totalVendorLeads}</span>
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-neutral-400">Blends</span>
+                  </div>
+                </div>
+
+                <div className="space-y-2 max-w-[200px]">
+                  {vendorDoughnut.map((seg, i) => (
+                    <div key={i} className="flex items-center gap-2 text-xs">
+                      <span className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: seg.color }} />
+                      <span className="text-neutral-500 font-semibold">{seg.label}:</span>
+                      <span className="font-bold text-neutral-800 tabular-nums">{seg.count} ({seg.percent.toFixed(0)}%)</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        </Card>
+        </SplitGrid>
+      </PageSection>
+
+      <PageSection>
+      <Card>
+        <CardHeader 
+          title="Campaigns Yield ROI Ledger" 
+          subtitle="Direct financial inputs and contract yields for active campaigns" 
+        />
+        <CampaignRoiTable campaignMetrics={campaignMetrics} navigate={navigate} />
+      </Card>
+      </PageSection>
+    </PageShell>
+  );
+}
+
+function CampaignRoiTable({ campaignMetrics = [], navigate }) {
+  const {
+    filtered: visibleRows,
+    filters: advancedFilters,
+    setFilters: setAdvancedFilters,
+    matchMode: advancedMatchMode,
+  } = useTableFilters(campaignMetrics, CAMPAIGN_ROI_FILTER_SCHEMA);
+
+  return (
+    <>
+      <div className="flex flex-wrap items-center gap-2 border-b border-[var(--color-line)] px-5 py-3">
+        <AdvancedFilterPopover
+          schema={CAMPAIGN_ROI_FILTER_SCHEMA}
+          filters={advancedFilters}
+          matchMode={advancedMatchMode}
+          onChange={setAdvancedFilters}
+        />
+      </div>
+      <AdvancedFilterChips
+        schema={CAMPAIGN_ROI_FILTER_SCHEMA}
+        filters={advancedFilters}
+        onChange={setAdvancedFilters}
+        className="px-5 pb-3"
+      />
+      <div className="crm-scroll overflow-x-auto">
+        <table className="crm-table min-w-[700px]">
+          <thead>
+            <tr className="crm-table-head">
+              <th>Campaign Project</th>
+              <th>UAE Milestone</th>
+              <th>Total Cost</th>
+              <th>Revenue Won</th>
+              <th>Yield ROI</th>
+              <th className="text-center">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {visibleRows.map((c) => (
+              <ClickableTableRow
+                key={c._id}
+                onClick={() => navigate(`/admin/crm/projects/${c._id}`)}
+              >
+                <td className="font-semibold text-[var(--color-ink)]">{c.projectName}</td>
+                <td className="text-neutral-500 font-medium">{c.milestone || 'General Exhibition'}</td>
+                <td className="font-mono text-neutral-600">{formatCurrency(c.totalCost)}</td>
+                <td className="font-mono text-emerald-700 font-semibold">{formatCurrency(c.revenueWon)}</td>
+                <td className={`font-bold ${c.roi >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                  {formatPercent(c.roi)}
+                </td>
+                <td className="text-center">
+                  <Badge tone={c.status === 'Active Campaigning' ? 'success' : 'neutral'}>
+                    {c.status}
+                  </Badge>
+                </td>
+              </ClickableTableRow>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+}

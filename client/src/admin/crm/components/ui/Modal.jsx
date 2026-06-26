@@ -1,18 +1,80 @@
+import { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { cn } from './primitives.jsx';
+import { useBodyScrollLock } from './useBodyScrollLock.js';
+import { useOverlayTransition } from './useOverlayTransition.js';
 
-export function Modal({ open, onClose, title, subtitle, children, footer, size = 'lg' }) {
-  if (!open) return null;
+export function Modal({ open, onClose, title, subtitle, children, footer, size = 'lg', icon: Icon, accent = 'brand' }) {
+  const panelRef = useRef(null);
+  const onCloseRef = useRef(onClose);
+  const { mounted, visible, exiting } = useOverlayTransition(open);
+  useBodyScrollLock(mounted);
+
+  onCloseRef.current = onClose;
+
+  useEffect(() => {
+    if (!mounted || exiting) return undefined;
+
+    const previousFocus = document.activeElement;
+    const panel = panelRef.current;
+    const focusableSelector = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [href], [tabindex]:not([tabindex="-1"])';
+    const firstInput = panel?.querySelector('input:not([disabled]), textarea:not([disabled]), select:not([disabled])');
+    const firstFocusable = panel?.querySelector(focusableSelector);
+    (firstInput || firstFocusable || panel)?.focus();
+
+    return () => {
+      previousFocus?.focus?.();
+    };
+  }, [mounted, exiting]);
+
+  useEffect(() => {
+    if (!mounted || exiting) return undefined;
+
+    const panel = panelRef.current;
+    const focusableSelector = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [href], [tabindex]:not([tabindex="-1"])';
+
+    function handleKeyDown(event) {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        onCloseRef.current?.();
+        return;
+      }
+      if (event.key !== 'Tab' || !panel) return;
+      const focusable = [...panel.querySelectorAll(focusableSelector)];
+      if (!focusable.length) {
+        event.preventDefault();
+        panel.focus();
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [mounted, exiting]);
+
+  if (!mounted) return null;
 
   const sizes = {
     md: 'max-w-2xl',
-    lg: 'max-w-3xl',
-    xl: 'max-w-4xl',
+    lg: 'max-w-4xl',
+    xl: 'max-w-5xl',
+    '2xl': 'max-w-6xl',
   };
+  const show = visible && !exiting;
 
-  return (
+  return createPortal(
     <div
-      className="crm-modal-overlay crm-root"
+      className={cn('crm-modal-overlay crm-root', show && 'is-visible', exiting && 'is-exiting')}
       role="dialog"
       aria-modal="true"
       aria-labelledby="crm-modal-title"
@@ -20,28 +82,40 @@ export function Modal({ open, onClose, title, subtitle, children, footer, size =
         if (e.target === e.currentTarget) onClose?.();
       }}
     >
-      <div className={cn('crm-modal-panel', sizes[size] || sizes.lg)}>
-        <div className="flex shrink-0 items-start justify-between gap-4 border-b border-[var(--color-line)] px-6 py-5">
-          <div className="min-w-0 pr-2">
-            <h2 id="crm-modal-title" className="text-lg font-bold tracking-tight text-[var(--color-ink)]">
-              {title}
-            </h2>
-            {subtitle && <p className="mt-1 text-[13px] leading-relaxed text-neutral-500">{subtitle}</p>}
+      <div
+        ref={panelRef}
+        tabIndex={-1}
+        className={cn('crm-modal-panel', sizes[size] || sizes.lg, show && 'is-visible', exiting && 'is-exiting')}
+      >
+        <div className="crm-modal-header">
+          <div className="flex min-w-0 flex-1 items-start gap-3.5 pr-2">
+            {Icon ? (
+              <div className={cn('crm-modal-icon', `crm-modal-icon--${accent}`)} aria-hidden="true">
+                <Icon className="h-4 w-4" strokeWidth={2} />
+              </div>
+            ) : null}
+            <div className="min-w-0 flex-1">
+              <h2 id="crm-modal-title" className="crm-drawer-title">
+                {title}
+              </h2>
+              {subtitle && <p className="crm-drawer-subtitle">{subtitle}</p>}
+            </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--color-line)] text-neutral-500 transition hover:bg-neutral-50 hover:text-[var(--color-ink)]"
+            className="crm-drawer-close"
             aria-label="Close"
           >
-            <X className="h-[18px] w-[18px]" />
+            <X className="h-4 w-4" />
           </button>
         </div>
 
-        <div className="crm-scroll flex-1 overflow-y-auto px-6 py-6">{children}</div>
+        <div className="crm-modal-body crm-scroll flex-1 overflow-y-auto">{children}</div>
 
-        {footer && <div className="shrink-0 border-t border-[var(--color-line)] bg-neutral-50/60 px-6 py-4">{footer}</div>}
+        {footer ? <div className="crm-modal-footer">{footer}</div> : null}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

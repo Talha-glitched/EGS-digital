@@ -7,7 +7,7 @@ import { RevenueEntry } from '../models/RevenueEntry.js';
 
 const VENDORS = ['Apollo', 'Hunter', 'Lusha', 'Manual'];
 
-async function computeVendorMatrix(campaignId) {
+export async function computeVendorMatrix(campaignId) {
   const matrix = [];
 
   for (const source of VENDORS) {

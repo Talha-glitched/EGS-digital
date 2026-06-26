@@ -18,6 +18,9 @@ const sequenceSchema = new mongoose.Schema(
     name: { type: String, required: true, trim: true },
     steps: [sequenceStepSchema],
     isActive: { type: Boolean, default: false },
+    version: { type: Number, default: 0 },
+    deletedAt: { type: Date, default: null, index: true },
+    deletedBy: { type: String, default: null, trim: true },
   },
   { timestamps: true, versionKey: false }
 );

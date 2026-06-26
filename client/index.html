@@ -57,10 +57,22 @@
     </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="shortcut icon" href="/favicon.svg" />
+    <style>
+      /* Prevent flash of SEO fallback content before React mounts */
+      html, body, #root {
+        margin: 0;
+        min-height: 100%;
+      }
+      #root:empty {
+        min-height: 100vh;
+        background: #fafaf9;
+      }
+    </style>
   </head>
   <body>
-    <div id="root">
-      <!-- SEO Fallback Content for Crawlers without JavaScript Support -->
+    <div id="root"></div>
+    <noscript>
+      <!-- SEO fallback for crawlers without JavaScript -->
       <header>
         <h1>Exhibit Graphic Sign (EGS) | Exhibition Stands &amp; Graduation Ceremony Setup Dubai</h1>
         <p>Dubai design and production partner for high-stakes physical brand moments since 2010. We fabricate custom exhibition stands, graduation ceremonies, events, retail activations, and commercial office fitouts in the UAE and Saudi Arabia.</p>
@@ -103,7 +115,7 @@
           <a href="/case-studies">View Case Studies</a>
         </section>
       </main>
-    </div>
+    </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

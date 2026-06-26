@@ -1,0 +1,21 @@
+const ROLE_STYLES = {
+  super_admin: 'bg-violet-100 text-violet-800',
+  sales_manager: 'bg-blue-100 text-blue-800',
+  sales_rep: 'bg-emerald-100 text-emerald-800',
+  viewer: 'bg-neutral-100 text-neutral-700',
+};
+
+const ROLE_LABELS = {
+  super_admin: 'Super Admin',
+  sales_manager: 'Sales Manager',
+  sales_rep: 'Sales Rep',
+  viewer: 'Viewer',
+};
+
+export default function RoleBadge({ role }) {
+  return (
+    <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${ROLE_STYLES[role] || ROLE_STYLES.viewer}`}>
+      {ROLE_LABELS[role] || role}
+    </span>
+  );
+}

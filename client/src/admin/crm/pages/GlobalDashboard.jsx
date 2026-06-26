@@ -2,11 +2,17 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { crmApiFetch, formatCurrency, formatPercent } from '../crmApi.js';
 import CampaignInitWizard from '../components/wizards/CampaignInitWizard.jsx';
-import { Modal } from '../components/ui/Modal.jsx';
-import { Plus, TrendingUp, Users, Inbox, FolderKanban, ChevronRight, Building2 } from 'lucide-react';
+import { Plus, TrendingUp, Users, Inbox, FolderKanban, ChevronRight, Building2, BriefcaseBusiness, ListTodo, AlertTriangle, ArrowUpRight, Clock3, MessageCircle } from 'lucide-react';
 import {
   PageShell,
   PageHeader,
+  PageSection,
+  MetricGrid,
+  SplitGrid,
+  ListBody,
+  ListRow,
+  StatBand,
+  StatBandItem,
   Card,
   CardHeader,
   StatCard,
@@ -19,7 +25,7 @@ import {
 const ONBOARDING_STEPS = [
   {
     title: 'Create a project',
-    body: 'Name your exhibition campaign, set budget baselines, and upload the list of target companies you want to win.',
+    body: 'Name your exhibition campaign and upload the list of target companies you want to win.',
   },
   {
     title: 'Import contacts',
@@ -27,7 +33,7 @@ const ONBOARDING_STEPS = [
   },
   {
     title: 'Launch sequences',
-    body: 'Build a multi-step email drip, enroll leads, and track replies in the Inbox. ROI updates as deals close.',
+    body: 'Open Email Sequences under Leads, build a multi-step drip, pick your audience, and launch or save as draft.',
   },
 ];
 
@@ -38,18 +44,40 @@ const STATUS_TONE = {
   Archived: 'neutral',
 };
 
+const DEMO_SUMMARY = {
+  metrics: { activeOpportunities: 9, pipelineValue: 3795000, weightedPipeline: 2322250, closingSoon: 5, overdueTasks: 2, interestedReplies7d: 4, failedSendJobs: 0, pendingContacts: 186 },
+  openTasks: [
+    { _id: 'demo-dash-task-1', title: 'Call Apex Energy procurement director', priority: 'High', dueAt: '2026-06-21T10:00:00', companyId: { companyName: 'Apex Energy Systems' } },
+    { _id: 'demo-dash-task-2', title: 'Send revised Gulfood proposal', priority: 'High', dueAt: '2026-06-21T14:30:00', companyId: { companyName: 'Al Noor Foods' } },
+    { _id: 'demo-dash-task-3', title: 'Confirm venue walkthrough attendees', priority: 'Normal', dueAt: '2026-06-22T09:30:00', companyId: { companyName: 'Northbridge University' } },
+    { _id: 'demo-dash-task-4', title: 'Finalize signage bill of quantities', priority: 'Normal', dueAt: '2026-06-24T16:00:00', companyId: { companyName: 'Crescent Holdings' } },
+  ],
+  recentOpportunities: [
+    { _id: 'demo-dash-opp-1', name: 'World Trade Centre pavilion', stage: 'Negotiation', valueAed: 740000, probability: 80, companyId: { companyName: 'Orion Defence' } },
+    { _id: 'demo-dash-opp-2', name: 'University ceremony programme', stage: 'Contract Sent', valueAed: 390000, probability: 90, companyId: { companyName: 'Emirates Technical University' } },
+    { _id: 'demo-dash-opp-3', name: 'Gulfood custom island stand', stage: 'Proposal Sent', valueAed: 275000, probability: 65, companyId: { companyName: 'Al Noor Foods' } },
+    { _id: 'demo-dash-opp-4', name: 'ADIPEC double-decker stand', stage: 'Discovery / Site Visit', valueAed: 680000, probability: 45, companyId: { companyName: 'Apex Energy Systems' } },
+  ],
+};
+
 export default function GlobalDashboard() {
   const navigate = useNavigate();
   const [analytics, setAnalytics] = useState(null);
   const [projects, setProjects] = useState([]);
+  const [summary, setSummary] = useState(null);
   const [showWizard, setShowWizard] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([crmApiFetch('/api/admin/analytics/global'), crmApiFetch('/api/admin/projects')])
-      .then(([globalData, projectList]) => {
+    Promise.all([
+      crmApiFetch('/api/admin/analytics/global'),
+      crmApiFetch('/api/admin/projects'),
+      crmApiFetch('/api/admin/workspace/summary'),
+    ])
+      .then(([globalData, projectList, workspaceSummary]) => {
         setAnalytics(globalData);
         setProjects(projectList);
+        setSummary(workspaceSummary);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -63,125 +91,155 @@ export default function GlobalDashboard() {
     );
   }
 
+  const previewMode = !summary?.metrics?.activeOpportunities && !summary?.openTasks?.length;
+  const workspace = previewMode ? DEMO_SUMMARY : summary;
+
   return (
     <PageShell>
       <PageHeader
-        title="Dashboard"
-        subtitle="Portfolio ROI, active outreach queues, and every exhibition campaign in one place."
         action={
-          <button type="button" onClick={() => setShowWizard(true)} className="crm-btn-primary">
-            <Plus className="h-[18px] w-[18px]" />
-            New project
-          </button>
+          <>
+            <Link to="/admin/crm/projects" className="crm-btn-secondary"><FolderKanban className="h-4 w-4" />All campaigns</Link>
+            <button type="button" onClick={() => setShowWizard(true)} className="crm-btn-primary"><Plus className="h-[18px] w-[18px]" />New campaign</button>
+          </>
         }
       />
 
-      <Modal
-        open={showWizard}
-        onClose={() => setShowWizard(false)}
-        title="Create exhibition project"
-        subtitle="Set up a new campaign in three steps. Import contacts and launch sequences once the project exists."
-        size="xl"
-      >
-        <CampaignInitWizard
-          onCancel={() => setShowWizard(false)}
-          onComplete={(projectId) => {
-            setShowWizard(false);
-            navigate(`/admin/crm/projects/${projectId}`);
-          }}
-        />
-      </Modal>
-
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard
-          label="Portfolio ROI"
-          value={formatPercent(analytics?.roiPercent)}
-          icon={TrendingUp}
-          tone="brand"
-          helpText="Return on all campaign spend vs. logged deal revenue."
-        />
-        <StatCard
-          label="Revenue won"
-          value={formatCurrency(analytics?.validatedRevenueWon)}
-          icon={Building2}
-          tone="success"
-          helpText="Closed deals attributed to campaigns."
-        />
-        <StatCard
-          label="Total leads"
-          value={analytics?.leadCount ?? 0}
-          icon={Users}
-          helpText="Individual contacts across all projects."
-        />
-        <StatCard
-          label="Active send queues"
-          value={analytics?.activeQueues ?? 0}
-          icon={Inbox}
-          tone="info"
-          helpText="Leads currently enrolled in live email sequences."
-        />
-      </div>
-
-      {!projects.length && (
-        <div className="space-y-3">
-          <h2 className="text-[15px] font-semibold text-[var(--color-ink)]">Getting started</h2>
-          <WorkflowGuide steps={ONBOARDING_STEPS} />
-        </div>
+      {(workspace?.metrics?.overdueTasks > 0 || workspace?.metrics?.failedSendJobs > 0 || workspace?.metrics?.interestedReplies7d > 0) && (
+        <PageSection>
+          <div className="crm-card flex flex-col gap-4 border-l-4 border-l-amber-500 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-700"><AlertTriangle className="h-4 w-4" /></div>
+              <div>
+                <p className="text-sm font-semibold text-[var(--color-ink)]">Attention needed</p>
+                <p className="mt-0.5 text-xs leading-relaxed text-neutral-500">
+                  {workspace.metrics.overdueTasks || 0} overdue follow-up(s), {workspace.metrics.interestedReplies7d || 0} interested reply/replies this week, and {workspace.metrics.failedSendJobs || 0} failed send job(s).
+                </p>
+              </div>
+            </div>
+            <Link to="/admin/crm/tasks" className="crm-btn-secondary shrink-0">Review follow-ups<ArrowUpRight className="h-4 w-4" /></Link>
+          </div>
+        </PageSection>
       )}
 
-      <Card>
-        <CardHeader
-          title="Your projects"
-          subtitle="Each project is one exhibition or outreach initiative with its own targets, leads, and ROI."
-          action={projects.length ? <Badge tone="neutral">{projects.length}</Badge> : null}
-        />
-        {projects.length ? (
-          <div className="divide-y divide-[var(--color-line)]">
-            {projects.map((project) => (
-              <Link
-                key={project._id}
-                to={`/admin/crm/projects/${project._id}`}
-                className="group flex items-center gap-4 px-5 py-4 transition-colors hover:bg-neutral-50/70"
-              >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand">
-                  <FolderKanban className="h-5 w-5" strokeWidth={1.75} />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2.5">
-                    <p className="truncate text-sm font-semibold text-[var(--color-ink)] group-hover:text-brand">
-                      {project.projectName}
-                    </p>
-                    <Badge tone={STATUS_TONE[project.status] || 'neutral'}>{project.status}</Badge>
+      <PageSection>
+        <MetricGrid>
+          <StatCard compact label="Open pipeline" value={formatCurrency(workspace?.metrics?.pipelineValue)} helpText={`${workspace?.metrics?.activeOpportunities || 0} active opportunities`} icon={BriefcaseBusiness} tone="brand" />
+          <StatCard compact label="Weighted forecast" value={formatCurrency(workspace?.metrics?.weightedPipeline)} helpText={`${workspace?.metrics?.closingSoon || 0} expected to close in 30 days`} icon={TrendingUp} tone="success" />
+          <StatCard compact label="Interested replies" value={workspace?.metrics?.interestedReplies7d || 0} helpText="Received during the last 7 days" icon={MessageCircle} tone="info" />
+          <StatCard compact label="Overdue tasks" value={workspace?.metrics?.overdueTasks || 0} helpText="Follow-ups currently past due" icon={ListTodo} tone={workspace?.metrics?.overdueTasks ? 'warning' : 'neutral'} />
+        </MetricGrid>
+      </PageSection>
+
+      <PageSection>
+        <SplitGrid>
+          <Card>
+            <CardHeader title="Next actions" subtitle="The open follow-ups with the nearest due dates." action={<Link to="/admin/crm/tasks" className="text-xs font-semibold text-brand hover:underline">View all</Link>} />
+            {workspace?.openTasks?.length ? (
+              <ListBody>
+                {workspace.openTasks.map((task) => (
+                  <ListRow key={task._id} className="items-start">
+                    <span className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${task.priority === 'High' ? 'bg-red-500' : 'bg-sky-500'}`} />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[13px] font-semibold text-[var(--color-ink)]">{task.title}</p>
+                      <p className="mt-0.5 text-xs text-neutral-500">{task.companyId?.companyName || task.opportunityId?.name || 'General follow-up'}</p>
+                    </div>
+                    {task.dueAt && (
+                      <span className="flex shrink-0 items-center gap-1 text-[11px] text-neutral-400">
+                        <Clock3 className="h-3 w-3" />
+                        {new Date(task.dueAt).toLocaleDateString('en-AE', { day: 'numeric', month: 'short' })}
+                      </span>
+                    )}
+                  </ListRow>
+                ))}
+              </ListBody>
+            ) : (
+              <EmptyState icon={ListTodo} title="No open follow-ups" description="Create a task when a conversation needs a call, meeting, proposal, or reminder." action={<Link to="/admin/crm/tasks" className="crm-btn-secondary"><Plus className="h-4 w-4" />Create task</Link>} />
+            )}
+          </Card>
+
+          <Card>
+            <CardHeader title="Recent opportunities" subtitle="Commercial conversations most recently updated." action={<Link to="/admin/crm/pipeline" className="text-xs font-semibold text-brand hover:underline">View pipeline</Link>} />
+            {workspace?.recentOpportunities?.length ? (
+              <ListBody>
+                {workspace.recentOpportunities.map((item) => (
+                  <ListRow key={item._id} as={Link} to="/admin/crm/pipeline" className="group hover:bg-neutral-50/80">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand"><BriefcaseBusiness className="h-4 w-4" /></div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-[13px] font-semibold text-[var(--color-ink)] group-hover:text-brand">{item.name}</p>
+                      <p className="mt-0.5 truncate text-xs text-neutral-500">{item.companyId?.companyName || 'Unknown company'} · {item.stage}</p>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <p className="text-[13px] font-bold tabular-nums text-[var(--color-ink)]">{formatCurrency(item.valueAed)}</p>
+                      <p className="text-[10px] text-neutral-400">{item.probability || 0}% probability</p>
+                    </div>
+                    <ChevronRight className="h-4 w-4 shrink-0 text-neutral-300 group-hover:text-brand" />
+                  </ListRow>
+                ))}
+              </ListBody>
+            ) : (
+              <EmptyState icon={BriefcaseBusiness} title="No sales opportunities" description="Turn a qualified reply into a tracked opportunity with value, stage, owner, and next action." action={<Link to="/admin/crm/pipeline" className="crm-btn-primary"><Plus className="h-4 w-4" />Create opportunity</Link>} />
+            )}
+          </Card>
+        </SplitGrid>
+      </PageSection>
+
+      <PageSection>
+        <StatBand>
+          <StatBandItem as={Link} to="/admin/crm/finance" label="Campaign ROI" value={formatPercent(analytics?.roiPercent)} detail="Manage in Finance" icon={TrendingUp} tone="brand" />
+          <StatBandItem as={Link} to="/admin/crm/finance" label="Revenue won" value={formatCurrency(analytics?.validatedRevenueWon)} detail="Log closed deals" icon={Building2} tone="success" />
+          <StatBandItem label="Contacts in campaigns" value={analytics?.leadCount ?? 0} detail="Across all projects" icon={Users} />
+          <StatBandItem as={Link} to="/admin/crm/sequences" label="Active sequences" value={analytics?.activeQueues ?? 0} detail="Manage email drips" icon={Inbox} tone="info" />
+        </StatBand>
+      </PageSection>
+
+      {!projects.length && (
+        <PageSection>
+          <h2 className="text-[15px] font-semibold text-[var(--color-ink)]">Getting started</h2>
+          <WorkflowGuide steps={ONBOARDING_STEPS} />
+        </PageSection>
+      )}
+
+      {projects.length > 0 && (
+        <PageSection>
+          <Card>
+            <CardHeader
+              title="Recent campaigns"
+              subtitle={`Quick access to active outreach projects.${analytics?.computedAt ? ` Updated ${new Date(analytics.computedAt).toLocaleString('en-AE')}.` : ''}`}
+              action={<Link to="/admin/crm/projects" className="text-xs font-semibold text-brand hover:underline">View all</Link>}
+            />
+            <ListBody>
+              {projects.slice(0, 5).map((project) => (
+                <ListRow key={project._id} as={Link} to={`/admin/crm/projects/${project._id}`} className="group hover:bg-neutral-50/80">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand">
+                    <FolderKanban className="h-5 w-5" strokeWidth={1.75} />
                   </div>
-                  <p className="mt-0.5 truncate text-[13px] text-neutral-500">
-                    {project.milestone ? `${project.milestone} · ` : ''}
-                    {project.targetCompaniesCount || 0} target companies
-                  </p>
-                </div>
-                <div className="hidden shrink-0 text-right sm:block">
-                  <p className="text-sm font-semibold tabular-nums text-[var(--color-ink)]">
-                    {formatCurrency(project.financialLedger?.validatedRevenueWon)}
-                  </p>
-                  <p className="text-[11px] uppercase tracking-wide text-neutral-400">revenue</p>
-                </div>
-                <ChevronRight className="h-4 w-4 shrink-0 text-neutral-300 transition-transform group-hover:translate-x-0.5 group-hover:text-brand" />
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <EmptyState
-            icon={FolderKanban}
-            title="No projects yet"
-            description="Create a project for your next exhibition. Upload target companies, import contacts from your prospecting tools, then launch personalized email sequences."
-            action={
-              <button type="button" onClick={() => setShowWizard(true)} className="crm-btn-primary">
-                <Plus className="h-[18px] w-[18px]" />
-                Create your first project
-              </button>
-            }
-          />
-        )}
-      </Card>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="truncate text-sm font-semibold text-[var(--color-ink)] group-hover:text-brand">{project.projectName}</p>
+                      <Badge tone={STATUS_TONE[project.status] || 'neutral'}>{project.status}</Badge>
+                    </div>
+                    <p className="mt-0.5 truncate text-xs text-neutral-500">
+                      {project.milestone ? `${project.milestone} · ` : ''}
+                      {project.targetCompaniesCount || 0} targets · {project.companiesWithPocsFound || 0} with POC
+                    </p>
+                  </div>
+                  <ChevronRight className="h-4 w-4 shrink-0 text-neutral-300 group-hover:text-brand" />
+                </ListRow>
+              ))}
+            </ListBody>
+          </Card>
+        </PageSection>
+      )}
+
+      <CampaignInitWizard
+        open={showWizard}
+        onClose={() => setShowWizard(false)}
+        onComplete={(projectId) => {
+          setShowWizard(false);
+          navigate(`/admin/crm/projects/${projectId}`);
+        }}
+      />
     </PageShell>
   );
 }

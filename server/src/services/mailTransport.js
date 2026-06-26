@@ -28,6 +28,7 @@ function envTlsRejectUnauthorized(imapSpecificEnv) {
 }
 
 export function createTransporter() {
+  const rejectUnauthorized = envTlsRejectUnauthorized(process.env.EMAIL_SMTP_TLS_REJECT_UNAUTHORIZED);
   return nodemailer.createTransport({
     host: process.env.EMAIL_SMTP_HOST,
     port: Number(process.env.EMAIL_SMTP_PORT || 465),
@@ -36,7 +37,7 @@ export function createTransporter() {
       user: process.env.EMAIL_SMTP_USER,
       pass: process.env.EMAIL_SMTP_PASS,
     },
-    tls: { rejectUnauthorized: false },
+    tls: { rejectUnauthorized },
   });
 }
 

@@ -40,13 +40,32 @@ async function chatCompletion(messages, { maxTokens = 800 } = {}) {
 }
 
 function personalizeTemplate(template, lead, company) {
+  const firstName = String(lead.name || '').split(' ')[0] || 'there';
   return String(template || '')
+    .replaceAll('[First]', firstName)
+    .replaceAll('[First Name]', firstName)
     .replaceAll('{{name}}', lead.name || 'there')
+    .replaceAll('[University]', company?.companyName || 'your institution')
+    .replaceAll('[Company]', company?.companyName || 'your team')
     .replaceAll('{{company}}', company?.companyName || 'your team')
     .replaceAll('{{email}}', lead.email || '')
     .replaceAll('{{designation}}', lead.designation || '')
     .replaceAll('{{industry}}', company?.industry || '');
 }
+
+const PROOF_LIBRARY = `
+EGS Approved Proof Points:
+1. HCT Graduation Program: EGS successfully delivered 7 HCT grand ceremonies across the UAE (Dubai, Abu Dhabi, Sharjah, RAK, Fujairah) in 2025 for 4,500 graduates and 13,500 guests. In 2024, EGS delivered 8 grand ceremonies for 3,500 graduates and 10,000 guests.
+2. HCT Fujairah stage recovery: EGS extended a stage by 5-6 meters at the Zayed Sports Complex ceremony just 10 hours before the event.
+3. Graduation Service Scope: EGS handles full physical ceremony production, including design, stage setup, venue branding, backdrops, LED screens, lighting, sound, AV, student registration support, seating, on-site management, and removal.
+`;
+
+const COMPLIANCE_CHECKLIST = `
+QA Writing Constraints:
+- Do not imply private monitoring like "we noticed you did X", do not make unsupported claims, avoid price anchoring, do not compare EGS to competitors, avoid intrusive details.
+- Phrase research sources strictly as: "I was looking at your website", "I came across", "public list shows".
+- Never claim EGS handled VIPs personally unless explicitly verified; focus on "VIP-scale" event production standards.
+`;
 
 export async function generateSequenceEmail({ lead, company, step }) {
   const baseSubject = personalizeTemplate(step.subjectTemplate, lead, company);
@@ -63,12 +82,25 @@ export async function generateSequenceEmail({ lead, company, step }) {
 
   const prompt =
     step.aiPrompt ||
-    'Write a concise, professional cold outreach email for UAE exhibition and branding services. Keep it human and specific. No unsubscribe footer.';
+    'Write a concise, professional cold outreach email for UAE exhibition and branding services. Keep it human and specific.';
+
+  const systemPrompt = `You are a compliance-first B2B outreach email personalizer for Exhibit Graphic Sign (EGS).
+Your task is to take a base subject and base body, and generate a personalized version with a natural, organic opening hook.
+
+${PROOF_LIBRARY}
+
+${COMPLIANCE_CHECKLIST}
+
+Guidelines:
+1. ONLY write a personalized intro hook or customize a specific section of the email body to make it organic. Keep the core EGS proof points and subject lines as defined in the base templates.
+2. Never invent fake claims, numbers, or services.
+3. Strictly follow the QA Writing Constraints (no banned monitoring phrasing, no price claims, no competitor comparisons).
+4. Return JSON only: {"subject": "...", "body": "..."}`;
 
   const { content, tokensUsed, costUsd } = await chatCompletion([
     {
       role: 'system',
-      content: `${prompt}\n\nReturn JSON: {"subject":"...","body":"..."}`,
+      content: systemPrompt,
     },
     {
       role: 'user',
@@ -77,6 +109,7 @@ export async function generateSequenceEmail({ lead, company, step }) {
         designation: lead.designation,
         companyName: company?.companyName,
         industry: company?.industry,
+        prompt,
         baseSubject,
         baseBody,
       }),

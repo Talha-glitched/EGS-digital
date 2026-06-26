@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { crmApiFetch } from '../../crmApi.js';
-import { Plus, Trash2, Play, Clock, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Plus, Trash2, Play, Clock, Sparkles, CheckCircle2, Save } from 'lucide-react';
 import { Alert, Field, InfoPanel } from '../ui/primitives.jsx';
 
 function emptyStep(order) {
@@ -15,45 +15,126 @@ function emptyStep(order) {
   };
 }
 
-export default function SequenceBuilder({ projectId, leadCount = 0, onEnrolled }) {
-  const [name, setName] = useState('Primary outreach sequence');
-  const [steps, setSteps] = useState([emptyStep(1), emptyStep(2), emptyStep(3)]);
+const GRADUATION_STEPS = [
+  {
+    stepOrder: 1,
+    dayDelay: 0,
+    subjectTemplate: '[University]: ceremony scale planning',
+    bodyTemplate: `Hi [First],\n\nOne reason I am reaching out is that EGS has handled graduation work at UAE-wide scale. In 2025, EGS delivered seven HCT grand ceremonies across Dubai, Abu Dhabi, Sharjah, Ras Al Khaimah and Fujairah for 4,500 graduates and 13,500 guests. In 2024, EGS delivered eight grand ceremonies for 3,500 graduates and 10,000 guests.\n\nThat repetition matters because every ceremony improves the next one: stage flow, seating, registration, AV, branding, and event-day coordination.\n\nWould it be worth a conversation about [University]'s upcoming or next-cycle graduation plans?\n\nBest Regards,\nMasuood-ul-Rasheed\nExhibit Graphic Sign\nhttps://exhibitgraphicsign.com`,
+    useAiPersonalization: true,
+    aiPrompt: 'Personalize the intro hook to reference their university graduation ceremonies.'
+  },
+  {
+    stepOrder: 2,
+    dayDelay: 3,
+    subjectTemplate: '[University]: clearer graduation scope',
+    bodyTemplate: `Hi [First],\n\nA common graduation concern is cost control without making the ceremony feel compromised. The risk is not only price; it is unclear scope, late variations, and too many disconnected vendors.\n\nEGS defines the ceremony scope around the parts guests actually experience: registration flow, stage, seating, branding, LED, lighting, sound, AV, on-site management, and removal.\n\nWould you be open to a short call this week to see whether EGS could be useful for [University]?\n\nBest Regards,\nMasuood-ul-Rasheed\nExhibit Graphic Sign\nhttps://exhibitgraphicsign.com`,
+    useAiPersonalization: true,
+    aiPrompt: 'Personalize the intro hook focusing on ceremony scope or vendor logistics.'
+  },
+  {
+    stepOrder: 3,
+    dayDelay: 4,
+    subjectTemplate: '[University]: before plans lock',
+    bodyTemplate: `Hi [First],\n\nBefore ceremony plans are fully locked, it may be useful to speak early about where production support could help.\n\nEGS is strongest when the relationship becomes repeatable. The team remembers what worked, what changed, and what should be improved next time. That is one reason the HCT relationship matters: EGS supported eight HCT grand ceremonies in 2024 and seven more in 2025.\n\nShould I speak with you about graduation ceremony production at [University], or is there someone better I should connect with?\n\nBest Regards,\nMasuood-ul-Rasheed\nExhibit Graphic Sign\nhttps://exhibitgraphicsign.com`,
+    useAiPersonalization: true,
+    aiPrompt: 'Personalize the intro hook about speaking early before graduation plans lock.'
+  },
+  {
+    stepOrder: 4,
+    dayDelay: 5,
+    subjectTemplate: '[University]: graduation setup for graduation',
+    bodyTemplate: `Hi [First],\n\nFor marketing and communications teams, graduation does not end when the ceremony ends. It becomes photos, video, parent memories, student posts, and internal proof of the institution's standard.\n\nEGS does not sell digital marketing. We handle the physical production that makes that output stronger: stage, backdrop, LED screens, branding, lighting, seating, and ceremony environment.\n\nWould it be useful to discuss how EGS can support [University]'s graduation setup?\n\nBest Regards,\nMasuood-ul-Rasheed\nExhibit Graphic Sign\nhttps://exhibitgraphicsign.com`,
+    useAiPersonalization: true,
+    aiPrompt: 'Personalize the intro hook about visual memory and public brand standards.'
+  },
+  {
+    stepOrder: 5,
+    dayDelay: 7,
+    subjectTemplate: '[University]: the ceremony families remember',
+    bodyTemplate: `Hi [First],\n\nA graduation has no second take. Students and families remember whether the room felt organized, dignified, and worthy of the day.\n\nThe HCT Fujairah 2025 ceremony is a useful example: public coverage notes 535 graduates at Zayed Sports Complex, with senior attendance. EGS's internal project record sits behind that graduation season. The point is not decoration; it is to make the ceremony feel right from arrival to finish.\n\nWould you be open to a short conversation about [University]'s next ceremony?\n\nBest Regards,\nMasuood-ul-Rasheed\nExhibit Graphic Sign\nhttps://exhibitgraphicsign.com`,
+    useAiPersonalization: true,
+    aiPrompt: 'Personalize the intro hook referencing the HCT Fujairah scale or dignity.'
+  }
+];
+
+export default function SequenceBuilder({ projectId, project, leadCount = 0, onEnrolled }) {
+  const isGraduation = String(project?.projectName || '').toLowerCase().includes('graduation') || 
+                       String(project?.milestone || '').toLowerCase().includes('graduation');
+
+  const [name, setName] = useState(isGraduation ? 'Graduation Ceremonies Sequence' : 'Primary outreach sequence');
+  const [steps, setSteps] = useState(() => {
+    return isGraduation ? GRADUATION_STEPS : [emptyStep(1), emptyStep(2), emptyStep(3)];
+  });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [sequenceId, setSequenceId] = useState(null);
+  const [launchArmed, setLaunchArmed] = useState(false);
 
   function updateStep(index, field, value) {
+    setLaunchArmed(false);
     setSteps((prev) => prev.map((s, i) => (i === index ? { ...s, [field]: value } : s)));
   }
   function addStep() {
+    setLaunchArmed(false);
     setSteps((prev) => [...prev, emptyStep(prev.length + 1)]);
   }
   function removeStep(index) {
+    setLaunchArmed(false);
     setSteps((prev) => prev.filter((_, i) => i !== index).map((s, i) => ({ ...s, stepOrder: i + 1 })));
   }
 
-  async function saveAndEnroll() {
+  async function persistSequence() {
+    let seqId = sequenceId;
+    if (!seqId) {
+      const seq = await crmApiFetch(`/api/admin/projects/${projectId}/sequences`, {
+        method: 'POST',
+        body: JSON.stringify({ name, steps }),
+      });
+      seqId = seq._id;
+      setSequenceId(seqId);
+    } else {
+      await crmApiFetch(`/api/admin/sequences/${seqId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ name, steps }),
+      });
+    }
+    return seqId;
+  }
+
+  async function saveDraft() {
     setBusy(true);
     setError('');
+    setSuccess('');
     try {
-      let seqId = sequenceId;
-      if (!seqId) {
-        const seq = await crmApiFetch(`/api/admin/projects/${projectId}/sequences`, {
-          method: 'POST',
-          body: JSON.stringify({ name, steps }),
-        });
-        seqId = seq._id;
-        setSequenceId(seqId);
-      } else {
-        await crmApiFetch(`/api/admin/sequences/${seqId}`, {
-          method: 'PATCH',
-          body: JSON.stringify({ name, steps }),
-        });
-      }
+      await persistSequence();
+      setLaunchArmed(false);
+      setSuccess('Draft saved. No contacts were enrolled.');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function saveAndEnroll() {
+    if (!launchArmed) {
+      setLaunchArmed(true);
+      setSuccess('Review the audience count, then confirm launch. Only never-contacted leads will be enrolled.');
+      return;
+    }
+
+    setBusy(true);
+    setError('');
+    setSuccess('');
+    try {
+      const seqId = await persistSequence();
       const result = await crmApiFetch(`/api/admin/projects/${projectId}/enroll`, {
         method: 'POST',
-        body: JSON.stringify({ sequenceId: seqId }),
+        body: JSON.stringify({ sequenceId: seqId, confirmEnrollment: true }),
       });
+      setLaunchArmed(false);
       onEnrolled?.(result);
     } catch (err) {
       setError(err.message);
@@ -84,9 +165,10 @@ export default function SequenceBuilder({ projectId, leadCount = 0, onEnrolled }
       </InfoPanel>
 
       {error && <Alert>{error}</Alert>}
+      {success && <Alert tone="success">{success}</Alert>}
 
       <Field label="Sequence name" hint="Internal label — not visible to recipients.">
-        <input className="crm-input max-w-md" value={name} onChange={(e) => setName(e.target.value)} />
+        <input className="crm-input max-w-md" value={name} onChange={(e) => { setName(e.target.value); setLaunchArmed(false); }} />
       </Field>
 
       <div className="space-y-4">
@@ -116,20 +198,20 @@ export default function SequenceBuilder({ projectId, leadCount = 0, onEnrolled }
               )}
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4">
               <Field label="Wait before sending (days)" hint="Days after the previous step, or after enrollment for step 1.">
                 <div className="relative">
                   <Clock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
                   <input
                     type="number"
                     min="0"
-                    className="crm-input pl-10"
+                    className="crm-input crm-input-has-icon"
                     value={step.dayDelay}
                     onChange={(e) => updateStep(index, 'dayDelay', Number(e.target.value))}
                   />
                 </div>
               </Field>
-              <label className="flex items-center gap-3 self-end rounded-lg border border-[var(--color-line-strong)] bg-white px-4 py-2.5">
+              <label className="flex items-center gap-3 rounded-lg border border-[var(--color-line-strong)] bg-white px-4 py-3">
                 <input
                   type="checkbox"
                   className="h-4 w-4 rounded border-neutral-300 text-brand focus:ring-brand/30"
@@ -142,12 +224,12 @@ export default function SequenceBuilder({ projectId, leadCount = 0, onEnrolled }
             </div>
 
             <div className="mt-4 space-y-3">
-              <Field label="Subject line" hint="Use {{name}}, {{company}}, {{designation}} as placeholders.">
+              <Field label="Subject line" hint="Use [First] or [University] as placeholders.">
                 <input className="crm-input" value={step.subjectTemplate} onChange={(e) => updateStep(index, 'subjectTemplate', e.target.value)} />
               </Field>
               <Field label="Email body" hint="Base template — AI refines this when personalization is on.">
                 <textarea
-                  rows={5}
+                  rows={6}
                   className="crm-input resize-y font-mono text-[13px] leading-relaxed"
                   value={step.bodyTemplate}
                   onChange={(e) => updateStep(index, 'bodyTemplate', e.target.value)}
@@ -163,10 +245,16 @@ export default function SequenceBuilder({ projectId, leadCount = 0, onEnrolled }
           <Plus className="h-4 w-4" />
           Add another step
         </button>
-        <button type="button" disabled={busy || leadCount === 0} onClick={saveAndEnroll} className="crm-btn-primary">
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <button type="button" disabled={busy} onClick={saveDraft} className="crm-btn-secondary">
+            <Save className="h-4 w-4" />
+            {busy ? 'Saving…' : 'Save draft'}
+          </button>
+          <button type="button" disabled={busy || leadCount === 0} onClick={saveAndEnroll} className={`crm-btn-primary crm-btn-wrap ${launchArmed ? 'ring-2 ring-red-200' : ''}`}>
           {busy ? <Play className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
-          {busy ? 'Launching sequence…' : 'Save & enroll eligible leads'}
-        </button>
+          {busy ? 'Launching…' : launchArmed ? `Confirm launch (${leadCount})` : 'Review & launch'}
+          </button>
+        </div>
       </div>
 
       {leadCount === 0 && (

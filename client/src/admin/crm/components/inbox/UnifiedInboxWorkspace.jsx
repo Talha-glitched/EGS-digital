@@ -1,34 +1,45 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import ConversationThreadView from './ConversationThreadView.jsx';
-import { Mail, MessageSquare, Search } from 'lucide-react';
+import { Mail, MessageSquare } from 'lucide-react';
 import { cn, EmptyState } from '../ui/primitives.jsx';
+import {
+  AdvancedFilterPopover,
+  AdvancedFilterChips,
+  useTableFilters,
+  INBOX_FILTER_SCHEMA,
+} from '../ui/advancedFilter/index.js';
 
-export default function UnifiedInboxWorkspace({ initialReplies = [], onAction }) {
+export default function UnifiedInboxWorkspace({ initialReplies = [], onAction, replyCount }) {
   const [activeThread, setActiveThread] = useState(initialReplies[0] || null);
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const filtered = initialReplies.filter(
-    (reply) =>
-      (reply.companyName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (reply.pocName || '').toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const {
+    filtered,
+    filters: advancedFilters,
+    setFilters: setAdvancedFilters,
+    matchMode: advancedMatchMode,
+  } = useTableFilters(initialReplies, INBOX_FILTER_SCHEMA);
 
   return (
-    <div className="crm-card flex h-[calc(100vh-150px)] min-h-[520px] overflow-hidden">
-      <aside className="flex w-[320px] shrink-0 flex-col border-r border-[var(--color-line)] bg-neutral-50/40">
-        <div className="border-b border-[var(--color-line)] bg-white p-3.5">
+    <div className="crm-card flex min-h-[560px] flex-col overflow-hidden md:h-[calc(100vh-168px)] md:flex-row">
+      <aside className="flex h-72 w-full shrink-0 flex-col border-b border-[var(--color-line)] bg-neutral-50/40 md:h-auto md:w-[360px] md:border-b-0 md:border-r">
+        <div className="border-b border-[var(--color-line)] bg-white px-5 py-4">
           <h2 className="flex items-center gap-2 text-sm font-semibold text-[var(--color-ink)]">
             <Mail className="h-4 w-4 text-brand" strokeWidth={1.75} />
             Replies
+            {typeof replyCount === 'number' && (
+              <span className="text-xs font-medium text-neutral-400">({replyCount})</span>
+            )}
           </h2>
-          <div className="relative mt-3">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-            <input
-              type="text"
-              placeholder="Filter by company or contact…"
-              className="crm-input py-2 pl-9 text-[13px]"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+          <div className="mt-3 space-y-2">
+            <AdvancedFilterPopover
+              schema={INBOX_FILTER_SCHEMA}
+              filters={advancedFilters}
+              matchMode={advancedMatchMode}
+              onChange={setAdvancedFilters}
+            />
+            <AdvancedFilterChips
+              schema={INBOX_FILTER_SCHEMA}
+              filters={advancedFilters}
+              onChange={setAdvancedFilters}
             />
           </div>
         </div>
@@ -45,7 +56,7 @@ export default function UnifiedInboxWorkspace({ initialReplies = [], onAction })
                   type="button"
                   onClick={() => setActiveThread(reply)}
                   className={cn(
-                    'block w-full border-b border-[var(--color-line)] px-3.5 py-3 text-left transition',
+                    'block w-full border-b border-[var(--color-line)] px-5 py-4 text-left transition',
                     selected ? 'bg-white shadow-[inset_3px_0_0_0_var(--color-brand)]' : 'hover:bg-white/70'
                   )}
                 >
@@ -65,7 +76,7 @@ export default function UnifiedInboxWorkspace({ initialReplies = [], onAction })
         </div>
       </aside>
 
-      <section className="flex min-w-0 flex-1 flex-col bg-white">
+      <section className="flex min-h-[480px] min-w-0 flex-1 flex-col bg-white md:min-h-0">
         {activeThread ? (
           <ConversationThreadView activeThread={activeThread} onAction={onAction} />
         ) : (
@@ -81,15 +92,10 @@ export default function UnifiedInboxWorkspace({ initialReplies = [], onAction })
 }
 
 function IntentPill({ intent }) {
-  const interested = intent === 'Interested';
+  const tone = intent === 'Interested' ? 'bg-emerald-50 text-emerald-700' : intent === 'Opt Out' ? 'bg-red-50 text-red-700' : 'bg-neutral-100 text-neutral-600';
   return (
-    <span
-      className={cn(
-        'shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide',
-        interested ? 'bg-emerald-50 text-emerald-700' : 'bg-neutral-100 text-neutral-600'
-      )}
-    >
-      {intent}
+    <span className={cn('shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold', tone)}>
+      {intent || 'Neutral'}
     </span>
   );
 }

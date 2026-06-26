@@ -9,9 +9,17 @@ const companySchema = new mongoose.Schema(
     projectsAssociated: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ProjectCampaign' }],
     globalStatus: {
       type: String,
-      enum: ['Lead', 'Active Prospect', 'Client Partner', 'Blacklisted'],
+      enum: ['Lead', 'Active Prospect', 'Client Partner', 'Blacklisted', 'Target', 'target'],
       default: 'Lead',
     },
+    city: { type: String, default: '', trim: true },
+    country: { type: String, default: '', trim: true },
+    genericEmails: [{ type: String, trim: true, lowercase: true }],
+    genericPhone: { type: String, default: '', trim: true },
+    notes: { type: String, default: '', trim: true },
+    version: { type: Number, default: 0 },
+    deletedAt: { type: Date, default: null, index: true },
+    deletedBy: { type: String, default: null, trim: true },
   },
   { timestamps: true, versionKey: false }
 );

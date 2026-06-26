@@ -26,6 +26,11 @@ const projectCampaignSchema = new mongoose.Schema(
       default: 'Active Planning',
       index: true,
     },
+    statusSource: {
+      type: String,
+      enum: ['auto', 'manual'],
+      default: 'auto',
+    },
     fromEmail: { type: String, default: '', trim: true },
     fromName: { type: String, default: 'Exhibit Graphic Sign', trim: true },
   },

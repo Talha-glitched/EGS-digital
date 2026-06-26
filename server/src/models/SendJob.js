@@ -13,6 +13,10 @@ const sendJobSchema = new mongoose.Schema(
     },
     scheduledFor: { type: Date, default: null },
     sentAt: { type: Date, default: null },
+    recipientEmail: { type: String, default: '', trim: true, lowercase: true },
+    providerMessageId: { type: String, default: '', trim: true, index: true },
+    renderedSubject: { type: String, default: '' },
+    renderedBody: { type: String, default: '' },
     errorMessage: { type: String, default: '' },
   },
   { timestamps: true, versionKey: false }

@@ -1,11 +1,16 @@
 import { useCallback, useEffect, useState } from 'react';
 import { crmApiFetch } from '../crmApi.js';
 import UnifiedInboxWorkspace from '../components/inbox/UnifiedInboxWorkspace.jsx';
-import { PageShell, PageHeader, LoadingState } from '../components/ui/primitives.jsx';
+import { Modal } from '../components/ui/Modal.jsx';
+import { PageShell, PageSection, LoadingState, Field, Alert } from '../components/ui/primitives.jsx';
 
 export default function InboxPage() {
   const [replies, setReplies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [wonThread, setWonThread] = useState(null);
+  const [wonAmount, setWonAmount] = useState('');
+  const [actionError, setActionError] = useState('');
+  const [actionBusy, setActionBusy] = useState(false);
 
   const load = useCallback(async () => {
     const data = await crmApiFetch('/api/admin/inbox?limit=100');
@@ -24,14 +29,32 @@ export default function InboxPage() {
       load();
     }
     if (action === 'won') {
-      const amount = window.prompt('Closed deal amount (AED):', '65000');
-      if (amount) {
-        await crmApiFetch(`/api/admin/inbox/${thread._id}/won`, {
-          method: 'POST',
-          body: JSON.stringify({ amount: Number(amount), description: 'Closed from inbox' }),
-        });
-        load();
-      }
+      setWonThread(thread);
+      setWonAmount('');
+      setActionError('');
+    }
+  }
+
+  async function confirmWon(e) {
+    e.preventDefault();
+    const amount = Number(wonAmount);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      setActionError('Enter a closed deal amount greater than zero.');
+      return;
+    }
+    setActionBusy(true);
+    setActionError('');
+    try {
+      await crmApiFetch(`/api/admin/inbox/${wonThread._id}/won`, {
+        method: 'POST',
+        body: JSON.stringify({ amount, description: 'Closed from inbox' }),
+      });
+      setWonThread(null);
+      await load();
+    } catch (err) {
+      setActionError(err.message);
+    } finally {
+      setActionBusy(false);
     }
   }
 
@@ -45,11 +68,36 @@ export default function InboxPage() {
 
   return (
     <PageShell>
-      <PageHeader
-        title="Inbox"
-        subtitle={`${replies.length} reply conversation${replies.length === 1 ? '' : 's'} — respond, blacklist, or close deals.`}
-      />
-      <UnifiedInboxWorkspace initialReplies={replies} onAction={handleAction} />
+      <PageSection>
+        <UnifiedInboxWorkspace initialReplies={replies} onAction={handleAction} replyCount={replies.length} />
+      </PageSection>
+      <Modal
+        open={Boolean(wonThread)}
+        onClose={() => !actionBusy && setWonThread(null)}
+        title="Mark opportunity won"
+        subtitle={`Record the AED contract value for ${wonThread?.companyName || wonThread?.pocName || 'this contact'}.`}
+        size="md"
+      >
+        <form onSubmit={confirmWon} className="space-y-5">
+          {actionError && <Alert>{actionError}</Alert>}
+          <Field label="Closed deal amount (AED)" required hint="Use the signed or internally approved contract value.">
+            <input
+              type="number"
+              min="1"
+              step="1"
+              autoFocus
+              className="crm-input"
+              value={wonAmount}
+              onChange={(e) => setWonAmount(e.target.value)}
+              placeholder="65000"
+            />
+          </Field>
+          <div className="flex justify-end gap-3 border-t border-[var(--color-line)] pt-4">
+            <button type="button" className="crm-btn-secondary" disabled={actionBusy} onClick={() => setWonThread(null)}>Cancel</button>
+            <button type="submit" className="crm-btn-primary" disabled={actionBusy}>{actionBusy ? 'Recording…' : 'Confirm won deal'}</button>
+          </div>
+        </form>
+      </Modal>
     </PageShell>
   );
 }

@@ -5,6 +5,7 @@ import { Sequence } from '../models/Sequence.js';
 import { SequenceEnrollment } from '../models/SequenceEnrollment.js';
 import { SendJob } from '../models/SendJob.js';
 import { Suppression } from '../models/Suppression.js';
+import { getPrimaryLeadEmail } from '../utils/contactEmails.js';
 import { generateSequenceEmail } from './openaiService.js';
 import { createTransporter, getBaseUrl, getFromIdentity } from './mailTransport.js';
 import {
@@ -13,12 +14,21 @@ import {
   isWithinUaeBusinessHours,
   randomSendDelayMs,
 } from '../utils/uaeBusinessHours.js';
+import { syncAutoCampaignStatus } from './projectService.js';
 
 const POLL_INTERVAL_MS = 5000;
 
 let pollTimer = null;
 let isProcessing = false;
 let nextAllowedSendAt = 0;
+
+async function recoverStaleProcessingJobs() {
+  const staleBefore = new Date(Date.now() - 30 * 60 * 1000);
+  await SendJob.updateMany(
+    { status: 'processing', updatedAt: { $lt: staleBefore } },
+    { $set: { status: 'failed', errorMessage: 'Worker stopped before send completion; review before retrying.' } }
+  );
+}
 
 function renderEmailHtml({ body, leadId, stepIndex }) {
   const baseUrl = getBaseUrl().replace(/\/$/, '');
@@ -34,6 +44,12 @@ function renderEmailHtml({ body, leadId, stepIndex }) {
     <div style="max-width:620px;margin:0 auto;padding:24px;">${escapedBody}</div>
     <img src="${pixel}" width="1" height="1" alt="" style="display:none;" />
   </body></html>`;
+}
+
+export function withOptOutFooter(body) {
+  const text = String(body || '').trim();
+  if (/opt[ -]?out|unsubscribe|stop (?:emailing|messages)/i.test(text)) return text;
+  return `${text}\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.`;
 }
 
 async function getDailySendCount() {
@@ -83,7 +99,15 @@ async function processSendJobRecord(job) {
     return;
   }
 
-  const suppressed = await Suppression.findOne({ email: lead.email });
+  const targetEmail = getPrimaryLeadEmail(lead);
+  if (!targetEmail) {
+    job.status = 'failed';
+    job.errorMessage = 'No valid target email address found for lead.';
+    await job.save();
+    return;
+  }
+
+  const suppressed = await Suppression.findOne({ email: targetEmail });
   if (suppressed) {
     lead.deliveryStatus = 'Opted Out';
     await lead.save();
@@ -124,36 +148,50 @@ async function processSendJobRecord(job) {
 
   try {
     const generated = await generateSequenceEmail({ lead, company, step });
+    const compliantBody = withOptOutFooter(generated.body);
     const { fromEmail, fromName } = getFromIdentity(project);
     const transporter = createTransporter();
 
     const result = await transporter.sendMail({
       from: `"${fromName}" <${fromEmail}>`,
-      to: lead.email,
+      to: targetEmail,
       subject: generated.subject,
+      text: compliantBody,
       html: renderEmailHtml({
-        body: generated.body,
+        body: compliantBody,
         leadId: lead._id,
         stepIndex: enrollment.currentStepIndex,
       }),
     });
+    const messageId = String(result?.messageId || '').trim();
 
     lead.deliveryStatus = 'Emailed Outbound';
-    lead.lastMessageId = String(result.messageId || '').trim();
+    if (messageId) {
+      lead.lastMessageId = messageId;
+    }
     lead.financialMetrics.tokensConsumed += generated.tokensUsed;
     lead.financialMetrics.calculatedAiCostUSD += generated.costUsd;
     lead.trackingMetrics.emailsDeliveredCount += 1;
     await lead.save();
 
+    if (lead.campaignId) {
+      await syncAutoCampaignStatus(lead.campaignId);
+    }
+
     if (project) {
+      const usdToAed = Number(process.env.OPENAI_USD_TO_AED) || 3.6725;
       project.financialLedger.accumulatedOpenAiCost =
-        (project.financialLedger.accumulatedOpenAiCost || 0) + generated.costUsd;
+        (project.financialLedger.accumulatedOpenAiCost || 0) + (generated.costUsd * usdToAed);
       project.recalculateCosts();
       await project.save();
     }
 
     job.status = 'sent';
     job.sentAt = new Date();
+    job.recipientEmail = targetEmail;
+    job.providerMessageId = messageId;
+    job.renderedSubject = generated.subject;
+    job.renderedBody = compliantBody;
     job.errorMessage = '';
     await job.save();
 
@@ -252,6 +290,7 @@ export function startSendWorker() {
     pollSendQueue().catch((err) => console.error('Send queue error:', err.message));
   }, POLL_INTERVAL_MS);
 
+  recoverStaleProcessingJobs().catch((err) => console.error('Send queue recovery failed:', err.message));
   pollSendQueue().catch(() => {});
 }
 

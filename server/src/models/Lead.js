@@ -21,11 +21,47 @@ const trackingMetricsSchema = new mongoose.Schema(
 const leadSchema = new mongoose.Schema(
   {
     companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', required: true, index: true },
-    campaignId: { type: mongoose.Schema.Types.ObjectId, ref: 'ProjectCampaign', required: true, index: true },
+    campaignId: { type: mongoose.Schema.Types.ObjectId, ref: 'ProjectCampaign', default: null, index: true },
     email: { type: String, required: true, trim: true, lowercase: true },
     name: { type: String, default: '', trim: true },
     designation: { type: String, default: '', trim: true },
     phone: { type: String, default: '', trim: true },
+    
+    // Stage 2 - Multi-Source Contact Discovery
+    linkedinUrl: { type: String, default: '', trim: true },
+    emailApollo: { type: String, default: '', trim: true, lowercase: true },
+    emailHunter: { type: String, default: '', trim: true, lowercase: true },
+    emailLusha: { type: String, default: '', trim: true, lowercase: true },
+    phoneLusha1: { type: String, default: '', trim: true },
+    phoneLusha2: { type: String, default: '', trim: true },
+    whatsappNumber: { type: String, default: '', trim: true },
+
+    // Stage 3 - Multi-channel Outreach Tracking
+    linkedinOutreach: {
+      connSent: { type: Boolean, default: false },
+      connDate: { type: Date, default: null },
+      accepted: { type: Boolean, default: false },
+      acceptDate: { type: Date, default: null },
+      inmailSent: { type: Boolean, default: false },
+      inmailDate: { type: Date, default: null },
+      inmailResponded: { type: Boolean, default: false },
+      dmSent: { type: Boolean, default: false },
+      dmDate: { type: Date, default: null },
+      dmResponded: { type: Boolean, default: false },
+      notes: { type: String, default: '' },
+    },
+    coldCall: {
+      made: { type: Boolean, default: false },
+      date: { type: Date, default: null },
+      response: { type: String, default: '' },
+      notes: { type: String, default: '' },
+    },
+    whatsapp: {
+      sent: { type: Boolean, default: false },
+      date: { type: Date, default: null },
+      response: { type: String, default: '' },
+    },
+
     sources: [{ type: String, trim: true }],
     primarySource: { type: String, default: '', trim: true },
     deliveryStatus: {
@@ -34,10 +70,46 @@ const leadSchema = new mongoose.Schema(
       default: 'Pending Inqueue',
       index: true,
     },
+    outcome: { type: String, default: 'Pending' },
+
+    pocQualification: {
+      status: {
+        type: String,
+        enum: ['Unverified', 'Confirmed', 'RedirectedWithReferral', 'RedirectedNoReferral', 'WrongContact'],
+        default: 'Unverified',
+        index: true,
+      },
+      assessedAt: { type: Date, default: null },
+      assessedBy: { type: String, default: '', trim: true },
+      notes: { type: String, default: '', trim: true },
+      referral: {
+        name: { type: String, default: '', trim: true },
+        email: { type: String, default: '', trim: true, lowercase: true },
+        phone: { type: String, default: '', trim: true },
+        designation: { type: String, default: '', trim: true },
+        linkedinUrl: { type: String, default: '', trim: true },
+      },
+      referredLeadId: { type: mongoose.Schema.Types.ObjectId, ref: 'Lead', default: null },
+    },
+    relationshipProfile: {
+      status: {
+        type: String,
+        enum: ['New', 'Active', 'Nurture', 'Later', 'Dormant'],
+        default: 'New',
+      },
+      owner: { type: String, default: '', trim: true },
+      serviceCategories: [{ type: String, trim: true }],
+      nextFollowUpAt: { type: Date, default: null },
+      reminderNotes: { type: String, default: '', trim: true },
+    },
+
     financialMetrics: { type: financialMetricsSchema, default: () => ({}) },
     trackingMetrics: { type: trackingMetricsSchema, default: () => ({}) },
     lastMessageId: { type: String, default: '', index: true },
     repliedAt: { type: Date, default: null },
+    version: { type: Number, default: 0 },
+    deletedAt: { type: Date, default: null, index: true },
+    deletedBy: { type: String, default: null, trim: true },
   },
   { timestamps: true, versionKey: false }
 );

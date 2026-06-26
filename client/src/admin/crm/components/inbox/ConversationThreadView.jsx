@@ -1,4 +1,4 @@
-import { MessageSquare, Calendar, ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { MessageSquare, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import { cn } from '../ui/primitives.jsx';
 
 export default function ConversationThreadView({ activeThread, onAction }) {
@@ -59,14 +59,11 @@ export default function ConversationThreadView({ activeThread, onAction }) {
           <button
             type="button"
             onClick={() => openWhatsAppChat(activeThread.phoneNumber, activeThread.pocName)}
+            disabled={!activeThread.phoneNumber}
             className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-3.5 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700"
           >
             <MessageSquare className="h-4 w-4" />
             WhatsApp
-          </button>
-          <button type="button" className="crm-btn-secondary !py-2">
-            <Calendar className="h-4 w-4 text-neutral-400" />
-            Schedule
           </button>
         </div>
         <div className="flex flex-wrap gap-1">

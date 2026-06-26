@@ -9,7 +9,7 @@ export default function CoverageMetricsBanner({ analytics, project }) {
   const responded = project?.companiesRespondedCount ?? 0;
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div className="crm-metric-grid cols-2">
       <MetricCard
         title="POC discovery"
         subtitle="Target companies with at least one valid contact found"
@@ -19,7 +19,7 @@ export default function CoverageMetricsBanner({ analytics, project }) {
       />
       <MetricCard
         title="Companies that replied"
-        subtitle="Unique target accounts where someone responded to outreach"
+        subtitle="Unique target companies where someone responded to outreach"
         percent={replyPercent}
         detail={`${responded} of ${targetCount} companies have replied`}
         tone="success"
@@ -30,7 +30,7 @@ export default function CoverageMetricsBanner({ analytics, project }) {
 
 function MetricCard({ title, subtitle, percent, detail, tone }) {
   return (
-    <div className="crm-card p-5">
+    <div className="crm-card p-5 lg:p-6">
       <div className="flex items-baseline justify-between gap-3">
         <div className="min-w-0">
           <p className="text-sm font-semibold text-[var(--color-ink)]">{title}</p>

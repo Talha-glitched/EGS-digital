@@ -1,46 +1,59 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { crmApiFetch, formatCurrency, formatPercent } from '../crmApi.js';
-import CoverageMetricsBanner from '../components/analytics/CoverageMetricsBanner.jsx';
-import VendorPerformanceGrid from '../components/analytics/VendorPerformanceGrid.jsx';
-import LeadTableView from '../components/leads/LeadTableView.jsx';
-import DataBlenderWizard from '../components/wizards/DataBlenderWizard.jsx';
-import SequenceBuilder from '../components/wizards/SequenceBuilder.jsx';
+import { Link, useParams } from 'react-router-dom';
+import { crmApiFetch, formatPercent, updateCampaign } from '../crmApi.js';
+import ProjectDatabaseTable from '../components/projects/ProjectDatabaseTable.jsx';
+import CampaignStageControl from '../components/projects/CampaignStageControl.jsx';
+import ExhibitorImportModal from '../components/projects/ExhibitorImportModal.jsx';
+import ContactBlenderModal from '../components/projects/ContactBlenderModal.jsx';
+import ProjectPerformanceModal from '../components/projects/ProjectPerformanceModal.jsx';
+import CompanyDetailsDrawer from '../components/leads/CompanyDetailsDrawer.jsx';
+import OutreachDrawer from '../components/leads/OutreachDrawer.jsx';
+import InfoTip from '../components/ui/InfoTip.jsx';
+import { CAMPAIGN_AUTOMATION } from '../constants/automationHints.js';
 import {
   PageShell,
-  PageHeader,
-  Tabs,
+  PageSection,
   Toast,
   LoadingState,
-  InfoPanel,
-  Badge,
+  ProgressBar,
 } from '../components/ui/primitives.jsx';
-import { ArrowRight, Building2, Users, Coins } from 'lucide-react';
+import {
+  Building2,
+  Users,
+  MessageCircle,
+  Upload,
+  Sparkles,
+  Layers,
+  BarChart3,
+  ChevronLeft,
+  TrendingUp,
+} from 'lucide-react';
 
-const STATUS_TONE = {
-  'Active Planning': 'warning',
-  'Active Campaigning': 'success',
-  Completed: 'neutral',
-  Archived: 'neutral',
-};
+const EMAILED_STATUSES = ['Emailed Outbound', 'Replied', 'Bounced / Invalid'];
 
 export default function ProjectDetailWorkspace() {
   const { id } = useParams();
   const [project, setProject] = useState(null);
   const [analytics, setAnalytics] = useState(null);
   const [leads, setLeads] = useState([]);
-  const [tab, setTab] = useState('leads');
+  const [companies, setCompanies] = useState([]);
   const [toast, setToast] = useState('');
+  const [selectedCompanyId, setSelectedCompanyId] = useState(null);
+  const [selectedLead, setSelectedLead] = useState(null);
+  const [modal, setModal] = useState(null);
+  const [savingStage, setSavingStage] = useState(false);
 
   const refresh = useCallback(async () => {
-    const [proj, anal, leadData] = await Promise.all([
+    const [proj, anal, leadData, companyData] = await Promise.all([
       crmApiFetch(`/api/admin/projects/${id}`),
       crmApiFetch(`/api/admin/analytics/projects/${id}`),
-      crmApiFetch(`/api/admin/projects/${id}/leads?limit=200`),
+      crmApiFetch(`/api/admin/projects/${id}/leads?limit=500`),
+      crmApiFetch(`/api/admin/projects/${id}/companies?limit=500`),
     ]);
     setProject(proj);
     setAnalytics(anal);
     setLeads(leadData.items || []);
+    setCompanies(companyData.items || []);
   }, [id]);
 
   useEffect(() => {
@@ -52,138 +65,210 @@ export default function ProjectDetailWorkspace() {
     setTimeout(() => setToast(''), 4500);
   }
 
+  function handleImported(msg) {
+    showToast(msg);
+    refresh();
+  }
+
+  function handleLeadUpdated() {
+    refresh();
+    showToast('Contact updated.');
+  }
+
+  async function handleStageChange(payload) {
+    setSavingStage(true);
+    try {
+      const updated = await updateCampaign(id, payload);
+      setProject((prev) => ({ ...prev, ...updated }));
+      showToast(payload.statusSource === 'auto' ? 'Automatic stage enabled.' : 'Campaign stage updated.');
+    } catch (error) {
+      showToast(error.message || 'Failed to update stage.');
+    } finally {
+      setSavingStage(false);
+    }
+  }
+
   if (!project) {
     return (
-      <PageShell>
-        <LoadingState label="Loading project workspace…" />
+      <PageShell compact>
+        <LoadingState label="Loading project…" />
       </PageShell>
     );
   }
 
-  const needsTargets = (project.targetCompaniesCount || 0) === 0;
-  const needsLeads = leads.length === 0;
-
-  const tabs = [
-    {
-      id: 'leads',
-      label: 'Leads',
-      description: 'Every point-of-contact matched to your target companies, with delivery status and source attribution.',
-    },
-    {
-      id: 'ingest',
-      label: 'Import contacts',
-      description: 'Upload Apollo, Hunter, or Lusha exports. Map columns, preview deduplication, then merge into this project.',
-    },
-    {
-      id: 'sequence',
-      label: 'Email sequence',
-      description: 'Build a multi-step drip with day delays and optional AI personalization, then enroll eligible leads.',
-    },
-    {
-      id: 'analytics',
-      label: 'Analytics',
-      description: 'Vendor performance, open rates, and ROI metrics cached for fast loading.',
-    },
-  ];
+  const target = project.targetCompaniesCount || 0;
+  const pocPct = analytics?.pocDiscoveryPercent ?? 0;
+  const replyPct = analytics?.interactionProgressPercent ?? 0;
+  const pocsEmailed = leads.filter((lead) => EMAILED_STATUSES.includes(lead.deliveryStatus)).length;
+  const pocsResponded = leads.filter((lead) => lead.deliveryStatus === 'Replied').length;
+  const pocReplyPct = pocsEmailed ? (pocsResponded / pocsEmailed) * 100 : 0;
 
   return (
-    <PageShell>
+    <PageShell compact>
       <Toast message={toast} onDismiss={() => setToast('')} />
 
-      <PageHeader
-        title={project.projectName}
-        subtitle={
-          project.milestone
-            ? `${project.milestone} — targets, contacts, sequences, and ROI for this campaign.`
-            : 'Exhibition outreach campaign workspace.'
-        }
-        action={<Badge tone={STATUS_TONE[project.status] || 'warning'}>{project.status}</Badge>}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Link to="/admin/crm/projects" className="inline-flex items-center gap-1 text-xs font-semibold text-neutral-500 hover:text-brand">
+          <ChevronLeft className="h-3.5 w-3.5" />
+          All campaigns
+        </Link>
+        <CampaignStageControl
+          status={project.status}
+          statusSource={project.statusSource}
+          onChange={handleStageChange}
+          saving={savingStage}
+          showHint
+        />
+      </div>
+
+      <PageSection>
+        <div className="crm-card px-4 py-3.5 lg:px-5">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs">
+            <CompactStat icon={Building2} label="Exhibitors" value={target} />
+            <CompactStat icon={Users} label="POCs" value={leads.length} />
+            <CompactStat
+              icon={MessageCircle}
+              label="Replied"
+              value={project.companiesRespondedCount || 0}
+              hint={CAMPAIGN_AUTOMATION.companiesReplied}
+            />
+            <CompactStat
+              icon={BarChart3}
+              label="Discovery"
+              value={formatPercent(pocPct)}
+              accent
+              hint={CAMPAIGN_AUTOMATION.discoveryRate}
+            />
+            <CompactStat
+              icon={TrendingUp}
+              label="Reply rate"
+              value={formatPercent(replyPct)}
+              hint={CAMPAIGN_AUTOMATION.replyRate}
+            />
+          </div>
+
+          <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <ProgressBlock
+              label="POC discovery"
+              hint={CAMPAIGN_AUTOMATION.discoveryRate}
+              value={pocPct}
+              fraction={`${project.companiesWithPocsFound || 0}/${target}`}
+              tone="brand"
+            />
+            <ProgressBlock
+              label="Companies replied"
+              hint={CAMPAIGN_AUTOMATION.companiesReplied}
+              value={replyPct}
+              fraction={`${project.companiesRespondedCount || 0}/${target}`}
+              tone="success"
+            />
+            <ProgressBlock
+              label="POC reply rate"
+              hint={CAMPAIGN_AUTOMATION.pocReplyRate}
+              value={pocReplyPct}
+              fraction={`${pocsResponded}/${pocsEmailed}`}
+              tone="success"
+            />
+          </div>
+
+          <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-[var(--color-line)] pt-3">
+            <ActionBtn icon={Upload} label="Add exhibitors" onClick={() => setModal('exhibitors')} />
+            <ActionBtn icon={Sparkles} label="Contact blender" onClick={() => setModal('blender')} />
+            <Link
+              to={`/admin/crm/sequences?new=1&campaign=${id}`}
+              className="crm-btn-secondary inline-flex items-center gap-1.5 py-1.5 text-xs"
+            >
+              <Layers className="h-3.5 w-3.5" />
+              Email sequences
+            </Link>
+            <ActionBtn icon={BarChart3} label="Performance" onClick={() => setModal('performance')} variant="secondary" />
+          </div>
+        </div>
+      </PageSection>
+
+      <PageSection>
+        <ProjectDatabaseTable
+          companies={companies}
+          leads={leads}
+          onCompanyClick={setSelectedCompanyId}
+          onLeadClick={setSelectedLead}
+        />
+      </PageSection>
+
+      <ExhibitorImportModal
+        open={modal === 'exhibitors'}
+        onClose={() => setModal(null)}
+        projectId={id}
+        onImported={handleImported}
       />
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <MiniStat icon={Building2} label="Target companies" value={project.targetCompaniesCount || 0} />
-        <MiniStat icon={Users} label="Leads" value={leads.length} />
-        <MiniStat icon={Coins} label="Campaign cost" value={formatCurrency(project.financialLedger?.totalProjectCost)} />
-        <MiniStat icon={ArrowRight} label="ROI" value={formatPercent(analytics?.roiPercent)} accent />
-      </div>
+      <ContactBlenderModal
+        open={modal === 'blender'}
+        onClose={() => setModal(null)}
+        projectId={id}
+        onImported={handleImported}
+      />
 
-      {(needsTargets || needsLeads) && tab === 'leads' && (
-        <InfoPanel title="Complete your project setup">
-          {needsTargets && (
-            <p className="mb-1.5">
-              <strong>No target companies yet.</strong> Importing contacts will automatically create companies from each
-              contact&apos;s email domain, so you can start in the{' '}
-              <button type="button" onClick={() => setTab('ingest')} className="font-semibold text-brand underline-offset-2 hover:underline">
-                Import contacts
-              </button>{' '}
-              tab right away.
-            </p>
-          )}
-          {needsLeads && !needsTargets && (
-            <p>
-              <strong>No contacts imported.</strong> Open the{' '}
-              <button type="button" onClick={() => setTab('ingest')} className="font-semibold text-brand underline-offset-2 hover:underline">
-                Import contacts
-              </button>{' '}
-              tab to upload your Apollo, Hunter, or Lusha export.
-            </p>
-          )}
-        </InfoPanel>
-      )}
+      <ProjectPerformanceModal
+        open={modal === 'performance'}
+        onClose={() => setModal(null)}
+        project={project}
+        analytics={analytics}
+        leads={leads}
+      />
 
-      <CoverageMetricsBanner analytics={analytics} project={project} />
+      <CompanyDetailsDrawer
+        companyId={selectedCompanyId}
+        onClose={() => setSelectedCompanyId(null)}
+        onPersonSelected={setSelectedLead}
+        onUpdated={refresh}
+      />
 
-      <Tabs items={tabs} active={tab} onChange={setTab} />
-
-      <div>
-        {tab === 'leads' && <LeadTableView leadsData={leads} campaignsList={[project]} projectId={id} />}
-        {tab === 'ingest' && (
-          <DataBlenderWizard
-            projectId={id}
-            onCancel={() => setTab('leads')}
-            onComplete={(result) => {
-              const created = result.companiesCreated ? `, created ${result.companiesCreated} companies` : '';
-              showToast(`Imported ${result.inserted} new leads, merged ${result.merged}${created}.`);
-              refresh();
-              setTab('leads');
-            }}
-          />
-        )}
-        {tab === 'sequence' && (
-          <SequenceBuilder
-            projectId={id}
-            leadCount={leads.length}
-            onEnrolled={(result) => {
-              showToast(`Enrolled ${result.enrolled} leads — emails send during UAE business hours only.`);
-              refresh();
-            }}
-          />
-        )}
-        {tab === 'analytics' && <VendorPerformanceGrid vendorMatrix={analytics?.vendorMatrix || []} />}
-      </div>
-
-      {tab === 'leads' && leads.length > 0 && (
-        <div className="flex justify-end">
-          <button type="button" onClick={() => setTab('sequence')} className="crm-btn-secondary">
-            Set up email sequence
-            <ArrowRight className="h-4 w-4" />
-          </button>
-        </div>
-      )}
+      <OutreachDrawer
+        lead={selectedLead}
+        onClose={() => setSelectedLead(null)}
+        onLeadUpdated={handleLeadUpdated}
+        stackLevel={selectedCompanyId ? 1 : 0}
+      />
     </PageShell>
   );
 }
 
-function MiniStat({ icon: Icon, label, value, accent }) {
+function CompactStat({ icon: Icon, label, value, accent, hint }) {
   return (
-    <div className="crm-card flex items-center gap-3 p-4">
-      <div className={`crm-stat-icon shrink-0 ${accent ? 'bg-brand-soft text-brand' : 'bg-neutral-100 text-neutral-600'}`}>
-        <Icon className="h-[18px] w-[18px]" strokeWidth={2} />
-      </div>
-      <div className="min-w-0">
-        <p className="truncate text-[12px] font-medium text-neutral-500">{label}</p>
-        <p className="truncate text-lg font-bold tabular-nums text-[var(--color-ink)]">{value}</p>
-      </div>
+    <div className="flex items-center gap-2">
+      <Icon className={`h-3.5 w-3.5 ${accent ? 'text-brand' : 'text-neutral-400'}`} strokeWidth={2} />
+      <span className="text-neutral-500">{label}</span>
+      <span className={`font-bold tabular-nums ${accent ? 'text-brand' : 'text-[var(--color-ink)]'}`}>{value}</span>
+      {hint && <InfoTip text={hint} label={`About ${label}`} />}
     </div>
+  );
+}
+
+function ProgressBlock({ label, hint, value, fraction, tone }) {
+  return (
+    <div>
+      <div className="mb-1 flex items-center justify-between gap-2 text-[10px] font-bold uppercase tracking-wide text-neutral-400">
+        <span className="inline-flex items-center gap-1">
+          {label}
+          {hint ? <InfoTip text={hint} label={`About ${label}`} /> : null}
+        </span>
+        <span className="tabular-nums">{fraction}</span>
+      </div>
+      <ProgressBar value={value} tone={tone} />
+    </div>
+  );
+}
+
+function ActionBtn({ icon: Icon, label, onClick, variant = 'primary' }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={variant === 'secondary' ? 'crm-btn-secondary py-1.5 text-xs' : 'crm-btn-primary py-1.5 text-xs'}
+    >
+      <Icon className="h-3.5 w-3.5" />
+      {label}
+    </button>
   );
 }

@@ -6,6 +6,7 @@ import { Suppression } from '../models/Suppression.js';
 import { SendJob } from '../models/SendJob.js';
 import { classifyReplyIntent } from './openaiService.js';
 import { freezeLeadSequence, purgeLeadFromQueue } from './sequenceService.js';
+import { buildLeadEmailQuery, getLeadEmailCandidates, getPrimaryLeadEmail } from '../utils/contactEmails.js';
 import {
   createImapClient,
   resolveImapSyncDays,
@@ -50,8 +51,11 @@ async function findLeadForMessage(message) {
     String(message.envelope?.from?.[0]?.address || '').trim().toLowerCase();
   if (!fromAddress) return null;
 
+  const emailQuery = buildLeadEmailQuery(fromAddress);
+  if (!emailQuery) return null;
+
   return Lead.findOne({
-    email: fromAddress,
+    ...emailQuery,
     deliveryStatus: { $in: ['Emailed Outbound', 'Replied'] },
   }).sort({ updatedAt: -1 });
 }
@@ -65,13 +69,14 @@ async function handleBounceMessage(message, text) {
   const bouncedEmail = extractBouncedEmailFromBody(text);
   if (!bouncedEmail) return null;
 
-  const lead = await Lead.findOne({ email: bouncedEmail }).sort({ updatedAt: -1 });
+  const emailQuery = buildLeadEmailQuery(bouncedEmail);
+  const lead = emailQuery ? await Lead.findOne(emailQuery).sort({ updatedAt: -1 }) : null;
   if (!lead) return { bouncedEmail, leadFound: false };
 
   await freezeLeadSequence(lead._id, 'bounce');
   await Suppression.updateOne(
-    { email: lead.email },
-    { $set: { email: lead.email, reason: 'bounced', campaignId: lead.campaignId, leadId: lead._id } },
+    { email: bouncedEmail },
+    { $set: { email: bouncedEmail, reason: 'bounced', campaignId: lead.campaignId, leadId: lead._id } },
     { upsert: true }
   );
   await purgeLeadFromQueue(lead._id);
@@ -86,7 +91,8 @@ async function handleHumanReply(lead, message, text) {
   }
 
   const { intent, confidence } = await classifyReplyIntent(text);
-  const from = message.envelope?.from?.map((item) => item.address).join(', ') || lead.email;
+  const senderEmail = String(message.envelope?.from?.[0]?.address || '').trim().toLowerCase();
+  const from = message.envelope?.from?.map((item) => item.address).join(', ') || getPrimaryLeadEmail(lead);
   const subject = message.envelope?.subject || '';
 
   const [company, project] = await Promise.all([
@@ -121,11 +127,13 @@ async function handleHumanReply(lead, message, text) {
 
   if (intent === 'Opt Out') {
     await freezeLeadSequence(lead._id, 'opt_out');
-    await Suppression.updateOne(
-      { email: lead.email },
-      { $set: { email: lead.email, reason: 'opted_out', campaignId: lead.campaignId, leadId: lead._id } },
+    const suppressedEmail = buildLeadEmailQuery(senderEmail) ? senderEmail : getPrimaryLeadEmail(lead);
+    const emailsToSuppress = [...new Set([suppressedEmail, ...getLeadEmailCandidates(lead)].filter(Boolean))];
+    await Promise.all(emailsToSuppress.map((email) => Suppression.updateOne(
+      { email },
+      { $set: { email, reason: 'opted_out', campaignId: lead.campaignId, leadId: lead._id } },
       { upsert: true }
-    );
+    )));
     await purgeLeadFromQueue(lead._id);
   } else {
     await freezeLeadSequence(lead._id, 'reply');
@@ -149,6 +157,9 @@ export async function syncImapMailbox() {
   };
 
   const client = createImapClient();
+  client.on('error', (err) => {
+    console.error('IMAP client connection/stream error:', err.message);
+  });
   try {
     await client.connect();
     const lock = await client.getMailboxLock('INBOX');
@@ -222,15 +233,27 @@ export async function listInboxThreads({ limit = 100, campaignId } = {}) {
   const query = {};
   if (campaignId) query.campaignId = campaignId;
 
-  const replies = await Reply.find(query).sort({ receivedAt: -1 }).limit(Math.min(limit, 500)).lean();
+  const replies = await Reply.find(query).sort({ receivedAt: -1 }).limit(500).lean();
   if (!replies.length) return [];
 
-  const leadIds = replies.map((r) => r.leadId);
-  const campaignIds = [...new Set(replies.map((r) => String(r.campaignId)))];
+  const latestByLead = new Map();
+  const repliesByLead = new Map();
+  for (const reply of replies) {
+    const leadKey = String(reply.leadId);
+    if (!latestByLead.has(leadKey)) latestByLead.set(leadKey, reply);
+    const list = repliesByLead.get(leadKey) || [];
+    list.push(reply);
+    repliesByLead.set(leadKey, list);
+  }
+  const threadReplies = [...latestByLead.values()].slice(0, Math.min(Number(limit) || 100, 500));
 
-  const [leads, campaigns] = await Promise.all([
+  const leadIds = threadReplies.map((r) => r.leadId);
+  const campaignIds = [...new Set(threadReplies.map((r) => String(r.campaignId)))];
+
+  const [leads, campaigns, outboundJobs] = await Promise.all([
     Lead.find({ _id: { $in: leadIds } }).lean(),
     ProjectCampaign.find({ _id: { $in: campaignIds } }).select('projectName').lean(),
+    SendJob.find({ leadId: { $in: leadIds }, status: 'sent' }).sort({ sentAt: 1 }).lean(),
   ]);
 
   const companyIds = leads.map((l) => l.companyId).filter(Boolean);
@@ -240,10 +263,30 @@ export async function listInboxThreads({ limit = 100, campaignId } = {}) {
   const campaignMap = new Map(campaigns.map((c) => [String(c._id), c]));
   const companyMap = new Map(companies.map((c) => [String(c._id), c]));
 
-  return replies.map((reply) => {
+  return threadReplies.map((reply) => {
     const lead = leadMap.get(String(reply.leadId));
     const company = lead ? companyMap.get(String(lead.companyId)) : null;
     const campaign = campaignMap.get(String(reply.campaignId));
+    const history = [
+      ...outboundJobs
+        .filter((job) => String(job.leadId) === String(reply.leadId))
+        .map((job) => ({
+          type: 'outbound',
+          step: job.stepIndex + 1,
+          subject: job.renderedSubject || '',
+          body: job.renderedBody || `Sequence step ${job.stepIndex + 1} delivered.`,
+          timestamp: job.sentAt,
+          messageId: job.providerMessageId || '',
+        })),
+      ...(repliesByLead.get(String(reply.leadId)) || []).map((item) => ({
+        type: 'inbound',
+        subject: item.subject,
+        body: item.text,
+        timestamp: item.receivedAt,
+        messageId: item.messageId,
+      })),
+    ].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
     return {
       _id: reply._id,
       campaignName: campaign?.projectName || 'Campaign',
@@ -255,9 +298,7 @@ export async function listInboxThreads({ limit = 100, campaignId } = {}) {
       intent: reply.intent,
       latestMessageBody: reply.text?.slice(0, 120) || '',
       receivedAt: reply.receivedAt,
-      threadHistory: reply.threadHistory || [
-        { type: 'inbound', body: reply.text, subject: reply.subject, timestamp: reply.receivedAt },
-      ],
+      threadHistory: history,
     };
   });
 }
@@ -282,7 +323,9 @@ export async function getInboxThread(threadId) {
     history.unshift({
       type: 'outbound',
       step: job.stepIndex + 1,
-      body: `Sequence step ${job.stepIndex + 1} delivered.`,
+      subject: job.renderedSubject || '',
+      body: job.renderedBody || `Sequence step ${job.stepIndex + 1} delivered.`,
+      messageId: job.providerMessageId || '',
       timestamp: job.sentAt,
     });
   });
