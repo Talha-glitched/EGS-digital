@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Inbox, FolderKanban, LogOut, Users, Building2, BarChart3, X, BriefcaseBusiness, ListTodo, PanelLeftClose, PanelLeft, Wallet, ChevronLeft, HeartHandshake, Mail, Shield, Activity, History } from 'lucide-react';
+import { LayoutDashboard, Inbox, FolderKanban, LogOut, Users, Building2, BarChart3, X, BriefcaseBusiness, ListTodo, PanelLeftClose, PanelLeft, Wallet, ChevronLeft, HeartHandshake, Mail, Shield, Activity, History, SendHorizontal } from 'lucide-react';
 import { cn } from '../ui/primitives.jsx';
 import { usePermissions } from '../../hooks/usePermissions.js';
 import egsLogo from '../../../../assets/logo/New_Logo/Logo-01.png';
@@ -31,6 +31,7 @@ const NAV_GROUPS = [
     heading: 'Tracking',
     items: [
       { to: '/admin/crm/inbox', label: 'Inbox', icon: Inbox },
+      { to: '/admin/crm/sent', label: 'Sent emails', icon: SendHorizontal },
       { to: '/admin/crm/finance', label: 'Finances', icon: Wallet },
       { to: '/admin/crm/analytics', label: 'Reports', icon: BarChart3 },
     ],

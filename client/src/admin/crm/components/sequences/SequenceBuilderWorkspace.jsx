@@ -254,7 +254,7 @@ export default function SequenceBuilderWorkspace({
         });
         setIsActive(true);
         setLaunchArmed(false);
-        setSuccess(`Sequence launched — ${result.enrolled} contact(s) enrolled.`);
+        setSuccess(`Sequence launched — ${result.enrolled} contact(s) enrolled. Sending via SMTP now.`);
         await refreshAudience(seqId);
       } else {
         setLaunchArmed(false);

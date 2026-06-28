@@ -17,6 +17,7 @@ import ProjectsPage from './pages/ProjectsPage.jsx';
 import SalesPipelinePage from './pages/SalesPipelinePage.jsx';
 import TasksPage from './pages/TasksPage.jsx';
 import SequencesPage from './pages/SequencesPage.jsx';
+import SentEmailsPage from './pages/SentEmailsPage.jsx';
 import RelationshipsPage from './pages/RelationshipsPage.jsx';
 import TeamSettingsPage from './pages/TeamSettingsPage.jsx';
 import UserActivityPage from './pages/UserActivityPage.jsx';
@@ -157,6 +158,7 @@ function CrmShell({ projects, onLogout, status }) {
     '/admin/crm/people': ['Contacts', 'Search and manage every point of contact'],
     '/admin/crm/companies': ['Companies', 'Target companies, clients, and relationship history'],
     '/admin/crm/inbox': ['Inbox', 'Replies and sales follow-up workspace'],
+    '/admin/crm/sent': ['Sent emails', 'Outbound sequence messages delivered via SMTP'],
     '/admin/crm/analytics': ['Reports', 'Campaign ROI, response performance, and source quality'],
     '/admin/crm/finance': ['Finances', 'Campaign budgets, fixed costs, and logged revenue'],
     '/admin/crm/settings/team': ['Team', 'User accounts, roles, and CRM access'],
@@ -219,6 +221,7 @@ function CrmShell({ projects, onLogout, status }) {
               <Route path="people" element={<PeoplePage />} />
               <Route path="companies" element={<CompaniesPage />} />
               <Route path="inbox" element={<InboxPage />} />
+              <Route path="sent" element={<SentEmailsPage />} />
               <Route path="analytics" element={<AdvancedAnalyticsPage />} />
               <Route path="finance" element={<FinancePage />} />
               <Route path="settings/team" element={<TeamSettingsPage />} />

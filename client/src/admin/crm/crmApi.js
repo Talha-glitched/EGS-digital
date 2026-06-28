@@ -218,6 +218,16 @@ export async function fetchMailboxUsage() {
   return crmApiFetch('/api/admin/mailbox-usage');
 }
 
+export async function fetchSentEmails({ page, limit, campaignId, q } = {}) {
+  const query = new URLSearchParams({
+    ...(page && { page: String(page) }),
+    ...(limit && { limit: String(limit) }),
+    ...(campaignId && { campaignId }),
+    ...(q && { q }),
+  }).toString();
+  return crmApiFetch(`/api/admin/sent-emails${query ? `?${query}` : ''}`);
+}
+
 export async function fetchAllSequences() {
   return crmApiFetch('/api/admin/sequences');
 }

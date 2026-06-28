@@ -1,4 +1,4 @@
-import { createTransporter, getBaseUrl, getMailConfigStatus } from './mailTransport.js';
+import { sendAuthenticatedMail, getBaseUrl, getMailConfigStatus } from './mailTransport.js';
 import { ROLE_LABELS } from '../constants/userRoles.js';
 
 function getCrmLoginUrl() {
@@ -75,9 +75,7 @@ If you did not expect this email, contact your administrator immediately.
 
 export async function sendUserCredentialsEmail({ user, password, welcome = false }) {
   assertSmtpReady();
-  const transporter = createTransporter();
   const fromName = process.env.EMAIL_FROM_NAME || 'Exhibit Graphic Sign';
-  const fromEmail = process.env.EMAIL_SMTP_USER;
   const { subject, text, html } = buildCredentialsEmail({
     displayName: user.displayName,
     email: user.email,
@@ -86,8 +84,8 @@ export async function sendUserCredentialsEmail({ user, password, welcome = false
     welcome,
   });
 
-  await transporter.sendMail({
-    from: `"${fromName}" <${fromEmail}>`,
+  await sendAuthenticatedMail({
+    fromName,
     to: user.email,
     subject,
     text,

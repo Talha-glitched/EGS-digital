@@ -18,6 +18,7 @@ import {
   Wallet,
   HeartHandshake,
   Mail,
+  SendHorizontal,
 } from 'lucide-react';
 import { fetchWorkspaceSearch } from '../../crmApi.js';
 import { cn } from '../ui/primitives.jsx';
@@ -33,6 +34,7 @@ const QUICK_NAV = [
   { id: 'nav-pipeline', type: 'page', title: 'Sales Pipeline', subtitle: 'Opportunities and deal stages', href: '/admin/crm/pipeline', keywords: ['sales', 'deals', 'pipeline', 'opportunities'], icon: BriefcaseBusiness },
   { id: 'nav-tasks', type: 'page', title: 'Tasks', subtitle: 'Calls, meetings, and next actions', href: '/admin/crm/tasks', keywords: ['tasks', 'follow', 'todo'], icon: ListTodo },
   { id: 'nav-inbox', type: 'page', title: 'Inbox', subtitle: 'Replies and sales follow-up', href: '/admin/crm/inbox', keywords: ['inbox', 'email', 'replies'], icon: Inbox },
+  { id: 'nav-sent', type: 'page', title: 'Sent emails', subtitle: 'Outbound sequence messages delivered via SMTP', href: '/admin/crm/sent', keywords: ['sent', 'outbound', 'delivered', 'smtp', 'emails'], icon: SendHorizontal },
   { id: 'nav-finance', type: 'page', title: 'Finances', subtitle: 'Campaign budgets, costs, and revenue', href: '/admin/crm/finance', keywords: ['finance', 'finances', 'budget', 'revenue', 'roi'], icon: Wallet },
   { id: 'nav-analytics', type: 'page', title: 'Reports', subtitle: 'Performance and ROI analytics', href: '/admin/crm/analytics', keywords: ['reports', 'analytics', 'roi'], icon: BarChart3 },
 ];

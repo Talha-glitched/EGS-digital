@@ -266,6 +266,156 @@ export async function getMailboxUsageStats() {
   };
 }
 
+function escapeRegExp(value) {
+  return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function formatSentEmailRow(row) {
+  return {
+    _id: row._id,
+    sentAt: row.sentAt,
+    recipientEmail: row.recipientEmail || '',
+    renderedSubject: row.renderedSubject || '',
+    renderedBody: row.renderedBody || '',
+    stepIndex: row.stepIndex,
+    stepNumber: Number(row.stepIndex) + 1,
+    providerMessageId: row.providerMessageId || '',
+    lead: row.lead
+      ? {
+          _id: row.lead._id,
+          name: row.lead.name || '',
+          email: row.lead.email || '',
+          deliveryStatus: row.lead.deliveryStatus || '',
+        }
+      : null,
+    company: row.company
+      ? {
+          _id: row.company._id,
+          companyName: row.company.companyName || '',
+        }
+      : null,
+    campaign: row.campaign
+      ? {
+          _id: row.campaign._id,
+          projectName: row.campaign.projectName || '',
+        }
+      : null,
+    sequence: row.sequence
+      ? {
+          _id: row.sequence._id,
+          name: row.sequence.name || '',
+        }
+      : null,
+  };
+}
+
+export async function listSentEmails(options = {}) {
+  const limit = Math.min(Math.max(Number(options.limit) || 50, 1), 200);
+  const page = Math.max(Number(options.page) || 1, 1);
+  const skip = (page - 1) * limit;
+
+  const pipeline = [
+    { $match: { status: 'sent', sentAt: { $ne: null } } },
+    {
+      $lookup: {
+        from: 'leads',
+        localField: 'leadId',
+        foreignField: '_id',
+        as: 'lead',
+      },
+    },
+    { $unwind: { path: '$lead', preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: 'companies',
+        localField: 'lead.companyId',
+        foreignField: '_id',
+        as: 'company',
+      },
+    },
+    { $unwind: { path: '$company', preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: 'sequenceenrollments',
+        localField: 'enrollmentId',
+        foreignField: '_id',
+        as: 'enrollment',
+      },
+    },
+    { $unwind: { path: '$enrollment', preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: 'sequences',
+        localField: 'enrollment.sequenceId',
+        foreignField: '_id',
+        as: 'sequence',
+      },
+    },
+    { $unwind: { path: '$sequence', preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: 'projectcampaigns',
+        localField: 'enrollment.campaignId',
+        foreignField: '_id',
+        as: 'campaign',
+      },
+    },
+    { $unwind: { path: '$campaign', preserveNullAndEmptyArrays: true } },
+  ];
+
+  if (options.campaignId && mongoose.isValidObjectId(String(options.campaignId))) {
+    pipeline.push({
+      $match: { 'enrollment.campaignId': new mongoose.Types.ObjectId(String(options.campaignId)) },
+    });
+  }
+
+  const search = String(options.q || options.search || '').trim();
+  if (search) {
+    const rx = new RegExp(escapeRegExp(search), 'i');
+    pipeline.push({
+      $match: {
+        $or: [
+          { recipientEmail: rx },
+          { renderedSubject: rx },
+          { renderedBody: rx },
+          { 'lead.name': rx },
+          { 'lead.email': rx },
+          { 'company.companyName': rx },
+          { 'sequence.name': rx },
+        ],
+      },
+    });
+  }
+
+  pipeline.push(
+    { $sort: { sentAt: -1 } },
+    {
+      $facet: {
+        total: [{ $count: 'count' }],
+        items: [{ $skip: skip }, { $limit: limit }],
+      },
+    },
+  );
+
+  const [result] = await SendJob.aggregate(pipeline);
+  const total = result?.total?.[0]?.count || 0;
+  const items = (result?.items || []).map(formatSentEmailRow);
+  const { start, end } = getGstDayBounds();
+  const sentToday = await SendJob.countDocuments({
+    status: 'sent',
+    sentAt: { $gte: start, $lt: end },
+  });
+
+  return {
+    items,
+    total,
+    page,
+    limit,
+    pages: total ? Math.ceil(total / limit) : 0,
+    summary: { sentToday, totalSent: total },
+  };
+}
+
 export async function listSequences(projectId) {
   return Sequence.find({ campaignId: projectId, deletedAt: null }).sort({ createdAt: -1 }).lean();
 }
@@ -438,7 +588,7 @@ export async function enrollProjectLeads(projectId, sequenceId, options = {}) {
       frozen: false,
     });
 
-    await scheduleEnrollmentJob(enrollment);
+    await scheduleEnrollmentJob(enrollment, 0, { immediate: true });
     enrolled += 1;
   }
 

@@ -18,6 +18,7 @@ const sendJobSchema = new mongoose.Schema(
     renderedSubject: { type: String, default: '' },
     renderedBody: { type: String, default: '' },
     errorMessage: { type: String, default: '' },
+    immediateLaunch: { type: Boolean, default: false },
   },
   { timestamps: true, versionKey: false }
 );

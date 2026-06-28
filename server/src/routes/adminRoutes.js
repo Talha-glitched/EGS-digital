@@ -78,6 +78,7 @@ import {
   getSequenceWithStats,
   previewAudience,
   getMailboxUsageStats,
+  listSentEmails,
   createSequence,
   updateSequence,
   deleteSequence,
@@ -98,6 +99,7 @@ import { permissionForRequest } from '../constants/userRoles.js';
 import { getActor } from '../utils/actor.js';
 import { writeAuditLog, listAuditLogs, getUserActivitySummary, getAuditLogById } from '../services/auditService.js';
 import { getEmailDeliveryStatus, sendUserCredentialsEmail } from '../services/userEmailService.js';
+import { kickSendQueue } from '../services/sendWorker.js';
 import {
   listUsers,
   listActiveUsers,
@@ -428,7 +430,7 @@ router.post('/projects/:id/enroll', asyncRoute(async (req, res) => {
   if (!sequenceId) {
     return res.status(400).json({ message: 'sequenceId is required.' });
   }
-  res.json(await enrollProjectLeads(req.params.id, sequenceId, {
+  const result = await enrollProjectLeads(req.params.id, sequenceId, {
     confirmEnrollment,
     leadIds,
     companyIds,
@@ -439,7 +441,11 @@ router.post('/projects/:id/enroll', asyncRoute(async (req, res) => {
     importedCampaignIds: req.body?.importedCampaignIds,
     importCampaign: req.body?.importCampaign,
     enrollLimit,
-  }));
+  });
+  if (result.enrolled > 0) {
+    kickSendQueue().catch((err) => console.error('Send queue kick failed:', err.message));
+  }
+  res.json(result);
 }));
 
 router.patch('/leads/:id', asyncRoute(async (req, res) => {
@@ -525,6 +531,15 @@ router.delete('/leads/:id', asyncRoute(async (req, res) => {
 
 router.post('/leads/:id/restore', asyncRoute(async (req, res) => {
   res.json(await restoreLead(req.params.id, getActor(req)));
+}));
+
+router.get('/sent-emails', asyncRoute(async (req, res) => {
+  res.json(await listSentEmails({
+    limit: req.query.limit,
+    page: req.query.page,
+    campaignId: req.query.campaignId,
+    q: req.query.q || req.query.search,
+  }));
 }));
 
 router.get('/inbox', asyncRoute(async (req, res) => {

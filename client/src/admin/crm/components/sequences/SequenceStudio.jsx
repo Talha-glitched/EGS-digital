@@ -449,7 +449,12 @@ export default function SequenceStudio({
         });
         setIsActive(true);
         setLaunchArmed(false);
-        showToast(`Launched — ${result.enrolled} enrolled.`, 'success');
+        showToast(
+          result.enrolled > 0
+            ? `Launched — ${result.enrolled} enrolled. Sending via SMTP now.`
+            : 'No new contacts were enrolled.',
+          result.enrolled > 0 ? 'success' : 'warning',
+        );
         fetchMailboxUsage().then(setMailboxUsage).catch(() => {});
       } else if (!launch) {
         setLaunchArmed(false);
