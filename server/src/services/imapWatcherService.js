@@ -23,7 +23,75 @@ const MAX_REPLY_TEXT = 2000;
 let isSyncing = false;
 let syncTimer = null;
 
+export function decodeQuotedPrintable(str) {
+  return String(str || '')
+    .replace(/=\r?\n/g, '')
+    .replace(/=([0-9A-F]{2})/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+}
+
+export function parseEmailSourceToText(source) {
+  const s = String(source || '');
+  const boundaryMatch = s.match(/boundary=["']?([^"'\r\n;]+)["']?/i);
+  
+  if (boundaryMatch) {
+    const boundary = boundaryMatch[1];
+    const parts = s.split('--' + boundary);
+    
+    let textPart = '';
+    for (const part of parts) {
+      if (/content-type:\s*text\/plain/i.test(part)) {
+        textPart = part;
+        break;
+      }
+    }
+    
+    if (!textPart && parts.length > 1) {
+      textPart = parts.find(p => p.trim() && !p.includes('content-type:'));
+    }
+    
+    if (textPart) {
+      const blankLineIdx = textPart.search(/\r?\n\r?\n/);
+      let headers = '';
+      let body = textPart;
+      if (blankLineIdx !== -1) {
+        headers = textPart.slice(0, blankLineIdx);
+        body = textPart.slice(blankLineIdx + 4);
+      }
+      
+      body = body.trim().replace(/--$/, '');
+      
+      if (/content-transfer-encoding:\s*quoted-printable/i.test(headers)) {
+        body = decodeQuotedPrintable(body);
+      } else if (/content-transfer-encoding:\s*base64/i.test(headers)) {
+        body = Buffer.from(body.replace(/\s+/g, ''), 'base64').toString('utf-8');
+      }
+      
+      return body.trim();
+    }
+  }
+  
+  const blankLineIdx = s.search(/\r?\n\r?\n/);
+  if (blankLineIdx === -1) return s.trim();
+  
+  const headers = s.slice(0, blankLineIdx);
+  let body = s.slice(blankLineIdx + 4).trim();
+  
+  if (/content-transfer-encoding:\s*quoted-printable/i.test(headers)) {
+    body = decodeQuotedPrintable(body);
+  } else if (/content-transfer-encoding:\s*base64/i.test(headers)) {
+    body = Buffer.from(body.replace(/\s+/g, ''), 'base64').toString('utf-8');
+  }
+  
+  return body.trim();
+}
+
 async function findLeadForMessage(message) {
+  const fromAddress = String(message.envelope?.from?.[0]?.address || '').trim().toLowerCase();
+  const smtpUser = String(process.env.EMAIL_SMTP_USER || '').trim().toLowerCase();
+  if (fromAddress === smtpUser) {
+    return null;
+  }
+
   const raw = String(message.source || '');
   const headerSection = getMimeHeaderSection(raw);
   const candidates = extractMessageIdCandidatesFromHeaders(headerSection);
@@ -46,12 +114,11 @@ async function findLeadForMessage(message) {
     }
   }
 
-  const fromAddress =
-    extractMailboxFromHeader(headerSection, 'Reply-To') ||
-    String(message.envelope?.from?.[0]?.address || '').trim().toLowerCase();
-  if (!fromAddress) return null;
+  const resolvedFromAddress =
+    extractMailboxFromHeader(headerSection, 'Reply-To') || fromAddress;
+  if (!resolvedFromAddress) return null;
 
-  const emailQuery = buildLeadEmailQuery(fromAddress);
+  const emailQuery = buildLeadEmailQuery(resolvedFromAddress);
   if (!emailQuery) return null;
 
   return Lead.findOne({
@@ -172,8 +239,14 @@ export async function syncImapMailbox() {
 
       for await (const message of client.fetch(cappedUids, { envelope: true, source: true, uid: true }, { uid: true })) {
         stats.scanned += 1;
-        const text = String(message.source || '').slice(0, MAX_REPLY_TEXT * 2);
-        const fromAddr = message.envelope?.from?.[0]?.address || '';
+        const fromAddr = String(message.envelope?.from?.[0]?.address || '').trim().toLowerCase();
+        const smtpUser = String(process.env.EMAIL_SMTP_USER || '').trim().toLowerCase();
+        if (fromAddr === smtpUser) {
+          stats.skippedNoLead += 1;
+          continue;
+        }
+
+        const text = parseEmailSourceToText(message.source).slice(0, MAX_REPLY_TEXT * 2);
 
         if (isBounceSender(fromAddr) || /undeliverable|delivery status notification/i.test(text)) {
           const bounceResult = await handleBounceMessage(message, text);

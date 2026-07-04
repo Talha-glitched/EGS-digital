@@ -13,6 +13,7 @@ export default function SentEmailsPage() {
   const [campaignId, setCampaignId] = useState('');
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [repliedOnly, setRepliedOnly] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -29,7 +30,7 @@ export default function SentEmailsPage() {
 
   useEffect(() => {
     setPage(1);
-  }, [campaignId, debouncedSearch]);
+  }, [campaignId, debouncedSearch, repliedOnly]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -40,6 +41,7 @@ export default function SentEmailsPage() {
         limit: 50,
         campaignId: campaignId || undefined,
         q: debouncedSearch || undefined,
+        repliedOnly: repliedOnly ? true : undefined,
       });
       setEmails(data.items || []);
       setTotal(data.total || 0);
@@ -53,7 +55,7 @@ export default function SentEmailsPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, campaignId, debouncedSearch]);
+  }, [page, campaignId, debouncedSearch, repliedOnly]);
 
   useEffect(() => {
     load().catch(console.error);
@@ -88,6 +90,8 @@ export default function SentEmailsPage() {
           pages={pages}
           onPageChange={setPage}
           loading={loading}
+          repliedOnly={repliedOnly}
+          onRepliedOnlyChange={setRepliedOnly}
         />
       </PageSection>
     </PageShell>

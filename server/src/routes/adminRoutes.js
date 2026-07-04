@@ -13,6 +13,11 @@ import {
 } from '../services/ingestionService.js';
 import { exportCampaignToBuffer } from '../services/excelExportService.js';
 import { Lead } from '../models/Lead.js';
+import { SendJob } from '../models/SendJob.js';
+import { Reply } from '../models/Reply.js';
+import { Company } from '../models/Company.js';
+import { ProjectCampaign } from '../models/ProjectCampaign.js';
+import { sendAuthenticatedMail, getFromIdentity } from '../services/mailTransport.js';
 import {
   listOpportunities,
   createOpportunity,
@@ -552,7 +557,119 @@ router.get('/sent-emails', asyncRoute(async (req, res) => {
     page: req.query.page,
     campaignId: req.query.campaignId,
     q: req.query.q || req.query.search,
+    repliedOnly: req.query.repliedOnly,
   }));
+}));
+
+router.get('/sent-emails/:id/thread', asyncRoute(async (req, res) => {
+  const job = await SendJob.findById(req.params.id);
+  if (!job) return res.status(404).json({ error: 'Email not found.' });
+
+  const lead = await Lead.findById(job.leadId);
+  const company = lead ? await Company.findById(lead.companyId) : null;
+
+  let thread = await Reply.findOne({ leadId: job.leadId });
+  let history = [];
+
+  if (thread) {
+    history = [...thread.threadHistory];
+  } else {
+    const outboundJobs = await SendJob.find({ leadId: job.leadId, status: 'sent' }).sort({ sentAt: 1 });
+    history = outboundJobs.map((j) => ({
+      type: 'outbound',
+      step: j.stepIndex + 1,
+      subject: j.renderedSubject || '',
+      body: j.renderedBody || '',
+      timestamp: j.sentAt,
+      messageId: j.providerMessageId || '',
+    }));
+  }
+
+  history.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+  res.json({
+    threadId: thread ? thread._id : null,
+    leadId: job.leadId,
+    pocName: lead?.name || job.recipientEmail,
+    designation: lead?.designation || '',
+    companyName: company?.companyName || '',
+    phoneNumber: lead?.phone || '',
+    recipientEmail: job.recipientEmail,
+    subject: job.renderedSubject,
+    history,
+  });
+}));
+
+router.post('/sent-emails/:id/reply', asyncRoute(async (req, res) => {
+  const { body } = req.body;
+  if (!body || !String(body).trim()) {
+    return res.status(400).json({ error: 'Reply body is required.' });
+  }
+
+  const job = await SendJob.findById(req.params.id);
+  if (!job) return res.status(404).json({ error: 'Email not found.' });
+
+  const lead = await Lead.findById(job.leadId);
+  if (!lead) return res.status(404).json({ error: 'Lead not found.' });
+
+  const project = await ProjectCampaign.findById(lead.campaignId);
+  const { fromEmail, fromName } = getFromIdentity(project);
+
+  let subject = job.renderedSubject || 'Follow up';
+  if (!subject.toLowerCase().startsWith('re:')) {
+    subject = `Re: ${subject}`;
+  }
+
+  const result = await sendAuthenticatedMail({
+    fromName,
+    fromEmail,
+    to: job.recipientEmail,
+    subject,
+    text: body,
+    html: `<div style="font-family:sans-serif;font-size:14px;line-height:1.5;color:#333;">
+      <p>${String(body).replace(/\n/g, '<br>')}</p>
+    </div>`,
+    inReplyTo: job.providerMessageId || undefined,
+    references: job.providerMessageId ? [job.providerMessageId] : undefined,
+  });
+
+  const messageId = String(result?.messageId || '').trim();
+
+  let thread = await Reply.findOne({ leadId: job.leadId });
+  if (!thread) {
+    const originalOutbound = {
+      type: 'outbound',
+      step: job.stepIndex + 1,
+      subject: job.renderedSubject || 'Follow up',
+      body: job.renderedBody || '',
+      timestamp: job.sentAt || job.createdAt,
+      messageId: job.providerMessageId || '',
+    };
+    thread = await Reply.create({
+      campaignId: lead.campaignId,
+      leadId: lead._id,
+      email: lead.email,
+      from: lead.name || lead.email,
+      subject: job.renderedSubject || 'Follow up',
+      text: '',
+      messageId: job.providerMessageId || `synthetic-${Date.now()}`,
+      receivedAt: new Date(),
+      intent: 'Neutral',
+      threadHistory: [originalOutbound],
+    });
+  }
+
+  const replyMessage = {
+    type: 'outbound',
+    subject,
+    body,
+    timestamp: new Date(),
+    messageId,
+  };
+  thread.threadHistory.push(replyMessage);
+  await thread.save();
+
+  res.json({ success: true, messageId, replyMessage });
 }));
 
 router.get('/inbox', asyncRoute(async (req, res) => {

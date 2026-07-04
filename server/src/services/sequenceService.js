@@ -382,6 +382,15 @@ export async function listSentEmails(options = {}) {
       },
     },
     { $unwind: { path: '$lead', preserveNullAndEmptyArrays: true } },
+  ];
+
+  if (options.repliedOnly === 'true' || options.repliedOnly === true) {
+    pipeline.push({
+      $match: { 'lead.deliveryStatus': 'Replied' },
+    });
+  }
+
+  pipeline.push(
     {
       $lookup: {
         from: 'companies',
@@ -417,8 +426,8 @@ export async function listSentEmails(options = {}) {
         as: 'campaign',
       },
     },
-    { $unwind: { path: '$campaign', preserveNullAndEmptyArrays: true } },
-  ];
+    { $unwind: { path: '$campaign', preserveNullAndEmptyArrays: true } }
+  );
 
   if (options.campaignId && mongoose.isValidObjectId(String(options.campaignId))) {
     pipeline.push({

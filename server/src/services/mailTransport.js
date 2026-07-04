@@ -103,6 +103,8 @@ export async function sendAuthenticatedMail({
   html,
   fromName,
   fromEmail,
+  inReplyTo,
+  references,
 }) {
   const smtpUser = String(process.env.EMAIL_SMTP_USER || '').trim();
   if (!smtpUser) {
@@ -137,6 +139,8 @@ export async function sendAuthenticatedMail({
     html,
     headers: {
       'List-Unsubscribe': `<mailto:${smtpUser}?subject=unsubscribe>`,
+      ...(inReplyTo && { 'In-Reply-To': inReplyTo }),
+      ...(references && { 'References': Array.isArray(references) ? references.join(' ') : references }),
     },
     envelope: {
       from: smtpUser,

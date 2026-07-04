@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Search, SendHorizontal } from 'lucide-react';
 import { cn, EmptyState } from '../ui/primitives.jsx';
+import { fetchSentEmailThread, sendSentEmailReply } from '../../crmApi.js';
 
 function formatSentAt(value) {
   if (!value) return '—';
@@ -19,6 +20,50 @@ function formatSentAt(value) {
 }
 
 function SentEmailDetail({ email }) {
+  const [thread, setThread] = useState(null);
+  const [loadingThread, setLoadingThread] = useState(false);
+  const [replyText, setReplyText] = useState('');
+  const [sendingReply, setSendingReply] = useState(false);
+  const [replyError, setReplyError] = useState('');
+
+  useEffect(() => {
+    if (!email?._id) {
+      setThread(null);
+      return;
+    }
+    setLoadingThread(true);
+    setReplyError('');
+    setThread(null);
+    fetchSentEmailThread(email._id)
+      .then((data) => setThread(data))
+      .catch((err) => setReplyError(err.message || 'Failed to load thread.'))
+      .finally(() => setLoadingThread(false));
+  }, [email]);
+
+  const handleSendReply = async (e) => {
+    e.preventDefault();
+    if (!replyText.trim() || !email?._id) return;
+    setSendingReply(true);
+    setReplyError('');
+    try {
+      const data = await sendSentEmailReply(email._id, replyText);
+      if (data.replyMessage) {
+        setThread((prev) => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            history: [...prev.history, data.replyMessage],
+          };
+        });
+        setReplyText('');
+      }
+    } catch (err) {
+      setReplyError(err.message || 'Failed to send reply.');
+    } finally {
+      setSendingReply(false);
+    }
+  };
+
   if (!email) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
@@ -32,7 +77,7 @@ function SentEmailDetail({ email }) {
 
   return (
     <div className="crm-scroll flex min-h-0 flex-1 flex-col overflow-y-auto">
-      <div className="border-b border-[var(--color-line)] px-6 py-5">
+      <div className="border-b border-[var(--color-line)] px-6 py-5 shrink-0 bg-white">
         <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-neutral-400">
           {email.campaign?.projectName || 'Campaign'} · Step {email.stepNumber}
         </p>
@@ -76,18 +121,72 @@ function SentEmailDetail({ email }) {
         )}
       </div>
 
-      <div className="px-6 py-5">
-        <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-neutral-400">Message</p>
-        <div className="rounded-xl border border-[var(--color-line)] bg-neutral-50/60 px-4 py-4">
-          <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-[var(--color-ink)]">
-            {email.renderedBody || 'No message body recorded.'}
-          </pre>
-        </div>
-        {email.providerMessageId && (
-          <p className="mt-3 break-all text-[10px] text-neutral-400">
-            Message ID: {email.providerMessageId}
-          </p>
+      <div className="flex-1 bg-neutral-50/50 p-6">
+        <p className="mb-3 text-[10px] font-semibold uppercase tracking-wide text-neutral-400">Conversation History</p>
+        
+        {loadingThread && !thread ? (
+          <div className="py-8 text-center text-xs text-neutral-400 font-medium">Loading conversation thread…</div>
+        ) : (
+          <div className="space-y-4">
+            {!thread || !thread.history || thread.history.length === 0 ? (
+              <div className="rounded-xl border border-[var(--color-line)] bg-white px-4 py-4">
+                <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-[var(--color-ink)]">
+                  {email.renderedBody || 'No message body recorded.'}
+                </pre>
+              </div>
+            ) : (
+              thread.history.map((msg, index) => {
+                const outbound = msg.type === 'outbound';
+                return (
+                  <div key={index} className={cn('flex', outbound ? 'justify-end' : 'justify-start')}>
+                    <div
+                      className={cn(
+                        'max-w-xl w-full rounded-2xl px-4 py-3 shadow-sm',
+                        outbound ? 'border border-[var(--color-line)] bg-white text-neutral-700' : 'bg-[var(--color-ink)] text-white'
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          'mb-2 flex items-center justify-between gap-4 border-b pb-1.5 text-[10px] font-semibold uppercase tracking-wider',
+                          outbound ? 'border-[var(--color-line)] text-neutral-400' : 'border-white/15 text-white/60'
+                        )}
+                      >
+                        <span>{outbound ? (msg.step ? `Step ${msg.step}` : 'Outbound Reply') : 'Inbound Reply'}</span>
+                        <span>{new Date(msg.timestamp).toLocaleString('en-AE', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+                      </div>
+                      <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.body}</p>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
         )}
+
+        <div className="mt-8 border-t border-[var(--color-line)] pt-6">
+          <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-neutral-400">Quick Reply</p>
+          <form onSubmit={handleSendReply} className="space-y-3">
+            <textarea
+              value={replyText}
+              onChange={(e) => setReplyText(e.target.value)}
+              placeholder="Type your email reply here..."
+              rows={4}
+              required
+              className="crm-input w-full text-sm"
+              disabled={sendingReply}
+            />
+            {replyError && <p className="text-xs text-red-500">{replyError}</p>}
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                disabled={sendingReply || !replyText.trim()}
+                className="crm-btn-primary flex items-center gap-2 text-xs"
+              >
+                {sendingReply ? 'Sending...' : 'Send Reply'}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
@@ -106,6 +205,8 @@ export default function SentEmailsWorkspace({
   pages = 0,
   onPageChange,
   loading = false,
+  repliedOnly = false,
+  onRepliedOnlyChange,
 }) {
   const [activeId, setActiveId] = useState('');
 
@@ -136,6 +237,33 @@ export default function SentEmailsWorkspace({
           <p className="mt-1 text-[11px] text-neutral-500">
             {sentToday} sent today · copies saved to your mailbox Sent folder when IMAP is configured
           </p>
+
+          <div className="mt-3 flex rounded-lg border border-[var(--color-line)] bg-neutral-50 p-0.5">
+            <button
+              type="button"
+              onClick={() => onRepliedOnlyChange(false)}
+              className={cn(
+                'flex-1 rounded-md py-1.5 text-center text-xs font-medium transition-all duration-200',
+                !repliedOnly
+                  ? 'bg-white text-[var(--color-ink)] shadow-sm border border-neutral-200/50 font-semibold'
+                  : 'text-neutral-500 hover:text-neutral-900',
+              )}
+            >
+              All Sent
+            </button>
+            <button
+              type="button"
+              onClick={() => onRepliedOnlyChange(true)}
+              className={cn(
+                'flex-1 rounded-md py-1.5 text-center text-xs font-medium transition-all duration-200',
+                repliedOnly
+                  ? 'bg-white text-[var(--color-ink)] shadow-sm border border-neutral-200/50 font-semibold'
+                  : 'text-neutral-500 hover:text-neutral-900',
+              )}
+            >
+              Replied Only
+            </button>
+          </div>
 
           <div className="mt-3 space-y-2">
             <label className="relative block">
