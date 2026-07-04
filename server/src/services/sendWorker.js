@@ -70,20 +70,15 @@ async function getDailySendCount() {
 }
 
 function computeScheduledFor(enrollment, extraDelayMs = 0, { immediate = false } = {}) {
-  if (immediate) {
-    return new Date(Date.now() + extraDelayMs);
-  }
   let runAt = enrollment.nextSendAt ? new Date(enrollment.nextSendAt) : new Date();
-  if (!isWithinUaeBusinessHours(runAt)) {
+  if (!immediate && !isWithinUaeBusinessHours(runAt)) {
     runAt = getNextUaeBusinessWindow(runAt);
   }
   return new Date(runAt.getTime() + extraDelayMs);
 }
 
 function shouldSkipBusinessHours(job) {
-  if (job.immediateLaunch) return true;
-  const waitMs = new Date(job.scheduledFor).getTime() - Date.now();
-  return waitMs < 24 * 60 * 60 * 1000;
+  return !!job.immediateLaunch;
 }
 
 async function rescheduleJob(job, runAt, reason) {
@@ -190,7 +185,7 @@ async function scheduleNextFlowStep(enrollment, flowGraph, lead) {
   console.log(
     `[SendWorker] Scheduling next flow node ${target.nodeId} for enrollment ${enrollment._id} in ${Math.round((target.delayMs + jitter) / 1000)}s`,
   );
-  await scheduleEnrollmentJob(enrollment, target.delayMs + jitter, { immediate });
+  await scheduleEnrollmentJob(enrollment, jitter, { immediate });
 }
 
 async function processFlowGraphJob(job, enrollment, lead, sequence, company, project, targetEmail) {
