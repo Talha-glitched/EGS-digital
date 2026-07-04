@@ -61,8 +61,8 @@ test('campaign enrollment requires confirmation and selects only never-contacted
   });
 });
 
-test('outbound messages always include a simple opt-out instruction', () => {
+test('outbound messages do not append an automatic opt-out footer', () => {
   const body = withOptOutFooter('Hello Joy');
-  assert.match(body, /reply “opt out”/i);
+  assert.equal(body, 'Hello Joy');
   assert.equal(withOptOutFooter('Hello Joy\n\nReply to opt out.'), 'Hello Joy\n\nReply to opt out.');
 });

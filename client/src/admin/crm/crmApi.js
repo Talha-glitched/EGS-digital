@@ -263,6 +263,13 @@ export async function previewSequenceAudience(campaignId, options = {}) {
   return crmApiFetch(`/api/admin/projects/${campaignId}/audience-preview${query ? `?${query}` : ''}`);
 }
 
+export async function resetSequenceEnrollments(sequenceId, leadIds = []) {
+  return crmApiFetch(`/api/admin/sequences/${sequenceId}/reset-enrollments`, {
+    method: 'POST',
+    body: JSON.stringify({ leadIds }),
+  });
+}
+
 export async function updateCampaign(campaignId, payload) {
   return crmApiFetch(`/api/admin/projects/${campaignId}`, {
     method: 'PATCH',

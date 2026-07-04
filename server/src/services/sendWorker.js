@@ -6,6 +6,14 @@ import { SequenceEnrollment } from '../models/SequenceEnrollment.js';
 import { SendJob } from '../models/SendJob.js';
 import { Suppression } from '../models/Suppression.js';
 import { getPrimaryLeadEmail } from '../utils/contactEmails.js';
+import {
+  findFlowNode,
+  isShortFlowDelay,
+  nodeToEmailStep,
+  normalizeFlowGraph,
+  resolveEntryNodeId,
+  resolveNextEmailTarget,
+} from '../utils/sequenceFlowExecutor.js';
 import { generateSequenceEmail } from './openaiService.js';
 import { getBaseUrl, getFromIdentity, isPublicTrackableUrl, sendAuthenticatedMail } from './mailTransport.js';
 import {
@@ -14,6 +22,7 @@ import {
   isWithinUaeBusinessHours,
   randomSendDelayMs,
 } from '../utils/uaeBusinessHours.js';
+import { parseStepDelay } from '../utils/sequenceDelay.js';
 import { syncAutoCampaignStatus } from './projectService.js';
 
 const POLL_INTERVAL_MS = 5000;
@@ -50,10 +59,9 @@ function renderEmailHtml({ body, leadId, stepIndex }) {
   </body></html>`;
 }
 
+/** @deprecated Kept for tests; no longer appends footer to outbound mail. */
 export function withOptOutFooter(body) {
-  const text = String(body || '').trim();
-  if (/opt[ -]?out|unsubscribe|stop (?:emailing|messages)/i.test(text)) return text;
-  return `${text}\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.`;
+  return String(body || '').trim();
 }
 
 async function getDailySendCount() {
@@ -62,11 +70,20 @@ async function getDailySendCount() {
 }
 
 function computeScheduledFor(enrollment, extraDelayMs = 0, { immediate = false } = {}) {
+  if (immediate) {
+    return new Date(Date.now() + extraDelayMs);
+  }
   let runAt = enrollment.nextSendAt ? new Date(enrollment.nextSendAt) : new Date();
-  if (!immediate && !isWithinUaeBusinessHours(runAt)) {
+  if (!isWithinUaeBusinessHours(runAt)) {
     runAt = getNextUaeBusinessWindow(runAt);
   }
   return new Date(runAt.getTime() + extraDelayMs);
+}
+
+function shouldSkipBusinessHours(job) {
+  if (job.immediateLaunch) return true;
+  const waitMs = new Date(job.scheduledFor).getTime() - Date.now();
+  return waitMs < 24 * 60 * 60 * 1000;
 }
 
 async function rescheduleJob(job, runAt, reason) {
@@ -74,6 +91,196 @@ async function rescheduleJob(job, runAt, reason) {
   job.scheduledFor = runAt;
   job.errorMessage = reason;
   await job.save();
+}
+
+async function completeEnrollment(enrollment, job, reason = '') {
+  enrollment.completedAt = new Date();
+  enrollment.currentNodeId = null;
+  await enrollment.save();
+  if (job) {
+    job.status = 'cancelled';
+    job.errorMessage = reason || 'sequence complete';
+    await job.save();
+  }
+}
+
+async function deliverSequenceEmail({
+  job,
+  enrollment,
+  lead,
+  company,
+  project,
+  step,
+  targetEmail,
+}) {
+  console.log(`[SendWorker] Generating sequence email content...`);
+  const generated = await generateSequenceEmail({ lead, company, step });
+  const body = String(generated.body || '').trim();
+  const { fromEmail, fromName } = getFromIdentity(project);
+
+  console.log(`[SendWorker] Invoking sendAuthenticatedMail for "${generated.subject}"...`);
+  const result = await sendAuthenticatedMail({
+    fromName,
+    fromEmail,
+    to: targetEmail,
+    subject: generated.subject,
+    text: body,
+    html: renderEmailHtml({
+      body,
+      leadId: lead._id,
+      stepIndex: enrollment.currentStepIndex,
+    }),
+  });
+  const messageId = String(result?.messageId || '').trim();
+
+  lead.deliveryStatus = 'Emailed Outbound';
+  if (messageId) {
+    lead.lastMessageId = messageId;
+  }
+  lead.financialMetrics.tokensConsumed += generated.tokensUsed;
+  lead.financialMetrics.calculatedAiCostUSD += generated.costUsd;
+  lead.trackingMetrics.emailsDeliveredCount += 1;
+  await lead.save();
+
+  if (lead.campaignId) {
+    await syncAutoCampaignStatus(lead.campaignId);
+  }
+
+  if (project) {
+    const usdToAed = Number(process.env.OPENAI_USD_TO_AED) || 3.6725;
+    project.financialLedger.accumulatedOpenAiCost =
+      (project.financialLedger.accumulatedOpenAiCost || 0) + (generated.costUsd * usdToAed);
+    project.recalculateCosts();
+    await project.save();
+  }
+
+  job.status = 'sent';
+  job.sentAt = new Date();
+  job.recipientEmail = targetEmail;
+  job.providerMessageId = messageId;
+  job.renderedSubject = generated.subject;
+  job.renderedBody = body;
+  job.errorMessage = '';
+  await job.save();
+
+  enrollment.lastSentAt = new Date();
+  enrollment.currentStepIndex += 1;
+  await enrollment.save();
+
+  return { generated, body, messageId };
+}
+
+async function scheduleNextFlowStep(enrollment, flowGraph, lead) {
+  const target = resolveNextEmailTarget(flowGraph, enrollment.currentNodeId, lead);
+
+  if (target.completed || !target.nodeId) {
+    console.log(`[SendWorker] Enrollment ${enrollment._id} completed flow graph.`);
+    enrollment.completedAt = new Date();
+    enrollment.currentNodeId = null;
+    await enrollment.save();
+    return;
+  }
+
+  enrollment.currentNodeId = target.nodeId;
+  enrollment.nextSendAt = new Date(Date.now() + target.delayMs);
+  await enrollment.save();
+
+  const jitter = target.delayMs > 0 ? randomSendDelayMs() : 0;
+  const immediate = isShortFlowDelay(target.delayMs);
+  console.log(
+    `[SendWorker] Scheduling next flow node ${target.nodeId} for enrollment ${enrollment._id} in ${Math.round((target.delayMs + jitter) / 1000)}s`,
+  );
+  await scheduleEnrollmentJob(enrollment, target.delayMs + jitter, { immediate });
+}
+
+async function processFlowGraphJob(job, enrollment, lead, sequence, company, project, targetEmail) {
+  const flowGraph = normalizeFlowGraph(sequence.flowGraph);
+  if (!flowGraph) {
+    return false;
+  }
+
+  let nodeId = enrollment.currentNodeId || resolveEntryNodeId(flowGraph);
+  if (!nodeId) {
+    await completeEnrollment(enrollment, job, 'flow entry missing');
+    return true;
+  }
+
+  const target = resolveNextEmailTarget(flowGraph, nodeId, lead);
+  if (target.completed || !target.nodeId) {
+    await completeEnrollment(enrollment, job, target.stopReason || 'flow complete');
+    return true;
+  }
+
+  const emailNode = findFlowNode(flowGraph, target.nodeId);
+  if (!emailNode || emailNode.type !== 'email') {
+    await completeEnrollment(enrollment, job, 'next email node missing');
+    return true;
+  }
+
+  enrollment.currentNodeId = target.nodeId;
+  await enrollment.save();
+
+  const step = nodeToEmailStep(emailNode);
+  await deliverSequenceEmail({
+    job,
+    enrollment,
+    lead,
+    company,
+    project,
+    step,
+    targetEmail,
+  });
+
+  enrollment.currentNodeId = getNextNodeAfterEmail(flowGraph, target.nodeId);
+  await enrollment.save();
+  await scheduleNextFlowStep(enrollment, flowGraph, lead);
+
+  nextAllowedSendAt = Date.now() + randomSendDelayMs();
+  return true;
+}
+
+function getNextNodeAfterEmail(flowGraph, emailNodeId) {
+  return flowGraph.edges.find((edge) => edge.from === emailNodeId && edge.branch === 'default')?.to
+    || flowGraph.edges.find((edge) => edge.from === emailNodeId)?.to
+    || null;
+}
+
+async function processLinearStepJob(job, enrollment, lead, sequence, company, project, targetEmail) {
+  const step = sequence?.steps?.[enrollment.currentStepIndex];
+  if (!step) {
+    console.log(`[SendWorker] Job ${job._id} cancelled: sequence step ${enrollment.currentStepIndex} missing.`);
+    await completeEnrollment(enrollment, job, 'sequence step missing');
+    return;
+  }
+
+  await deliverSequenceEmail({
+    job,
+    enrollment,
+    lead,
+    company,
+    project,
+    step,
+    targetEmail,
+  });
+
+  const nextStep = sequence.steps[enrollment.currentStepIndex];
+  if (nextStep) {
+    const delayMs = parseStepDelay(nextStep);
+    enrollment.nextSendAt = new Date(Date.now() + delayMs);
+    await enrollment.save();
+    console.log(
+      `[SendWorker] Scheduling next step (${enrollment.currentStepIndex}) for enrollment ${enrollment._id} in ${Math.round(delayMs / 1000)}s`,
+    );
+    await scheduleEnrollmentJob(enrollment, randomSendDelayMs(), {
+      immediate: isShortFlowDelay(delayMs),
+    });
+  } else {
+    console.log(`[SendWorker] Enrollment ${enrollment._id} completed all steps!`);
+    enrollment.completedAt = new Date();
+    await enrollment.save();
+  }
+
+  nextAllowedSendAt = Date.now() + randomSendDelayMs();
 }
 
 async function processSendJobRecord(job) {
@@ -97,7 +304,7 @@ async function processSendJobRecord(job) {
     return;
   }
 
-  const blockedStatuses = ['Bounced / Invalid', 'Opted Out', 'Replied'];
+  const blockedStatuses = ['Bounced / Invalid', 'Opted Out'];
   if (blockedStatuses.includes(lead.deliveryStatus)) {
     console.log(`[SendWorker] Job ${job._id} cancelled: lead status is blocked (${lead.deliveryStatus})`);
     enrollment.frozen = true;
@@ -139,7 +346,7 @@ async function processSendJobRecord(job) {
     return;
   }
 
-  if (!job.immediateLaunch && !isWithinUaeBusinessHours()) {
+  if (!shouldSkipBusinessHours(job) && !isWithinUaeBusinessHours()) {
     const nextWindow = getNextUaeBusinessWindow();
     console.log(`[SendWorker] Job ${job._id} rescheduled: outside business hours. Rescheduling for: ${nextWindow}`);
     await rescheduleJob(job, nextWindow, 'outside business hours');
@@ -152,88 +359,21 @@ async function processSendJobRecord(job) {
     ProjectCampaign.findById(enrollment.campaignId),
   ]);
 
-  const step = sequence?.steps?.[enrollment.currentStepIndex];
-  if (!step) {
-    console.log(`[SendWorker] Job ${job._id} cancelled: sequence step ${enrollment.currentStepIndex} missing.`);
-    enrollment.completedAt = new Date();
-    await enrollment.save();
-    job.status = 'cancelled';
-    job.errorMessage = 'sequence step missing';
-    await job.save();
-    return;
-  }
-
   try {
-    console.log(`[SendWorker] Generating sequence email content using AI/OpenAI...`);
-    const generated = await generateSequenceEmail({ lead, company, step });
-    console.log(`[SendWorker] Generated email subject: "${generated.subject}"`);
-    const compliantBody = withOptOutFooter(generated.body);
-    const { fromEmail, fromName } = getFromIdentity(project);
-
-    console.log(`[SendWorker] Invoking sendAuthenticatedMail...`);
-    const result = await sendAuthenticatedMail({
-      fromName,
-      fromEmail,
-      to: targetEmail,
-      subject: generated.subject,
-      text: compliantBody,
-      html: renderEmailHtml({
-        body: compliantBody,
-        leadId: lead._id,
-        stepIndex: enrollment.currentStepIndex,
-      }),
-    });
-    const messageId = String(result?.messageId || '').trim();
-    console.log(`[SendWorker] sendAuthenticatedMail response messageId: ${messageId}`);
-
-    lead.deliveryStatus = 'Emailed Outbound';
-    if (messageId) {
-      lead.lastMessageId = messageId;
+    const usedFlowGraph = await processFlowGraphJob(
+      job,
+      enrollment,
+      lead,
+      sequence,
+      company,
+      project,
+      targetEmail,
+    );
+    if (usedFlowGraph) {
+      console.log(`[SendWorker] Job ${job._id} processed via flow graph.`);
+      return;
     }
-    lead.financialMetrics.tokensConsumed += generated.tokensUsed;
-    lead.financialMetrics.calculatedAiCostUSD += generated.costUsd;
-    lead.trackingMetrics.emailsDeliveredCount += 1;
-    await lead.save();
-
-    if (lead.campaignId) {
-      await syncAutoCampaignStatus(lead.campaignId);
-    }
-
-    if (project) {
-      const usdToAed = Number(process.env.OPENAI_USD_TO_AED) || 3.6725;
-      project.financialLedger.accumulatedOpenAiCost =
-        (project.financialLedger.accumulatedOpenAiCost || 0) + (generated.costUsd * usdToAed);
-      project.recalculateCosts();
-      await project.save();
-    }
-
-    job.status = 'sent';
-    job.sentAt = new Date();
-    job.recipientEmail = targetEmail;
-    job.providerMessageId = messageId;
-    job.renderedSubject = generated.subject;
-    job.renderedBody = compliantBody;
-    job.errorMessage = '';
-    await job.save();
-
-    enrollment.lastSentAt = new Date();
-    enrollment.currentStepIndex += 1;
-
-    const nextStep = sequence.steps[enrollment.currentStepIndex];
-    if (nextStep) {
-      const delayDays = nextStep.dayDelay || 0;
-      const delayMs = delayDays * 24 * 60 * 60 * 1000;
-      enrollment.nextSendAt = new Date(Date.now() + delayMs);
-      await enrollment.save();
-      console.log(`[SendWorker] Scheduling next step (${enrollment.currentStepIndex}) for enrollment ${enrollment._id} in ${delayDays} days`);
-      await scheduleEnrollmentJob(enrollment, randomSendDelayMs());
-    } else {
-      console.log(`[SendWorker] Enrollment ${enrollment._id} completed all steps!`);
-      enrollment.completedAt = new Date();
-      await enrollment.save();
-    }
-
-    nextAllowedSendAt = Date.now() + randomSendDelayMs();
+    await processLinearStepJob(job, enrollment, lead, sequence, company, project, targetEmail);
     console.log(`[SendWorker] Job ${job._id} successfully sent and recorded.`);
   } catch (error) {
     job.status = 'failed';

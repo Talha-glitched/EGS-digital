@@ -14,12 +14,14 @@ import {
   Building2,
   UserRound,
   X,
+  Play,
 } from 'lucide-react';
 import SearchableSelect from '../ui/SearchableSelect.jsx';
 import SearchableMultiSelect from '../ui/SearchableMultiSelect.jsx';
 import MailboxUsagePopover from './MailboxUsagePopover.jsx';
 import AudiencePreviewModal from './AudiencePreviewModal.jsx';
 import { buildAudienceSummary, buildImportedListLabels } from './audienceBuilder.js';
+import { DELAY_PRESETS, DELAY_UNIT_OPTIONS, formatDelayLabel } from '../../utils/sequenceDelay.js';
 import { Alert } from '../ui/primitives.jsx';
 import { cn } from '../ui/primitives.jsx';
 
@@ -69,7 +71,9 @@ export default function SequenceInspector({
   onAudienceChange,
   companyOptions,
   contactOptions,
+  onContactSearch,
   audiencePreview,
+  onResetEnrollments,
   launchMode,
   onLaunchModeChange,
   enrollLimit,
@@ -146,8 +150,10 @@ export default function SequenceInspector({
               patchAudience={patchAudience}
               companyOptions={companyOptions}
               contactOptions={contactOptions}
+              onContactSearch={onContactSearch}
               audiencePreview={audiencePreview}
               onOpenPreview={() => setPreviewOpen(true)}
+              onResetEnrollments={onResetEnrollments}
               launchMode={launchMode}
               onLaunchModeChange={onLaunchModeChange}
               enrollLimit={enrollLimit}
@@ -214,8 +220,10 @@ function GlobalInspector({
   patchAudience,
   companyOptions,
   contactOptions,
+  onContactSearch,
   audiencePreview,
   onOpenPreview,
+  onResetEnrollments,
   launchMode,
   onLaunchModeChange,
   enrollLimit,
@@ -310,6 +318,7 @@ function GlobalInspector({
           onChange={(includeContactIds) => patchAudience({ includeContactIds })}
           options={contactOptions}
           placeholder="Search contacts…"
+          onSearch={onContactSearch}
         />
 
         <AudienceAddRow
@@ -330,6 +339,7 @@ function GlobalInspector({
           options={contactOptions}
           placeholder="Remove contacts…"
           tone="exclude"
+          onSearch={onContactSearch}
         />
         </div>
 
@@ -349,6 +359,32 @@ function GlobalInspector({
 
         <div className="crm-seq-audience-summary">
           <p className="text-[10px] leading-relaxed text-neutral-600">{summary}</p>
+          {(audiencePreview?.alreadyEnrolled || 0) > 0 && (audiencePreview?.netNew || 0) === 0 && (
+            <div className="crm-seq-enroll-blocked mt-2">
+              <p className="text-[10px] leading-relaxed text-amber-800">
+                {(audiencePreview.blockingContacts || []).filter((c) => c.status === 'active').map((c) => c.name || c.email).filter(Boolean).join(', ') || 'Selected contact(s)'}
+                {' '}already active in this sequence
+                {(audiencePreview.blockingContacts || []).find((c) => c.status === 'active')?.currentStepIndex != null
+                  ? ` (step ${((audiencePreview.blockingContacts.find((c) => c.status === 'active')?.currentStepIndex) || 0) + 1})`
+                  : ''}.
+              </p>
+              {onResetEnrollments && (
+                <button
+                  type="button"
+                  onClick={onResetEnrollments}
+                  className="mt-2 text-[10px] font-semibold text-brand hover:underline"
+                >
+                  Reset enrollment to re-test
+                </button>
+              )}
+            </div>
+          )}
+          {(audiencePreview?.alreadyCompleted || 0) > 0 && (audiencePreview?.netNew || 0) > 0 && (
+            <p className="mt-2 text-[10px] leading-relaxed text-neutral-600">
+              {(audiencePreview.blockingContacts || []).filter((c) => c.status === 'completed').map((c) => c.name || c.email).filter(Boolean).join(', ')}
+              {' '}previously finished this sequence — relaunch will restart from step 1.
+            </p>
+          )}
           <button
             type="button"
             onClick={onOpenPreview}
@@ -417,7 +453,7 @@ function GlobalInspector({
   );
 }
 
-function AudienceAddRow({ icon: Icon, label, values, onChange, options, placeholder, tone }) {
+function AudienceAddRow({ icon: Icon, label, values, onChange, options, placeholder, tone, onSearch }) {
   const [open, setOpen] = useState(false);
   const count = values?.length || 0;
 
@@ -438,6 +474,7 @@ function AudienceAddRow({ icon: Icon, label, values, onChange, options, placehol
               options={options}
               placeholder={placeholder}
               className="crm-seq-compact-select"
+              onQueryChange={onSearch}
             />
           </div>
         )}
@@ -496,17 +533,47 @@ function NodeInspector({ node, onUpdate, onDelete, canDelete }) {
   }
 
   if (node.type === 'wait') {
+    const amount = Number(node.data?.amount ?? node.data?.days) || 1;
+    const unit = node.data?.unit || 'days';
+    const setWait = (patch) => onUpdate(node.id, { ...node.data, ...patch });
+
     return (
       <>
-        <CompactField label="Days">
-          <input
-            type="number"
-            min="1"
-            className="crm-input crm-seq-input py-1.5 text-[11px]"
-            value={node.data?.days || 1}
-            onChange={(e) => update('days', Number(e.target.value))}
-          />
+        <CompactField label="Wait duration">
+          <div className="flex gap-2">
+            <input
+              type="number"
+              min="1"
+              className="crm-input crm-seq-input min-w-0 flex-1 py-1.5 text-[11px]"
+              value={amount}
+              onChange={(e) => setWait({ amount: Number(e.target.value), days: undefined })}
+            />
+            <select
+              className="crm-input crm-seq-input w-24 shrink-0 py-1.5 text-[11px]"
+              value={unit}
+              onChange={(e) => setWait({ unit: e.target.value })}
+            >
+              {DELAY_UNIT_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          </div>
         </CompactField>
+        <div className="flex flex-wrap gap-1.5">
+          {DELAY_PRESETS.map((preset) => (
+            <button
+              key={preset.label}
+              type="button"
+              className="rounded-md border border-[var(--color-line)] px-2 py-1 text-[10px] font-medium text-neutral-600 hover:border-brand hover:text-brand"
+              onClick={() => setWait({ amount: preset.amount, unit: preset.unit, days: undefined })}
+            >
+              {preset.label}
+            </button>
+          ))}
+        </div>
+        <p className="text-[10px] text-neutral-400">
+          Current wait: {formatDelayLabel(amount, unit)}
+        </p>
         {canDelete && (
           <button type="button" onClick={() => onDelete(node.id)} className="crm-btn-ghost w-full !py-1.5 text-[10px] text-rose-600">
             <Trash2 className="h-3 w-3" />
@@ -558,6 +625,7 @@ function NodeInspector({ node, onUpdate, onDelete, canDelete }) {
 }
 
 export function nodeIcon(type) {
+  if (type === 'start') return Play;
   if (type === 'email') return Mail;
   if (type === 'condition') return GitBranch;
   if (type === 'wait') return Clock;

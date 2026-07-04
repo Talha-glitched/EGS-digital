@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Save, ExternalLink, AlertCircle, Mail, BriefcaseBusiness, Building2, Trash2 } from 'lucide-react';
 import Drawer from '../ui/Drawer.jsx';
 import { Alert } from '../ui/primitives.jsx';
-import { updateLead, addLeadToCompany } from '../../crmApi.js';
+import { updateLead, addLeadToCompany, crmApiFetch } from '../../crmApi.js';
+import SearchableSelect from '../ui/SearchableSelect.jsx';
 import DrawerCollapsible from './DrawerCollapsible.jsx';
 import DrawerTabs from './DrawerTabs.jsx';
 import InteractionTimeline from './InteractionTimeline.jsx';
@@ -26,6 +27,7 @@ function populateFromLead(lead) {
     formPhoneLusha2: lead.phoneLusha2 || '',
     formWhatsappNumber: lead.whatsappNumber || '',
     formOutcome: lead.outcome || 'Pending',
+    formCampaignId: lead.campaignId?._id || lead.campaignId || '',
     formDeliveryStatus: lead.deliveryStatus || 'Pending Inqueue',
     formLiConnSent: lead.linkedinOutreach?.connSent || false,
     formLiAccepted: lead.linkedinOutreach?.accepted || false,
@@ -82,7 +84,22 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
   const [tab, setTab] = useState(initialTab);
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState('');
+  const [campaigns, setCampaigns] = useState([]);
   const [form, setForm] = useState(() => (lead ? populateFromLead(lead) : {}));
+
+  useEffect(() => {
+    crmApiFetch('/api/admin/projects')
+      .then((items) => setCampaigns(items || []))
+      .catch(() => setCampaigns([]));
+  }, []);
+
+  const campaignOptions = useMemo(
+    () => campaigns.map((campaign) => ({
+      value: campaign._id,
+      label: campaign.projectName,
+    })),
+    [campaigns],
+  );
 
   useEffect(() => {
     if (lead) {
@@ -119,6 +136,7 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
       phoneLusha2: form.formPhoneLusha2.trim(),
       whatsappNumber: form.formWhatsappNumber.trim(),
       outcome: form.formOutcome,
+      campaignId: form.formCampaignId || null,
       deliveryStatus: form.formDeliveryStatus,
       linkedinOutreach: {
         connSent: form.formLiConnSent,
@@ -461,6 +479,25 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
                 ))}
               </div>
               <Field label="WhatsApp number" value={form.formWhatsappNumber} onChange={(v) => set('formWhatsappNumber', v)} placeholder="e.g. 971501234567" />
+            </div>
+          </DrawerCollapsible>
+
+          <DrawerCollapsible title="Campaign assignment" subtitle="Link this contact to an outreach campaign" defaultOpen>
+            <div className="space-y-4 pt-4">
+              <label className="block space-y-1.5">
+                <span className="text-xs font-medium text-neutral-600">Campaign</span>
+                <SearchableSelect
+                  value={form.formCampaignId}
+                  onChange={(value) => set('formCampaignId', value)}
+                  options={campaignOptions}
+                  placeholder="No campaign — standalone contact"
+                  searchPlaceholder="Search campaigns…"
+                  emptyLabel="No campaigns match."
+                />
+              </label>
+              <p className="text-xs leading-relaxed text-neutral-500">
+                Assign a campaign so this contact appears in sequence audiences and campaign reporting. Leave blank for standalone contacts.
+              </p>
             </div>
           </DrawerCollapsible>
 

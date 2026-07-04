@@ -59,6 +59,7 @@ import {
   createCompany,
   createStandaloneLead,
   addLeadToCompany,
+  assignLeadToCampaign,
   getComprehensiveAnalytics,
   deleteLead,
   restoreLead,
@@ -85,6 +86,7 @@ import {
   deleteSequences,
   restoreSequence,
   enrollProjectLeads,
+  resetSequenceEnrollments,
 } from '../services/sequenceService.js';
 import {
   clearAdminCookie,
@@ -448,6 +450,11 @@ router.post('/projects/:id/enroll', asyncRoute(async (req, res) => {
   res.json(result);
 }));
 
+router.post('/sequences/:id/reset-enrollments', asyncRoute(async (req, res) => {
+  const leadIds = Array.isArray(req.body?.leadIds) ? req.body.leadIds : [];
+  res.json(await resetSequenceEnrollments(req.params.id, leadIds));
+}));
+
 router.patch('/leads/:id', asyncRoute(async (req, res) => {
   const lead = await Lead.findById(req.params.id);
   if (!lead) {
@@ -522,6 +529,12 @@ router.patch('/leads/:id', asyncRoute(async (req, res) => {
   }
 
   await lead.save();
+
+  if (req.body.campaignId !== undefined) {
+    const assigned = await assignLeadToCampaign(req.params.id, req.body.campaignId || null);
+    return res.json(assigned);
+  }
+
   res.json(lead);
 }));
 

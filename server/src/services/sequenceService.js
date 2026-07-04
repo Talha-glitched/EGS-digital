@@ -8,6 +8,8 @@ import { scheduleEnrollmentJob, cancelLeadJobs } from './sendWorker.js';
 import { getMailConfigStatus } from './mailTransport.js';
 import { syncAutoCampaignStatus } from './projectService.js';
 import { getGstDayBounds } from '../utils/uaeBusinessHours.js';
+import { normalizeFlowGraph, resolveEntryNodeId } from '../utils/sequenceFlowExecutor.js';
+import { Company } from '../models/Company.js';
 import {
   softDeleteRecord,
   restoreRecord,
@@ -57,18 +59,16 @@ export async function resolveAudienceLeadIds(projectId, options = {}) {
 
   if (includeCompanyIds.length) {
     const ids = await Lead.find({
-      campaignId: projectId,
-      deliveryStatus: 'Pending Inqueue',
       companyId: { $in: includeCompanyIds },
+      deliveryStatus: 'Pending Inqueue',
     }).distinct('_id');
     ids.forEach((id) => leadIdSet.add(String(id)));
   }
 
   if (includeLeadIds.length) {
     const ids = await Lead.find({
-      campaignId: projectId,
-      deliveryStatus: 'Pending Inqueue',
       _id: { $in: includeLeadIds },
+      deliveryStatus: { $nin: ['Bounced / Invalid', 'Opted Out'] },
     }).distinct('_id');
     ids.forEach((id) => leadIdSet.add(String(id)));
   }
@@ -84,6 +84,28 @@ export async function resolveAudienceLeadIds(projectId, options = {}) {
   excludeLeadIds.forEach((id) => leadIdSet.delete(String(id)));
 
   return [...leadIdSet];
+}
+
+async function ensureLeadAssignedToCampaign(lead, projectId) {
+  if (String(lead.campaignId) === String(projectId)) return true;
+
+  const duplicate = await Lead.findOne({
+    campaignId: projectId,
+    email: lead.email,
+    _id: { $ne: lead._id },
+  });
+  if (duplicate) return false;
+
+  lead.campaignId = projectId;
+  await lead.save();
+
+  const company = await Company.findById(lead.companyId);
+  if (company && !company.projectsAssociated.some((pid) => String(pid) === String(projectId))) {
+    company.projectsAssociated.push(projectId);
+    await company.save();
+  }
+
+  return true;
 }
 
 async function buildEnrollmentStats(sequenceIds = []) {
@@ -181,14 +203,6 @@ export async function previewAudience(projectId, options = {}) {
   const leadIds = await resolveAudienceLeadIds(projectId, options);
   const eligible = leadIds.length;
 
-  let alreadyEnrolled = 0;
-  if (options.sequenceId && eligible) {
-    alreadyEnrolled = await SequenceEnrollment.countDocuments({
-      sequenceId: options.sequenceId,
-      leadId: { $in: leadIds },
-    });
-  }
-
   const itemLimit = options.full ? 500 : 8;
   const items = leadIds.length
     ? await Lead.find({ _id: { $in: leadIds } })
@@ -198,10 +212,53 @@ export async function previewAudience(projectId, options = {}) {
       .lean()
     : [];
 
+  let alreadyEnrolled = 0;
+  let alreadyCompleted = 0;
+  let blockingContacts = [];
+  if (options.sequenceId && eligible) {
+    const enrollmentRows = await SequenceEnrollment.find({
+      sequenceId: options.sequenceId,
+      leadId: { $in: leadIds },
+    }).lean();
+    const leadMap = new Map(items.map((row) => [String(row._id), row]));
+    const missingLeadIds = leadIds.filter((id) => !leadMap.has(String(id)));
+    if (missingLeadIds.length) {
+      const extraLeads = await Lead.find({ _id: { $in: missingLeadIds } }).select('name email').lean();
+      extraLeads.forEach((row) => leadMap.set(String(row._id), row));
+    }
+    for (const row of enrollmentRows) {
+      const lead = leadMap.get(String(row.leadId));
+      if (row.frozen || row.completedAt) {
+        alreadyCompleted += 1;
+        blockingContacts.push({
+          leadId: String(row.leadId),
+          name: lead?.name || '',
+          email: lead?.email || '',
+          currentStepIndex: row.currentStepIndex,
+          status: 'completed',
+        });
+        continue;
+      }
+      alreadyEnrolled += 1;
+      blockingContacts.push({
+        leadId: String(row.leadId),
+        name: lead?.name || '',
+        email: lead?.email || '',
+        currentStepIndex: row.currentStepIndex,
+        status: 'active',
+      });
+    }
+  }
+
+  const previouslyEnrolled = alreadyEnrolled + alreadyCompleted;
+
   return {
     projectId,
     eligible,
     alreadyEnrolled,
+    alreadyCompleted,
+    previouslyEnrolled,
+    blockingContacts,
     netNew: Math.max(0, eligible - alreadyEnrolled),
     sample: items.slice(0, 8),
     items: options.full ? items : undefined,
@@ -441,6 +498,7 @@ export async function createSequence(projectId, payload) {
   const steps = (payload.steps || []).map((step, index) => ({
     stepOrder: index + 1,
     dayDelay: Number(step.dayDelay) || 0,
+    delayUnit: step.delayUnit || 'days',
     subjectTemplate: String(step.subjectTemplate || ''),
     bodyTemplate: String(step.bodyTemplate || ''),
     useAiPersonalization: step.useAiPersonalization !== false,
@@ -451,6 +509,7 @@ export async function createSequence(projectId, payload) {
     campaignId: projectId,
     name: String(payload.name || 'Outreach Sequence').trim(),
     steps,
+    flowGraph: normalizeFlowGraph(payload.flowGraph),
     isActive: false,
   });
 }
@@ -468,11 +527,15 @@ export async function updateSequence(id, payload) {
     seq.steps = payload.steps.map((step, index) => ({
       stepOrder: index + 1,
       dayDelay: Number(step.dayDelay) || 0,
+      delayUnit: step.delayUnit || 'days',
       subjectTemplate: String(step.subjectTemplate || ''),
       bodyTemplate: String(step.bodyTemplate || ''),
       useAiPersonalization: step.useAiPersonalization !== false,
       aiPrompt: String(step.aiPrompt || ''),
     }));
+  }
+  if (payload.flowGraph !== undefined) {
+    seq.flowGraph = normalizeFlowGraph(payload.flowGraph);
   }
   if (payload.isActive !== undefined) seq.isActive = Boolean(payload.isActive);
   await seq.save();
@@ -563,28 +626,44 @@ export async function enrollProjectLeads(projectId, sequenceId, options = {}) {
   assertEnrollmentConfirmed(options);
   const resolvedLeadIds = await resolveAudienceLeadIds(projectId, options);
   let leads = resolvedLeadIds.length
-    ? await Lead.find({ _id: { $in: resolvedLeadIds }, deliveryStatus: 'Pending Inqueue' })
+    ? await Lead.find({ _id: { $in: resolvedLeadIds } })
     : [];
+  leads = leads.filter((lead) => !['Bounced / Invalid', 'Opted Out'].includes(lead.deliveryStatus));
   const enrollLimit = Number(options.enrollLimit);
   if (Number.isFinite(enrollLimit) && enrollLimit > 0) {
     leads = leads.slice(0, enrollLimit);
   }
 
   let enrolled = 0;
+  let restarted = 0;
+  let skippedActive = 0;
   const now = new Date();
-  const firstDelay = sequence.steps[0]?.dayDelay || 0;
-  const nextSendAt = new Date(now.getTime() + firstDelay * 24 * 60 * 60 * 1000);
+  const flowGraph = normalizeFlowGraph(sequence.flowGraph);
+  const entryNodeId = flowGraph ? resolveEntryNodeId(flowGraph) : null;
 
   for (const lead of leads) {
+    const assigned = await ensureLeadAssignedToCampaign(lead, projectId);
+    if (!assigned) continue;
+
     const existing = await SequenceEnrollment.findOne({ leadId: lead._id, sequenceId });
-    if (existing) continue;
+    if (existing) {
+      const isActive = !existing.frozen && !existing.completedAt;
+      if (isActive) {
+        skippedActive += 1;
+        continue;
+      }
+      await SendJob.deleteMany({ enrollmentId: existing._id });
+      await SequenceEnrollment.deleteOne({ _id: existing._id });
+      restarted += 1;
+    }
 
     const enrollment = await SequenceEnrollment.create({
       leadId: lead._id,
       campaignId: projectId,
       sequenceId,
       currentStepIndex: 0,
-      nextSendAt,
+      currentNodeId: entryNodeId,
+      nextSendAt: now,
       frozen: false,
     });
 
@@ -596,7 +675,32 @@ export async function enrollProjectLeads(projectId, sequenceId, options = {}) {
   await sequence.save();
   await syncAutoCampaignStatus(projectId);
 
-  return { enrolled, sequenceId, projectId };
+  return { enrolled, restarted, skippedActive, sequenceId, projectId };
+}
+
+export async function resetSequenceEnrollments(sequenceId, leadIds = []) {
+  const seq = await Sequence.findById(sequenceId);
+  if (!seq) {
+    const error = new Error('Sequence not found.');
+    error.status = 404;
+    throw error;
+  }
+
+  const query = { sequenceId };
+  if (Array.isArray(leadIds) && leadIds.length) {
+    query.leadId = { $in: leadIds };
+  }
+
+  const enrollments = await SequenceEnrollment.find(query).select('_id leadId');
+  if (!enrollments.length) {
+    return { reset: 0 };
+  }
+
+  const enrollmentIds = enrollments.map((row) => row._id);
+  await SendJob.deleteMany({ enrollmentId: { $in: enrollmentIds } });
+  await SequenceEnrollment.deleteMany({ _id: { $in: enrollmentIds } });
+
+  return { reset: enrollments.length, sequenceId };
 }
 
 export async function freezeLeadSequence(leadId, reason = 'reply') {

@@ -658,7 +658,7 @@ export async function listAllLeads({
   }
 
   const p = Math.max(Number(page) || 1, 1);
-  const lim = Math.min(Math.max(Number(limit) || 50, 1), 200);
+  const lim = Math.min(Math.max(Number(limit) || 50, 1), 500);
   const skip = (p - 1) * lim;
   const sortSpec = sort === 'followUp'
     ? { 'relationshipProfile.nextFollowUpAt': 1, name: 1 }
@@ -699,7 +699,7 @@ export async function listAllCompanies({ search, page = 1, limit = 50 } = {}) {
   }
 
   const p = Math.max(Number(page) || 1, 1);
-  const lim = Math.min(Math.max(Number(limit) || 50, 1), 200);
+  const lim = Math.min(Math.max(Number(limit) || 50, 1), 500);
   const skip = (p - 1) * lim;
 
   const [companies, total] = await Promise.all([
@@ -895,6 +895,63 @@ export async function createStandaloneLead(payload = {}) {
     companyName: company.companyName,
     domain: company.domain,
     campaignName: campaign?.projectName || '',
+  };
+}
+
+export async function assignLeadToCampaign(leadId, campaignId) {
+  assertDb();
+  const lead = await Lead.findById(leadId);
+  if (!lead) {
+    const error = new Error('Lead not found.');
+    error.status = 404;
+    throw error;
+  }
+
+  if (!campaignId) {
+    lead.campaignId = null;
+    await lead.save();
+    const company = await Company.findById(lead.companyId);
+    return {
+      ...lead.toObject(),
+      companyName: company?.companyName || '',
+      domain: company?.domain || '',
+      campaignName: '',
+    };
+  }
+
+  const campaign = await ProjectCampaign.findById(campaignId);
+  if (!campaign) {
+    const error = new Error('Campaign not found.');
+    error.status = 404;
+    throw error;
+  }
+
+  if (String(lead.campaignId) !== String(campaignId)) {
+    const duplicate = await Lead.findOne({
+      campaignId,
+      email: lead.email,
+      _id: { $ne: lead._id },
+    });
+    if (duplicate) {
+      const error = new Error('A contact with this email already exists in that campaign.');
+      error.status = 409;
+      throw error;
+    }
+    lead.campaignId = campaignId;
+    await lead.save();
+  }
+
+  const company = await Company.findById(lead.companyId);
+  if (company && !company.projectsAssociated.some((pid) => String(pid) === String(campaignId))) {
+    company.projectsAssociated.push(campaignId);
+    await company.save();
+  }
+
+  return {
+    ...lead.toObject(),
+    companyName: company?.companyName || '',
+    domain: company?.domain || '',
+    campaignName: campaign.projectName || '',
   };
 }
 

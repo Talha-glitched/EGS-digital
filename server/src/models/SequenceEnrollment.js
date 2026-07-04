@@ -6,6 +6,7 @@ const sequenceEnrollmentSchema = new mongoose.Schema(
     campaignId: { type: mongoose.Schema.Types.ObjectId, ref: 'ProjectCampaign', required: true, index: true },
     sequenceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Sequence', required: true },
     currentStepIndex: { type: Number, default: 0 },
+    currentNodeId: { type: String, default: null },
     nextSendAt: { type: Date, default: null, index: true },
     frozen: { type: Boolean, default: false, index: true },
     completedAt: { type: Date, default: null },

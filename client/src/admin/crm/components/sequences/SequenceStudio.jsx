@@ -7,6 +7,9 @@ import {
   previewSequenceAudience,
   deleteSequenceWithUndo,
   deleteSequences,
+  fetchGlobalLeads,
+  fetchGlobalCompanies,
+  resetSequenceEnrollments,
 } from '../../crmApi.js';
 import { useConfirmDelete } from '../../hooks/useConfirmDelete.js';
 import { useUndoToast } from '../../context/UndoToastContext.jsx';
@@ -21,15 +24,19 @@ import SequenceWhiteboard from './SequenceWhiteboard.jsx';
 import SequenceStudioToast from './SequenceStudioToast.jsx';
 import { useStudioToast } from './useStudioToast.js';
 import { LoadingState } from '../ui/primitives.jsx';
+import SequenceNodeEditorModal from './SequenceNodeEditorModal.jsx';
 import {
   appendNode,
-  connectChain,
-  createConditionNode,
+  appendConditionWithBranches,
+  connectNodes,
+  disconnectEdge,
   createEmailNode,
   createWaitNode,
   defaultFlow,
+  deleteNodeFromGraph,
+  flowFromSequence,
+  flowGraphFromState,
   flowToSteps,
-  stepsToFlow,
 } from './sequenceFlow.js';
 
 function buildAudienceParams(audience) {
@@ -51,6 +58,8 @@ export default function SequenceStudio({
   const [nodes, setNodes] = useState(defaultFlow().nodes);
   const [edges, setEdges] = useState(defaultFlow().edges);
   const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const [editingNodeId, setEditingNodeId] = useState(null);
+  const [linkingFrom, setLinkingFrom] = useState(null);
   const [isActive, setIsActive] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -74,7 +83,7 @@ export default function SequenceStudio({
   const draftSnapshotRef = useRef('');
   const skipAutosaveRef = useRef(true);
 
-  const selectedNode = nodes.find((n) => n.id === selectedNodeId) || null;
+  const editingNode = nodes.find((n) => n.id === editingNodeId) || null;
 
   const campaignOptions = useMemo(
     () => campaigns.map((c) => ({
@@ -94,14 +103,36 @@ export default function SequenceStudio({
     () => contacts.map((l) => ({
       value: l._id,
       label: l.name || l.email || 'Contact',
-      hint: l.designation,
+      hint: [l.email, l.companyName, l.designation].filter(Boolean).join(' · '),
     })),
     [contacts],
   );
 
+  const loadAudienceOptions = useCallback(async (contactSearch = '') => {
+    try {
+      if (contactSearch) {
+        const contactData = await fetchGlobalLeads({ search: contactSearch, limit: 100 });
+        setContacts(contactData.items || []);
+        return;
+      }
+      const [companyData, contactData] = await Promise.all([
+        fetchGlobalCompanies({ limit: 500 }),
+        fetchGlobalLeads({ limit: 500 }),
+      ]);
+      setCompanies(companyData.items || []);
+      setContacts(contactData.items || []);
+    } catch {
+      if (!contactSearch) {
+        setCompanies([]);
+      }
+      setContacts([]);
+    }
+  }, []);
+
   const buildDraftSnapshot = useCallback(() => JSON.stringify({
     name: sequenceName,
     steps: flowToSteps(nodes, edges),
+    flowGraph: flowGraphFromState(nodes, edges),
     fromName,
     fromEmail,
   }), [sequenceName, nodes, edges, fromName, fromEmail]);
@@ -118,6 +149,7 @@ export default function SequenceStudio({
     }
 
     const steps = flowToSteps(nodes, edges);
+    const flowGraph = flowGraphFromState(nodes, edges);
     if (!steps.length) {
       if (!silent) showToast('Add at least one email step.', 'error');
       return null;
@@ -136,7 +168,7 @@ export default function SequenceStudio({
       if (!seqId) {
         const created = await crmApiFetch(`/api/admin/projects/${campaignId}/sequences`, {
           method: 'POST',
-          body: JSON.stringify({ name: sequenceName, steps }),
+          body: JSON.stringify({ name: sequenceName, steps, flowGraph }),
         });
         seqId = created._id;
         setActiveSequenceId(seqId);
@@ -144,7 +176,7 @@ export default function SequenceStudio({
       } else {
         await crmApiFetch(`/api/admin/sequences/${seqId}`, {
           method: 'PATCH',
-          body: JSON.stringify({ name: sequenceName, steps }),
+          body: JSON.stringify({ name: sequenceName, steps, flowGraph }),
         });
       }
 
@@ -183,13 +215,15 @@ export default function SequenceStudio({
     dismissToast();
     try {
       const seq = await crmApiFetch(`/api/admin/sequences/${id}`);
-      const flow = stepsToFlow(seq.steps || []);
+      const flow = flowFromSequence(seq);
       setActiveSequenceId(seq._id);
       setSequenceName(seq.name || 'Untitled sequence');
       setCampaignId(String(seq.campaignId));
       setNodes(flow.nodes);
       setEdges(flow.edges);
       setSelectedNodeId(null);
+      setEditingNodeId(null);
+      setLinkingFrom(null);
       setIsActive(Boolean(seq.isActive));
       setFromEmail(seq.campaign?.fromEmail || '');
       setFromName(seq.campaign?.fromName || 'Exhibit Graphic Sign');
@@ -229,14 +263,8 @@ export default function SequenceStudio({
   }, []);
 
   useEffect(() => {
-    if (!campaignId) return;
-    crmApiFetch(`/api/admin/projects/${campaignId}/companies?limit=500`)
-      .then((data) => setCompanies(data.items || []))
-      .catch(() => setCompanies([]));
-    crmApiFetch(`/api/admin/projects/${campaignId}/leads?limit=500&deliveryStatus=Pending%20Inqueue`)
-      .then((data) => setContacts(data.items || []))
-      .catch(() => setContacts([]));
-  }, [campaignId]);
+    loadAudienceOptions();
+  }, [loadAudienceOptions, campaignId]);
 
   useEffect(() => {
     if (!campaignId) return undefined;
@@ -390,20 +418,81 @@ export default function SequenceStudio({
   }
 
   function deleteNode(id) {
-    const nextNodes = nodes.filter((n) => n.id !== id);
-    const nextEdges = connectChain(nextNodes, edges.filter((e) => e.from !== id && e.to !== id));
-    setNodes(nextNodes.length ? nextNodes : defaultFlow().nodes);
-    setEdges(nextEdges);
+    const result = deleteNodeFromGraph(nodes, edges, id);
+    setNodes(result.nodes);
+    setEdges(result.edges);
     setSelectedNodeId(null);
+    setEditingNodeId(null);
+    setLaunchArmed(false);
   }
 
-  function addNode(factory) {
+  function addNode(factory, options) {
     const node = factory();
-    const result = appendNode(nodes, edges, node);
+    const result = appendNode(nodes, edges, node, options);
     setNodes(result.nodes);
     setEdges(result.edges);
     setSelectedNodeId(result.selectedNodeId);
+    setEditingNodeId(result.selectedNodeId);
     setLaunchArmed(false);
+  }
+
+  function addConditionBranch() {
+    const result = appendConditionWithBranches(nodes, edges);
+    setNodes(result.nodes);
+    setEdges(result.edges);
+    setSelectedNodeId(result.selectedNodeId);
+    setEditingNodeId(result.selectedNodeId);
+    setLaunchArmed(false);
+  }
+
+  function startLink(nodeId, branch) {
+    setLinkingFrom({ nodeId, branch });
+    setSelectedNodeId(nodeId);
+  }
+
+  function completeLink(fromId, toId, branch) {
+    setEdges((prev) => connectNodes(nodes, prev, fromId, toId, branch));
+    setLinkingFrom(null);
+    setLaunchArmed(false);
+    showToast('Connected steps.', 'success');
+  }
+
+  function cancelLink() {
+    setLinkingFrom(null);
+  }
+
+  function handleDisconnectEdge(edgeId) {
+    setEdges((prev) => disconnectEdge(prev, edgeId));
+    setLaunchArmed(false);
+  }
+
+  async function handleResetEnrollments() {
+    if (!activeSequenceId) {
+      showToast('Save the sequence first.', 'warning');
+      return;
+    }
+    setBusy(true);
+    try {
+      const leadIds = audience.includeContactIds?.length ? audience.includeContactIds : [];
+      const result = await resetSequenceEnrollments(activeSequenceId, leadIds);
+      showToast(
+        result.reset > 0
+          ? `Reset ${result.reset} enrollment(s). You can launch again.`
+          : 'No enrollments to reset for this audience.',
+        result.reset > 0 ? 'success' : 'warning',
+      );
+      const preview = await previewSequenceAudience(campaignId, {
+        sequenceId: activeSequenceId,
+        ...buildAudienceParams(audience),
+      });
+      setAudiencePreview(preview);
+      setEnrollLimit(Math.max(1, preview.netNew || 0));
+      setLaunchArmed(false);
+    } catch (err) {
+      showToast(err.message || 'Reset failed.', 'error');
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function save({ launch = false } = {}) {
@@ -413,6 +502,7 @@ export default function SequenceStudio({
     }
 
     const steps = flowToSteps(nodes, edges);
+    const flowGraph = flowGraphFromState(nodes, edges);
     if (!steps.length) {
       showToast('Add at least one email step.', 'error');
       return;
@@ -451,11 +541,24 @@ export default function SequenceStudio({
         setLaunchArmed(false);
         showToast(
           result.enrolled > 0
-            ? `Launched — ${result.enrolled} enrolled. Sending via SMTP now.`
-            : 'No new contacts were enrolled.',
+            ? `Launched — ${result.enrolled} enrolled${result.restarted ? ` (${result.restarted} restarted)` : ''}. Sending via SMTP now.`
+            : result.skippedActive
+              ? 'No new contacts enrolled — selected contact(s) are still active in this sequence. Use “Reset enrollment to re-test” first.'
+              : 'No new contacts were enrolled.',
           result.enrolled > 0 ? 'success' : 'warning',
         );
         fetchMailboxUsage().then(setMailboxUsage).catch(() => {});
+        if (result.enrolled > 0) {
+          previewSequenceAudience(campaignId, {
+            sequenceId: seqId,
+            ...buildAudienceParams(audience),
+          })
+            .then((preview) => {
+              setAudiencePreview(preview);
+              setEnrollLimit(Math.max(1, preview.netNew || 0));
+            })
+            .catch(() => {});
+        }
       } else if (!launch) {
         setLaunchArmed(false);
         showToast('Draft saved.', 'success');
@@ -480,13 +583,30 @@ export default function SequenceStudio({
           nodes={nodes}
           edges={edges}
           selectedNodeId={selectedNodeId}
+          linkingFrom={linkingFrom}
           onSelectNode={setSelectedNodeId}
           onMoveNode={moveNode}
           onAddEmail={() => addNode(() => createEmailNode())}
-          onAddCondition={() => addNode(() => createConditionNode())}
-          onAddWait={() => addNode(() => createWaitNode(3))}
-          onCanvasClick={() => setSelectedNodeId(null)}
+          onAddCondition={addConditionBranch}
+          onAddWait={() => addNode(() => createWaitNode(5, 'minutes'))}
+          onCanvasClick={() => {
+            setSelectedNodeId(null);
+            setLinkingFrom(null);
+          }}
+          onStartLink={startLink}
+          onCompleteLink={completeLink}
+          onCancelLink={cancelLink}
+          onEditNode={setEditingNodeId}
+          onDisconnectEdge={handleDisconnectEdge}
           focusKey={activeSequenceId || 'new'}
+        />
+        <SequenceNodeEditorModal
+          node={editingNode}
+          open={Boolean(editingNode)}
+          onClose={() => setEditingNodeId(null)}
+          onSave={updateNodeData}
+          onDelete={deleteNode}
+          canDelete={nodes.length > 1 || editingNode?.type !== 'email'}
         />
         <SequenceStudioToast
           message={toast.message}
@@ -506,7 +626,7 @@ export default function SequenceStudio({
       />
 
       <SequenceInspector
-        selectedNode={selectedNode}
+        selectedNode={null}
         nodes={nodes}
         onUpdateNode={updateNodeData}
         onDeleteNode={deleteNode}
@@ -521,7 +641,9 @@ export default function SequenceStudio({
         onAudienceChange={setAudience}
         companyOptions={companyOptions}
         contactOptions={contactOptions}
+        onContactSearch={loadAudienceOptions}
         audiencePreview={audiencePreview}
+        onResetEnrollments={handleResetEnrollments}
         launchMode={launchMode}
         onLaunchModeChange={setLaunchMode}
         enrollLimit={enrollLimit}

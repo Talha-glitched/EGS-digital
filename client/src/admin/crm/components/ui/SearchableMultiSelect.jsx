@@ -21,6 +21,8 @@ export default function SearchableMultiSelect({
   disabled = false,
   className = '',
   menuMinWidth = 260,
+  onQueryChange,
+  remoteLoading = false,
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -94,6 +96,12 @@ export default function SearchableMultiSelect({
       unregister();
     };
   }, [open, listId, overlayId]);
+
+  useEffect(() => {
+    if (!onQueryChange) return undefined;
+    const timer = window.setTimeout(() => onQueryChange(query.trim()), 250);
+    return () => clearTimeout(timer);
+  }, [query, onQueryChange]);
 
   useEffect(() => {
     if (open) {
@@ -182,7 +190,9 @@ export default function SearchableMultiSelect({
                 </button>
               );
             }) : (
-              <p className="px-3 py-4 text-center text-xs text-neutral-500">{emptyLabel}</p>
+              <p className="px-3 py-4 text-center text-xs text-neutral-500">
+                {remoteLoading ? 'Searching…' : emptyLabel}
+              </p>
             )}
           </div>
         </div>,

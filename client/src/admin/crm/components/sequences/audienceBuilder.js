@@ -63,7 +63,15 @@ export function buildAudienceSummary(audience, preview, campaignLabels = {}) {
 
   const net = preview?.netNew ?? 0;
   const eligible = preview?.eligible ?? 0;
-  text += `. ${net} of ${eligible} will enroll.`;
+  const activeBlocked = preview?.alreadyEnrolled ?? 0;
+  const completed = preview?.alreadyCompleted ?? 0;
+  if (activeBlocked > 0 && net === 0 && eligible > 0) {
+    text += `. ${activeBlocked} already active in this sequence — reset to re-test.`;
+  } else if (completed > 0 && net > 0) {
+    text += `. ${net} of ${eligible} will enroll${completed ? ` (${completed} will restart from step 1)` : ''}.`;
+  } else {
+    text += `. ${net} of ${eligible} will enroll.`;
+  }
   return text;
 }
 
