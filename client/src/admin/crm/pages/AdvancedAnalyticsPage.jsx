@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchComprehensiveAnalytics, formatCurrency, formatPercent } from '../crmApi.js';
 import {
@@ -20,6 +20,9 @@ import {
   useTableFilters,
   CAMPAIGN_ROI_FILTER_SCHEMA,
 } from '../components/ui/advancedFilter/index.js';
+import { SortableTableHeader, TableSortIndicator } from '../components/ui/SortableTableHeader.jsx';
+import { useTableSort } from '../hooks/useTableSort.js';
+import { campaignRoiSortAccessors } from '../hooks/tableSortAccessors.js';
 
 export default function AdvancedAnalyticsPage() {
   const navigate = useNavigate();
@@ -303,6 +306,14 @@ function CampaignRoiTable({ campaignMetrics = [], navigate }) {
     matchMode: advancedMatchMode,
   } = useTableFilters(campaignMetrics, CAMPAIGN_ROI_FILTER_SCHEMA);
 
+  const { sortKey, sortDir, sortLabel, toggleSort, clearSort, sortItems } = useTableSort({
+    defaultKey: 'roi',
+    defaultDir: 'desc',
+    accessors: campaignRoiSortAccessors,
+  });
+
+  const sortedRows = useMemo(() => sortItems(visibleRows), [visibleRows, sortItems]);
+
   return (
     <>
       <div className="flex flex-wrap items-center gap-2 border-b border-[var(--color-line)] px-5 py-3">
@@ -319,20 +330,27 @@ function CampaignRoiTable({ campaignMetrics = [], navigate }) {
         onChange={setAdvancedFilters}
         className="px-5 pb-3"
       />
+      <TableSortIndicator
+        sortKey={sortKey}
+        sortDir={sortDir}
+        sortLabel={sortLabel}
+        onToggle={() => toggleSort(sortKey)}
+        onClear={clearSort}
+      />
       <div className="crm-scroll overflow-x-auto">
         <table className="crm-table min-w-[700px]">
           <thead>
             <tr className="crm-table-head">
-              <th>Campaign Project</th>
-              <th>UAE Milestone</th>
-              <th>Total Cost</th>
-              <th>Revenue Won</th>
-              <th>Yield ROI</th>
-              <th className="text-center">Status</th>
+              <SortableTableHeader label="Campaign Project" sortKey="projectName" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+              <SortableTableHeader label="UAE Milestone" sortKey="milestone" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+              <SortableTableHeader label="Total Cost" sortKey="totalCost" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+              <SortableTableHeader label="Revenue Won" sortKey="revenueWon" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+              <SortableTableHeader label="Yield ROI" sortKey="roi" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+              <SortableTableHeader label="Status" sortKey="status" activeKey={sortKey} direction={sortDir} onSort={toggleSort} align="center" />
             </tr>
           </thead>
           <tbody>
-            {visibleRows.map((c) => (
+            {sortedRows.map((c) => (
               <ClickableTableRow
                 key={c._id}
                 onClick={() => navigate(`/admin/crm/projects/${c._id}`)}

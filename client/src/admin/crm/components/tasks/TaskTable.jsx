@@ -2,7 +2,12 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Check, Circle, Trash2 } from 'lucide-react';
 import DataTableShell from '../ui/DataTableShell.jsx';
 import DateTimePicker from '../ui/DateTimePicker.jsx';
+import SearchableCombobox from '../ui/SearchableCombobox.jsx';
 import SearchableSelect from '../ui/SearchableSelect.jsx';
+import { BulkSelectHeaderCell, BulkSelectRowCell } from '../ui/BulkSelectTable.jsx';
+import { SortableTableHeader, TableSortIndicator } from '../ui/SortableTableHeader.jsx';
+import { useTableSort } from '../../hooks/useTableSort.js';
+import { taskSortAccessors } from '../../hooks/tableSortAccessors.js';
 import { Badge, cn } from '../ui/primitives.jsx';
 import {
   TASK_PRIORITIES,
@@ -64,16 +69,27 @@ export default function TaskTable({
   onEditTask,
   onDelete,
   editingTaskIds = [],
+  campaigns = [],
   opportunities = [],
   companies = [],
   ownerOptions = [],
   focusTaskId = '',
+  showCampaignColumn = true,
   showOpportunityColumn = true,
   showAccountColumn = true,
   embedded = false,
+  selection = null,
 }) {
-  const owners = ownerOptions.length ? ownerOptions : ['admin'];
+  const owners = ownerOptions.length ? ownerOptions : [{ value: 'admin', label: 'admin' }];
   const editingSet = useMemo(() => new Set(editingTaskIds), [editingTaskIds]);
+
+  const { sortKey, sortDir, sortLabel, toggleSort, clearSort, sortItems } = useTableSort({
+    defaultKey: 'dueAt',
+    defaultDir: 'asc',
+    accessors: taskSortAccessors,
+  });
+
+  const sortedTasks = useMemo(() => sortItems(tasks), [tasks, sortItems]);
 
   const opportunityOptions = useMemo(
     () => [
@@ -85,6 +101,18 @@ export default function TaskTable({
       })),
     ],
     [opportunities],
+  );
+
+  const campaignOptions = useMemo(
+    () => [
+      NONE_OPTION,
+      ...campaigns.map((item) => ({
+        value: item._id,
+        label: item.projectName,
+        hint: item.milestone || item.status || undefined,
+      })),
+    ],
+    [campaigns],
   );
 
   const companyOptions = useMemo(
@@ -100,25 +128,41 @@ export default function TaskTable({
   );
 
   return (
+    <>
+      <TableSortIndicator
+        sortKey={sortKey}
+        sortDir={sortDir}
+        sortLabel={sortLabel}
+        onToggle={() => toggleSort(sortKey)}
+        onClear={clearSort}
+      />
     <DataTableShell
-      minWidth={embedded ? 560 : (showOpportunityColumn ? (showAccountColumn ? 1180 : 1020) : 960)}
+      minWidth={embedded ? 560 : (showCampaignColumn ? (showOpportunityColumn ? (showAccountColumn ? 1340 : 1180) : 1120) : (showOpportunityColumn ? (showAccountColumn ? 1180 : 1020) : 960))}
       className={embedded ? 'crm-task-table-embedded' : ''}
     >
       <table className={cn('w-full text-left', embedded ? 'text-xs' : 'text-sm')}>
         <thead>
           <tr className="crm-table-head">
+            {selection ? <BulkSelectHeaderCell selection={selection} ariaLabel="Select all tasks" /> : null}
             <th className="w-10" aria-label="Complete" />
-            <th>Task</th>
-            <th>Due</th>
-            {showOpportunityColumn && <th className="crm-task-col-link">Opportunity</th>}
-            {showAccountColumn && <th className="crm-task-col-link">Company</th>}
-            <th>Owner</th>
-            <th>Priority</th>
+            <SortableTableHeader label="Task" sortKey="title" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+            <SortableTableHeader label="Due" sortKey="dueAt" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+            {showCampaignColumn && (
+              <SortableTableHeader label="Project" sortKey="campaign" activeKey={sortKey} direction={sortDir} onSort={toggleSort} className="crm-task-col-link" />
+            )}
+            {showOpportunityColumn && (
+              <SortableTableHeader label="Opportunity" sortKey="opportunity" activeKey={sortKey} direction={sortDir} onSort={toggleSort} className="crm-task-col-link" />
+            )}
+            {showAccountColumn && (
+              <SortableTableHeader label="Company" sortKey="company" activeKey={sortKey} direction={sortDir} onSort={toggleSort} className="crm-task-col-link" />
+            )}
+            <SortableTableHeader label="Owner" sortKey="owner" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+            <SortableTableHeader label="Priority" sortKey="priority" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
             <th className="w-10" aria-label="Delete" />
           </tr>
         </thead>
         <tbody>
-          {tasks.map((task) => {
+          {sortedTasks.map((task) => {
             const done = task.status === 'Done';
             const demo = isDemoTask(task._id);
             const editing = !demo && editingSet.has(task._id);
@@ -130,6 +174,13 @@ export default function TaskTable({
                 className={cn('crm-table-row', locked && 'crm-task-row-locked', editing && 'crm-task-row-editing')}
                 onClick={() => locked && onEditTask?.(task)}
               >
+                {selection && !demo ? (
+                  <BulkSelectRowCell
+                    id={task._id}
+                    selection={selection}
+                    ariaLabel={`Select ${task.title || 'task'}`}
+                  />
+                ) : selection ? <td className="crm-bulk-select-col" /> : null}
                 <td onClick={(e) => e.stopPropagation()}>
                   {editing ? (
                     <button
@@ -181,6 +232,24 @@ export default function TaskTable({
                     />
                   )}
                 </td>
+                {showCampaignColumn && (
+                  <td className="crm-task-col-link" onClick={(e) => editing && e.stopPropagation()}>
+                    {locked || demo ? (
+                      <span className="text-neutral-700">{task.campaignId?.projectName || '—'}</span>
+                    ) : (
+                      <SearchableSelect
+                        className="crm-task-table-select"
+                        menuMinWidth={300}
+                        value={normalizeTaskId(task.campaignId)}
+                        onChange={(next) => onPatch?.(task, { campaignId: next || null })}
+                        options={campaignOptions}
+                        placeholder="Link project…"
+                        searchPlaceholder="Search projects…"
+                        emptyLabel="No projects match."
+                      />
+                    )}
+                  </td>
+                )}
                 {showOpportunityColumn && (
                   <td className="crm-task-col-link" onClick={(e) => editing && e.stopPropagation()}>
                     {locked || demo ? (
@@ -226,16 +295,17 @@ export default function TaskTable({
                   {locked || demo ? (
                     <span className="text-neutral-700">{task.owner || 'admin'}</span>
                   ) : (
-                    <select
-                      aria-label={`Owner for ${task.title}`}
-                      className="crm-select crm-task-inline-select"
-                      value={task.owner || 'admin'}
-                      onChange={(e) => onPatch?.(task, { owner: e.target.value })}
-                    >
-                      {owners.map((owner) => (
-                        <option key={owner} value={owner}>{owner}</option>
-                      ))}
-                    </select>
+                    <SearchableCombobox
+                      className="crm-task-table-select"
+                      menuMinWidth={260}
+                      value={task.owner || ''}
+                      onChange={(next) => onPatch?.(task, { owner: next || null })}
+                      options={owners}
+                      placeholder="Assign owner…"
+                      searchPlaceholder="Search or type owner…"
+                      emptyLabel="No owners match."
+                      allowCustom
+                    />
                   )}
                 </td>
                 <td onClick={(e) => editing && e.stopPropagation()}>
@@ -272,5 +342,6 @@ export default function TaskTable({
         </tbody>
       </table>
     </DataTableShell>
+    </>
   );
 }

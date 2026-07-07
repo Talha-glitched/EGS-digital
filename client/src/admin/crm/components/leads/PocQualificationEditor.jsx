@@ -1,4 +1,5 @@
 import { PocQualificationBadge } from './PocQualificationBadge.jsx';
+import SensitiveDataField from '../ui/SensitiveDataField.jsx';
 import { POC_QUALIFICATION_OPTIONS, needsReferralDetails } from '../../constants/pocQualification.js';
 import { cn } from '../ui/primitives.jsx';
 
@@ -64,9 +65,9 @@ export default function PocQualificationEditor({ value, onChange }) {
           <p className="text-xs font-semibold text-sky-900">Referral contact details</p>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Field label="Referral name" value={referral.name || ''} onChange={(v) => setReferral('name', v)} placeholder="Correct decision-maker" />
-            <Field label="Referral email" type="email" value={referral.email || ''} onChange={(v) => setReferral('email', v)} placeholder="name@company.com" />
+            <SensitiveDataField label="Referral email" type="email" kind="email" value={referral.email || ''} onChange={(v) => setReferral('email', v)} placeholder="name@company.com" />
             <Field label="Job title" value={referral.designation || ''} onChange={(v) => setReferral('designation', v)} placeholder="Marketing Director" />
-            <Field label="Phone / WhatsApp" value={referral.phone || ''} onChange={(v) => setReferral('phone', v)} />
+            <SensitiveDataField label="Phone / WhatsApp" type="tel" kind="phone" value={referral.phone || ''} onChange={(v) => setReferral('phone', v)} />
             <div className="sm:col-span-2">
               <Field label="LinkedIn URL" value={referral.linkedinUrl || ''} onChange={(v) => setReferral('linkedinUrl', v)} placeholder="https://linkedin.com/in/..." />
             </div>

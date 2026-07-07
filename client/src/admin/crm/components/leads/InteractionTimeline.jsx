@@ -16,6 +16,7 @@ import {
   ListTodo,
   Sparkles,
   Users,
+  ArrowRight,
 } from 'lucide-react';
 import { LoadingState, cn } from '../ui/primitives.jsx';
 import InfoTip from '../ui/InfoTip.jsx';
@@ -23,6 +24,7 @@ import {
   crmApiFetch,
   fetchContactTimeline,
   fetchCompanyTimeline,
+  fetchCompanyDetails,
   fetchOpportunity,
   fetchOpportunityTimeline,
   createContactInteraction,
@@ -34,6 +36,17 @@ import { useConfirmDelete } from '../../hooks/useConfirmDelete.js';
 import LogInteractionModal from './LogInteractionModal.jsx';
 import { interactionFormFromEvent } from '../../constants/interactionTypes.js';
 import { TIMELINE_AUTOMATION } from '../../constants/automationHints.js';
+import {
+  directionTone,
+  formatRelativeWhen,
+  formatWhen,
+  resolveDirectionLabel,
+  resolveInteractionBody,
+  resolveInteractionDirection,
+  resolveInteractionParties,
+  resolveInteractionTypeLabel,
+  resolveOutcomeLabel,
+} from './interactionTimelineUtils.js';
 
 const POLL_INTERVAL_MS = 30000;
 
@@ -60,18 +73,6 @@ const CHANNEL_META = {
   crm: { icon: UserRound, tone: 'neutral' },
 };
 
-function formatWhen(iso) {
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return '—';
-  return date.toLocaleString('en-AE', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-  });
-}
-
 function groupByMonth(events) {
   const groups = new Map();
   events.forEach((event) => {
@@ -83,6 +84,125 @@ function groupByMonth(events) {
     groups.get(key).push(event);
   });
   return [...groups.entries()];
+}
+
+function TimelineEventCard({
+  event,
+  index,
+  showContact,
+  isDeleting,
+  onEdit,
+  onDelete,
+}) {
+  const meta = CHANNEL_META[event.channel] || CHANNEL_META[event.type] || CHANNEL_META.crm;
+  const Icon = meta.icon;
+  const isManual = event.source === 'manual' || event.editable;
+  const direction = resolveInteractionDirection(event);
+  const parties = resolveInteractionParties(event, direction);
+  const typeLabel = resolveInteractionTypeLabel(event);
+  const directionLabel = resolveDirectionLabel(direction, event);
+  const outcomeLabel = resolveOutcomeLabel(event);
+  const body = resolveInteractionBody(event);
+  const relativeWhen = formatRelativeWhen(event.timestamp);
+  const absoluteWhen = formatWhen(event.timestamp);
+  const dotTone = direction === 'inbound' ? 'emerald' : direction === 'internal' ? 'neutral' : meta.tone;
+
+  return (
+    <article
+      className="crm-timeline-item"
+      style={{ animationDelay: `${Math.min(index, 8) * 40}ms` }}
+    >
+      <div className={cn('crm-timeline-dot', `tone-${dotTone}`)}>
+        <Icon className="h-3.5 w-3.5" strokeWidth={2} />
+      </div>
+      <div className={cn('crm-timeline-card', `crm-timeline-card--${directionTone(direction)}`)}>
+        <div className="crm-timeline-card-head">
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="text-[13px] font-semibold text-[var(--color-ink)]">{typeLabel}</p>
+              <span className={cn('crm-timeline-direction', `is-${directionTone(direction)}`)}>
+                {directionLabel}
+              </span>
+            </div>
+            <div className="crm-timeline-when">
+              <time dateTime={event.timestamp}>{absoluteWhen}</time>
+              {relativeWhen ? <span className="crm-timeline-when-relative">· {relativeWhen}</span> : null}
+            </div>
+          </div>
+          {isManual && (
+            <div className="flex shrink-0 items-center gap-1">
+              <button
+                type="button"
+                onClick={() => onEdit(event)}
+                className="crm-timeline-action"
+                aria-label="Edit interaction"
+              >
+                <Pencil className="h-3 w-3" />
+              </button>
+              <button
+                type="button"
+                onClick={() => onDelete(event)}
+                disabled={isDeleting}
+                className="crm-timeline-action danger"
+                aria-label="Delete interaction"
+              >
+                <Trash2 className="h-3 w-3" />
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="crm-timeline-parties">
+          <span className="crm-timeline-party is-from" title="From">{parties.from}</span>
+          <ArrowRight className="crm-timeline-party-arrow" aria-hidden="true" />
+          <span className="crm-timeline-party is-to" title="To">{parties.to}</span>
+        </div>
+
+        {body && (
+          <p className="crm-timeline-body">{body}</p>
+        )}
+
+        {event.meta?.location && (
+          <p className="crm-timeline-meta-line">
+            <MapPin className="h-3 w-3 shrink-0" />
+            {event.meta.location}
+          </p>
+        )}
+
+        {event.meta?.attendees && (
+          <p className="crm-timeline-meta-line">
+            <Users className="h-3 w-3 shrink-0" />
+            With {event.meta.attendees}
+          </p>
+        )}
+
+        {event.meta?.relatedContacts?.length > 1 && (
+          <p className="crm-timeline-meta-line">
+            <UserRound className="h-3 w-3 shrink-0" />
+            Associated contacts: {event.meta.relatedContacts.map((contact) => contact.name).join(', ')}
+          </p>
+        )}
+
+        <div className="crm-timeline-card-foot">
+          <span className={cn('crm-timeline-badge', isManual ? 'is-manual' : 'is-automated')}>
+            {isManual ? 'Manual log' : 'Automated'}
+          </span>
+          {outcomeLabel && (
+            <span className="crm-timeline-outcome">{outcomeLabel}</span>
+          )}
+          {event.meta?.durationMinutes ? (
+            <span className="crm-timeline-meta-chip">{event.meta.durationMinutes} min</span>
+          ) : null}
+          {showContact && event.contactName && (
+            <span className="crm-timeline-meta-chip">Re: {event.contactName}</span>
+          )}
+          {isManual && event.actor && (
+            <span className="crm-timeline-meta-chip">Logged by {event.actor}</span>
+          )}
+        </div>
+      </div>
+    </article>
+  );
 }
 
 function listenState(syncStatus) {
@@ -126,6 +246,7 @@ export default function InteractionTimeline({
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState('');
   const [opportunityContacts, setOpportunityContacts] = useState([]);
+  const [companyContacts, setCompanyContacts] = useState([]);
   const mountedRef = useRef(true);
 
   const resolvedLeadId = normalizeId(leadId);
@@ -134,8 +255,8 @@ export default function InteractionTimeline({
   const hasScope = Boolean(resolvedLeadId || resolvedCompanyId || resolvedOpportunityId);
 
   const logContacts = useMemo(() => (
-    contacts.length ? contacts : opportunityContacts
-  ), [contacts, opportunityContacts]);
+    contacts.length ? contacts : (opportunityContacts.length ? opportunityContacts : companyContacts)
+  ), [contacts, opportunityContacts, companyContacts]);
 
   const canLog = Boolean(resolvedLeadId || logContacts.length > 0);
 
@@ -183,6 +304,24 @@ export default function InteractionTimeline({
       mountedRef.current = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (contacts.length || !resolvedCompanyId || resolvedOpportunityId) {
+      setCompanyContacts([]);
+      return undefined;
+    }
+    let cancelled = false;
+    fetchCompanyDetails(resolvedCompanyId)
+      .then((data) => {
+        if (!cancelled) setCompanyContacts(data.leads || []);
+      })
+      .catch(() => {
+        if (!cancelled) setCompanyContacts([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [contacts.length, resolvedCompanyId, resolvedOpportunityId]);
 
   useEffect(() => {
     if (!resolvedOpportunityId) {
@@ -258,15 +397,18 @@ export default function InteractionTimeline({
     setModalOpen(true);
   };
 
-  const handleSubmit = async ({ leadId: submitLeadId, payload }) => {
-    const targetLeadId = normalizeId(submitLeadId || resolvedLeadId);
+  const handleSubmit = async ({ leadId: submitLeadId, leadIds, payload }) => {
+    const targetLeadId = normalizeId(submitLeadId || resolvedLeadId || leadIds?.[0]);
     if (!targetLeadId) {
-      throw new Error('Select which contact this interaction is about.');
+      throw new Error('Select at least one contact for this interaction.');
     }
     setSaving(true);
     try {
       if (modalMode === 'edit' && editingEvent?.meta?.interactionId) {
-        await updateContactInteraction(editingEvent.meta.interactionId, payload);
+        await updateContactInteraction(editingEvent.meta.interactionId, {
+          ...payload,
+          leadId: targetLeadId,
+        });
       } else {
         await createContactInteraction(targetLeadId, payload);
       }
@@ -376,78 +518,17 @@ export default function InteractionTimeline({
             <section key={month} className="crm-timeline-group">
               <h4 className="crm-timeline-month">{month}</h4>
               <div className="crm-timeline-track">
-                {monthEvents.map((event, index) => {
-                  const meta = CHANNEL_META[event.channel] || CHANNEL_META[event.type] || CHANNEL_META.crm;
-                  const Icon = meta.icon;
-                  const isManual = event.source === 'manual' || event.editable;
-                  const isDeleting = deletingId === event?.meta?.interactionId;
-
-                  return (
-                    <article
-                      key={event.id}
-                      className="crm-timeline-item"
-                      style={{ animationDelay: `${Math.min(index, 8) * 40}ms` }}
-                    >
-                      <div className={cn('crm-timeline-dot', `tone-${meta.tone}`)}>
-                        <Icon className="h-3.5 w-3.5" strokeWidth={2} />
-                      </div>
-                      <div className="crm-timeline-card">
-                        <div className="flex flex-wrap items-start justify-between gap-2">
-                          <div className="min-w-0 flex-1">
-                            <div className="flex flex-wrap items-center gap-2">
-                              <p className="text-[13px] font-semibold text-[var(--color-ink)]">{event.title}</p>
-                              <span className={cn('crm-timeline-badge', isManual ? 'is-manual' : 'is-automated')}>
-                                {isManual ? 'Manual' : 'Automated'}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex shrink-0 items-center gap-1">
-                            <time className="text-[11px] text-neutral-400">{formatWhen(event.timestamp)}</time>
-                            {isManual && (
-                              <>
-                                <button
-                                  type="button"
-                                  onClick={() => openEdit(event)}
-                                  className="crm-timeline-action"
-                                  aria-label="Edit interaction"
-                                >
-                                  <Pencil className="h-3 w-3" />
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => handleDelete(event)}
-                                  disabled={isDeleting}
-                                  className="crm-timeline-action danger"
-                                  aria-label="Delete interaction"
-                                >
-                                  <Trash2 className="h-3 w-3" />
-                                </button>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                        {event.detail && (
-                          <p className="mt-1.5 text-xs leading-relaxed text-neutral-600 whitespace-pre-wrap">{event.detail}</p>
-                        )}
-                        <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] font-medium text-neutral-400">
-                          <span>{event.actor}</span>
-                          {showContact && event.contactName && (
-                            <>
-                              <span>·</span>
-                              <span>{event.contactName}</span>
-                            </>
-                          )}
-                          {event.meta?.outcomeLabel && (
-                            <>
-                              <span>·</span>
-                              <span>{event.meta.outcomeLabel}</span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </article>
-                  );
-                })}
+                {monthEvents.map((event, index) => (
+                  <TimelineEventCard
+                    key={event.id}
+                    event={event}
+                    index={index}
+                    showContact={showContact}
+                    isDeleting={deletingId === event?.meta?.interactionId}
+                    onEdit={openEdit}
+                    onDelete={handleDelete}
+                  />
+                ))}
               </div>
             </section>
           ))}
@@ -461,6 +542,14 @@ export default function InteractionTimeline({
         initialValues={modalMode === 'edit' && editingEvent ? interactionFormFromEvent(editingEvent) : undefined}
         contacts={logContacts}
         defaultLeadId={resolvedLeadId || logContacts[0]?._id || ''}
+        defaultLeadIds={
+          modalMode === 'edit' && editingEvent?.meta
+            ? [
+                editingEvent.meta.primaryLeadId || editingEvent.contactId,
+                ...(editingEvent.meta.relatedLeadIds || []),
+              ].filter(Boolean)
+            : undefined
+        }
         saving={saving}
         mode={modalMode}
       />

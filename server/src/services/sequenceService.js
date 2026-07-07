@@ -6,7 +6,7 @@ import { Lead } from '../models/Lead.js';
 import { ProjectCampaign } from '../models/ProjectCampaign.js';
 import { scheduleEnrollmentJob, cancelLeadJobs } from './sendWorker.js';
 import { getMailConfigStatus } from './mailTransport.js';
-import { syncAutoCampaignStatus } from './projectService.js';
+import { syncAutoCampaignStatus, syncCampaignResponseCounts } from './projectService.js';
 import { getGstDayBounds } from '../utils/uaeBusinessHours.js';
 import { normalizeFlowGraph, resolveEntryNodeId } from '../utils/sequenceFlowExecutor.js';
 import { Company } from '../models/Company.js';
@@ -16,6 +16,14 @@ import {
   registerRevisionModel,
 } from './revisionService.js';
 
+function normalizeObjectIdList(values = []) {
+  return [...new Set(
+    values
+      .map((value) => (value == null ? '' : String(value).trim()))
+      .filter((value) => mongoose.isValidObjectId(value)),
+  )];
+}
+
 export function assertEnrollmentConfirmed(options = {}) {
   if (options.confirmEnrollment !== true) {
     const error = new Error('Explicit launch confirmation is required.');
@@ -24,8 +32,14 @@ export function assertEnrollmentConfirmed(options = {}) {
   }
 }
 
+const BLOCKED_DELIVERY_STATUSES = ['Bounced / Invalid', 'Opted Out'];
+
+export function enrollableDeliveryFilter() {
+  return { deliveryStatus: { $nin: BLOCKED_DELIVERY_STATUSES } };
+}
+
 export function buildEnrollmentLeadQuery(projectId, options = {}) {
-  const query = { campaignId: projectId, deliveryStatus: 'Pending Inqueue' };
+  const query = { campaignId: projectId, ...enrollableDeliveryFilter() };
   if (Array.isArray(options.leadIds) && options.leadIds.length) {
     query._id = { $in: options.leadIds };
   }
@@ -52,15 +66,17 @@ export async function resolveAudienceLeadIds(projectId, options = {}) {
 
   const leadIdSet = new Set();
 
+  const deliveryFilter = enrollableDeliveryFilter();
+
   for (const cid of importedCampaignIds) {
-    const ids = await Lead.find({ campaignId: cid, deliveryStatus: 'Pending Inqueue' }).distinct('_id');
+    const ids = await Lead.find({ campaignId: cid, ...deliveryFilter }).distinct('_id');
     ids.forEach((id) => leadIdSet.add(String(id)));
   }
 
   if (includeCompanyIds.length) {
     const ids = await Lead.find({
       companyId: { $in: includeCompanyIds },
-      deliveryStatus: 'Pending Inqueue',
+      ...deliveryFilter,
     }).distinct('_id');
     ids.forEach((id) => leadIdSet.add(String(id)));
   }
@@ -68,14 +84,13 @@ export async function resolveAudienceLeadIds(projectId, options = {}) {
   if (includeLeadIds.length) {
     const ids = await Lead.find({
       _id: { $in: includeLeadIds },
-      deliveryStatus: { $nin: ['Bounced / Invalid', 'Opted Out'] },
+      ...deliveryFilter,
     }).distinct('_id');
     ids.forEach((id) => leadIdSet.add(String(id)));
   }
 
   if (excludeCompanyIds.length) {
     const excludeIds = await Lead.find({
-      campaignId: projectId,
       companyId: { $in: excludeCompanyIds },
     }).distinct('_id');
     excludeIds.forEach((id) => leadIdSet.delete(String(id)));
@@ -164,10 +179,12 @@ export async function listAllSequences() {
   const sequences = await Sequence.find({ deletedAt: null }).sort({ updatedAt: -1 }).lean();
   if (!sequences.length) return [];
 
-  const campaignIds = [...new Set(sequences.map((seq) => String(seq.campaignId)))];
-  const campaigns = await ProjectCampaign.find({ _id: { $in: campaignIds } })
-    .select('projectName milestone status fromEmail fromName')
-    .lean();
+  const campaignIds = normalizeObjectIdList(sequences.map((seq) => seq.campaignId));
+  const campaigns = campaignIds.length
+    ? await ProjectCampaign.find({ _id: { $in: campaignIds } })
+      .select('projectName milestone status fromEmail fromName')
+      .lean()
+    : [];
   const campaignMap = Object.fromEntries(campaigns.map((campaign) => [String(campaign._id), campaign]));
   const statsMap = await buildEnrollmentStats(sequences.map((seq) => seq._id));
 
@@ -727,16 +744,11 @@ export async function freezeLeadSequence(leadId, reason = 'reply') {
   if (reason === 'reply') {
     lead.deliveryStatus = 'Replied';
     lead.repliedAt = new Date();
-
-    const project = await ProjectCampaign.findById(lead.campaignId);
-    if (project) {
-      const respondedCompanies = await Lead.distinct('companyId', {
-        campaignId: lead.campaignId,
-        deliveryStatus: 'Replied',
-      });
-      project.companiesRespondedCount = respondedCompanies.length;
-      await project.save();
+    await lead.save();
+    if (lead.campaignId) {
+      await syncCampaignResponseCounts(lead.campaignId);
     }
+    return lead.toObject();
   } else if (reason === 'bounce') {
     lead.deliveryStatus = 'Bounced / Invalid';
   } else if (reason === 'opt_out') {

@@ -17,6 +17,26 @@ function escapeRegExp(value) {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+function normalizeObjectIdList(values = []) {
+  return [...new Set(
+    values
+      .map((value) => (value == null ? '' : String(value).trim()))
+      .filter((value) => mongoose.isValidObjectId(value)),
+  )];
+}
+
+function buildWordSearchQuery(fields, term) {
+  const words = String(term || '').trim().split(/\s+/).filter((word) => word.length >= 2);
+  if (!words.length) return null;
+
+  const clauses = words.map((word) => {
+    const re = new RegExp(escapeRegExp(word), 'i');
+    return { $or: fields.map((field) => ({ [field]: re })) };
+  });
+
+  return clauses.length === 1 ? clauses[0] : { $and: clauses };
+}
+
 export async function globalSearch(query, { limit = 5 } = {}) {
   assertDb();
   const term = String(query || '').trim();
@@ -26,14 +46,16 @@ export async function globalSearch(query, { limit = 5 } = {}) {
 
   const re = new RegExp(escapeRegExp(term), 'i');
   const cap = Math.min(Math.max(Number(limit) || 5, 1), 10);
+  const leadQuery = buildWordSearchQuery(['name', 'email', 'designation', 'emailApollo', 'emailHunter', 'emailLusha'], term);
+  const companyQuery = buildWordSearchQuery(['companyName', 'domain', 'city', 'industry'], term) || { $or: [{ companyName: re }, { domain: re }, { city: re }, { industry: re }, { genericEmails: re }] };
 
   const [leads, companies, projects, opportunities, tasks] = await Promise.all([
-    Lead.find({ $or: [{ name: re }, { email: re }, { designation: re }] })
+    Lead.find(leadQuery || { $or: [{ name: re }, { email: re }, { designation: re }] })
       .sort({ updatedAt: -1 })
       .limit(cap)
       .populate('companyId', 'companyName domain')
       .lean(),
-    Company.find({ $or: [{ companyName: re }, { domain: re }, { city: re }, { industry: re }, { genericEmails: re }] })
+    Company.find(companyQuery)
       .sort({ updatedAt: -1 })
       .limit(cap)
       .lean(),
@@ -54,7 +76,7 @@ export async function globalSearch(query, { limit = 5 } = {}) {
       .lean(),
   ]);
 
-  const campaignIds = [...new Set(leads.map((l) => String(l.campaignId)).filter(Boolean))];
+  const campaignIds = normalizeObjectIdList(leads.map((l) => l.campaignId));
   const campaigns = campaignIds.length
     ? await ProjectCampaign.find({ _id: { $in: campaignIds } }).select('projectName').lean()
     : [];
@@ -69,11 +91,12 @@ export async function globalSearch(query, { limit = 5 } = {}) {
       items: leads.map((lead) => ({
         id: `lead-${lead._id}`,
         type: 'contact',
+        recordId: lead._id,
         title: lead.name || lead.email || 'Unnamed contact',
         subtitle: [lead.companyId?.companyName, lead.email, campaignMap.get(String(lead.campaignId))]
           .filter(Boolean)
           .join(' · '),
-        href: `/admin/crm/people?q=${encodeURIComponent(lead.email || lead.name || '')}`,
+        href: '/admin/crm/people',
         meta: lead.designation || '',
       })),
     });
@@ -86,9 +109,10 @@ export async function globalSearch(query, { limit = 5 } = {}) {
       items: companies.map((company) => ({
         id: `company-${company._id}`,
         type: 'company',
+        recordId: company._id,
         title: company.companyName || company.domain || 'Unnamed company',
         subtitle: [company.domain, company.city, company.industry].filter(Boolean).join(' · '),
-        href: `/admin/crm/companies?q=${encodeURIComponent(company.companyName || company.domain || '')}`,
+        href: '/admin/crm/companies',
         meta: company.globalStatus || '',
       })),
     });
@@ -101,6 +125,7 @@ export async function globalSearch(query, { limit = 5 } = {}) {
       items: projects.map((project) => ({
         id: `project-${project._id}`,
         type: 'project',
+        recordId: project._id,
         title: project.projectName || 'Untitled project',
         subtitle: [project.milestone, project.status].filter(Boolean).join(' · '),
         href: `/admin/crm/projects/${project._id}`,
@@ -116,9 +141,10 @@ export async function globalSearch(query, { limit = 5 } = {}) {
       items: opportunities.map((opp) => ({
         id: `opp-${opp._id}`,
         type: 'opportunity',
+        recordId: opp._id,
         title: opp.name || 'Untitled opportunity',
         subtitle: [opp.companyId?.companyName, opp.stage, opp.owner].filter(Boolean).join(' · '),
-        href: `/admin/crm/pipeline?q=${encodeURIComponent(opp.name || '')}`,
+        href: '/admin/crm/pipeline',
         meta: opp.stage || '',
       })),
     });
@@ -131,11 +157,12 @@ export async function globalSearch(query, { limit = 5 } = {}) {
       items: tasks.map((task) => ({
         id: `task-${task._id}`,
         type: 'task',
+        recordId: task._id,
         title: task.title || 'Untitled task',
         subtitle: [task.companyId?.companyName, task.opportunityId?.name, task.owner]
           .filter(Boolean)
           .join(' · '),
-        href: `/admin/crm/tasks`,
+        href: '/admin/crm/tasks',
         meta: task.status || '',
       })),
     });

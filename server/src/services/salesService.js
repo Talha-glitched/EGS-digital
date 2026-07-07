@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { Opportunity } from '../models/Opportunity.js';
 import { PipelineConfig, DEFAULT_PIPELINE_STAGES } from '../models/PipelineConfig.js';
 import { Task } from '../models/Task.js';
+import { User } from '../models/User.js';
 import {
   softDeleteRecord,
   restoreRecord,
@@ -33,6 +34,61 @@ function cleanNumber(value, fallback = 0) {
   return Number.isFinite(number) ? number : fallback;
 }
 
+function normalizeObjectIdList(values = []) {
+  return [...new Set(
+    values
+      .map((value) => (value == null ? '' : String(value).trim()))
+      .filter((value) => mongoose.isValidObjectId(value)),
+  )];
+}
+
+function normalizeTextList(values = []) {
+  if (!Array.isArray(values)) return [];
+  return [...new Set(values.map((value) => String(value || '').trim()).filter(Boolean))];
+}
+
+async function resolveOwnerAssignment(payload = {}, fallbackOwner = 'admin') {
+  const ownerUserId = payload.ownerUserId && mongoose.isValidObjectId(String(payload.ownerUserId))
+    ? String(payload.ownerUserId)
+    : null;
+  const requestedOwner = String(payload.owner || '').trim();
+  if (ownerUserId) {
+    const user = await User.findById(ownerUserId).select('displayName').lean();
+    if (!user) {
+      const error = new Error('Assigned owner user not found.');
+      error.status = 400;
+      throw error;
+    }
+    return { owner: user.displayName || requestedOwner || fallbackOwner, ownerUserId };
+  }
+  if (requestedOwner) {
+    const user = await User.findOne({ displayName: requestedOwner, isActive: true }).select('_id displayName').lean();
+    if (user) return { owner: user.displayName || requestedOwner, ownerUserId: String(user._id) };
+  }
+  return { owner: String(fallbackOwner || 'admin').trim() || 'admin', ownerUserId: null };
+}
+
+async function validateOpportunityContacts(companyId, primaryLeadId, stakeholderLeadIds = []) {
+  const allLeadIds = normalizeObjectIdList([
+    primaryLeadId,
+    ...stakeholderLeadIds,
+  ]);
+  if (!allLeadIds.length) return { primaryLeadId: primaryLeadId || null, stakeholderLeadIds: [] };
+  const leads = await Lead.find({ _id: { $in: allLeadIds }, companyId, deletedAt: null }).select('_id').lean();
+  if (leads.length !== allLeadIds.length) {
+    const error = new Error('All selected client contacts must belong to the selected company.');
+    error.status = 400;
+    throw error;
+  }
+  const normalizedPrimary = primaryLeadId && mongoose.isValidObjectId(String(primaryLeadId))
+    ? String(primaryLeadId)
+    : null;
+  return {
+    primaryLeadId: normalizedPrimary,
+    stakeholderLeadIds: allLeadIds.filter((id) => id !== normalizedPrimary),
+  };
+}
+
 function normalizeStages(stages = []) {
   return stages
     .map((stage) => ({
@@ -62,8 +118,10 @@ function trackChanges(opportunity, payload, actor) {
     name: 'name',
     companyId: 'companyId',
     primaryLeadId: 'primaryLeadId',
+    stakeholderLeadIds: 'client contacts',
     campaignId: 'campaignId',
     owner: 'owner',
+    collaborators: 'internal collaborators',
     stage: 'stage',
     nextAction: 'next action',
     eventName: 'event',
@@ -93,6 +151,27 @@ async function getPipelineStages() {
   const config = await PipelineConfig.findOne({ key: 'sales' }).lean();
   const stages = normalizeStages(config?.stages?.length ? config.stages : DEFAULT_PIPELINE_STAGES);
   return stages.length ? stages : DEFAULT_PIPELINE_STAGES.map((stage) => ({ ...stage }));
+}
+
+function mergeStagesWithOpportunityData(stages, items = []) {
+  const merged = [...stages];
+  const known = new Set(stages.map((stage) => stage.name));
+  items.forEach((item) => {
+    const name = String(item?.stage || '').trim();
+    if (!name || known.has(name)) return;
+    known.add(name);
+    merged.push({
+      name,
+      probability: cleanNumber(item?.probability, 0),
+    });
+  });
+  return merged;
+}
+
+async function getPopulatedOpportunity(id) {
+  return withOpportunityPopulate(
+    Opportunity.findOne({ _id: id, deletedAt: null }),
+  ).lean();
 }
 
 export async function getPipelineConfig() {
@@ -140,19 +219,24 @@ export async function updatePipelineConfig(payload, actor = 'admin') {
 const OPPORTUNITY_POPULATE = [
   { path: 'companyId', select: 'companyName domain globalStatus' },
   { path: 'primaryLeadId', select: 'name email designation pocQualification' },
+  { path: 'stakeholderLeadIds', select: 'name email designation pocQualification' },
   { path: 'campaignId', select: 'projectName' },
+  { path: 'ownerUserId', select: 'displayName email role' },
+  { path: 'collaboratorUserIds', select: 'displayName email role' },
 ];
 
 function withOpportunityPopulate(query) {
   return OPPORTUNITY_POPULATE.reduce((q, spec) => q.populate(spec), query);
 }
 
-export async function listOpportunities({ stage, owner, search } = {}) {
+export async function listOpportunities({ stage, owner, search, campaignId, companyId } = {}) {
   assertDb();
   const stages = await getPipelineStages();
   const query = { deletedAt: null };
   if (stage && stage !== 'All') query.stage = stage;
   if (owner && owner !== 'All') query.owner = owner;
+  if (campaignId && mongoose.isValidObjectId(String(campaignId))) query.campaignId = campaignId;
+  if (companyId && mongoose.isValidObjectId(String(companyId))) query.companyId = companyId;
   if (search) {
     query.$or = [
       { name: new RegExp(String(search).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') },
@@ -163,30 +247,66 @@ export async function listOpportunities({ stage, owner, search } = {}) {
   const items = await withOpportunityPopulate(Opportunity.find(query))
     .sort({ updatedAt: -1, expectedCloseDate: 1 })
     .lean();
+  const stageList = mergeStagesWithOpportunityData(stages, items);
+  const opportunityIds = items.map((item) => item._id);
+  const taskCounts = opportunityIds.length
+    ? await Task.aggregate([
+      {
+        $match: {
+          deletedAt: null,
+          opportunityId: { $in: opportunityIds },
+        },
+      },
+      {
+        $group: {
+          _id: '$opportunityId',
+          total: { $sum: 1 },
+          open: {
+            $sum: {
+              $cond: [{ $eq: ['$status', 'Open'] }, 1, 0],
+            },
+          },
+        },
+      },
+    ])
+    : [];
+  const taskCountMap = new Map(taskCounts.map((row) => [String(row._id), row]));
+  const enrichedItems = items.map((item) => {
+    const counts = taskCountMap.get(String(item._id));
+    return {
+      ...item,
+      executionSummary: {
+        totalTasks: counts?.total || 0,
+        openTasks: counts?.open || 0,
+        clientStakeholders: (item.stakeholderLeadIds || []).length + (item.primaryLeadId ? 1 : 0),
+        internalCollaborators: (item.collaborators || []).length + (item.owner ? 1 : 0),
+      },
+    };
+  });
 
-  const owners = [...new Set(items.map((item) => item.owner).filter(Boolean))].sort();
+  const owners = [...new Set(enrichedItems.map((item) => item.owner).filter(Boolean))].sort();
 
   return {
-    items,
-    stages: stageNames(stages),
-    stageProbabilities: Object.fromEntries(stages.map((s) => [s.name, s.probability])),
+    items: enrichedItems,
+    stages: stageNames(stageList),
+    stageProbabilities: Object.fromEntries(stageList.map((s) => [s.name, s.probability])),
     owners,
   };
 }
 
 export async function getOpportunity(id) {
   assertDb();
-  const opportunity = await withOpportunityPopulate(Opportunity.findById(id)).lean();
+  const opportunity = await getPopulatedOpportunity(id);
   if (!opportunity) {
     const error = new Error('Opportunity not found.');
     error.status = 404;
     throw error;
   }
 
-  const stages = await getPipelineStages();
+  const stages = mergeStagesWithOpportunityData(await getPipelineStages(), [opportunity]);
   let contacts = [];
   if (opportunity.companyId?._id) {
-    contacts = await Lead.find({ companyId: opportunity.companyId._id })
+    contacts = await Lead.find({ companyId: opportunity.companyId._id, deletedAt: null })
       .select('name email designation pocQualification campaignId')
       .sort({ createdAt: -1 })
       .lean();
@@ -217,15 +337,26 @@ export async function createOpportunity(payload, actor = 'admin') {
   const stages = await getPipelineStages();
   const stage = payload.stage || stages[0]?.name || 'New Lead';
   const now = new Date();
-  const owner = String(payload.owner || actor || 'admin').trim();
+  const assignment = await resolveOwnerAssignment(payload, actor || 'admin');
   const probability = probabilityForStage(stages, stage);
+  const validatedContacts = await validateOpportunityContacts(
+    payload.companyId,
+    payload.primaryLeadId,
+    payload.stakeholderLeadIds || [],
+  );
+  const collaboratorUserIds = normalizeObjectIdList(payload.collaboratorUserIds || []);
+  const collaborators = normalizeTextList(payload.collaborators || []);
 
   const opportunity = await Opportunity.create({
     name: payload.name.trim(),
     companyId: payload.companyId,
-    primaryLeadId: payload.primaryLeadId || null,
+    primaryLeadId: validatedContacts.primaryLeadId || null,
+    stakeholderLeadIds: validatedContacts.stakeholderLeadIds,
     campaignId: payload.campaignId || null,
-    owner,
+    owner: assignment.owner,
+    ownerUserId: assignment.ownerUserId,
+    collaborators,
+    collaboratorUserIds,
     stage,
     valueAed: Math.max(0, cleanNumber(payload.valueAed)),
     probability,
@@ -235,23 +366,23 @@ export async function createOpportunity(payload, actor = 'admin') {
     eventName: String(payload.eventName || '').trim(),
     proposalDeadline: payload.proposalDeadline || null,
     notes: String(payload.notes || '').trim(),
-    lastModifiedBy: owner,
+    lastModifiedBy: assignment.owner,
     activityLog: [{
       action: 'Opportunity created',
       field: 'stage',
       from: null,
       to: stage,
-      by: owner,
+      by: assignment.owner,
       at: now,
     }],
   });
 
-  return opportunity.toObject();
+  return getPopulatedOpportunity(opportunity._id);
 }
 
 export async function updateOpportunity(id, payload, actor = 'admin') {
   assertDb();
-  const opportunity = await Opportunity.findById(id);
+  const opportunity = await Opportunity.findOne({ _id: id, deletedAt: null });
   if (!opportunity) {
     const error = new Error('Opportunity not found.');
     error.status = 404;
@@ -260,8 +391,39 @@ export async function updateOpportunity(id, payload, actor = 'admin') {
 
   const stages = await getPipelineStages();
   const modifier = String(actor || payload.owner || opportunity.owner || 'admin').trim();
+  let ownerPatch = null;
+  if (payload.owner !== undefined || payload.ownerUserId !== undefined) {
+    ownerPatch = await resolveOwnerAssignment(
+      { owner: payload.owner, ownerUserId: payload.ownerUserId },
+      opportunity.owner || modifier,
+    );
+  }
+  const normalizedStakeholders = payload.stakeholderLeadIds !== undefined
+    ? normalizeObjectIdList(payload.stakeholderLeadIds)
+    : undefined;
+  const contactPatch = (
+    payload.companyId !== undefined
+    || payload.primaryLeadId !== undefined
+    || payload.stakeholderLeadIds !== undefined
+  )
+    ? await validateOpportunityContacts(
+      payload.companyId || opportunity.companyId,
+      payload.primaryLeadId !== undefined ? payload.primaryLeadId : opportunity.primaryLeadId,
+      normalizedStakeholders !== undefined ? normalizedStakeholders : opportunity.stakeholderLeadIds,
+    )
+    : null;
+  const trackedPayload = {
+    ...payload,
+    ...(ownerPatch ? ownerPatch : {}),
+    ...(contactPatch ? {
+      primaryLeadId: contactPatch.primaryLeadId,
+      stakeholderLeadIds: contactPatch.stakeholderLeadIds,
+    } : {}),
+    ...(payload.collaborators !== undefined ? { collaborators: normalizeTextList(payload.collaborators) } : {}),
+    ...(payload.collaboratorUserIds !== undefined ? { collaboratorUserIds: normalizeObjectIdList(payload.collaboratorUserIds) } : {}),
+  };
 
-  trackChanges(opportunity, payload, modifier);
+  trackChanges(opportunity, trackedPayload, modifier);
 
   const fields = [
     'name', 'companyId', 'primaryLeadId', 'campaignId', 'owner', 'stage',
@@ -269,8 +431,22 @@ export async function updateOpportunity(id, payload, actor = 'admin') {
     'eventDate', 'boothNumber', 'budgetBand', 'proposalDeadline', 'lostReason', 'notes',
   ];
   fields.forEach((field) => {
-    if (payload[field] !== undefined) opportunity[field] = payload[field] || null;
+    if (trackedPayload[field] !== undefined) opportunity[field] = trackedPayload[field] || null;
   });
+  if (contactPatch) {
+    opportunity.primaryLeadId = contactPatch.primaryLeadId || null;
+    opportunity.stakeholderLeadIds = contactPatch.stakeholderLeadIds;
+  }
+  if (ownerPatch) {
+    opportunity.owner = ownerPatch.owner;
+    opportunity.ownerUserId = ownerPatch.ownerUserId || null;
+  }
+  if (payload.collaborators !== undefined) {
+    opportunity.collaborators = normalizeTextList(payload.collaborators);
+  }
+  if (payload.collaboratorUserIds !== undefined) {
+    opportunity.collaboratorUserIds = normalizeObjectIdList(payload.collaboratorUserIds);
+  }
 
   if (payload.valueAed !== undefined) opportunity.valueAed = Math.max(0, cleanNumber(payload.valueAed));
   if (payload.standSizeSqm !== undefined) {
@@ -288,7 +464,7 @@ export async function updateOpportunity(id, payload, actor = 'admin') {
 
   opportunity.lastModifiedBy = modifier;
   await opportunity.save();
-  return opportunity.toObject();
+  return getPopulatedOpportunity(opportunity._id);
 }
 
 export async function getOpportunityTimeline(id) {
@@ -311,14 +487,15 @@ export async function getOpportunityTimeline(id) {
   let contactEvents = [];
   if (opportunity.primaryLeadId?._id) {
     const timeline = await getLeadTimeline(opportunity.primaryLeadId._id);
-    contactEvents = timeline.events || [];
+    contactEvents = (timeline.events || []).filter((event) => event?.type !== 'opportunity');
   } else if (opportunity.companyId?._id) {
     const timeline = await getCompanyTimeline(opportunity.companyId._id);
-    contactEvents = timeline.events || [];
+    contactEvents = (timeline.events || []).filter((event) => event?.type !== 'opportunity');
   }
 
   const merged = [...activityEvents, ...contactEvents]
     .filter((event) => event?.timestamp)
+    .filter((event, index, array) => array.findIndex((candidate) => candidate.id === event.id) === index)
     .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
   return {
@@ -327,19 +504,46 @@ export async function getOpportunityTimeline(id) {
   };
 }
 
-export async function listTasks({ status = 'Open', owner, opportunityId } = {}) {
+export async function listTasks({ status = 'Open', owner, opportunityId, campaignId, companyId } = {}) {
   assertDb();
   const query = { deletedAt: null };
   if (status && status !== 'All') query.status = status;
   if (owner && owner !== 'All') query.owner = owner;
   if (opportunityId) query.opportunityId = opportunityId;
+  if (companyId && mongoose.isValidObjectId(String(companyId))) query.companyId = companyId;
+  if (campaignId && mongoose.isValidObjectId(String(campaignId))) {
+    const opportunityIds = await Opportunity.find({
+      deletedAt: null,
+      campaignId,
+    }).distinct('_id');
+    query.opportunityId = { $in: opportunityIds };
+  }
   const items = await Task.find(query)
     .sort({ status: 1, dueAt: 1, priority: -1, createdAt: -1 })
+    .populate('campaignId', 'projectName')
     .populate('companyId', 'companyName')
     .populate('leadId', 'name email')
     .populate('opportunityId', 'name stage valueAed')
+    .populate('ownerUserId', 'displayName email role')
     .lean();
   return { items };
+}
+
+export async function getTask(id) {
+  assertDb();
+  const task = await Task.findOne({ _id: id, deletedAt: null })
+    .populate('campaignId', 'projectName')
+    .populate('companyId', 'companyName')
+    .populate('leadId', 'name email')
+    .populate('opportunityId', 'name stage valueAed')
+    .populate('ownerUserId', 'displayName email role')
+    .lean();
+  if (!task) {
+    const error = new Error('Task not found.');
+    error.status = 404;
+    throw error;
+  }
+  return task;
 }
 
 export async function createTask(payload, actor = 'admin') {
@@ -350,15 +554,20 @@ export async function createTask(payload, actor = 'admin') {
     throw error;
   }
   let companyId = payload.companyId || null;
+  let campaignId = payload.campaignId || null;
   if (payload.opportunityId) {
-    const opportunity = await Opportunity.findById(payload.opportunityId).select('companyId').lean();
+    const opportunity = await Opportunity.findById(payload.opportunityId).select('companyId campaignId').lean();
     companyId = opportunity?.companyId || companyId || null;
+    campaignId = opportunity?.campaignId || campaignId || null;
   }
+  const assignment = await resolveOwnerAssignment(payload, actor || 'admin');
   return Task.create({
     title: payload.title.trim(),
     dueAt: payload.dueAt || null,
     priority: payload.priority || 'Normal',
-    owner: String(payload.owner || actor || 'admin').trim(),
+    owner: assignment.owner,
+    ownerUserId: assignment.ownerUserId,
+    campaignId,
     companyId,
     leadId: payload.leadId || null,
     opportunityId: payload.opportunityId || null,
@@ -374,15 +583,25 @@ export async function updateTask(id, payload) {
     error.status = 404;
     throw error;
   }
-  ['title', 'dueAt', 'priority', 'owner', 'companyId', 'leadId', 'opportunityId', 'notes'].forEach((field) => {
+  ['title', 'dueAt', 'priority', 'campaignId', 'companyId', 'leadId', 'opportunityId', 'notes'].forEach((field) => {
     if (payload[field] !== undefined) task[field] = payload[field] || null;
   });
+  if (payload.owner !== undefined || payload.ownerUserId !== undefined) {
+    const assignment = await resolveOwnerAssignment(
+      { owner: payload.owner, ownerUserId: payload.ownerUserId },
+      task.owner || 'admin',
+    );
+    task.owner = assignment.owner;
+    task.ownerUserId = assignment.ownerUserId || null;
+  }
   if (payload.opportunityId !== undefined) {
     if (payload.opportunityId) {
-      const opportunity = await Opportunity.findById(payload.opportunityId).select('companyId').lean();
+      const opportunity = await Opportunity.findById(payload.opportunityId).select('companyId campaignId').lean();
       task.companyId = opportunity?.companyId || null;
+      task.campaignId = opportunity?.campaignId || null;
     } else if (payload.companyId === undefined) {
       task.companyId = null;
+      if (payload.campaignId === undefined) task.campaignId = null;
     }
   }
   if (payload.status !== undefined) {
@@ -391,9 +610,11 @@ export async function updateTask(id, payload) {
   }
   await task.save();
   return Task.findById(id)
+    .populate('campaignId', 'projectName')
     .populate('companyId', 'companyName')
     .populate('leadId', 'name email')
     .populate('opportunityId', 'name stage valueAed')
+    .populate('ownerUserId', 'displayName email role')
     .lean();
 }
 
@@ -412,13 +633,54 @@ export async function restoreTask(id, actor = {}) {
 export async function deleteOpportunity(id, actor = {}) {
   assertDb();
   registerRevisionModel('opportunity', Opportunity);
-  return softDeleteRecord({ Model: Opportunity, resourceType: 'opportunity', id, actor });
+  const result = await softDeleteRecord({ Model: Opportunity, resourceType: 'opportunity', id, actor });
+  await Task.updateMany(
+    { opportunityId: id, deletedAt: null },
+    { $set: { deletedAt: new Date(), deletedBy: actor.displayName || 'admin', deletedViaOpportunityId: id } },
+  );
+  return result;
 }
 
 export async function restoreOpportunity(id, actor = {}) {
   assertDb();
   registerRevisionModel('opportunity', Opportunity);
-  return restoreRecord({ Model: Opportunity, resourceType: 'opportunity', id, actor });
+  const result = await restoreRecord({ Model: Opportunity, resourceType: 'opportunity', id, actor });
+  await Task.updateMany(
+    { opportunityId: id, deletedViaOpportunityId: id, deletedAt: { $ne: null } },
+    { $set: { deletedAt: null, deletedBy: null, deletedViaOpportunityId: null } },
+  );
+  return result;
+}
+
+function normalizeIdList(ids) {
+  if (!Array.isArray(ids)) return [];
+  return ids.map((id) => String(id).trim()).filter(Boolean);
+}
+
+async function bulkSoftDelete(ids, deleteFn, actor = {}) {
+  const uniqueIds = [...new Set(normalizeIdList(ids))];
+  const results = [];
+  for (const id of uniqueIds) {
+    try {
+      const result = await deleteFn(id, actor);
+      results.push({ id, ok: true, ...result });
+    } catch (err) {
+      results.push({ id, ok: false, message: err.message || 'Delete failed.' });
+    }
+  }
+  return {
+    deleted: results.filter((row) => row.ok).length,
+    failed: results.filter((row) => !row.ok).length,
+    results,
+  };
+}
+
+export async function deleteTasks(ids = [], actor = {}) {
+  return bulkSoftDelete(ids, deleteTask, actor);
+}
+
+export async function deleteOpportunities(ids = [], actor = {}) {
+  return bulkSoftDelete(ids, deleteOpportunity, actor);
 }
 
 export async function getWorkspaceSummary() {
@@ -426,17 +688,18 @@ export async function getWorkspaceSummary() {
   const now = new Date();
   const next30Days = new Date(now.getTime() + 30 * 86400000);
   const sevenDaysAgo = new Date(now.getTime() - 7 * 86400000);
+  const stages = await getPipelineStages();
   const [opportunities, openTasks, overdueTasks, newReplies, failedJobs, pendingContacts] = await Promise.all([
-    Opportunity.find({ stage: { $nin: [CLOSED_LOST_STAGE] } }).sort({ updatedAt: -1 }).populate('companyId', 'companyName').lean(),
-    Task.find({ status: 'Open', deletedAt: null }).sort({ dueAt: 1 }).limit(8).populate('companyId', 'companyName').populate('opportunityId', 'name').lean(),
-    Task.countDocuments({ status: 'Open', dueAt: { $lt: now } }),
+    Opportunity.find({ deletedAt: null, stage: { $nin: [CLOSED_LOST_STAGE] } }).sort({ updatedAt: -1 }).populate('companyId', 'companyName').lean(),
+    Task.find({ status: 'Open', deletedAt: null }).sort({ dueAt: 1 }).limit(8).populate('companyId', 'companyName').populate('opportunityId', 'name').populate('ownerUserId', 'displayName').lean(),
+    Task.countDocuments({ status: 'Open', deletedAt: null, dueAt: { $lt: now } }),
     Reply.countDocuments({ receivedAt: { $gte: sevenDaysAgo }, intent: 'Interested' }),
     SendJob.countDocuments({ status: 'failed' }),
     Lead.countDocuments({ deliveryStatus: 'Pending Inqueue' }),
   ]);
   const active = opportunities.filter((item) => item.stage !== CLOSED_WON_STAGE);
   const pipelineValue = active.reduce((sum, item) => sum + (item.valueAed || 0), 0);
-  const weightedPipeline = active.reduce((sum, item) => sum + ((item.valueAed || 0) * (item.probability || 0) / 100), 0);
+  const weightedPipeline = active.reduce((sum, item) => sum + ((item.valueAed || 0) * probabilityForStage(stages, item.stage) / 100), 0);
   const closingSoon = active.filter((item) => item.expectedCloseDate && new Date(item.expectedCloseDate) <= next30Days).length;
 
   return {

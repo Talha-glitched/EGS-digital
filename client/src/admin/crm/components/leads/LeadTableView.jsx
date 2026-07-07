@@ -2,17 +2,26 @@ import { useMemo, useState, useEffect } from 'react';
 import LeadFilterToolbar from './LeadFilterToolbar.jsx';
 import OutreachDrawer from './OutreachDrawer.jsx';
 import { DeliveryStatusBadge, SourceAttributionChips } from './LeadTableComponents.jsx';
+import { VendorEmailColumns, VendorEmailHeaders } from './VendorEmailCells.jsx';
 import { EmptyState } from '../ui/primitives.jsx';
 import TablePagination from '../ui/TablePagination.jsx';
 import DataTableShell from '../ui/DataTableShell.jsx';
-import ClickableTableRow from '../ui/ClickableTableRow.jsx';
+import ClickableTableRow, { stopRowClick } from '../ui/ClickableTableRow.jsx';
 import {
   AdvancedFilterChips,
   useTableFilters,
   buildLeadFilterSchema,
   buildDistinctFieldOptions,
 } from '../ui/advancedFilter/index.js';
-import { updateLead } from '../../crmApi.js';
+import { useBulkDelete } from '../../hooks/useBulkDelete.js';
+import { useTableSort } from '../../hooks/useTableSort.js';
+import { leadSortAccessors } from '../../hooks/tableSortAccessors.js';
+import { SortableTableHeader, TableSortIndicator } from '../ui/SortableTableHeader.jsx';
+import DeleteIconButton from '../ui/DeleteIconButton.jsx';
+import { BulkSelectHeaderCell, BulkSelectRowCell, BulkSelectionBar } from '../ui/BulkSelectTable.jsx';
+import { useRowSelection } from '../../hooks/useRowSelection.js';
+import { useConfirmDelete } from '../../hooks/useConfirmDelete.js';
+import { updateLead, deleteLeadWithUndo, deleteLeads } from '../../crmApi.js';
 import { 
   Users, 
   PhoneCall, 
@@ -45,11 +54,12 @@ function initials(name = '') {
   return (parts[0][0] + (parts[1]?.[0] || '')).toUpperCase();
 }
 
-export default function LeadTableView({ leadsData = [], campaignsList = [], projectId, onLeadUpdated, onCompanyClick }) {
+export default function LeadTableView({ leadsData = [], campaignsList = [], projectId, onLeadUpdated, onCompanyClick, onLeadRemoved, onRestored }) {
   const [selectedLead, setSelectedLead] = useState(null);
   const [error, setError] = useState('');
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(50);
+  const [bulkDeleting, setBulkDeleting] = useState(false);
 
   const leadFilterSchema = useMemo(
     () => buildLeadFilterSchema({
@@ -71,10 +81,23 @@ export default function LeadTableView({ leadsData = [], campaignsList = [], proj
     matchMode: advancedMatchMode,
   } = useTableFilters(leadsData, leadFilterSchema);
 
+  const { sortKey, sortDir, sortLabel, toggleSort, clearSort, sortItems } = useTableSort({
+    defaultKey: 'name',
+    defaultDir: 'asc',
+    accessors: leadSortAccessors,
+  });
+
+  const sortedLeads = useMemo(
+    () => sortItems(filteredLeads),
+    [filteredLeads, sortItems],
+  );
+
   const paginatedLeads = useMemo(() => {
     const start = (page - 1) * limit;
-    return filteredLeads.slice(start, start + limit);
-  }, [filteredLeads, page, limit]);
+    return sortedLeads.slice(start, start + limit);
+  }, [sortedLeads, page, limit]);
+
+  const selection = useRowSelection(paginatedLeads);
 
   useEffect(() => {
     setPage(1);
@@ -84,6 +107,52 @@ export default function LeadTableView({ leadsData = [], campaignsList = [], proj
     setLimit(nextLimit);
     setPage(1);
   };
+
+  const confirmDeleteLead = useConfirmDelete({
+    resourceType: 'lead',
+    deleteFn: deleteLeadWithUndo,
+    onRemoved: (id) => {
+      onLeadRemoved?.(id);
+      if (selectedLead?._id === id) setSelectedLead(null);
+      selection.clearSelection();
+    },
+    onRestored,
+    defaultConfirm: 'Delete this contact? You can undo within 30 seconds.',
+  });
+
+  const runBulkDeleteLeads = useBulkDelete({
+    resourceType: 'lead',
+    bulkDeleteFn: deleteLeads,
+    getLabelForId: (id) => {
+      const lead = leadsData.find((l) => l._id === id);
+      return `Deleted contact: ${lead?.name || lead?.email || 'Contact'}`;
+    },
+    defaultConfirm: 'Delete these contacts? You can undo each within 30 seconds.',
+    onRemoved: (ids) => {
+      ids.forEach((id) => onLeadRemoved?.(id));
+      if (selectedLead && ids.includes(selectedLead._id)) setSelectedLead(null);
+      selection.clearSelection();
+    },
+    onRestored,
+  });
+
+  async function deleteLeadItem(lead) {
+    await confirmDeleteLead(
+      lead._id,
+      `Deleted contact: ${lead.name || lead.email || 'Contact'}`,
+    );
+  }
+
+  async function handleBulkDelete() {
+    setBulkDeleting(true);
+    try {
+      await runBulkDeleteLeads(selection.selectedArray, { noun: 'contact' });
+    } catch (err) {
+      setError(err.message || 'Failed to delete contacts.');
+    } finally {
+      setBulkDeleting(false);
+    }
+  }
 
   const openDrawer = (lead) => {
     setSelectedLead(lead);
@@ -193,17 +262,33 @@ export default function LeadTableView({ leadsData = [], campaignsList = [], proj
             onLimitChange={handleLimitChange}
             noun="leads"
           />
-          <DataTableShell minWidth={1050}>
+          <BulkSelectionBar
+            count={selection.selectionCount}
+            noun="contact"
+            onDelete={handleBulkDelete}
+            onClear={selection.clearSelection}
+            deleting={bulkDeleting}
+          />
+          <TableSortIndicator
+            sortKey={sortKey}
+            sortDir={sortDir}
+            sortLabel={sortLabel}
+            onToggle={() => toggleSort(sortKey)}
+            onClear={clearSort}
+          />
+          <DataTableShell minWidth={1200}>
           <table className="crm-table">
             <thead>
               <tr className="crm-table-head">
-                <th className="px-4 py-3">Contact</th>
-                <th className="px-4 py-3">Company</th>
+                <BulkSelectHeaderCell selection={selection} ariaLabel="Select all contacts" />
+                <SortableTableHeader label="Contact" sortKey="name" activeKey={sortKey} direction={sortDir} onSort={toggleSort} className="px-4 py-3" />
+                <SortableTableHeader label="Company" sortKey="companyName" activeKey={sortKey} direction={sortDir} onSort={toggleSort} className="px-4 py-3" />
+                <VendorEmailHeaders sortKey={sortKey} sortDir={sortDir} toggleSort={toggleSort} SortableTableHeader={SortableTableHeader} />
                 <th className="px-4 py-3 text-center">LinkedIn Nav</th>
                 <th className="px-4 py-3 text-center">Cold Call</th>
                 <th className="px-4 py-3 text-center">WhatsApp</th>
-                <th className="px-4 py-3">Outbox</th>
-                <th className="px-4 py-3">Outcome</th>
+                <SortableTableHeader label="Outbox" sortKey="deliveryStatus" activeKey={sortKey} direction={sortDir} onSort={toggleSort} className="px-4 py-3" />
+                <SortableTableHeader label="Outcome" sortKey="outcome" activeKey={sortKey} direction={sortDir} onSort={toggleSort} className="px-4 py-3" />
                 <th className="px-4 py-3 text-center">Actions</th>
               </tr>
             </thead>
@@ -213,6 +298,11 @@ export default function LeadTableView({ leadsData = [], campaignsList = [], proj
                 const hasWa = lead.whatsapp?.sent || false;
                 return (
                   <ClickableTableRow key={lead._id} onClick={() => openDrawer(lead)}>
+                    <BulkSelectRowCell
+                      id={lead._id}
+                      selection={selection}
+                      ariaLabel={`Select ${lead.name || 'contact'}`}
+                    />
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-[11px] font-bold text-neutral-600">
@@ -234,8 +324,8 @@ export default function LeadTableView({ leadsData = [], campaignsList = [], proj
                       >
                         {lead.companyName || '—'}
                       </button>
-                      <div className="truncate font-mono text-xs text-neutral-400">{lead.email}</div>
                     </td>
+                    <VendorEmailColumns lead={lead} />
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-center gap-2">
                         <button
@@ -296,8 +386,11 @@ export default function LeadTableView({ leadsData = [], campaignsList = [], proj
                         {lead.outcome}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-center text-xs font-semibold text-brand">
-                      Edit / Notes
+                    <td className="px-4 py-3 text-center" onClick={stopRowClick}>
+                      <DeleteIconButton
+                        label={`Delete ${lead.name || 'contact'}`}
+                        onClick={() => deleteLeadItem(lead)}
+                      />
                     </td>
                   </ClickableTableRow>
                 );
@@ -321,6 +414,7 @@ export default function LeadTableView({ leadsData = [], campaignsList = [], proj
         lead={selectedLead}
         onClose={closeDrawer}
         onLeadUpdated={onLeadUpdated}
+        onDelete={deleteLeadItem}
       />
     </div>
   );

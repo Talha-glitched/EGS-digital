@@ -7,7 +7,11 @@ import {
   splitContactEmails,
 } from '../src/utils/contactEmails.js';
 import { buildStepPerformance } from '../src/services/projectService.js';
-import { assertEnrollmentConfirmed, buildEnrollmentLeadQuery } from '../src/services/sequenceService.js';
+import {
+  assertEnrollmentConfirmed,
+  buildEnrollmentLeadQuery,
+  enrollableDeliveryFilter,
+} from '../src/services/sequenceService.js';
 import { withOptOutFooter } from '../src/services/sendWorker.js';
 
 test('contact email helpers choose one primary and safely parse provider lists', () => {
@@ -51,12 +55,15 @@ test('sequence analytics maps zero-based job indexes to human step numbers', () 
   ]);
 });
 
-test('campaign enrollment requires confirmation and selects only never-contacted leads', () => {
+test('campaign enrollment requires confirmation and selects enrollable leads', () => {
   assert.throws(() => assertEnrollmentConfirmed(), /confirmation is required/i);
   assert.doesNotThrow(() => assertEnrollmentConfirmed({ confirmEnrollment: true }));
+  assert.deepEqual(enrollableDeliveryFilter(), {
+    deliveryStatus: { $nin: ['Bounced / Invalid', 'Opted Out'] },
+  });
   assert.deepEqual(buildEnrollmentLeadQuery('project-1', { leadIds: ['lead-1'] }), {
     campaignId: 'project-1',
-    deliveryStatus: 'Pending Inqueue',
+    deliveryStatus: { $nin: ['Bounced / Invalid', 'Opted Out'] },
     _id: { $in: ['lead-1'] },
   });
 });

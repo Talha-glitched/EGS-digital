@@ -1,0 +1,949 @@
+[
+  {
+    "_id": {
+      "$oid": "6a33f44d29414e54b55e463b"
+    },
+    "companyName": "DIALMAZ",
+    "domain": "dialmaz.com",
+    "industry": "luxury goods & jewelry",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      },
+      {
+        "$oid": "6a340ff379f8f5c6b1af2f30"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789773483"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797936718"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f44d29414e54b55e4642"
+    },
+    "companyName": "DHAKAN JEWELLERS LLC",
+    "domain": "dhakanjewellers.com",
+    "industry": "luxury goods & jewelry",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      },
+      {
+        "$oid": "6a340ff379f8f5c6b1af2f30"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789773686"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797936945"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f44d29414e54b55e4649"
+    },
+    "companyName": "JAWHARA JEWELLERY",
+    "domain": "jawharajewellery.ae",
+    "industry": "luxury goods & jewelry",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      },
+      {
+        "$oid": "6a340ff379f8f5c6b1af2f30"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789773882"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797937915"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f44e29414e54b55e4652"
+    },
+    "companyName": "Devji Aurum",
+    "domain": "devjiaurum.com",
+    "industry": "luxury goods & jewelry",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      },
+      {
+        "$oid": "6a340ff379f8f5c6b1af2f30"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789774143"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797943345"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f44e29414e54b55e4656"
+    },
+    "companyName": "ZEL JEWELLERS LTD",
+    "domain": "rkjewellers.in",
+    "industry": "luxury goods & jewelry",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789774252"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797259783"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f44e29414e54b55e465a"
+    },
+    "companyName": "RENEE JEWELLERS",
+    "domain": "reneejewellers.com",
+    "industry": "insurance",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      },
+      {
+        "$oid": "6a340ff379f8f5c6b1af2f30"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789774363"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797940739"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f44e29414e54b55e465e"
+    },
+    "companyName": "COLOR JEWELS DMCC",
+    "domain": "dyach.com",
+    "industry": "wholesale",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      },
+      {
+        "$oid": "6a340ff379f8f5c6b1af2f30"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789774480"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797940358"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "companyName": "INTERNATIONAL GEMOLOGICAL INSTITUTE",
+    "domain": "igi.org",
+    "industry": "luxury goods & jewelry",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      },
+      {
+        "$oid": "6a340ff379f8f5c6b1af2f30"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789774595"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797937335"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f44e29414e54b55e466c"
+    },
+    "companyName": "MY UAE GUIDE",
+    "domain": "myuaeguide.com",
+    "industry": "marketing & advertising",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      },
+      {
+        "$oid": "6a340ff379f8f5c6b1af2f30"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789774860"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797937564"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f44f29414e54b55e467d"
+    },
+    "companyName": "BHASKAR DEVJI CO. W.L.L",
+    "domain": "devji.com",
+    "industry": "retail",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      },
+      {
+        "$oid": "6a340ff379f8f5c6b1af2f30"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789775354"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797938154"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f44f29414e54b55e4681"
+    },
+    "companyName": "SHARJAH AIRPORT INTERNATIONAL FREE ZONE AUTHORITY",
+    "domain": "saif-zone.com",
+    "industry": "government administration",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789775465"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797257323"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f44f29414e54b55e468a"
+    },
+    "companyName": "SOIT BELLE JEWELLERY",
+    "domain": "soitbelle.ae",
+    "industry": "luxury goods & jewelry",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789775741"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797262461"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f44f29414e54b55e468f"
+    },
+    "companyName": "K.K. JEWELS",
+    "domain": "kkjewels.com",
+    "industry": "luxury goods & jewelry",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      },
+      {
+        "$oid": "6a340ff379f8f5c6b1af2f30"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789775851"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797938369"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45029414e54b55e4698"
+    },
+    "companyName": "THANGALS JEWELLERY LLC",
+    "domain": "thangalsgold.com",
+    "industry": "luxury goods & jewelry",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789776126"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797257993"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45029414e54b55e46ab"
+    },
+    "companyName": "AL ANWAAR GOLDEN JEWELLERS",
+    "domain": "alanwaaronline.com",
+    "industry": "luxury goods & jewelry",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789776709"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782494509482"
+      }
+    },
+    "deletedAt": null,
+    "deletedBy": null,
+    "version": {
+      "$numberInt": "2"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45029414e54b55e46af"
+    },
+    "companyName": "LIFESTYLE FINE JEWELLERY",
+    "domain": "lifestylegcc.com",
+    "industry": "retail",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      },
+      {
+        "$oid": "6a340ff379f8f5c6b1af2f30"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789776827"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797939155"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45129414e54b55e46bc"
+    },
+    "companyName": "AMISANO 1967",
+    "domain": "italgold.it",
+    "industry": "luxury goods & jewelry",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      },
+      {
+        "$oid": "6a340ff379f8f5c6b1af2f30"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789777156"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782494510626"
+      }
+    },
+    "deletedAt": null,
+    "deletedBy": null,
+    "version": {
+      "$numberInt": "2"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45129414e54b55e46c3"
+    },
+    "companyName": "ITALIAN TRADE COMMISSION",
+    "domain": "ice.it",
+    "industry": "international trade & development",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      },
+      {
+        "$oid": "6a340ff379f8f5c6b1af2f30"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789777340"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797939791"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45129414e54b55e46ca"
+    },
+    "companyName": "JOVIAL WATCHES CO. L.L.C",
+    "domain": "jovialwatch.com",
+    "industry": "luxury goods & jewelry",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789777528"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797259294"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45129414e54b55e46d0"
+    },
+    "companyName": "V M JEWELLERY",
+    "domain": "vmjewellery.com",
+    "industry": "luxury goods & jewelry",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      },
+      {
+        "$oid": "6a340ff379f8f5c6b1af2f30"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789777707"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797942193"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45229414e54b55e46db"
+    },
+    "companyName": "IRYS MIDDLE EAST LLC - FZ",
+    "domain": "irysgroup.com",
+    "industry": "information technology & services",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      },
+      {
+        "$oid": "6a340ff379f8f5c6b1af2f30"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789778057"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797940145"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45229414e54b55e46e8"
+    },
+    "companyName": "PURITY JEWELLERY DMCC",
+    "domain": "purityjewelry.net",
+    "industry": "luxury goods & jewelry",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789778390"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797260339"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45329414e54b55e4700"
+    },
+    "companyName": "ABIDA JEWELLERY L.L.C",
+    "domain": "abida-jewellery.com",
+    "industry": "luxury goods & jewelry",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      },
+      {
+        "$oid": "6a340ff379f8f5c6b1af2f30"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789779088"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797941231"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45329414e54b55e4717"
+    },
+    "companyName": "LA MARQUISE DIAMONDS AND WATCHES DMCC",
+    "domain": "lamarquisejewellery.com",
+    "industry": "luxury goods & jewelry",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      },
+      {
+        "$oid": "6a340ff379f8f5c6b1af2f30"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789779774"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797941929"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45329414e54b55e471e"
+    },
+    "companyName": "THREE STAR JEWELLERY",
+    "domain": "threestarjewellery.com",
+    "industry": "retail",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789779957"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797261717"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45429414e54b55e472f"
+    },
+    "companyName": "JAMA JEWELS FZCO",
+    "domain": "jamajewels.com",
+    "industry": "luxury goods & jewelry",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      },
+      {
+        "$oid": "6a340ff379f8f5c6b1af2f30"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789780801"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797942571"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45429414e54b55e4736"
+    },
+    "companyName": "IL BERNARDO",
+    "domain": "ilbernardo.com",
+    "industry": "luxury goods & jewelry",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789780988"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797262341"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45529414e54b55e4741"
+    },
+    "companyName": "ORG LUXURY",
+    "domain": "orgluxury.com",
+    "industry": "retail",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a33f159b9b12c438ad4e9a0"
+      },
+      {
+        "$oid": "6a3411734c44b94e0dc48764"
+      },
+      {
+        "$oid": "6a340ff379f8f5c6b1af2f30"
+      }
+    ],
+    "globalStatus": "target",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789781314"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797942974"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a394dd2aec1a785a5a25852"
+    },
+    "companyName": "rawr",
+    "domain": "rawrr",
+    "industry": "",
+    "boothNumber": "",
+    "projectsAssociated": [],
+    "globalStatus": "Lead",
+    "city": "",
+    "country": "",
+    "genericEmail": "",
+    "genericPhone": "",
+    "notes": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782140370951"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782140370951"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3ebc23ac1ef3c5e876d41c"
+    },
+    "companyName": "EGS",
+    "domain": "exhibitgraphicsign.com",
+    "industry": "",
+    "boothNumber": "BIG STAND",
+    "projectsAssociated": [
+      {
+        "$oid": "6a3ebb9eac1ef3c5e876d151"
+      }
+    ],
+    "globalStatus": "Lead",
+    "city": "Gojra",
+    "country": "America",
+    "genericEmails": [],
+    "genericPhone": "",
+    "notes": "",
+    "version": {
+      "$numberInt": "0"
+    },
+    "deletedAt": null,
+    "deletedBy": null,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782496291755"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782496291755"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a43a38bc7deaff7f78d0ca9"
+    },
+    "companyName": "uzair",
+    "domain": "rawr.com",
+    "industry": "",
+    "boothNumber": "",
+    "projectsAssociated": [
+      {
+        "$oid": "6a3ebb9eac1ef3c5e876d151"
+      }
+    ],
+    "globalStatus": "Lead",
+    "city": "",
+    "country": "",
+    "genericEmails": [],
+    "genericPhone": "",
+    "notes": "",
+    "version": {
+      "$numberInt": "0"
+    },
+    "deletedAt": null,
+    "deletedBy": null,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782817675542"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782818689313"
+      }
+    }
+  }
+]

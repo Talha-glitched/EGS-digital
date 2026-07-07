@@ -32,6 +32,19 @@ const leadSchema = new mongoose.Schema(
     emailApollo: { type: String, default: '', trim: true, lowercase: true },
     emailHunter: { type: String, default: '', trim: true, lowercase: true },
     emailLusha: { type: String, default: '', trim: true, lowercase: true },
+    /** Set automatically when a reply arrives from Apollo/Hunter/Lusha/manual email on this lead. */
+    outreachEmail: { type: String, default: '', trim: true, lowercase: true, index: true },
+    outreachEmailSource: {
+      type: String,
+      enum: ['', 'Apollo', 'Hunter', 'Lusha', 'Manual'],
+      default: '',
+    },
+    contactKind: {
+      type: String,
+      enum: ['person', 'genericInbox'],
+      default: 'person',
+      index: true,
+    },
     phoneLusha1: { type: String, default: '', trim: true },
     phoneLusha2: { type: String, default: '', trim: true },
     whatsappNumber: { type: String, default: '', trim: true },

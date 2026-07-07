@@ -5,7 +5,7 @@ import { Sequence } from '../models/Sequence.js';
 import { SequenceEnrollment } from '../models/SequenceEnrollment.js';
 import { SendJob } from '../models/SendJob.js';
 import { Suppression } from '../models/Suppression.js';
-import { getPrimaryLeadEmail } from '../utils/contactEmails.js';
+import { getSendTargetEmail } from '../utils/contactEmails.js';
 import {
   findFlowNode,
   isShortFlowDelay,
@@ -310,7 +310,9 @@ async function processSendJobRecord(job) {
     return;
   }
 
-  const targetEmail = getPrimaryLeadEmail(lead);
+  const targetEmail = getSendTargetEmail(lead, {
+    vendor: job.metadata?.emailVendor || lead.primarySource,
+  });
   if (!targetEmail) {
     console.error(`[SendWorker] Job ${job._id} failed: No valid target email address found for lead.`);
     job.status = 'failed';

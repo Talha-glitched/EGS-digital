@@ -74,6 +74,7 @@ function filterProjects(projects, query) {
     return list.map((project) => ({
       id: `project-${project._id}`,
       type: 'project',
+      recordId: project._id,
       title: project.projectName || 'Untitled project',
       subtitle: [project.milestone, project.status].filter(Boolean).join(' · '),
       href: `/admin/crm/projects/${project._id}`,
@@ -89,6 +90,7 @@ function filterProjects(projects, query) {
     .map((project) => ({
       id: `project-${project._id}`,
       type: 'project',
+      recordId: project._id,
       title: project.projectName || 'Untitled project',
       subtitle: [project.milestone, project.status].filter(Boolean).join(' · '),
       href: `/admin/crm/projects/${project._id}`,
@@ -140,8 +142,11 @@ export default function SpotlightSearch({ open, onClose, projects = [] }) {
   const selectItem = useCallback(
     (item) => {
       if (!item?.href) return;
+      const navState = item.recordId
+        ? { fromSpotlight: true, recordId: String(item.recordId), recordType: item.type }
+        : undefined;
+      navigate(item.href, navState ? { state: navState } : undefined);
       onClose();
-      navigate(item.href);
     },
     [navigate, onClose],
   );
@@ -229,10 +234,15 @@ export default function SpotlightSearch({ open, onClose, projects = [] }) {
   let runningIndex = -1;
 
   return createPortal(
-    <div className="crm-spotlight-overlay" onMouseDown={onClose} role="presentation">
+    <div
+      className="crm-spotlight-overlay"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+      role="presentation"
+    >
       <div
         className="crm-spotlight-panel"
-        onMouseDown={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-label="Search workspace"
@@ -285,7 +295,11 @@ export default function SpotlightSearch({ open, onClose, projects = [] }) {
                         aria-selected={isActive}
                         className={cn('crm-spotlight-item', isActive && 'crm-spotlight-item-active')}
                         onMouseEnter={() => setActiveIndex(index)}
-                        onClick={() => selectItem(item)}
+                        onMouseDown={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          selectItem(item);
+                        }}
                       >
                         <span className="crm-spotlight-item-icon">
                           <Icon className="h-4 w-4" strokeWidth={1.75} />

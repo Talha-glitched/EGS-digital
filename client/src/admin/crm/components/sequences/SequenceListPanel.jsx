@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Layers,
@@ -11,6 +12,9 @@ import {
 } from 'lucide-react';
 import DataTableShell from '../ui/DataTableShell.jsx';
 import ClickableTableRow from '../ui/ClickableTableRow.jsx';
+import { SortableTableHeader, TableSortIndicator } from '../ui/SortableTableHeader.jsx';
+import { useTableSort } from '../../hooks/useTableSort.js';
+import { sequenceSortAccessors } from '../../hooks/tableSortAccessors.js';
 import { Badge, EmptyState } from '../ui/primitives.jsx';
 
 function formatDate(value) {
@@ -23,6 +27,14 @@ function formatDate(value) {
 }
 
 export default function SequenceListPanel({ sequences = [], onCreate, onEdit, loading }) {
+  const { sortKey, sortDir, sortLabel, toggleSort, clearSort, sortItems } = useTableSort({
+    defaultKey: 'updatedAt',
+    defaultDir: 'desc',
+    accessors: sequenceSortAccessors,
+  });
+
+  const sortedSequences = useMemo(() => sortItems(sequences), [sequences, sortItems]);
+
   if (!loading && !sequences.length) {
     return (
       <EmptyState
@@ -41,22 +53,29 @@ export default function SequenceListPanel({ sequences = [], onCreate, onEdit, lo
 
   return (
     <DataTableShell>
+      <TableSortIndicator
+        sortKey={sortKey}
+        sortDir={sortDir}
+        sortLabel={sortLabel}
+        onToggle={() => toggleSort(sortKey)}
+        onClear={clearSort}
+      />
       <div className="overflow-x-auto">
         <table className="crm-table min-w-[920px]">
           <thead>
             <tr>
-              <th>Sequence</th>
-              <th>Campaign</th>
-              <th>Steps</th>
-              <th>Status</th>
-              <th>Enrolled</th>
-              <th>Queue</th>
-              <th>Updated</th>
+              <SortableTableHeader label="Sequence" sortKey="name" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+              <SortableTableHeader label="Campaign" sortKey="campaign" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+              <SortableTableHeader label="Steps" sortKey="steps" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+              <SortableTableHeader label="Status" sortKey="status" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+              <SortableTableHeader label="Enrolled" sortKey="enrolled" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+              <SortableTableHeader label="Queue" sortKey="queue" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+              <SortableTableHeader label="Updated" sortKey="updatedAt" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
               <th className="w-24" />
             </tr>
           </thead>
           <tbody>
-            {sequences.map((seq) => {
+            {sortedSequences.map((seq) => {
               const stats = seq.stats || {};
               const campaign = seq.campaign || {};
               return (

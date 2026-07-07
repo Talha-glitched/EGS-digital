@@ -1,0 +1,8049 @@
+[
+  {
+    "_id": {
+      "$oid": "6a33f44d29414e54b55e463e"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e463b"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "shivam@dialmaz.com",
+    "name": "Shivam",
+    "designation": "Head of Marketing",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "6782aca6cc171df1952a21801f2f0606887e85e9a0dd7cff",
+    "openTrackingToken": "9113b85be3f4c36229e14f4952845c341d3cc64f9c0dbc10",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789773559"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789773559"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f44d29414e54b55e4645"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e4642"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "dhakanithra@dhakanjewellers.ae",
+    "name": "Hitesh",
+    "designation": "Managing Director, Owner",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "fe932f592a8d89c5eb1aac04868c8a3ba5063ab2329aebf6",
+    "openTrackingToken": "9a83546a6aaaa3a72065526e1109ade394c6854ff2f3cfac",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789773764"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789773764"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f44e29414e54b55e464e"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e463b"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "sushil@dialmaz.com",
+    "name": "Sushil",
+    "designation": "Managing Director",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "369e7dd46117474e0c902b87e0a28c3722334858bb214258",
+    "openTrackingToken": "731eb79616dc0d42340f4cab40512d000a9ae107729b9ca0",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789774029"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789774029"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f44e29414e54b55e4666"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "eslam.salah@igi.org",
+    "name": "Eslam",
+    "designation": "Country Manager",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "8f2f27b8ac7b7cf6a5f5edc9474c170eea90e6884323231d",
+    "openTrackingToken": "a2972688a771e817884508a9aef27f039f10f3d06e62d012",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789774669"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789774669"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f44e29414e54b55e466f"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e466c"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "iftikhar@myplanetguides.com",
+    "name": "Iftikhar",
+    "designation": "Managing Director",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "4a01a9b49662ac9abf5b70264aeec1a6ba9684d2c3caf62d",
+    "openTrackingToken": "d39eada45af4ebceda7b4eda2737fa9178f6386816795cd6",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789774932"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789774932"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f44f29414e54b55e4674"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e466c"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "waseem@myuaeguide.com",
+    "name": "Muhammad",
+    "designation": "Marketing Manager",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "447c8be389d2f25bdd8c4cb41e1d1ead271eb8d6f76cc32a",
+    "openTrackingToken": "df0f6f96560b6f36cdb46f33b74fb1f1e085e500b5eb980e",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789775079"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789775079"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f44f29414e54b55e4679"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e4649"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "abdullah@jawharajewellery.com",
+    "name": "Abdullah",
+    "designation": "General Manager",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "bac8b042c6672626fad64f7dcfbbf8dcb00ac16c1e75fd29",
+    "openTrackingToken": "a933e565cde17a794b2a655d093407ca897f9e99ee3b4d2a",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789775234"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789775234"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f44f29414e54b55e4686"
+    },
+    "companyId": {
+      "$oid": "6a33f44f29414e54b55e467d"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "rashmi@devji.com",
+    "name": "Rashmi",
+    "designation": "Marketing Manager",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "41aa352ba68013952d40b512235e12551b7724599508e1d2",
+    "openTrackingToken": "272428a46b5165178f2b98163a723f3d0fc567e1e367d65a",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789775628"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789775628"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f44f29414e54b55e4692"
+    },
+    "companyId": {
+      "$oid": "6a33f44f29414e54b55e468f"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "kumud@kkjewels.com",
+    "name": "Kumud",
+    "designation": "Managing Director",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "53dba52751ffe0efec218665e7b6cdc92dc66d01c127a9b0",
+    "openTrackingToken": "e42354aafd2116a9a217ebb4339bbeb8661c950b3bea2048",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789775928"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789775928"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45029414e54b55e469d"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "johan.dsouza@igi.org",
+    "name": "Johan",
+    "designation": "Regional Managing Director - MENA",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "81bf1031bd69ff275c64fb66f6e8b017a4fb7341c950fcd9",
+    "openTrackingToken": "270329a11707395d582ea2a324c7ed852f16c5fc1269ca7e",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789776271"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789776271"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45029414e54b55e46a2"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "sindhu@igi.org",
+    "name": "Sindhu",
+    "designation": "General Manager- Finance & Operations",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "21ba268f6887e9fc8d364f92cf9118b8715ce27f1ba08dd5",
+    "openTrackingToken": "1488bc4dd5509bf4d57ddde8f7a41e0615e8e3317956fc9b",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789776430"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789776430"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45029414e54b55e46a7"
+    },
+    "companyId": {
+      "$oid": "6a33f44f29414e54b55e467d"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "jbharatji@devji.com",
+    "name": "Jaydeep",
+    "designation": "Joint Managing Director",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "53fb788ac15ca9b0f567e6a4f8e4619f7fc2ca84a65867a1",
+    "openTrackingToken": "c3822e7cdab50e84a9ed1f92b781a11bd1b2f812e97da05a",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789776591"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789776591"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45029414e54b55e46b2"
+    },
+    "companyId": {
+      "$oid": "6a33f45029414e54b55e46af"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "hussain@lifestylegcc.com",
+    "name": "Khadim",
+    "designation": "Brand Manager",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "a4633db1750b4e90822f1408421563c172fc5de8963e681e",
+    "openTrackingToken": "e9aade8ec0975412ebaceb705e56e64c0a8a67d0a5ac0a38",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789776899"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789776899"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45129414e54b55e46b8"
+    },
+    "companyId": {
+      "$oid": "6a33f45029414e54b55e46af"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "ashraf@lifestylegcc.com",
+    "name": "Ashraf",
+    "designation": "Sales Director",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "b6e6f9a648543de0001eeb8a13086cac6cf549ea6f1c5310",
+    "openTrackingToken": "f510bfb1fd2e825b91f7363deadf0c77ac2b3f48adb8637e",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789777045"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789777045"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45129414e54b55e46bf"
+    },
+    "companyId": {
+      "$oid": "6a33f45129414e54b55e46bc"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "alessandro@italgold.it",
+    "name": "Alessandro",
+    "designation": "General Manager",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "7c91355de686aa728a70f6f9cff9b65eb9aa9ab84fde65f5",
+    "openTrackingToken": "afdd0b05fcabad6532d2956daaf1828b4a8d60ab17213654",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789777227"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789777227"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45129414e54b55e46c6"
+    },
+    "companyId": {
+      "$oid": "6a33f45129414e54b55e46c3"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "l.galanti@ice.it",
+    "name": "Lorenzo",
+    "designation": "CEO and Managing Director",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "1a5daa7ed64faa24e0d8d09003ef33458a3790dce5de9f30",
+    "openTrackingToken": "a2dd149072b6ffd9df58a374334ab867dce023c4842ff839",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789777419"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789777419"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45129414e54b55e46d7"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e4649"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "karthik@jawharajewellery.ae",
+    "name": "Karthik",
+    "designation": "Marketing Manager",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "08e995a2fb2a765219ab23b7d93687ce781e7f479496cd69",
+    "openTrackingToken": "813e2984a8535816f3dd1d597425358d1217c79643b4e177",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789777946"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789777946"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45229414e54b55e46de"
+    },
+    "companyId": {
+      "$oid": "6a33f45229414e54b55e46db"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "vishal.usapkar@irysgroup.com",
+    "name": "Vishal",
+    "designation": "Managing Director - Irys India",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "f434614ee00efde3613b3a62e00fa738f24ce6247429d54a",
+    "openTrackingToken": "65e888b2ab1ff7c5e37a4edc6714a2dbfc9124acf3d56b7a",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789778134"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789778134"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45229414e54b55e46e4"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e465e"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "niall@colorjewels.net",
+    "name": "Niall",
+    "designation": "North America & Caribbean, Marketing Manager",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "5a2145fff0ccb68f5ba2c753ddd2f4882825b7aabce011a5",
+    "openTrackingToken": "6bc39c165dec6518a99d2956325778be44504a77cd44c5c3",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789778279"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789778279"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45229414e54b55e46ed"
+    },
+    "companyId": {
+      "$oid": "6a33f45129414e54b55e46c3"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "i.rokvic.ext@ice.it",
+    "name": "Ivana",
+    "designation": "Trade Analyst | Project & Event Manager",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "30ca0b825ddf66d5b57dcccfa6c048078500a66c07c8d360",
+    "openTrackingToken": "a73e8059d77d659d18d065154608f16b8585c2a34e937d97",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789778532"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789778532"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45229414e54b55e46f2"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e465a"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "cihan@reneejewellers.com",
+    "name": "Cihan",
+    "designation": "Executive Marketing Manager",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "7635901eb3c3aedb88302ce47d40c31067b7708103a61ba3",
+    "openTrackingToken": "e9ad813c8af389fdfd9aea0e001512d4b0a140399f35f865",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789778680"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789778680"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45229414e54b55e46f7"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "tehmasp@igi.org",
+    "name": "Tehmasp",
+    "designation": "Managing Director",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "87c18aa762d598dba88da55c44d1cf0d19828f0e916b3963",
+    "openTrackingToken": "e0104c34137363ee87203480d5e592c90e1c090d2d15537d",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789778822"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789778822"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45229414e54b55e46fc"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e4649"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "sandesh@jawharajewellery.ae",
+    "name": "Sandesh",
+    "designation": "Brand Manager",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "e0cc96e0b2a462fe6ee1a18d875e883f958d4d69c55eda84",
+    "openTrackingToken": "4878450e23bdd8bc2390747e5c46d0f2880a6925bf4addb4",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789778970"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789778970"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45329414e54b55e4703"
+    },
+    "companyId": {
+      "$oid": "6a33f45329414e54b55e4700"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "jaffer@abida-jewellery.com",
+    "name": "Jaffer",
+    "designation": "Managing Director",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "ae4fc0657f4408e67fe67692ed15897078d697d4f6e933a0",
+    "openTrackingToken": "f77fbbb13b253235f604f1a8f074694ebeecc67f1e100ce8",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789779166"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789779166"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45329414e54b55e4708"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "aniket@igi.org",
+    "name": "Aniket",
+    "designation": "General Manager",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "4856b7204026efa824d9b8994996a4faa9c0029312229cc2",
+    "openTrackingToken": "5f011af4aab0d34c03d6b75ba0bb9aea9b003fd8b92f47cd",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789779307"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789779307"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45329414e54b55e470e"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "renuka@igi.org",
+    "name": "Renuka",
+    "designation": "PR Manager",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "4c21409d04f986eac50c24e55325503f204e019a717e809b",
+    "openTrackingToken": "c0b43e5af1554391003de2d70b9b1d6042f2c5e236a516fa",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789779465"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789779465"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45329414e54b55e4713"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e4649"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "kuwait@jawharajewellery.com",
+    "name": "Kuwait",
+    "designation": "General Manager",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "b5cca83aa0667ebfca7fba5b0cc2f1fa03a0d01f4bff2333",
+    "openTrackingToken": "8bbbdc8743a78e5faf6576d70125eac666d14ef9ca5634ab",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789779621"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789779621"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45329414e54b55e471a"
+    },
+    "companyId": {
+      "$oid": "6a33f45329414e54b55e4717"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "swathi@lamarquisejewellery.com",
+    "name": "Swathi",
+    "designation": "Brand Manager",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "a0f324ba2d03e0f5b627f7eb1527d70f0111833419b61bee",
+    "openTrackingToken": "bf1d7338cfd140c717159a9b8fc6dd1bf0c123b59285bf9d",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789779849"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789779849"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45429414e54b55e4725"
+    },
+    "companyId": {
+      "$oid": "6a33f45129414e54b55e46d0"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "mahak@vmjewellery.com",
+    "name": "Mahak",
+    "designation": "Content Marketing Manager",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "19ccf4353edd85437a6071e46b6550c33ee99e36457f936a",
+    "openTrackingToken": "6374d4b844199834163df5b75a41f96f027b0b6d9a531afe",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789780408"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789780408"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45429414e54b55e472b"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e4649"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "ajith@jawharajewellery.com",
+    "name": "Ajith",
+    "designation": "Operations Manager",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "296b70ab56d165e253c144019c62020c8b9c7962f91f6c56",
+    "openTrackingToken": "1d4fc68bc0c0f383e11794edec7bcc3b6e83bf83ecb73f19",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789780689"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789780689"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45429414e54b55e4732"
+    },
+    "companyId": {
+      "$oid": "6a33f45429414e54b55e472f"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "jemis@jamajewels.com",
+    "name": "Jemis",
+    "designation": "Managing Director",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "1107723b3d595b40a4ffbc3826e4073c9b87f2733148a50d",
+    "openTrackingToken": "6693f9d560ef0f69ba8d0f0f648268576f7cabee51bc2c8c",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789780876"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789780876"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45529414e54b55e473d"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e4649"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "vinu.menon@jawharajewellery.ae",
+    "name": "Vinu",
+    "designation": "Group General Manager",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "48ea4361043bc520d8d31871b6a810664eae98d1006d2c6b",
+    "openTrackingToken": "d8cb430caf75acb9f49a7a521ba847c061fbd82d4650c8b4",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789781205"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789781205"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45529414e54b55e4744"
+    },
+    "companyId": {
+      "$oid": "6a33f45529414e54b55e4741"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "zeyad@orgluxury.com",
+    "name": "Zeyad",
+    "designation": "Sales Director",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "ce8027dd5974856ad1172fed4d3ea9a9a6aab81056ef0756",
+    "openTrackingToken": "813ca1d10e4d126736c4da8b9c6b1264bbd4332c59438aca",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789781385"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789781385"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45529414e54b55e4749"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "kapil.ladiwal@igi.org",
+    "name": "Kapil",
+    "designation": "Sales Marketing Manager",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "7040d5b635678057c2bfe8047603090920c65824e1da4d8d",
+    "openTrackingToken": "faaebb7ca27dfcd74cb44373b02313e82b8db935567bf310",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789781527"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789781527"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45529414e54b55e474e"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4652"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "zahan@devjiaurum.com",
+    "name": "Zahan",
+    "designation": "Marketing Manager",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "55a4af0381f79bb3b84395a93ada3a1eaf5752b96ffdb4b8",
+    "openTrackingToken": "86c131e2c9d03b1e0d96751ab832fdc3ea4f373502f6779b",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789781681"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789781681"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a33f45529414e54b55e4754"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "email": "joy.jain@igi.org",
+    "name": "Joy",
+    "designation": "Operations Manager",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending",
+    "sequenceStageIndex": {
+      "$numberInt": "0"
+    },
+    "sequenceActive": true,
+    "lastSentAt": null,
+    "nextSendAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "emailsSentCount": {
+        "$numberInt": "0"
+      },
+      "replied": false,
+      "bounced": false
+    },
+    "unsubscribeToken": "d2d06d559db0f998cd6e62d954b4b7c309456c6301c3b137",
+    "openTrackingToken": "30ca1f9576cb09de9f27229ccc8ee40f433d300cbf9d9a2a",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789781828"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789781828"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143096cc4b99fb544a0e"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e463b"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "shivam@dialmaz.com",
+    "name": "Shivam",
+    "designation": "Head of Marketing",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797936815"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797936815"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143196cc4b99fb544a14"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e4642"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "dhakanithra@dhakanjewellers.ae",
+    "name": "Hitesh",
+    "designation": "Managing Director, Owner",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797937031"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797937031"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143196cc4b99fb544a18"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e463b"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "sushil@dialmaz.com",
+    "name": "Sushil",
+    "designation": "Managing Director",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797937205"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797937205"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143196cc4b99fb544a1e"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "eslam.salah@igi.org",
+    "name": "Eslam",
+    "designation": "Country Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797937425"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797937425"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143196cc4b99fb544a25"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e466c"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "iftikhar@myplanetguides.com",
+    "name": "Iftikhar",
+    "designation": "Managing Director",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797937655"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797937655"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143196cc4b99fb544a29"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e466c"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "waseem@myuaeguide.com",
+    "name": "Muhammad",
+    "designation": "Marketing Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797937784"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797937784"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143296cc4b99fb544a2f"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e4649"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "abdullah@jawharajewellery.com",
+    "name": "Abdullah",
+    "designation": "General Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797938019"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797938019"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143296cc4b99fb544a35"
+    },
+    "companyId": {
+      "$oid": "6a33f44f29414e54b55e467d"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "rashmi@devji.com",
+    "name": "Rashmi",
+    "designation": "Marketing Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797938235"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797938235"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143296cc4b99fb544a3b"
+    },
+    "companyId": {
+      "$oid": "6a33f44f29414e54b55e468f"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "kumud@kkjewels.com",
+    "name": "Kumud",
+    "designation": "Managing Director",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797938495"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797938495"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143296cc4b99fb544a3f"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "johan.dsouza@igi.org",
+    "name": "Johan",
+    "designation": "Regional Managing Director - MENA",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797938670"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797938670"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143296cc4b99fb544a43"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "sindhu@igi.org",
+    "name": "Sindhu",
+    "designation": "General Manager- Finance & Operations",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797938889"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797938889"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143396cc4b99fb544a47"
+    },
+    "companyId": {
+      "$oid": "6a33f44f29414e54b55e467d"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "jbharatji@devji.com",
+    "name": "Jaydeep",
+    "designation": "Joint Managing Director",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797939029"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797939029"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143396cc4b99fb544a4d"
+    },
+    "companyId": {
+      "$oid": "6a33f45029414e54b55e46af"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "hussain@lifestylegcc.com",
+    "name": "Khadim",
+    "designation": "Brand Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797939245"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797939245"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143396cc4b99fb544a51"
+    },
+    "companyId": {
+      "$oid": "6a33f45029414e54b55e46af"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "ashraf@lifestylegcc.com",
+    "name": "Ashraf",
+    "designation": "Sales Director",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797939405"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797939405"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143396cc4b99fb544a57"
+    },
+    "companyId": {
+      "$oid": "6a33f45129414e54b55e46bc"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "alessandro@italgold.it",
+    "name": "Alessandro",
+    "designation": "General Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797939645"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797939645"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143396cc4b99fb544a5d"
+    },
+    "companyId": {
+      "$oid": "6a33f45129414e54b55e46c3"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "l.galanti@ice.it",
+    "name": "Lorenzo",
+    "designation": "CEO and Managing Director",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797939875"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797939875"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143496cc4b99fb544a61"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e4649"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "karthik@jawharajewellery.ae",
+    "name": "Karthik",
+    "designation": "Marketing Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797940015"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797940015"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143496cc4b99fb544a67"
+    },
+    "companyId": {
+      "$oid": "6a33f45229414e54b55e46db"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "vishal.usapkar@irysgroup.com",
+    "name": "Vishal",
+    "designation": "Managing Director - Irys India",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797940235"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797940235"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143496cc4b99fb544a6d"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e465e"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "niall@colorjewels.net",
+    "name": "Niall",
+    "designation": "North America & Caribbean, Marketing Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797940444"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797940444"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143496cc4b99fb544a71"
+    },
+    "companyId": {
+      "$oid": "6a33f45129414e54b55e46c3"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "i.rokvic.ext@ice.it",
+    "name": "Ivana",
+    "designation": "Trade Analyst | Project & Event Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797940610"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797940610"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143496cc4b99fb544a77"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e465a"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "cihan@reneejewellers.com",
+    "name": "Cihan",
+    "designation": "Executive Marketing Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797940826"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797940826"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143496cc4b99fb544a7b"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "tehmasp@igi.org",
+    "name": "Tehmasp",
+    "designation": "Managing Director",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797940970"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797940970"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143596cc4b99fb544a7f"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e4649"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "sandesh@jawharajewellery.ae",
+    "name": "Sandesh",
+    "designation": "Brand Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797941102"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797941102"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143596cc4b99fb544a85"
+    },
+    "companyId": {
+      "$oid": "6a33f45329414e54b55e4700"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "jaffer@abida-jewellery.com",
+    "name": "Jaffer",
+    "designation": "Managing Director",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797941322"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797941322"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143596cc4b99fb544a89"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "aniket@igi.org",
+    "name": "Aniket",
+    "designation": "General Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797941480"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797941480"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143596cc4b99fb544a8d"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "renuka@igi.org",
+    "name": "Renuka",
+    "designation": "PR Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797941616"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797941616"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143596cc4b99fb544a91"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e4649"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "kuwait@jawharajewellery.com",
+    "name": "Kuwait",
+    "designation": "General Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797941765"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797941765"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143696cc4b99fb544a97"
+    },
+    "companyId": {
+      "$oid": "6a33f45329414e54b55e4717"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "swathi@lamarquisejewellery.com",
+    "name": "Swathi",
+    "designation": "Brand Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797942039"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797942039"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143696cc4b99fb544a9d"
+    },
+    "companyId": {
+      "$oid": "6a33f45129414e54b55e46d0"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "mahak@vmjewellery.com",
+    "name": "Mahak",
+    "designation": "Content Marketing Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797942280"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797942280"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143696cc4b99fb544aa1"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e4649"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "ajith@jawharajewellery.com",
+    "name": "Ajith",
+    "designation": "Operations Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797942435"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797942435"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143696cc4b99fb544aa8"
+    },
+    "companyId": {
+      "$oid": "6a33f45429414e54b55e472f"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "jemis@jamajewels.com",
+    "name": "Jemis",
+    "designation": "Managing Director",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797942665"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797942665"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143696cc4b99fb544aac"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e4649"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "vinu.menon@jawharajewellery.ae",
+    "name": "Vinu",
+    "designation": "Group General Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797942825"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797942825"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143796cc4b99fb544ab2"
+    },
+    "companyId": {
+      "$oid": "6a33f45529414e54b55e4741"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "zeyad@orgluxury.com",
+    "name": "Zeyad",
+    "designation": "Sales Director",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797943075"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797943075"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143796cc4b99fb544ab6"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "kapil.ladiwal@igi.org",
+    "name": "Kapil",
+    "designation": "Sales Marketing Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797943215"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797943215"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143796cc4b99fb544abc"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4652"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "zahan@devjiaurum.com",
+    "name": "Zahan",
+    "designation": "Marketing Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797943444"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797943444"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a34143796cc4b99fb544ac0"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "email": "joy.jain@igi.org",
+    "name": "Joy",
+    "designation": "Operations Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797943580"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797943580"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a096cc4b99fb545262"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e463b"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "shivam@dialmaz.com",
+    "name": "Shivam",
+    "designation": "Head of Marketing",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<0ddd2b6b-b4c3-3c39-5b74-b100c0d3d822@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798560961"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782719985166"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a196cc4b99fb545269"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e4642"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "dhakanithra@dhakanjewellers.ae",
+    "name": "Hitesh",
+    "designation": "Managing Director, Owner",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<a47d58a8-2029-5137-df33-8492df7a9d8c@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798561127"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782713995283"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a196cc4b99fb545270"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e463b"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "sushil@dialmaz.com",
+    "name": "Sushil",
+    "designation": "Managing Director",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<95597d61-43c1-f90f-a260-bd46a4d002d9@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798561271"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727482170"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a196cc4b99fb545277"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "eslam.salah@igi.org",
+    "name": "Eslam",
+    "designation": "Country Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<5a907f18-c59a-843f-4ee6-749d0ff24dca@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798561405"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782708654660"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a196cc4b99fb54527e"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e466c"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "iftikhar@myplanetguides.com",
+    "name": "Iftikhar",
+    "designation": "Managing Director",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<95d25fc8-a445-54f9-d8fb-cd749f762e4e@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798561555"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782724008083"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a196cc4b99fb545285"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e466c"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "waseem@myuaeguide.com",
+    "name": "Muhammad",
+    "designation": "Marketing Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<b50c6543-bc71-bb03-a9df-9066e935b612@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798561705"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782723288299"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a196cc4b99fb54528b"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e4649"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "abdullah@jawharajewellery.com",
+    "name": "Abdullah",
+    "designation": "General Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<2989255b-9643-616c-9e84-c2cbce604aef@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798561848"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782726956997"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a296cc4b99fb545292"
+    },
+    "companyId": {
+      "$oid": "6a33f44f29414e54b55e467d"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "rashmi@devji.com",
+    "name": "Rashmi",
+    "designation": "Marketing Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<aa16301a-507f-745c-1346-661af4cab581@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798562026"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727681847"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a296cc4b99fb54529a"
+    },
+    "companyId": {
+      "$oid": "6a33f44f29414e54b55e468f"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "kumud@kkjewels.com",
+    "name": "Kumud",
+    "designation": "Managing Director",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<090499ee-7407-8caf-387f-58130653a413@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798562200"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782725942846"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a296cc4b99fb5452a1"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "johan.dsouza@igi.org",
+    "name": "Johan",
+    "designation": "Regional Managing Director - MENA",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<6664ba3e-919f-0115-9936-767c94ec43d1@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798562338"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727297064"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a296cc4b99fb5452a8"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "sindhu@igi.org",
+    "name": "Sindhu",
+    "designation": "General Manager- Finance & Operations",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<211b8668-4433-88c6-7c2a-b81e133496db@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798562495"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782707709832"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a296cc4b99fb5452ae"
+    },
+    "companyId": {
+      "$oid": "6a33f44f29414e54b55e467d"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "jbharatji@devji.com",
+    "name": "Jaydeep",
+    "designation": "Joint Managing Director",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<8dfd122c-c172-9f5a-8433-2b9a23e82bdf@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798562643"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782720343190"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a296cc4b99fb5452b5"
+    },
+    "companyId": {
+      "$oid": "6a33f45029414e54b55e46af"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "hussain@lifestylegcc.com",
+    "name": "Khadim",
+    "designation": "Brand Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<12b54ae4-8182-90b1-2556-de6307630c94@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798562820"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782719984785"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a296cc4b99fb5452bc"
+    },
+    "companyId": {
+      "$oid": "6a33f45029414e54b55e46af"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "ashraf@lifestylegcc.com",
+    "name": "Ashraf",
+    "designation": "Sales Director",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<a28e57cb-e921-c908-ac65-5edaab60d2fc@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798562986"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727131969"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a396cc4b99fb5452c3"
+    },
+    "companyId": {
+      "$oid": "6a33f45129414e54b55e46bc"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "alessandro@italgold.it",
+    "name": "Alessandro",
+    "designation": "General Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<17defecc-9d10-eb8d-f268-56fbe1587f51@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798563129"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782726888445"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a396cc4b99fb5452cb"
+    },
+    "companyId": {
+      "$oid": "6a33f45129414e54b55e46c3"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "l.galanti@ice.it",
+    "name": "Lorenzo",
+    "designation": "CEO and Managing Director",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<39d202a4-e589-6d70-db87-47bd6e716c6f@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798563312"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782724008223"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a396cc4b99fb5452d2"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e4649"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "karthik@jawharajewellery.ae",
+    "name": "Karthik",
+    "designation": "Marketing Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<c40d1572-0eee-77a6-cb87-49ae5f698f89@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "2"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798563476"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782372808689"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a396cc4b99fb5452d9"
+    },
+    "companyId": {
+      "$oid": "6a33f45229414e54b55e46db"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "vishal.usapkar@irysgroup.com",
+    "name": "Vishal",
+    "designation": "Managing Director - Irys India",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<eb6e4148-ec73-8812-f6d1-403603f3ff31@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798563665"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727906868"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a396cc4b99fb5452e1"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e465e"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "niall@colorjewels.net",
+    "name": "Niall",
+    "designation": "North America & Caribbean, Marketing Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<b0908187-c52b-c8e2-bea4-9df4f0cb31b1@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798563830"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782711464253"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a396cc4b99fb5452e7"
+    },
+    "companyId": {
+      "$oid": "6a33f45129414e54b55e46c3"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "i.rokvic.ext@ice.it",
+    "name": "Ivana",
+    "designation": "Trade Analyst | Project & Event Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<dbfcbc82-4e2f-73af-a667-388c5ed2bc3a@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798563991"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727216774"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a496cc4b99fb5452ee"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e465a"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "cihan@reneejewellers.com",
+    "name": "Cihan",
+    "designation": "Executive Marketing Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<82f56993-4bd6-95b2-c38a-263c0c0aaecc@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798564160"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782713022621"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a496cc4b99fb5452f5"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "tehmasp@igi.org",
+    "name": "Tehmasp",
+    "designation": "Managing Director",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<f90a0716-7893-f875-d36f-979dd025c5c0@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798564330"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727826895"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a496cc4b99fb5452fc"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e4649"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "sandesh@jawharajewellery.ae",
+    "name": "Sandesh",
+    "designation": "Brand Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<81f5b99b-280f-9213-9bd5-48e8d90e051a@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798564489"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727751874"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a496cc4b99fb545303"
+    },
+    "companyId": {
+      "$oid": "6a33f45329414e54b55e4700"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "jaffer@abida-jewellery.com",
+    "name": "Jaffer",
+    "designation": "Managing Director",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<37507ed6-66b5-3a03-fd2e-bfaa33e82acf@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798564649"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782709362836"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a496cc4b99fb54530b"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "aniket@igi.org",
+    "name": "Aniket",
+    "designation": "General Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<8e692732-9780-d417-f550-8c1f4b23bd76@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798564808"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782710335043"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a496cc4b99fb545311"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "renuka@igi.org",
+    "name": "Renuka",
+    "designation": "PR Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<f77554c7-8565-3991-b26a-c68329910bce@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798564968"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782707709502"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a596cc4b99fb545318"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e4649"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "kuwait@jawharajewellery.com",
+    "name": "Kuwait",
+    "designation": "General Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<999e3488-f603-8156-e3a5-5084eb7d9d42@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798565113"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727581725"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a596cc4b99fb545320"
+    },
+    "companyId": {
+      "$oid": "6a33f45329414e54b55e4717"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "swathi@lamarquisejewellery.com",
+    "name": "Swathi",
+    "designation": "Brand Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<99719980-5c37-c004-3fbf-cce2b1dd8fe3@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798565270"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782728107138"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a596cc4b99fb545327"
+    },
+    "companyId": {
+      "$oid": "6a33f45129414e54b55e46d0"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "mahak@vmjewellery.com",
+    "name": "Mahak",
+    "designation": "Content Marketing Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<d50deb21-8231-6b16-0fe2-965a3ddcf92c@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798565422"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782712409554"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a596cc4b99fb54532e"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e4649"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "ajith@jawharajewellery.com",
+    "name": "Ajith",
+    "designation": "Operations Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<d566c413-8cbf-2472-7e90-905930f26ee7@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798565559"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782728006904"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a596cc4b99fb545335"
+    },
+    "companyId": {
+      "$oid": "6a33f45429414e54b55e472f"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "jemis@jamajewels.com",
+    "name": "Jemis",
+    "designation": "Managing Director",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<fd6d76d6-18d6-1411-2016-2a53b7713815@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798565695"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782720481371"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a596cc4b99fb54533c"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e4649"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "vinu.menon@jawharajewellery.ae",
+    "name": "Vinu",
+    "designation": "Group General Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<c7715361-aaac-f564-a94a-4ffa3a078b8d@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798565841"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782718838656"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a596cc4b99fb545343"
+    },
+    "companyId": {
+      "$oid": "6a33f45529414e54b55e4741"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "zeyad@orgluxury.com",
+    "name": "Zeyad",
+    "designation": "Sales Director",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<f9b3faae-a241-c670-0905-9b270a74b854@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798565983"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727392025"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a696cc4b99fb54534a"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "kapil.ladiwal@igi.org",
+    "name": "Kapil",
+    "designation": "Sales Marketing Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798566136"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781798566136"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a696cc4b99fb545351"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4652"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "zahan@devjiaurum.com",
+    "name": "Zahan",
+    "designation": "Marketing Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Emailed Outbound",
+    "lastMessageId": "<428bb22a-e79b-eaa2-801e-c6cc728d20f6@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "3"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798566278"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727051777"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "notes": "",
+      "response": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "accepted": false,
+      "connSent": false,
+      "dmResponded": false,
+      "dmSent": false,
+      "inmailResponded": false,
+      "inmailSent": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "response": "",
+      "sent": false
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "assessedBy": "",
+      "notes": "",
+      "referral": {
+        "designation": "",
+        "email": "",
+        "linkedinUrl": "",
+        "name": "",
+        "phone": ""
+      },
+      "status": "Unverified"
+    },
+    "relationshipProfile": {
+      "owner": "",
+      "reminderNotes": "",
+      "serviceCategories": [],
+      "status": "New"
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3416a696cc4b99fb545357"
+    },
+    "companyId": {
+      "$oid": "6a33f44e29414e54b55e4663"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "email": "joy.jain@igi.org",
+    "name": "Joy",
+    "designation": "Operations Manager",
+    "phone": "",
+    "sources": [
+      "Apollo"
+    ],
+    "primarySource": "Apollo",
+    "deliveryStatus": "Pending Inqueue",
+    "lastMessageId": "",
+    "repliedAt": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "0"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781798566438"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782674839527"
+      }
+    },
+    "coldCall": {
+      "made": false,
+      "date": null,
+      "response": "",
+      "notes": ""
+    },
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "linkedinOutreach": {
+      "connSent": false,
+      "connDate": null,
+      "accepted": false,
+      "acceptDate": null,
+      "inmailSent": false,
+      "inmailDate": null,
+      "inmailResponded": false,
+      "dmSent": false,
+      "dmDate": null,
+      "dmResponded": false,
+      "notes": ""
+    },
+    "linkedinUrl": "",
+    "outcome": "Pending",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsapp": {
+      "sent": false,
+      "date": null,
+      "response": ""
+    },
+    "whatsappNumber": "",
+    "pocQualification": {
+      "status": "Confirmed",
+      "assessedAt": {
+        "$date": {
+          "$numberLong": "1782310116146"
+        }
+      },
+      "assessedBy": "admin",
+      "notes": "",
+      "referral": {
+        "name": "",
+        "email": "",
+        "phone": "",
+        "designation": "",
+        "linkedinUrl": ""
+      },
+      "referredLeadId": null
+    },
+    "relationshipProfile": {
+      "status": "New",
+      "owner": "",
+      "serviceCategories": [],
+      "nextFollowUpAt": {
+        "$date": {
+          "$numberLong": "1783020420000"
+        }
+      },
+      "reminderNotes": ""
+    },
+    "version": {
+      "$numberInt": "0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3ebc4cac1ef3c5e876d44d"
+    },
+    "companyId": {
+      "$oid": "6a3ebc23ac1ef3c5e876d41c"
+    },
+    "campaignId": {
+      "$oid": "6a3ebb9eac1ef3c5e876d151"
+    },
+    "email": "rana.talhadxb@gmail.com",
+    "name": "Rana Talha",
+    "designation": "CEO",
+    "phone": "",
+    "linkedinUrl": "",
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsappNumber": "",
+    "linkedinOutreach": {
+      "connSent": false,
+      "connDate": null,
+      "accepted": false,
+      "acceptDate": null,
+      "inmailSent": false,
+      "inmailDate": null,
+      "inmailResponded": false,
+      "dmSent": false,
+      "dmDate": null,
+      "dmResponded": false,
+      "notes": ""
+    },
+    "coldCall": {
+      "made": false,
+      "date": null,
+      "response": "",
+      "notes": ""
+    },
+    "whatsapp": {
+      "sent": false,
+      "date": null,
+      "response": ""
+    },
+    "sources": [
+      "Manual"
+    ],
+    "primarySource": "Manual",
+    "deliveryStatus": "Emailed Outbound",
+    "outcome": "Pending",
+    "pocQualification": {
+      "status": "Unverified",
+      "assessedAt": {
+        "$date": {
+          "$numberLong": "1782496930613"
+        }
+      },
+      "assessedBy": "admin",
+      "notes": "",
+      "referral": {
+        "name": "",
+        "email": "",
+        "phone": "",
+        "designation": "",
+        "linkedinUrl": ""
+      },
+      "referredLeadId": null
+    },
+    "relationshipProfile": {
+      "status": "New",
+      "owner": "",
+      "serviceCategories": [],
+      "nextFollowUpAt": null,
+      "reminderNotes": ""
+    },
+    "lastMessageId": "<e3b9d968-2926-ee27-9d0f-40448bb1b4fa@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "version": {
+      "$numberInt": "0"
+    },
+    "deletedAt": null,
+    "deletedBy": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "1"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782496332452"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782496930615"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3ebeeaffbf80bd617384e3"
+    },
+    "companyId": {
+      "$oid": "6a3ebc23ac1ef3c5e876d41c"
+    },
+    "campaignId": {
+      "$oid": "6a3ebb9eac1ef3c5e876d151"
+    },
+    "email": "m.talha2703@gmail.com",
+    "name": "RANAAAAA VASTAYKANA",
+    "designation": "CFO",
+    "phone": "",
+    "linkedinUrl": "",
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsappNumber": "",
+    "linkedinOutreach": {
+      "connSent": false,
+      "connDate": null,
+      "accepted": false,
+      "acceptDate": null,
+      "inmailSent": false,
+      "inmailDate": null,
+      "inmailResponded": false,
+      "dmSent": false,
+      "dmDate": null,
+      "dmResponded": false,
+      "notes": ""
+    },
+    "coldCall": {
+      "made": false,
+      "date": null,
+      "response": "",
+      "notes": ""
+    },
+    "whatsapp": {
+      "sent": false,
+      "date": null,
+      "response": ""
+    },
+    "sources": [
+      "Manual"
+    ],
+    "primarySource": "Manual",
+    "deliveryStatus": "Replied",
+    "outcome": "Pending",
+    "pocQualification": {
+      "referral": {
+        "name": "",
+        "email": "",
+        "phone": "",
+        "designation": "",
+        "linkedinUrl": ""
+      },
+      "status": "Unverified",
+      "assessedAt": null,
+      "assessedBy": "",
+      "notes": "",
+      "referredLeadId": null
+    },
+    "relationshipProfile": {
+      "status": "New",
+      "owner": "",
+      "serviceCategories": [],
+      "nextFollowUpAt": null,
+      "reminderNotes": ""
+    },
+    "lastMessageId": "<da527032-f01f-4f37-0ebb-32178fcef721@exhibitgraphicsign.com>",
+    "repliedAt": {
+      "$date": {
+        "$numberLong": "1782497095541"
+      }
+    },
+    "version": {
+      "$numberInt": "0"
+    },
+    "deletedAt": null,
+    "deletedBy": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "1"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782497002481"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782497095695"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3f06e324f7c2264ea93fc1"
+    },
+    "companyId": {
+      "$oid": "6a3ebc23ac1ef3c5e876d41c"
+    },
+    "campaignId": {
+      "$oid": "6a3ebb9eac1ef3c5e876d151"
+    },
+    "email": "nadeemtalha83@gmail.com",
+    "name": "RANA Talha",
+    "designation": "Manager",
+    "phone": "",
+    "linkedinUrl": "",
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsappNumber": "",
+    "linkedinOutreach": {
+      "connSent": false,
+      "connDate": null,
+      "accepted": false,
+      "acceptDate": null,
+      "inmailSent": false,
+      "inmailDate": null,
+      "inmailResponded": false,
+      "dmSent": false,
+      "dmDate": null,
+      "dmResponded": false,
+      "notes": ""
+    },
+    "coldCall": {
+      "made": false,
+      "date": null,
+      "response": "",
+      "notes": ""
+    },
+    "whatsapp": {
+      "sent": false,
+      "date": null,
+      "response": ""
+    },
+    "sources": [
+      "Manual"
+    ],
+    "primarySource": "Manual",
+    "deliveryStatus": "Emailed Outbound",
+    "outcome": "Pending",
+    "pocQualification": {
+      "referral": {
+        "name": "",
+        "email": "",
+        "phone": "",
+        "designation": "",
+        "linkedinUrl": ""
+      },
+      "status": "Unverified",
+      "assessedAt": null,
+      "assessedBy": "",
+      "notes": "",
+      "referredLeadId": null
+    },
+    "relationshipProfile": {
+      "status": "New",
+      "owner": "",
+      "serviceCategories": [],
+      "nextFollowUpAt": null,
+      "reminderNotes": ""
+    },
+    "lastMessageId": "<4d53b6cd-0594-5bba-7ad7-3adbb742940d@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "version": {
+      "$numberInt": "0"
+    },
+    "deletedAt": null,
+    "deletedBy": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "1"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782515427771"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782515480879"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a41a522b62ed59729ddacaf"
+    },
+    "companyId": {
+      "$oid": "6a3ebc23ac1ef3c5e876d41c"
+    },
+    "campaignId": {
+      "$oid": "6a3ebb9eac1ef3c5e876d151"
+    },
+    "email": "nadeemtalha104@gmail.com",
+    "name": "Rana Talha",
+    "designation": "CHAPRI",
+    "phone": "",
+    "linkedinUrl": "",
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsappNumber": "",
+    "linkedinOutreach": {
+      "connSent": false,
+      "connDate": null,
+      "accepted": false,
+      "acceptDate": null,
+      "inmailSent": false,
+      "inmailDate": null,
+      "inmailResponded": false,
+      "dmSent": false,
+      "dmDate": null,
+      "dmResponded": false,
+      "notes": ""
+    },
+    "coldCall": {
+      "made": false,
+      "date": null,
+      "response": "",
+      "notes": ""
+    },
+    "whatsapp": {
+      "sent": false,
+      "date": null,
+      "response": ""
+    },
+    "sources": [
+      "Manual"
+    ],
+    "primarySource": "Manual",
+    "deliveryStatus": "Emailed Outbound",
+    "outcome": "Pending",
+    "pocQualification": {
+      "referral": {
+        "name": "",
+        "email": "",
+        "phone": "",
+        "designation": "",
+        "linkedinUrl": ""
+      },
+      "status": "Unverified",
+      "assessedAt": null,
+      "assessedBy": "",
+      "notes": "",
+      "referredLeadId": null
+    },
+    "relationshipProfile": {
+      "status": "New",
+      "owner": "",
+      "serviceCategories": [],
+      "nextFollowUpAt": null,
+      "reminderNotes": ""
+    },
+    "lastMessageId": "<26ab5092-b0b3-4d3a-254c-4c7e67553226@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "version": {
+      "$numberInt": "0"
+    },
+    "deletedAt": null,
+    "deletedBy": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "1"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782687010934"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782687258714"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a43a38bc7deaff7f78d0cac"
+    },
+    "companyId": {
+      "$oid": "6a43a38bc7deaff7f78d0ca9"
+    },
+    "campaignId": {
+      "$oid": "6a3ebb9eac1ef3c5e876d151"
+    },
+    "email": "uzairmasuood@gmail.com",
+    "name": "Uzair",
+    "designation": "",
+    "phone": "",
+    "linkedinUrl": "",
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsappNumber": "",
+    "linkedinOutreach": {
+      "connSent": false,
+      "connDate": null,
+      "accepted": false,
+      "acceptDate": null,
+      "inmailSent": false,
+      "inmailDate": null,
+      "inmailResponded": false,
+      "dmSent": false,
+      "dmDate": null,
+      "dmResponded": false,
+      "notes": ""
+    },
+    "coldCall": {
+      "made": false,
+      "date": null,
+      "response": "",
+      "notes": ""
+    },
+    "whatsapp": {
+      "sent": false,
+      "date": null,
+      "response": ""
+    },
+    "sources": [
+      "Manual"
+    ],
+    "primarySource": "Manual",
+    "deliveryStatus": "Replied",
+    "outcome": "Pending",
+    "pocQualification": {
+      "status": "Confirmed",
+      "assessedAt": {
+        "$date": {
+          "$numberLong": "1782817679692"
+        }
+      },
+      "assessedBy": "admin",
+      "notes": "",
+      "referral": {
+        "name": "",
+        "email": "",
+        "phone": "",
+        "designation": "",
+        "linkedinUrl": ""
+      },
+      "referredLeadId": null
+    },
+    "relationshipProfile": {
+      "status": "New",
+      "owner": "",
+      "serviceCategories": [],
+      "nextFollowUpAt": null,
+      "reminderNotes": ""
+    },
+    "lastMessageId": "<6fdb6166-dcf0-2d13-be8e-90166e74b85a@exhibitgraphicsign.com>",
+    "repliedAt": {
+      "$date": {
+        "$numberLong": "1782828776007"
+      }
+    },
+    "version": {
+      "$numberInt": "0"
+    },
+    "deletedAt": null,
+    "deletedBy": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "4"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782817675692"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782828776249"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a43afe97bbd9dd2325c7dca"
+    },
+    "companyId": {
+      "$oid": "6a3ebc23ac1ef3c5e876d41c"
+    },
+    "campaignId": {
+      "$oid": "6a3ebb9eac1ef3c5e876d151"
+    },
+    "email": "rana.talha2703@gmail.com",
+    "name": "UZAIR",
+    "designation": "CEO",
+    "phone": "0551122578",
+    "linkedinUrl": "",
+    "emailApollo": "",
+    "emailHunter": "",
+    "emailLusha": "",
+    "phoneLusha1": "",
+    "phoneLusha2": "",
+    "whatsappNumber": "",
+    "linkedinOutreach": {
+      "connSent": false,
+      "connDate": null,
+      "accepted": false,
+      "acceptDate": null,
+      "inmailSent": false,
+      "inmailDate": null,
+      "inmailResponded": false,
+      "dmSent": false,
+      "dmDate": null,
+      "dmResponded": false,
+      "notes": ""
+    },
+    "coldCall": {
+      "made": false,
+      "date": null,
+      "response": "",
+      "notes": ""
+    },
+    "whatsapp": {
+      "sent": false,
+      "date": null,
+      "response": ""
+    },
+    "sources": [
+      "Manual"
+    ],
+    "primarySource": "Manual",
+    "deliveryStatus": "Emailed Outbound",
+    "outcome": "Pending",
+    "pocQualification": {
+      "referral": {
+        "name": "",
+        "email": "",
+        "phone": "",
+        "designation": "",
+        "linkedinUrl": ""
+      },
+      "status": "Unverified",
+      "assessedAt": null,
+      "assessedBy": "",
+      "notes": "",
+      "referredLeadId": null
+    },
+    "relationshipProfile": {
+      "status": "New",
+      "owner": "",
+      "serviceCategories": [],
+      "nextFollowUpAt": null,
+      "reminderNotes": ""
+    },
+    "lastMessageId": "<ab065ab4-34c8-8499-8fbb-c6adf97444ae@exhibitgraphicsign.com>",
+    "repliedAt": null,
+    "version": {
+      "$numberInt": "0"
+    },
+    "deletedAt": null,
+    "deletedBy": null,
+    "financialMetrics": {
+      "tokensConsumed": {
+        "$numberInt": "0"
+      },
+      "calculatedAiCostUSD": {
+        "$numberInt": "0"
+      }
+    },
+    "trackingMetrics": {
+      "emailsDeliveredCount": {
+        "$numberInt": "1"
+      },
+      "isOpened": false,
+      "totalOpenCount": {
+        "$numberInt": "0"
+      },
+      "lastOpenTimestamp": null
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782820841851"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782820932127"
+      }
+    }
+  }
+]

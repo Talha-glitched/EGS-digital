@@ -5,7 +5,7 @@ import { Alert, Field } from '../ui/primitives.jsx';
 import SearchableSelect from '../ui/SearchableSelect.jsx';
 import { ModalActionFooter, ModalFieldList, ModalSection, ModalStack } from '../ui/workspaceModalParts.jsx';
 import AddCompanyModal from '../leads/AddCompanyModal.jsx';
-import { createOpportunity } from '../../crmApi.js';
+import { createOpportunity, fetchCompanyDetails, fetchGlobalCompanies } from '../../crmApi.js';
 
 function emptyForm(owner = '') {
   return {
@@ -35,6 +35,8 @@ export default function CreateOpportunityModal({
   const [error, setError] = useState('');
   const [showAddCompany, setShowAddCompany] = useState(false);
   const [localCompanies, setLocalCompanies] = useState(companies);
+  const [companyContacts, setCompanyContacts] = useState([]);
+  const [loadingContacts, setLoadingContacts] = useState(false);
 
   useEffect(() => {
     setLocalCompanies(companies);
@@ -66,17 +68,47 @@ export default function CreateOpportunityModal({
 
   const contactOptions = useMemo(() => {
     const companyId = form.companyId;
-    return contacts
-      .filter((contact) => !companyId || String(contact.companyId?._id || contact.companyId) === String(companyId))
+    const source = companyContacts.length
+      ? companyContacts
+      : contacts.filter((contact) => !companyId || String(contact.companyId?._id || contact.companyId) === String(companyId));
+    return source
       .map((contact) => ({
         value: contact._id,
         label: contact.name || contact.email,
         hint: [contact.designation, contact.email].filter(Boolean).join(' · '),
       }));
-  }, [contacts, form.companyId]);
+  }, [companyContacts, contacts, form.companyId]);
+
+  useEffect(() => {
+    if (!open || !form.companyId) {
+      setCompanyContacts([]);
+      setLoadingContacts(false);
+      return;
+    }
+    let cancelled = false;
+    setLoadingContacts(true);
+    fetchCompanyDetails(form.companyId)
+      .then((data) => {
+        if (!cancelled) setCompanyContacts(data?.leads || []);
+      })
+      .catch(() => {
+        if (!cancelled) setCompanyContacts([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingContacts(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [open, form.companyId]);
 
   function update(field, value) {
-    setForm((prev) => ({ ...prev, [field]: value }));
+    setForm((prev) => {
+      if (field === 'companyId') {
+        return { ...prev, companyId: value, primaryLeadId: '' };
+      }
+      return { ...prev, [field]: value };
+    });
   }
 
   async function handleSubmit(event) {
@@ -156,6 +188,15 @@ export default function CreateOpportunityModal({
                       emptyLabel="No companies match. Create one below."
                       onCreateNew={() => setShowAddCompany(true)}
                       createLabel="Create new company"
+                      onSearch={async (query) => {
+                        const data = await fetchGlobalCompanies({ search: query, page: 1, limit: 25 });
+                        return (data.items || []).map((company) => ({
+                          value: company._id,
+                          label: company.companyName,
+                          hint: company.domain || company.city || '',
+                        }));
+                      }}
+                      minQueryLength={2}
                       required
                     />
                   </Field>
@@ -178,8 +219,9 @@ export default function CreateOpportunityModal({
                       options={contactOptions}
                       placeholder={form.companyId ? 'Select contact…' : 'Select a company first'}
                       searchPlaceholder="Search contacts…"
-                      emptyLabel={form.companyId ? 'No contacts for this company.' : 'Choose a company first.'}
+                      emptyLabel={form.companyId ? (loadingContacts ? 'Loading company contacts…' : 'No contacts for this company.') : 'Choose a company first.'}
                       disabled={!form.companyId}
+                      searching={loadingContacts}
                     />
                   </Field>
 

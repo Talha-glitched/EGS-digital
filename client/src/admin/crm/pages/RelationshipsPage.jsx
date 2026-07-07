@@ -1,8 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchGlobalLeads, deleteLeadWithUndo } from '../crmApi.js';
+import { fetchGlobalLeads, deleteLeadWithUndo, deleteLeads } from '../crmApi.js';
 import DeleteIconButton from '../components/ui/DeleteIconButton.jsx';
 import ClickableTableRow, { stopRowClick } from '../components/ui/ClickableTableRow.jsx';
+import { BulkSelectHeaderCell, BulkSelectRowCell, BulkSelectionBar } from '../components/ui/BulkSelectTable.jsx';
+import { useRowSelection } from '../hooks/useRowSelection.js';
+import { useBulkDelete } from '../hooks/useBulkDelete.js';
+import { useTableSort } from '../hooks/useTableSort.js';
+import { relationshipSortAccessors } from '../hooks/tableSortAccessors.js';
+import { SortableTableHeader, TableSortIndicator } from '../components/ui/SortableTableHeader.jsx';
 import { useConfirmDelete } from '../hooks/useConfirmDelete.js';
 import {
   PageShell,
@@ -33,6 +39,28 @@ function initials(name = '') {
   const parts = name.trim().split(/\s+/).filter(Boolean);
   if (!parts.length) return '—';
   return (parts[0][0] + (parts[1]?.[0] || '')).toUpperCase();
+}
+
+function formatLastInteraction(value) {
+  if (!value) return 'No interactions';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'No interactions';
+  return date.toLocaleString('en-AE', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
+function lastInteractionTone(value) {
+  if (!value) return 'neutral';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'neutral';
+  const days = (Date.now() - date.getTime()) / 86400000;
+  if (days <= 14) return 'success';
+  if (days <= 60) return 'info';
+  if (days <= 180) return 'warning';
+  return 'neutral';
 }
 
 function formatFollowUp(value) {
@@ -66,6 +94,7 @@ export default function RelationshipsPage() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(50);
   const [selectedLead, setSelectedLead] = useState(null);
+  const [bulkDeleting, setBulkDeleting] = useState(false);
 
   const leadFilterSchema = useMemo(
     () => buildLeadFilterSchema({
@@ -113,13 +142,26 @@ export default function RelationshipsPage() {
     loadData();
   }, [page, limit, advancedActiveCount]);
 
-  const tableLeads = useMemo(() => {
-    if (!advancedActiveCount) return leads;
-    const start = (page - 1) * limit;
-    return advancedFilteredLeads.slice(start, start + limit);
-  }, [advancedActiveCount, advancedFilteredLeads, leads, page, limit]);
-
   const tableTotal = advancedActiveCount ? advancedFilteredLeads.length : total;
+
+  const { sortKey, sortDir, sortLabel, toggleSort, clearSort, sortItems } = useTableSort({
+    defaultKey: 'nextFollowUp',
+    defaultDir: 'asc',
+    accessors: relationshipSortAccessors,
+  });
+
+  const sortedLeads = useMemo(() => {
+    const base = advancedActiveCount ? advancedFilteredLeads : leads;
+    return sortItems(base);
+  }, [advancedActiveCount, advancedFilteredLeads, leads, sortItems]);
+
+  const tableLeads = useMemo(() => {
+    if (!advancedActiveCount) return sortedLeads;
+    const start = (page - 1) * limit;
+    return sortedLeads.slice(start, start + limit);
+  }, [advancedActiveCount, sortedLeads, page, limit]);
+
+  const selection = useRowSelection(tableLeads);
 
   const handleLimitChange = (nextLimit) => {
     setLimit(nextLimit);
@@ -157,6 +199,33 @@ export default function RelationshipsPage() {
     onRestored: () => loadData(),
     defaultConfirm: 'Delete this contact? You can undo within 30 seconds.',
   });
+
+  const runBulkDeleteLeads = useBulkDelete({
+    resourceType: 'lead',
+    bulkDeleteFn: deleteLeads,
+    getLabelForId: (id) => {
+      const lead = leads.find((l) => l._id === id);
+      return `Deleted contact: ${lead?.name || lead?.email || 'Contact'}`;
+    },
+    defaultConfirm: 'Delete these contacts? You can undo each within 30 seconds.',
+    onRemoved: (ids) => {
+      setLeads((prev) => prev.filter((l) => !ids.includes(l._id)));
+      if (selectedLead && ids.includes(selectedLead._id)) setSelectedLead(null);
+      selection.clearSelection();
+    },
+    onRestored: () => loadData(),
+  });
+
+  async function handleBulkDelete() {
+    setBulkDeleting(true);
+    try {
+      await runBulkDeleteLeads(selection.selectedArray, { noun: 'contact' });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setBulkDeleting(false);
+    }
+  }
 
   async function deleteLeadItem(lead) {
     try {
@@ -206,7 +275,7 @@ export default function RelationshipsPage() {
             <EmptyState
               icon={HeartHandshake}
               title="No right POCs yet"
-              description="Mark contacts as Right POC in the contact manager, then use the Relationship tab to set service fit, owner, and follow-up timing."
+              description="Mark contacts as Right POC in the contact manager, then use the Relationship tab to set owner, follow-up timing, and notes."
               action={<Link to="/admin/crm/people" className="crm-btn-secondary">Browse all contacts</Link>}
             />
           ) : (
@@ -219,27 +288,47 @@ export default function RelationshipsPage() {
                 onLimitChange={handleLimitChange}
                 noun="right POCs"
               />
-              <DataTableShell minWidth={1100}>
+              <BulkSelectionBar
+                count={selection.selectionCount}
+                noun="contact"
+                onDelete={handleBulkDelete}
+                onClear={selection.clearSelection}
+                deleting={bulkDeleting}
+              />
+              <TableSortIndicator
+                sortKey={sortKey}
+                sortDir={sortDir}
+                sortLabel={sortLabel}
+                onToggle={() => toggleSort(sortKey)}
+                onClear={clearSort}
+              />
+              <DataTableShell minWidth={1100} className="is-below-stats">
               <table className="crm-table min-w-[1100px]">
                 <thead>
                   <tr className="crm-table-head">
-                    <th>Contact</th>
-                    <th>Company</th>
-                    <th>Service fit</th>
-                    <th>Relationship</th>
-                    <th>Owner</th>
-                    <th>Next follow-up</th>
-                    <th>Notes</th>
+                    <BulkSelectHeaderCell selection={selection} ariaLabel="Select all contacts" />
+                    <SortableTableHeader label="Contact" sortKey="name" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                    <SortableTableHeader label="Company" sortKey="companyName" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                    <SortableTableHeader label="Last interaction" sortKey="lastInteraction" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                    <SortableTableHeader label="Relationship" sortKey="relationshipStatus" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                    <SortableTableHeader label="Owner" sortKey="owner" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                    <SortableTableHeader label="Next follow-up" sortKey="nextFollowUp" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                    <SortableTableHeader label="Notes" sortKey="notes" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
                     <th className="text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {tableLeads.map((lead) => {
                     const profile = lead.relationshipProfile || {};
-                    const categories = profile.serviceCategories || [];
                     const dueTone = followUpTone(profile.nextFollowUpAt);
+                    const interactionTone = lastInteractionTone(lead.lastInteractionAt);
                     return (
                       <ClickableTableRow key={lead._id} onClick={() => openDrawer(lead)}>
+                        <BulkSelectRowCell
+                          id={lead._id}
+                          selection={selection}
+                          ariaLabel={`Select ${lead.name || 'contact'}`}
+                        />
                         <td>
                           <div className="flex items-center gap-3">
                             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-soft text-[11px] font-bold text-brand">
@@ -258,22 +347,7 @@ export default function RelationshipsPage() {
                           <div className="truncate text-xs text-neutral-400">{lead.campaignName}</div>
                         </td>
                         <td>
-                          {categories.length ? (
-                            <div className="flex max-w-[220px] flex-wrap gap-1">
-                              {categories.slice(0, 2).map((category) => (
-                                <span key={category} className="rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-medium text-neutral-600">
-                                  {category}
-                                </span>
-                              ))}
-                              {categories.length > 2 && (
-                                <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-medium text-neutral-500">
-                                  +{categories.length - 2}
-                                </span>
-                              )}
-                            </div>
-                          ) : (
-                            <span className="text-xs text-neutral-400">Not tagged</span>
-                          )}
+                          <Badge tone={interactionTone}>{formatLastInteraction(lead.lastInteractionAt)}</Badge>
                         </td>
                         <td>
                           <RelationshipStatusBadge status={profile.status || 'New'} compact />

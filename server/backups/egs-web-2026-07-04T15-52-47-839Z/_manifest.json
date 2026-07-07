@@ -1,0 +1,32 @@
+{
+  "database": "egs-web",
+  "createdAt": "2026-07-04T15-52-47-839Z",
+  "counts": {
+    "globalsettings": 1,
+    "blendjobs": 1,
+    "sequenceenrollments": 42,
+    "pipelineconfigs": 0,
+    "recordrevisions": 11,
+    "dripsequences": 0,
+    "replies": 2,
+    "sendevents": 0,
+    "opportunities": 2,
+    "sequences": 2,
+    "leadcampaigns": 1,
+    "recipients": 0,
+    "campaigns": 0,
+    "revenueentries": 0,
+    "sendjobs": 112,
+    "companies": 31,
+    "analyticssnapshots": 1253,
+    "suppressions": 0,
+    "users": 2,
+    "auditlogs": 13,
+    "leads": 114,
+    "projectcampaigns": 5,
+    "pages": 0,
+    "contactinteractions": 1,
+    "mailboxdailyquotas": 0,
+    "tasks": 7
+  }
+}

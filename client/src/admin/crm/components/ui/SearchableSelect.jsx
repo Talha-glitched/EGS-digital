@@ -17,28 +17,39 @@ export default function SearchableSelect({
   menuMinWidth = 0,
   onCreateNew,
   createLabel = 'Create new',
+  onSearch,
+  searching = false,
+  minQueryLength = 0,
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [asyncOptions, setAsyncOptions] = useState([]);
+  const [internalSearching, setInternalSearching] = useState(false);
   const [menuCoords, setMenuCoords] = useState({ top: 0, left: 0, width: 0 });
   const rootRef = useRef(null);
   const inputRef = useRef(null);
   const listId = useId();
   const overlayId = useId();
+  const isAsync = Boolean(onSearch);
+  const isSearching = searching || internalSearching;
+
+  const optionPool = isAsync ? asyncOptions : options;
 
   const selected = useMemo(
-    () => options.find((option) => String(option.value) === String(value)),
-    [options, value],
+    () => options.find((option) => String(option.value) === String(value))
+      || asyncOptions.find((option) => String(option.value) === String(value)),
+    [options, asyncOptions, value],
   );
 
   const filtered = useMemo(() => {
+    if (isAsync) return optionPool;
     const term = query.trim().toLowerCase();
     if (!term) return options;
     return options.filter((option) => {
       const haystack = `${option.label || ''} ${option.hint || ''}`.toLowerCase();
       return haystack.includes(term);
     });
-  }, [options, query]);
+  }, [isAsync, optionPool, options, query]);
 
   const updateMenuPosition = () => {
     const el = rootRef.current;
@@ -97,8 +108,35 @@ export default function SearchableSelect({
     }
   }, [open]);
 
+  useEffect(() => {
+    if (!open || !onSearch) return undefined;
+    const term = query.trim();
+    if (term.length < minQueryLength) {
+      setAsyncOptions([]);
+      return undefined;
+    }
+
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      setInternalSearching(true);
+      try {
+        const result = await onSearch(term);
+        if (!cancelled) setAsyncOptions(Array.isArray(result) ? result : []);
+      } catch {
+        if (!cancelled) setAsyncOptions([]);
+      } finally {
+        if (!cancelled) setInternalSearching(false);
+      }
+    }, 250);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [open, query, onSearch, minQueryLength]);
+
   function selectOption(option) {
-    onChange?.(option.value);
+    onChange?.(option.value, option);
     setOpen(false);
     setQuery('');
   }
@@ -147,7 +185,9 @@ export default function SearchableSelect({
               </button>
             )}
 
-            {filtered.length ? filtered.map((option) => {
+            {isSearching ? (
+              <p className="px-3 py-4 text-center text-xs text-neutral-500">Searching…</p>
+            ) : filtered.length ? filtered.map((option) => {
               const active = String(option.value) === String(value);
               return (
                 <button

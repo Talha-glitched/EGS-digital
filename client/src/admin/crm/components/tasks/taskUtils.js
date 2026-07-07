@@ -59,6 +59,7 @@ export function dueTaskTone(task) {
 
 export function normalizeTaskId(value) {
   if (!value) return '';
+  if (typeof value === 'object' && value.id) return value.id;
   if (typeof value === 'string') return value;
   return value._id || '';
 }
@@ -76,24 +77,43 @@ export function companyFromOpportunity(opportunityId, opportunities = []) {
   return opp?.companyId || null;
 }
 
+export function campaignIdFromOpportunity(opportunityId, opportunities = []) {
+  if (!opportunityId) return null;
+  const opp = opportunities.find((item) => String(item._id) === String(opportunityId));
+  if (!opp?.campaignId) return null;
+  return normalizeTaskId(opp.campaignId) || null;
+}
+
 
 export async function loadOwnerOptions(fallbackTasks = [], extraOwners = []) {
   try {
     const users = await fetchActiveUsers();
-    const fromUsers = users.map((u) => u.displayName).filter(Boolean);
-    return buildOwnerOptions(fallbackTasks, [...fromUsers, ...extraOwners]);
+    return buildOwnerOptions(fallbackTasks, extraOwners, users);
   } catch {
     return buildOwnerOptions(fallbackTasks, extraOwners);
   }
 }
 
-export function buildOwnerOptions(tasks = [], extraOwners = []) {
+export function buildOwnerOptions(tasks = [], extraOwners = [], activeUsers = []) {
   const owners = new Set(DEFAULT_TASK_OWNERS);
+  const options = [];
+  const seen = new Set();
+  const pushOption = (value, label = value, hint = '') => {
+    const key = String(value || '').trim();
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    options.push({ value: key, label, hint });
+  };
+  activeUsers.forEach((user) => {
+    if (user?.displayName) owners.add(user.displayName);
+    pushOption(user?.displayName, user?.displayName, user?.email || user?.role || '');
+  });
   tasks.forEach((task) => {
     if (task.owner) owners.add(task.owner);
   });
   extraOwners.forEach((owner) => {
     if (owner) owners.add(owner);
   });
-  return [...owners].sort((a, b) => a.localeCompare(b));
+  [...owners].sort((a, b) => a.localeCompare(b)).forEach((owner) => pushOption(owner, owner));
+  return options;
 }

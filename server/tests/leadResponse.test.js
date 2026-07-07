@@ -4,12 +4,23 @@ import {
   getLeadResponseMeta,
   getCompanyResponseMeta,
   enrichLeadsWithResponse,
+  getLeadLastInteractionAt,
 } from '../src/utils/leadResponse.js';
 
 test('getLeadResponseMeta detects email replies', () => {
   const meta = getLeadResponseMeta({
     deliveryStatus: 'Replied',
     repliedAt: '2026-01-10T10:00:00.000Z',
+  });
+  assert.equal(meta.hasResponded, true);
+  assert.deepEqual(meta.responseChannels, ['email']);
+});
+
+test('getLeadResponseMeta treats positive outcomes as responses', () => {
+  const meta = getLeadResponseMeta({
+    deliveryStatus: 'Emailed Outbound',
+    outcome: 'Call Scheduled',
+    updatedAt: '2026-02-01T09:00:00.000Z',
   });
   assert.equal(meta.hasResponded, true);
   assert.deepEqual(meta.responseChannels, ['email']);
@@ -44,4 +55,28 @@ test('enrichLeadsWithResponse includes inbound manual interactions', () => {
   );
   assert.equal(lead.hasResponded, true);
   assert.ok(lead.responseChannels.includes('manual'));
+});
+
+test('buildLatestInteractionByLead includes related contacts', async () => {
+  const { buildLatestInteractionByLead } = await import('../src/utils/leadResponse.js');
+  const map = buildLatestInteractionByLead([
+    {
+      leadId: 'primary',
+      relatedLeadIds: ['secondary'],
+      occurredAt: '2026-05-01T10:00:00.000Z',
+    },
+  ]);
+  assert.equal(map.get('primary')?.toISOString(), '2026-05-01T10:00:00.000Z');
+  assert.equal(map.get('secondary')?.toISOString(), '2026-05-01T10:00:00.000Z');
+});
+
+test('getLeadLastInteractionAt uses latest manual interaction and lead touchpoints', () => {
+  const at = getLeadLastInteractionAt(
+    {
+      repliedAt: '2026-01-10T10:00:00.000Z',
+      coldCall: { date: '2026-02-01T09:00:00.000Z' },
+    },
+    { latestManualAt: new Date('2026-03-15T12:00:00.000Z') },
+  );
+  assert.equal(at, '2026-03-15T12:00:00.000Z');
 });

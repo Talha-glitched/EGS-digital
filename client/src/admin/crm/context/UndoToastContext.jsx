@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
-import { restoreRecord } from '../crmApi.js';
+import { notifyWorkspaceChanged, restoreRecord } from '../crmApi.js';
 
 const UndoToastContext = createContext(null);
 const UNDO_DURATION_MS = 30000;
@@ -40,6 +40,7 @@ export function UndoToastProvider({ children }) {
       setToasts((prev) => prev.map((t) => (t.id === toastId ? { ...t, busy: true } : t)));
       try {
         await restoreRecord(toast.resourceType, toast.resourceId);
+        notifyWorkspaceChanged({ entity: toast.resourceType, action: 'restore', id: toast.resourceId });
         toast.onRestored?.();
         dismissUndo(toastId);
       } catch {

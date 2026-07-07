@@ -1,0 +1,115 @@
+[
+  {
+    "_id": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "projectName": "GISEC Outreach",
+    "exhibition": "GITEX",
+    "targetCompaniesCount": {
+      "$numberInt": "0"
+    },
+    "companiesWithPocsFound": {
+      "$numberInt": "19"
+    },
+    "companiesRespondedCount": {
+      "$numberInt": "0"
+    },
+    "financialLedger": {
+      "allocatedToolBudget": {
+        "$numberInt": "100"
+      },
+      "domainFixedCosts": {
+        "$numberInt": "15"
+      },
+      "accumulatedOpenAiCost": {
+        "$numberInt": "0"
+      },
+      "totalProjectCost": {
+        "$numberInt": "115"
+      },
+      "validatedRevenueWon": {
+        "$numberInt": "0"
+      }
+    },
+    "status": "draft",
+    "toolMetrics": {
+      "Apollo": {
+        "sentCount": {
+          "$numberInt": "0"
+        },
+        "openCount": {
+          "$numberInt": "0"
+        },
+        "replyCount": {
+          "$numberInt": "0"
+        },
+        "bounceCount": {
+          "$numberInt": "0"
+        }
+      },
+      "Hunter": {
+        "sentCount": {
+          "$numberInt": "0"
+        },
+        "openCount": {
+          "$numberInt": "0"
+        },
+        "replyCount": {
+          "$numberInt": "0"
+        },
+        "bounceCount": {
+          "$numberInt": "0"
+        }
+      },
+      "Lusha": {
+        "sentCount": {
+          "$numberInt": "0"
+        },
+        "openCount": {
+          "$numberInt": "0"
+        },
+        "replyCount": {
+          "$numberInt": "0"
+        },
+        "bounceCount": {
+          "$numberInt": "0"
+        }
+      },
+      "Consolidated": {
+        "sentCount": {
+          "$numberInt": "0"
+        },
+        "openCount": {
+          "$numberInt": "0"
+        },
+        "replyCount": {
+          "$numberInt": "0"
+        },
+        "bounceCount": {
+          "$numberInt": "0"
+        }
+      }
+    },
+    "roiPercent": {
+      "$numberInt": "-100"
+    },
+    "dripActive": false,
+    "lastMetricsRefreshAt": {
+      "$date": {
+        "$numberLong": "1781790546052"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789017491"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781790546053"
+      }
+    },
+    "assignedTo": "",
+    "createdBy": ""
+  }
+]

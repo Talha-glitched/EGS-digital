@@ -284,8 +284,9 @@ export const CAMPAIGN_COMPANY_FILTER_SCHEMA = {
     {
       id: 'engagement',
       label: 'Engagement',
-      description: 'Response and status',
+      description: 'Contacts and response',
       fields: [
+        { key: 'pocCount', label: 'Contacts discovered', type: 'range', accessor: (r) => r.pocCount },
         { key: 'hasResponded', label: 'Has responded', type: 'tri', accessor: (r) => r.hasResponded },
         {
           key: 'responseChannels',
@@ -414,6 +415,9 @@ export function buildOpportunityFilterSchema(stages = []) {
 }
 
 export function buildTaskFilterSchema(ownerOptions = []) {
+  const normalizedOwnerOptions = ownerOptions.map((item) => (
+    typeof item === 'string' ? { value: item, label: item } : item
+  ));
   return {
     id: 'task',
     label: 'Tasks',
@@ -443,7 +447,7 @@ export function buildTaskFilterSchema(ownerOptions = []) {
             label: 'Owner',
             type: 'multi',
             accessor: (r) => r.owner,
-            options: ownerOptions.map((value) => ({ value, label: value })),
+            options: normalizedOwnerOptions,
           },
           { key: 'notes', label: 'Notes', type: 'text', placeholder: 'Contains…', accessor: (r) => r.notes },
         ],
@@ -453,6 +457,7 @@ export function buildTaskFilterSchema(ownerOptions = []) {
         label: 'Links',
         description: 'Related records',
         fields: [
+          { key: 'campaignName', label: 'Project', type: 'text', placeholder: 'Contains…', accessor: (r) => r.campaignId?.projectName || r.campaignName },
           { key: 'opportunityName', label: 'Opportunity', type: 'text', placeholder: 'Contains…', accessor: (r) => r.opportunityId?.name || r.opportunityName },
           { key: 'companyName', label: 'Company', type: 'text', placeholder: 'Contains…', accessor: (r) => r.companyId?.companyName || r.companyName },
         ],

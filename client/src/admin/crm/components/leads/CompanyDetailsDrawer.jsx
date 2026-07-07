@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
-import { fetchCompanyDetails, updateCompanyDetails, addLeadToCompany, crmApiFetch } from '../../crmApi.js';
-import { Plus, ExternalLink, AlertCircle, Save, Building2, MapPin, Users, Globe, X, Trash2 } from 'lucide-react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
+import { fetchCompanyDetails, updateCompanyDetails, addLeadToCompany, crmApiFetch, deleteLeadWithUndo, deleteLeads } from '../../crmApi.js';
+import { Plus, ExternalLink, AlertCircle, Building2, MapPin, Users, Globe, X, Trash2 } from 'lucide-react';
 import Drawer from '../ui/Drawer.jsx';
 import DrawerLoadingSkeleton from '../ui/DrawerLoadingSkeleton.jsx';
 import SearchableSelect from '../ui/SearchableSelect.jsx';
@@ -10,6 +10,17 @@ import { ResponseStatusBadge } from './LeadTableComponents.jsx';
 import DrawerCollapsible from './DrawerCollapsible.jsx';
 import DrawerTabs from './DrawerTabs.jsx';
 import InteractionTimeline from './InteractionTimeline.jsx';
+import { BulkSelectCheckbox, BulkSelectionBar } from '../ui/BulkSelectTable.jsx';
+import DeleteIconButton from '../ui/DeleteIconButton.jsx';
+import { useRowSelection } from '../../hooks/useRowSelection.js';
+import { useConfirmDelete } from '../../hooks/useConfirmDelete.js';
+import { useBulkDelete } from '../../hooks/useBulkDelete.js';
+import SensitiveDataField from '../ui/SensitiveDataField.jsx';
+import SensitiveEmailList from '../ui/SensitiveEmailList.jsx';
+import { useLockSensitiveDataOnClose } from '../../hooks/useLockSensitiveDataOnClose.js';
+import { useDebouncedAutoSave } from '../../hooks/useDebouncedAutoSave.js';
+import AutoSaveIndicator from '../ui/AutoSaveIndicator.jsx';
+import AutoSaveCloseNotice from '../ui/AutoSaveCloseNotice.jsx';
 
 const STATUS_TONE = {
   'Client Partner': 'success',
@@ -25,10 +36,13 @@ function contactInitials(name = '') {
 }
 
 export default function CompanyDetailsDrawer({ companyId, onClose, onPersonSelected, onUpdated, onDelete }) {
+  const isOpen = Boolean(companyId);
+  const { closeAndLock } = useLockSensitiveDataOnClose(isOpen);
+  const handleClose = useCallback(() => closeAndLock(onClose), [closeAndLock, onClose]);
+
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [busy, setBusy] = useState(false);
   const [campaigns, setCampaigns] = useState([]);
   const [tab, setTab] = useState('account');
   const [timelineCount, setTimelineCount] = useState(null);
@@ -51,7 +65,59 @@ export default function CompanyDetailsDrawer({ companyId, onClose, onPersonSelec
   const [addCampaignId, setAddCampaignId] = useState('');
   const [addError, setAddError] = useState('');
   const [addSuccess, setAddSuccess] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [bulkDeleting, setBulkDeleting] = useState(false);
+
+  const peopleSelection = useRowSelection(data?.leads || []);
+
+  const confirmDeleteLead = useConfirmDelete({
+    resourceType: 'lead',
+    deleteFn: deleteLeadWithUndo,
+    onRemoved: () => {
+      loadDetails();
+      onUpdated?.();
+      peopleSelection.clearSelection();
+    },
+    onRestored: () => {
+      loadDetails();
+      onUpdated?.();
+    },
+    defaultConfirm: 'Delete this contact? You can undo within 30 seconds.',
+  });
+
+  const runBulkDeleteLeads = useBulkDelete({
+    resourceType: 'lead',
+    bulkDeleteFn: deleteLeads,
+    getLabelForId: (id) => {
+      const lead = data?.leads?.find((l) => l._id === id);
+      return `Deleted contact: ${lead?.name || lead?.email || 'Contact'}`;
+    },
+    defaultConfirm: 'Delete these contacts? You can undo each within 30 seconds.',
+    onRemoved: () => {
+      loadDetails();
+      onUpdated?.();
+      peopleSelection.clearSelection();
+    },
+    onRestored: () => {
+      loadDetails();
+      onUpdated?.();
+    },
+  });
+
+  async function deleteLeadItem(lead) {
+    await confirmDeleteLead(
+      lead._id,
+      `Deleted contact: ${lead.name || lead.email || 'Contact'}`,
+    );
+  }
+
+  async function handleBulkDeletePeople() {
+    setBulkDeleting(true);
+    try {
+      await runBulkDeleteLeads(peopleSelection.selectedArray, { noun: 'contact' });
+    } finally {
+      setBulkDeleting(false);
+    }
+  }
 
   const loadDetails = async () => {
     setLoading(true);
@@ -91,33 +157,48 @@ export default function CompanyDetailsDrawer({ companyId, onClose, onPersonSelec
       .catch(console.error);
   }, []);
 
-  const handleCompanySave = async (e) => {
-    e.preventDefault();
-    setBusy(true);
+  const companySnapshot = useMemo(() => ({
+    companyName,
+    domain,
+    industry,
+    boothNumber,
+    city,
+    country,
+    genericEmails,
+    genericPhone,
+    globalStatus,
+    notes,
+  }), [companyName, domain, industry, boothNumber, city, country, genericEmails, genericPhone, globalStatus, notes]);
+
+  const persistCompany = useCallback(async (snapshot) => {
+    if (!companyId) return;
     setError('');
     try {
-      const updated = await updateCompanyDetails(companyId, {
-        companyName,
-        domain,
-        industry,
-        boothNumber,
-        city,
-        country,
-        genericEmails,
-        genericPhone,
-        globalStatus,
-        notes,
-      });
+      const updated = await updateCompanyDetails(companyId, snapshot);
       onUpdated?.();
-      setData((prev) => ({ ...prev, company: updated }));
-      setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 3000);
+      setData((prev) => (prev ? { ...prev, company: updated } : prev));
     } catch (err) {
       setError(err.message || 'Failed to update company.');
-    } finally {
-      setBusy(false);
+      throw err;
     }
-  };
+  }, [companyId, onUpdated]);
+
+  const { status: saveStatus, requestClose, closingNotice } = useDebouncedAutoSave({
+    snapshot: companySnapshot,
+    onSave: persistCompany,
+    enabled: Boolean(companyId) && tab === 'account' && !loading,
+    resetKey: companyId,
+  });
+
+  const guardedClose = useCallback(
+    () => requestClose(handleClose),
+    [requestClose, handleClose],
+  );
+
+  useEffect(() => {
+    if (saveStatus !== 'error') return;
+    setError('Failed to save company changes. Please try again.');
+  }, [saveStatus]);
 
   const handleAddContact = async (e) => {
     e.preventDefault();
@@ -159,9 +240,10 @@ export default function CompanyDetailsDrawer({ companyId, onClose, onPersonSelec
   );
 
   return (
+    <>
     <Drawer
       open={Boolean(companyId)}
-      onClose={onClose}
+      onClose={guardedClose}
       title={companyName || 'Company profile'}
       subtitle={domain ? `${domain} · relationship hub` : 'Contacts, timeline, and company details'}
       size="2xl"
@@ -180,15 +262,13 @@ export default function CompanyDetailsDrawer({ companyId, onClose, onPersonSelec
               </button>
             ) : null}
             {tab === 'account' ? (
-              <button type="submit" form="company-profile-form" disabled={busy} className="crm-btn-primary flex flex-1 items-center justify-center gap-1.5">
-                <Save className="h-4 w-4" />
-                {busy ? 'Saving…' : 'Save company details'}
-              </button>
+              <AutoSaveIndicator status={saveStatus} className="flex-1" />
             ) : (
-              <button type="button" onClick={onClose} className="crm-btn-secondary flex-1">
-                Close
-              </button>
+              <span className="flex-1" />
             )}
+            <button type="button" onClick={guardedClose} className="crm-btn-secondary shrink-0">
+              Close
+            </button>
           </div>
         ) : null
       }
@@ -205,8 +285,6 @@ export default function CompanyDetailsDrawer({ companyId, onClose, onPersonSelec
               </span>
             </Alert>
           )}
-          {saveSuccess && <Alert tone="success">Company updated successfully.</Alert>}
-
           <div className="crm-drawer-hero">
             <div className="flex items-start gap-4">
               <div className="crm-profile-avatar is-brand">
@@ -286,14 +364,42 @@ export default function CompanyDetailsDrawer({ companyId, onClose, onPersonSelec
                   {!data?.leads?.length ? (
                     <p className="text-sm text-neutral-400">No contacts linked yet.</p>
                   ) : (
-                    <div className="space-y-2">
+                    <>
+                      <div className="mb-3 flex items-center justify-between gap-3">
+                        <label className="inline-flex items-center gap-2 text-xs font-semibold text-neutral-600">
+                          <BulkSelectCheckbox
+                            checked={peopleSelection.allSelected}
+                            indeterminate={peopleSelection.someSelected && !peopleSelection.allSelected}
+                            onChange={peopleSelection.toggleSelectAll}
+                            aria-label="Select all contacts"
+                          />
+                          Select all
+                        </label>
+                      </div>
+                      <BulkSelectionBar
+                        count={peopleSelection.selectionCount}
+                        noun="contact"
+                        onDelete={handleBulkDeletePeople}
+                        onClear={peopleSelection.clearSelection}
+                        deleting={bulkDeleting}
+                        className="mb-3 rounded-lg border border-[var(--color-line)]"
+                      />
+                      <div className="space-y-2">
                       {data.leads.map((lead) => (
-                        <button
+                        <div
                           key={lead._id}
-                          type="button"
-                          onClick={() => onPersonSelected(lead)}
-                          className="crm-profile-contact-card"
+                          className={`crm-profile-contact-card flex items-center gap-2 ${peopleSelection.isSelected(lead._id) ? 'ring-2 ring-brand/30' : ''}`}
                         >
+                          <BulkSelectCheckbox
+                            checked={peopleSelection.isSelected(lead._id)}
+                            onChange={(e) => peopleSelection.toggleSelect(lead._id, e)}
+                            aria-label={`Select ${lead.name || 'contact'}`}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => onPersonSelected(lead)}
+                            className="flex min-w-0 flex-1 items-center justify-between gap-3 text-left"
+                          >
                           <div className="flex min-w-0 flex-1 items-center gap-3 pr-3">
                             <div className="crm-profile-avatar is-neutral !h-9 !w-9 !text-[11px]">
                               {contactInitials(lead.name)}
@@ -317,9 +423,16 @@ export default function CompanyDetailsDrawer({ companyId, onClose, onPersonSelec
                               {lead.outcome || 'Pending'}
                             </span>
                           </div>
-                        </button>
+                          </button>
+                          <DeleteIconButton
+                            label={`Delete ${lead.name || 'contact'}`}
+                            onClick={() => deleteLeadItem(lead)}
+                            size="sm"
+                          />
+                        </div>
                       ))}
-                    </div>
+                      </div>
+                    </>
                   )}
                 </div>
               </DrawerCollapsible>
@@ -342,8 +455,14 @@ export default function CompanyDetailsDrawer({ companyId, onClose, onPersonSelec
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-neutral-600 block mb-1">Email</label>
-                      <input type="email" className="crm-input text-sm" value={addEmail} onChange={(e) => setAddEmail(e.target.value)} placeholder="contact@..." />
+                      <SensitiveDataField
+                        label="Email"
+                        type="email"
+                        kind="email"
+                        value={addEmail}
+                        onChange={setAddEmail}
+                        placeholder="contact@..."
+                      />
                     </div>
                     <div>
                       <label className="text-xs font-medium text-neutral-600 block mb-1">Full name</label>
@@ -364,7 +483,7 @@ export default function CompanyDetailsDrawer({ companyId, onClose, onPersonSelec
           )}
 
           {tab === 'account' && (
-            <form id="company-profile-form" onSubmit={handleCompanySave}>
+            <div className="space-y-5">
               <DrawerCollapsible title="Company identity" subtitle="Name, domain, industry" defaultOpen>
                 <div className="space-y-4 pt-4">
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -421,64 +540,26 @@ export default function CompanyDetailsDrawer({ companyId, onClose, onPersonSelec
                   <div className="space-y-3">
                     <label className="block space-y-1.5">
                       <span className="text-xs font-medium text-neutral-600">Generic emails</span>
-                      {genericEmails.length > 0 ? (
-                        <ul className="flex flex-wrap gap-2">
-                          {genericEmails.map((email) => (
-                            <li
-                              key={email}
-                              className="inline-flex items-center gap-1 rounded-full border border-[var(--color-line)] bg-white px-2.5 py-1 text-xs font-medium text-neutral-700"
-                            >
-                              <span>{email}</span>
-                              <button
-                                type="button"
-                                className="rounded p-0.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
-                                onClick={() => setGenericEmails((prev) => prev.filter((item) => item !== email))}
-                                aria-label={`Remove ${email}`}
-                              >
-                                <X className="h-3 w-3" />
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p className="text-xs text-neutral-400">No generic emails yet.</p>
-                      )}
-                      <div className="flex gap-2">
-                        <input
-                          type="email"
-                          className="crm-input text-sm"
-                          value={newGenericEmail}
-                          onChange={(e) => setNewGenericEmail(e.target.value)}
-                          placeholder="info@company.com"
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              e.preventDefault();
-                              const next = newGenericEmail.trim().toLowerCase();
-                              if (!next) return;
-                              setGenericEmails((prev) => (prev.includes(next) ? prev : [...prev, next]));
-                              setNewGenericEmail('');
-                            }
-                          }}
-                        />
-                        <button
-                          type="button"
-                          className="crm-btn-secondary shrink-0 text-xs"
-                          onClick={() => {
-                            const next = newGenericEmail.trim().toLowerCase();
-                            if (!next) return;
-                            setGenericEmails((prev) => (prev.includes(next) ? prev : [...prev, next]));
-                            setNewGenericEmail('');
-                          }}
-                        >
-                          <Plus className="h-3.5 w-3.5" />
-                          Add
-                        </button>
-                      </div>
+                      <SensitiveEmailList
+                        emails={genericEmails}
+                        onChange={setGenericEmails}
+                        inputValue={newGenericEmail}
+                        onInputChange={setNewGenericEmail}
+                        onAdd={() => {
+                          const next = newGenericEmail.trim().toLowerCase();
+                          if (!next) return;
+                          setGenericEmails((prev) => (prev.includes(next) ? prev : [...prev, next]));
+                          setNewGenericEmail('');
+                        }}
+                      />
                     </label>
-                    <label className="block space-y-1.5 sm:col-span-1">
-                      <span className="text-xs font-medium text-neutral-600">Generic phone</span>
-                      <input type="text" className="crm-input text-sm" value={genericPhone} onChange={(e) => setGenericPhone(e.target.value)} />
-                    </label>
+                    <SensitiveDataField
+                      label="Generic phone"
+                      type="tel"
+                      kind="phone"
+                      value={genericPhone}
+                      onChange={setGenericPhone}
+                    />
                   </div>
                 </div>
               </DrawerCollapsible>
@@ -488,11 +569,13 @@ export default function CompanyDetailsDrawer({ companyId, onClose, onPersonSelec
                   <textarea className="crm-input min-h-[5rem] resize-y text-sm" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Relationship notes, access restrictions, preferences…" />
                 </div>
               </DrawerCollapsible>
-            </form>
+            </div>
           )}
           </div>
         </>
       )}
     </Drawer>
+    <AutoSaveCloseNotice open={closingNotice} />
+    </>
   );
 }

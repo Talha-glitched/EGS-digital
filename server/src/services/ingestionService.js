@@ -7,10 +7,12 @@ import { Suppression } from '../models/Suppression.js';
 import { normalizeDomain, normalizeEmail, isValidEmail } from '../utils/normalizeDomain.js';
 import { normalizeGenericEmails } from '../utils/companyEmails.js';
 import { computeProjectSnapshot } from './analyticsCronService.js';
+import { resolveCompanyForContact, isGenericMailboxEmail } from '../utils/companyResolver.js';
+import { pickDedupEmail, firstContactEmail } from '../utils/contactEmails.js';
 
 const FIELD_ALIASES = {
-  email: ['email', 'emailaddress', 'mail', 'e-mail', 'workemail', 'contactemail', 'primaryemail', 'emailaddress', 'email_address'],
-  name: ['name', 'fullname', 'contactname', 'person', 'contactfirstname', 'firstname', 'first name', 'last name', 'lastname', 'contactlastname'],
+  email: ['email', 'emailaddress', 'mail', 'e-mail', 'workemail', 'contactemail', 'primaryemail', 'emailaddress', 'email_address', 'emailforoutreach'],
+  name: ['name', 'fullname', 'contactname', 'person', 'contactfirstname', 'firstname', 'first name', 'last name', 'lastname', 'contactlastname', 'full name'],
   designation: ['designation', 'title', 'jobtitle', 'position', 'role'],
   companyName: ['company', 'companyname', 'organization', 'organisation', 'accountname', 'account'],
   domain: ['domain', 'website', 'companywebsite', 'url', 'companydomain', 'websiteurl', 'web'],
@@ -60,6 +62,16 @@ export function detectVendor(headers) {
   return 'Manual';
 }
 
+function findEgsHeaderRow(rows, sheetName) {
+  if (sheetName === 'Companies') {
+    return rows.findIndex((row) => String(row[1] || '').trim() === 'Company Name');
+  }
+  if (sheetName === 'POCs') {
+    return rows.findIndex((row) => String(row[0] || '').trim() === 'POC ID');
+  }
+  return -1;
+}
+
 export function parseSpreadsheetBuffer(buffer) {
   const workbook = XLSX.read(buffer, { type: 'buffer' });
   const sheets = [];
@@ -72,7 +84,10 @@ export function parseSpreadsheetBuffer(buffer) {
     });
     if (!rows.length) return;
 
-    const headerIndex = rows.findIndex((row) => row.some(Boolean));
+    const egsHeaderIndex = findEgsHeaderRow(rows, sheetName);
+    const headerIndex = egsHeaderIndex >= 0
+      ? egsHeaderIndex
+      : rows.findIndex((row) => row.some(Boolean));
     if (headerIndex < 0) return;
 
     const headers = rows[headerIndex].map((h) => String(h || '').trim());
@@ -143,6 +158,91 @@ function normalizeUrl(url) {
     .replace(/\/$/, '');
 }
 
+async function resolveOrCreateCompany({
+  project,
+  projectId,
+  companyName,
+  websiteDomain,
+  emailDomain,
+  companiesInProject,
+  domainToCompany,
+  stats,
+}) {
+  const resolved = resolveCompanyForContact({
+    companyName,
+    websiteDomain,
+    emailDomain,
+    companiesInProject,
+  });
+
+  if (resolved.company) {
+    if (!resolved.company.projectsAssociated?.some((cid) => String(cid) === String(projectId))) {
+      await Company.updateOne({ _id: resolved.company._id }, { $addToSet: { projectsAssociated: project._id } });
+    }
+    return resolved.company;
+  }
+
+  const createDomain = normalizeDomain(websiteDomain) || normalizeDomain(emailDomain);
+  if (!createDomain || !createDomain.includes('.')) {
+    return null;
+  }
+
+  let company = await Company.findOne({ domain: createDomain });
+  if (company) {
+    if (!company.projectsAssociated.some((cid) => String(cid) === String(projectId))) {
+      await Company.updateOne({ _id: company._id }, { $addToSet: { projectsAssociated: project._id } });
+    }
+    company = company.toObject ? company.toObject() : company;
+  } else {
+    company = await Company.create({
+      companyName: companyName || deriveCompanyNameFromDomain(createDomain),
+      domain: createDomain,
+      projectsAssociated: [project._id],
+    });
+    company = company.toObject();
+    stats.companiesCreated += 1;
+  }
+
+  domainToCompany.set(company.domain, company);
+  return company;
+}
+
+async function routeGenericEmailsToCompany({
+  project,
+  projectId,
+  companyName,
+  websiteDomain,
+  emails,
+  companiesInProject,
+  domainToCompany,
+  stats,
+}) {
+  if (!emails.length) return false;
+
+  const emailDomain = normalizeDomain(emails[0].split('@')[1] || '');
+  const company = await resolveOrCreateCompany({
+    project,
+    projectId,
+    companyName,
+    websiteDomain,
+    emailDomain,
+    companiesInProject,
+    domainToCompany,
+    stats,
+  });
+  if (!company) {
+    stats.skipped += 1;
+    return true;
+  }
+
+  await Company.updateOne(
+    { _id: company._id },
+    { $addToSet: { genericEmails: { $each: emails } } },
+  );
+  stats.genericRouted = (stats.genericRouted || 0) + emails.length;
+  return true;
+}
+
 export async function blendAndIngestLeads(projectId, uploads) {
   if (mongoose.connection.readyState !== 1) {
     const error = new Error('MongoDB is required.');
@@ -164,6 +264,7 @@ export async function blendAndIngestLeads(projectId, uploads) {
     companiesCreated: 0,
     invalidEmail: 0,
     suppressed: 0,
+    genericRouted: 0,
   };
 
   const rawContacts = [];
@@ -184,6 +285,7 @@ export async function blendAndIngestLeads(projectId, uploads) {
       const emailApolloCol = resolveColumnIndex(headers, 'Email (Apollo)');
       const emailHunterCol = resolveColumnIndex(headers, 'Email (Hunter)');
       const emailLushaCol = resolveColumnIndex(headers, 'Email (Lusha)');
+      const emailOutreachCol = resolveColumnIndex(headers, 'Email for Outreach');
       const phoneLusha1Col = resolveColumnIndex(headers, 'Lusha Phone 1') !== -1 ? resolveColumnIndex(headers, 'Lusha Phone 1') : resolveColumnIndex(headers, 'Phone 1');
       const phoneLusha2Col = resolveColumnIndex(headers, 'Lusha Phone 2') !== -1 ? resolveColumnIndex(headers, 'Lusha Phone 2') : resolveColumnIndex(headers, 'Phone 2');
       const linkedinUrlCol = resolveColumnIndex(headers, 'LinkedIn URL') !== -1 ? resolveColumnIndex(headers, 'LinkedIn URL') : resolveColumnIndex(headers, 'Person Linkedin Url');
@@ -203,7 +305,8 @@ export async function blendAndIngestLeads(projectId, uploads) {
         let apolloEmail = emailApolloCol >= 0 ? normalizeEmail(row[emailApolloCol]) : '';
         let hunterEmail = emailHunterCol >= 0 ? normalizeEmail(row[emailHunterCol]) : '';
         let lushaEmail = emailLushaCol >= 0 ? normalizeEmail(row[emailLushaCol]) : '';
-        let primaryEmail = col.email >= 0 ? normalizeEmail(row[col.email]) : '';
+        let outreachEmailCol = emailOutreachCol >= 0 ? normalizeEmail(row[emailOutreachCol]) : '';
+        let primaryEmail = col.email >= 0 ? normalizeEmail(row[col.email]) : outreachEmailCol;
 
         if (sourceVendor === 'Apollo' && !apolloEmail) apolloEmail = primaryEmail;
         if (sourceVendor === 'Hunter' && !hunterEmail) hunterEmail = primaryEmail;
@@ -218,14 +321,9 @@ export async function blendAndIngestLeads(projectId, uploads) {
           if (!lushaPhone1) lushaPhone1 = primaryPhone;
         }
 
-        // Normalize domain
+        // Normalize domain from mapped website column only — never infer from email here
         let domain = normalizeDomain(rawDomain);
         const activeEmail = apolloEmail || lushaEmail || hunterEmail || primaryEmail;
-        if (!domain || !domain.includes('.')) {
-          if (activeEmail && activeEmail.includes('@')) {
-            domain = normalizeDomain(activeEmail.split('@')[1]);
-          }
-        }
 
         if (!activeEmail && !linkedinUrl && !name) {
           continue;
@@ -244,7 +342,8 @@ export async function blendAndIngestLeads(projectId, uploads) {
           lushaPhone1,
           lushaPhone2,
           primaryPhone,
-          vendor: sourceVendor
+          vendor: sourceVendor,
+          isGenericInbox: Boolean(activeEmail && !name && (isGenericMailboxEmail(activeEmail) || !linkedinUrl)),
         });
       }
     }
@@ -304,21 +403,49 @@ export async function blendAndIngestLeads(projectId, uploads) {
 
   for (const group of groups) {
     const contacts = group.contacts;
-    
-    const name = contacts.map(c => c.name).find(Boolean) || '';
-    const designation = contacts.map(c => c.designation).find(Boolean) || '';
-    const linkedinUrl = contacts.map(c => c.linkedinUrl).find(Boolean) || '';
-    const companyName = contacts.map(c => c.companyName).find(Boolean) || '';
-    const domain = contacts.map(c => c.domain).find(Boolean) || '';
 
-    const apolloEmails = [...new Set(contacts.map(c => c.apolloEmail).filter(Boolean))];
-    const hunterEmails = [...new Set(contacts.map(c => c.hunterEmail).filter(Boolean))];
-    const lushaEmails = [...new Set(contacts.map(c => c.lushaEmail).filter(Boolean))];
-    
-    let email = apolloEmails[0] || lushaEmails[0] || hunterEmails[0] || contacts.map(c => c.primaryEmail).find(Boolean) || '';
+    const name = contacts.map((c) => c.name).find(Boolean) || '';
+    const designation = contacts.map((c) => c.designation).find(Boolean) || '';
+    const linkedinUrl = contacts.map((c) => c.linkedinUrl).find(Boolean) || '';
+    const companyName = contacts.map((c) => c.companyName).find(Boolean) || '';
+    const websiteDomain = contacts.map((c) => c.domain).find(Boolean) || '';
 
+    const apolloEmail = firstContactEmail(contacts.map((c) => c.apolloEmail).find(Boolean) || '');
+    const hunterEmail = firstContactEmail(contacts.map((c) => c.hunterEmail).find(Boolean) || '');
+    const lushaEmail = firstContactEmail(contacts.map((c) => c.lushaEmail).find(Boolean) || '');
+    const primaryEmail = contacts.map((c) => c.primaryEmail).find(Boolean) || '';
+
+    const dedupEmail = pickDedupEmail({
+      apolloEmail,
+      hunterEmail,
+      lushaEmail,
+      primaryEmail,
+    });
+
+    const vendorEmails = [apolloEmail, hunterEmail, lushaEmail, primaryEmail].filter(Boolean);
+    const isGenericInbox = contacts.some((c) => c.isGenericInbox) || (!name && vendorEmails.length > 0);
+
+    if (isGenericInbox) {
+      const routed = await routeGenericEmailsToCompany({
+        project,
+        projectId,
+        companyName,
+        websiteDomain,
+        emails: [...new Set(vendorEmails)],
+        companiesInProject: [...domainToCompany.values()],
+        domainToCompany,
+        stats,
+      });
+      if (routed) continue;
+    }
+
+    const email = dedupEmail;
     if (!email || !isValidEmail(email)) {
-      stats.invalidEmail += 1;
+      if (linkedinUrl && name) {
+        stats.skipped += 1;
+      } else {
+        stats.invalidEmail += 1;
+      }
       continue;
     }
 
@@ -328,41 +455,28 @@ export async function blendAndIngestLeads(projectId, uploads) {
       continue;
     }
 
-    let resolvedDomain = domain;
-    if (!resolvedDomain || !resolvedDomain.includes('.')) {
-      resolvedDomain = normalizeDomain(email.split('@')[1] || '');
-    }
+    const emailDomain = normalizeDomain(email.split('@')[1] || '');
+    const company = await resolveOrCreateCompany({
+      project,
+      projectId,
+      companyName,
+      websiteDomain,
+      emailDomain,
+      companiesInProject: [...domainToCompany.values()],
+      domainToCompany,
+      stats,
+    });
 
-    if (!resolvedDomain || !resolvedDomain.includes('.')) {
+    if (!company) {
       stats.invalidEmail += 1;
       continue;
     }
 
-    let company = domainToCompany.get(resolvedDomain);
-    if (!company) {
-      company = await Company.findOne({ domain: resolvedDomain });
-      if (company) {
-        if (!company.projectsAssociated.some((cid) => String(cid) === String(projectId))) {
-          await Company.updateOne({ _id: company._id }, { $addToSet: { projectsAssociated: project._id } });
-        }
-        company = company.toObject ? company.toObject() : company;
-      } else {
-        company = await Company.create({
-          companyName: companyName || deriveCompanyNameFromDomain(resolvedDomain),
-          domain: resolvedDomain,
-          projectsAssociated: [project._id],
-        });
-        company = company.toObject();
-        stats.companiesCreated += 1;
-      }
-      domainToCompany.set(resolvedDomain, company);
-    }
+    const lushaPhone1 = contacts.map((c) => c.lushaPhone1).find(Boolean) || '';
+    const lushaPhone2 = contacts.map((c) => c.lushaPhone2).find(Boolean) || '';
+    const phone = lushaPhone1 || contacts.map((c) => c.primaryPhone).find(Boolean) || '';
 
-    const lushaPhone1s = [...new Set(contacts.map(c => c.lushaPhone1).filter(Boolean))];
-    const lushaPhone2s = [...new Set(contacts.map(c => c.lushaPhone2).filter(Boolean))];
-    const phone = lushaPhone1s[0] || contacts.map(c => c.primaryPhone).find(Boolean) || '';
-
-    const sources = [...new Set(contacts.map(c => c.vendor).filter(Boolean))];
+    const sources = [...new Set(contacts.map((c) => c.vendor).filter(Boolean))];
     const primarySource = contacts[0]?.vendor || 'Manual';
 
     let lead = await Lead.findOne({ campaignId: projectId, email });
@@ -370,12 +484,14 @@ export async function blendAndIngestLeads(projectId, uploads) {
       lead.name = lead.name || name;
       lead.designation = lead.designation || designation;
       lead.linkedinUrl = lead.linkedinUrl || linkedinUrl;
-      lead.emailApollo = lead.emailApollo || apolloEmails.join('; ');
-      lead.emailHunter = lead.emailHunter || hunterEmails.join('; ');
-      lead.emailLusha = lead.emailLusha || lushaEmails.join('; ');
-      lead.phoneLusha1 = lead.phoneLusha1 || lushaPhone1s.join('; ');
-      lead.phoneLusha2 = lead.phoneLusha2 || lushaPhone2s.join('; ');
-      lead.phone = lead.phone || phone;
+      lead.companyId = company._id;
+      lead.contactKind = 'person';
+      if (apolloEmail) lead.emailApollo = apolloEmail;
+      if (hunterEmail) lead.emailHunter = hunterEmail;
+      if (lushaEmail) lead.emailLusha = lushaEmail;
+      if (lushaPhone1) lead.phoneLusha1 = lushaPhone1;
+      if (lushaPhone2) lead.phoneLusha2 = lushaPhone2;
+      if (phone) lead.phone = phone;
 
       for (const s of sources) {
         if (!lead.sources.includes(s)) lead.sources.push(s);
@@ -390,14 +506,15 @@ export async function blendAndIngestLeads(projectId, uploads) {
         name,
         designation,
         linkedinUrl,
-        emailApollo: apolloEmails.join('; '),
-        emailHunter: hunterEmails.join('; '),
-        emailLusha: lushaEmails.join('; '),
-        phoneLusha1: lushaPhone1s.join('; '),
-        phoneLusha2: lushaPhone2s.join('; '),
+        emailApollo: apolloEmail,
+        emailHunter: hunterEmail,
+        emailLusha: lushaEmail,
+        phoneLusha1: lushaPhone1,
+        phoneLusha2: lushaPhone2,
         phone,
         sources,
         primarySource,
+        contactKind: 'person',
         deliveryStatus: 'Pending Inqueue',
       });
       stats.inserted += 1;
@@ -451,6 +568,7 @@ export async function previewBlendAndIngestLeads(projectId, uploads) {
       const emailApolloCol = resolveColumnIndex(headers, 'Email (Apollo)');
       const emailHunterCol = resolveColumnIndex(headers, 'Email (Hunter)');
       const emailLushaCol = resolveColumnIndex(headers, 'Email (Lusha)');
+      const emailOutreachCol = resolveColumnIndex(headers, 'Email for Outreach');
       const phoneLusha1Col = resolveColumnIndex(headers, 'Lusha Phone 1') !== -1 ? resolveColumnIndex(headers, 'Lusha Phone 1') : resolveColumnIndex(headers, 'Phone 1');
       const phoneLusha2Col = resolveColumnIndex(headers, 'Lusha Phone 2') !== -1 ? resolveColumnIndex(headers, 'Lusha Phone 2') : resolveColumnIndex(headers, 'Phone 2');
       const linkedinUrlCol = resolveColumnIndex(headers, 'LinkedIn URL') !== -1 ? resolveColumnIndex(headers, 'LinkedIn URL') : resolveColumnIndex(headers, 'Person Linkedin Url');

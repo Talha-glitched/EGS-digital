@@ -1,0 +1,325 @@
+[
+  {
+    "_id": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "name": "Primary outreach sequence",
+    "steps": [
+      {
+        "stepOrder": {
+          "$numberInt": "1"
+        },
+        "dayDelay": {
+          "$numberInt": "0"
+        },
+        "subjectTemplate": "{{company}} — exhibition stand support (Step 1)",
+        "bodyTemplate": "Hi {{name}},\n\nWe help {{company}} with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?",
+        "useAiPersonalization": true,
+        "aiPrompt": "",
+        "_id": {
+          "$oid": "6a356e059f23c150e7f5b60c"
+        }
+      },
+      {
+        "stepOrder": {
+          "$numberInt": "2"
+        },
+        "dayDelay": {
+          "$numberInt": "3"
+        },
+        "subjectTemplate": "{{company}} — exhibition stand support (Step 2)",
+        "bodyTemplate": "Hi {{name}},\n\nWe help {{company}} with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?",
+        "useAiPersonalization": true,
+        "aiPrompt": "",
+        "_id": {
+          "$oid": "6a356e059f23c150e7f5b60d"
+        }
+      },
+      {
+        "stepOrder": {
+          "$numberInt": "3"
+        },
+        "dayDelay": {
+          "$numberInt": "3"
+        },
+        "subjectTemplate": "{{company}} — exhibition stand support (Step 3)",
+        "bodyTemplate": "Hi {{name}},\n\nWe help {{company}} with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?",
+        "useAiPersonalization": true,
+        "aiPrompt": "",
+        "_id": {
+          "$oid": "6a356e059f23c150e7f5b60e"
+        }
+      }
+    ],
+    "isActive": true,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886469475"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781886478410"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3ebc76ac1ef3c5e876d4d2"
+    },
+    "campaignId": {
+      "$oid": "6a3ebb9eac1ef3c5e876d151"
+    },
+    "name": "test 1",
+    "steps": [
+      {
+        "stepOrder": {
+          "$numberInt": "1"
+        },
+        "dayDelay": {
+          "$numberInt": "0"
+        },
+        "delayUnit": "days",
+        "subjectTemplate": "{{company}} — stand execution support (Step 1)",
+        "bodyTemplate": "hi test 1",
+        "useAiPersonalization": false,
+        "aiPrompt": "",
+        "_id": {
+          "$oid": "6a43cd486a5ec3de77957b2d"
+        }
+      },
+      {
+        "stepOrder": {
+          "$numberInt": "2"
+        },
+        "dayDelay": {
+          "$numberInt": "1"
+        },
+        "delayUnit": "minutes",
+        "subjectTemplate": "{{company}} — stand execution support (Step 1)",
+        "bodyTemplate": "an ai gen message",
+        "useAiPersonalization": true,
+        "aiPrompt": "just saying hi or something",
+        "_id": {
+          "$oid": "6a43cd486a5ec3de77957b2e"
+        }
+      }
+    ],
+    "isActive": true,
+    "version": {
+      "$numberInt": "0"
+    },
+    "deletedAt": null,
+    "deletedBy": null,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782496374270"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782828360677"
+      }
+    },
+    "flowGraph": {
+      "nodes": [
+        {
+          "id": "start-1782825905501-13",
+          "type": "start",
+          "x": {
+            "$numberDouble": "549.0800542740841"
+          },
+          "y": {
+            "$numberDouble": "-186.45968273002626"
+          },
+          "data": {
+            "label": "Start"
+          }
+        },
+        {
+          "id": "email-1782824049370-9",
+          "type": "email",
+          "x": {
+            "$numberDouble": "470.35180541740476"
+          },
+          "y": {
+            "$numberDouble": "-123.34890780545753"
+          },
+          "data": {
+            "stepOrder": {
+              "$numberInt": "1"
+            },
+            "dayDelay": {
+              "$numberInt": "0"
+            },
+            "subjectTemplate": "{{company}} — stand execution support (Step 1)",
+            "bodyTemplate": "hi test 1",
+            "useAiPersonalization": false,
+            "aiPrompt": ""
+          }
+        },
+        {
+          "id": "wait-1782825098013-64",
+          "type": "wait",
+          "x": {
+            "$numberInt": "480"
+          },
+          "y": {
+            "$numberInt": "250"
+          },
+          "data": {
+            "amount": {
+              "$numberInt": "5"
+            },
+            "unit": "minutes"
+          }
+        },
+        {
+          "id": "condition-1782825105946-79",
+          "type": "condition",
+          "x": {
+            "$numberInt": "480"
+          },
+          "y": {
+            "$numberInt": "380"
+          },
+          "data": {
+            "conditionType": "replied",
+            "label": "If replied",
+            "trueAction": "continue",
+            "falseAction": "continue"
+          }
+        },
+        {
+          "id": "email-1782825105946-80",
+          "type": "email",
+          "x": {
+            "$numberInt": "300"
+          },
+          "y": {
+            "$numberInt": "520"
+          },
+          "data": {
+            "stepOrder": {
+              "$numberInt": "1"
+            },
+            "dayDelay": {
+              "$numberInt": "0"
+            },
+            "subjectTemplate": "Yes path — follow up",
+            "bodyTemplate": "Listening works",
+            "useAiPersonalization": false,
+            "aiPrompt": ""
+          }
+        },
+        {
+          "id": "email-1782825105946-81",
+          "type": "email",
+          "x": {
+            "$numberInt": "660"
+          },
+          "y": {
+            "$numberInt": "520"
+          },
+          "data": {
+            "stepOrder": {
+              "$numberInt": "1"
+            },
+            "dayDelay": {
+              "$numberInt": "0"
+            },
+            "subjectTemplate": "No path — follow up",
+            "bodyTemplate": "listening did not work",
+            "useAiPersonalization": false,
+            "aiPrompt": ""
+          }
+        },
+        {
+          "id": "wait-1782826574423-3316",
+          "type": "wait",
+          "x": {
+            "$numberDouble": "480.972389411844"
+          },
+          "y": {
+            "$numberDouble": "3.5709629661193834"
+          },
+          "data": {
+            "amount": {
+              "$numberInt": "1"
+            },
+            "unit": "minutes"
+          }
+        },
+        {
+          "id": "email-1782826596021-4737",
+          "type": "email",
+          "x": {
+            "$numberDouble": "493.8366488553043"
+          },
+          "y": {
+            "$numberDouble": "136.5016438818759"
+          },
+          "data": {
+            "stepOrder": {
+              "$numberInt": "1"
+            },
+            "dayDelay": {
+              "$numberInt": "0"
+            },
+            "subjectTemplate": "{{company}} — stand execution support (Step 1)",
+            "bodyTemplate": "an ai gen message",
+            "useAiPersonalization": true,
+            "aiPrompt": "just saying hi or something"
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "edge-start-1782825905501-13-default-email-1782824049370-9-7",
+          "from": "start-1782825905501-13",
+          "to": "email-1782824049370-9",
+          "branch": "default"
+        },
+        {
+          "id": "edge-wait-1782825098013-64-default-condition-1782825105946-79-2",
+          "from": "wait-1782825098013-64",
+          "to": "condition-1782825105946-79",
+          "branch": "default"
+        },
+        {
+          "id": "edge-condition-1782825105946-79-true-email-1782825105946-80-3",
+          "from": "condition-1782825105946-79",
+          "to": "email-1782825105946-80",
+          "branch": "true"
+        },
+        {
+          "id": "edge-condition-1782825105946-79-false-email-1782825105946-81-4",
+          "from": "condition-1782825105946-79",
+          "to": "email-1782825105946-81",
+          "branch": "false"
+        },
+        {
+          "id": "edge-email-1782824049370-9-default-wait-1782826574423-3316-2969",
+          "from": "email-1782824049370-9",
+          "to": "wait-1782826574423-3316",
+          "branch": "default"
+        },
+        {
+          "id": "edge-wait-1782826574423-3316-default-email-1782826596021-4737-2978",
+          "from": "wait-1782826574423-3316",
+          "to": "email-1782826596021-4737",
+          "branch": "default"
+        },
+        {
+          "id": "edge-email-1782826596021-4737-default-wait-1782825098013-64-2987",
+          "from": "email-1782826596021-4737",
+          "to": "wait-1782825098013-64",
+          "branch": "default"
+        }
+      ]
+    }
+  }
+]

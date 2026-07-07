@@ -1,0 +1,38 @@
+[
+  {
+    "_id": {
+      "$oid": "6a3915ff8fe68ad7e4ba0522"
+    },
+    "leadId": {
+      "$oid": "6a33f44d29414e54b55e463e"
+    },
+    "companyId": {
+      "$oid": "6a33f44d29414e54b55e463b"
+    },
+    "type": "phone_call",
+    "direction": "outbound",
+    "title": "Phone call",
+    "summary": "Test call about GITEX stand requirements.",
+    "occurredAt": {
+      "$date": {
+        "$numberLong": "1782126079439"
+      }
+    },
+    "durationMinutes": null,
+    "outcome": "interested",
+    "location": "",
+    "attendees": "",
+    "loggedBy": "admin",
+    "updatedBy": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782126079523"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782126079523"
+      }
+    }
+  }
+]

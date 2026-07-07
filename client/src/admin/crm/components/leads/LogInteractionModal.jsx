@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Save } from 'lucide-react';
 import { Modal } from '../ui/Modal.jsx';
-import SearchableSelect from '../ui/SearchableSelect.jsx';
+import SearchableMultiSelect from '../ui/SearchableMultiSelect.jsx';
 import {
   INTERACTION_TYPES,
   INTERACTION_DIRECTIONS,
@@ -34,19 +34,23 @@ export default function LogInteractionModal({
   initialValues,
   contacts = [],
   defaultLeadId,
+  defaultLeadIds,
   saving = false,
   mode = 'create',
 }) {
   const [form, setForm] = useState(emptyInteractionForm);
-  const [leadId, setLeadId] = useState(defaultLeadId || '');
+  const [leadIds, setLeadIds] = useState([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (!open) return;
     setForm(initialValues || emptyInteractionForm());
-    setLeadId(defaultLeadId || contacts[0]?._id || '');
+    const initialIds = defaultLeadIds?.length
+      ? defaultLeadIds
+      : [defaultLeadId || contacts[0]?._id || ''].filter(Boolean);
+    setLeadIds(initialIds.map(String));
     setError('');
-  }, [open, initialValues, defaultLeadId, contacts]);
+  }, [open, initialValues, defaultLeadId, defaultLeadIds, contacts]);
 
   const outcomeOptions = useMemo(
     () => OUTCOMES_BY_TYPE[form.type] || INTERACTION_OUTCOMES_FALLBACK,
@@ -55,7 +59,7 @@ export default function LogInteractionModal({
 
   const contactOptions = useMemo(
     () => contacts.map((contact) => ({
-      value: contact._id,
+      value: String(contact._id),
       label: contact.name || contact.email || 'Unnamed',
       hint: contact.designation || 'POC',
     })),
@@ -76,17 +80,22 @@ export default function LogInteractionModal({
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
-    if (contacts.length && !leadId) {
-      setError('Select which contact this interaction is about.');
+    if (contacts.length && !leadIds.length) {
+      setError('Select at least one contact for this interaction.');
       return;
     }
     if (!form.summary.trim()) {
       setError('Add a short summary of what happened.');
       return;
     }
+    const normalizedLeadIds = leadIds.map(String).filter(Boolean);
+    const primaryLeadId = normalizedLeadIds.includes(String(defaultLeadId))
+      ? String(defaultLeadId)
+      : normalizedLeadIds[0];
     try {
       await onSubmit({
-        leadId,
+        leadId: primaryLeadId,
+        leadIds: normalizedLeadIds,
         payload: {
           ...form,
           title: form.title.trim() || defaultTitleForType(form.type, form.direction),
@@ -94,6 +103,7 @@ export default function LogInteractionModal({
           durationMinutes: form.durationMinutes === '' ? null : Number(form.durationMinutes),
           outcome: form.outcome || null,
           occurredAt: new Date(form.occurredAt).toISOString(),
+          leadIds: normalizedLeadIds,
         },
       });
       onClose?.();
@@ -134,15 +144,17 @@ export default function LogInteractionModal({
         {error && <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
 
         {contacts.length > 0 && (
-          <Field label="Contact">
-            <SearchableSelect
-              value={leadId}
-              onChange={setLeadId}
+          <Field
+            label="Contacts"
+            hint="Select one or more people involved. The interaction appears on each contact's timeline."
+          >
+            <SearchableMultiSelect
+              values={leadIds}
+              onChange={setLeadIds}
               options={contactOptions}
-              placeholder="Select contact…"
+              placeholder="Select contacts…"
               searchPlaceholder="Search contacts…"
               emptyLabel="No contacts match."
-              disabled={mode === 'edit'}
             />
           </Field>
         )}
@@ -155,7 +167,13 @@ export default function LogInteractionModal({
               ))}
             </select>
           </Field>
-          <Field label="Direction">
+          <Field label="Direction" hint={
+            form.direction === 'inbound'
+              ? 'They initiated this — shows as Contact → EGS Team on the timeline.'
+              : form.direction === 'internal'
+                ? 'Internal note for your team about this contact.'
+                : 'Your team initiated this — shows as EGS Team → Contact on the timeline.'
+          }>
             <select className={inputClass} value={form.direction} onChange={(e) => set('direction', e.target.value)}>
               {INTERACTION_DIRECTIONS.map((direction) => (
                 <option key={direction} value={direction}>{INTERACTION_DIRECTION_LABELS[direction]}</option>

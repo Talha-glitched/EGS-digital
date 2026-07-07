@@ -1,0 +1,275 @@
+[
+  {
+    "_id": {
+      "$oid": "6a3eadb4418c4b59c54cc555"
+    },
+    "userId": null,
+    "userDisplayName": "admin",
+    "action": "logout",
+    "resource": "",
+    "resourceId": null,
+    "summary": "admin signed out",
+    "changes": [],
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782492596526"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3eadbe418c4b59c54cc5bc"
+    },
+    "userId": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "userDisplayName": "admin",
+    "action": "login",
+    "resource": "",
+    "resourceId": null,
+    "summary": "admin signed in",
+    "changes": [],
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782492606803"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3eb8041bc903dbc7ad6f95"
+    },
+    "userId": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "userDisplayName": "admin",
+    "action": "update",
+    "resource": "user",
+    "resourceId": "6a3eb8011bc903dbc7ad6f92",
+    "summary": "Emailed welcome credentials to Uzair Masuood",
+    "changes": [],
+    "metadata": {
+      "emailed": true
+    },
+    "ip": null,
+    "userAgent": null,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782495236785"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3eb8041bc903dbc7ad6f97"
+    },
+    "userId": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "userDisplayName": "admin",
+    "action": "create",
+    "resource": "user",
+    "resourceId": "6a3eb8011bc903dbc7ad6f92",
+    "summary": "Created user Uzair Masuood",
+    "changes": [],
+    "metadata": {
+      "emailed": true
+    },
+    "ip": null,
+    "userAgent": null,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782495236851"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3ebabcac1ef3c5e876cec2"
+    },
+    "userId": null,
+    "userDisplayName": "admin",
+    "action": "login_failed",
+    "resource": "",
+    "resourceId": null,
+    "summary": "Failed login attempt",
+    "changes": [],
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782495932522"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3ebac3ac1ef3c5e876cec7"
+    },
+    "userId": null,
+    "userDisplayName": "admin",
+    "action": "login_failed",
+    "resource": "",
+    "resourceId": null,
+    "summary": "Failed login attempt",
+    "changes": [],
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782495939784"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3ebb29ac1ef3c5e876cedf"
+    },
+    "userId": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "userDisplayName": "admin",
+    "action": "login",
+    "resource": "",
+    "resourceId": null,
+    "summary": "admin signed in",
+    "changes": [],
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782496041489"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a4174a5ca0c6a159f9e0e02"
+    },
+    "userId": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "userDisplayName": "admin",
+    "action": "login",
+    "resource": "",
+    "resourceId": null,
+    "summary": "admin signed in",
+    "changes": [],
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782674597937"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a41a4c3b62ed59729dda9ce"
+    },
+    "userId": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "userDisplayName": "admin",
+    "action": "login",
+    "resource": "",
+    "resourceId": null,
+    "summary": "admin signed in",
+    "changes": [],
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782686915667"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a43a354c7deaff7f78d0ac6"
+    },
+    "userId": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "userDisplayName": "admin",
+    "action": "login",
+    "resource": "",
+    "resourceId": null,
+    "summary": "admin signed in",
+    "changes": [],
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782817620905"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a43af827bbd9dd2325c7bd2"
+    },
+    "userId": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "userDisplayName": "admin",
+    "action": "login",
+    "resource": "",
+    "resourceId": null,
+    "summary": "admin signed in",
+    "changes": [],
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782820738890"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a491f14e3e69c0a886da005"
+    },
+    "userId": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "userDisplayName": "admin",
+    "action": "login",
+    "resource": "",
+    "resourceId": null,
+    "summary": "admin signed in",
+    "changes": [],
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1783176980100"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a4928e504b4ff3ed1fdf8b8"
+    },
+    "userId": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "userDisplayName": "admin",
+    "action": "login",
+    "resource": "",
+    "resourceId": null,
+    "summary": "admin signed in",
+    "changes": [],
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1783179493957"
+      }
+    }
+  }
+]

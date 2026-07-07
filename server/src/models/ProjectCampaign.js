@@ -33,6 +33,8 @@ const projectCampaignSchema = new mongoose.Schema(
     },
     fromEmail: { type: String, default: '', trim: true },
     fromName: { type: String, default: 'Exhibit Graphic Sign', trim: true },
+    deletedAt: { type: Date, default: null, index: true },
+    deletedBy: { type: String, default: null },
   },
   { timestamps: true, versionKey: false }
 );

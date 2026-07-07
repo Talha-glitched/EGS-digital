@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   crmApiFetch,
@@ -26,7 +26,6 @@ import {
   TrendingUp,
   Wallet,
   Plus,
-  Save,
   ChevronRight,
   Sparkles,
   Building2,
@@ -37,6 +36,11 @@ import {
   useTableFilters,
   REVENUE_FILTER_SCHEMA,
 } from '../components/ui/advancedFilter/index.js';
+import { SortableTableHeader, TableSortIndicator } from '../components/ui/SortableTableHeader.jsx';
+import { useTableSort } from '../hooks/useTableSort.js';
+import { revenueSortAccessors } from '../hooks/tableSortAccessors.js';
+import { useDebouncedAutoSave } from '../hooks/useDebouncedAutoSave.js';
+import AutoSaveIndicator from '../components/ui/AutoSaveIndicator.jsx';
 
 const STATUS_TONE = {
   'Active Planning': 'warning',
@@ -92,30 +96,37 @@ export default function FinancePage() {
     setMessage('');
   }, [selectedId, selected?.financialLedger]);
 
-  async function saveOverhead(event) {
-    event.preventDefault();
+  const persistOverhead = useCallback(async (snapshot) => {
     if (!selectedId) return;
-    setBusy(true);
     setError('');
-    setMessage('');
     try {
       await crmApiFetch('/api/admin/finance/overhead', {
         method: 'POST',
         body: JSON.stringify({
           campaignId: selectedId,
-          allocatedToolBudget: Number(overheadForm.allocatedToolBudget) || 0,
-          domainFixedCosts: Number(overheadForm.domainFixedCosts) || 0,
-          laborCosts: Number(overheadForm.laborCosts) || 0,
+          allocatedToolBudget: Number(snapshot.allocatedToolBudget) || 0,
+          domainFixedCosts: Number(snapshot.domainFixedCosts) || 0,
+          laborCosts: Number(snapshot.laborCosts) || 0,
         }),
       });
-      setMessage('Project expenses updated.');
       await load();
     } catch (err) {
-      setError(err.message);
-    } finally {
-      setBusy(false);
+      setError(err.message || 'Failed to save project expenses.');
+      throw err;
     }
-  }
+  }, [selectedId, load]);
+
+  const { status: overheadSaveStatus } = useDebouncedAutoSave({
+    snapshot: overheadForm,
+    onSave: persistOverhead,
+    enabled: Boolean(selectedId),
+    resetKey: selectedId,
+  });
+
+  useEffect(() => {
+    if (overheadSaveStatus !== 'error') return;
+    setError('Failed to save project expenses.');
+  }, [overheadSaveStatus]);
 
   async function logRevenue(event) {
     event.preventDefault();
@@ -225,9 +236,10 @@ export default function FinancePage() {
                   title={selected.projectName}
                   subtitle="Fixed costs and subscriptions for this campaign."
                 />
-                <form onSubmit={saveOverhead} className="space-y-4 px-5 pb-5">
+                <div className="space-y-4 px-5 pb-5">
                   {error && <Alert>{error}</Alert>}
                   {message && <Alert tone="success">{message}</Alert>}
+                  <AutoSaveIndicator status={overheadSaveStatus} />
                   <div className="rounded-lg border border-[var(--color-line)] bg-neutral-50/60 px-4 py-3 text-xs leading-relaxed text-neutral-600">
                     <Sparkles className="mb-1 inline h-3.5 w-3.5 text-brand" /> AI email costs are tracked automatically as sequences run. Update the manual baselines below.
                   </div>
@@ -272,11 +284,7 @@ export default function FinancePage() {
                       </p>
                     </div>
                   </div>
-                  <button type="submit" disabled={busy} className="crm-btn-primary w-full">
-                    <Save className="h-4 w-4" />
-                    {busy ? 'Saving…' : 'Save expenses'}
-                  </button>
-                </form>
+                </div>
               </Card>
 
               <Card>
@@ -340,6 +348,14 @@ function RecentRevenueTable({ entries = [], onSelectCampaign }) {
     matchMode: advancedMatchMode,
   } = useTableFilters(entries, REVENUE_FILTER_SCHEMA);
 
+  const { sortKey, sortDir, sortLabel, toggleSort, clearSort, sortItems } = useTableSort({
+    defaultKey: 'date',
+    defaultDir: 'desc',
+    accessors: revenueSortAccessors,
+  });
+
+  const sortedRows = useMemo(() => sortItems(visibleRows), [visibleRows, sortItems]);
+
   return (
     <>
       <div className="flex flex-wrap items-center gap-2 border-b border-[var(--color-line)] px-5 py-3">
@@ -356,19 +372,26 @@ function RecentRevenueTable({ entries = [], onSelectCampaign }) {
         onChange={setAdvancedFilters}
         className="px-5 pb-3"
       />
+      <TableSortIndicator
+        sortKey={sortKey}
+        sortDir={sortDir}
+        sortLabel={sortLabel}
+        onToggle={() => toggleSort(sortKey)}
+        onClear={clearSort}
+      />
       <div className="crm-scroll overflow-x-auto">
         <table className="crm-table min-w-[640px]">
           <thead>
             <tr className="crm-table-head">
-              <th className="px-5 py-3 text-left">Project</th>
-              <th className="px-5 py-3 text-left">Company</th>
-              <th className="px-5 py-3 text-left">Description</th>
-              <th className="px-5 py-3 text-right">Amount</th>
-              <th className="px-5 py-3 text-right">Date</th>
+              <SortableTableHeader label="Project" sortKey="project" activeKey={sortKey} direction={sortDir} onSort={toggleSort} className="px-5 py-3" />
+              <SortableTableHeader label="Company" sortKey="company" activeKey={sortKey} direction={sortDir} onSort={toggleSort} className="px-5 py-3" />
+              <SortableTableHeader label="Description" sortKey="description" activeKey={sortKey} direction={sortDir} onSort={toggleSort} className="px-5 py-3" />
+              <SortableTableHeader label="Amount" sortKey="amount" activeKey={sortKey} direction={sortDir} onSort={toggleSort} align="right" className="px-5 py-3" />
+              <SortableTableHeader label="Date" sortKey="date" activeKey={sortKey} direction={sortDir} onSort={toggleSort} align="right" className="px-5 py-3" />
             </tr>
           </thead>
           <tbody>
-            {visibleRows.map((entry) => (
+            {sortedRows.map((entry) => (
               <ClickableTableRow
                 key={entry._id}
                 onClick={() => {

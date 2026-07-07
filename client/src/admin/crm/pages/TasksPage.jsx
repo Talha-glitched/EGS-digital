@@ -1,8 +1,12 @@
-import { useEffect, useMemo, useState } from 'react';
-import { crmApiFetch, deleteTaskWithUndo } from '../crmApi.js';
+import { useEffect, useMemo, useState, useCallback } from 'react';
+import { crmApiFetch, deleteTaskWithUndo, deleteTasks, notifyWorkspaceChanged } from '../crmApi.js';
 import { useConfirmDelete } from '../hooks/useConfirmDelete.js';
+import { useBulkDelete } from '../hooks/useBulkDelete.js';
+import { useSpotlightDeepLink } from '../hooks/useSpotlightDeepLink.js';
+import { useRowSelection } from '../hooks/useRowSelection.js';
 import TaskTable from '../components/tasks/TaskTable.jsx';
-import { buildOwnerOptions, companyFromOpportunity, companyIdFromOpportunity, isDemoTask } from '../components/tasks/taskUtils.js';
+import { BulkSelectionBar } from '../components/ui/BulkSelectTable.jsx';
+import { buildOwnerOptions, campaignIdFromOpportunity, companyFromOpportunity, companyIdFromOpportunity, isDemoTask, loadOwnerOptions } from '../components/tasks/taskUtils.js';
 import { Alert, Card, EmptyState, LoadingState, PageHeader, PageSection, PageShell, PageToolbar, ToolbarCount } from '../components/ui/primitives.jsx';
 import { CalendarCheck2, Plus } from 'lucide-react';
 import {
@@ -14,6 +18,7 @@ import {
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState([]);
+  const [campaigns, setCampaigns] = useState([]);
   const [opportunities, setOpportunities] = useState([]);
   const [status, setStatus] = useState('Open');
   const [loading, setLoading] = useState(true);
@@ -21,13 +26,31 @@ export default function TasksPage() {
   const [editingTaskIds, setEditingTaskIds] = useState([]);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState('');
+  const [bulkDeleting, setBulkDeleting] = useState(false);
+  const [ownerOptions, setOwnerOptions] = useState([]);
 
-  const ownerOptions = useMemo(
-    () => buildOwnerOptions(tasks, opportunities.map((item) => item.owner)),
-    [tasks, opportunities],
-  );
+  useEffect(() => {
+    loadOwnerOptions(tasks, opportunities.map((item) => item.owner))
+      .then(setOwnerOptions)
+      .catch(() => setOwnerOptions(buildOwnerOptions(tasks, opportunities.map((item) => item.owner))));
+  }, [tasks, opportunities]);
 
   const taskFilterSchema = useMemo(() => buildTaskFilterSchema(ownerOptions), [ownerOptions]);
+
+  const {
+    filtered: filteredTasks,
+    filters: advancedFilters,
+    setFilters: setAdvancedFilters,
+    matchMode: advancedMatchMode,
+  } = useTableFilters(tasks, taskFilterSchema);
+
+  const visibleTasks = filteredTasks;
+
+  const deletableTasks = useMemo(
+    () => visibleTasks.filter((task) => !isDemoTask(task._id)),
+    [visibleTasks],
+  );
+  const selection = useRowSelection(deletableTasks);
 
   const confirmDeleteTask = useConfirmDelete({
     resourceType: 'task',
@@ -40,28 +63,61 @@ export default function TasksPage() {
     onRestored: () => load().catch(() => {}),
     defaultConfirm: 'Delete this task? You can undo within 30 seconds.',
   });
-  const {
-    filtered: filteredTasks,
-    filters: advancedFilters,
-    setFilters: setAdvancedFilters,
-    matchMode: advancedMatchMode,
-  } = useTableFilters(tasks, taskFilterSchema);
 
-  const visibleTasks = filteredTasks;
+  const runBulkDeleteTasks = useBulkDelete({
+    resourceType: 'task',
+    bulkDeleteFn: deleteTasks,
+    getLabelForId: (id) => {
+      const task = tasks.find((item) => item._id === id);
+      return `Deleted task: ${task?.title || 'Untitled'}`;
+    },
+    defaultConfirm: 'Delete these tasks? You can undo each within 30 seconds.',
+    onRemoved: (removedIds) => {
+      setTasks((items) => items.filter((item) => !removedIds.includes(item._id)));
+      setEditingTaskIds((itemIds) => itemIds.filter((itemId) => !removedIds.includes(itemId)));
+      if (focusTaskId && removedIds.includes(focusTaskId)) setFocusTaskId('');
+      selection.clearSelection();
+    },
+    onRestored: () => load().catch(() => {}),
+  });
+
+  async function handleBulkDelete() {
+    setBulkDeleting(true);
+    try {
+      await runBulkDeleteTasks(selection.selectedArray, { noun: 'task' });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setBulkDeleting(false);
+    }
+  }
 
   async function load() {
-    const [taskData, opportunityData] = await Promise.all([
+    const [taskData, opportunityData, campaignData] = await Promise.all([
       crmApiFetch(`/api/admin/sales/tasks?status=${encodeURIComponent(status)}`),
       crmApiFetch('/api/admin/sales/opportunities'),
+      crmApiFetch('/api/admin/projects'),
     ]);
     setTasks(taskData.items || []);
     setOpportunities(opportunityData.items || []);
+    setCampaigns(campaignData || []);
   }
 
   useEffect(() => {
     setLoading(true);
     load().catch((err) => setError(err.message)).finally(() => setLoading(false));
   }, [status]);
+
+  useSpotlightDeepLink({
+    recordType: 'task',
+    onOpen: useCallback((task) => {
+      if (task?.status && task.status !== status) setStatus(task.status);
+      setFocusTaskId(task._id);
+    }, [status]),
+    findRecord: useCallback((id) => tasks.find((task) => String(task._id) === String(id)), [tasks]),
+    resolveRecord: useCallback((id) => crmApiFetch(`/api/admin/sales/tasks/${encodeURIComponent(id)}`), []),
+    ready: !loading,
+  });
 
   async function patchTask(task, updates) {
     if (isDemoTask(task._id)) return;
@@ -71,6 +127,7 @@ export default function TasksPage() {
       payload = {
         ...updates,
         opportunityId,
+        campaignId: opportunityId ? campaignIdFromOpportunity(opportunityId, opportunities) : null,
         companyId: opportunityId ? companyIdFromOpportunity(opportunityId, opportunities) : null,
       };
     }
@@ -92,6 +149,7 @@ export default function TasksPage() {
         body: JSON.stringify(payload),
       });
       setTasks((items) => items.map((item) => (item._id === task._id ? updated : item)));
+      notifyWorkspaceChanged({ entity: 'task', action: 'update', id: task._id });
       if (updates.status === 'Done' && status === 'Open') {
         setTasks((items) => items.filter((item) => item._id !== task._id));
       }
@@ -138,6 +196,7 @@ export default function TasksPage() {
       } else {
         setStatus('Open');
       }
+      notifyWorkspaceChanged({ entity: 'task', action: 'create', id: created._id });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -212,8 +271,16 @@ export default function TasksPage() {
           </Card>
         ) : (
           <Card className="overflow-hidden p-0">
+            <BulkSelectionBar
+              count={selection.selectionCount}
+              noun="task"
+              onDelete={handleBulkDelete}
+              onClear={selection.clearSelection}
+              deleting={bulkDeleting}
+            />
             <TaskTable
               tasks={visibleTasks}
+              campaigns={campaigns}
               onToggle={toggleTask}
               onPatch={patchTask}
               onConfirmTask={confirmTask}
@@ -224,6 +291,7 @@ export default function TasksPage() {
               ownerOptions={ownerOptions}
               focusTaskId={focusTaskId}
               showAccountColumn={false}
+              selection={selection}
             />
           </Card>
         )}

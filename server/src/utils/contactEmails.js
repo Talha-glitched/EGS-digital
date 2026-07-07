@@ -1,6 +1,12 @@
 import { isValidEmail, normalizeEmail } from './normalizeDomain.js';
 
-const EMAIL_FIELDS = ['email', 'emailApollo', 'emailHunter', 'emailLusha'];
+const EMAIL_FIELDS = ['email', 'emailApollo', 'emailHunter', 'emailLusha', 'outreachEmail'];
+
+const VENDOR_FIELD_MAP = {
+  Apollo: 'emailApollo',
+  Hunter: 'emailHunter',
+  Lusha: 'emailLusha',
+};
 
 export function splitContactEmails(value) {
   return String(value || '')
@@ -9,12 +15,142 @@ export function splitContactEmails(value) {
     .filter((email) => email && isValidEmail(email));
 }
 
+export function firstContactEmail(value) {
+  return splitContactEmails(value)[0] || '';
+}
+
 export function getLeadEmailCandidates(lead) {
   return [...new Set(EMAIL_FIELDS.flatMap((field) => splitContactEmails(lead?.[field])))];
 }
 
+/** Internal dedup / legacy — not the confirmed outreach channel. */
 export function getPrimaryLeadEmail(lead) {
   return splitContactEmails(lead?.email)[0] || getLeadEmailCandidates(lead)[0] || '';
+}
+
+/** Confirmed outreach address — only set after a reply from that mailbox. */
+export function getOutreachEmail(lead) {
+  const outreach = firstContactEmail(lead?.outreachEmail);
+  return outreach && isValidEmail(outreach) ? outreach : '';
+}
+
+export function detectEmailVendor(lead, email) {
+  const normalized = normalizeEmail(email);
+  if (!normalized) return '';
+
+  for (const [vendor, field] of Object.entries(VENDOR_FIELD_MAP)) {
+    if (splitContactEmails(lead?.[field]).includes(normalized)) return vendor;
+  }
+
+  if (normalizeEmail(lead?.email) === normalized) return lead?.primarySource || 'Manual';
+  return 'Manual';
+}
+
+/**
+ * Pick send target: confirmed outreach email first, else vendor-specific source email.
+ * Returns empty when no outreach is confirmed and no vendor email is available.
+ */
+export function getSendTargetEmail(lead, { vendor } = {}) {
+  const confirmed = getOutreachEmail(lead);
+  if (confirmed) return confirmed;
+
+  if (vendor && VENDOR_FIELD_MAP[vendor]) {
+    const vendorEmail = firstContactEmail(lead?.[VENDOR_FIELD_MAP[vendor]]);
+    if (vendorEmail && isValidEmail(vendorEmail)) return vendorEmail;
+  }
+
+  for (const field of ['emailHunter', 'emailApollo', 'emailLusha']) {
+    const candidate = firstContactEmail(lead?.[field]);
+    if (candidate && isValidEmail(candidate)) return candidate;
+  }
+
+  return '';
+}
+
+export function setOutreachEmail(lead, email, source = '') {
+  const normalized = normalizeEmail(email);
+  if (!normalized || !isValidEmail(normalized)) {
+    return { applied: false, reason: 'invalid-email' };
+  }
+
+  const existing = normalizeEmail(lead?.outreachEmail);
+  if (existing && existing === normalized) {
+    lead.outreachEmailSource = source || lead.outreachEmailSource || detectEmailVendor(lead, normalized) || 'Manual';
+    return {
+      applied: true,
+      outreachEmail: normalized,
+      source: lead.outreachEmailSource,
+    };
+  }
+
+  const candidates = getLeadEmailCandidates(lead);
+  const isKnown = candidates.includes(normalized) || normalizeEmail(lead?.email) === normalized;
+  if (!isKnown && candidates.length > 0) {
+    return { applied: false, reason: 'email-not-on-lead' };
+  }
+
+  lead.outreachEmail = normalized;
+  lead.outreachEmailSource = source || detectEmailVendor(lead, normalized) || 'Manual';
+  return {
+    applied: true,
+    outreachEmail: normalized,
+    source: lead.outreachEmailSource,
+  };
+}
+
+/**
+ * Infer which vendor mailbox worked — last send target, sole vendor email, or primary source match.
+ */
+export function inferOutreachEmail(lead, { lastSentEmail = '' } = {}) {
+  if (firstContactEmail(lead?.outreachEmail)) {
+    return {
+      email: firstContactEmail(lead.outreachEmail),
+      source: lead.outreachEmailSource || detectEmailVendor(lead, lead.outreachEmail) || 'Manual',
+      method: 'existing',
+    };
+  }
+
+  const sent = normalizeEmail(lastSentEmail);
+  if (sent && isValidEmail(sent)) {
+    const fromReply = applyOutreachEmailFromReply(lead, sent);
+    if (fromReply.applied) {
+      return { email: lead.outreachEmail, source: lead.outreachEmailSource, method: 'last-send' };
+    }
+  }
+
+  const vendorOptions = Object.entries(VENDOR_FIELD_MAP)
+    .map(([vendor, field]) => ({ vendor, email: firstContactEmail(lead?.[field]) }))
+    .filter((row) => row.email && isValidEmail(row.email));
+
+  if (vendorOptions.length === 1) {
+    setOutreachEmail(lead, vendorOptions[0].email, vendorOptions[0].vendor);
+    return { email: lead.outreachEmail, source: lead.outreachEmailSource, method: 'sole-vendor' };
+  }
+
+  const primary = String(lead?.primarySource || '').trim();
+  const primaryMatch = vendorOptions.find((row) => row.vendor === primary);
+  if (primaryMatch) {
+    setOutreachEmail(lead, primaryMatch.email, primaryMatch.vendor);
+    return { email: lead.outreachEmail, source: lead.outreachEmailSource, method: 'primary-source' };
+  }
+
+  return null;
+}
+
+export function applyOutreachEmailFromReply(lead, senderEmail) {
+  const normalized = normalizeEmail(senderEmail);
+  if (!normalized || !isValidEmail(normalized)) {
+    return { applied: false, reason: 'invalid-sender' };
+  }
+
+  const candidates = getLeadEmailCandidates(lead);
+  if (!candidates.includes(normalized)) {
+    return { applied: false, reason: 'sender-not-on-lead' };
+  }
+
+  lead.outreachEmail = normalized;
+  lead.outreachEmailSource = detectEmailVendor(lead, normalized) || 'Manual';
+  return { applied: true, outreachEmail: normalized, source: lead.outreachEmailSource };
 }
 
 export function buildLeadEmailQuery(email) {
@@ -27,4 +163,8 @@ export function buildLeadEmailQuery(email) {
   return {
     $or: EMAIL_FIELDS.map((field) => ({ [field]: listPattern })),
   };
+}
+
+export function pickDedupEmail({ apolloEmail = '', hunterEmail = '', lushaEmail = '', primaryEmail = '' }) {
+  return apolloEmail || lushaEmail || hunterEmail || primaryEmail || '';
 }

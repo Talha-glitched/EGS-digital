@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Modal } from '../ui/Modal.jsx';
 import { Alert, Field } from '../ui/primitives.jsx';
 import SearchableSelect from '../ui/SearchableSelect.jsx';
@@ -20,32 +20,34 @@ const EMPTY = {
 
 export default function AddContactModal({ open, onClose, onCreated }) {
   const [form, setForm] = useState(EMPTY);
-  const [companies, setCompanies] = useState([]);
+  const [selectedCompanyOption, setSelectedCompanyOption] = useState(null);
   const [campaigns, setCampaigns] = useState([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (!open) return;
-    Promise.all([
-      fetchGlobalCompanies({ limit: 200 }),
-      crmApiFetch('/api/admin/projects'),
-    ])
-      .then(([companyData, projectList]) => {
-        setCompanies(companyData.items || []);
-        setCampaigns(projectList || []);
-      })
+    crmApiFetch('/api/admin/projects')
+      .then((projectList) => setCampaigns(projectList || []))
       .catch(console.error);
   }, [open]);
 
-  const companyOptions = useMemo(
-    () => companies.map((company) => ({
+  const searchCompanies = useCallback(async (query) => {
+    const data = await fetchGlobalCompanies({
+      search: query || undefined,
+      limit: 50,
+    });
+    return (data.items || []).map((company) => ({
       value: company._id,
       label: company.companyName,
       hint: company.domain || undefined,
-    })),
-    [companies],
-  );
+    }));
+  }, []);
+
+  const companyOptions = useMemo(() => {
+    if (!selectedCompanyOption) return [];
+    return [selectedCompanyOption];
+  }, [selectedCompanyOption]);
 
   const campaignOptions = useMemo(
     () => campaigns.map((campaign) => ({
@@ -62,6 +64,7 @@ export default function AddContactModal({ open, onClose, onCreated }) {
   function handleClose() {
     if (busy) return;
     setForm(EMPTY);
+    setSelectedCompanyOption(null);
     setError('');
     onClose?.();
   }
@@ -93,6 +96,7 @@ export default function AddContactModal({ open, onClose, onCreated }) {
       const lead = await createStandaloneLead(payload);
       onCreated?.(lead);
       setForm(EMPTY);
+      setSelectedCompanyOption(null);
       onClose?.();
     } catch (err) {
       setError(err.message || 'Failed to create contact.');
@@ -139,8 +143,12 @@ export default function AddContactModal({ open, onClose, onCreated }) {
           <Field label="Company">
             <SearchableSelect
               value={form.companyId}
-              onChange={(value) => update('companyId', value)}
+              onChange={(value, option) => {
+                update('companyId', value);
+                setSelectedCompanyOption(option || null);
+              }}
               options={companyOptions}
+              onSearch={searchCompanies}
               placeholder="Select company…"
               searchPlaceholder="Search companies…"
               emptyLabel="No companies match."

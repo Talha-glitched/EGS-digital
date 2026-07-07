@@ -524,7 +524,7 @@ export default function SequenceBuilderWorkspace({
 
               {audienceMode === AUDIENCE_MODES.CONTACTS && (
                 <div className="mt-3">
-                  <Field label="Contacts" hint="Only Pending Inqueue contacts are eligible.">
+                  <Field label="Contacts" hint="Contacts that are bounced or opted out are excluded.">
                     <SearchableMultiSelect
                       values={contactIds}
                       onChange={setContactIds}

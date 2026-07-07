@@ -1,0 +1,4586 @@
+[
+  {
+    "_id": {
+      "$oid": "6a356e069f23c150e7f5b61b"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a096cc4b99fb545262"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e059f23c150e7f5b617"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782102618902"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886470043"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782102618903"
+      }
+    },
+    "providerMessageId": "<bcb5e7b8-1bd0-a76b-300f-697af28cc3e7@exhibitgraphicsign.com>",
+    "recipientEmail": "shivam@dialmaz.com",
+    "renderedBody": "Hi Shivam,\n\nWe help DIALMAZ with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "DIALMAZ — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e069f23c150e7f5b621"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb545269"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e069f23c150e7f5b61e"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782103609507"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886470301"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782103609508"
+      }
+    },
+    "providerMessageId": "<e25b3940-b531-0fe2-3c55-e104a090b487@exhibitgraphicsign.com>",
+    "recipientEmail": "dhakanithra@dhakanjewellers.ae",
+    "renderedBody": "Hi Hitesh,\n\nWe help DHAKAN JEWELLERS LLC with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "DHAKAN JEWELLERS LLC — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e069f23c150e7f5b627"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb545270"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e069f23c150e7f5b624"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782103765138"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886470513"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782103765139"
+      }
+    },
+    "providerMessageId": "<6a3bc9bb-b52a-815d-f77d-81dbe8ce9ee0@exhibitgraphicsign.com>",
+    "recipientEmail": "sushil@dialmaz.com",
+    "renderedBody": "Hi Sushil,\n\nWe help DIALMAZ with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "DIALMAZ — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e069f23c150e7f5b62d"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb545277"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e069f23c150e7f5b62a"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782103765964"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886470764"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782103765964"
+      }
+    },
+    "providerMessageId": "<4d159da2-97f0-2057-14e6-f4639b417873@exhibitgraphicsign.com>",
+    "recipientEmail": "eslam.salah@igi.org",
+    "renderedBody": "Hi Eslam,\n\nWe help INTERNATIONAL GEMOLOGICAL INSTITUTE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "INTERNATIONAL GEMOLOGICAL INSTITUTE — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e069f23c150e7f5b633"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb54527e"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e069f23c150e7f5b630"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782104085479"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886470988"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782104085480"
+      }
+    },
+    "providerMessageId": "<765be21b-080d-85a2-8010-bd3b676452ac@exhibitgraphicsign.com>",
+    "recipientEmail": "iftikhar@myplanetguides.com",
+    "renderedBody": "Hi Iftikhar,\n\nWe help MY UAE GUIDE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "MY UAE GUIDE — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e079f23c150e7f5b639"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb545285"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e079f23c150e7f5b636"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782105058303"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886471231"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782105058303"
+      }
+    },
+    "providerMessageId": "<113c3484-3722-6c62-8ac3-c6b8998a4bc3@exhibitgraphicsign.com>",
+    "recipientEmail": "waseem@myuaeguide.com",
+    "renderedBody": "Hi Muhammad,\n\nWe help MY UAE GUIDE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "MY UAE GUIDE — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e079f23c150e7f5b63f"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb54528b"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e079f23c150e7f5b63c"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782106039376"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886471506"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782106039377"
+      }
+    },
+    "providerMessageId": "<72e8f388-33b3-f76f-5ce2-7e56b939dccc@exhibitgraphicsign.com>",
+    "recipientEmail": "abdullah@jawharajewellery.com",
+    "renderedBody": "Hi Abdullah,\n\nWe help JAWHARA JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "JAWHARA JEWELLERY — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e079f23c150e7f5b645"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb545292"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e079f23c150e7f5b642"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782107016694"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886471691"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782107016695"
+      }
+    },
+    "providerMessageId": "<b77448c5-dd6c-a741-c3f4-3fa92ee4037a@exhibitgraphicsign.com>",
+    "recipientEmail": "rashmi@devji.com",
+    "renderedBody": "Hi Rashmi,\n\nWe help BHASKAR DEVJI CO. W.L.L with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "BHASKAR DEVJI CO. W.L.L — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e079f23c150e7f5b64b"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb54529a"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e079f23c150e7f5b648"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782107184695"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886471933"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782107184696"
+      }
+    },
+    "providerMessageId": "<0ddd269b-c6c1-4fad-a043-4d0f09dbf9c1@exhibitgraphicsign.com>",
+    "recipientEmail": "kumud@kkjewels.com",
+    "renderedBody": "Hi Kumud,\n\nWe help K.K. JEWELS with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "K.K. JEWELS — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e089f23c150e7f5b651"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb5452a1"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e089f23c150e7f5b64e"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782108159211"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886472241"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782108159212"
+      }
+    },
+    "providerMessageId": "<735061f5-6033-e8b3-19a8-d1909f8063c2@exhibitgraphicsign.com>",
+    "recipientEmail": "johan.dsouza@igi.org",
+    "renderedBody": "Hi Johan,\n\nWe help INTERNATIONAL GEMOLOGICAL INSTITUTE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "INTERNATIONAL GEMOLOGICAL INSTITUTE — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e089f23c150e7f5b657"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb5452a8"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e089f23c150e7f5b654"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782108159260"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886472481"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782108159261"
+      }
+    },
+    "providerMessageId": "<ca3b7680-6420-cf06-0648-995f617281f5@exhibitgraphicsign.com>",
+    "recipientEmail": "sindhu@igi.org",
+    "renderedBody": "Hi Sindhu,\n\nWe help INTERNATIONAL GEMOLOGICAL INSTITUTE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "INTERNATIONAL GEMOLOGICAL INSTITUTE — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e089f23c150e7f5b65d"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb5452ae"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e089f23c150e7f5b65a"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782109131606"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886472722"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782109131606"
+      }
+    },
+    "providerMessageId": "<90834bb0-ed72-96fc-3a05-e0dbab5ec3ac@exhibitgraphicsign.com>",
+    "recipientEmail": "jbharatji@devji.com",
+    "renderedBody": "Hi Jaydeep,\n\nWe help BHASKAR DEVJI CO. W.L.L with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "BHASKAR DEVJI CO. W.L.L — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e089f23c150e7f5b663"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb5452b5"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e089f23c150e7f5b660"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782109131704"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886472970"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782109131704"
+      }
+    },
+    "providerMessageId": "<acfc58e3-4a18-dda7-a204-44e86708198e@exhibitgraphicsign.com>",
+    "recipientEmail": "hussain@lifestylegcc.com",
+    "renderedBody": "Hi Khadim,\n\nWe help LIFESTYLE FINE JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "LIFESTYLE FINE JEWELLERY — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e099f23c150e7f5b669"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb5452bc"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e099f23c150e7f5b666"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782109670277"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886473201"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782109670277"
+      }
+    },
+    "providerMessageId": "<2c92ff7c-5944-ffb8-3580-6f624820e8de@exhibitgraphicsign.com>",
+    "recipientEmail": "ashraf@lifestylegcc.com",
+    "renderedBody": "Hi Ashraf,\n\nWe help LIFESTYLE FINE JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "LIFESTYLE FINE JEWELLERY — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e099f23c150e7f5b66f"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452c3"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e099f23c150e7f5b66c"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782110646401"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886473449"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782110646401"
+      }
+    },
+    "providerMessageId": "<17465bd2-155c-d3c0-cc45-c6ddc2d8cbdd@exhibitgraphicsign.com>",
+    "recipientEmail": "alessandro@italgold.it",
+    "renderedBody": "Hi Alessandro,\n\nWe help AMISANO 1967 with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "AMISANO 1967 — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e099f23c150e7f5b675"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452cb"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e099f23c150e7f5b672"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782111619659"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886473676"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782111619660"
+      }
+    },
+    "providerMessageId": "<10f69f59-80b8-894e-4ee5-6e06c04b4443@exhibitgraphicsign.com>",
+    "recipientEmail": "l.galanti@ice.it",
+    "renderedBody": "Hi Lorenzo,\n\nWe help ITALIAN TRADE COMMISSION with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "ITALIAN TRADE COMMISSION — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e099f23c150e7f5b67b"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452d2"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e099f23c150e7f5b678"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782111753438"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886473904"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782111753439"
+      }
+    },
+    "providerMessageId": "<5d5f7e86-77fd-21bf-3d1b-de1365b7b559@exhibitgraphicsign.com>",
+    "recipientEmail": "karthik@jawharajewellery.ae",
+    "renderedBody": "Hi Karthik,\n\nWe help JAWHARA JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "JAWHARA JEWELLERY — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0a9f23c150e7f5b681"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452d9"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0a9f23c150e7f5b67e"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782112727399"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886474101"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782112727400"
+      }
+    },
+    "providerMessageId": "<09755ee6-c2a9-005d-3080-fd84df5ab48e@exhibitgraphicsign.com>",
+    "recipientEmail": "vishal.usapkar@irysgroup.com",
+    "renderedBody": "Hi Vishal,\n\nWe help IRYS MIDDLE EAST LLC - FZ with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "IRYS MIDDLE EAST LLC - FZ — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0a9f23c150e7f5b687"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452e1"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0a9f23c150e7f5b684"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782112732422"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886474323"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782112732423"
+      }
+    },
+    "providerMessageId": "<d740e4f6-729c-4d3c-f94f-ed89c8bbe503@exhibitgraphicsign.com>",
+    "recipientEmail": "niall@colorjewels.net",
+    "renderedBody": "Hi Niall,\n\nWe help COLOR JEWELS DMCC with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "COLOR JEWELS DMCC — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0a9f23c150e7f5b68d"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452e7"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0a9f23c150e7f5b68a"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782112919580"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886474561"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782112919581"
+      }
+    },
+    "providerMessageId": "<2a8a6c52-e6df-e4be-b33c-f3db9b101650@exhibitgraphicsign.com>",
+    "recipientEmail": "i.rokvic.ext@ice.it",
+    "renderedBody": "Hi Ivana,\n\nWe help ITALIAN TRADE COMMISSION with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "ITALIAN TRADE COMMISSION — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0a9f23c150e7f5b693"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb5452ee"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0a9f23c150e7f5b690"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782113041648"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886474786"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782113041649"
+      }
+    },
+    "providerMessageId": "<177f958b-c6ae-6fa1-39a0-380019f8b46a@exhibitgraphicsign.com>",
+    "recipientEmail": "cihan@reneejewellers.com",
+    "renderedBody": "Hi Cihan,\n\nWe help RENEE JEWELLERS with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "RENEE JEWELLERS — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0b9f23c150e7f5b69a"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb5452f5"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0a9f23c150e7f5b696"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782113332879"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886475026"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782113332879"
+      }
+    },
+    "providerMessageId": "<5d6b890b-fe09-3f9b-70cd-8cf01fc530de@exhibitgraphicsign.com>",
+    "recipientEmail": "tehmasp@igi.org",
+    "renderedBody": "Hi Tehmasp,\n\nWe help INTERNATIONAL GEMOLOGICAL INSTITUTE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "INTERNATIONAL GEMOLOGICAL INSTITUTE — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0b9f23c150e7f5b6a0"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb5452fc"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0b9f23c150e7f5b69d"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782113459145"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886475251"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782113459146"
+      }
+    },
+    "providerMessageId": "<65ac0dec-69a3-8ce1-87c8-9d9f791e9df1@exhibitgraphicsign.com>",
+    "recipientEmail": "sandesh@jawharajewellery.ae",
+    "renderedBody": "Hi Sandesh,\n\nWe help JAWHARA JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "JAWHARA JEWELLERY — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0b9f23c150e7f5b6a6"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb545303"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0b9f23c150e7f5b6a3"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782113764383"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886475534"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782113764383"
+      }
+    },
+    "providerMessageId": "<1ac79281-ab7c-9fa9-6ecb-7283160c55ec@exhibitgraphicsign.com>",
+    "recipientEmail": "jaffer@abida-jewellery.com",
+    "renderedBody": "Hi Jaffer,\n\nWe help ABIDA JEWELLERY L.L.C with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "ABIDA JEWELLERY L.L.C — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0b9f23c150e7f5b6ac"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb54530b"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0b9f23c150e7f5b6a9"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782113876285"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886475761"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782113876286"
+      }
+    },
+    "providerMessageId": "<6aa92003-a34f-8e2b-96de-52be8b309d5c@exhibitgraphicsign.com>",
+    "recipientEmail": "aniket@igi.org",
+    "renderedBody": "Hi Aniket,\n\nWe help INTERNATIONAL GEMOLOGICAL INSTITUTE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "INTERNATIONAL GEMOLOGICAL INSTITUTE — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0c9f23c150e7f5b6b2"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb545311"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0b9f23c150e7f5b6af"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782114027223"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886476024"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782114027223"
+      }
+    },
+    "providerMessageId": "<3c41ffeb-b0e6-984c-1264-f96b625714e7@exhibitgraphicsign.com>",
+    "recipientEmail": "renuka@igi.org",
+    "renderedBody": "Hi Renuka,\n\nWe help INTERNATIONAL GEMOLOGICAL INSTITUTE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "INTERNATIONAL GEMOLOGICAL INSTITUTE — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0c9f23c150e7f5b6b8"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb545318"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0c9f23c150e7f5b6b5"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782114229248"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886476283"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782114229249"
+      }
+    },
+    "providerMessageId": "<cacb15d7-6fa0-f5a1-a2ba-e0cefeb4f782@exhibitgraphicsign.com>",
+    "recipientEmail": "kuwait@jawharajewellery.com",
+    "renderedBody": "Hi Kuwait,\n\nWe help JAWHARA JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "JAWHARA JEWELLERY — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0c9f23c150e7f5b6be"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb545320"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0c9f23c150e7f5b6bb"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782114375608"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886476513"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782114375608"
+      }
+    },
+    "providerMessageId": "<ad25e109-8346-b914-ec2d-c24763db184e@exhibitgraphicsign.com>",
+    "recipientEmail": "swathi@lamarquisejewellery.com",
+    "renderedBody": "Hi Swathi,\n\nWe help LA MARQUISE DIAMONDS AND WATCHES DMCC with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "LA MARQUISE DIAMONDS AND WATCHES DMCC — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0c9f23c150e7f5b6c4"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb545327"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0c9f23c150e7f5b6c1"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782117322753"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886476716"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782117322754"
+      }
+    },
+    "providerMessageId": "<5ccba7e2-3933-cccd-26d1-8b4ca0a9989d@exhibitgraphicsign.com>",
+    "recipientEmail": "mahak@vmjewellery.com",
+    "renderedBody": "Hi Mahak,\n\nWe help V M JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "V M JEWELLERY — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0c9f23c150e7f5b6ca"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb54532e"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0c9f23c150e7f5b6c7"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782117322970"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886476946"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782117322971"
+      }
+    },
+    "providerMessageId": "<0b29806b-024a-5ebe-1821-fa687a1497ac@exhibitgraphicsign.com>",
+    "recipientEmail": "ajith@jawharajewellery.com",
+    "renderedBody": "Hi Ajith,\n\nWe help JAWHARA JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "JAWHARA JEWELLERY — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0d9f23c150e7f5b6d0"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb545335"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0d9f23c150e7f5b6cd"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782117322969"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886477176"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782117322969"
+      }
+    },
+    "providerMessageId": "<96d1c2ae-9d38-fedc-89af-a6e803e870db@exhibitgraphicsign.com>",
+    "recipientEmail": "jemis@jamajewels.com",
+    "renderedBody": "Hi Jemis,\n\nWe help JAMA JEWELS FZCO with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "JAMA JEWELS FZCO — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0d9f23c150e7f5b6d6"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb54533c"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0d9f23c150e7f5b6d3"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782117323671"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886477407"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782117323671"
+      }
+    },
+    "providerMessageId": "<50eea3b3-85ae-4325-f219-ae858e0b61b4@exhibitgraphicsign.com>",
+    "recipientEmail": "vinu.menon@jawharajewellery.ae",
+    "renderedBody": "Hi Vinu,\n\nWe help JAWHARA JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "JAWHARA JEWELLERY — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0d9f23c150e7f5b6dc"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb545343"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0d9f23c150e7f5b6d9"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782117322751"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886477680"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782117322752"
+      }
+    },
+    "providerMessageId": "<085eb39b-653e-c5c0-7a74-535b82c6e903@exhibitgraphicsign.com>",
+    "recipientEmail": "zeyad@orgluxury.com",
+    "renderedBody": "Hi Zeyad,\n\nWe help ORG LUXURY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "ORG LUXURY — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0d9f23c150e7f5b6e2"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a696cc4b99fb54534a"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0d9f23c150e7f5b6df"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "failed",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": null,
+    "errorMessage": "connect ECONNREFUSED 162.241.225.108:465",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886477897"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782117319741"
+      }
+    },
+    "providerMessageId": "",
+    "recipientEmail": "",
+    "renderedBody": "",
+    "renderedSubject": ""
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0e9f23c150e7f5b6e8"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a696cc4b99fb545351"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0e9f23c150e7f5b6e5"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782117323672"
+      }
+    },
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886478121"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782117323672"
+      }
+    },
+    "providerMessageId": "<307efeb3-66e6-a127-0a6c-643272572c80@exhibitgraphicsign.com>",
+    "recipientEmail": "zahan@devjiaurum.com",
+    "renderedBody": "Hi Zahan,\n\nWe help Devji Aurum with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "renderedSubject": "Devji Aurum — exhibition stand support (Step 1)"
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0e9f23c150e7f5b6ee"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a696cc4b99fb545357"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0e9f23c150e7f5b6eb"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "failed",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782102600000"
+      }
+    },
+    "sentAt": null,
+    "errorMessage": "connect ECONNREFUSED 162.241.225.108:465",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886478353"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782117322793"
+      }
+    },
+    "providerMessageId": "",
+    "recipientEmail": "",
+    "renderedBody": "",
+    "renderedSubject": ""
+  },
+  {
+    "_id": {
+      "$oid": "6a38ba5b0e77439e7c9beb58"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a096cc4b99fb545262"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e059f23c150e7f5b617"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782361891369"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782362004894"
+      }
+    },
+    "recipientEmail": "shivam@dialmaz.com",
+    "providerMessageId": "<7248bfb8-5834-253d-2e7a-13e7da854211@exhibitgraphicsign.com>",
+    "renderedSubject": "DIALMAZ — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Shivam,\n\nWe help DIALMAZ with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782102619064"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782362004895"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38be390e77439e7c9beb6a"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb545269"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e069f23c150e7f5b61e"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782362889705"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782363167614"
+      }
+    },
+    "recipientEmail": "dhakanithra@dhakanjewellers.ae",
+    "providerMessageId": "<deb2ab38-8660-dc75-4b8c-276d0fc7c495@exhibitgraphicsign.com>",
+    "renderedSubject": "DHAKAN JEWELLERS LLC — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Hitesh,\n\nWe help DHAKAN JEWELLERS LLC with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782103609727"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782363167615"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38bed50e77439e7c9beb87"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb545270"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e069f23c150e7f5b624"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782363050295"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782365111172"
+      }
+    },
+    "recipientEmail": "sushil@dialmaz.com",
+    "providerMessageId": "<55c302b4-a761-bac2-bbc7-9db672cfe134@exhibitgraphicsign.com>",
+    "renderedSubject": "DIALMAZ — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Sushil,\n\nWe help DIALMAZ with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782103765280"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782365111172"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38bed60e77439e7c9beb94"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb545277"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e069f23c150e7f5b62a"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782363029843"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782364138306"
+      }
+    },
+    "recipientEmail": "eslam.salah@igi.org",
+    "providerMessageId": "<d4b750cf-ed11-d57c-18ee-46a9da9b8345@exhibitgraphicsign.com>",
+    "renderedSubject": "INTERNATIONAL GEMOLOGICAL INSTITUTE — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Eslam,\n\nWe help INTERNATIONAL GEMOLOGICAL INSTITUTE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782103766112"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782364138307"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38c0150e77439e7c9bed84"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb54527e"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e069f23c150e7f5b630"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782363379874"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782365334579"
+      }
+    },
+    "recipientEmail": "iftikhar@myplanetguides.com",
+    "providerMessageId": "<c2fc81a3-47e3-518e-fd74-76f3c9f78e23@exhibitgraphicsign.com>",
+    "renderedSubject": "MY UAE GUIDE — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Iftikhar,\n\nWe help MY UAE GUIDE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782104085631"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782365334580"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38c3e20e77439e7c9bef39"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb545285"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e079f23c150e7f5b636"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782364334268"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782365334077"
+      }
+    },
+    "recipientEmail": "waseem@myuaeguide.com",
+    "providerMessageId": "<f18e6d14-8999-ac3f-5dd8-1f1215fb8fa1@exhibitgraphicsign.com>",
+    "renderedSubject": "MY UAE GUIDE — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Muhammad,\n\nWe help MY UAE GUIDE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782105058454"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782365334078"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38c7b70e77439e7c9bf0b0"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb54528b"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e079f23c150e7f5b63c"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782365313193"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782365455618"
+      }
+    },
+    "recipientEmail": "abdullah@jawharajewellery.com",
+    "providerMessageId": "<bc76edce-9a43-fc5f-1081-ce194b052eb8@exhibitgraphicsign.com>",
+    "renderedSubject": "JAWHARA JEWELLERY — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Abdullah,\n\nWe help JAWHARA JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782106039541"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782365455619"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38cb880e77439e7c9bf26b"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb545292"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e079f23c150e7f5b642"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782366305310"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782366835872"
+      }
+    },
+    "recipientEmail": "rashmi@devji.com",
+    "providerMessageId": "<e6cd5404-8289-df62-a5c3-403864ec11c6@exhibitgraphicsign.com>",
+    "renderedSubject": "BHASKAR DEVJI CO. W.L.L — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Rashmi,\n\nWe help BHASKAR DEVJI CO. W.L.L with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782107016893"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782366835873"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38cc300e77439e7c9bf41c"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb54529a"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e079f23c150e7f5b648"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782366453502"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782367814300"
+      }
+    },
+    "recipientEmail": "kumud@kkjewels.com",
+    "providerMessageId": "<bce66303-1af7-b940-1d30-d3fe341d47f4@exhibitgraphicsign.com>",
+    "renderedSubject": "K.K. JEWELS — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Kumud,\n\nWe help K.K. JEWELS with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782107184856"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782367814301"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38cfff0e77439e7c9bf624"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb5452a1"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e089f23c150e7f5b64e"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782367449554"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782368988438"
+      }
+    },
+    "recipientEmail": "johan.dsouza@igi.org",
+    "providerMessageId": "<10496dd8-e6ee-1ccd-b678-e51a490b4606@exhibitgraphicsign.com>",
+    "renderedSubject": "INTERNATIONAL GEMOLOGICAL INSTITUTE — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Johan,\n\nWe help INTERNATIONAL GEMOLOGICAL INSTITUTE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782108159372"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782368988438"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38cfff0e77439e7c9bf627"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb5452a8"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e089f23c150e7f5b654"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782367434535"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782368013977"
+      }
+    },
+    "recipientEmail": "sindhu@igi.org",
+    "providerMessageId": "<58378bc1-2179-eb1e-46f1-9f196c256c78@exhibitgraphicsign.com>",
+    "renderedSubject": "INTERNATIONAL GEMOLOGICAL INSTITUTE — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Sindhu,\n\nWe help INTERNATIONAL GEMOLOGICAL INSTITUTE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782108159411"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782368013978"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38d3cb0e77439e7c9bf7ef"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb5452ae"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e089f23c150e7f5b65a"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782368408829"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782369511026"
+      }
+    },
+    "recipientEmail": "jbharatji@devji.com",
+    "providerMessageId": "<a1886770-39ff-3544-ec52-c571c3944c93@exhibitgraphicsign.com>",
+    "renderedSubject": "BHASKAR DEVJI CO. W.L.L — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Jaydeep,\n\nWe help BHASKAR DEVJI CO. W.L.L with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782109131765"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782369511027"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38d3cb0e77439e7c9bf7f5"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb5452b5"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e089f23c150e7f5b660"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782368402055"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782369131940"
+      }
+    },
+    "recipientEmail": "hussain@lifestylegcc.com",
+    "providerMessageId": "<42d1d0da-ad16-dff2-035e-4f5aa00b7676@exhibitgraphicsign.com>",
+    "renderedSubject": "LIFESTYLE FINE JEWELLERY — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Khadim,\n\nWe help LIFESTYLE FINE JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782109131856"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782369131941"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38d5e60e77439e7c9bf962"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb5452bc"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e099f23c150e7f5b666"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782368931272"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782370483948"
+      }
+    },
+    "recipientEmail": "ashraf@lifestylegcc.com",
+    "providerMessageId": "<d4115d48-ed5e-4756-d197-b06220a6eb18@exhibitgraphicsign.com>",
+    "renderedSubject": "LIFESTYLE FINE JEWELLERY — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Ashraf,\n\nWe help LIFESTYLE FINE JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782109670406"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782370483949"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38d9b60e77439e7c9bfb25"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452c3"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e099f23c150e7f5b66c"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782369942222"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782371457021"
+      }
+    },
+    "recipientEmail": "alessandro@italgold.it",
+    "providerMessageId": "<2e1b3825-ca51-1418-1372-eb91bfb5048e@exhibitgraphicsign.com>",
+    "renderedSubject": "AMISANO 1967 — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Alessandro,\n\nWe help AMISANO 1967 with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782110646565"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782371457022"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38dd830e77439e7c9bfcf1"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452cb"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e099f23c150e7f5b672"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782370888533"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782372444574"
+      }
+    },
+    "recipientEmail": "l.galanti@ice.it",
+    "providerMessageId": "<a4ebc716-f34b-b1e6-baf0-acae13a20277@exhibitgraphicsign.com>",
+    "renderedSubject": "ITALIAN TRADE COMMISSION — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Lorenzo,\n\nWe help ITALIAN TRADE COMMISSION with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782111619866"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782372444575"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38de090e77439e7c9bfe84"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452d2"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e099f23c150e7f5b678"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782371044802"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782372808872"
+      }
+    },
+    "recipientEmail": "karthik@jawharajewellery.ae",
+    "providerMessageId": "<c40d1572-0eee-77a6-cb87-49ae5f698f89@exhibitgraphicsign.com>",
+    "renderedSubject": "JAWHARA JEWELLERY — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Karthik,\n\nWe help JAWHARA JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782111753609"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782372808872"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38e1d70e77439e7c9bfea1"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452d9"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0a9f23c150e7f5b67e"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782372027225"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782373172077"
+      }
+    },
+    "recipientEmail": "vishal.usapkar@irysgroup.com",
+    "providerMessageId": "<7cd68b2e-81b9-7140-6b51-09117ad560d4@exhibitgraphicsign.com>",
+    "renderedSubject": "IRYS MIDDLE EAST LLC - FZ — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Vishal,\n\nWe help IRYS MIDDLE EAST LLC - FZ with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782112727562"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782373172078"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38e1dc0e77439e7c9bfea8"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452e1"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0a9f23c150e7f5b684"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782372012379"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782372957374"
+      }
+    },
+    "recipientEmail": "niall@colorjewels.net",
+    "providerMessageId": "<7b2b1c4c-0f82-0b1e-1686-1585ac21cd6e@exhibitgraphicsign.com>",
+    "renderedSubject": "COLOR JEWELS DMCC — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Niall,\n\nWe help COLOR JEWELS DMCC with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782112732587"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782372957375"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38e2970e77439e7c9bfef2"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452e7"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0a9f23c150e7f5b68a"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782372196485"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782373307853"
+      }
+    },
+    "recipientEmail": "i.rokvic.ext@ice.it",
+    "providerMessageId": "<b916296f-96a6-c416-fc19-baa7786beb61@exhibitgraphicsign.com>",
+    "renderedSubject": "ITALIAN TRADE COMMISSION — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Ivana,\n\nWe help ITALIAN TRADE COMMISSION with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782112919726"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782373307853"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38e3110e77439e7c9c0070"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb5452ee"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0a9f23c150e7f5b690"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782372341636"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782374285345"
+      }
+    },
+    "recipientEmail": "cihan@reneejewellers.com",
+    "providerMessageId": "<6d728429-1b27-3016-55af-2cab18412f71@exhibitgraphicsign.com>",
+    "renderedSubject": "RENEE JEWELLERS — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Cihan,\n\nWe help RENEE JEWELLERS with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782113041813"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782374285345"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38e4350e77439e7c9c00b2"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb5452f5"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0a9f23c150e7f5b696"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782372627382"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782374285711"
+      }
+    },
+    "recipientEmail": "tehmasp@igi.org",
+    "providerMessageId": "<f8e2e82d-0312-3075-6470-09655a1aca91@exhibitgraphicsign.com>",
+    "renderedSubject": "INTERNATIONAL GEMOLOGICAL INSTITUTE — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Tehmasp,\n\nWe help INTERNATIONAL GEMOLOGICAL INSTITUTE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782113333081"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782374285712"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38e4b30e77439e7c9c0238"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb5452fc"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0b9f23c150e7f5b69d"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782372731008"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782374416075"
+      }
+    },
+    "recipientEmail": "sandesh@jawharajewellery.ae",
+    "providerMessageId": "<a50845df-e39e-9b73-851f-739780d09cf3@exhibitgraphicsign.com>",
+    "renderedSubject": "JAWHARA JEWELLERY — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Sandesh,\n\nWe help JAWHARA JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782113459311"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782374416076"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38e5e40e77439e7c9c025b"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb545303"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0b9f23c150e7f5b6a3"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782373048093"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782375384267"
+      }
+    },
+    "recipientEmail": "jaffer@abida-jewellery.com",
+    "providerMessageId": "<8ce77ded-bfa7-8e96-6b0e-0c53a0bc1725@exhibitgraphicsign.com>",
+    "renderedSubject": "ABIDA JEWELLERY L.L.C — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Jaffer,\n\nWe help ABIDA JEWELLERY L.L.C with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782113764572"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782375384268"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38e6540e77439e7c9c0400"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb54530b"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0b9f23c150e7f5b6a9"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782373154796"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782376357533"
+      }
+    },
+    "recipientEmail": "aniket@igi.org",
+    "providerMessageId": "<20d0ff4d-5d22-6ea1-5a11-8bdd2223696c@exhibitgraphicsign.com>",
+    "renderedSubject": "INTERNATIONAL GEMOLOGICAL INSTITUTE — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Aniket,\n\nWe help INTERNATIONAL GEMOLOGICAL INSTITUTE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782113876434"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782376357534"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38e6eb0e77439e7c9c0413"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb545311"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0b9f23c150e7f5b6af"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782373297518"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782376830017"
+      }
+    },
+    "recipientEmail": "renuka@igi.org",
+    "providerMessageId": "<4a734389-fe08-dc05-f00f-bf596693620c@exhibitgraphicsign.com>",
+    "renderedSubject": "INTERNATIONAL GEMOLOGICAL INSTITUTE — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Renuka,\n\nWe help INTERNATIONAL GEMOLOGICAL INSTITUTE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782114027385"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782376830017"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38e7b50e77439e7c9c0605"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb545318"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0c9f23c150e7f5b6b5"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782373520865"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782377803077"
+      }
+    },
+    "recipientEmail": "kuwait@jawharajewellery.com",
+    "providerMessageId": "<78d4ecce-1e1e-7272-2f87-1baa3558c72d@exhibitgraphicsign.com>",
+    "renderedSubject": "JAWHARA JEWELLERY — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Kuwait,\n\nWe help JAWHARA JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782114229407"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782377803077"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38e8470e77439e7c9c077e"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb545320"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0c9f23c150e7f5b6bb"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782373649650"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782378816729"
+      }
+    },
+    "recipientEmail": "swathi@lamarquisejewellery.com",
+    "providerMessageId": "<20a4d261-6eb6-3dfd-4d4d-1629b1d1c779@exhibitgraphicsign.com>",
+    "renderedSubject": "LA MARQUISE DIAMONDS AND WATCHES DMCC — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Swathi,\n\nWe help LA MARQUISE DIAMONDS AND WATCHES DMCC with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782114375758"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782378816730"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38f3ca0e77439e7c9c08b4"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb545343"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0d9f23c150e7f5b6d9"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782376611056"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782382437088"
+      }
+    },
+    "recipientEmail": "zeyad@orgluxury.com",
+    "providerMessageId": "<2326439c-4f5a-2e10-148a-eaf7cd5abe34@exhibitgraphicsign.com>",
+    "renderedSubject": "ORG LUXURY — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Zeyad,\n\nWe help ORG LUXURY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782117322947"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782382437089"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38f3ca0e77439e7c9c08b8"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb545327"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0c9f23c150e7f5b6c1"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782376605566"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782379906283"
+      }
+    },
+    "recipientEmail": "mahak@vmjewellery.com",
+    "providerMessageId": "<e7816c85-13f6-ef1b-e1d5-0a5ed500e5c7@exhibitgraphicsign.com>",
+    "renderedSubject": "V M JEWELLERY — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Mahak,\n\nWe help V M JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782117322972"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782379906284"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38f3cb0e77439e7c9c08c2"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb545335"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0d9f23c150e7f5b6cd"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782376610023"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782381467862"
+      }
+    },
+    "recipientEmail": "jemis@jamajewels.com",
+    "providerMessageId": "<19be9c34-c353-9a8a-100a-f34d1ef26f06@exhibitgraphicsign.com>",
+    "renderedSubject": "JAMA JEWELS FZCO — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Jemis,\n\nWe help JAMA JEWELS FZCO with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782117323456"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782381467863"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38f3cb0e77439e7c9c08c0"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb54532e"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0c9f23c150e7f5b6c7"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782376594780"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782378793652"
+      }
+    },
+    "recipientEmail": "ajith@jawharajewellery.com",
+    "providerMessageId": "<f7bb03f7-1f97-c694-3b39-418646413dc1@exhibitgraphicsign.com>",
+    "renderedSubject": "JAWHARA JEWELLERY — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Ajith,\n\nWe help JAWHARA JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782117323455"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782378793653"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38f3cc0e77439e7c9c08cc"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb54533c"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0d9f23c150e7f5b6d3"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782376608576"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782380494352"
+      }
+    },
+    "recipientEmail": "vinu.menon@jawharajewellery.ae",
+    "providerMessageId": "<6c394894-1c8a-d64c-b2e8-b70a2d6cb656@exhibitgraphicsign.com>",
+    "renderedSubject": "JAWHARA JEWELLERY — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Vinu,\n\nWe help JAWHARA JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782117324209"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782380494353"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a38f3cc0e77439e7c9c08ce"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a696cc4b99fb545351"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0e9f23c150e7f5b6e5"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782376597003"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782379772090"
+      }
+    },
+    "recipientEmail": "zahan@devjiaurum.com",
+    "providerMessageId": "<53dc2636-5eed-45af-e0f8-aeee97cd3adf@exhibitgraphicsign.com>",
+    "renderedSubject": "Devji Aurum — exhibition stand support (Step 2)",
+    "renderedBody": "Hi Zahan,\n\nWe help Devji Aurum with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782117324210"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782379772091"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3caf956ed4e03c0c5649d2"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a096cc4b99fb545262"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e059f23c150e7f5b617"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707474343"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782719985357"
+      }
+    },
+    "recipientEmail": "shivam@dialmaz.com",
+    "providerMessageId": "<0ddd2b6b-b4c3-3c39-5b74-b100c0d3d822@exhibitgraphicsign.com>",
+    "renderedSubject": "DIALMAZ — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Shivam,\n\nWe help DIALMAZ with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782362005117"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782719985357"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cb41f6ed4e03c0c564d42"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb545269"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e069f23c150e7f5b61e"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707471837"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782713995471"
+      }
+    },
+    "recipientEmail": "dhakanithra@dhakanjewellers.ae",
+    "providerMessageId": "<a47d58a8-2029-5137-df33-8492df7a9d8c@exhibitgraphicsign.com>",
+    "renderedSubject": "DHAKAN JEWELLERS LLC — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Hitesh,\n\nWe help DHAKAN JEWELLERS LLC with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782363167791"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782713995472"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cb7ea6ed4e03c0c564ed8"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb545277"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e069f23c150e7f5b62a"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707463683"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782708655073"
+      }
+    },
+    "recipientEmail": "eslam.salah@igi.org",
+    "providerMessageId": "<5a907f18-c59a-843f-4ee6-749d0ff24dca@exhibitgraphicsign.com>",
+    "renderedSubject": "INTERNATIONAL GEMOLOGICAL INSTITUTE — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Eslam,\n\nWe help INTERNATIONAL GEMOLOGICAL INSTITUTE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782364138464"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782708655074"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cbbb76ed4e03c0c5650e0"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb545270"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e069f23c150e7f5b624"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707489610"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782727482412"
+      }
+    },
+    "recipientEmail": "sushil@dialmaz.com",
+    "providerMessageId": "<95597d61-43c1-f90f-a260-bd46a4d002d9@exhibitgraphicsign.com>",
+    "renderedSubject": "DIALMAZ — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Sushil,\n\nWe help DIALMAZ with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782365111324"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727482413"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cbc966ed4e03c0c56528d"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb545285"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e079f23c150e7f5b636"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707477574"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782723288548"
+      }
+    },
+    "recipientEmail": "waseem@myuaeguide.com",
+    "providerMessageId": "<b50c6543-bc71-bb03-a9df-9066e935b612@exhibitgraphicsign.com>",
+    "renderedSubject": "MY UAE GUIDE — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Muhammad,\n\nWe help MY UAE GUIDE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782365334239"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782723288549"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cbc966ed4e03c0c5652a2"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb54527e"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e069f23c150e7f5b630"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707479215"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782724008279"
+      }
+    },
+    "recipientEmail": "iftikhar@myplanetguides.com",
+    "providerMessageId": "<95d25fc8-a445-54f9-d8fb-cd749f762e4e@exhibitgraphicsign.com>",
+    "renderedSubject": "MY UAE GUIDE — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Iftikhar,\n\nWe help MY UAE GUIDE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782365334746"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782724008279"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cbd0f6ed4e03c0c56543c"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb54528b"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e079f23c150e7f5b63c"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707482860"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782726957212"
+      }
+    },
+    "recipientEmail": "abdullah@jawharajewellery.com",
+    "providerMessageId": "<2989255b-9643-616c-9e84-c2cbce604aef@exhibitgraphicsign.com>",
+    "renderedSubject": "JAWHARA JEWELLERY — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Abdullah,\n\nWe help JAWHARA JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782365455769"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782726957213"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cc2746ed4e03c0c56560e"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb545292"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e079f23c150e7f5b642"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707495367"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782727682067"
+      }
+    },
+    "recipientEmail": "rashmi@devji.com",
+    "providerMessageId": "<aa16301a-507f-745c-1346-661af4cab581@exhibitgraphicsign.com>",
+    "renderedSubject": "BHASKAR DEVJI CO. W.L.L — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Rashmi,\n\nWe help BHASKAR DEVJI CO. W.L.L with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782366836047"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727682067"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cc6466ed4e03c0c565803"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb54529a"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e079f23c150e7f5b648"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707479289"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782725943113"
+      }
+    },
+    "recipientEmail": "kumud@kkjewels.com",
+    "providerMessageId": "<090499ee-7407-8caf-387f-58130653a413@exhibitgraphicsign.com>",
+    "renderedSubject": "K.K. JEWELS — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Kumud,\n\nWe help K.K. JEWELS with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782367814484"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782725943113"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cc70e6ed4e03c0c565995"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb5452a8"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e089f23c150e7f5b654"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707463271"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782707710034"
+      }
+    },
+    "recipientEmail": "sindhu@igi.org",
+    "providerMessageId": "<211b8668-4433-88c6-7c2a-b81e133496db@exhibitgraphicsign.com>",
+    "renderedSubject": "INTERNATIONAL GEMOLOGICAL INSTITUTE — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Sindhu,\n\nWe help INTERNATIONAL GEMOLOGICAL INSTITUTE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782368014149"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782707710034"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3ccadc6ed4e03c0c565b92"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb5452a1"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e089f23c150e7f5b64e"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707488368"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782727297343"
+      }
+    },
+    "recipientEmail": "johan.dsouza@igi.org",
+    "providerMessageId": "<6664ba3e-919f-0115-9936-767c94ec43d1@exhibitgraphicsign.com>",
+    "renderedSubject": "INTERNATIONAL GEMOLOGICAL INSTITUTE — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Johan,\n\nWe help INTERNATIONAL GEMOLOGICAL INSTITUTE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782368988616"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727297344"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3ccb6c6ed4e03c0c565d1f"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb5452b5"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e089f23c150e7f5b660"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707475133"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782719985001"
+      }
+    },
+    "recipientEmail": "hussain@lifestylegcc.com",
+    "providerMessageId": "<12b54ae4-8182-90b1-2556-de6307630c94@exhibitgraphicsign.com>",
+    "renderedSubject": "LIFESTYLE FINE JEWELLERY — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Khadim,\n\nWe help LIFESTYLE FINE JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782369132093"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782719985003"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3ccce76ed4e03c0c565e29"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb5452ae"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e089f23c150e7f5b65a"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707476138"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782720343417"
+      }
+    },
+    "recipientEmail": "jbharatji@devji.com",
+    "providerMessageId": "<8dfd122c-c172-9f5a-8433-2b9a23e82bdf@exhibitgraphicsign.com>",
+    "renderedSubject": "BHASKAR DEVJI CO. W.L.L — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Jaydeep,\n\nWe help BHASKAR DEVJI CO. W.L.L with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782369511170"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782720343418"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cd0b46ed4e03c0c565e7a"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb5452bc"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e099f23c150e7f5b666"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707486851"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782727132220"
+      }
+    },
+    "recipientEmail": "ashraf@lifestylegcc.com",
+    "providerMessageId": "<a28e57cb-e921-c908-ac65-5edaab60d2fc@exhibitgraphicsign.com>",
+    "renderedSubject": "LIFESTYLE FINE JEWELLERY — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Ashraf,\n\nWe help LIFESTYLE FINE JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782370484110"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727132221"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cd4816ed4e03c0c566007"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452c3"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e099f23c150e7f5b66c"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707481282"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782726888674"
+      }
+    },
+    "recipientEmail": "alessandro@italgold.it",
+    "providerMessageId": "<17defecc-9d10-eb8d-f268-56fbe1587f51@exhibitgraphicsign.com>",
+    "renderedSubject": "AMISANO 1967 — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Alessandro,\n\nWe help AMISANO 1967 with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782371457170"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782726888676"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cd85c6ed4e03c0c566209"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452cb"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e099f23c150e7f5b672"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707478164"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782724008417"
+      }
+    },
+    "recipientEmail": "l.galanti@ice.it",
+    "providerMessageId": "<39d202a4-e589-6d70-db87-47bd6e716c6f@exhibitgraphicsign.com>",
+    "renderedSubject": "ITALIAN TRADE COMMISSION — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Lorenzo,\n\nWe help ITALIAN TRADE COMMISSION with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782372444721"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782724008418"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cd9c96ed4e03c0c566395"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452d2"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e099f23c150e7f5b678"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "failed",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707477152"
+      }
+    },
+    "sentAt": null,
+    "recipientEmail": "",
+    "providerMessageId": "",
+    "renderedSubject": "",
+    "renderedBody": "",
+    "errorMessage": "Connection timeout",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782372809028"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782722372807"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cda5d6ed4e03c0c566552"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452e1"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0a9f23c150e7f5b684"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707470098"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782711464642"
+      }
+    },
+    "recipientEmail": "niall@colorjewels.net",
+    "providerMessageId": "<b0908187-c52b-c8e2-bea4-9df4f0cb31b1@exhibitgraphicsign.com>",
+    "renderedSubject": "COLOR JEWELS DMCC — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Niall,\n\nWe help COLOR JEWELS DMCC with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782372957532"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782711464643"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cdb346ed4e03c0c56664e"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452d9"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0a9f23c150e7f5b67e"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707497443"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782727907103"
+      }
+    },
+    "recipientEmail": "vishal.usapkar@irysgroup.com",
+    "providerMessageId": "<eb6e4148-ec73-8812-f6d1-403603f3ff31@exhibitgraphicsign.com>",
+    "renderedSubject": "IRYS MIDDLE EAST LLC - FZ — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Vishal,\n\nWe help IRYS MIDDLE EAST LLC - FZ with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782373172217"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727907104"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cdbbc6ed4e03c0c56672c"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452e7"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0a9f23c150e7f5b68a"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707487832"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782727216982"
+      }
+    },
+    "recipientEmail": "i.rokvic.ext@ice.it",
+    "providerMessageId": "<dbfcbc82-4e2f-73af-a667-388c5ed2bc3a@exhibitgraphicsign.com>",
+    "renderedSubject": "ITALIAN TRADE COMMISSION — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Ivana,\n\nWe help ITALIAN TRADE COMMISSION with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782373308006"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727216983"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cdf8d6ed4e03c0c56676b"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb5452ee"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0a9f23c150e7f5b690"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707470360"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782713022817"
+      }
+    },
+    "recipientEmail": "cihan@reneejewellers.com",
+    "providerMessageId": "<82f56993-4bd6-95b2-c38a-263c0c0aaecc@exhibitgraphicsign.com>",
+    "renderedSubject": "RENEE JEWELLERS — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Cihan,\n\nWe help RENEE JEWELLERS with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782374285530"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782713022818"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cdf8d6ed4e03c0c566774"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb5452f5"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0a9f23c150e7f5b696"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707496596"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782727827181"
+      }
+    },
+    "recipientEmail": "tehmasp@igi.org",
+    "providerMessageId": "<f90a0716-7893-f875-d36f-979dd025c5c0@exhibitgraphicsign.com>",
+    "renderedSubject": "INTERNATIONAL GEMOLOGICAL INSTITUTE — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Tehmasp,\n\nWe help INTERNATIONAL GEMOLOGICAL INSTITUTE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782374285882"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727827181"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3ce0106ed4e03c0c566789"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb5452fc"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0b9f23c150e7f5b69d"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707496065"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782727752115"
+      }
+    },
+    "recipientEmail": "sandesh@jawharajewellery.ae",
+    "providerMessageId": "<81f5b99b-280f-9213-9bd5-48e8d90e051a@exhibitgraphicsign.com>",
+    "renderedSubject": "JAWHARA JEWELLERY — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Sandesh,\n\nWe help JAWHARA JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782374416234"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727752116"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3ce3d86ed4e03c0c5667a5"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb545303"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0b9f23c150e7f5b6a3"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707463937"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782709363036"
+      }
+    },
+    "recipientEmail": "jaffer@abida-jewellery.com",
+    "providerMessageId": "<37507ed6-66b5-3a03-fd2e-bfaa33e82acf@exhibitgraphicsign.com>",
+    "renderedSubject": "ABIDA JEWELLERY L.L.C — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Jaffer,\n\nWe help ABIDA JEWELLERY L.L.C with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782375384428"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782709363037"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3ce7a56ed4e03c0c5669a9"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb54530b"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0b9f23c150e7f5b6a9"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707468492"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782710335325"
+      }
+    },
+    "recipientEmail": "aniket@igi.org",
+    "providerMessageId": "<8e692732-9780-d417-f550-8c1f4b23bd76@exhibitgraphicsign.com>",
+    "renderedSubject": "INTERNATIONAL GEMOLOGICAL INSTITUTE — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Aniket,\n\nWe help INTERNATIONAL GEMOLOGICAL INSTITUTE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782376357690"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782710335326"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3ce97e6ed4e03c0c566b2c"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb545311"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0b9f23c150e7f5b6af"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707462683"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782707709794"
+      }
+    },
+    "recipientEmail": "renuka@igi.org",
+    "providerMessageId": "<f77554c7-8565-3991-b26a-c68329910bce@exhibitgraphicsign.com>",
+    "renderedSubject": "INTERNATIONAL GEMOLOGICAL INSTITUTE — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Renuka,\n\nWe help INTERNATIONAL GEMOLOGICAL INSTITUTE with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782376830160"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782707709796"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3ced4b6ed4e03c0c566cf4"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb545318"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0c9f23c150e7f5b6b5"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707490606"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782727581957"
+      }
+    },
+    "recipientEmail": "kuwait@jawharajewellery.com",
+    "providerMessageId": "<999e3488-f603-8156-e3a5-5084eb7d9d42@exhibitgraphicsign.com>",
+    "renderedSubject": "JAWHARA JEWELLERY — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Kuwait,\n\nWe help JAWHARA JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782377803281"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727581958"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cf1296ed4e03c0c566f0b"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb54532e"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0c9f23c150e7f5b6c7"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707497651"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782728007158"
+      }
+    },
+    "recipientEmail": "ajith@jawharajewellery.com",
+    "providerMessageId": "<d566c413-8cbf-2472-7e90-905930f26ee7@exhibitgraphicsign.com>",
+    "renderedSubject": "JAWHARA JEWELLERY — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Ajith,\n\nWe help JAWHARA JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782378793829"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782728007160"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cf1406ed4e03c0c567071"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb545320"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0c9f23c150e7f5b6bb"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707497815"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782728107385"
+      }
+    },
+    "recipientEmail": "swathi@lamarquisejewellery.com",
+    "providerMessageId": "<99719980-5c37-c004-3fbf-cce2b1dd8fe3@exhibitgraphicsign.com>",
+    "renderedSubject": "LA MARQUISE DIAMONDS AND WATCHES DMCC — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Swathi,\n\nWe help LA MARQUISE DIAMONDS AND WATCHES DMCC with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782378816912"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782728107386"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cf4fc6ed4e03c0c567097"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a696cc4b99fb545351"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0e9f23c150e7f5b6e5"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707486144"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782727051978"
+      }
+    },
+    "recipientEmail": "zahan@devjiaurum.com",
+    "providerMessageId": "<428bb22a-e79b-eaa2-801e-c6cc728d20f6@exhibitgraphicsign.com>",
+    "renderedSubject": "Devji Aurum — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Zahan,\n\nWe help Devji Aurum with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782379772287"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727051979"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cf5826ed4e03c0c567251"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb545327"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0c9f23c150e7f5b6c1"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707470102"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782712409808"
+      }
+    },
+    "recipientEmail": "mahak@vmjewellery.com",
+    "providerMessageId": "<d50deb21-8231-6b16-0fe2-965a3ddcf92c@exhibitgraphicsign.com>",
+    "renderedSubject": "V M JEWELLERY — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Mahak,\n\nWe help V M JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782379906445"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782712409809"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cf7ce6ed4e03c0c567266"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb54533c"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0d9f23c150e7f5b6d3"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707473213"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782718838914"
+      }
+    },
+    "recipientEmail": "vinu.menon@jawharajewellery.ae",
+    "providerMessageId": "<c7715361-aaac-f564-a94a-4ffa3a078b8d@exhibitgraphicsign.com>",
+    "renderedSubject": "JAWHARA JEWELLERY — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Vinu,\n\nWe help JAWHARA JEWELLERY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782380494498"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782718838915"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cfb9c6ed4e03c0c5672bb"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb545335"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0d9f23c150e7f5b6cd"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707476284"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782720481559"
+      }
+    },
+    "recipientEmail": "jemis@jamajewels.com",
+    "providerMessageId": "<fd6d76d6-18d6-1411-2016-2a53b7713815@exhibitgraphicsign.com>",
+    "renderedSubject": "JAMA JEWELS FZCO — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Jemis,\n\nWe help JAMA JEWELS FZCO with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782381468067"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782720481560"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3cff656ed4e03c0c56744a"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb545343"
+    },
+    "enrollmentId": {
+      "$oid": "6a356e0d9f23c150e7f5b6d9"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782707488825"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782727392245"
+      }
+    },
+    "recipientEmail": "zeyad@orgluxury.com",
+    "providerMessageId": "<f9b3faae-a241-c670-0905-9b270a74b854@exhibitgraphicsign.com>",
+    "renderedSubject": "ORG LUXURY — exhibition stand support (Step 3)",
+    "renderedBody": "Hi Zeyad,\n\nWe help ORG LUXURY with custom exhibition stands and branded environments across the UAE.\n\nWould you have 15 minutes this week for a quick call?\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782382437229"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727392253"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3ebcc1ac1ef3c5e876d705"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3ebc4cac1ef3c5e876d44d"
+    },
+    "enrollmentId": {
+      "$oid": "6a3ebcc1ac1ef3c5e876d6fc"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782496804673"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782496815110"
+      }
+    },
+    "recipientEmail": "rana.talhadxb@gmail.com",
+    "providerMessageId": "<e3b9d968-2926-ee27-9d0f-40448bb1b4fa@exhibitgraphicsign.com>",
+    "renderedSubject": "EGS — stand execution support (Step 1)",
+    "renderedBody": "Hi Rana Talha,\n\nWe support regional companies with custom exhibition stands in Dubai & Abu Dhabi.\n\nWould you be open for a short call?\nOr an exhibition stand design inspiration\n\nBest,\nEGS Team\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782496449933"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782496815110"
+      }
+    },
+    "immediateLaunch": true
+  },
+  {
+    "_id": {
+      "$oid": "6a3ebf0dffbf80bd6173854e"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3ebeeaffbf80bd617384e3"
+    },
+    "enrollmentId": {
+      "$oid": "6a3ebf0dffbf80bd61738545"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782497037329"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782497044209"
+      }
+    },
+    "recipientEmail": "m.talha2703@gmail.com",
+    "providerMessageId": "<da527032-f01f-4f37-0ebb-32178fcef721@exhibitgraphicsign.com>",
+    "renderedSubject": "EGS — stand execution support (Step 1)",
+    "renderedBody": "Hi RANAAAAA VASTAYKANA,\n\nWe support regional companies with custom exhibition stands in Dubai & Abu Dhabi.\n\nWould you be open for a short call?\nOr an exhibition stand design inspiration\n\nBest,\nEGS Team\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "immediateLaunch": true,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782497037506"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782497044210"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3f070f24f7c2264ea94055"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a3f06e324f7c2264ea93fc1"
+    },
+    "enrollmentId": {
+      "$oid": "6a3f070f24f7c2264ea94051"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782515471792"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782515481095"
+      }
+    },
+    "recipientEmail": "nadeemtalha83@gmail.com",
+    "providerMessageId": "<4d53b6cd-0594-5bba-7ad7-3adbb742940d@exhibitgraphicsign.com>",
+    "renderedSubject": "EGS — stand execution support (Step 1)",
+    "renderedBody": "Hi RANA Talha,\n\nWe support regional companies with custom exhibition stands in Dubai & Abu Dhabi.\n\nWould you be open for a short call?\nOr an exhibition stand design inspiration\n\nBest,\nEGS Team\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "immediateLaunch": true,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782515471970"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782515481095"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a41a61115ac3e5ae5c8371f"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a41a522b62ed59729ddacaf"
+    },
+    "enrollmentId": {
+      "$oid": "6a41a61015ac3e5ae5c8371a"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782687248825"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782687259119"
+      }
+    },
+    "recipientEmail": "nadeemtalha104@gmail.com",
+    "providerMessageId": "<26ab5092-b0b3-4d3a-254c-4c7e67553226@exhibitgraphicsign.com>",
+    "renderedSubject": "EGS — stand execution support (Step 1)",
+    "renderedBody": "Hi Rana Talha,\n\nWe support regional companies with custom exhibition stands in Dubai & Abu Dhabi.\n\nWould you be open for a short call?\nOr an exhibition stand design inspiration\n\nBest,\nEGS Team\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "immediateLaunch": true,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782687249023"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782687259119"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a43b03a7bbd9dd2325c7faa"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a43afe97bbd9dd2325c7dca"
+    },
+    "enrollmentId": {
+      "$oid": "6a43b03a7bbd9dd2325c7fa4"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782820922243"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782820932729"
+      }
+    },
+    "recipientEmail": "rana.talha2703@gmail.com",
+    "providerMessageId": "<ab065ab4-34c8-8499-8fbb-c6adf97444ae@exhibitgraphicsign.com>",
+    "renderedSubject": "EGS — stand execution support (Step 1)",
+    "renderedBody": "Hi UZAIR,\n\nWe support regional companies with custom exhibition stands in Dubai & Abu Dhabi.\n\nWould you be open for a short call?\nOr an exhibition stand design inspiration\n\nBest,\nEGS Team\n\nIf you prefer not to receive follow-ups from EGS, reply “opt out” and we will stop.",
+    "errorMessage": "",
+    "immediateLaunch": true,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782820922574"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782820932729"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a43cd496a5ec3de77957b4e"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a43a38bc7deaff7f78d0cac"
+    },
+    "enrollmentId": {
+      "$oid": "6a43cd496a5ec3de77957b4b"
+    },
+    "stepIndex": {
+      "$numberInt": "0"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782828361250"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782828376563"
+      }
+    },
+    "recipientEmail": "uzairmasuood@gmail.com",
+    "providerMessageId": "<ad0ec412-727a-b113-6877-9c60d1ceadfb@exhibitgraphicsign.com>",
+    "renderedSubject": "uzair — stand execution support (Step 1)",
+    "renderedBody": "hi test 1",
+    "errorMessage": "",
+    "immediateLaunch": true,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782828361453"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782828376563"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a43cd586a5ec3de77957bb4"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a43a38bc7deaff7f78d0cac"
+    },
+    "enrollmentId": {
+      "$oid": "6a43cd496a5ec3de77957b4b"
+    },
+    "stepIndex": {
+      "$numberInt": "1"
+    },
+    "status": "sent",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782828536160"
+      }
+    },
+    "sentAt": {
+      "$date": {
+        "$numberLong": "1782828548704"
+      }
+    },
+    "recipientEmail": "uzairmasuood@gmail.com",
+    "providerMessageId": "<6fdb6166-dcf0-2d13-be8e-90166e74b85a@exhibitgraphicsign.com>",
+    "renderedSubject": "uzair — stand execution support (Step 1)",
+    "renderedBody": "an ai gen message",
+    "errorMessage": "",
+    "immediateLaunch": true,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782828376962"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782828548705"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a43ce056a5ec3de77957d80"
+    },
+    "bullJobId": "",
+    "leadId": {
+      "$oid": "6a43a38bc7deaff7f78d0cac"
+    },
+    "enrollmentId": {
+      "$oid": "6a43cd496a5ec3de77957b4b"
+    },
+    "stepIndex": {
+      "$numberInt": "2"
+    },
+    "status": "cancelled",
+    "scheduledFor": {
+      "$date": {
+        "$numberLong": "1782828940875"
+      }
+    },
+    "sentAt": null,
+    "recipientEmail": "",
+    "providerMessageId": "",
+    "renderedSubject": "",
+    "renderedBody": "",
+    "errorMessage": "lead cancelled",
+    "immediateLaunch": true,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782828549186"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782828775830"
+      }
+    }
+  }
+]

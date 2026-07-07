@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { crmApiFetch, formatPercent, updateCampaign } from '../crmApi.js';
+import { crmApiFetch, formatPercent, updateCampaign, fetchAllProjectLeads, fetchAllProjectCompanies } from '../crmApi.js';
 import ProjectDatabaseTable from '../components/projects/ProjectDatabaseTable.jsx';
 import CampaignStageControl from '../components/projects/CampaignStageControl.jsx';
 import ExhibitorImportModal from '../components/projects/ExhibitorImportModal.jsx';
@@ -8,6 +8,7 @@ import ContactBlenderModal from '../components/projects/ContactBlenderModal.jsx'
 import ProjectPerformanceModal from '../components/projects/ProjectPerformanceModal.jsx';
 import CompanyDetailsDrawer from '../components/leads/CompanyDetailsDrawer.jsx';
 import OutreachDrawer from '../components/leads/OutreachDrawer.jsx';
+import TaskTable from '../components/tasks/TaskTable.jsx';
 import InfoTip from '../components/ui/InfoTip.jsx';
 import { CAMPAIGN_AUTOMATION } from '../constants/automationHints.js';
 import {
@@ -16,9 +17,13 @@ import {
   Toast,
   LoadingState,
   ProgressBar,
+  Card,
+  CardHeader,
+  EmptyState,
 } from '../components/ui/primitives.jsx';
 import {
   Building2,
+  BriefcaseBusiness,
   Users,
   MessageCircle,
   Upload,
@@ -27,7 +32,9 @@ import {
   BarChart3,
   ChevronLeft,
   TrendingUp,
+  CalendarCheck2,
 } from 'lucide-react';
+import { buildOwnerOptions } from '../components/tasks/taskUtils.js';
 
 const EMAILED_STATUSES = ['Emailed Outbound', 'Replied', 'Bounced / Invalid'];
 
@@ -37,6 +44,8 @@ export default function ProjectDetailWorkspace() {
   const [analytics, setAnalytics] = useState(null);
   const [leads, setLeads] = useState([]);
   const [companies, setCompanies] = useState([]);
+  const [opportunities, setOpportunities] = useState([]);
+  const [tasks, setTasks] = useState([]);
   const [toast, setToast] = useState('');
   const [selectedCompanyId, setSelectedCompanyId] = useState(null);
   const [selectedLead, setSelectedLead] = useState(null);
@@ -47,13 +56,19 @@ export default function ProjectDetailWorkspace() {
     const [proj, anal, leadData, companyData] = await Promise.all([
       crmApiFetch(`/api/admin/projects/${id}`),
       crmApiFetch(`/api/admin/analytics/projects/${id}`),
-      crmApiFetch(`/api/admin/projects/${id}/leads?limit=500`),
-      crmApiFetch(`/api/admin/projects/${id}/companies?limit=500`),
+      fetchAllProjectLeads(id),
+      fetchAllProjectCompanies(id),
+    ]);
+    const [opportunityData, taskData] = await Promise.all([
+      crmApiFetch(`/api/admin/sales/opportunities?campaignId=${encodeURIComponent(id)}`),
+      crmApiFetch(`/api/admin/sales/tasks?status=All&campaignId=${encodeURIComponent(id)}`),
     ]);
     setProject(proj);
     setAnalytics(anal);
     setLeads(leadData.items || []);
     setCompanies(companyData.items || []);
+    setOpportunities(opportunityData.items || []);
+    setTasks(taskData.items || []);
   }, [id]);
 
   useEffect(() => {
@@ -100,8 +115,10 @@ export default function ProjectDetailWorkspace() {
   const pocPct = analytics?.pocDiscoveryPercent ?? 0;
   const replyPct = analytics?.interactionProgressPercent ?? 0;
   const pocsEmailed = leads.filter((lead) => EMAILED_STATUSES.includes(lead.deliveryStatus)).length;
-  const pocsResponded = leads.filter((lead) => lead.deliveryStatus === 'Replied').length;
+  const pocsResponded = leads.filter((lead) => lead.hasResponded).length;
   const pocReplyPct = pocsEmailed ? (pocsResponded / pocsEmailed) * 100 : 0;
+  const openTasks = useMemo(() => tasks.filter((task) => task.status !== 'Done'), [tasks]);
+  const ownerOptions = useMemo(() => buildOwnerOptions(tasks, opportunities.map((item) => item.owner)), [tasks, opportunities]);
 
   return (
     <PageShell compact>
@@ -192,7 +209,73 @@ export default function ProjectDetailWorkspace() {
           leads={leads}
           onCompanyClick={setSelectedCompanyId}
           onLeadClick={setSelectedLead}
+          onCompanyRemoved={() => refresh()}
+          onLeadRemoved={() => refresh()}
+          onRestored={() => refresh()}
         />
+      </PageSection>
+
+      <PageSection>
+        <div className="grid gap-4 xl:grid-cols-[1.1fr,0.9fr]">
+          <Card className="overflow-hidden">
+            <CardHeader
+              title="Linked opportunities"
+              subtitle="Sales workspaces connected to this campaign context."
+              action={<Link to="/admin/crm/pipeline" className="text-xs font-semibold text-brand hover:underline">Open pipeline</Link>}
+            />
+            {!opportunities.length ? (
+              <EmptyState
+                icon={BriefcaseBusiness}
+                title="No linked opportunities"
+                description="Campaign context is optional. Link this campaign on an opportunity when commercial work begins."
+              />
+            ) : (
+              <div className="divide-y divide-[var(--color-line)]">
+                {opportunities.map((opportunity) => (
+                  <Link
+                    key={opportunity._id}
+                    to="/admin/crm/pipeline"
+                    className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-neutral-50/70"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-[var(--color-ink)]">{opportunity.name}</p>
+                      <p className="mt-0.5 truncate text-xs text-neutral-500">
+                        {opportunity.companyId?.companyName || 'Unknown company'} · {opportunity.stage}
+                      </p>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <p className="text-sm font-bold tabular-nums text-[var(--color-ink)]">{(opportunity.valueAed || 0).toLocaleString('en-AE')} AED</p>
+                      <p className="text-[11px] text-neutral-400">{opportunity.owner || 'Unassigned'}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </Card>
+
+          <Card className="overflow-hidden">
+            <CardHeader
+              title="Execution tasks"
+              subtitle="Tasks attached to opportunities linked with this campaign."
+              action={<Link to="/admin/crm/tasks" className="text-xs font-semibold text-brand hover:underline">Open tasks</Link>}
+            />
+            {!tasks.length ? (
+              <EmptyState
+                icon={CalendarCheck2}
+                title="No execution tasks yet"
+                description="Create tasks from linked opportunities to track prework, delivery prep, and follow-through."
+              />
+            ) : (
+              <TaskTable
+                tasks={openTasks.length ? openTasks : tasks}
+                opportunities={opportunities}
+                ownerOptions={ownerOptions}
+                showAccountColumn={false}
+                embedded
+              />
+            )}
+          </Card>
+        </div>
       </PageSection>
 
       <ExhibitorImportModal

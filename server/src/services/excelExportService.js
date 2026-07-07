@@ -113,7 +113,7 @@ export async function exportCampaignToBuffer(projectId) {
       'Notes': lead.coldCall?.notes || lead.linkedinOutreach?.notes || '',
 
       // Aggregate
-      'Email for Outreach': lead.email || '',
+      'Email for Outreach': lead.outreachEmail || '',
       'Phone for Outreach': lead.phone || '',
       'Touch Count': lead.trackingMetrics?.emailsDeliveredCount || 0,
       'Last Touch': lead.updatedAt || '',

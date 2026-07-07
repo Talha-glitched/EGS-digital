@@ -26,6 +26,9 @@ import CredentialResultModal from '../components/settings/CredentialResultModal.
 import { formatSettingsWhen, userInitials } from '../components/settings/settingsUtils.js';
 import DataTableShell from '../components/ui/DataTableShell.jsx';
 import ClickableTableRow from '../components/ui/ClickableTableRow.jsx';
+import { SortableTableHeader, TableSortIndicator } from '../components/ui/SortableTableHeader.jsx';
+import { useTableSort } from '../hooks/useTableSort.js';
+import { userSortAccessors } from '../hooks/tableSortAccessors.js';
 
 export default function TeamSettingsPage() {
   const [users, setUsers] = useState([]);
@@ -59,6 +62,14 @@ export default function TeamSettingsPage() {
     const mustChange = users.filter((user) => user.mustChangePassword).length;
     return { active, inactive: users.length - active, mustChange };
   }, [users]);
+
+  const { sortKey, sortDir, sortLabel, toggleSort, clearSort, sortItems } = useTableSort({
+    defaultKey: 'displayName',
+    defaultDir: 'asc',
+    accessors: userSortAccessors,
+  });
+
+  const sortedUsers = useMemo(() => sortItems(users), [users, sortItems]);
 
   async function handleSave(payload) {
     if (editingUser) {
@@ -131,19 +142,26 @@ export default function TeamSettingsPage() {
               <EmptyState title="No users yet" description="Add your first team member to get started." />
             ) : (
               <div className="crm-settings-panel">
+                <TableSortIndicator
+                  sortKey={sortKey}
+                  sortDir={sortDir}
+                  sortLabel={sortLabel}
+                  onToggle={() => toggleSort(sortKey)}
+                  onClear={clearSort}
+                />
                 <DataTableShell minWidth={920}>
                   <table className="crm-table">
                     <thead>
                       <tr className="crm-table-head">
-                        <th>Team member</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Status</th>
-                        <th>Last login</th>
+                        <SortableTableHeader label="Team member" sortKey="displayName" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                        <SortableTableHeader label="Email" sortKey="email" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                        <SortableTableHeader label="Role" sortKey="role" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                        <SortableTableHeader label="Status" sortKey="isActive" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                        <SortableTableHeader label="Last login" sortKey="lastLoginAt" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
                       </tr>
                     </thead>
                     <tbody>
-                      {users.map((user) => (
+                      {sortedUsers.map((user) => (
                         <ClickableTableRow key={user.id} onClick={() => setSelectedUser(user)}>
                           <td>
                             <div className="flex items-center gap-3">

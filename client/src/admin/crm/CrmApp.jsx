@@ -24,6 +24,7 @@ import UserActivityPage from './pages/UserActivityPage.jsx';
 import DataRecoveryPage from './pages/DataRecoveryPage.jsx';
 import { UndoToastProvider } from './context/UndoToastContext.jsx';
 import { ConfirmDeleteProvider } from './context/ConfirmDeleteContext.jsx';
+import { SensitiveDataProvider } from './context/SensitiveDataContext.jsx';
 import DeleteUndoToastStack from './components/ui/DeleteUndoToastStack.jsx';
 import { Alert, Field, LoadingState } from './components/ui/primitives.jsx';
 import { Lock } from 'lucide-react';
@@ -154,7 +155,7 @@ function CrmShell({ projects, onLogout, status }) {
     '/admin/crm/sequences': ['Sequence Studio', 'Whiteboard builder for multi-step outreach flows'],
     '/admin/crm/pipeline': ['Sales Pipeline', 'Qualified opportunities from first response to contract award'],
     '/admin/crm/tasks': ['Tasks', 'Calls, meetings, proposals, and overdue next actions'],
-    '/admin/crm/relationships': ['Key Relationships', 'Confirmed right POCs, service fit, and follow-up timing'],
+    '/admin/crm/relationships': ['Key Relationships', 'Confirmed right POCs, last touchpoints, and follow-up timing'],
     '/admin/crm/people': ['Contacts', 'Search and manage every point of contact'],
     '/admin/crm/companies': ['Companies', 'Target companies, clients, and relationship history'],
     '/admin/crm/inbox': ['Inbox', 'Replies and sales follow-up workspace'],
@@ -189,7 +190,8 @@ function CrmShell({ projects, onLogout, status }) {
   return (
     <ConfirmDeleteProvider>
       <UndoToastProvider>
-        <div className="crm-root flex min-h-screen bg-[var(--color-canvas)]">
+        <SensitiveDataProvider>
+        <div className="crm-root flex h-screen overflow-hidden bg-[var(--color-canvas)]">
         <Sidebar
           activeProject={activeProject}
           onLogout={onLogout}
@@ -199,7 +201,7 @@ function CrmShell({ projects, onLogout, status }) {
           onToggleCollapse={toggleSidebarCollapse}
           status={status}
         />
-        <div className="flex min-w-0 flex-1 flex-col">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <TopNavbar
             title={match[0]}
             pageInfo={match[1]}
@@ -209,7 +211,7 @@ function CrmShell({ projects, onLogout, status }) {
           />
           <SpotlightSearch open={spotlightOpen} onClose={closeSpotlight} projects={projects} />
           <PreviewWorkspaceModal open={previewNoticeOpen} onClose={() => setPreviewNoticeOpen(false)} />
-          <main className={`crm-scroll flex-1 ${isSequenceStudio ? 'overflow-hidden' : 'overflow-auto'}`}>
+          <main className={`crm-scroll min-h-0 flex-1 ${isSequenceStudio ? 'overflow-hidden' : 'overflow-y-auto'}`}>
             <Routes>
               <Route index element={<GlobalDashboard />} />
               <Route path="pipeline" element={<SalesPipelinePage />} />
@@ -234,6 +236,7 @@ function CrmShell({ projects, onLogout, status }) {
         </div>
         <DeleteUndoToastStack />
       </div>
+        </SensitiveDataProvider>
       </UndoToastProvider>
     </ConfirmDeleteProvider>
   );

@@ -16,7 +16,13 @@ import { ContactInteraction } from '../models/ContactInteraction.js';
 import {
   enrichCompaniesWithResponse,
   enrichLeadsWithResponse,
+  buildLatestDateByLead,
+  mergeLatestDateMaps,
+  interactionQueryForLeadIds,
+  getLeadResponseMeta,
+  buildEarliestInboundByLead,
 } from '../utils/leadResponse.js';
+import { buildLatestInteractionDateMap } from './interactionService.js';
 import {
   softDeleteRecord,
   restoreRecord,
@@ -29,6 +35,14 @@ function assertDb() {
     error.status = 503;
     throw error;
   }
+}
+
+function normalizeObjectIdList(values = []) {
+  return [...new Set(
+    values
+      .map((value) => (value == null ? '' : String(value).trim()))
+      .filter((value) => mongoose.isValidObjectId(value)),
+  )];
 }
 
 export function buildStepPerformance(sentRows = [], replyRows = [], maxSteps = 5) {
@@ -60,6 +74,8 @@ export function getCrmAdminStatus() {
 }
 
 const EMAILED_STATUSES = ['Emailed Outbound', 'Replied', 'Bounced / Invalid'];
+
+const MAX_LIST_LIMIT = 500;
 
 const CAMPAIGN_STATUSES = ['Active Planning', 'Active Campaigning', 'Completed', 'Archived'];
 const AUTO_LOCKED_STATUSES = ['Completed', 'Archived'];
@@ -101,9 +117,32 @@ export async function syncAutoCampaignStatus(projectId) {
   return project.toObject();
 }
 
+function normalizeIdList(ids) {
+  if (!Array.isArray(ids)) return [];
+  return ids.map((id) => String(id).trim()).filter(Boolean);
+}
+
+async function bulkSoftDelete(ids, deleteFn, actor = {}) {
+  const uniqueIds = [...new Set(normalizeIdList(ids))];
+  const results = [];
+  for (const id of uniqueIds) {
+    try {
+      const result = await deleteFn(id, actor);
+      results.push({ id, ok: true, ...result });
+    } catch (err) {
+      results.push({ id, ok: false, message: err.message || 'Delete failed.' });
+    }
+  }
+  return {
+    deleted: results.filter((row) => row.ok).length,
+    failed: results.filter((row) => !row.ok).length,
+    results,
+  };
+}
+
 export async function listProjects() {
   assertDb();
-  const projects = await ProjectCampaign.find().sort({ createdAt: -1 }).lean();
+  const projects = await ProjectCampaign.find({ deletedAt: null }).sort({ createdAt: -1 }).lean();
   if (!projects.length) return [];
 
   const projectIds = projects.map((p) => p._id);
@@ -114,7 +153,7 @@ export async function listProjects() {
       .map((project) => syncAutoCampaignStatus(project._id)),
   );
 
-  const refreshedProjects = await ProjectCampaign.find({ _id: { $in: projectIds } })
+  const refreshedProjects = await ProjectCampaign.find({ _id: { $in: projectIds }, deletedAt: null })
     .sort({ createdAt: -1 })
     .lean();
 
@@ -162,8 +201,9 @@ export async function listProjects() {
 export async function getProject(id) {
   assertDb();
   await syncAutoCampaignStatus(id);
+  await syncCampaignResponseCounts(id);
   const project = await ProjectCampaign.findById(id).lean();
-  if (!project) {
+  if (!project || project.deletedAt) {
     const error = new Error('Project not found.');
     error.status = 404;
     throw error;
@@ -320,29 +360,64 @@ export async function importTargetCompanies(projectId, rows) {
   return { created, linked, total: count, errors };
 }
 
+export async function syncCampaignResponseCounts(campaignId) {
+  assertDb();
+  if (!campaignId) return null;
+
+  const project = await ProjectCampaign.findById(campaignId);
+  if (!project) return null;
+
+  const leads = await Lead.find({ campaignId, deletedAt: null }).lean();
+  const interactionFilter = interactionQueryForLeadIds(leads.map((lead) => lead._id));
+  const interactions = interactionFilter
+    ? await ContactInteraction.find(interactionFilter)
+      .select('leadId relatedLeadIds direction outcome occurredAt')
+      .lean()
+    : [];
+
+  const inboundByLead = buildEarliestInboundByLead(interactions);
+  const respondedCompanyIds = new Set();
+
+  leads.forEach((lead) => {
+    const meta = getLeadResponseMeta(lead, {
+      manualInboundAt: inboundByLead.get(String(lead._id)) || null,
+    });
+    if (meta.hasResponded && lead.companyId) {
+      respondedCompanyIds.add(String(lead.companyId));
+    }
+  });
+
+  project.companiesRespondedCount = respondedCompanyIds.size;
+  await project.save();
+  return project.toObject();
+}
+
 export async function listProjectCompanies(projectId, { page = 1, limit = 50 } = {}) {
   assertDb();
-  const skip = (Math.max(page, 1) - 1) * limit;
+  const p = Math.max(Number(page) || 1, 1);
+  const lim = Math.min(Math.max(Number(limit) || 50, 1), MAX_LIST_LIMIT);
+  const skip = (p - 1) * lim;
   const [items, total, campaignLeads] = await Promise.all([
-    Company.find({ projectsAssociated: projectId }).sort({ companyName: 1 }).skip(skip).limit(limit).lean(),
-    Company.countDocuments({ projectsAssociated: projectId }),
-    Lead.find({ campaignId: projectId }).lean(),
+    Company.find({ projectsAssociated: projectId, deletedAt: null }).sort({ companyName: 1 }).skip(skip).limit(lim).lean(),
+    Company.countDocuments({ projectsAssociated: projectId, deletedAt: null }),
+    Lead.find({ campaignId: projectId, deletedAt: null }).lean(),
   ]);
 
-  const companyIds = items.map((company) => company._id);
-  const interactions = companyIds.length
-    ? await ContactInteraction.find({ companyId: { $in: companyIds } })
-      .select('leadId companyId direction outcome occurredAt')
+  const leadIds = campaignLeads.map((lead) => lead._id);
+  const interactionFilter = interactionQueryForLeadIds(leadIds);
+  const interactions = interactionFilter
+    ? await ContactInteraction.find(interactionFilter)
+      .select('leadId relatedLeadIds companyId direction outcome occurredAt')
       .lean()
     : [];
 
   const enriched = enrichCompaniesWithResponse(items, campaignLeads, interactions).map(formatCompanyRecord);
-  return { items: enriched, total, page, limit };
+  return { items: enriched, total, page: p, limit: lim };
 }
 
 export async function listProjectLeads(projectId, filters = {}) {
   assertDb();
-  const query = { campaignId: projectId };
+  const query = { campaignId: projectId, deletedAt: null };
   if (filters.deliveryStatus && filters.deliveryStatus !== 'All') {
     query.deliveryStatus = filters.deliveryStatus;
   }
@@ -355,7 +430,7 @@ export async function listProjectLeads(projectId, filters = {}) {
   }
 
   const page = Math.max(Number(filters.page) || 1, 1);
-  const limit = Math.min(Math.max(Number(filters.limit) || 50, 1), 200);
+  const limit = Math.min(Math.max(Number(filters.limit) || 50, 1), MAX_LIST_LIMIT);
   const skip = (page - 1) * limit;
 
   const [leads, total] = await Promise.all([
@@ -368,9 +443,10 @@ export async function listProjectLeads(projectId, filters = {}) {
   const companyMap = new Map(companies.map((c) => [String(c._id), c]));
 
   const leadIds = leads.map((lead) => lead._id);
-  const interactions = leadIds.length
-    ? await ContactInteraction.find({ leadId: { $in: leadIds } })
-      .select('leadId direction outcome occurredAt')
+  const interactionFilter = interactionQueryForLeadIds(leadIds);
+  const interactions = interactionFilter
+    ? await ContactInteraction.find(interactionFilter)
+      .select('leadId relatedLeadIds direction outcome occurredAt')
       .lean()
     : [];
 
@@ -669,8 +745,10 @@ export async function listAllLeads({
     Lead.countDocuments(query),
   ]);
 
-  const campaignIds = [...new Set(leads.map((l) => String(l.campaignId)))];
-  const campaigns = await ProjectCampaign.find({ _id: { $in: campaignIds } }).select('projectName').lean();
+  const campaignIds = normalizeObjectIdList(leads.map((l) => l.campaignId));
+  const campaigns = campaignIds.length
+    ? await ProjectCampaign.find({ _id: { $in: campaignIds } }).select('projectName').lean()
+    : [];
   const campaignMap = new Map(campaigns.map((c) => [String(c._id), c]));
 
   const enriched = leads.map((lead) => ({
@@ -680,7 +758,53 @@ export async function listAllLeads({
     campaignName: campaignMap.get(String(lead.campaignId))?.projectName || (lead.campaignId ? 'Campaign' : ''),
   }));
 
-  return { items: enriched, total, page: p, limit: lim };
+  const leadIds = enriched.map((lead) => lead._id);
+  if (!leadIds.length) {
+    return { items: enriched, total, page: p, limit: lim };
+  }
+
+  const [interactions, replies, sendJobs, latestInteractionMap] = await Promise.all([
+    ContactInteraction.find(interactionQueryForLeadIds(leadIds))
+      .select('leadId relatedLeadIds direction outcome occurredAt')
+      .lean(),
+    Reply.find({ leadId: { $in: leadIds } }).select('leadId receivedAt').lean(),
+    SendJob.find({ leadId: { $in: leadIds }, status: 'sent' }).select('leadId sentAt').lean(),
+    buildLatestInteractionDateMap(leadIds),
+  ]);
+
+  const latestByLead = mergeLatestDateMaps(
+    latestInteractionMap,
+    buildLatestDateByLead(replies, 'leadId', 'receivedAt'),
+    buildLatestDateByLead(sendJobs, 'leadId', 'sentAt'),
+  );
+
+  return {
+    items: enrichLeadsWithResponse(enriched, interactions, latestByLead),
+    total,
+    page: p,
+    limit: lim,
+  };
+}
+
+export async function getLeadById(leadId) {
+  assertDb();
+  const lead = await Lead.findOne({ _id: leadId, deletedAt: null }).populate('companyId').lean();
+  if (!lead) {
+    const error = new Error('Contact not found.');
+    error.status = 404;
+    throw error;
+  }
+
+  const campaign = lead.campaignId
+    ? await ProjectCampaign.findById(lead.campaignId).select('projectName').lean()
+    : null;
+
+  return {
+    ...lead,
+    companyName: lead.companyId?.companyName || '',
+    domain: lead.companyId?.domain || '',
+    campaignName: campaign?.projectName || (lead.campaignId ? 'Campaign' : ''),
+  };
 }
 
 export async function listAllCompanies({ search, page = 1, limit = 50 } = {}) {
@@ -714,8 +838,10 @@ export async function listAllCompanies({ search, page = 1, limit = 50 } = {}) {
   ]);
   const leadCountMap = new Map(leadCounts.map(lc => [String(lc._id), lc.count]));
 
-  const allCampaignIds = [...new Set(companies.flatMap(c => c.projectsAssociated || []))];
-  const campaigns = await ProjectCampaign.find({ _id: { $in: allCampaignIds } }).select('projectName').lean();
+  const allCampaignIds = normalizeObjectIdList(companies.flatMap((c) => c.projectsAssociated || []));
+  const campaigns = allCampaignIds.length
+    ? await ProjectCampaign.find({ _id: { $in: allCampaignIds } }).select('projectName').lean()
+    : [];
   const campaignMap = new Map(campaigns.map(c => [String(c._id), c]));
 
   const enriched = companies.map((comp) => formatCompanyRecord({
@@ -740,12 +866,17 @@ export async function getCompanyDetails(companyId) {
 
   const leads = await Lead.find({ companyId }).sort({ createdAt: -1 }).lean();
   
-  const campaignIds = [...new Set(leads.map(l => String(l.campaignId)))];
-  const campaigns = await ProjectCampaign.find({ _id: { $in: campaignIds } }).select('projectName').lean();
+  const campaignIds = normalizeObjectIdList(leads.map((l) => l.campaignId));
+  const campaigns = campaignIds.length
+    ? await ProjectCampaign.find({ _id: { $in: campaignIds } }).select('projectName').lean()
+    : [];
   const campaignMap = new Map(campaigns.map(c => [String(c._id), c]));
   
-  const interactions = await ContactInteraction.find({ companyId })
-    .select('leadId direction outcome occurredAt')
+  const interactions = await ContactInteraction.find({
+    companyId,
+    deletedAt: null,
+  })
+    .select('leadId relatedLeadIds direction outcome occurredAt')
     .lean();
 
   const enrichedLeads = enrichLeadsWithResponse(
@@ -1120,6 +1251,30 @@ export async function restoreCompany(id, actor = {}) {
   assertDb();
   registerRevisionModel('company', Company);
   return restoreRecord({ Model: Company, resourceType: 'company', id, actor });
+}
+
+export async function deleteProject(id, actor = {}) {
+  assertDb();
+  registerRevisionModel('project', ProjectCampaign);
+  return softDeleteRecord({ Model: ProjectCampaign, resourceType: 'project', id, actor });
+}
+
+export async function restoreProject(id, actor = {}) {
+  assertDb();
+  registerRevisionModel('project', ProjectCampaign);
+  return restoreRecord({ Model: ProjectCampaign, resourceType: 'project', id, actor });
+}
+
+export async function deleteProjects(ids = [], actor = {}) {
+  return bulkSoftDelete(ids, deleteProject, actor);
+}
+
+export async function deleteLeads(ids = [], actor = {}) {
+  return bulkSoftDelete(ids, deleteLead, actor);
+}
+
+export async function deleteCompanies(ids = [], actor = {}) {
+  return bulkSoftDelete(ids, deleteCompany, actor);
 }
 
 export { normalizeEmail, normalizeDomain };

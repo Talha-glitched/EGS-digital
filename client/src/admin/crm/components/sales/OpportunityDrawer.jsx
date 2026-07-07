@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   CalendarDays,
   Clock3,
-  Save,
   Target,
   Trash2,
   UserRound,
@@ -11,12 +10,17 @@ import Drawer from '../ui/Drawer.jsx';
 import DrawerTabs from '../leads/DrawerTabs.jsx';
 import DrawerCollapsible from '../leads/DrawerCollapsible.jsx';
 import InteractionTimeline from '../leads/InteractionTimeline.jsx';
+import SearchableMultiSelect from '../ui/SearchableMultiSelect.jsx';
 import SearchableSelect from '../ui/SearchableSelect.jsx';
 import { Alert, Badge, Field, LoadingState } from '../ui/primitives.jsx';
 import PocQualificationBadge from '../leads/PocQualificationBadge.jsx';
 import OpportunityTasksPanel from '../tasks/OpportunityTasksPanel.jsx';
+import AutoSaveIndicator from '../ui/AutoSaveIndicator.jsx';
+import AutoSaveCloseNotice from '../ui/AutoSaveCloseNotice.jsx';
+import { useDebouncedAutoSave } from '../../hooks/useDebouncedAutoSave.js';
 import {
   fetchOpportunity,
+  fetchActiveUsers,
   updateOpportunity,
   normalizeId,
   formatCurrency,
@@ -39,7 +43,6 @@ export default function OpportunityDrawer({
 }) {
   const [tab, setTab] = useState('overview');
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [detail, setDetail] = useState(null);
   const [timelineRefresh, setTimelineRefresh] = useState(0);
@@ -52,8 +55,12 @@ export default function OpportunityDrawer({
     eventName: '',
     notes: '',
     primaryLeadId: '',
+    stakeholderLeadIds: [],
     campaignId: '',
+    owner: '',
+    collaborators: [],
   });
+  const [activeUsers, setActiveUsers] = useState([]);
 
   const loadDetail = useCallback(async () => {
     if (!opportunityId) return;
@@ -71,7 +78,10 @@ export default function OpportunityDrawer({
         eventName: opp.eventName || '',
         notes: opp.notes || '',
         primaryLeadId: normalizeId(opp.primaryLeadId) || '',
+        stakeholderLeadIds: (opp.stakeholderLeadIds || []).map((lead) => normalizeId(lead)).filter(Boolean),
         campaignId: normalizeId(opp.campaignId) || '',
+        owner: opp.owner || '',
+        collaborators: Array.isArray(opp.collaborators) ? opp.collaborators : [],
       });
     } catch (err) {
       setError(err.message || 'Failed to load opportunity.');
@@ -83,6 +93,10 @@ export default function OpportunityDrawer({
   useEffect(() => {
     loadDetail();
   }, [loadDetail]);
+
+  useEffect(() => {
+    fetchActiveUsers().then(setActiveUsers).catch(() => setActiveUsers([]));
+  }, []);
 
   const opportunity = detail?.opportunity;
   const contacts = useMemo(() => {
@@ -112,37 +126,64 @@ export default function OpportunityDrawer({
     })),
     [contacts],
   );
+  const internalUserOptions = useMemo(
+    () => activeUsers.map((user) => ({
+      value: user.displayName,
+      label: user.displayName,
+      hint: user.email || user.role || '',
+    })),
+    [activeUsers],
+  );
 
   const selectedContact = contacts.find((c) => normalizeId(c._id) === normalizeId(form.primaryLeadId));
+  const stageOptions = useMemo(() => {
+    const source = detail?.stages?.length ? detail.stages : stages;
+    const merged = [...source];
+    if (form.stage && !merged.includes(form.stage)) merged.unshift(form.stage);
+    return merged;
+  }, [detail?.stages, form.stage, stages]);
 
   function update(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
-  async function saveOverview(event) {
-    event?.preventDefault?.();
+  const persistOpportunity = useCallback(async (currentForm) => {
     if (!opportunityId) return;
-    setSaving(true);
     setError('');
     try {
       const updated = await updateOpportunity(opportunityId, {
-        ...form,
-        valueAed: form.valueAed === '' ? 0 : Number(form.valueAed),
-        primaryLeadId: form.primaryLeadId || null,
+        ...currentForm,
+        valueAed: currentForm.valueAed === '' ? 0 : Number(currentForm.valueAed),
+        primaryLeadId: currentForm.primaryLeadId || null,
       });
       onUpdated?.(updated);
-      await loadDetail();
+      setDetail((prev) => (prev ? { ...prev, opportunity: { ...prev.opportunity, ...updated } } : prev));
       setTimelineRefresh((value) => value + 1);
     } catch (err) {
       setError(err.message || 'Failed to save opportunity.');
-    } finally {
-      setSaving(false);
+      throw err;
     }
-  }
+  }, [opportunityId, onUpdated]);
+
+  const { status: saveStatus, requestClose, closingNotice } = useDebouncedAutoSave({
+    snapshot: form,
+    onSave: persistOpportunity,
+    enabled: Boolean(opportunityId) && tab === 'overview' && !loading,
+    resetKey: opportunityId,
+  });
+
+  const guardedClose = useCallback(
+    () => requestClose(onClose),
+    [requestClose, onClose],
+  );
+
+  useEffect(() => {
+    if (saveStatus !== 'error') return;
+    setError('Failed to save opportunity changes. Please try again.');
+  }, [saveStatus]);
 
   async function savePoc(leadId) {
     if (!opportunityId) return;
-    setSaving(true);
     setError('');
     try {
       const updated = await updateOpportunity(opportunityId, { primaryLeadId: leadId || null });
@@ -152,8 +193,6 @@ export default function OpportunityDrawer({
       setTimelineRefresh((value) => value + 1);
     } catch (err) {
       setError(err.message || 'Failed to update POC.');
-    } finally {
-      setSaving(false);
     }
   }
 
@@ -173,9 +212,10 @@ export default function OpportunityDrawer({
   }
 
   return (
+    <>
     <Drawer
       open={Boolean(opportunityId)}
-      onClose={onClose}
+      onClose={guardedClose}
       title={loading ? 'Loading…' : opportunity?.name || 'Opportunity'}
       subtitle={opportunity?.companyId?.companyName || 'Sales opportunity'}
       size="2xl"
@@ -192,17 +232,8 @@ export default function OpportunityDrawer({
               Delete
             </button>
           ) : null}
-          {tab === 'overview' ? (
-            <>
-              <button type="button" className="crm-btn-secondary ml-auto" onClick={onClose}>Close</button>
-              <button type="button" className="crm-btn-primary" onClick={saveOverview} disabled={saving}>
-                <Save className="h-4 w-4" />
-                {saving ? 'Saving…' : 'Save changes'}
-              </button>
-            </>
-          ) : (
-            <button type="button" className="crm-btn-secondary ml-auto" onClick={onClose}>Close</button>
-          )}
+          {tab === 'overview' ? <AutoSaveIndicator status={saveStatus} className="flex-1" /> : <span className="flex-1" />}
+          <button type="button" className="crm-btn-secondary shrink-0" onClick={guardedClose}>Close</button>
         </div>
       )}
     >
@@ -242,7 +273,7 @@ export default function OpportunityDrawer({
 
           {tab === 'overview' && (
             <div className="crm-drawer-tab-panel">
-              <form onSubmit={saveOverview} className="crm-drawer-section space-y-5">
+              <div className="crm-drawer-section space-y-5">
                 <div className="crm-opp-form-grid">
                   <Field label="Opportunity name" required>
                     <input className="crm-input" value={form.name} onChange={(e) => update('name', e.target.value)} required />
@@ -251,7 +282,7 @@ export default function OpportunityDrawer({
                     <SearchableSelect
                       value={form.stage}
                       onChange={(value) => update('stage', value)}
-                      options={(stages.length ? stages : [form.stage]).map((stage) => ({ value: stage, label: stage }))}
+                      options={stageOptions.map((stage) => ({ value: stage, label: stage }))}
                       placeholder="Select stage…"
                       searchPlaceholder="Search stages…"
                     />
@@ -262,14 +293,34 @@ export default function OpportunityDrawer({
                   <Field label="Event / exhibition">
                     <input className="crm-input" value={form.eventName} onChange={(e) => update('eventName', e.target.value)} />
                   </Field>
+                  <Field label="Owner">
+                    <SearchableSelect
+                      value={form.owner}
+                      onChange={(value) => update('owner', value)}
+                      options={internalUserOptions}
+                      placeholder="Assign owner…"
+                      searchPlaceholder="Search internal users…"
+                      emptyLabel="No users match."
+                    />
+                  </Field>
                 </div>
+                <Field label="Internal collaborators">
+                  <SearchableMultiSelect
+                    values={form.collaborators}
+                    onChange={(values) => update('collaborators', values)}
+                    options={internalUserOptions}
+                    placeholder="Select collaborators…"
+                    searchPlaceholder="Search internal users…"
+                    emptyLabel="No users match."
+                  />
+                </Field>
                 <Field label="Next action">
                   <input className="crm-input" value={form.nextAction} onChange={(e) => update('nextAction', e.target.value)} />
                 </Field>
                 <Field label="Notes">
                   <textarea className="crm-input min-h-[112px] resize-y" value={form.notes} onChange={(e) => update('notes', e.target.value)} />
                 </Field>
-              </form>
+              </div>
             </div>
           )}
 
@@ -290,7 +341,7 @@ export default function OpportunityDrawer({
               <DrawerCollapsible title="Primary point of contact" defaultOpen>
                 <div className="space-y-4">
                   <p className="text-sm leading-relaxed text-neutral-600">
-                    The selected POC links this opportunity to their interaction timeline and the company record across the CRM.
+                    The selected client contacts link this opportunity to their interaction timeline and the company record across the CRM.
                   </p>
                   <Field label="POC for this deal">
                     <SearchableSelect
@@ -305,6 +356,16 @@ export default function OpportunityDrawer({
                       emptyLabel="No contacts linked to this company."
                     />
                   </Field>
+                  <Field label="Additional client stakeholders">
+                    <SearchableMultiSelect
+                      values={form.stakeholderLeadIds}
+                      onChange={(values) => update('stakeholderLeadIds', values.filter((value) => String(value) !== String(form.primaryLeadId)))}
+                      options={contactOptions.filter((option) => String(option.value) !== String(form.primaryLeadId))}
+                      placeholder="Select stakeholders…"
+                      searchPlaceholder="Search contacts…"
+                      emptyLabel="No additional contacts linked to this company."
+                    />
+                  </Field>
 
                   {selectedContact && (
                     <div className="rounded-xl border border-[var(--color-line)] bg-neutral-50/80 p-4">
@@ -315,6 +376,22 @@ export default function OpportunityDrawer({
                           <p className="mt-1 text-xs text-neutral-500">{selectedContact.email}</p>
                         </div>
                         <PocQualificationBadge status={selectedContact.pocQualification?.status} />
+                      </div>
+                    </div>
+                  )}
+
+                  {form.stakeholderLeadIds.length > 0 && (
+                    <div className="rounded-xl border border-[var(--color-line)] bg-neutral-50/80 p-4">
+                      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">Stakeholders</p>
+                      <div className="space-y-2">
+                        {contacts
+                          .filter((contact) => form.stakeholderLeadIds.includes(normalizeId(contact._id)))
+                          .map((contact) => (
+                            <div key={normalizeId(contact._id)} className="text-sm text-[var(--color-ink)]">
+                              <p className="font-medium">{contact.name || contact.email}</p>
+                              <p className="text-xs text-neutral-500">{[contact.designation, contact.email].filter(Boolean).join(' · ')}</p>
+                            </div>
+                          ))}
                       </div>
                     </div>
                   )}
@@ -348,5 +425,7 @@ export default function OpportunityDrawer({
         </div>
       )}
     </Drawer>
+    <AutoSaveCloseNotice open={closingNotice} />
+    </>
   );
 }

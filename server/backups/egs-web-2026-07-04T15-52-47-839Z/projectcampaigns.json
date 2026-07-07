@@ -1,0 +1,252 @@
+[
+  {
+    "_id": {
+      "$oid": "6a340ff379f8f5c6b1af2f30"
+    },
+    "projectName": "GIsec",
+    "milestone": "GISEC",
+    "targetCompaniesCount": {
+      "$numberInt": "19"
+    },
+    "companiesWithPocsFound": {
+      "$numberInt": "19"
+    },
+    "companiesRespondedCount": {
+      "$numberInt": "0"
+    },
+    "financialLedger": {
+      "allocatedToolBudget": {
+        "$numberInt": "1000"
+      },
+      "domainFixedCosts": {
+        "$numberInt": "0"
+      },
+      "laborCosts": {
+        "$numberInt": "0"
+      },
+      "accumulatedOpenAiCost": {
+        "$numberInt": "0"
+      },
+      "totalProjectCost": {
+        "$numberInt": "1000"
+      },
+      "validatedRevenueWon": {
+        "$numberInt": "0"
+      }
+    },
+    "status": "Active Planning",
+    "fromEmail": "talha@exhibitgraphicsign.com",
+    "fromName": "Exhibit Graphic Sign",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781796851904"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781797943706"
+      }
+    },
+    "statusSource": "auto"
+  },
+  {
+    "_id": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "projectName": "GISEC",
+    "milestone": "TES",
+    "targetCompaniesCount": {
+      "$numberInt": "28"
+    },
+    "companiesWithPocsFound": {
+      "$numberInt": "19"
+    },
+    "companiesRespondedCount": {
+      "$numberInt": "0"
+    },
+    "financialLedger": {
+      "allocatedToolBudget": {
+        "$numberInt": "1500"
+      },
+      "domainFixedCosts": {
+        "$numberInt": "0"
+      },
+      "laborCosts": {
+        "$numberInt": "0"
+      },
+      "accumulatedOpenAiCost": {
+        "$numberInt": "0"
+      },
+      "totalProjectCost": {
+        "$numberInt": "1500"
+      },
+      "validatedRevenueWon": {
+        "$numberInt": "0"
+      }
+    },
+    "status": "Active Campaigning",
+    "fromEmail": "talha@exhibitgraphicsign.com",
+    "fromName": "Exhibit Graphic Sign",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781797235675"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781886478462"
+      }
+    },
+    "statusSource": "auto"
+  },
+  {
+    "_id": {
+      "$oid": "6a38077e19e3ff758a7292ed"
+    },
+    "projectName": "gitex",
+    "milestone": "",
+    "targetCompaniesCount": {
+      "$numberInt": "0"
+    },
+    "companiesWithPocsFound": {
+      "$numberInt": "0"
+    },
+    "companiesRespondedCount": {
+      "$numberInt": "0"
+    },
+    "financialLedger": {
+      "allocatedToolBudget": {
+        "$numberInt": "0"
+      },
+      "domainFixedCosts": {
+        "$numberInt": "0"
+      },
+      "laborCosts": {
+        "$numberInt": "0"
+      },
+      "accumulatedOpenAiCost": {
+        "$numberInt": "0"
+      },
+      "totalProjectCost": {
+        "$numberInt": "0"
+      },
+      "validatedRevenueWon": {
+        "$numberInt": "0"
+      }
+    },
+    "status": "Active Planning",
+    "fromEmail": "talha@exhibitgraphicsign.com",
+    "fromName": "Exhibit Graphic Sign",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782056830323"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782056830323"
+      }
+    },
+    "statusSource": "auto"
+  },
+  {
+    "_id": {
+      "$oid": "6a394199ec771b0e44c9c2a2"
+    },
+    "projectName": "rawr",
+    "milestone": "",
+    "targetCompaniesCount": {
+      "$numberInt": "0"
+    },
+    "companiesWithPocsFound": {
+      "$numberInt": "0"
+    },
+    "companiesRespondedCount": {
+      "$numberInt": "0"
+    },
+    "financialLedger": {
+      "allocatedToolBudget": {
+        "$numberInt": "0"
+      },
+      "domainFixedCosts": {
+        "$numberInt": "0"
+      },
+      "laborCosts": {
+        "$numberInt": "0"
+      },
+      "accumulatedOpenAiCost": {
+        "$numberInt": "0"
+      },
+      "totalProjectCost": {
+        "$numberInt": "0"
+      },
+      "validatedRevenueWon": {
+        "$numberInt": "0"
+      }
+    },
+    "status": "Active Planning",
+    "statusSource": "auto",
+    "fromEmail": "talha@exhibitgraphicsign.com",
+    "fromName": "Exhibit Graphic Sign",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782137241891"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782137241891"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3ebb9eac1ef3c5e876d151"
+    },
+    "projectName": "RANA EX",
+    "milestone": "2026",
+    "targetCompaniesCount": {
+      "$numberInt": "1"
+    },
+    "companiesWithPocsFound": {
+      "$numberInt": "0"
+    },
+    "companiesRespondedCount": {
+      "$numberInt": "1"
+    },
+    "financialLedger": {
+      "allocatedToolBudget": {
+        "$numberInt": "0"
+      },
+      "domainFixedCosts": {
+        "$numberInt": "0"
+      },
+      "laborCosts": {
+        "$numberInt": "0"
+      },
+      "accumulatedOpenAiCost": {
+        "$numberInt": "0"
+      },
+      "totalProjectCost": {
+        "$numberInt": "0"
+      },
+      "validatedRevenueWon": {
+        "$numberInt": "0"
+      }
+    },
+    "status": "Active Campaigning",
+    "statusSource": "auto",
+    "fromEmail": "talha@exhibitgraphicsign.com",
+    "fromName": "Exhibit Graphic Sign",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782496158420"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782828776131"
+      }
+    }
+  }
+]

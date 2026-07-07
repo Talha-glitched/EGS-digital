@@ -35,6 +35,11 @@ export function normalizeId(value) {
   return String(value);
 }
 
+export function notifyWorkspaceChanged(detail = {}) {
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(new CustomEvent('crm:workspace-changed', { detail }));
+}
+
 export async function uploadIngestFile(projectId, file, fieldMapping, vendor) {
   const form = new FormData();
   form.append('file', file);
@@ -134,6 +139,10 @@ export async function createStandaloneLead(payload) {
     method: 'POST',
     body: JSON.stringify(payload),
   });
+}
+
+export async function fetchLeadById(id) {
+  return crmApiFetch(`/api/admin/leads/${encodeURIComponent(normalizeId(id))}`);
 }
 
 export async function fetchGlobalCompanies({ search, page, limit } = {}) {
@@ -289,6 +298,39 @@ export async function updateCampaign(campaignId, payload) {
   });
 }
 
+const PROJECT_LIST_PAGE_SIZE = 500;
+
+async function fetchAllProjectPages(projectId, resource, filters = {}) {
+  let page = 1;
+  const items = [];
+  let total = 0;
+
+  while (page <= 100) {
+    const params = new URLSearchParams({
+      ...Object.fromEntries(
+        Object.entries(filters).filter(([, value]) => value != null && value !== ''),
+      ),
+      page: String(page),
+      limit: String(PROJECT_LIST_PAGE_SIZE),
+    });
+    const data = await crmApiFetch(`/api/admin/projects/${projectId}/${resource}?${params}`);
+    items.push(...(data.items || []));
+    total = data.total ?? items.length;
+    if (items.length >= total || !(data.items?.length)) break;
+    page += 1;
+  }
+
+  return { items, total };
+}
+
+export function fetchAllProjectLeads(projectId, filters = {}) {
+  return fetchAllProjectPages(projectId, 'leads', filters);
+}
+
+export function fetchAllProjectCompanies(projectId, filters = {}) {
+  return fetchAllProjectPages(projectId, 'companies', filters);
+}
+
 export async function updateProjectOverhead(campaignId, payload) {
   return crmApiFetch('/api/admin/finance/overhead', {
     method: 'POST',
@@ -323,17 +365,21 @@ export async function fetchOpportunityTimeline(opportunityId) {
 }
 
 export async function createOpportunity(payload) {
-  return crmApiFetch('/api/admin/sales/opportunities', {
+  const result = await crmApiFetch('/api/admin/sales/opportunities', {
     method: 'POST',
     body: JSON.stringify(payload),
   });
+  notifyWorkspaceChanged({ entity: 'opportunity', action: 'create', id: result?._id });
+  return result;
 }
 
 export async function updateOpportunity(opportunityId, payload) {
-  return crmApiFetch(`/api/admin/sales/opportunities/${encodeURIComponent(normalizeId(opportunityId))}`, {
+  const result = await crmApiFetch(`/api/admin/sales/opportunities/${encodeURIComponent(normalizeId(opportunityId))}`, {
     method: 'PATCH',
     body: JSON.stringify(payload),
   });
+  notifyWorkspaceChanged({ entity: 'opportunity', action: 'update', id: normalizeId(opportunityId) });
+  return result;
 }
 
 export async function fetchUsers() {
@@ -422,9 +468,11 @@ export async function restoreRecord(resourceType, id) {
 }
 
 export async function deleteTaskWithUndo(id) {
-  return crmApiFetch(`/api/admin/sales/tasks/${encodeURIComponent(normalizeId(id))}`, {
+  const result = await crmApiFetch(`/api/admin/sales/tasks/${encodeURIComponent(normalizeId(id))}`, {
     method: 'DELETE',
   });
+  notifyWorkspaceChanged({ entity: 'task', action: 'delete', id: normalizeId(id) });
+  return result;
 }
 
 export async function deleteInteractionWithUndo(id) {
@@ -452,7 +500,54 @@ export async function deleteCompanyWithUndo(id) {
 }
 
 export async function deleteOpportunityWithUndo(id) {
-  return crmApiFetch(`/api/admin/sales/opportunities/${encodeURIComponent(normalizeId(id))}`, {
+  const result = await crmApiFetch(`/api/admin/sales/opportunities/${encodeURIComponent(normalizeId(id))}`, {
     method: 'DELETE',
   });
+  notifyWorkspaceChanged({ entity: 'opportunity', action: 'delete', id: normalizeId(id) });
+  return result;
+}
+
+export async function deleteProjectWithUndo(id) {
+  return crmApiFetch(`/api/admin/projects/${encodeURIComponent(normalizeId(id))}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function deleteProjects(ids = []) {
+  return crmApiFetch('/api/admin/projects/bulk-delete', {
+    method: 'POST',
+    body: JSON.stringify({ ids }),
+  });
+}
+
+export async function deleteLeads(ids = []) {
+  return crmApiFetch('/api/admin/leads/bulk-delete', {
+    method: 'POST',
+    body: JSON.stringify({ ids }),
+  });
+}
+
+export async function deleteCompanies(ids = []) {
+  return crmApiFetch('/api/admin/companies/bulk-delete', {
+    method: 'POST',
+    body: JSON.stringify({ ids }),
+  });
+}
+
+export async function deleteTasks(ids = []) {
+  const result = await crmApiFetch('/api/admin/sales/tasks/bulk-delete', {
+    method: 'POST',
+    body: JSON.stringify({ ids }),
+  });
+  notifyWorkspaceChanged({ entity: 'task', action: 'bulk-delete', ids });
+  return result;
+}
+
+export async function deleteOpportunities(ids = []) {
+  const result = await crmApiFetch('/api/admin/sales/opportunities/bulk-delete', {
+    method: 'POST',
+    body: JSON.stringify({ ids }),
+  });
+  notifyWorkspaceChanged({ entity: 'opportunity', action: 'bulk-delete', ids });
+  return result;
 }

@@ -166,6 +166,7 @@ export function buildDeleteLabel(resourceType, doc) {
   if (resourceType === 'opportunity') return `Deleted opportunity: ${doc.name || 'Opportunity'}`;
   if (resourceType === 'interaction') return `Deleted interaction: ${doc.subject || doc.type || 'Interaction'}`;
   if (resourceType === 'sequence') return `Deleted sequence: ${doc.name || 'Sequence'}`;
+  if (resourceType === 'project') return `Deleted campaign: ${doc.projectName || 'Campaign'}`;
   return `Deleted ${resourceType}`;
 }
 

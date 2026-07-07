@@ -1,0 +1,212 @@
+[
+  {
+    "_id": {
+      "$oid": "6a394dd7aec1a785a5a25857"
+    },
+    "name": "rarwrawrawr",
+    "companyId": {
+      "$oid": "6a394dd2aec1a785a5a25852"
+    },
+    "primaryLeadId": null,
+    "campaignId": null,
+    "owner": "admin",
+    "stage": "Contacted",
+    "valueAed": {
+      "$numberInt": "0"
+    },
+    "probability": {
+      "$numberInt": "20"
+    },
+    "expectedCloseDate": {
+      "$date": {
+        "$numberLong": "1782140375777"
+      }
+    },
+    "nextAction": "",
+    "nextActionDueAt": null,
+    "services": [],
+    "eventName": "",
+    "eventDate": null,
+    "boothNumber": "",
+    "standSizeSqm": null,
+    "budgetBand": "",
+    "proposalDeadline": null,
+    "lostReason": "",
+    "notes": "",
+    "closedAt": null,
+    "lastModifiedBy": "admin",
+    "activityLog": [
+      {
+        "action": "Updated stage",
+        "field": "stage",
+        "from": "New Lead",
+        "to": "Contacted",
+        "by": "admin",
+        "at": {
+          "$date": {
+            "$numberLong": "1782141120924"
+          }
+        },
+        "_id": {
+          "$oid": "6a3950c0aec1a785a5a261ea"
+        }
+      },
+      {
+        "action": "Updated stage",
+        "field": "stage",
+        "from": "Contacted",
+        "to": "New Lead",
+        "by": "admin",
+        "at": {
+          "$date": {
+            "$numberLong": "1782140769500"
+          }
+        },
+        "_id": {
+          "$oid": "6a394f61aec1a785a5a25e01"
+        }
+      },
+      {
+        "action": "Updated stage",
+        "field": "stage",
+        "from": "New Lead",
+        "to": "Contacted",
+        "by": "admin",
+        "at": {
+          "$date": {
+            "$numberLong": "1782140768575"
+          }
+        },
+        "_id": {
+          "$oid": "6a394f60aec1a785a5a25dec"
+        }
+      },
+      {
+        "action": "Opportunity created",
+        "field": "stage",
+        "from": null,
+        "to": "New Lead",
+        "by": "admin",
+        "at": {
+          "$date": {
+            "$numberLong": "1782140375777"
+          }
+        },
+        "_id": {
+          "$oid": "6a394dd7aec1a785a5a25858"
+        }
+      }
+    ],
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782140375780"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782141120924"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3954eeaec1a785a5a26e5e"
+    },
+    "name": "uyhjgjh",
+    "companyId": {
+      "$oid": "6a33f45329414e54b55e4700"
+    },
+    "primaryLeadId": {
+      "$oid": "6a34143596cc4b99fb544a85"
+    },
+    "campaignId": null,
+    "owner": "admin",
+    "stage": "New Lead",
+    "valueAed": {
+      "$numberInt": "0"
+    },
+    "probability": {
+      "$numberInt": "10"
+    },
+    "expectedCloseDate": {
+      "$date": {
+        "$numberLong": "1782142190578"
+      }
+    },
+    "nextAction": "",
+    "nextActionDueAt": null,
+    "services": [],
+    "eventName": "",
+    "eventDate": null,
+    "boothNumber": "",
+    "standSizeSqm": null,
+    "budgetBand": "",
+    "proposalDeadline": null,
+    "lostReason": "",
+    "notes": "",
+    "closedAt": null,
+    "lastModifiedBy": "admin",
+    "activityLog": [
+      {
+        "action": "Updated primaryLeadId",
+        "field": "primaryLeadId",
+        "from": "6a3416a496cc4b99fb545303",
+        "to": "6a34143596cc4b99fb544a85",
+        "by": "admin",
+        "at": {
+          "$date": {
+            "$numberLong": "1782142203981"
+          }
+        },
+        "_id": {
+          "$oid": "6a3954fbaec1a785a5a26f69"
+        }
+      },
+      {
+        "action": "Updated primaryLeadId",
+        "field": "primaryLeadId",
+        "from": null,
+        "to": "6a3416a496cc4b99fb545303",
+        "by": "admin",
+        "at": {
+          "$date": {
+            "$numberLong": "1782142195017"
+          }
+        },
+        "_id": {
+          "$oid": "6a3954f3aec1a785a5a26e90"
+        }
+      },
+      {
+        "action": "Opportunity created",
+        "field": "stage",
+        "from": null,
+        "to": "New Lead",
+        "by": "admin",
+        "at": {
+          "$date": {
+            "$numberLong": "1782142190578"
+          }
+        },
+        "_id": {
+          "$oid": "6a3954eeaec1a785a5a26e5f"
+        }
+      }
+    ],
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782142190581"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782495305121"
+      }
+    },
+    "deletedAt": null,
+    "deletedBy": null,
+    "version": {
+      "$numberInt": "2"
+    }
+  }
+]

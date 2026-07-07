@@ -1,0 +1,1789 @@
+[
+  {
+    "_id": {
+      "$oid": "6a356e059f23c150e7f5b617"
+    },
+    "leadId": {
+      "$oid": "6a3416a096cc4b99fb545262"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782621204962"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782719985458"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782719985458"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886469908"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782719985460"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e069f23c150e7f5b61e"
+    },
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb545269"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782622367674"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782713995525"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782713995525"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886470183"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782713995526"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e069f23c150e7f5b624"
+    },
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb545270"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782624311223"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782727482478"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782727482478"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886470411"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727482478"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e069f23c150e7f5b62a"
+    },
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb545277"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782623338361"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782708655148"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782708655148"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886470641"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782708655149"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e069f23c150e7f5b630"
+    },
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb54527e"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782624534633"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782724008331"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782724008331"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886470866"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782724008332"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e079f23c150e7f5b636"
+    },
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb545285"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782624534131"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782723288606"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782723288606"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886471101"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782723288607"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e079f23c150e7f5b63c"
+    },
+    "leadId": {
+      "$oid": "6a3416a196cc4b99fb54528b"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782624655678"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782726957262"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782726957262"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886471346"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782726957263"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e079f23c150e7f5b642"
+    },
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb545292"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782626035935"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782727682124"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782727682124"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886471596"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727682124"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e079f23c150e7f5b648"
+    },
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb54529a"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782627014370"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782725943176"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782725943176"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886471820"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782725943177"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e089f23c150e7f5b64e"
+    },
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb5452a1"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782628188497"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782727297408"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782727297408"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886472061"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727297409"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e089f23c150e7f5b654"
+    },
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb5452a8"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782627214039"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782707710099"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782707710099"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886472369"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782707710100"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e089f23c150e7f5b65a"
+    },
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb5452ae"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782628711076"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782720343482"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782720343482"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886472588"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782720343482"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e089f23c150e7f5b660"
+    },
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb5452b5"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782628331994"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782719985056"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782719985056"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886472846"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782719985057"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e099f23c150e7f5b666"
+    },
+    "leadId": {
+      "$oid": "6a3416a296cc4b99fb5452bc"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782629684005"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782727132276"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782727132275"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886473086"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727132276"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e099f23c150e7f5b66c"
+    },
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452c3"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782630657073"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782726888728"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782726888728"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886473313"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782726888729"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e099f23c150e7f5b672"
+    },
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452cb"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782631644629"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782724008471"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782724008470"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886473560"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782724008471"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e099f23c150e7f5b678"
+    },
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452d2"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "2"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782632008926"
+      }
+    },
+    "frozen": false,
+    "completedAt": null,
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782372808926"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886473781"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782372808927"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0a9f23c150e7f5b67e"
+    },
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452d9"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782632372129"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782727907185"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782727907185"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886474010"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727907186"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0a9f23c150e7f5b684"
+    },
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452e1"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782632157432"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782711464700"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782711464700"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886474200"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782711464700"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0a9f23c150e7f5b68a"
+    },
+    "leadId": {
+      "$oid": "6a3416a396cc4b99fb5452e7"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782632507902"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782727217031"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782727217031"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886474441"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727217031"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0a9f23c150e7f5b690"
+    },
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb5452ee"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782633485407"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782713022878"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782713022877"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886474674"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782713022878"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0a9f23c150e7f5b696"
+    },
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb5452f5"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782633485767"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782727827252"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782727827251"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886474907"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727827253"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0b9f23c150e7f5b69d"
+    },
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb5452fc"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782633616132"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782727752164"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782727752164"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886475144"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727752165"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0b9f23c150e7f5b6a3"
+    },
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb545303"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782634584321"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782709363086"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782709363085"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886475396"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782709363086"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0b9f23c150e7f5b6a9"
+    },
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb54530b"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782635557591"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782710335390"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782710335390"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886475650"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782710335391"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0b9f23c150e7f5b6af"
+    },
+    "leadId": {
+      "$oid": "6a3416a496cc4b99fb545311"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782636030063"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782707709852"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782707709852"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886475885"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782707709853"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0c9f23c150e7f5b6b5"
+    },
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb545318"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782637003153"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782727582014"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782727582013"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886476168"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727582015"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0c9f23c150e7f5b6bb"
+    },
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb545320"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782638016795"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782728107442"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782728107442"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886476396"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782728107443"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0c9f23c150e7f5b6c1"
+    },
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb545327"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782639106340"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782712409858"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782712409858"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886476621"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782712409859"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0c9f23c150e7f5b6c7"
+    },
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb54532e"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782637993721"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782728007215"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782728007214"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886476831"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782728007216"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0d9f23c150e7f5b6cd"
+    },
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb545335"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782640667936"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782720481608"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782720481608"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886477075"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782720481609"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0d9f23c150e7f5b6d3"
+    },
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb54533c"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782639694405"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782718838993"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782718838992"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886477291"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782718838994"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0d9f23c150e7f5b6d9"
+    },
+    "leadId": {
+      "$oid": "6a3416a596cc4b99fb545343"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782641637137"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782727392314"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782727392314"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886477526"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727392315"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0d9f23c150e7f5b6df"
+    },
+    "leadId": {
+      "$oid": "6a3416a696cc4b99fb54534a"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "0"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1781886469843"
+      }
+    },
+    "frozen": false,
+    "completedAt": null,
+    "lastSentAt": null,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886477787"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781886477787"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0e9f23c150e7f5b6e5"
+    },
+    "leadId": {
+      "$oid": "6a3416a696cc4b99fb545351"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "3"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782638972161"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782727052073"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782727052072"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886478001"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782727052073"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a356e0e9f23c150e7f5b6eb"
+    },
+    "leadId": {
+      "$oid": "6a3416a696cc4b99fb545357"
+    },
+    "campaignId": {
+      "$oid": "6a3411734c44b94e0dc48764"
+    },
+    "sequenceId": {
+      "$oid": "6a356e059f23c150e7f5b60b"
+    },
+    "currentStepIndex": {
+      "$numberInt": "0"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1781886469843"
+      }
+    },
+    "frozen": false,
+    "completedAt": null,
+    "lastSentAt": null,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781886478224"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781886478224"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3ebcc1ac1ef3c5e876d6fc"
+    },
+    "leadId": {
+      "$oid": "6a3ebc4cac1ef3c5e876d44d"
+    },
+    "campaignId": {
+      "$oid": "6a3ebb9eac1ef3c5e876d151"
+    },
+    "sequenceId": {
+      "$oid": "6a3ebc76ac1ef3c5e876d4d2"
+    },
+    "currentStepIndex": {
+      "$numberInt": "1"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782496449775"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782496815174"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782496815174"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782496449824"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782496815174"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3ebf0dffbf80bd61738545"
+    },
+    "leadId": {
+      "$oid": "6a3ebeeaffbf80bd617384e3"
+    },
+    "campaignId": {
+      "$oid": "6a3ebb9eac1ef3c5e876d151"
+    },
+    "sequenceId": {
+      "$oid": "6a3ebc76ac1ef3c5e876d4d2"
+    },
+    "currentStepIndex": {
+      "$numberInt": "1"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782497037329"
+      }
+    },
+    "frozen": true,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782497095349"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782497044269"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782497037395"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782497095349"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3f070f24f7c2264ea94051"
+    },
+    "leadId": {
+      "$oid": "6a3f06e324f7c2264ea93fc1"
+    },
+    "campaignId": {
+      "$oid": "6a3ebb9eac1ef3c5e876d151"
+    },
+    "sequenceId": {
+      "$oid": "6a3ebc76ac1ef3c5e876d4d2"
+    },
+    "currentStepIndex": {
+      "$numberInt": "1"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782515471792"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782515481149"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782515481149"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782515471850"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782515481149"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a41a61015ac3e5ae5c8371a"
+    },
+    "leadId": {
+      "$oid": "6a41a522b62ed59729ddacaf"
+    },
+    "campaignId": {
+      "$oid": "6a3ebb9eac1ef3c5e876d151"
+    },
+    "sequenceId": {
+      "$oid": "6a3ebc76ac1ef3c5e876d4d2"
+    },
+    "currentStepIndex": {
+      "$numberInt": "1"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782687248825"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782687259288"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782687259288"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782687248890"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782687259289"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a43b03a7bbd9dd2325c7fa4"
+    },
+    "leadId": {
+      "$oid": "6a43afe97bbd9dd2325c7dca"
+    },
+    "campaignId": {
+      "$oid": "6a3ebb9eac1ef3c5e876d151"
+    },
+    "sequenceId": {
+      "$oid": "6a3ebc76ac1ef3c5e876d4d2"
+    },
+    "currentStepIndex": {
+      "$numberInt": "1"
+    },
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782820922243"
+      }
+    },
+    "frozen": false,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782820932816"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782820932816"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782820922298"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782820932816"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a43cd496a5ec3de77957b4b"
+    },
+    "leadId": {
+      "$oid": "6a43a38bc7deaff7f78d0cac"
+    },
+    "campaignId": {
+      "$oid": "6a3ebb9eac1ef3c5e876d151"
+    },
+    "sequenceId": {
+      "$oid": "6a3ebc76ac1ef3c5e876d4d2"
+    },
+    "currentStepIndex": {
+      "$numberInt": "2"
+    },
+    "currentNodeId": "email-1782825105946-81",
+    "nextSendAt": {
+      "$date": {
+        "$numberLong": "1782828848932"
+      }
+    },
+    "frozen": true,
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1782828775774"
+      }
+    },
+    "lastSentAt": {
+      "$date": {
+        "$numberLong": "1782828548778"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782828361152"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782828775774"
+      }
+    }
+  }
+]

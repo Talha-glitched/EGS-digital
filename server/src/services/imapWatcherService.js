@@ -6,7 +6,7 @@ import { Suppression } from '../models/Suppression.js';
 import { SendJob } from '../models/SendJob.js';
 import { classifyReplyIntent } from './openaiService.js';
 import { freezeLeadSequence, purgeLeadFromQueue } from './sequenceService.js';
-import { buildLeadEmailQuery, getLeadEmailCandidates, getPrimaryLeadEmail } from '../utils/contactEmails.js';
+import { buildLeadEmailQuery, getLeadEmailCandidates, getPrimaryLeadEmail, applyOutreachEmailFromReply } from '../utils/contactEmails.js';
 import {
   createImapClient,
   resolveImapSyncDays,
@@ -22,6 +22,14 @@ import {
 const MAX_REPLY_TEXT = 2000;
 let isSyncing = false;
 let syncTimer = null;
+
+function normalizeObjectIdList(values = []) {
+  return [...new Set(
+    values
+      .map((value) => (value == null ? '' : String(value).trim()))
+      .filter(Boolean),
+  )];
+}
 
 export function decodeQuotedPrintable(str) {
   return String(str || '')
@@ -179,6 +187,9 @@ async function handleHumanReply(lead, message, text) {
 
   const replyIntent = intent === 'Opt Out' ? 'Opt Out' : intent === 'Interested' ? 'Interested' : 'Neutral';
 
+  applyOutreachEmailFromReply(lead, senderEmail);
+  await lead.save();
+
   await Reply.create({
     campaignId: lead.campaignId,
     leadId: lead._id,
@@ -321,7 +332,7 @@ export async function listInboxThreads({ limit = 100, campaignId } = {}) {
   const threadReplies = [...latestByLead.values()].slice(0, Math.min(Number(limit) || 100, 500));
 
   const leadIds = threadReplies.map((r) => r.leadId);
-  const campaignIds = [...new Set(threadReplies.map((r) => String(r.campaignId)))];
+  const campaignIds = normalizeObjectIdList(threadReplies.map((r) => r.campaignId));
 
   const [leads, campaigns, outboundJobs] = await Promise.all([
     Lead.find({ _id: { $in: leadIds } }).lean(),

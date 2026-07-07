@@ -1,0 +1,94 @@
+[
+  {
+    "_id": {
+      "$oid": "6a3ebf47ffbf80bd61738614"
+    },
+    "campaignId": {
+      "$oid": "6a3ebb9eac1ef3c5e876d151"
+    },
+    "leadId": {
+      "$oid": "6a3ebeeaffbf80bd617384e3"
+    },
+    "email": "m.talha2703@gmail.com",
+    "from": "m.talha2703@gmail.com",
+    "subject": "Re: Event and exhibition production support for Preview company",
+    "text": "Return-Path: <m.talha2703@gmail.com>\r\nDelivered-To: talha@exhibitgraphicsign.com\r\nReceived: from box5258.bluehost.com\r\n\tby box5258.bluehost.com with LMTP\r\n\tid oOyaNwt0AmpjngAACvpLfQ\r\n\t(envelope-from <m.talha2703@gmail.com>)\r\n\tfor <talha@exhibitgraphicsign.com>; Mon, 11 May 2026 18:27:55 -0600\r\nReturn-path: <m.talha2703@gmail.com>\r\nEnvelope-to: talha@exhibitgraphicsign.com\r\nDelivery-date: Mon, 11 May 2026 18:27:55 -0600\r\nReceived: from mail-lf1-f54.google.com ([209.85.167.54]:42405)\r\n\tby box5258.bluehost.com with esmtps  (TLS1.3) tls TLS_AES_128_GCM_SHA256\r\n\t(Exim 4.99.2)\r\n\t(envelope-from <m.talha2703@gmail.com>)\r\n\tid 1wMayZ-00000000AUj-1eTO\r\n\tfor talha@exhibitgraphicsign.com;\r\n\tMon, 11 May 2026 18:27:55 -0600\r\nReceived: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5a746f9c092so7696865e87.1\r\n        for <talha@exhibitgraphicsign.com>; Mon, 11 May 2026 17:27:50 -0700 (PDT)\r\nARC-Seal: i=1; a=rsa-sha256; t=1778545663; cv=none;\r\n        d=google.com; s=arc-20240605;\r\n        b=ZG0v7+epzg+KpYhUhmZYiuWiaMahkQ5PrAFlW2K22vLoGU3M1rP+lAbE8J3Riwc+Mv\r\n         1rWdQ5ynC5rm2CpHeJ8c+J4CGAXJbymVyxm8MVG3AuVzNKrboaTINwhSbdcj7Qk8FlSC\r\n         +Z/TpjClGFILsTTtHTVWIyec/aglZs3UNC5gpuU4Ee+/hlLwUbcOG2Rx1iH/HCQBIym1\r\n         /grAcTTTsH2LMSdUMcmhpZeq1B4zslvHbTAaiE+BFHcYoiXO+xUurS6K38py5bbHTc9p\r\n         ohjk3EbbALEUFz2vKQbawjYv3ps4qZjPg3DcmVBri/1suApRefk/QCV3gI7BWlqOj3N8\r\n         Uc8w==\r\nARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;\r\n        h=to:subject:message-id:date:from:in-reply-to:references:mime-version\r\n         :dkim-signature;\r\n        bh=jxcqVJ2Yx1ucwCIMKU8hf9VFOYQvfvjEoNvSiN0RGdU=;\r\n        fh=MjVU0Nm3DoL1IsR/AYYu9/YYRr5vb0BtnFXSTdQG8wY=;\r\n        b=UE68M+wrn76au+KSukvz032ec/s/QW+ftktqggafhA3kgUhEIQdGJg5Sgvbr2+UEkw\r\n         JiHYxwlHuQGroYRTQz7I6/tvgKkW8iAiZ9l8f+oic3Vq2Qyf8YUU4LP1LKW4PnDLdTda\r\n         7SKSHOuXPsyJ4fOp4hh8+lIALfvlM9fqhFiRTP/xfam71DFC4oAWK2rGLB0kn0Fq0PRN\r\n         wXRMkusR3lv4PFS3O1myrXu3dcNQ6Y7jqFCwwMxAG14v",
+    "messageId": "<CAHk6nbAGPdepVXyx82F=fOF1cSNLny4tS=2KSVPo5p=ns3QLLw@mail.gmail.com>",
+    "receivedAt": {
+      "$date": {
+        "$numberLong": "1778545651000"
+      }
+    },
+    "intent": "Neutral",
+    "threadHistory": [
+      {
+        "type": "inbound",
+        "step": null,
+        "body": "Return-Path: <m.talha2703@gmail.com>\r\nDelivered-To: talha@exhibitgraphicsign.com\r\nReceived: from box5258.bluehost.com\r\n\tby box5258.bluehost.com with LMTP\r\n\tid oOyaNwt0AmpjngAACvpLfQ\r\n\t(envelope-from <m.talha2703@gmail.com>)\r\n\tfor <talha@exhibitgraphicsign.com>; Mon, 11 May 2026 18:27:55 -0600\r\nReturn-path: <m.talha2703@gmail.com>\r\nEnvelope-to: talha@exhibitgraphicsign.com\r\nDelivery-date: Mon, 11 May 2026 18:27:55 -0600\r\nReceived: from mail-lf1-f54.google.com ([209.85.167.54]:42405)\r\n\tby box5258.bluehost.com with esmtps  (TLS1.3) tls TLS_AES_128_GCM_SHA256\r\n\t(Exim 4.99.2)\r\n\t(envelope-from <m.talha2703@gmail.com>)\r\n\tid 1wMayZ-00000000AUj-1eTO\r\n\tfor talha@exhibitgraphicsign.com;\r\n\tMon, 11 May 2026 18:27:55 -0600\r\nReceived: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5a746f9c092so7696865e87.1\r\n        for <talha@exhibitgraphicsign.com>; Mon, 11 May 2026 17:27:50 -0700 (PDT)\r\nARC-Seal: i=1; a=rsa-sha256; t=1778545663; cv=none;\r\n        d=google.com; s=arc-20240605;\r\n        b=ZG0v7+epzg+KpYhUhmZYiuWiaMahkQ5PrAFlW2K22vLoGU3M1rP+lAbE8J3Riwc+Mv\r\n         1rWdQ5ynC5rm2CpHeJ8c+J4CGAXJbymVyxm8MVG3AuVzNKrboaTINwhSbdcj7Qk8FlSC\r\n         +Z/TpjClGFILsTTtHTVWIyec/aglZs3UNC5gpuU4Ee+/hlLwUbcOG2Rx1iH/HCQBIym1\r\n         /grAcTTTsH2LMSdUMcmhpZeq1B4zslvHbTAaiE+BFHcYoiXO+xUurS6K38py5bbHTc9p\r\n         ohjk3EbbALEUFz2vKQbawjYv3ps4qZjPg3DcmVBri/1suApRefk/QCV3gI7BWlqOj3N8\r\n         Uc8w==\r\nARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;\r\n        h=to:subject:message-id:date:from:in-reply-to:references:mime-version\r\n         :dkim-signature;\r\n        bh=jxcqVJ2Yx1ucwCIMKU8hf9VFOYQvfvjEoNvSiN0RGdU=;\r\n        fh=MjVU0Nm3DoL1IsR/AYYu9/YYRr5vb0BtnFXSTdQG8wY=;\r\n        b=UE68M+wrn76au+KSukvz032ec/s/QW+ftktqggafhA3kgUhEIQdGJg5Sgvbr2+UEkw\r\n         JiHYxwlHuQGroYRTQz7I6/tvgKkW8iAiZ9l8f+oic3Vq2Qyf8YUU4LP1LKW4PnDLdTda\r\n         7SKSHOuXPsyJ4fOp4hh8+lIALfvlM9fqhFiRTP/xfam71DFC4oAWK2rGLB0kn0Fq0PRN\r\n         wXRMkusR3lv4PFS3O1myrXu3dcNQ6Y7jqFCwwMxAG14v",
+        "subject": "Re: Event and exhibition production support for Preview company",
+        "timestamp": {
+          "$date": {
+            "$numberLong": "1778545651000"
+          }
+        },
+        "messageId": "<CAHk6nbAGPdepVXyx82F=fOF1cSNLny4tS=2KSVPo5p=ns3QLLw@mail.gmail.com>"
+      }
+    ],
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782497095220"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782497095220"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a43cee76a5ec3de77958123"
+    },
+    "campaignId": {
+      "$oid": "6a3ebb9eac1ef3c5e876d151"
+    },
+    "leadId": {
+      "$oid": "6a43a38bc7deaff7f78d0cac"
+    },
+    "email": "uzairmasuood@gmail.com",
+    "from": "uzairmasuood@gmail.com",
+    "subject": "Re: uzair — stand execution support (Step 1)",
+    "text": "Return-Path: <uzairmasuood@gmail.com>\r\nDelivered-To: talha@exhibitgraphicsign.com\r\nReceived: from box5258.bluehost.com\r\n\tby box5258.bluehost.com with LMTP\r\n\tid QE1VNiDOQ2qpPA4ACvpLfQ\r\n\t(envelope-from <uzairmasuood@gmail.com>)\r\n\tfor <talha@exhibitgraphicsign.com>; Tue, 30 Jun 2026 08:09:36 -0600\r\nReturn-path: <uzairmasuood@gmail.com>\r\nEnvelope-to: talha@exhibitgraphicsign.com\r\nDelivery-date: Tue, 30 Jun 2026 08:09:36 -0600\r\nReceived: from mail-qk1-f174.google.com ([209.85.222.174]:58683)\r\n\tby box5258.bluehost.com with esmtps  (TLS1.3) tls TLS_AES_128_GCM_SHA256\r\n\t(Exim 4.99.2)\r\n\t(envelope-from <uzairmasuood@gmail.com>)\r\n\tid 1weZ9c-000000049t0-37OL\r\n\tfor talha@exhibitgraphicsign.com;\r\n\tTue, 30 Jun 2026 08:09:36 -0600\r\nReceived: by mail-qk1-f174.google.com with SMTP id af79cd13be357-92e501244f5so122285985a.1\r\n        for <talha@exhibitgraphicsign.com>; Tue, 30 Jun 2026 07:09:36 -0700 (PDT)\r\nDKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;\r\n        d=gmail.com; s=20251104; t=1782828576; x=1783433376; darn=exhibitgraphicsign.com;\r\n        h=mime-version:content-language:accept-language:in-reply-to\r\n         :references:message-id:date:thread-index:thread-topic:subject:to\r\n         :from:from:to:cc:subject:date:message-id:reply-to;\r\n        bh=NWLeGtj0s+itOsGx91qKeGCuYw3g+Sn+uOC0mkyIM08=;\r\n        b=LfnMfUnVygcP2mo7xmizRmHFZnqaBLgSY1GZRN4RlRDLx86t8qOqYihY7bhLq449B/\r\n         e+G2QoGgsrkbQaiKSYG53rt4UNlIJZh43N7Zw7N0aQP0z2tqPzYImKskETS6pZQ1Cboh\r\n         UFcsgXxbeDKx2jCJgOW9nbEtHy+EBO9fYj/pYFm0qDLLT3hz1vFrPgeJsgdttZ9ylDYI\r\n         IPO5jswMihrXjQ1aBYt50zwKGCrB49s2XE+iWEiW9T7FdN/R3I56YHKcKk7t/kLqMrDA\r\n         g+5OrpnwdimLTxOOHdZL04tKKSOaUb6j4aXSM51M0hBkFy6CzMFRcQlbb9ehwLwf1oDC\r\n         cW0w==\r\nX-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;\r\n        d=1e100.net; s=20251104; t=1782828576; x=1783433376;\r\n        h=mime-version:content-language:accept-language:in-reply-to\r\n         :references:message-id:date:thread-index:thread-topic:subject:to\r\n         ",
+    "messageId": "<GV3P280MB1445495654ABE32E4E8FF0B6AAF72@GV3P280MB1445.SWEP280.PROD.OUTLOOK.COM>",
+    "receivedAt": {
+      "$date": {
+        "$numberLong": "1782828572000"
+      }
+    },
+    "intent": "Neutral",
+    "threadHistory": [
+      {
+        "type": "inbound",
+        "step": null,
+        "body": "Return-Path: <uzairmasuood@gmail.com>\r\nDelivered-To: talha@exhibitgraphicsign.com\r\nReceived: from box5258.bluehost.com\r\n\tby box5258.bluehost.com with LMTP\r\n\tid QE1VNiDOQ2qpPA4ACvpLfQ\r\n\t(envelope-from <uzairmasuood@gmail.com>)\r\n\tfor <talha@exhibitgraphicsign.com>; Tue, 30 Jun 2026 08:09:36 -0600\r\nReturn-path: <uzairmasuood@gmail.com>\r\nEnvelope-to: talha@exhibitgraphicsign.com\r\nDelivery-date: Tue, 30 Jun 2026 08:09:36 -0600\r\nReceived: from mail-qk1-f174.google.com ([209.85.222.174]:58683)\r\n\tby box5258.bluehost.com with esmtps  (TLS1.3) tls TLS_AES_128_GCM_SHA256\r\n\t(Exim 4.99.2)\r\n\t(envelope-from <uzairmasuood@gmail.com>)\r\n\tid 1weZ9c-000000049t0-37OL\r\n\tfor talha@exhibitgraphicsign.com;\r\n\tTue, 30 Jun 2026 08:09:36 -0600\r\nReceived: by mail-qk1-f174.google.com with SMTP id af79cd13be357-92e501244f5so122285985a.1\r\n        for <talha@exhibitgraphicsign.com>; Tue, 30 Jun 2026 07:09:36 -0700 (PDT)\r\nDKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;\r\n        d=gmail.com; s=20251104; t=1782828576; x=1783433376; darn=exhibitgraphicsign.com;\r\n        h=mime-version:content-language:accept-language:in-reply-to\r\n         :references:message-id:date:thread-index:thread-topic:subject:to\r\n         :from:from:to:cc:subject:date:message-id:reply-to;\r\n        bh=NWLeGtj0s+itOsGx91qKeGCuYw3g+Sn+uOC0mkyIM08=;\r\n        b=LfnMfUnVygcP2mo7xmizRmHFZnqaBLgSY1GZRN4RlRDLx86t8qOqYihY7bhLq449B/\r\n         e+G2QoGgsrkbQaiKSYG53rt4UNlIJZh43N7Zw7N0aQP0z2tqPzYImKskETS6pZQ1Cboh\r\n         UFcsgXxbeDKx2jCJgOW9nbEtHy+EBO9fYj/pYFm0qDLLT3hz1vFrPgeJsgdttZ9ylDYI\r\n         IPO5jswMihrXjQ1aBYt50zwKGCrB49s2XE+iWEiW9T7FdN/R3I56YHKcKk7t/kLqMrDA\r\n         g+5OrpnwdimLTxOOHdZL04tKKSOaUb6j4aXSM51M0hBkFy6CzMFRcQlbb9ehwLwf1oDC\r\n         cW0w==\r\nX-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;\r\n        d=1e100.net; s=20251104; t=1782828576; x=1783433376;\r\n        h=mime-version:content-language:accept-language:in-reply-to\r\n         :references:message-id:date:thread-index:thread-topic:subject:to\r\n         ",
+        "subject": "Re: uzair — stand execution support (Step 1)",
+        "timestamp": {
+          "$date": {
+            "$numberLong": "1782828572000"
+          }
+        },
+        "messageId": "<GV3P280MB1445495654ABE32E4E8FF0B6AAF72@GV3P280MB1445.SWEP280.PROD.OUTLOOK.COM>"
+      }
+    ],
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782828775432"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782828775432"
+      }
+    }
+  }
+]

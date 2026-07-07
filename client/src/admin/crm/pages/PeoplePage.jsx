@@ -1,8 +1,15 @@
-import { useEffect, useState, useMemo } from 'react';
-import { fetchGlobalLeads, crmApiFetch, updateLead, deleteLeadWithUndo } from '../crmApi.js';
+import { useEffect, useState, useMemo, useCallback } from 'react';
+import { fetchGlobalLeads, crmApiFetch, updateLead, deleteLeadWithUndo, deleteLeads, fetchLeadById } from '../crmApi.js';
 import DeleteIconButton from '../components/ui/DeleteIconButton.jsx';
 import ClickableTableRow, { stopRowClick } from '../components/ui/ClickableTableRow.jsx';
+import { BulkSelectHeaderCell, BulkSelectRowCell, BulkSelectionBar } from '../components/ui/BulkSelectTable.jsx';
+import { useRowSelection } from '../hooks/useRowSelection.js';
+import { useBulkDelete } from '../hooks/useBulkDelete.js';
+import { useTableSort } from '../hooks/useTableSort.js';
+import { leadSortAccessors } from '../hooks/tableSortAccessors.js';
+import { SortableTableHeader, TableSortIndicator } from '../components/ui/SortableTableHeader.jsx';
 import { useConfirmDelete } from '../hooks/useConfirmDelete.js';
+import { useSpotlightDeepLink } from '../hooks/useSpotlightDeepLink.js';
 import { 
   PageShell, 
   PageSection,
@@ -22,6 +29,7 @@ import DataTableShell from '../components/ui/DataTableShell.jsx';
 import { DeliveryStatusBadge } from '../components/leads/LeadTableComponents.jsx';
 import PocQualificationBadge from '../components/leads/PocQualificationBadge.jsx';
 import OutreachDrawer from '../components/leads/OutreachDrawer.jsx';
+import { VendorEmailColumns, VendorEmailHeaders } from '../components/leads/VendorEmailCells.jsx';
 import AddContactModal from '../components/leads/AddContactModal.jsx';
 import TablePagination from '../components/ui/TablePagination.jsx';
 import {
@@ -70,6 +78,7 @@ export default function PeoplePage() {
   const [selectedLead, setSelectedLead] = useState(null);
   const [showAddContact, setShowAddContact] = useState(false);
   const [error, setError] = useState('');
+  const [bulkDeleting, setBulkDeleting] = useState(false);
 
   const leadFilterSchema = useMemo(
     () => buildLeadFilterSchema({
@@ -124,13 +133,26 @@ export default function PeoplePage() {
     loadData();
   }, [page, limit, advancedActiveCount]);
 
-  const tableLeads = useMemo(() => {
-    if (!advancedActiveCount) return leads;
-    const start = (page - 1) * limit;
-    return advancedFilteredLeads.slice(start, start + limit);
-  }, [advancedActiveCount, advancedFilteredLeads, leads, page, limit]);
-
   const tableTotal = advancedActiveCount ? advancedFilteredLeads.length : total;
+
+  const { sortKey, sortDir, sortLabel, toggleSort, clearSort, sortItems } = useTableSort({
+    defaultKey: 'name',
+    defaultDir: 'asc',
+    accessors: leadSortAccessors,
+  });
+
+  const sortedLeads = useMemo(() => {
+    const base = advancedActiveCount ? advancedFilteredLeads : leads;
+    return sortItems(base);
+  }, [advancedActiveCount, advancedFilteredLeads, leads, sortItems]);
+
+  const tableLeads = useMemo(() => {
+    if (!advancedActiveCount) return sortedLeads;
+    const start = (page - 1) * limit;
+    return sortedLeads.slice(start, start + limit);
+  }, [advancedActiveCount, sortedLeads, page, limit]);
+
+  const selection = useRowSelection(tableLeads);
 
   const handleLimitChange = (nextLimit) => {
     setLimit(nextLimit);
@@ -148,6 +170,33 @@ export default function PeoplePage() {
     defaultConfirm: 'Delete this contact? You can undo within 30 seconds.',
   });
 
+  const runBulkDeleteLeads = useBulkDelete({
+    resourceType: 'lead',
+    bulkDeleteFn: deleteLeads,
+    getLabelForId: (id) => {
+      const lead = leads.find((l) => l._id === id);
+      return `Deleted contact: ${lead?.name || lead?.email || 'Contact'}`;
+    },
+    defaultConfirm: 'Delete these contacts? You can undo each within 30 seconds.',
+    onRemoved: (ids) => {
+      setLeads((prev) => prev.filter((l) => !ids.includes(l._id)));
+      if (selectedLead && ids.includes(selectedLead._id)) setSelectedLead(null);
+      selection.clearSelection();
+    },
+    onRestored: () => loadData(),
+  });
+
+  async function handleBulkDelete() {
+    setBulkDeleting(true);
+    try {
+      await runBulkDeleteLeads(selection.selectedArray, { noun: 'contact' });
+    } catch (err) {
+      setError(err.message || 'Failed to delete contacts.');
+    } finally {
+      setBulkDeleting(false);
+    }
+  }
+
   const openDrawer = (lead) => {
     setSelectedLead(lead);
     setError('');
@@ -156,6 +205,14 @@ export default function PeoplePage() {
   const closeDrawer = () => {
     setSelectedLead(null);
   };
+
+  useSpotlightDeepLink({
+    recordType: 'contact',
+    onOpen: openDrawer,
+    findRecord: useCallback((id) => leads.find((lead) => String(lead._id) === String(id)), [leads]),
+    resolveRecord: useCallback((id) => fetchLeadById(id), []),
+    ready: !loading,
+  });
 
   const handleUpdate = async (leadId, patch) => {
     try {
@@ -269,18 +326,34 @@ export default function PeoplePage() {
               onLimitChange={handleLimitChange}
               noun="leads"
             />
-            <DataTableShell minWidth={1050}>
-            <table className="crm-table min-w-[900px]">
+            <BulkSelectionBar
+              count={selection.selectionCount}
+              noun="contact"
+              onDelete={handleBulkDelete}
+              onClear={selection.clearSelection}
+              deleting={bulkDeleting}
+            />
+            <TableSortIndicator
+              sortKey={sortKey}
+              sortDir={sortDir}
+              sortLabel={sortLabel}
+              onToggle={() => toggleSort(sortKey)}
+              onClear={clearSort}
+            />
+            <DataTableShell minWidth={1200}>
+            <table className="crm-table min-w-[1100px]">
               <thead>
                 <tr className="crm-table-head">
-                  <th>Contact</th>
-                  <th>Company</th>
-                  <th>Campaign Approach</th>
+                  <BulkSelectHeaderCell selection={selection} ariaLabel="Select all contacts" />
+                  <SortableTableHeader label="Contact" sortKey="name" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                  <SortableTableHeader label="Company" sortKey="companyName" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                  <VendorEmailHeaders sortKey={sortKey} sortDir={sortDir} toggleSort={toggleSort} SortableTableHeader={SortableTableHeader} />
+                  <SortableTableHeader label="Campaign Approach" sortKey="campaignName" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
                   <th className="text-center">LinkedIn Nav</th>
                   <th className="text-center">Cold Call</th>
                   <th className="text-center">WhatsApp</th>
-                  <th>POC fit</th>
-                  <th>Email status</th>
+                  <SortableTableHeader label="POC fit" sortKey="pocStatus" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                  <SortableTableHeader label="Email status" sortKey="deliveryStatus" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
                   <th className="text-center">Action</th>
                 </tr>
               </thead>
@@ -290,6 +363,11 @@ export default function PeoplePage() {
                   const hasWa = lead.whatsapp?.sent || false;
                   return (
                     <ClickableTableRow key={lead._id} onClick={() => openDrawer(lead)}>
+                      <BulkSelectRowCell
+                        id={lead._id}
+                        selection={selection}
+                        ariaLabel={`Select ${lead.name || 'contact'}`}
+                      />
                       <td>
                         <div className="flex items-center gap-3">
                           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-[11px] font-bold text-neutral-600">
@@ -305,8 +383,8 @@ export default function PeoplePage() {
                       </td>
                       <td>
                         <div className="truncate font-medium text-neutral-800">{lead.companyName || '—'}</div>
-                        <div className="truncate font-mono text-xs text-neutral-400">{lead.email}</div>
                       </td>
+                      <VendorEmailColumns lead={lead} />
                       <td className=" font-semibold text-brand-dark max-w-[150px] truncate" title={lead.campaignName || 'No campaign'}>
                         {lead.campaignName || '—'}
                       </td>

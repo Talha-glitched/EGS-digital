@@ -10,6 +10,7 @@ import {
   listInteractionsForLead,
   listInteractionsForCompany,
   manualInteractionToEvent,
+  buildRelatedContacts,
 } from './interactionService.js';
 import mongoose from 'mongoose';
 
@@ -33,6 +34,12 @@ function event(id, payload) {
   if (!payload.timestamp) return null;
   const ts = new Date(payload.timestamp);
   if (Number.isNaN(ts.getTime())) return null;
+
+  const direction = payload.direction
+    || payload.meta?.direction
+    || (payload.type === 'email_outbound' ? 'outbound' : null)
+    || (payload.type === 'email_inbound' ? 'inbound' : null);
+
   return {
     id,
     type: payload.type,
@@ -43,8 +50,20 @@ function event(id, payload) {
     channel: payload.channel || 'crm',
     contactName: payload.contactName || '',
     contactId: payload.contactId || null,
-    meta: payload.meta || {},
+    source: payload.source || 'automated',
+    meta: {
+      ...(payload.meta || {}),
+      ...(direction ? { direction } : {}),
+    },
   };
+}
+
+function normalizeObjectIdList(values = []) {
+  return [...new Set(
+    values
+      .map((value) => (value == null ? '' : String(value).trim()))
+      .filter((value) => mongoose.isValidObjectId(value)),
+  )];
 }
 
 function leadOutreachEvents(lead, campaignName) {
@@ -225,7 +244,9 @@ function leadOutreachEvents(lead, campaignName) {
 }
 
 async function enrichCampaignMap(campaignIds) {
-  const campaigns = await ProjectCampaign.find({ _id: { $in: campaignIds } }).select('projectName').lean();
+  const ids = normalizeObjectIdList(campaignIds);
+  if (!ids.length) return new Map();
+  const campaigns = await ProjectCampaign.find({ _id: { $in: ids } }).select('projectName').lean();
   return new Map(campaigns.map((c) => [String(c._id), c.projectName]));
 }
 
@@ -313,8 +334,22 @@ export async function getLeadTimeline(leadId) {
     if (evt) events.push(evt);
   });
 
+  const relatedIds = manualInteractions.flatMap((record) => record.relatedLeadIds || []);
+  const relatedLeads = relatedIds.length
+    ? await Lead.find({ _id: { $in: relatedIds } }).select('name email').lean()
+    : [];
+  const interactionLeadMap = new Map([
+    [String(leadId), lead],
+    ...relatedLeads.map((item) => [String(item._id), item]),
+  ]);
+
   manualInteractions.forEach((record) => {
-    events.push(manualInteractionToEvent(record, contactName));
+    const primaryLead = interactionLeadMap.get(String(record.leadId));
+    events.push(manualInteractionToEvent(
+      record,
+      primaryLead?.name || primaryLead?.email || contactName,
+      buildRelatedContacts(record, interactionLeadMap),
+    ));
   });
 
   events.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -345,7 +380,7 @@ export async function getCompanyTimeline(companyId) {
 
   const leads = await Lead.find({ companyId }).lean();
   const leadIds = leads.map((l) => l._id);
-  const campaignIds = [...new Set(leads.map((l) => String(l.campaignId)))];
+  const campaignIds = normalizeObjectIdList(leads.map((l) => l.campaignId));
   const campaignMap = await enrichCampaignMap(campaignIds);
 
   const [sendJobs, replies, tasks, opportunities, manualInteractions] = await Promise.all([
@@ -428,7 +463,11 @@ export async function getCompanyTimeline(companyId) {
 
   manualInteractions.forEach((record) => {
     const lead = leadMap.get(String(record.leadId));
-    events.push(manualInteractionToEvent(record, lead?.name || lead?.email || ''));
+    events.push(manualInteractionToEvent(
+      record,
+      lead?.name || lead?.email || '',
+      buildRelatedContacts(record, leadMap),
+    ));
   });
 
   const seen = new Set();

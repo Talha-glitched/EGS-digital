@@ -1,0 +1,34 @@
+[
+  {
+    "_id": {
+      "$oid": "6a33f7598321fccc499b85b9"
+    },
+    "singletonKey": "default",
+    "apolloMonthlyCostUSD": {
+      "$numberInt": "0"
+    },
+    "hunterMonthlyCostUSD": {
+      "$numberInt": "0"
+    },
+    "lushaMonthlyCostUSD": {
+      "$numberInt": "0"
+    },
+    "hostingCostsUSD": {
+      "$numberInt": "0"
+    },
+    "domainPurchasesUSD": {
+      "$numberInt": "0"
+    },
+    "notes": "",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781790553761"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781790553761"
+      }
+    }
+  }
+]

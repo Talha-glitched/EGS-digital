@@ -8,6 +8,7 @@ import {
 const contactInteractionSchema = new mongoose.Schema(
   {
     leadId: { type: mongoose.Schema.Types.ObjectId, ref: 'Lead', required: true, index: true },
+    relatedLeadIds: { type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Lead' }], default: [], index: true },
     companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', required: true, index: true },
     type: { type: String, enum: INTERACTION_TYPES, required: true, index: true },
     direction: { type: String, enum: INTERACTION_DIRECTIONS, default: 'outbound' },

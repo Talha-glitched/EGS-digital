@@ -1,0 +1,1681 @@
+[
+  {
+    "_id": {
+      "$oid": "6a3eb52537f77b6c58947853"
+    },
+    "resourceType": "company",
+    "resourceId": "6a33f45029414e54b55e46ab",
+    "revisionNumber": {
+      "$numberInt": "1"
+    },
+    "snapshot": {
+      "city": "",
+      "country": "",
+      "genericEmails": [],
+      "genericPhone": "",
+      "notes": "",
+      "version": {
+        "$numberInt": "0"
+      },
+      "deletedAt": null,
+      "deletedBy": null,
+      "_id": {
+        "$oid": "6a33f45029414e54b55e46ab"
+      },
+      "companyName": "AL ANWAAR GOLDEN JEWELLERS",
+      "domain": "alanwaaronline.com",
+      "industry": "luxury goods & jewelry",
+      "boothNumber": "",
+      "projectsAssociated": [
+        {
+          "$oid": "6a33f159b9b12c438ad4e9a0"
+        },
+        {
+          "$oid": "6a3411734c44b94e0dc48764"
+        }
+      ],
+      "globalStatus": "target",
+      "createdAt": {
+        "$date": {
+          "$numberLong": "1781789776709"
+        }
+      },
+      "updatedAt": {
+        "$date": {
+          "$numberLong": "1781797258600"
+        }
+      }
+    },
+    "snapshotAfter": {
+      "city": "",
+      "country": "",
+      "genericEmails": [],
+      "genericPhone": "",
+      "notes": "",
+      "_id": {
+        "$oid": "6a33f45029414e54b55e46ab"
+      },
+      "companyName": "AL ANWAAR GOLDEN JEWELLERS",
+      "domain": "alanwaaronline.com",
+      "industry": "luxury goods & jewelry",
+      "boothNumber": "",
+      "projectsAssociated": [
+        {
+          "$oid": "6a33f159b9b12c438ad4e9a0"
+        },
+        {
+          "$oid": "6a3411734c44b94e0dc48764"
+        }
+      ],
+      "globalStatus": "target",
+      "createdAt": {
+        "$date": {
+          "$numberLong": "1781789776709"
+        }
+      },
+      "updatedAt": {
+        "$date": {
+          "$numberLong": "1782494501261"
+        }
+      },
+      "deletedAt": {
+        "$date": {
+          "$numberLong": "1782494501250"
+        }
+      },
+      "deletedBy": "admin",
+      "version": {
+        "$numberInt": "1"
+      }
+    },
+    "changeType": "soft_delete",
+    "changedFields": [
+      {
+        "field": "version",
+        "from": {
+          "$numberInt": "0"
+        },
+        "to": {
+          "$numberInt": "1"
+        },
+        "_id": {
+          "$oid": "6a3eb52537f77b6c58947854"
+        }
+      },
+      {
+        "field": "deletedAt",
+        "from": null,
+        "to": {
+          "$date": {
+            "$numberLong": "1782494501250"
+          }
+        },
+        "_id": {
+          "$oid": "6a3eb52537f77b6c58947855"
+        }
+      },
+      {
+        "field": "deletedBy",
+        "from": null,
+        "to": "admin",
+        "_id": {
+          "$oid": "6a3eb52537f77b6c58947856"
+        }
+      }
+    ],
+    "changedBy": "admin",
+    "userId": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "rollbackOfRevisionId": null,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782494501462"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3eb52b37f77b6c5894787f"
+    },
+    "resourceType": "company",
+    "resourceId": "6a33f45129414e54b55e46bc",
+    "revisionNumber": {
+      "$numberInt": "1"
+    },
+    "snapshot": {
+      "city": "",
+      "country": "",
+      "genericEmails": [],
+      "genericPhone": "",
+      "notes": "",
+      "version": {
+        "$numberInt": "0"
+      },
+      "deletedAt": null,
+      "deletedBy": null,
+      "_id": {
+        "$oid": "6a33f45129414e54b55e46bc"
+      },
+      "companyName": "AMISANO 1967",
+      "domain": "italgold.it",
+      "industry": "luxury goods & jewelry",
+      "boothNumber": "",
+      "projectsAssociated": [
+        {
+          "$oid": "6a33f159b9b12c438ad4e9a0"
+        },
+        {
+          "$oid": "6a3411734c44b94e0dc48764"
+        },
+        {
+          "$oid": "6a340ff379f8f5c6b1af2f30"
+        }
+      ],
+      "globalStatus": "target",
+      "createdAt": {
+        "$date": {
+          "$numberLong": "1781789777156"
+        }
+      },
+      "updatedAt": {
+        "$date": {
+          "$numberLong": "1781797939554"
+        }
+      }
+    },
+    "snapshotAfter": {
+      "city": "",
+      "country": "",
+      "genericEmails": [],
+      "genericPhone": "",
+      "notes": "",
+      "_id": {
+        "$oid": "6a33f45129414e54b55e46bc"
+      },
+      "companyName": "AMISANO 1967",
+      "domain": "italgold.it",
+      "industry": "luxury goods & jewelry",
+      "boothNumber": "",
+      "projectsAssociated": [
+        {
+          "$oid": "6a33f159b9b12c438ad4e9a0"
+        },
+        {
+          "$oid": "6a3411734c44b94e0dc48764"
+        },
+        {
+          "$oid": "6a340ff379f8f5c6b1af2f30"
+        }
+      ],
+      "globalStatus": "target",
+      "createdAt": {
+        "$date": {
+          "$numberLong": "1781789777156"
+        }
+      },
+      "updatedAt": {
+        "$date": {
+          "$numberLong": "1782494506971"
+        }
+      },
+      "deletedAt": {
+        "$date": {
+          "$numberLong": "1782494506969"
+        }
+      },
+      "deletedBy": "admin",
+      "version": {
+        "$numberInt": "1"
+      }
+    },
+    "changeType": "soft_delete",
+    "changedFields": [
+      {
+        "field": "version",
+        "from": {
+          "$numberInt": "0"
+        },
+        "to": {
+          "$numberInt": "1"
+        },
+        "_id": {
+          "$oid": "6a3eb52b37f77b6c58947880"
+        }
+      },
+      {
+        "field": "deletedAt",
+        "from": null,
+        "to": {
+          "$date": {
+            "$numberLong": "1782494506969"
+          }
+        },
+        "_id": {
+          "$oid": "6a3eb52b37f77b6c58947881"
+        }
+      },
+      {
+        "field": "deletedBy",
+        "from": null,
+        "to": "admin",
+        "_id": {
+          "$oid": "6a3eb52b37f77b6c58947882"
+        }
+      }
+    ],
+    "changedBy": "admin",
+    "userId": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "rollbackOfRevisionId": null,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782494507105"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3eb52d37f77b6c58947887"
+    },
+    "resourceType": "company",
+    "resourceId": "6a33f45029414e54b55e46ab",
+    "revisionNumber": {
+      "$numberInt": "2"
+    },
+    "snapshot": {
+      "city": "",
+      "country": "",
+      "genericEmails": [],
+      "genericPhone": "",
+      "notes": "",
+      "_id": {
+        "$oid": "6a33f45029414e54b55e46ab"
+      },
+      "companyName": "AL ANWAAR GOLDEN JEWELLERS",
+      "domain": "alanwaaronline.com",
+      "industry": "luxury goods & jewelry",
+      "boothNumber": "",
+      "projectsAssociated": [
+        {
+          "$oid": "6a33f159b9b12c438ad4e9a0"
+        },
+        {
+          "$oid": "6a3411734c44b94e0dc48764"
+        }
+      ],
+      "globalStatus": "target",
+      "createdAt": {
+        "$date": {
+          "$numberLong": "1781789776709"
+        }
+      },
+      "updatedAt": {
+        "$date": {
+          "$numberLong": "1782494501261"
+        }
+      },
+      "deletedAt": {
+        "$date": {
+          "$numberLong": "1782494501250"
+        }
+      },
+      "deletedBy": "admin",
+      "version": {
+        "$numberInt": "1"
+      }
+    },
+    "snapshotAfter": {
+      "city": "",
+      "country": "",
+      "genericEmails": [],
+      "genericPhone": "",
+      "notes": "",
+      "_id": {
+        "$oid": "6a33f45029414e54b55e46ab"
+      },
+      "companyName": "AL ANWAAR GOLDEN JEWELLERS",
+      "domain": "alanwaaronline.com",
+      "industry": "luxury goods & jewelry",
+      "boothNumber": "",
+      "projectsAssociated": [
+        {
+          "$oid": "6a33f159b9b12c438ad4e9a0"
+        },
+        {
+          "$oid": "6a3411734c44b94e0dc48764"
+        }
+      ],
+      "globalStatus": "target",
+      "createdAt": {
+        "$date": {
+          "$numberLong": "1781789776709"
+        }
+      },
+      "updatedAt": {
+        "$date": {
+          "$numberLong": "1782494509482"
+        }
+      },
+      "deletedAt": null,
+      "deletedBy": null,
+      "version": {
+        "$numberInt": "2"
+      }
+    },
+    "changeType": "restore",
+    "changedFields": [
+      {
+        "field": "deletedAt",
+        "from": {
+          "$date": {
+            "$numberLong": "1782494501250"
+          }
+        },
+        "to": null,
+        "_id": {
+          "$oid": "6a3eb52d37f77b6c58947888"
+        }
+      },
+      {
+        "field": "deletedBy",
+        "from": "admin",
+        "to": null,
+        "_id": {
+          "$oid": "6a3eb52d37f77b6c58947889"
+        }
+      },
+      {
+        "field": "version",
+        "from": {
+          "$numberInt": "1"
+        },
+        "to": {
+          "$numberInt": "2"
+        },
+        "_id": {
+          "$oid": "6a3eb52d37f77b6c5894788a"
+        }
+      }
+    ],
+    "changedBy": "admin",
+    "userId": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "rollbackOfRevisionId": null,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782494509606"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3eb52e37f77b6c58947894"
+    },
+    "resourceType": "company",
+    "resourceId": "6a33f45129414e54b55e46bc",
+    "revisionNumber": {
+      "$numberInt": "2"
+    },
+    "snapshot": {
+      "city": "",
+      "country": "",
+      "genericEmails": [],
+      "genericPhone": "",
+      "notes": "",
+      "_id": {
+        "$oid": "6a33f45129414e54b55e46bc"
+      },
+      "companyName": "AMISANO 1967",
+      "domain": "italgold.it",
+      "industry": "luxury goods & jewelry",
+      "boothNumber": "",
+      "projectsAssociated": [
+        {
+          "$oid": "6a33f159b9b12c438ad4e9a0"
+        },
+        {
+          "$oid": "6a3411734c44b94e0dc48764"
+        },
+        {
+          "$oid": "6a340ff379f8f5c6b1af2f30"
+        }
+      ],
+      "globalStatus": "target",
+      "createdAt": {
+        "$date": {
+          "$numberLong": "1781789777156"
+        }
+      },
+      "updatedAt": {
+        "$date": {
+          "$numberLong": "1782494506971"
+        }
+      },
+      "deletedAt": {
+        "$date": {
+          "$numberLong": "1782494506969"
+        }
+      },
+      "deletedBy": "admin",
+      "version": {
+        "$numberInt": "1"
+      }
+    },
+    "snapshotAfter": {
+      "city": "",
+      "country": "",
+      "genericEmails": [],
+      "genericPhone": "",
+      "notes": "",
+      "_id": {
+        "$oid": "6a33f45129414e54b55e46bc"
+      },
+      "companyName": "AMISANO 1967",
+      "domain": "italgold.it",
+      "industry": "luxury goods & jewelry",
+      "boothNumber": "",
+      "projectsAssociated": [
+        {
+          "$oid": "6a33f159b9b12c438ad4e9a0"
+        },
+        {
+          "$oid": "6a3411734c44b94e0dc48764"
+        },
+        {
+          "$oid": "6a340ff379f8f5c6b1af2f30"
+        }
+      ],
+      "globalStatus": "target",
+      "createdAt": {
+        "$date": {
+          "$numberLong": "1781789777156"
+        }
+      },
+      "updatedAt": {
+        "$date": {
+          "$numberLong": "1782494510626"
+        }
+      },
+      "deletedAt": null,
+      "deletedBy": null,
+      "version": {
+        "$numberInt": "2"
+      }
+    },
+    "changeType": "restore",
+    "changedFields": [
+      {
+        "field": "deletedAt",
+        "from": {
+          "$date": {
+            "$numberLong": "1782494506969"
+          }
+        },
+        "to": null,
+        "_id": {
+          "$oid": "6a3eb52e37f77b6c58947895"
+        }
+      },
+      {
+        "field": "deletedBy",
+        "from": "admin",
+        "to": null,
+        "_id": {
+          "$oid": "6a3eb52e37f77b6c58947896"
+        }
+      },
+      {
+        "field": "version",
+        "from": {
+          "$numberInt": "1"
+        },
+        "to": {
+          "$numberInt": "2"
+        },
+        "_id": {
+          "$oid": "6a3eb52e37f77b6c58947897"
+        }
+      }
+    ],
+    "changedBy": "admin",
+    "userId": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "rollbackOfRevisionId": null,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782494510727"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3eb8471bc903dbc7ad707b"
+    },
+    "resourceType": "opportunity",
+    "resourceId": "6a3954eeaec1a785a5a26e5e",
+    "revisionNumber": {
+      "$numberInt": "1"
+    },
+    "snapshot": {
+      "version": {
+        "$numberInt": "0"
+      },
+      "deletedAt": null,
+      "deletedBy": null,
+      "_id": {
+        "$oid": "6a3954eeaec1a785a5a26e5e"
+      },
+      "name": "uyhjgjh",
+      "companyId": {
+        "$oid": "6a33f45329414e54b55e4700"
+      },
+      "primaryLeadId": {
+        "$oid": "6a34143596cc4b99fb544a85"
+      },
+      "campaignId": null,
+      "owner": "admin",
+      "stage": "New Lead",
+      "valueAed": {
+        "$numberInt": "0"
+      },
+      "probability": {
+        "$numberInt": "10"
+      },
+      "expectedCloseDate": {
+        "$date": {
+          "$numberLong": "1782142190578"
+        }
+      },
+      "nextAction": "",
+      "nextActionDueAt": null,
+      "services": [],
+      "eventName": "",
+      "eventDate": null,
+      "boothNumber": "",
+      "standSizeSqm": null,
+      "budgetBand": "",
+      "proposalDeadline": null,
+      "lostReason": "",
+      "notes": "",
+      "closedAt": null,
+      "lastModifiedBy": "admin",
+      "activityLog": [
+        {
+          "action": "Updated primaryLeadId",
+          "field": "primaryLeadId",
+          "from": "6a3416a496cc4b99fb545303",
+          "to": "6a34143596cc4b99fb544a85",
+          "by": "admin",
+          "at": {
+            "$date": {
+              "$numberLong": "1782142203981"
+            }
+          },
+          "_id": {
+            "$oid": "6a3954fbaec1a785a5a26f69"
+          }
+        },
+        {
+          "action": "Updated primaryLeadId",
+          "field": "primaryLeadId",
+          "from": null,
+          "to": "6a3416a496cc4b99fb545303",
+          "by": "admin",
+          "at": {
+            "$date": {
+              "$numberLong": "1782142195017"
+            }
+          },
+          "_id": {
+            "$oid": "6a3954f3aec1a785a5a26e90"
+          }
+        },
+        {
+          "action": "Opportunity created",
+          "field": "stage",
+          "from": null,
+          "to": "New Lead",
+          "by": "admin",
+          "at": {
+            "$date": {
+              "$numberLong": "1782142190578"
+            }
+          },
+          "_id": {
+            "$oid": "6a3954eeaec1a785a5a26e5f"
+          }
+        }
+      ],
+      "createdAt": {
+        "$date": {
+          "$numberLong": "1782142190581"
+        }
+      },
+      "updatedAt": {
+        "$date": {
+          "$numberLong": "1782142203989"
+        }
+      }
+    },
+    "snapshotAfter": {
+      "_id": {
+        "$oid": "6a3954eeaec1a785a5a26e5e"
+      },
+      "name": "uyhjgjh",
+      "companyId": {
+        "$oid": "6a33f45329414e54b55e4700"
+      },
+      "primaryLeadId": {
+        "$oid": "6a34143596cc4b99fb544a85"
+      },
+      "campaignId": null,
+      "owner": "admin",
+      "stage": "New Lead",
+      "valueAed": {
+        "$numberInt": "0"
+      },
+      "probability": {
+        "$numberInt": "10"
+      },
+      "expectedCloseDate": {
+        "$date": {
+          "$numberLong": "1782142190578"
+        }
+      },
+      "nextAction": "",
+      "nextActionDueAt": null,
+      "services": [],
+      "eventName": "",
+      "eventDate": null,
+      "boothNumber": "",
+      "standSizeSqm": null,
+      "budgetBand": "",
+      "proposalDeadline": null,
+      "lostReason": "",
+      "notes": "",
+      "closedAt": null,
+      "lastModifiedBy": "admin",
+      "activityLog": [
+        {
+          "action": "Updated primaryLeadId",
+          "field": "primaryLeadId",
+          "from": "6a3416a496cc4b99fb545303",
+          "to": "6a34143596cc4b99fb544a85",
+          "by": "admin",
+          "at": {
+            "$date": {
+              "$numberLong": "1782142203981"
+            }
+          },
+          "_id": {
+            "$oid": "6a3954fbaec1a785a5a26f69"
+          }
+        },
+        {
+          "action": "Updated primaryLeadId",
+          "field": "primaryLeadId",
+          "from": null,
+          "to": "6a3416a496cc4b99fb545303",
+          "by": "admin",
+          "at": {
+            "$date": {
+              "$numberLong": "1782142195017"
+            }
+          },
+          "_id": {
+            "$oid": "6a3954f3aec1a785a5a26e90"
+          }
+        },
+        {
+          "action": "Opportunity created",
+          "field": "stage",
+          "from": null,
+          "to": "New Lead",
+          "by": "admin",
+          "at": {
+            "$date": {
+              "$numberLong": "1782142190578"
+            }
+          },
+          "_id": {
+            "$oid": "6a3954eeaec1a785a5a26e5f"
+          }
+        }
+      ],
+      "createdAt": {
+        "$date": {
+          "$numberLong": "1782142190581"
+        }
+      },
+      "updatedAt": {
+        "$date": {
+          "$numberLong": "1782495303089"
+        }
+      },
+      "deletedAt": {
+        "$date": {
+          "$numberLong": "1782495303087"
+        }
+      },
+      "deletedBy": "admin",
+      "version": {
+        "$numberInt": "1"
+      }
+    },
+    "changeType": "soft_delete",
+    "changedFields": [
+      {
+        "field": "version",
+        "from": {
+          "$numberInt": "0"
+        },
+        "to": {
+          "$numberInt": "1"
+        },
+        "_id": {
+          "$oid": "6a3eb8471bc903dbc7ad707c"
+        }
+      },
+      {
+        "field": "deletedAt",
+        "from": null,
+        "to": {
+          "$date": {
+            "$numberLong": "1782495303087"
+          }
+        },
+        "_id": {
+          "$oid": "6a3eb8471bc903dbc7ad707d"
+        }
+      },
+      {
+        "field": "deletedBy",
+        "from": null,
+        "to": "admin",
+        "_id": {
+          "$oid": "6a3eb8471bc903dbc7ad707e"
+        }
+      }
+    ],
+    "changedBy": "admin",
+    "userId": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "rollbackOfRevisionId": null,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782495303205"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3eb8491bc903dbc7ad70af"
+    },
+    "resourceType": "opportunity",
+    "resourceId": "6a3954eeaec1a785a5a26e5e",
+    "revisionNumber": {
+      "$numberInt": "2"
+    },
+    "snapshot": {
+      "_id": {
+        "$oid": "6a3954eeaec1a785a5a26e5e"
+      },
+      "name": "uyhjgjh",
+      "companyId": {
+        "$oid": "6a33f45329414e54b55e4700"
+      },
+      "primaryLeadId": {
+        "$oid": "6a34143596cc4b99fb544a85"
+      },
+      "campaignId": null,
+      "owner": "admin",
+      "stage": "New Lead",
+      "valueAed": {
+        "$numberInt": "0"
+      },
+      "probability": {
+        "$numberInt": "10"
+      },
+      "expectedCloseDate": {
+        "$date": {
+          "$numberLong": "1782142190578"
+        }
+      },
+      "nextAction": "",
+      "nextActionDueAt": null,
+      "services": [],
+      "eventName": "",
+      "eventDate": null,
+      "boothNumber": "",
+      "standSizeSqm": null,
+      "budgetBand": "",
+      "proposalDeadline": null,
+      "lostReason": "",
+      "notes": "",
+      "closedAt": null,
+      "lastModifiedBy": "admin",
+      "activityLog": [
+        {
+          "action": "Updated primaryLeadId",
+          "field": "primaryLeadId",
+          "from": "6a3416a496cc4b99fb545303",
+          "to": "6a34143596cc4b99fb544a85",
+          "by": "admin",
+          "at": {
+            "$date": {
+              "$numberLong": "1782142203981"
+            }
+          },
+          "_id": {
+            "$oid": "6a3954fbaec1a785a5a26f69"
+          }
+        },
+        {
+          "action": "Updated primaryLeadId",
+          "field": "primaryLeadId",
+          "from": null,
+          "to": "6a3416a496cc4b99fb545303",
+          "by": "admin",
+          "at": {
+            "$date": {
+              "$numberLong": "1782142195017"
+            }
+          },
+          "_id": {
+            "$oid": "6a3954f3aec1a785a5a26e90"
+          }
+        },
+        {
+          "action": "Opportunity created",
+          "field": "stage",
+          "from": null,
+          "to": "New Lead",
+          "by": "admin",
+          "at": {
+            "$date": {
+              "$numberLong": "1782142190578"
+            }
+          },
+          "_id": {
+            "$oid": "6a3954eeaec1a785a5a26e5f"
+          }
+        }
+      ],
+      "createdAt": {
+        "$date": {
+          "$numberLong": "1782142190581"
+        }
+      },
+      "updatedAt": {
+        "$date": {
+          "$numberLong": "1782495303089"
+        }
+      },
+      "deletedAt": {
+        "$date": {
+          "$numberLong": "1782495303087"
+        }
+      },
+      "deletedBy": "admin",
+      "version": {
+        "$numberInt": "1"
+      }
+    },
+    "snapshotAfter": {
+      "_id": {
+        "$oid": "6a3954eeaec1a785a5a26e5e"
+      },
+      "name": "uyhjgjh",
+      "companyId": {
+        "$oid": "6a33f45329414e54b55e4700"
+      },
+      "primaryLeadId": {
+        "$oid": "6a34143596cc4b99fb544a85"
+      },
+      "campaignId": null,
+      "owner": "admin",
+      "stage": "New Lead",
+      "valueAed": {
+        "$numberInt": "0"
+      },
+      "probability": {
+        "$numberInt": "10"
+      },
+      "expectedCloseDate": {
+        "$date": {
+          "$numberLong": "1782142190578"
+        }
+      },
+      "nextAction": "",
+      "nextActionDueAt": null,
+      "services": [],
+      "eventName": "",
+      "eventDate": null,
+      "boothNumber": "",
+      "standSizeSqm": null,
+      "budgetBand": "",
+      "proposalDeadline": null,
+      "lostReason": "",
+      "notes": "",
+      "closedAt": null,
+      "lastModifiedBy": "admin",
+      "activityLog": [
+        {
+          "action": "Updated primaryLeadId",
+          "field": "primaryLeadId",
+          "from": "6a3416a496cc4b99fb545303",
+          "to": "6a34143596cc4b99fb544a85",
+          "by": "admin",
+          "at": {
+            "$date": {
+              "$numberLong": "1782142203981"
+            }
+          },
+          "_id": {
+            "$oid": "6a3954fbaec1a785a5a26f69"
+          }
+        },
+        {
+          "action": "Updated primaryLeadId",
+          "field": "primaryLeadId",
+          "from": null,
+          "to": "6a3416a496cc4b99fb545303",
+          "by": "admin",
+          "at": {
+            "$date": {
+              "$numberLong": "1782142195017"
+            }
+          },
+          "_id": {
+            "$oid": "6a3954f3aec1a785a5a26e90"
+          }
+        },
+        {
+          "action": "Opportunity created",
+          "field": "stage",
+          "from": null,
+          "to": "New Lead",
+          "by": "admin",
+          "at": {
+            "$date": {
+              "$numberLong": "1782142190578"
+            }
+          },
+          "_id": {
+            "$oid": "6a3954eeaec1a785a5a26e5f"
+          }
+        }
+      ],
+      "createdAt": {
+        "$date": {
+          "$numberLong": "1782142190581"
+        }
+      },
+      "updatedAt": {
+        "$date": {
+          "$numberLong": "1782495305121"
+        }
+      },
+      "deletedAt": null,
+      "deletedBy": null,
+      "version": {
+        "$numberInt": "2"
+      }
+    },
+    "changeType": "restore",
+    "changedFields": [
+      {
+        "field": "deletedAt",
+        "from": {
+          "$date": {
+            "$numberLong": "1782495303087"
+          }
+        },
+        "to": null,
+        "_id": {
+          "$oid": "6a3eb8491bc903dbc7ad70b0"
+        }
+      },
+      {
+        "field": "deletedBy",
+        "from": "admin",
+        "to": null,
+        "_id": {
+          "$oid": "6a3eb8491bc903dbc7ad70b1"
+        }
+      },
+      {
+        "field": "version",
+        "from": {
+          "$numberInt": "1"
+        },
+        "to": {
+          "$numberInt": "2"
+        },
+        "_id": {
+          "$oid": "6a3eb8491bc903dbc7ad70b2"
+        }
+      }
+    ],
+    "changedBy": "admin",
+    "userId": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "rollbackOfRevisionId": null,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782495305211"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3eb8521bc903dbc7ad71a6"
+    },
+    "resourceType": "task",
+    "resourceId": "6a3eb84e1bc903dbc7ad713e",
+    "revisionNumber": {
+      "$numberInt": "1"
+    },
+    "snapshot": {
+      "_id": {
+        "$oid": "6a3eb84e1bc903dbc7ad713e"
+      },
+      "title": "New task",
+      "dueAt": null,
+      "status": "Open",
+      "priority": "Normal",
+      "owner": "admin",
+      "ownerUserId": null,
+      "companyId": null,
+      "leadId": null,
+      "opportunityId": null,
+      "notes": "",
+      "completedAt": null,
+      "version": {
+        "$numberInt": "0"
+      },
+      "deletedAt": null,
+      "deletedBy": null,
+      "createdAt": {
+        "$date": {
+          "$numberLong": "1782495310093"
+        }
+      },
+      "updatedAt": {
+        "$date": {
+          "$numberLong": "1782495310093"
+        }
+      }
+    },
+    "snapshotAfter": {
+      "_id": {
+        "$oid": "6a3eb84e1bc903dbc7ad713e"
+      },
+      "title": "New task",
+      "dueAt": null,
+      "status": "Open",
+      "priority": "Normal",
+      "owner": "admin",
+      "ownerUserId": null,
+      "companyId": null,
+      "leadId": null,
+      "opportunityId": null,
+      "notes": "",
+      "completedAt": null,
+      "version": {
+        "$numberInt": "1"
+      },
+      "deletedAt": {
+        "$date": {
+          "$numberLong": "1782495314626"
+        }
+      },
+      "deletedBy": "admin",
+      "createdAt": {
+        "$date": {
+          "$numberLong": "1782495310093"
+        }
+      },
+      "updatedAt": {
+        "$date": {
+          "$numberLong": "1782495314626"
+        }
+      }
+    },
+    "changeType": "soft_delete",
+    "changedFields": [
+      {
+        "field": "version",
+        "from": {
+          "$numberInt": "0"
+        },
+        "to": {
+          "$numberInt": "1"
+        },
+        "_id": {
+          "$oid": "6a3eb8521bc903dbc7ad71a7"
+        }
+      },
+      {
+        "field": "deletedAt",
+        "from": null,
+        "to": {
+          "$date": {
+            "$numberLong": "1782495314626"
+          }
+        },
+        "_id": {
+          "$oid": "6a3eb8521bc903dbc7ad71a8"
+        }
+      },
+      {
+        "field": "deletedBy",
+        "from": null,
+        "to": "admin",
+        "_id": {
+          "$oid": "6a3eb8521bc903dbc7ad71a9"
+        }
+      }
+    ],
+    "changedBy": "admin",
+    "userId": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "rollbackOfRevisionId": null,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782495314724"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3eb8611bc903dbc7ad71ec"
+    },
+    "resourceType": "task",
+    "resourceId": "6a3eb85a1bc903dbc7ad71d4",
+    "revisionNumber": {
+      "$numberInt": "1"
+    },
+    "snapshot": {
+      "_id": {
+        "$oid": "6a3eb85a1bc903dbc7ad71d4"
+      },
+      "title": "New task",
+      "dueAt": null,
+      "status": "Open",
+      "priority": "Normal",
+      "owner": "admin",
+      "ownerUserId": null,
+      "companyId": null,
+      "leadId": null,
+      "opportunityId": null,
+      "notes": "",
+      "completedAt": null,
+      "version": {
+        "$numberInt": "0"
+      },
+      "deletedAt": null,
+      "deletedBy": null,
+      "createdAt": {
+        "$date": {
+          "$numberLong": "1782495322433"
+        }
+      },
+      "updatedAt": {
+        "$date": {
+          "$numberLong": "1782495322433"
+        }
+      }
+    },
+    "snapshotAfter": {
+      "_id": {
+        "$oid": "6a3eb85a1bc903dbc7ad71d4"
+      },
+      "title": "New task",
+      "dueAt": null,
+      "status": "Open",
+      "priority": "Normal",
+      "owner": "admin",
+      "ownerUserId": null,
+      "companyId": null,
+      "leadId": null,
+      "opportunityId": null,
+      "notes": "",
+      "completedAt": null,
+      "version": {
+        "$numberInt": "1"
+      },
+      "deletedAt": {
+        "$date": {
+          "$numberLong": "1782495329709"
+        }
+      },
+      "deletedBy": "admin",
+      "createdAt": {
+        "$date": {
+          "$numberLong": "1782495322433"
+        }
+      },
+      "updatedAt": {
+        "$date": {
+          "$numberLong": "1782495329711"
+        }
+      }
+    },
+    "changeType": "soft_delete",
+    "changedFields": [
+      {
+        "field": "version",
+        "from": {
+          "$numberInt": "0"
+        },
+        "to": {
+          "$numberInt": "1"
+        },
+        "_id": {
+          "$oid": "6a3eb8611bc903dbc7ad71ed"
+        }
+      },
+      {
+        "field": "deletedAt",
+        "from": null,
+        "to": {
+          "$date": {
+            "$numberLong": "1782495329709"
+          }
+        },
+        "_id": {
+          "$oid": "6a3eb8611bc903dbc7ad71ee"
+        }
+      },
+      {
+        "field": "deletedBy",
+        "from": null,
+        "to": "admin",
+        "_id": {
+          "$oid": "6a3eb8611bc903dbc7ad71ef"
+        }
+      }
+    ],
+    "changedBy": "admin",
+    "userId": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "rollbackOfRevisionId": null,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782495330016"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3eb8661bc903dbc7ad7232"
+    },
+    "resourceType": "task",
+    "resourceId": "6a3eb85a1bc903dbc7ad71d2",
+    "revisionNumber": {
+      "$numberInt": "1"
+    },
+    "snapshot": {
+      "_id": {
+        "$oid": "6a3eb85a1bc903dbc7ad71d2"
+      },
+      "title": "New task",
+      "dueAt": null,
+      "status": "Open",
+      "priority": "Normal",
+      "owner": "admin",
+      "ownerUserId": null,
+      "companyId": null,
+      "leadId": null,
+      "opportunityId": null,
+      "notes": "",
+      "completedAt": null,
+      "version": {
+        "$numberInt": "0"
+      },
+      "deletedAt": null,
+      "deletedBy": null,
+      "createdAt": {
+        "$date": {
+          "$numberLong": "1782495322265"
+        }
+      },
+      "updatedAt": {
+        "$date": {
+          "$numberLong": "1782495322265"
+        }
+      }
+    },
+    "snapshotAfter": {
+      "_id": {
+        "$oid": "6a3eb85a1bc903dbc7ad71d2"
+      },
+      "title": "New task",
+      "dueAt": null,
+      "status": "Open",
+      "priority": "Normal",
+      "owner": "admin",
+      "ownerUserId": null,
+      "companyId": null,
+      "leadId": null,
+      "opportunityId": null,
+      "notes": "",
+      "completedAt": null,
+      "version": {
+        "$numberInt": "1"
+      },
+      "deletedAt": {
+        "$date": {
+          "$numberLong": "1782495334020"
+        }
+      },
+      "deletedBy": "admin",
+      "createdAt": {
+        "$date": {
+          "$numberLong": "1782495322265"
+        }
+      },
+      "updatedAt": {
+        "$date": {
+          "$numberLong": "1782495334021"
+        }
+      }
+    },
+    "changeType": "soft_delete",
+    "changedFields": [
+      {
+        "field": "version",
+        "from": {
+          "$numberInt": "0"
+        },
+        "to": {
+          "$numberInt": "1"
+        },
+        "_id": {
+          "$oid": "6a3eb8661bc903dbc7ad7233"
+        }
+      },
+      {
+        "field": "deletedAt",
+        "from": null,
+        "to": {
+          "$date": {
+            "$numberLong": "1782495334020"
+          }
+        },
+        "_id": {
+          "$oid": "6a3eb8661bc903dbc7ad7234"
+        }
+      },
+      {
+        "field": "deletedBy",
+        "from": null,
+        "to": "admin",
+        "_id": {
+          "$oid": "6a3eb8661bc903dbc7ad7235"
+        }
+      }
+    ],
+    "changedBy": "admin",
+    "userId": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "rollbackOfRevisionId": null,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782495334129"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3eb8681bc903dbc7ad7263"
+    },
+    "resourceType": "task",
+    "resourceId": "6a3eb8591bc903dbc7ad71d0",
+    "revisionNumber": {
+      "$numberInt": "1"
+    },
+    "snapshot": {
+      "_id": {
+        "$oid": "6a3eb8591bc903dbc7ad71d0"
+      },
+      "title": "New task",
+      "dueAt": null,
+      "status": "Open",
+      "priority": "Normal",
+      "owner": "admin",
+      "ownerUserId": null,
+      "companyId": null,
+      "leadId": null,
+      "opportunityId": null,
+      "notes": "",
+      "completedAt": null,
+      "version": {
+        "$numberInt": "0"
+      },
+      "deletedAt": null,
+      "deletedBy": null,
+      "createdAt": {
+        "$date": {
+          "$numberLong": "1782495321749"
+        }
+      },
+      "updatedAt": {
+        "$date": {
+          "$numberLong": "1782495321749"
+        }
+      }
+    },
+    "snapshotAfter": {
+      "_id": {
+        "$oid": "6a3eb8591bc903dbc7ad71d0"
+      },
+      "title": "New task",
+      "dueAt": null,
+      "status": "Open",
+      "priority": "Normal",
+      "owner": "admin",
+      "ownerUserId": null,
+      "companyId": null,
+      "leadId": null,
+      "opportunityId": null,
+      "notes": "",
+      "completedAt": null,
+      "version": {
+        "$numberInt": "1"
+      },
+      "deletedAt": {
+        "$date": {
+          "$numberLong": "1782495336858"
+        }
+      },
+      "deletedBy": "admin",
+      "createdAt": {
+        "$date": {
+          "$numberLong": "1782495321749"
+        }
+      },
+      "updatedAt": {
+        "$date": {
+          "$numberLong": "1782495336862"
+        }
+      }
+    },
+    "changeType": "soft_delete",
+    "changedFields": [
+      {
+        "field": "version",
+        "from": {
+          "$numberInt": "0"
+        },
+        "to": {
+          "$numberInt": "1"
+        },
+        "_id": {
+          "$oid": "6a3eb8681bc903dbc7ad7264"
+        }
+      },
+      {
+        "field": "deletedAt",
+        "from": null,
+        "to": {
+          "$date": {
+            "$numberLong": "1782495336858"
+          }
+        },
+        "_id": {
+          "$oid": "6a3eb8681bc903dbc7ad7265"
+        }
+      },
+      {
+        "field": "deletedBy",
+        "from": null,
+        "to": "admin",
+        "_id": {
+          "$oid": "6a3eb8681bc903dbc7ad7266"
+        }
+      }
+    ],
+    "changedBy": "admin",
+    "userId": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "rollbackOfRevisionId": null,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782495337000"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3eb86c1bc903dbc7ad7293"
+    },
+    "resourceType": "task",
+    "resourceId": "6a3eb8591bc903dbc7ad71ce",
+    "revisionNumber": {
+      "$numberInt": "1"
+    },
+    "snapshot": {
+      "_id": {
+        "$oid": "6a3eb8591bc903dbc7ad71ce"
+      },
+      "title": "New task",
+      "dueAt": null,
+      "status": "Open",
+      "priority": "Normal",
+      "owner": "admin",
+      "ownerUserId": null,
+      "companyId": null,
+      "leadId": null,
+      "opportunityId": null,
+      "notes": "",
+      "completedAt": null,
+      "version": {
+        "$numberInt": "0"
+      },
+      "deletedAt": null,
+      "deletedBy": null,
+      "createdAt": {
+        "$date": {
+          "$numberLong": "1782495321105"
+        }
+      },
+      "updatedAt": {
+        "$date": {
+          "$numberLong": "1782495321105"
+        }
+      }
+    },
+    "snapshotAfter": {
+      "_id": {
+        "$oid": "6a3eb8591bc903dbc7ad71ce"
+      },
+      "title": "New task",
+      "dueAt": null,
+      "status": "Open",
+      "priority": "Normal",
+      "owner": "admin",
+      "ownerUserId": null,
+      "companyId": null,
+      "leadId": null,
+      "opportunityId": null,
+      "notes": "",
+      "completedAt": null,
+      "version": {
+        "$numberInt": "1"
+      },
+      "deletedAt": {
+        "$date": {
+          "$numberLong": "1782495339822"
+        }
+      },
+      "deletedBy": "admin",
+      "createdAt": {
+        "$date": {
+          "$numberLong": "1782495321105"
+        }
+      },
+      "updatedAt": {
+        "$date": {
+          "$numberLong": "1782495339822"
+        }
+      }
+    },
+    "changeType": "soft_delete",
+    "changedFields": [
+      {
+        "field": "version",
+        "from": {
+          "$numberInt": "0"
+        },
+        "to": {
+          "$numberInt": "1"
+        },
+        "_id": {
+          "$oid": "6a3eb86c1bc903dbc7ad7294"
+        }
+      },
+      {
+        "field": "deletedAt",
+        "from": null,
+        "to": {
+          "$date": {
+            "$numberLong": "1782495339822"
+          }
+        },
+        "_id": {
+          "$oid": "6a3eb86c1bc903dbc7ad7295"
+        }
+      },
+      {
+        "field": "deletedBy",
+        "from": null,
+        "to": "admin",
+        "_id": {
+          "$oid": "6a3eb86c1bc903dbc7ad7296"
+        }
+      }
+    ],
+    "changedBy": "admin",
+    "userId": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "rollbackOfRevisionId": null,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782495340130"
+      }
+    }
+  }
+]

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { crmApiFetch, formatCurrency, formatPercent } from '../crmApi.js';
 import CampaignInitWizard from '../components/wizards/CampaignInitWizard.jsx';
@@ -68,20 +68,37 @@ export default function GlobalDashboard() {
   const [showWizard, setShowWizard] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    Promise.all([
+  const loadDashboard = useCallback(async () => {
+    const [globalData, projectList, workspaceSummary] = await Promise.all([
       crmApiFetch('/api/admin/analytics/global'),
       crmApiFetch('/api/admin/projects'),
       crmApiFetch('/api/admin/workspace/summary'),
-    ])
-      .then(([globalData, projectList, workspaceSummary]) => {
-        setAnalytics(globalData);
-        setProjects(projectList);
-        setSummary(workspaceSummary);
-      })
+    ]);
+    setAnalytics(globalData);
+    setProjects(projectList);
+    setSummary(workspaceSummary);
+  }, []);
+
+  useEffect(() => {
+    loadDashboard()
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, []);
+  }, [loadDashboard]);
+
+  useEffect(() => {
+    let timer = null;
+    function handleWorkspaceChanged() {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        loadDashboard().catch(console.error);
+      }, 150);
+    }
+    window.addEventListener('crm:workspace-changed', handleWorkspaceChanged);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener('crm:workspace-changed', handleWorkspaceChanged);
+    };
+  }, [loadDashboard]);
 
   if (loading) {
     return (
@@ -91,7 +108,12 @@ export default function GlobalDashboard() {
     );
   }
 
-  const previewMode = !summary?.metrics?.activeOpportunities && !summary?.openTasks?.length;
+  const previewMode = !summary
+    || (
+      !summary?.metrics?.activeOpportunities
+      && !summary?.openTasks?.length
+      && !summary?.recentOpportunities?.length
+    );
   const workspace = previewMode ? DEMO_SUMMARY : summary;
 
   return (

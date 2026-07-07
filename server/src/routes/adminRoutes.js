@@ -27,12 +27,15 @@ import {
   getPipelineConfig,
   updatePipelineConfig,
   listTasks,
+  getTask,
   createTask,
   updateTask,
   deleteTask,
   restoreTask,
   deleteOpportunity,
   restoreOpportunity,
+  deleteTasks,
+  deleteOpportunities,
   getWorkspaceSummary,
 } from '../services/salesService.js';
 import { globalSearch } from '../services/searchService.js';
@@ -58,6 +61,7 @@ import {
   markLeadWon,
   getCrmAdminStatus,
   listAllLeads,
+  getLeadById,
   listAllCompanies,
   getCompanyDetails,
   updateCompanyDetails,
@@ -70,7 +74,14 @@ import {
   restoreLead,
   deleteCompany,
   restoreCompany,
+  deleteProject,
+  restoreProject,
+  deleteProjects,
+  deleteLeads,
+  deleteCompanies,
+  syncCampaignResponseCounts,
 } from '../services/projectService.js';
+import { inferOutreachEmail, setOutreachEmail } from '../utils/contactEmails.js';
 import { getLeadTimeline, getCompanyTimeline } from '../services/contactTimelineService.js';
 import {
   createInteraction,
@@ -255,6 +266,22 @@ router.get('/projects/:id', asyncRoute(async (req, res) => {
 
 router.patch('/projects/:id', asyncRoute(async (req, res) => {
   res.json(await updateProject(req.params.id, req.body || {}));
+}));
+
+router.delete('/projects/:id', asyncRoute(async (req, res) => {
+  res.json(await deleteProject(req.params.id, getActor(req)));
+}));
+
+router.post('/projects/:id/restore', asyncRoute(async (req, res) => {
+  res.json(await restoreProject(req.params.id, getActor(req)));
+}));
+
+router.post('/projects/bulk-delete', asyncRoute(async (req, res) => {
+  const ids = req.body?.ids || [];
+  if (!Array.isArray(ids) || !ids.length) {
+    return res.status(400).json({ message: 'ids array is required.' });
+  }
+  res.json(await deleteProjects(ids, getActor(req)));
 }));
 
 router.get('/projects/:id/companies', asyncRoute(async (req, res) => {
@@ -470,12 +497,13 @@ router.patch('/leads/:id', asyncRoute(async (req, res) => {
     'name', 'designation', 'email', 'phone', 'linkedinUrl',
     'emailApollo', 'emailHunter', 'emailLusha',
     'phoneLusha1', 'phoneLusha2', 'whatsappNumber',
-    'outcome', 'deliveryStatus'
+    'outcome', 'deliveryStatus',
+    'outreachEmail', 'outreachEmailSource',
   ];
 
   fields.forEach((f) => {
     if (req.body[f] === undefined) return;
-    if (f === 'deliveryStatus') return;
+    if (f === 'deliveryStatus' || f === 'outreachEmail' || f === 'outreachEmailSource') return;
     lead[f] = req.body[f];
   });
 
@@ -484,6 +512,36 @@ router.patch('/leads/:id', asyncRoute(async (req, res) => {
     if (req.body.deliveryStatus === 'Replied' && !lead.repliedAt) {
       lead.repliedAt = new Date();
     }
+  }
+
+  if (req.body.outreachEmail !== undefined) {
+    const trimmed = String(req.body.outreachEmail || '').trim();
+    if (!trimmed) {
+      lead.outreachEmail = '';
+      lead.outreachEmailSource = '';
+    } else {
+      const result = setOutreachEmail(lead, trimmed, req.body.outreachEmailSource);
+      if (!result.applied) {
+        return res.status(400).json({ message: 'Outreach email must match a contact email on this record.' });
+      }
+    }
+  } else if (req.body.outreachEmailSource !== undefined && lead.outreachEmail) {
+    const source = String(req.body.outreachEmailSource || '').trim();
+    if (['Apollo', 'Hunter', 'Lusha', 'Manual', ''].includes(source)) {
+      lead.outreachEmailSource = source;
+    }
+  } else if (req.body.autoDetectOutreach) {
+    const lastJob = await SendJob.findOne({ leadId: lead._id, status: 'sent' })
+      .sort({ sentAt: -1 })
+      .select('recipientEmail')
+      .lean();
+    inferOutreachEmail(lead, { lastSentEmail: lastJob?.recipientEmail || '' });
+  } else if (req.body.deliveryStatus === 'Replied' && !lead.outreachEmail) {
+    const lastJob = await SendJob.findOne({ leadId: lead._id, status: 'sent' })
+      .sort({ sentAt: -1 })
+      .select('recipientEmail')
+      .lean();
+    inferOutreachEmail(lead, { lastSentEmail: lastJob?.recipientEmail || '' });
   }
 
   if (req.body.linkedinOutreach) {
@@ -535,6 +593,10 @@ router.patch('/leads/:id', asyncRoute(async (req, res) => {
 
   await lead.save();
 
+  if (lead.campaignId) {
+    await syncCampaignResponseCounts(lead.campaignId);
+  }
+
   if (req.body.campaignId !== undefined) {
     const assigned = await assignLeadToCampaign(req.params.id, req.body.campaignId || null);
     return res.json(assigned);
@@ -549,6 +611,14 @@ router.delete('/leads/:id', asyncRoute(async (req, res) => {
 
 router.post('/leads/:id/restore', asyncRoute(async (req, res) => {
   res.json(await restoreLead(req.params.id, getActor(req)));
+}));
+
+router.post('/leads/bulk-delete', asyncRoute(async (req, res) => {
+  const ids = req.body?.ids || [];
+  if (!Array.isArray(ids) || !ids.length) {
+    return res.status(400).json({ message: 'ids array is required.' });
+  }
+  res.json(await deleteLeads(ids, getActor(req)));
 }));
 
 router.get('/sent-emails', asyncRoute(async (req, res) => {
@@ -727,6 +797,10 @@ router.post('/leads', asyncRoute(async (req, res) => {
   res.status(201).json(await createStandaloneLead(req.body || {}));
 }));
 
+router.get('/leads/:id', asyncRoute(async (req, res) => {
+  res.json(await getLeadById(req.params.id));
+}));
+
 router.get('/leads/:id/timeline', asyncRoute(async (req, res) => {
   res.json(await getLeadTimeline(req.params.id));
 }));
@@ -775,6 +849,14 @@ router.post('/companies/:id/restore', asyncRoute(async (req, res) => {
   res.json(await restoreCompany(req.params.id, getActor(req)));
 }));
 
+router.post('/companies/bulk-delete', asyncRoute(async (req, res) => {
+  const ids = req.body?.ids || [];
+  if (!Array.isArray(ids) || !ids.length) {
+    return res.status(400).json({ message: 'ids array is required.' });
+  }
+  res.json(await deleteCompanies(ids, getActor(req)));
+}));
+
 router.post('/companies/:id/leads', asyncRoute(async (req, res) => {
   res.json(await addLeadToCompany(req.params.id, req.body || {}));
 }));
@@ -819,12 +901,24 @@ router.post('/sales/opportunities/:id/restore', asyncRoute(async (req, res) => {
   res.json(await restoreOpportunity(req.params.id, getActor(req)));
 }));
 
+router.post('/sales/opportunities/bulk-delete', asyncRoute(async (req, res) => {
+  const ids = req.body?.ids || [];
+  if (!Array.isArray(ids) || !ids.length) {
+    return res.status(400).json({ message: 'ids array is required.' });
+  }
+  res.json(await deleteOpportunities(ids, getActor(req)));
+}));
+
 router.get('/sales/tasks', asyncRoute(async (req, res) => {
   res.json(await listTasks(req.query));
 }));
 
 router.post('/sales/tasks', asyncRoute(async (req, res) => {
   res.status(201).json(await createTask(req.body || {}, req.admin?.username));
+}));
+
+router.get('/sales/tasks/:id', asyncRoute(async (req, res) => {
+  res.json(await getTask(req.params.id));
 }));
 
 router.patch('/sales/tasks/:id', asyncRoute(async (req, res) => {
@@ -837,6 +931,14 @@ router.delete('/sales/tasks/:id', asyncRoute(async (req, res) => {
 
 router.post('/sales/tasks/:id/restore', asyncRoute(async (req, res) => {
   res.json(await restoreTask(req.params.id, getActor(req)));
+}));
+
+router.post('/sales/tasks/bulk-delete', asyncRoute(async (req, res) => {
+  const ids = req.body?.ids || [];
+  if (!Array.isArray(ids) || !ids.length) {
+    return res.status(400).json({ message: 'ids array is required.' });
+  }
+  res.json(await deleteTasks(ids, getActor(req)));
 }));
 
 router.get('/users', asyncRoute(async (_req, res) => {
@@ -1014,6 +1116,9 @@ router.post('/:resourceType/:id/restore', asyncRoute(async (req, res) => {
   }
   if (resourceType === 'opportunity' || resourceType === 'opportunities') {
     return res.json(await restoreOpportunity(id, actor));
+  }
+  if (resourceType === 'project' || resourceType === 'projects') {
+    return res.json(await restoreProject(id, actor));
   }
   const modelMap = { task: Task, interaction: ContactInteraction, interactions: ContactInteraction };
   const Model = modelMap[resourceType];

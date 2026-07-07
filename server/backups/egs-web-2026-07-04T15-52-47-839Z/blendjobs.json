@@ -1,0 +1,62 @@
+[
+  {
+    "_id": {
+      "$oid": "6a33f44d29414e54b55e4636"
+    },
+    "campaignId": {
+      "$oid": "6a33f159b9b12c438ad4e9a0"
+    },
+    "sourceType": "Apollo",
+    "status": "completed",
+    "progress": {
+      "normalizingDomains": {
+        "$numberInt": "100"
+      },
+      "matchingCompanies": {
+        "$numberInt": "100"
+      },
+      "deduplicatingContacts": {
+        "$numberInt": "100"
+      },
+      "mergingSources": {
+        "$numberInt": "100"
+      }
+    },
+    "stats": {
+      "rowsProcessed": {
+        "$numberInt": "57"
+      },
+      "leadsCreated": {
+        "$numberInt": "36"
+      },
+      "leadsUpdated": {
+        "$numberInt": "0"
+      },
+      "companiesLinked": {
+        "$numberInt": "57"
+      },
+      "skipped": {
+        "$numberInt": "21"
+      },
+      "errors": {
+        "$numberInt": "0"
+      }
+    },
+    "errorMessage": "",
+    "completedAt": {
+      "$date": {
+        "$numberLong": "1781789782071"
+      }
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1781789773320"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1781789782072"
+      }
+    }
+  }
+]

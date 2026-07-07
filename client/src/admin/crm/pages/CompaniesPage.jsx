@@ -1,8 +1,15 @@
-import { useEffect, useState, useMemo } from 'react';
-import { fetchGlobalCompanies, crmApiFetch, deleteCompanyWithUndo, deleteLeadWithUndo } from '../crmApi.js';
+import { useEffect, useState, useMemo, useCallback } from 'react';
+import { fetchGlobalCompanies, crmApiFetch, deleteCompanyWithUndo, deleteLeadWithUndo, deleteCompanies, deleteLeads } from '../crmApi.js';
 import DeleteIconButton from '../components/ui/DeleteIconButton.jsx';
 import ClickableTableRow, { stopRowClick } from '../components/ui/ClickableTableRow.jsx';
+import { BulkSelectHeaderCell, BulkSelectRowCell, BulkSelectionBar } from '../components/ui/BulkSelectTable.jsx';
+import { useRowSelection } from '../hooks/useRowSelection.js';
+import { useBulkDelete } from '../hooks/useBulkDelete.js';
+import { useTableSort } from '../hooks/useTableSort.js';
+import { companySortAccessors } from '../hooks/tableSortAccessors.js';
+import { SortableTableHeader, TableSortIndicator } from '../components/ui/SortableTableHeader.jsx';
 import { useConfirmDelete } from '../hooks/useConfirmDelete.js';
+import { useSpotlightDeepLink } from '../hooks/useSpotlightDeepLink.js';
 import { 
   PageShell, 
   PageSection,
@@ -74,6 +81,7 @@ export default function CompaniesPage() {
   const [selectedLead, setSelectedLead] = useState(null);
   const [showAddCompany, setShowAddCompany] = useState(false);
   const [error, setError] = useState('');
+  const [bulkDeleting, setBulkDeleting] = useState(false);
 
   const companyFilterSchema = useMemo(
     () => withFieldOptions(COMPANY_FILTER_SCHEMA, {
@@ -124,13 +132,26 @@ export default function CompaniesPage() {
     loadData();
   }, [page, limit, advancedActiveCount]);
 
-  const tableCompanies = useMemo(() => {
-    if (!advancedActiveCount) return companies;
-    const start = (page - 1) * limit;
-    return advancedFilteredCompanies.slice(start, start + limit);
-  }, [advancedActiveCount, advancedFilteredCompanies, companies, page, limit]);
-
   const tableTotal = advancedActiveCount ? advancedFilteredCompanies.length : total;
+
+  const { sortKey, sortDir, sortLabel, toggleSort, clearSort, sortItems } = useTableSort({
+    defaultKey: 'companyName',
+    defaultDir: 'asc',
+    accessors: companySortAccessors,
+  });
+
+  const sortedCompanies = useMemo(() => {
+    const base = advancedActiveCount ? advancedFilteredCompanies : companies;
+    return sortItems(base);
+  }, [advancedActiveCount, advancedFilteredCompanies, companies, sortItems]);
+
+  const tableCompanies = useMemo(() => {
+    if (!advancedActiveCount) return sortedCompanies;
+    const start = (page - 1) * limit;
+    return sortedCompanies.slice(start, start + limit);
+  }, [advancedActiveCount, sortedCompanies, page, limit]);
+
+  const selection = useRowSelection(tableCompanies);
 
   const handleLimitChange = (nextLimit) => {
     setLimit(nextLimit);
@@ -140,6 +161,14 @@ export default function CompaniesPage() {
   const handleCompanyUpdated = () => {
     loadData();
   };
+
+  useSpotlightDeepLink({
+    recordType: 'company',
+    onOpen: (company) => setSelectedCompanyId(company._id),
+    findRecord: useCallback((id) => companies.find((company) => String(company._id) === String(id)), [companies]),
+    resolveRecord: useCallback(async (id) => ({ _id: id }), []),
+    ready: !loading,
+  });
 
   const confirmDeleteCompany = useConfirmDelete({
     resourceType: 'company',
@@ -161,6 +190,34 @@ export default function CompaniesPage() {
     onRestored: () => handleCompanyUpdated(),
     defaultConfirm: 'Delete this contact? You can undo within 30 seconds.',
   });
+
+  const runBulkDeleteCompanies = useBulkDelete({
+    resourceType: 'company',
+    bulkDeleteFn: deleteCompanies,
+    getLabelForId: (id) => {
+      const company = companies.find((c) => c._id === id);
+      return `Deleted company: ${company?.companyName || 'Company'}`;
+    },
+    defaultConfirm: 'Delete these companies? You can undo each within 30 seconds.',
+    onRemoved: (ids) => {
+      setCompanies((prev) => prev.filter((c) => !ids.includes(c._id)));
+      if (selectedCompanyId && ids.includes(selectedCompanyId)) setSelectedCompanyId(null);
+      selection.clearSelection();
+    },
+    onRestored: () => loadData(),
+  });
+
+  async function handleBulkDelete() {
+    setBulkDeleting(true);
+    setError('');
+    try {
+      await runBulkDeleteCompanies(selection.selectedArray, { noun: 'company' });
+    } catch (err) {
+      setError(err.message || 'Failed to delete companies.');
+    } finally {
+      setBulkDeleting(false);
+    }
+  }
 
   async function deleteCompanyItem(company) {
     setError('');
@@ -242,22 +299,42 @@ export default function CompaniesPage() {
               onLimitChange={handleLimitChange}
               noun="companies"
             />
+            <BulkSelectionBar
+              count={selection.selectionCount}
+              noun="company"
+              onDelete={handleBulkDelete}
+              onClear={selection.clearSelection}
+              deleting={bulkDeleting}
+            />
+            <TableSortIndicator
+              sortKey={sortKey}
+              sortDir={sortDir}
+              sortLabel={sortLabel}
+              onToggle={() => toggleSort(sortKey)}
+              onClear={clearSort}
+            />
             <DataTableShell minWidth={700}>
             <table className="crm-table min-w-[700px]">
               <thead>
                 <tr className="crm-table-head">
-                  <th>Company Name</th>
-                  <th>Domain</th>
-                  <th>Location</th>
-                  <th>Known Contacts</th>
-                  <th>Associated Projects</th>
-                  <th className="text-center">Status</th>
+                  <BulkSelectHeaderCell selection={selection} ariaLabel="Select all companies" />
+                  <SortableTableHeader label="Company Name" sortKey="companyName" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                  <SortableTableHeader label="Domain" sortKey="domain" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                  <SortableTableHeader label="Location" sortKey="location" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                  <SortableTableHeader label="Known Contacts" sortKey="pocCount" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                  <SortableTableHeader label="Associated Projects" sortKey="campaigns" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                  <SortableTableHeader label="Status" sortKey="globalStatus" activeKey={sortKey} direction={sortDir} onSort={toggleSort} align="center" />
                   <th className="text-center">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {tableCompanies.map((comp) => (
                   <ClickableTableRow key={comp._id} onClick={() => setSelectedCompanyId(comp._id)}>
+                    <BulkSelectRowCell
+                      id={comp._id}
+                      selection={selection}
+                      ariaLabel={`Select ${comp.companyName}`}
+                    />
                     <td>
                       <div className="crm-cell-primary">
                         {comp.companyName}

@@ -1,9 +1,14 @@
+import mongoose from 'mongoose';
+
 const INBOUND_RESPONSE_OUTCOMES = new Set([
   'connected',
   'interested',
   'scheduled_followup',
   'completed',
 ]);
+
+/** Campaign outcome values that mean the contact engaged (manual CRM updates). */
+const POSITIVE_LEAD_OUTCOMES = new Set(['Call Scheduled', 'Won']);
 
 function earliestDate(current, candidate) {
   if (!candidate) return current;
@@ -34,7 +39,14 @@ export function getLeadResponseMeta(lead, { manualInboundAt = null } = {}) {
     note('email', lead.repliedAt || lead.updatedAt);
   }
 
+  if (POSITIVE_LEAD_OUTCOMES.has(lead?.outcome)) {
+    note('email', lead.repliedAt || lead.updatedAt);
+  }
+
   const li = lead?.linkedinOutreach || {};
+  if (li.accepted) {
+    note('linkedin', li.acceptDate || lead.updatedAt);
+  }
   if (li.inmailResponded) {
     note('linkedin', li.inmailDate || lead.updatedAt);
   }
@@ -73,25 +85,113 @@ export function buildEarliestInboundByLead(interactions = []) {
   const map = new Map();
   interactions.forEach((record) => {
     if (!interactionCountsAsResponse(record)) return;
-    const key = String(record.leadId);
     const at = record.occurredAt;
-    const existing = map.get(key);
-    if (!existing || new Date(at) < new Date(existing)) {
-      map.set(key, at);
-    }
+    const keys = [record.leadId, ...(record.relatedLeadIds || [])]
+      .map((id) => String(id))
+      .filter(Boolean);
+    keys.forEach((key) => {
+      const existing = map.get(key);
+      if (!existing || new Date(at) < new Date(existing)) {
+        map.set(key, at);
+      }
+    });
   });
   return map;
 }
 
-export function enrichLeadWithResponse(lead, inboundByLead = new Map()) {
-  const manualInboundAt = inboundByLead.get(String(lead._id)) || null;
-  const response = getLeadResponseMeta(lead, { manualInboundAt });
-  return { ...lead, ...response };
+export function buildLatestInteractionByLead(interactions = []) {
+  const map = new Map();
+  interactions.forEach((record) => {
+    if (!record?.occurredAt) return;
+    const at = new Date(record.occurredAt);
+    if (Number.isNaN(at.getTime())) return;
+    const leadIds = [
+      record.leadId,
+      ...(record.relatedLeadIds || []),
+    ].map((id) => String(id)).filter(Boolean);
+    leadIds.forEach((key) => {
+      const existing = map.get(key);
+      if (!existing || at > existing) map.set(key, at);
+    });
+  });
+  return map;
 }
 
-export function enrichLeadsWithResponse(leads, interactions = []) {
+export function interactionQueryForLeadIds(leadIds = []) {
+  if (!leadIds.length) return null;
+  const objectIds = leadIds
+    .map((id) => String(id))
+    .filter((id) => mongoose.Types.ObjectId.isValid(id))
+    .map((id) => new mongoose.Types.ObjectId(id));
+  if (!objectIds.length) return null;
+  return {
+    deletedAt: null,
+    $or: [
+      { leadId: { $in: objectIds } },
+      { relatedLeadIds: { $in: objectIds } },
+    ],
+  };
+}
+
+export function buildLatestDateByLead(records = [], leadIdField = 'leadId', dateField) {
+  const map = new Map();
+  records.forEach((record) => {
+    const key = String(record?.[leadIdField]);
+    const at = new Date(record?.[dateField]);
+    if (!key || Number.isNaN(at.getTime())) return;
+    const existing = map.get(key);
+    if (!existing || at > existing) map.set(key, at);
+  });
+  return map;
+}
+
+export function mergeLatestDateMaps(...maps) {
+  const result = new Map();
+  maps.forEach((map) => {
+    map.forEach((at, key) => {
+      const existing = result.get(key);
+      if (!existing || at > existing) result.set(key, at);
+    });
+  });
+  return result;
+}
+
+export function getLeadLastInteractionAt(lead, { latestManualAt = null } = {}) {
+  let latest = null;
+  const consider = (date) => {
+    if (!date) return;
+    const at = date instanceof Date ? date : new Date(date);
+    if (Number.isNaN(at.getTime())) return;
+    if (!latest || at > latest) latest = at;
+  };
+
+  consider(latestManualAt);
+  consider(lead?.repliedAt);
+
+  const li = lead?.linkedinOutreach || {};
+  consider(li.connDate);
+  consider(li.acceptDate);
+  consider(li.inmailDate);
+  consider(li.dmDate);
+
+  consider(lead?.coldCall?.date);
+  consider(lead?.whatsapp?.date);
+
+  return latest ? latest.toISOString() : null;
+}
+
+export function enrichLeadWithResponse(lead, inboundByLead = new Map(), latestByLead = new Map()) {
+  const manualInboundAt = inboundByLead.get(String(lead._id)) || null;
+  const latestManualAt = latestByLead.get(String(lead._id)) || null;
+  const response = getLeadResponseMeta(lead, { manualInboundAt });
+  const lastInteractionAt = getLeadLastInteractionAt(lead, { latestManualAt });
+  return { ...lead, ...response, lastInteractionAt };
+}
+
+export function enrichLeadsWithResponse(leads, interactions = [], latestByLead = null) {
   const inboundByLead = buildEarliestInboundByLead(interactions);
-  return leads.map((lead) => enrichLeadWithResponse(lead, inboundByLead));
+  const manualLatestByLead = latestByLead || buildLatestInteractionByLead(interactions);
+  return leads.map((lead) => enrichLeadWithResponse(lead, inboundByLead, manualLatestByLead));
 }
 
 export function getCompanyResponseMeta(leads = [], inboundByLead = new Map()) {
@@ -129,6 +229,6 @@ export function enrichCompaniesWithResponse(companies, leads = [], interactions 
   return companies.map((company) => {
     const companyLeads = leadsByCompany.get(String(company._id)) || [];
     const response = getCompanyResponseMeta(companyLeads, inboundByLead);
-    return { ...company, ...response };
+    return { ...company, ...response, pocCount: companyLeads.length };
   });
 }

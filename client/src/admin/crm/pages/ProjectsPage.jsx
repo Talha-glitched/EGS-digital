@@ -1,10 +1,18 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { crmApiFetch, updateCampaign } from '../crmApi.js';
+import { crmApiFetch, updateCampaign, deleteProjectWithUndo, deleteProjects } from '../crmApi.js';
 import CampaignInitWizard from '../components/wizards/CampaignInitWizard.jsx';
 import CampaignStageControl from '../components/projects/CampaignStageControl.jsx';
 import DataTableShell from '../components/ui/DataTableShell.jsx';
-import ClickableTableRow from '../components/ui/ClickableTableRow.jsx';
+import ClickableTableRow, { stopRowClick } from '../components/ui/ClickableTableRow.jsx';
+import DeleteIconButton from '../components/ui/DeleteIconButton.jsx';
+import { BulkSelectHeaderCell, BulkSelectRowCell, BulkSelectionBar } from '../components/ui/BulkSelectTable.jsx';
+import { useRowSelection } from '../hooks/useRowSelection.js';
+import { useConfirmDelete } from '../hooks/useConfirmDelete.js';
+import { useBulkDelete } from '../hooks/useBulkDelete.js';
+import { useTableSort } from '../hooks/useTableSort.js';
+import { campaignSortAccessors } from '../hooks/tableSortAccessors.js';
+import { SortableTableHeader, TableSortIndicator } from '../components/ui/SortableTableHeader.jsx';
 import { TableHeaderLabel } from '../components/ui/InfoTip.jsx';
 import { CAMPAIGN_AUTOMATION } from '../constants/automationHints.js';
 import {
@@ -40,6 +48,7 @@ export default function ProjectsPage() {
   const [loading, setLoading] = useState(true);
   const [showWizard, setShowWizard] = useState(false);
   const [savingStageId, setSavingStageId] = useState(null);
+  const [bulkDeleting, setBulkDeleting] = useState(false);
 
   const {
     filtered: visibleCampaigns,
@@ -47,6 +56,68 @@ export default function ProjectsPage() {
     setFilters: setAdvancedFilters,
     matchMode: advancedMatchMode,
   } = useTableFilters(campaigns, CAMPAIGN_FILTER_SCHEMA);
+
+  const { sortKey, sortDir, sortLabel, toggleSort, clearSort, sortItems } = useTableSort({
+    defaultKey: 'projectName',
+    defaultDir: 'asc',
+    accessors: campaignSortAccessors,
+  });
+
+  const sortedCampaigns = useMemo(
+    () => sortItems(visibleCampaigns),
+    [visibleCampaigns, sortItems],
+  );
+
+  const selection = useRowSelection(sortedCampaigns);
+
+  const confirmDeleteCampaign = useConfirmDelete({
+    resourceType: 'project',
+    deleteFn: deleteProjectWithUndo,
+    onRemoved: (id) => {
+      setCampaigns((prev) => prev.filter((c) => c._id !== id));
+      selection.clearSelection();
+    },
+    onRestored: () => {
+      crmApiFetch('/api/admin/projects').then(setCampaigns).catch(console.error);
+    },
+    defaultConfirm: 'Delete this campaign? Related data is kept and you can undo within 30 seconds.',
+  });
+
+  const runBulkDeleteCampaigns = useBulkDelete({
+    resourceType: 'project',
+    bulkDeleteFn: deleteProjects,
+    getLabelForId: (id) => {
+      const campaign = campaigns.find((c) => c._id === id);
+      return `Deleted campaign: ${campaign?.projectName || 'Campaign'}`;
+    },
+    defaultConfirm: 'Delete these campaigns? Related data is kept and you can undo each within 30 seconds.',
+    onRemoved: (ids) => {
+      setCampaigns((prev) => prev.filter((c) => !ids.includes(c._id)));
+      selection.clearSelection();
+    },
+    onRestored: () => {
+      crmApiFetch('/api/admin/projects').then(setCampaigns).catch(console.error);
+    },
+  });
+
+  async function deleteCampaignItem(campaign) {
+    const linkedCompanies = Number(campaign.targetCompaniesCount || 0);
+    const linkedPocs = Number(campaign.pocsFound || 0);
+    await confirmDeleteCampaign(
+      campaign._id,
+      `Deleted campaign: ${campaign.projectName || 'Campaign'}`,
+      `Delete this campaign? It currently tracks ${linkedCompanies} target compan${linkedCompanies === 1 ? 'y' : 'ies'} and ${linkedPocs} POC${linkedPocs === 1 ? '' : 's'}. Related CRM records stay recoverable and you can undo within 30 seconds.`,
+    );
+  }
+
+  async function handleBulkDelete() {
+    setBulkDeleting(true);
+    try {
+      await runBulkDeleteCampaigns(selection.selectedArray, { noun: 'campaign' });
+    } finally {
+      setBulkDeleting(false);
+    }
+  }
 
   useEffect(() => {
     crmApiFetch('/api/admin/projects')
@@ -144,27 +215,48 @@ export default function ProjectsPage() {
                   description="Try adjusting your search or advanced filters."
                 />
               ) : (
+            <>
+              <TableSortIndicator
+                sortKey={sortKey}
+                sortDir={sortDir}
+                sortLabel={sortLabel}
+                onToggle={() => toggleSort(sortKey)}
+                onClear={clearSort}
+              />
+              <BulkSelectionBar
+                count={selection.selectionCount}
+                noun="campaign"
+                onDelete={handleBulkDelete}
+                onClear={selection.clearSelection}
+                deleting={bulkDeleting}
+              />
             <DataTableShell minWidth={1100}>
               <table className="crm-table">
                 <thead>
                   <tr className="crm-table-head">
-                    <th>Campaign</th>
-                    <th className="crm-table-stage-col"><TableHeaderLabel label="Stage" hint={CAMPAIGN_AUTOMATION.stage} /></th>
-                    <th className="text-right"><TableHeaderLabel label="Companies found" hint={CAMPAIGN_AUTOMATION.companiesFound} align="right" /></th>
-                    <th className="text-right"><TableHeaderLabel label="Companies reached" hint={CAMPAIGN_AUTOMATION.companiesReached} align="right" /></th>
-                    <th className="text-right"><TableHeaderLabel label="POCs found" hint={CAMPAIGN_AUTOMATION.pocsFound} align="right" /></th>
-                    <th className="text-right"><TableHeaderLabel label="POCs emailed" hint={CAMPAIGN_AUTOMATION.pocsEmailed} align="right" /></th>
-                    <th className="text-right"><TableHeaderLabel label="POCs responded" hint={CAMPAIGN_AUTOMATION.pocsResponded} align="right" /></th>
-                    <th className="text-right"><TableHeaderLabel label="In queue" hint={CAMPAIGN_AUTOMATION.inQueue} align="right" /></th>
+                    <BulkSelectHeaderCell selection={selection} ariaLabel="Select all campaigns" />
+                    <SortableTableHeader label="Campaign" sortKey="projectName" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                    <SortableTableHeader label="Stage" sortKey="status" activeKey={sortKey} direction={sortDir} onSort={toggleSort} hint={CAMPAIGN_AUTOMATION.stage} className="crm-table-stage-col" />
+                    <SortableTableHeader label="Companies found" sortKey="targetCompaniesCount" activeKey={sortKey} direction={sortDir} onSort={toggleSort} hint={CAMPAIGN_AUTOMATION.companiesFound} align="right" />
+                    <SortableTableHeader label="Companies reached" sortKey="companiesReached" activeKey={sortKey} direction={sortDir} onSort={toggleSort} hint={CAMPAIGN_AUTOMATION.companiesReached} align="right" />
+                    <SortableTableHeader label="POCs found" sortKey="pocsFound" activeKey={sortKey} direction={sortDir} onSort={toggleSort} hint={CAMPAIGN_AUTOMATION.pocsFound} align="right" />
+                    <SortableTableHeader label="POCs emailed" sortKey="pocsEmailed" activeKey={sortKey} direction={sortDir} onSort={toggleSort} hint={CAMPAIGN_AUTOMATION.pocsEmailed} align="right" />
+                    <SortableTableHeader label="POCs responded" sortKey="pocsResponded" activeKey={sortKey} direction={sortDir} onSort={toggleSort} hint={CAMPAIGN_AUTOMATION.pocsResponded} align="right" />
+                    <SortableTableHeader label="In queue" sortKey="activeQueues" activeKey={sortKey} direction={sortDir} onSort={toggleSort} hint={CAMPAIGN_AUTOMATION.inQueue} align="right" />
                     <th className="text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {visibleCampaigns.map((campaign) => (
+                  {sortedCampaigns.map((campaign) => (
                     <ClickableTableRow
                       key={campaign._id}
                       onClick={() => navigate(`/admin/crm/projects/${campaign._id}`)}
                     >
+                      <BulkSelectRowCell
+                        id={campaign._id}
+                        selection={selection}
+                        ariaLabel={`Select ${campaign.projectName}`}
+                      />
                       <td>
                         <p className="font-semibold text-[var(--color-ink)]">{campaign.projectName}</p>
                         {campaign.milestone ? (
@@ -198,12 +290,18 @@ export default function ProjectsPage() {
                       <td className="text-right tabular-nums text-neutral-500">
                         {formatCount(campaign.activeQueues)}
                       </td>
-                      <td className="text-center text-xs font-bold text-brand">Open</td>
+                      <td className="text-center" onClick={stopRowClick}>
+                        <DeleteIconButton
+                          label={`Delete ${campaign.projectName}`}
+                          onClick={() => deleteCampaignItem(campaign)}
+                        />
+                      </td>
                     </ClickableTableRow>
                   ))}
                 </tbody>
               </table>
             </DataTableShell>
+            </>
               )}
             </>
           )}

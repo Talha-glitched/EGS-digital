@@ -250,9 +250,9 @@ function GlobalInspector({
   const importedLists = buildImportedListLabels(audience, campaignLabels);
 
   function importCampaignList() {
-    const id = importPickerId || campaignId;
+    const id = String(importPickerId || campaignId || '');
     if (!id) return;
-    const ids = audience.importedCampaignIds || [];
+    const ids = (audience.importedCampaignIds || []).map(String);
     if (ids.includes(id)) return;
     const nextIds = [...ids, id];
     patchAudience({ importedCampaignIds: nextIds });
@@ -263,7 +263,9 @@ function GlobalInspector({
 
   function removeImportedList(id) {
     patchAudience({
-      importedCampaignIds: (audience.importedCampaignIds || []).filter((item) => item !== id),
+      importedCampaignIds: (audience.importedCampaignIds || [])
+        .map(String)
+        .filter((item) => item !== String(id)),
     });
   }
 

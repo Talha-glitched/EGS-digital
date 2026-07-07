@@ -112,7 +112,7 @@ export default function Sidebar({ activeProject, onLogout, mobileOpen = false, o
         )}
       </div>
 
-      <nav className="crm-scroll flex-1 space-y-0.5 overflow-y-auto px-2 py-2">
+      <nav className="crm-scroll min-h-0 flex-1 space-y-0.5 overflow-y-auto px-2 py-2">
         {navGroups.map((group, groupIndex) => (
           <div key={group.heading || 'dashboard'} className={groupIndex > 0 ? (collapsed ? 'pt-2' : '') : ''}>
             {group.heading && !collapsed && (

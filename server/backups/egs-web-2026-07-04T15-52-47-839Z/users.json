@@ -1,0 +1,56 @@
+[
+  {
+    "_id": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "email": "admin",
+    "passwordHash": "$2b$12$uQ/sEmqXKSjZbyrhY7N5T.rmQyvVkANax7FHUO4ujbd4H/iUQccQm",
+    "displayName": "admin",
+    "role": "super_admin",
+    "isActive": true,
+    "mustChangePassword": false,
+    "lastLoginAt": {
+      "$date": {
+        "$numberLong": "1783179493900"
+      }
+    },
+    "lastLoginIp": "::1",
+    "createdBy": null,
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782492147342"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1783179493901"
+      }
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a3eb8011bc903dbc7ad6f92"
+    },
+    "email": "uzairmasuood@gmail.com",
+    "passwordHash": "$2b$12$GJ8bZuJR0tqbdl4ogRXiNON1C3Pc0ka9aIPm2cXBnBBBd3AzXFzme",
+    "displayName": "Uzair Masuood",
+    "role": "sales_rep",
+    "isActive": true,
+    "mustChangePassword": false,
+    "lastLoginAt": null,
+    "lastLoginIp": null,
+    "createdBy": {
+      "$oid": "6a3eabf391e0acf46d1476c5"
+    },
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1782495233105"
+      }
+    },
+    "updatedAt": {
+      "$date": {
+        "$numberLong": "1782495233105"
+      }
+    }
+  }
+]

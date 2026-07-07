@@ -5,7 +5,8 @@ import { cn } from './primitives.jsx';
 import { registerNestedOverlay } from './nestedOverlayGuard.js';
 
 function summarizeSelection(options, values = []) {
-  const selected = options.filter((opt) => values.includes(opt.value));
+  const normalized = values.map(String);
+  const selected = options.filter((opt) => normalized.includes(String(opt.value)));
   if (!selected.length) return null;
   if (selected.length === 1) return selected[0].label;
   return `${selected.length} selected`;
@@ -32,7 +33,7 @@ export default function SearchableMultiSelect({
   const listId = useId();
   const overlayId = useId();
 
-  const selectedSet = useMemo(() => new Set(values || []), [values]);
+  const selectedSet = useMemo(() => new Set((values || []).map(String)), [values]);
 
   const filtered = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -42,7 +43,7 @@ export default function SearchableMultiSelect({
     );
   }, [options, query]);
 
-  const summary = summarizeSelection(options, values);
+  const summary = summarizeSelection(options, (values || []).map(String));
 
   const updateMenuPosition = () => {
     const el = rootRef.current;
@@ -111,9 +112,10 @@ export default function SearchableMultiSelect({
   }, [open]);
 
   function toggleOption(optionValue) {
+    const key = String(optionValue);
     const next = new Set(selectedSet);
-    if (next.has(optionValue)) next.delete(optionValue);
-    else next.add(optionValue);
+    if (next.has(key)) next.delete(key);
+    else next.add(key);
     onChange?.([...next]);
   }
 
@@ -167,15 +169,16 @@ export default function SearchableMultiSelect({
 
           <div className="crm-searchable-select-options crm-scroll">
             {filtered.length ? filtered.map((option) => {
-              const active = selectedSet.has(option.value);
+              const optionValue = String(option.value);
+              const active = selectedSet.has(optionValue);
               return (
                 <button
-                  key={option.value}
+                  key={optionValue}
                   type="button"
                   role="option"
                   aria-selected={active}
                   className={cn('crm-searchable-select-option', active && 'is-active')}
-                  onClick={() => toggleOption(option.value)}
+                  onClick={() => toggleOption(optionValue)}
                 >
                   <span
                     className={cn('crm-multi-check', active && 'is-checked')}

@@ -8,6 +8,7 @@ const taskSchema = new mongoose.Schema(
     priority: { type: String, enum: ['Low', 'Normal', 'High'], default: 'Normal', index: true },
     owner: { type: String, default: 'admin', trim: true, index: true },
     ownerUserId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+    campaignId: { type: mongoose.Schema.Types.ObjectId, ref: 'ProjectCampaign', default: null, index: true },
     companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', default: null },
     leadId: { type: mongoose.Schema.Types.ObjectId, ref: 'Lead', default: null },
     opportunityId: { type: mongoose.Schema.Types.ObjectId, ref: 'Opportunity', default: null },
@@ -16,6 +17,7 @@ const taskSchema = new mongoose.Schema(
     version: { type: Number, default: 0 },
     deletedAt: { type: Date, default: null, index: true },
     deletedBy: { type: String, default: null, trim: true },
+    deletedViaOpportunityId: { type: mongoose.Schema.Types.ObjectId, ref: 'Opportunity', default: null, index: true },
   },
   { timestamps: true, versionKey: false }
 );

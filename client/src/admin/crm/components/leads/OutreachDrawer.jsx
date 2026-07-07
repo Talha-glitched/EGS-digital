@@ -1,17 +1,23 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Save, ExternalLink, AlertCircle, Mail, BriefcaseBusiness, Building2, Trash2 } from 'lucide-react';
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
+import { ExternalLink, AlertCircle, Mail, BriefcaseBusiness, Building2, Trash2 } from 'lucide-react';
 import Drawer from '../ui/Drawer.jsx';
 import { Alert } from '../ui/primitives.jsx';
-import { updateLead, addLeadToCompany, crmApiFetch } from '../../crmApi.js';
+import { updateLead, addLeadToCompany, crmApiFetch, normalizeId } from '../../crmApi.js';
 import SearchableSelect from '../ui/SearchableSelect.jsx';
 import DrawerCollapsible from './DrawerCollapsible.jsx';
 import DrawerTabs from './DrawerTabs.jsx';
 import InteractionTimeline from './InteractionTimeline.jsx';
 import PocQualificationEditor from './PocQualificationEditor.jsx';
 import PocQualificationBadge from './PocQualificationBadge.jsx';
+import SensitiveDataField from '../ui/SensitiveDataField.jsx';
+import SensitiveDataDisplay from '../ui/SensitiveDataDisplay.jsx';
 import { DeliveryStatusBadge } from './LeadTableComponents.jsx';
 import { needsReferralDetails } from '../../constants/pocQualification.js';
 import { RELATIONSHIP_STATUS_OPTIONS, SERVICE_CATEGORY_OPTIONS, getRelationshipOption } from '../../constants/relationshipProfile.js';
+import { useLockSensitiveDataOnClose } from '../../hooks/useLockSensitiveDataOnClose.js';
+import { useDebouncedAutoSave } from '../../hooks/useDebouncedAutoSave.js';
+import AutoSaveIndicator from '../ui/AutoSaveIndicator.jsx';
+import AutoSaveCloseNotice from '../ui/AutoSaveCloseNotice.jsx';
 
 function populateFromLead(lead) {
   return {
@@ -39,9 +45,12 @@ function populateFromLead(lead) {
     formCcNotes: lead.coldCall?.notes || '',
     formWaSent: lead.whatsapp?.sent || false,
     formWaResponse: lead.whatsapp?.response || '',
+    formOutreachEmail: lead.outreachEmail || '',
+    formOutreachEmailSource: lead.outreachEmailSource || '',
     pocQualification: {
       status: lead.pocQualification?.status || 'Unverified',
       notes: lead.pocQualification?.notes || '',
+      referredLeadId: lead.pocQualification?.referredLeadId || null,
       referral: {
         name: lead.pocQualification?.referral?.name || '',
         email: lead.pocQualification?.referral?.email || '',
@@ -74,6 +83,21 @@ function contactInitials(name = '') {
   return (parts[0][0] + (parts[1]?.[0] || '')).toUpperCase();
 }
 
+function collectOutreachEmailOptions(form) {
+  const options = [];
+  const add = (source, email) => {
+    const trimmed = String(email || '').trim().toLowerCase();
+    if (!trimmed) return;
+    if (options.some((row) => row.email === trimmed)) return;
+    options.push({ source, email: trimmed });
+  };
+  add('Apollo', form.formEmailApollo);
+  add('Hunter', form.formEmailHunter);
+  add('Lusha', form.formEmailLusha);
+  add('Manual', form.formEmail);
+  return options;
+}
+
 const TABS = [
   { id: 'profile', label: 'Profile' },
   { id: 'relationship', label: 'Relationship' },
@@ -81,11 +105,18 @@ const TABS = [
 ];
 
 export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete, stackLevel = 0, initialTab = 'profile' }) {
+  const isOpen = Boolean(lead);
+  const { closeAndLock } = useLockSensitiveDataOnClose(isOpen);
+  const handleClose = useCallback(() => closeAndLock(onClose), [closeAndLock, onClose]);
+
   const [tab, setTab] = useState(initialTab);
-  const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState('');
+  const [detectingOutreach, setDetectingOutreach] = useState(false);
   const [campaigns, setCampaigns] = useState([]);
   const [form, setForm] = useState(() => (lead ? populateFromLead(lead) : {}));
+  const leadRef = useRef(lead);
+
+  leadRef.current = lead;
 
   useEffect(() => {
     crmApiFetch('/api/admin/projects')
@@ -100,6 +131,27 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
     })),
     [campaigns],
   );
+
+  const outreachEmailOptions = useMemo(() => collectOutreachEmailOptions(form), [form]);
+
+  async function handleAutoDetectOutreach() {
+    if (!lead?._id) return;
+    setDetectingOutreach(true);
+    setError('');
+    try {
+      const updated = await updateLead(lead._id, { autoDetectOutreach: true });
+      setForm((prev) => ({
+        ...prev,
+        formOutreachEmail: updated.outreachEmail || '',
+        formOutreachEmailSource: updated.outreachEmailSource || '',
+      }));
+      onLeadUpdated?.(updated);
+    } catch (err) {
+      setError(err.message || 'Could not detect outreach email.');
+    } finally {
+      setDetectingOutreach(false);
+    }
+  }
 
   useEffect(() => {
     if (lead) {
@@ -118,136 +170,132 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
     set('relationshipProfile', { ...form.relationshipProfile, serviceCategories: next });
   };
 
-  async function save(e) {
-    e.preventDefault();
-    if (!lead) return;
-    setIsUpdating(true);
+  const buildPatch = useCallback((currentForm) => ({
+    name: currentForm.formName.trim(),
+    designation: currentForm.formDesignation.trim(),
+    linkedinUrl: currentForm.formLinkedinUrl.trim(),
+    email: currentForm.formEmail.trim(),
+    emailApollo: currentForm.formEmailApollo.trim(),
+    emailHunter: currentForm.formEmailHunter.trim(),
+    emailLusha: currentForm.formEmailLusha.trim(),
+    phone: currentForm.formPhone.trim(),
+    phoneLusha1: currentForm.formPhoneLusha1.trim(),
+    phoneLusha2: currentForm.formPhoneLusha2.trim(),
+    whatsappNumber: currentForm.formWhatsappNumber.trim(),
+    outcome: currentForm.formOutcome,
+    campaignId: currentForm.formCampaignId || null,
+    deliveryStatus: currentForm.formDeliveryStatus,
+    linkedinOutreach: {
+      connSent: currentForm.formLiConnSent,
+      accepted: currentForm.formLiAccepted,
+      inmailSent: currentForm.formLiInmailSent,
+      dmSent: currentForm.formLiDmSent,
+      notes: currentForm.formLiNotes.trim(),
+    },
+    coldCall: {
+      made: currentForm.formCcMade,
+      response: currentForm.formCcResponse,
+      notes: currentForm.formCcNotes.trim(),
+    },
+    whatsapp: {
+      sent: currentForm.formWaSent,
+      response: currentForm.formWaResponse,
+    },
+    outreachEmail: currentForm.formOutreachEmail.trim(),
+    outreachEmailSource: currentForm.formOutreachEmailSource,
+    pocQualification: currentForm.pocQualification,
+    relationshipProfile: {
+      ...currentForm.relationshipProfile,
+      owner: currentForm.relationshipProfile?.owner?.trim() || '',
+      reminderNotes: currentForm.relationshipProfile?.reminderNotes?.trim() || '',
+      serviceCategories: (currentForm.relationshipProfile?.serviceCategories || []).filter(Boolean),
+      nextFollowUpAt: currentForm.relationshipProfile?.nextFollowUpAt
+        ? new Date(currentForm.relationshipProfile.nextFollowUpAt).toISOString()
+        : null,
+    },
+  }), []);
+
+  const persistContact = useCallback(async (currentForm) => {
+    const activeLead = leadRef.current;
+    if (!activeLead) return;
+
     setError('');
-    const patch = {
-      name: form.formName.trim(),
-      designation: form.formDesignation.trim(),
-      linkedinUrl: form.formLinkedinUrl.trim(),
-      email: form.formEmail.trim(),
-      emailApollo: form.formEmailApollo.trim(),
-      emailHunter: form.formEmailHunter.trim(),
-      emailLusha: form.formEmailLusha.trim(),
-      phone: form.formPhone.trim(),
-      phoneLusha1: form.formPhoneLusha1.trim(),
-      phoneLusha2: form.formPhoneLusha2.trim(),
-      whatsappNumber: form.formWhatsappNumber.trim(),
-      outcome: form.formOutcome,
-      campaignId: form.formCampaignId || null,
-      deliveryStatus: form.formDeliveryStatus,
-      linkedinOutreach: {
-        connSent: form.formLiConnSent,
-        accepted: form.formLiAccepted,
-        inmailSent: form.formLiInmailSent,
-        dmSent: form.formLiDmSent,
-        notes: form.formLiNotes.trim(),
-      },
-      coldCall: {
-        made: form.formCcMade,
-        response: form.formCcResponse,
-        notes: form.formCcNotes.trim(),
-      },
-      whatsapp: {
-        sent: form.formWaSent,
-        response: form.formWaResponse,
-      },
-      pocQualification: form.pocQualification,
-      relationshipProfile: {
-        ...form.relationshipProfile,
-        owner: form.relationshipProfile?.owner?.trim() || '',
-        reminderNotes: form.relationshipProfile?.reminderNotes?.trim() || '',
-        serviceCategories: (form.relationshipProfile?.serviceCategories || []).filter(Boolean),
-        nextFollowUpAt: form.relationshipProfile?.nextFollowUpAt
-          ? new Date(form.relationshipProfile.nextFollowUpAt).toISOString()
-          : null,
-      },
-    };
-    try {
-      const poc = form.pocQualification || {};
-      const referral = poc.referral || {};
-      if (needsReferralDetails(poc.status) && referral.email?.trim()) {
-        const companyId = lead.companyId?._id || lead.companyId;
-        const campaignId = lead.campaignId?._id || lead.campaignId;
-        if (companyId && campaignId) {
-          try {
-            const referred = await addLeadToCompany(companyId, {
-              campaignId,
-              email: referral.email.trim(),
-              name: referral.name?.trim() || '',
-              designation: referral.designation?.trim() || '',
-              phone: referral.phone?.trim() || '',
-              linkedinUrl: referral.linkedinUrl?.trim() || '',
-            });
-            patch.pocQualification = {
-              ...patch.pocQualification,
-              referredLeadId: referred._id,
-            };
-          } catch (referralErr) {
-            if (!String(referralErr.message || '').includes('already enrolled')) {
-              throw referralErr;
-            }
+    const patch = buildPatch(currentForm);
+    const poc = currentForm.pocQualification || {};
+    const referral = poc.referral || {};
+
+    if (needsReferralDetails(poc.status) && referral.email?.trim() && !poc.referredLeadId) {
+      const companyId = activeLead.companyId?._id || activeLead.companyId;
+      const campaignId = activeLead.campaignId?._id || activeLead.campaignId;
+      if (companyId && campaignId) {
+        try {
+          const referred = await addLeadToCompany(companyId, {
+            campaignId,
+            email: referral.email.trim(),
+            name: referral.name?.trim() || '',
+            designation: referral.designation?.trim() || '',
+            phone: referral.phone?.trim() || '',
+            linkedinUrl: referral.linkedinUrl?.trim() || '',
+          });
+          patch.pocQualification = {
+            ...patch.pocQualification,
+            referredLeadId: referred._id,
+          };
+        } catch (referralErr) {
+          if (!String(referralErr.message || '').includes('already enrolled')) {
+            throw referralErr;
           }
         }
       }
-      const updated = await updateLead(lead._id, patch);
+    }
+
+    try {
+      const updated = await updateLead(activeLead._id, patch);
       onLeadUpdated?.(updated);
-      onClose?.();
     } catch (err) {
       setError(err.message || 'Failed to update lead');
-    } finally {
-      setIsUpdating(false);
+      throw err;
     }
-  }
+  }, [buildPatch, onLeadUpdated]);
+
+  const { status: saveStatus, requestClose, closingNotice } = useDebouncedAutoSave({
+    snapshot: form,
+    onSave: persistContact,
+    enabled: Boolean(lead) && tab !== 'timeline',
+    resetKey: lead?._id,
+  });
+
+  const guardedClose = useCallback(
+    () => requestClose(handleClose),
+    [requestClose, handleClose],
+  );
 
   return (
+    <>
     <Drawer
       open={Boolean(lead)}
-      onClose={onClose}
+      onClose={guardedClose}
       title={lead?.name || 'Contact profile'}
       subtitle={lead ? `${lead.companyName || 'Unknown company'} · ${lead.campaignName || 'No campaign'}` : ''}
       size="2xl"
       stackLevel={stackLevel}
       footer={
-        tab !== 'timeline' ? (
-          <div className="flex gap-3">
-            {onDelete && lead ? (
-              <button
-                type="button"
-                onClick={() => onDelete(lead)}
-                className="crm-btn-ghost shrink-0 text-rose-600 hover:bg-rose-50"
-              >
-                <Trash2 className="h-4 w-4" />
-                Delete
-              </button>
-            ) : null}
-            <button type="submit" form="outreach-drawer-form" disabled={isUpdating} className="crm-btn-primary flex flex-1 items-center justify-center gap-1.5">
-              <Save className="h-4 w-4" />
-              {isUpdating ? 'Saving…' : 'Save contact'}
+        <div className="flex items-center gap-3">
+          {onDelete && lead ? (
+            <button
+              type="button"
+              onClick={() => onDelete(lead)}
+              className="crm-btn-ghost shrink-0 text-rose-600 hover:bg-rose-50"
+            >
+              <Trash2 className="h-4 w-4" />
+              Delete
             </button>
-            <button type="button" onClick={onClose} className="crm-btn-secondary">
-              Cancel
-            </button>
-          </div>
-        ) : (
-          <div className="flex gap-3">
-            {onDelete && lead ? (
-              <button
-                type="button"
-                onClick={() => onDelete(lead)}
-                className="crm-btn-ghost shrink-0 text-rose-600 hover:bg-rose-50"
-              >
-                <Trash2 className="h-4 w-4" />
-                Delete
-              </button>
-            ) : null}
-            <button type="button" onClick={onClose} className="crm-btn-secondary flex-1">
-              Close
-            </button>
-          </div>
-        )
+          ) : null}
+          {tab !== 'timeline' ? <AutoSaveIndicator status={saveStatus} className="flex-1" /> : <span className="flex-1" />}
+          <button type="button" onClick={guardedClose} className="crm-btn-secondary shrink-0">
+            Close
+          </button>
+        </div>
       }
     >
       {error && (
@@ -280,7 +328,7 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
                 {lead.email && (
                   <span className="crm-profile-chip">
                     <Mail className="h-3 w-3" />
-                    {lead.email}
+                    <SensitiveDataDisplay value={lead.email} kind="email" />
                   </span>
                 )}
                 {lead.campaignName && (
@@ -325,9 +373,9 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
 
       <div key={tab} className="crm-drawer-tab-panel">
       {tab === 'timeline' ? (
-        <InteractionTimeline leadId={lead?._id} />
+        <InteractionTimeline leadId={lead?._id} companyId={normalizeId(lead?.companyId)} />
       ) : tab === 'relationship' ? (
-        <form id="outreach-drawer-form" onSubmit={save} className="space-y-0">
+        <div className="space-y-0">
           <DrawerCollapsible title="Relationship state" subtitle="Manage relevant POCs even when the timing is later" defaultOpen>
             <div className="space-y-4 pt-4">
               <p className="text-xs leading-relaxed text-neutral-500">
@@ -425,9 +473,9 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
               </label>
             </div>
           </DrawerCollapsible>
-        </form>
+        </div>
       ) : (
-        <form id="outreach-drawer-form" onSubmit={save} className="space-y-0">
+        <div className="space-y-0">
           <DrawerCollapsible title="POC verification" subtitle="Is this the right person to speak with?" defaultOpen>
             <div className="pt-4">
               <PocQualificationEditor
@@ -463,22 +511,89 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
             </div>
           </DrawerCollapsible>
 
-          <DrawerCollapsible title="Contact channels" subtitle="Emails, phones, WhatsApp">
+          <DrawerCollapsible title="Contact channels" subtitle="Vendor emails and confirmed outreach address">
             <div className="space-y-4 pt-4">
-              <Field label="Primary outreach email" type="email" value={form.formEmail} onChange={(v) => set('formEmail', v)} />
+              <div className="rounded-lg border border-emerald-100 bg-emerald-50/60 px-3 py-2.5">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-emerald-800">Confirmed outreach email</div>
+                  <button
+                    type="button"
+                    className="crm-btn-secondary !py-1 text-[11px]"
+                    onClick={handleAutoDetectOutreach}
+                    disabled={detectingOutreach}
+                  >
+                    {detectingOutreach ? 'Detecting…' : 'Auto-detect'}
+                  </button>
+                </div>
+                <p className="mt-1 text-[11px] leading-relaxed text-emerald-800/80">
+                  Set manually below, or auto-detect from the last sequence send / sole vendor email / inbox reply.
+                </p>
+                <label className="mt-3 block space-y-1.5">
+                  <span className="text-xs font-medium text-emerald-900">Working email</span>
+                  <select
+                    className="crm-select text-sm"
+                    value={form.formOutreachEmail || ''}
+                    onChange={(e) => {
+                      const email = e.target.value;
+                      const match = outreachEmailOptions.find((row) => row.email === email);
+                      setForm((prev) => ({
+                        ...prev,
+                        formOutreachEmail: email,
+                        formOutreachEmailSource: match?.source || (email ? 'Manual' : ''),
+                      }));
+                    }}
+                  >
+                    <option value="">Not confirmed yet</option>
+                    {outreachEmailOptions.map((row) => (
+                      <option key={`${row.source}-${row.email}`} value={row.email}>
+                        {row.source}: {row.email}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                {form.formOutreachEmail ? (
+                  <div className="mt-2 font-mono text-sm text-emerald-900">
+                    <SensitiveDataDisplay value={form.formOutreachEmail} kind="email" />
+                  </div>
+                ) : null}
+                {form.formOutreachEmailSource ? (
+                  <div className="mt-1 text-xs text-emerald-700">Source: {form.formOutreachEmailSource}</div>
+                ) : null}
+              </div>
+              <SensitiveDataField
+                label="Internal record email (dedup key)"
+                type="email"
+                kind="email"
+                value={form.formEmail}
+                onChange={(v) => set('formEmail', v)}
+              />
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {[
-                  ['formEmailApollo', 'Apollo email'],
-                  ['formEmailHunter', 'Hunter email'],
-                  ['formEmailLusha', 'Lusha email'],
-                  ['formPhoneLusha1', 'Lusha phone 1'],
-                  ['formPhoneLusha2', 'Lusha phone 2'],
-                  ['formPhone', 'Outreach phone'],
-                ].map(([key, label]) => (
-                  <Field key={key} label={label} value={form[key]} onChange={(v) => set(key, v)} />
+                  ['formEmailApollo', 'Apollo email', 'email', 'email'],
+                  ['formEmailHunter', 'Hunter email', 'email', 'email'],
+                  ['formEmailLusha', 'Lusha email', 'email', 'email'],
+                  ['formPhoneLusha1', 'Lusha phone 1', 'tel', 'phone'],
+                  ['formPhoneLusha2', 'Lusha phone 2', 'tel', 'phone'],
+                  ['formPhone', 'Outreach phone', 'tel', 'phone'],
+                ].map(([key, label, type, kind]) => (
+                  <SensitiveDataField
+                    key={key}
+                    label={label}
+                    type={type}
+                    kind={kind}
+                    value={form[key]}
+                    onChange={(v) => set(key, v)}
+                  />
                 ))}
               </div>
-              <Field label="WhatsApp number" value={form.formWhatsappNumber} onChange={(v) => set('formWhatsappNumber', v)} placeholder="e.g. 971501234567" />
+              <SensitiveDataField
+                label="WhatsApp number"
+                type="tel"
+                kind="phone"
+                value={form.formWhatsappNumber}
+                onChange={(v) => set('formWhatsappNumber', v)}
+                placeholder="e.g. 971501234567"
+              />
             </div>
           </DrawerCollapsible>
 
@@ -572,10 +687,12 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
               </div>
             </div>
           </DrawerCollapsible>
-        </form>
+        </div>
       )}
       </div>
     </Drawer>
+    <AutoSaveCloseNotice open={closingNotice} />
+    </>
   );
 }
 
