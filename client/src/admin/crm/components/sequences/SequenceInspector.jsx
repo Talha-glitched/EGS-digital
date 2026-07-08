@@ -24,6 +24,7 @@ import { buildAudienceSummary, buildImportedListLabels } from './audienceBuilder
 import { DELAY_PRESETS, DELAY_UNIT_OPTIONS, formatDelayLabel } from '../../utils/sequenceDelay.js';
 import { Alert } from '../ui/primitives.jsx';
 import { cn } from '../ui/primitives.jsx';
+import { SequenceDeliveryAlert } from '../sent/SendDeliveryIssuesWorkspace.jsx';
 
 const CONDITION_TYPES = [
   { value: 'replied', label: 'If replied' },
@@ -92,6 +93,7 @@ export default function SequenceInspector({
   isActive,
   contentKey,
   autosaveStatus = 'idle',
+  deliverySummary,
 }) {
   const isGlobal = !selectedNode;
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -164,6 +166,7 @@ export default function SequenceInspector({
               onFromEmailChange={onFromEmailChange}
               mailboxUsage={mailboxUsage}
               mailStatus={mailStatus}
+              deliverySummary={deliverySummary}
             />
           ) : (
             <NodeInspector
@@ -234,6 +237,7 @@ function GlobalInspector({
   onFromEmailChange,
   mailboxUsage,
   mailStatus,
+  deliverySummary,
 }) {
   const [importPickerId, setImportPickerId] = useState(campaignId || '');
   const maxEnroll = audiencePreview?.netNew || 0;
@@ -271,6 +275,12 @@ function GlobalInspector({
 
   return (
     <div className="crm-seq-inspector-sections">
+      {deliverySummary ? (
+        <InspectorSection title="Delivery status">
+          <SequenceDeliveryAlert summary={deliverySummary} compact />
+        </InspectorSection>
+      ) : null}
+
       <InspectorSection title="Basics">
         <CompactField label="Name">
           <input

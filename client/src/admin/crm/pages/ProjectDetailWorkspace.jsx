@@ -103,6 +103,9 @@ export default function ProjectDetailWorkspace() {
     }
   }
 
+  const openTasks = useMemo(() => tasks.filter((task) => task.status !== 'Done'), [tasks]);
+  const ownerOptions = useMemo(() => buildOwnerOptions(tasks, opportunities.map((item) => item.owner)), [tasks, opportunities]);
+
   if (!project) {
     return (
       <PageShell compact>
@@ -117,8 +120,6 @@ export default function ProjectDetailWorkspace() {
   const pocsEmailed = leads.filter((lead) => EMAILED_STATUSES.includes(lead.deliveryStatus)).length;
   const pocsResponded = leads.filter((lead) => lead.hasResponded).length;
   const pocReplyPct = pocsEmailed ? (pocsResponded / pocsEmailed) * 100 : 0;
-  const openTasks = useMemo(() => tasks.filter((task) => task.status !== 'Done'), [tasks]);
-  const ownerOptions = useMemo(() => buildOwnerOptions(tasks, opportunities.map((item) => item.owner)), [tasks, opportunities]);
 
   return (
     <PageShell compact>

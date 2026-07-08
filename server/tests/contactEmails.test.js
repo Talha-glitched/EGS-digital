@@ -32,6 +32,16 @@ assert.equal(lead.outreachEmailSource, 'Hunter');
 assert.equal(getOutreachEmail(lead), 'hunter@company.com');
 assert.equal(getSendTargetEmail(lead, { vendor: 'Apollo' }), 'hunter@company.com');
 
+const manualLead = {
+  email: 'manual@company.com',
+  emailApollo: '',
+  emailHunter: '',
+  emailLusha: '',
+  outreachEmail: '',
+  primarySource: 'Manual',
+};
+assert.equal(getSendTargetEmail(manualLead), 'manual@company.com');
+
 const staleLead = {
   email: 'joy@company.com',
   emailApollo: '',

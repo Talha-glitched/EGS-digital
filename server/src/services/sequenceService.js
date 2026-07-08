@@ -15,6 +15,7 @@ import {
   restoreRecord,
   registerRevisionModel,
 } from './revisionService.js';
+import { formatDeliveryIssueRow } from '../utils/sendDeliveryErrors.js';
 
 function normalizeObjectIdList(values = []) {
   return [...new Set(
@@ -143,7 +144,7 @@ async function buildEnrollmentStats(sequenceIds = []) {
     },
   ]);
 
-  const pendingJobs = await SendJob.aggregate([
+  const jobStats = await SendJob.aggregate([
     {
       $lookup: {
         from: 'sequenceenrollments',
@@ -153,8 +154,18 @@ async function buildEnrollmentStats(sequenceIds = []) {
       },
     },
     { $unwind: '$enrollment' },
-    { $match: { 'enrollment.sequenceId': { $in: ids }, status: 'pending' } },
-    { $group: { _id: '$enrollment.sequenceId', queued: { $sum: 1 } } },
+    {
+      $match: {
+        'enrollment.sequenceId': { $in: ids },
+        status: { $in: ['pending', 'processing', 'failed', 'cancelled'] },
+      },
+    },
+    {
+      $group: {
+        _id: { sequenceId: '$enrollment.sequenceId', status: '$status' },
+        count: { $sum: 1 },
+      },
+    },
   ]);
 
   const map = new Map();
@@ -164,12 +175,20 @@ async function buildEnrollmentStats(sequenceIds = []) {
       active: row.active,
       completed: row.completed,
       queued: 0,
+      failed: 0,
+      cancelled: 0,
     });
   }
-  for (const row of pendingJobs) {
-    const key = String(row._id);
-    const current = map.get(key) || { enrolled: 0, active: 0, completed: 0, queued: 0 };
-    current.queued = row.queued;
+  for (const row of jobStats) {
+    const key = String(row._id.sequenceId);
+    const current = map.get(key) || { enrolled: 0, active: 0, completed: 0, queued: 0, failed: 0, cancelled: 0 };
+    if (row._id.status === 'pending' || row._id.status === 'processing') {
+      current.queued += row.count;
+    } else if (row._id.status === 'failed') {
+      current.failed = row.count;
+    } else if (row._id.status === 'cancelled') {
+      current.cancelled = row.count;
+    }
     map.set(key, current);
   }
   return map;
@@ -190,7 +209,7 @@ export async function listAllSequences() {
 
   return sequences.map((seq) => {
     const campaign = campaignMap[String(seq.campaignId)] || null;
-    const stats = statsMap.get(String(seq._id)) || { enrolled: 0, active: 0, completed: 0, queued: 0 };
+    const stats = statsMap.get(String(seq._id)) || { enrolled: 0, active: 0, completed: 0, queued: 0, failed: 0, cancelled: 0 };
     return {
       ...seq,
       campaign,
@@ -205,7 +224,7 @@ export async function getSequenceWithStats(id) {
     .select('projectName milestone status fromEmail fromName')
     .lean();
   const statsMap = await buildEnrollmentStats([seq._id]);
-  const stats = statsMap.get(String(seq._id)) || { enrolled: 0, active: 0, completed: 0, queued: 0 };
+  const stats = statsMap.get(String(seq._id)) || { enrolled: 0, active: 0, completed: 0, queued: 0, failed: 0, cancelled: 0 };
   return { ...seq, campaign, stats };
 }
 
@@ -496,6 +515,209 @@ export async function listSentEmails(options = {}) {
     limit,
     pages: total ? Math.ceil(total / limit) : 0,
     summary: { sentToday, totalSent: total },
+  };
+}
+
+function parseDeliveryStatusFilter(raw = '') {
+  const value = String(raw || '').trim().toLowerCase();
+  if (value === 'queued' || value === 'queue') return ['pending', 'processing'];
+  if (value === 'failed') return ['failed'];
+  if (value === 'cancelled' || value === 'canceled') return ['cancelled'];
+  if (value === 'issues') return ['failed', 'cancelled'];
+  return ['failed', 'cancelled', 'pending', 'processing'];
+}
+
+function buildDeliveryIssuePipeline({ statusFilter, campaignId, sequenceId, search, skip, limit }) {
+  const pipeline = [
+    { $match: { status: { $in: statusFilter } } },
+    {
+      $lookup: {
+        from: 'leads',
+        localField: 'leadId',
+        foreignField: '_id',
+        as: 'lead',
+      },
+    },
+    { $unwind: { path: '$lead', preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: 'sequenceenrollments',
+        localField: 'enrollmentId',
+        foreignField: '_id',
+        as: 'enrollment',
+      },
+    },
+    { $unwind: { path: '$enrollment', preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: 'sequences',
+        localField: 'enrollment.sequenceId',
+        foreignField: '_id',
+        as: 'sequence',
+      },
+    },
+    { $unwind: { path: '$sequence', preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: 'projectcampaigns',
+        localField: 'enrollment.campaignId',
+        foreignField: '_id',
+        as: 'campaign',
+      },
+    },
+    { $unwind: { path: '$campaign', preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: 'companies',
+        localField: 'lead.companyId',
+        foreignField: '_id',
+        as: 'company',
+      },
+    },
+    { $unwind: { path: '$company', preserveNullAndEmptyArrays: true } },
+  ];
+
+  if (campaignId && mongoose.isValidObjectId(String(campaignId))) {
+    pipeline.push({
+      $match: { 'enrollment.campaignId': new mongoose.Types.ObjectId(String(campaignId)) },
+    });
+  }
+
+  if (sequenceId && mongoose.isValidObjectId(String(sequenceId))) {
+    pipeline.push({
+      $match: { 'enrollment.sequenceId': new mongoose.Types.ObjectId(String(sequenceId)) },
+    });
+  }
+
+  if (search) {
+    const rx = new RegExp(escapeRegExp(search), 'i');
+    pipeline.push({
+      $match: {
+        $or: [
+          { recipientEmail: rx },
+          { renderedSubject: rx },
+          { errorMessage: rx },
+          { 'lead.name': rx },
+          { 'lead.email': rx },
+          { 'company.companyName': rx },
+          { 'sequence.name': rx },
+        ],
+      },
+    });
+  }
+
+  pipeline.push(
+    { $sort: { updatedAt: -1 } },
+    {
+      $facet: {
+        total: [{ $count: 'count' }],
+        items: [{ $skip: skip }, { $limit: limit }],
+      },
+    },
+  );
+
+  return pipeline;
+}
+
+export async function listSendDeliveryIssues(options = {}) {
+  const limit = Math.min(Math.max(Number(options.limit) || 50, 1), 200);
+  const page = Math.max(Number(options.page) || 1, 1);
+  const skip = (page - 1) * limit;
+  const statusFilter = parseDeliveryStatusFilter(options.status || options.view || 'issues');
+  const search = String(options.q || options.search || '').trim();
+
+  const pipeline = buildDeliveryIssuePipeline({
+    statusFilter,
+    campaignId: options.campaignId,
+    sequenceId: options.sequenceId,
+    search,
+    skip,
+    limit,
+  });
+
+  const [result] = await SendJob.aggregate(pipeline);
+  const total = result?.total?.[0]?.count || 0;
+  const items = (result?.items || []).map(formatDeliveryIssueRow);
+
+  const summaryMatch = {};
+  if (options.campaignId && mongoose.isValidObjectId(String(options.campaignId))) {
+    summaryMatch['enrollment.campaignId'] = new mongoose.Types.ObjectId(String(options.campaignId));
+  }
+  if (options.sequenceId && mongoose.isValidObjectId(String(options.sequenceId))) {
+    summaryMatch['enrollment.sequenceId'] = new mongoose.Types.ObjectId(String(options.sequenceId));
+  }
+
+  const summaryRows = await SendJob.aggregate([
+    {
+      $lookup: {
+        from: 'sequenceenrollments',
+        localField: 'enrollmentId',
+        foreignField: '_id',
+        as: 'enrollment',
+      },
+    },
+    { $unwind: '$enrollment' },
+    ...(Object.keys(summaryMatch).length ? [{ $match: summaryMatch }] : []),
+    { $group: { _id: '$status', count: { $sum: 1 } } },
+  ]);
+
+  const summary = {
+    failed: 0,
+    cancelled: 0,
+    queued: 0,
+    processing: 0,
+  };
+  for (const row of summaryRows) {
+    if (row._id === 'failed') summary.failed = row.count;
+    else if (row._id === 'cancelled') summary.cancelled = row.count;
+    else if (row._id === 'pending') summary.queued = row.count;
+    else if (row._id === 'processing') summary.processing = row.count;
+  }
+
+  const errorBreakdown = {};
+  for (const item of items) {
+    const key = item.error?.code || 'unknown';
+    errorBreakdown[key] = (errorBreakdown[key] || 0) + 1;
+  }
+
+  return {
+    items,
+    total,
+    page,
+    limit,
+    pages: total ? Math.ceil(total / limit) : 0,
+    summary: {
+      ...summary,
+      totalIssues: summary.failed + summary.cancelled,
+    },
+    errorBreakdown,
+  };
+}
+
+export async function getSequenceDeliverySummary(sequenceId) {
+  if (!mongoose.isValidObjectId(String(sequenceId))) {
+    const error = new Error('Invalid sequence id.');
+    error.status = 400;
+    throw error;
+  }
+
+  const data = await listSendDeliveryIssues({
+    sequenceId,
+    status: 'issues',
+    limit: 5,
+    page: 1,
+  });
+
+  const recentFailed = data.items.filter((item) => item.status === 'failed');
+  return {
+    sequenceId,
+    stats: {
+      failed: data.summary.failed,
+      cancelled: data.summary.cancelled,
+      queued: data.summary.queued + data.summary.processing,
+    },
+    recentIssues: data.items,
+    topError: recentFailed[0]?.error || null,
   };
 }
 

@@ -159,7 +159,7 @@ function CrmShell({ projects, onLogout, status }) {
     '/admin/crm/people': ['Contacts', 'Search and manage every point of contact'],
     '/admin/crm/companies': ['Companies', 'Target companies, clients, and relationship history'],
     '/admin/crm/inbox': ['Inbox', 'Replies and sales follow-up workspace'],
-    '/admin/crm/sent': ['Sent emails', 'Outbound sequence messages delivered via SMTP'],
+    '/admin/crm/sent': ['Email delivery', 'Delivered messages, failed sends, and queue status'],
     '/admin/crm/analytics': ['Reports', 'Campaign ROI, response performance, and source quality'],
     '/admin/crm/finance': ['Finances', 'Campaign budgets, fixed costs, and logged revenue'],
     '/admin/crm/settings/team': ['Team', 'User accounts, roles, and CRM access'],

@@ -47,8 +47,8 @@ export function detectEmailVendor(lead, email) {
 }
 
 /**
- * Pick send target: confirmed outreach email first, else vendor-specific source email.
- * Returns empty when no outreach is confirmed and no vendor email is available.
+ * Pick send target: confirmed outreach email first, else vendor-specific source email,
+ * else the lead's primary/manual email when no vendor channel is available.
  */
 export function getSendTargetEmail(lead, { vendor } = {}) {
   const confirmed = getOutreachEmail(lead);
@@ -63,6 +63,9 @@ export function getSendTargetEmail(lead, { vendor } = {}) {
     const candidate = firstContactEmail(lead?.[field]);
     if (candidate && isValidEmail(candidate)) return candidate;
   }
+
+  const manualEmail = firstContactEmail(lead?.email);
+  if (manualEmail && isValidEmail(manualEmail)) return manualEmail;
 
   return '';
 }
