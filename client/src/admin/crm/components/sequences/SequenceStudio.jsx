@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   crmApiFetch,
   updateCampaign,
@@ -50,6 +50,7 @@ export default function SequenceStudio({
   onRefresh,
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const campaignParam = searchParams.get('campaign');
 
   const [activeSequenceId, setActiveSequenceId] = useState(null);
@@ -549,15 +550,8 @@ export default function SequenceStudio({
         );
         fetchMailboxUsage().then(setMailboxUsage).catch(() => {});
         if (result.enrolled > 0) {
-          previewSequenceAudience(campaignId, {
-            sequenceId: seqId,
-            ...buildAudienceParams(audience),
-          })
-            .then((preview) => {
-              setAudiencePreview(preview);
-              setEnrollLimit(Math.max(1, preview.netNew || 0));
-            })
-            .catch(() => {});
+          navigate(`/admin/crm/projects/${campaignId}?tab=queue`);
+          return;
         }
       } else if (!launch) {
         setLaunchArmed(false);

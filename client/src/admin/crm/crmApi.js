@@ -227,15 +227,21 @@ export async function fetchMailboxUsage() {
   return crmApiFetch('/api/admin/mailbox-usage');
 }
 
-export async function fetchSentEmails({ page, limit, campaignId, q, repliedOnly } = {}) {
+export async function fetchSentEmails({ page, limit, campaignId, sequenceId, q, repliedOnly, includeAllStatuses } = {}) {
   const query = new URLSearchParams({
     ...(page && { page: String(page) }),
     ...(limit && { limit: String(limit) }),
     ...(campaignId && { campaignId }),
+    ...(sequenceId && { sequenceId }),
     ...(q && { q }),
     ...(repliedOnly && { repliedOnly: String(repliedOnly) }),
+    ...(includeAllStatuses && { includeAllStatuses: String(includeAllStatuses) }),
   }).toString();
   return crmApiFetch(`/api/admin/sent-emails${query ? `?${query}` : ''}`);
+}
+
+export async function fetchProjectSequences(projectId) {
+  return crmApiFetch(`/api/admin/projects/${projectId}/sequences`);
 }
 
 export async function fetchSentEmailThread(id) {

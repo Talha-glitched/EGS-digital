@@ -4,12 +4,12 @@ import { startAnalyticsCron } from './analyticsCronService.js';
 import { getMailConfigStatus } from './mailTransport.js';
 
 export function initializeCrmRuntime() {
-  const { imapReady } = getMailConfigStatus();
+  const { imapReady, imap2Ready } = getMailConfigStatus();
 
   startSendWorker();
   console.info('CRM send worker started (MongoDB queue, no Redis).');
 
-  if (imapReady) {
+  if (imapReady || imap2Ready) {
     startImapWatcher();
     console.info('IMAP watcher started.');
   }

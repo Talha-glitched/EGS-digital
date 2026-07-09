@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { crmApiFetch, formatPercent, updateCampaign, fetchAllProjectLeads, fetchAllProjectCompanies } from '../crmApi.js';
 import ProjectDatabaseTable from '../components/projects/ProjectDatabaseTable.jsx';
 import CampaignStageControl from '../components/projects/CampaignStageControl.jsx';
@@ -8,6 +8,7 @@ import ContactBlenderModal from '../components/projects/ContactBlenderModal.jsx'
 import ProjectPerformanceModal from '../components/projects/ProjectPerformanceModal.jsx';
 import CompanyDetailsDrawer from '../components/leads/CompanyDetailsDrawer.jsx';
 import OutreachDrawer from '../components/leads/OutreachDrawer.jsx';
+import EmailDetailsDrawer from '../components/leads/EmailDetailsDrawer.jsx';
 import TaskTable from '../components/tasks/TaskTable.jsx';
 import InfoTip from '../components/ui/InfoTip.jsx';
 import { CAMPAIGN_AUTOMATION } from '../constants/automationHints.js';
@@ -49,8 +50,54 @@ export default function ProjectDetailWorkspace() {
   const [toast, setToast] = useState('');
   const [selectedCompanyId, setSelectedCompanyId] = useState(null);
   const [selectedLead, setSelectedLead] = useState(null);
+  const [selectedEmail, setSelectedEmail] = useState(null);
   const [modal, setModal] = useState(null);
   const [savingStage, setSavingStage] = useState(false);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get('tab') || 'companies';
+
+  const handleTabChange = (tabName) => {
+    setSearchParams((prev) => {
+      prev.set('tab', tabName);
+      return prev;
+    }, { replace: true });
+  };
+
+  // Sync selected email from URL params
+  useEffect(() => {
+    const emailId = searchParams.get('emailId');
+    if (emailId) {
+      crmApiFetch(`/api/admin/sent-emails/${emailId}`)
+        .then((data) => {
+          setSelectedEmail(data);
+        })
+        .catch((err) => {
+          console.error('Failed to load initial email detail:', err);
+          // If not found, clear emailId from query params
+          setSearchParams((prev) => {
+            prev.delete('emailId');
+            return prev;
+          }, { replace: true });
+        });
+    } else {
+      setSelectedEmail(null);
+    }
+  }, [searchParams, setSearchParams]);
+
+  const handleEmailClick = (email) => {
+    setSearchParams((prev) => {
+      prev.set('emailId', email._id);
+      return prev;
+    }, { replace: true });
+  };
+
+  const handleCloseEmailDrawer = () => {
+    setSearchParams((prev) => {
+      prev.delete('emailId');
+      return prev;
+    }, { replace: true });
+  };
 
   const refresh = useCallback(async () => {
     const [proj, anal, leadData, companyData] = await Promise.all([
@@ -103,6 +150,9 @@ export default function ProjectDetailWorkspace() {
     }
   }
 
+  const openTasks = useMemo(() => tasks.filter((task) => task.status !== 'Done'), [tasks]);
+  const ownerOptions = useMemo(() => buildOwnerOptions(tasks, opportunities.map((item) => item.owner)), [tasks, opportunities]);
+
   if (!project) {
     return (
       <PageShell compact>
@@ -117,8 +167,6 @@ export default function ProjectDetailWorkspace() {
   const pocsEmailed = leads.filter((lead) => EMAILED_STATUSES.includes(lead.deliveryStatus)).length;
   const pocsResponded = leads.filter((lead) => lead.hasResponded).length;
   const pocReplyPct = pocsEmailed ? (pocsResponded / pocsEmailed) * 100 : 0;
-  const openTasks = useMemo(() => tasks.filter((task) => task.status !== 'Done'), [tasks]);
-  const ownerOptions = useMemo(() => buildOwnerOptions(tasks, opportunities.map((item) => item.owner)), [tasks, opportunities]);
 
   return (
     <PageShell compact>
@@ -205,6 +253,10 @@ export default function ProjectDetailWorkspace() {
 
       <PageSection>
         <ProjectDatabaseTable
+          projectId={id}
+          view={activeTab}
+          onViewChange={handleTabChange}
+          onEmailClick={handleEmailClick}
           companies={companies}
           leads={leads}
           onCompanyClick={setSelectedCompanyId}
@@ -305,13 +357,22 @@ export default function ProjectDetailWorkspace() {
         onClose={() => setSelectedCompanyId(null)}
         onPersonSelected={setSelectedLead}
         onUpdated={refresh}
+        stackLevel={selectedEmail ? 1 : 0}
+      />
+
+      <EmailDetailsDrawer
+        email={selectedEmail}
+        onClose={handleCloseEmailDrawer}
+        onLeadClick={(lead) => setSelectedLead(lead)}
+        onCompanyClick={(companyId) => setSelectedCompanyId(companyId)}
+        stackLevel={0}
       />
 
       <OutreachDrawer
         lead={selectedLead}
         onClose={() => setSelectedLead(null)}
         onLeadUpdated={handleLeadUpdated}
-        stackLevel={selectedCompanyId ? 1 : 0}
+        stackLevel={selectedCompanyId || selectedEmail ? 1 : 0}
       />
     </PageShell>
   );

@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 import { DeliveryStatusBadge, ResponseStatusBadge } from '../leads/LeadTableComponents.jsx';
 import { VendorEmailColumns, VendorEmailHeaders } from '../leads/VendorEmailCells.jsx';
 import PocQualificationBadge from '../leads/PocQualificationBadge.jsx';
@@ -15,7 +15,7 @@ import { useBulkDelete } from '../../hooks/useBulkDelete.js';
 import { useTableSort } from '../../hooks/useTableSort.js';
 import { campaignCompanySortAccessors, leadSortAccessors } from '../../hooks/tableSortAccessors.js';
 import { SortableTableHeader, TableSortIndicator } from '../ui/SortableTableHeader.jsx';
-import { deleteCompanyWithUndo, deleteLeadWithUndo, deleteCompanies, deleteLeads } from '../../crmApi.js';
+import { deleteCompanyWithUndo, deleteLeadWithUndo, deleteCompanies, deleteLeads, fetchSentEmails, crmApiFetch } from '../../crmApi.js';
 import {
   AdvancedFilterPopover,
   AdvancedFilterChips,
@@ -26,7 +26,27 @@ import {
   buildDistinctFieldOptions,
   buildDistinctFieldOptionsFromArrays,
 } from '../ui/advancedFilter/index.js';
-import { Building2, Users } from 'lucide-react';
+import { Building2, Users, Mail, Search, Send, Play } from 'lucide-react';
+
+const SEND_JOB_STATUS_CONFIG = {
+  pending: { className: 'bg-amber-50 text-amber-800 ring-amber-200/70', label: 'Pending' },
+  processing: { className: 'bg-blue-50 text-blue-800 ring-blue-200/70', label: 'Sending...' },
+  sent: { className: 'bg-emerald-50 text-emerald-800 ring-emerald-200/70', label: 'Sent' },
+  failed: { className: 'bg-red-50 text-red-800 ring-red-200/70', label: 'Failed' },
+  cancelled: { className: 'bg-neutral-100 text-neutral-600 ring-neutral-200/70', label: 'Cancelled' },
+};
+
+function SendJobStatusBadge({ status }) {
+  const config = SEND_JOB_STATUS_CONFIG[status] || {
+    className: 'bg-neutral-100 text-neutral-600 ring-neutral-200/70',
+    label: status,
+  };
+  return (
+    <span className={cn('inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold ring-1 ring-inset', config.className)}>
+      {config.label}
+    </span>
+  );
+}
 
 export default function ProjectDatabaseTable({
   companies = [],
@@ -36,11 +56,122 @@ export default function ProjectDatabaseTable({
   onCompanyRemoved,
   onLeadRemoved,
   onRestored,
+  projectId,
+  onEmailClick,
+  view: controlledView,
+  onViewChange,
 }) {
-  const [view, setView] = useState('companies');
+  const [localView, setLocalView] = useState('companies');
+  const view = controlledView || localView;
+  const setView = onViewChange || setLocalView;
+
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(50);
   const [bulkDeleting, setBulkDeleting] = useState(false);
+
+  // Email state
+  const [emails, setEmails] = useState([]);
+  const [emailTotal, setEmailTotal] = useState(0);
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [emailPage, setEmailPage] = useState(1);
+  const [emailLimit, setEmailLimit] = useState(50);
+  const [emailSearch, setEmailSearch] = useState('');
+  const [debouncedEmailSearch, setDebouncedEmailSearch] = useState('');
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setDebouncedEmailSearch(emailSearch.trim()), 250);
+    return () => clearTimeout(timer);
+  }, [emailSearch]);
+
+  // Queue state
+  const [queueJobs, setQueueJobs] = useState([]);
+  const [queueTotal, setQueueTotal] = useState(0);
+  const [queueLoading, setQueueLoading] = useState(false);
+  const [sendingAll, setSendingAll] = useState(false);
+  const [sendingProgress, setSendingProgress] = useState({ current: 0, total: 0 });
+
+  const fetchQueueJobs = useCallback(async () => {
+    if (!projectId || view !== 'queue') return;
+    setQueueLoading(true);
+    try {
+      const data = await crmApiFetch(`/api/admin/projects/${projectId}/queue`);
+      const pendingJobs = (data.items || []).filter(j => j.status === 'pending');
+      setQueueJobs(pendingJobs);
+      setQueueTotal(pendingJobs.length);
+    } catch (err) {
+      console.error('Failed to fetch queue:', err);
+    } finally {
+      setQueueLoading(false);
+    }
+  }, [projectId, view]);
+
+  useEffect(() => {
+    fetchQueueJobs();
+  }, [fetchQueueJobs]);
+
+  async function triggerQueueSend() {
+    if (queueJobs.length === 0 || sendingAll) return;
+    setSendingAll(true);
+    setSendingProgress({ current: 0, total: queueJobs.length });
+
+    for (let i = 0; i < queueJobs.length; i++) {
+      const currentJob = queueJobs[i];
+      setQueueJobs(prev => prev.map(j => j._id === currentJob._id ? { ...j, status: 'processing' } : j));
+      setSendingProgress(prev => ({ ...prev, current: i + 1 }));
+
+      try {
+        await crmApiFetch(`/api/admin/send-jobs/${currentJob._id}/send`, { method: 'POST' });
+        setQueueJobs(prev => prev.map(j => j._id === currentJob._id ? { ...j, status: 'sent' } : j));
+      } catch (err) {
+        console.error(`Failed to send job ${currentJob._id}:`, err);
+        setQueueJobs(prev => prev.map(j => j._id === currentJob._id ? { ...j, status: 'failed', errorMessage: err.message } : j));
+      }
+    }
+
+    setSendingAll(false);
+    setTimeout(fetchQueueJobs, 1500);
+  }
+
+  const fetchEmails = useCallback(async () => {
+    if (!projectId || view !== 'emails') return;
+    setEmailLoading(true);
+    try {
+      const data = await fetchSentEmails({
+        page: emailPage,
+        limit: emailLimit,
+        campaignId: projectId,
+        q: debouncedEmailSearch || undefined,
+        includeAllStatuses: true,
+      });
+      setEmails(data.items || []);
+      setEmailTotal(data.total || 0);
+    } catch (err) {
+      console.error('Failed to fetch emails:', err);
+    } finally {
+      setEmailLoading(false);
+    }
+  }, [projectId, view, emailPage, emailLimit, debouncedEmailSearch]);
+
+  useEffect(() => {
+    fetchEmails();
+  }, [fetchEmails]);
+
+  useEffect(() => {
+    if (!projectId) return;
+    fetchSentEmails({
+      page: 1,
+      limit: 1,
+      campaignId: projectId,
+      includeAllStatuses: true,
+    })
+      .then((data) => setEmailTotal(data.total || 0))
+      .catch((err) => console.error(err));
+  }, [projectId]);
+
+  const refreshEmails = useCallback(() => {
+    fetchEmails();
+  }, [fetchEmails]);
+
 
   const companiesWithCounts = useMemo(() => {
     const countByCompany = new Map();
@@ -215,19 +346,36 @@ export default function ProjectDatabaseTable({
           <div className="flex gap-1 rounded-lg border border-[var(--color-line)] bg-white p-1">
             <ToggleBtn active={view === 'companies'} onClick={() => setView('companies')} icon={Building2} label={`Companies (${filteredCompanies.length})`} />
             <ToggleBtn active={view === 'people'} onClick={() => setView('people')} icon={Users} label={`People (${filteredLeads.length})`} />
+            <ToggleBtn active={view === 'emails'} onClick={() => setView('emails')} icon={Mail} label={`Emails (${emailTotal})`} />
+            <ToggleBtn active={view === 'queue'} onClick={() => setView('queue')} icon={Send} label={`Queue (${queueTotal})`} />
           </div>
-          <AdvancedFilterPopover
+          {view === 'emails' ? (
+            <label className="relative block min-w-[240px]">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-400" />
+              <input
+                type="search"
+                value={emailSearch}
+                onChange={(e) => setEmailSearch(e.target.value)}
+                placeholder="Search subject, recipient, company..."
+                className="crm-input w-full py-1.5 pl-9 text-xs"
+              />
+            </label>
+          ) : (
+            <AdvancedFilterPopover
+              schema={activeSchema}
+              filters={activeFilters.filters}
+              matchMode={activeFilters.matchMode}
+              onChange={activeFilters.setFilters}
+            />
+          )}
+        </div>
+        {view !== 'emails' && (
+          <AdvancedFilterChips
             schema={activeSchema}
             filters={activeFilters.filters}
-            matchMode={activeFilters.matchMode}
             onChange={activeFilters.setFilters}
           />
-        </div>
-        <AdvancedFilterChips
-          schema={activeSchema}
-          filters={activeFilters.filters}
-          onChange={activeFilters.setFilters}
-        />
+        )}
       </div>
 
       {view === 'companies' ? (
@@ -315,91 +463,273 @@ export default function ProjectDatabaseTable({
             />
           </>
         )
-      ) : filteredLeads.length === 0 ? (
-        <EmptyState
-          icon={Users}
-          title="No contacts yet"
-          description="Run the contact blender to import Apollo, Hunter, or Lusha exports."
-        />
-      ) : (
+      ) : view === 'people' ? (
+        filteredLeads.length === 0 ? (
+          <EmptyState
+            icon={Users}
+            title="No contacts yet"
+            description="Run the contact blender to import Apollo, Hunter, or Lusha exports."
+          />
+        ) : (
+          <>
+            <TablePagination
+              page={page}
+              limit={limit}
+              total={filteredLeads.length}
+              onPageChange={setPage}
+              onLimitChange={handleLimitChange}
+              noun="contacts"
+            />
+            <TableSortIndicator
+              sortKey={sortKey}
+              sortDir={sortDir}
+              sortLabel={sortLabel}
+              onToggle={() => toggleSort(sortKey)}
+              onClear={clearSort}
+            />
+            <BulkSelectionBar
+              count={selection.selectionCount}
+              noun="contact"
+              onDelete={handleBulkDelete}
+              onClear={selection.clearSelection}
+              deleting={bulkDeleting}
+            />
+            <DataTableShell minWidth={1200}>
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="crm-table-head bg-slate-100/50">
+                  <BulkSelectHeaderCell selection={selection} ariaLabel="Select all contacts" />
+                  <SortableTableHeader label="Name" sortKey="name" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                  <SortableTableHeader label="Company" sortKey="companyName" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                  <VendorEmailHeaders sortKey={sortKey} sortDir={sortDir} toggleSort={toggleSort} SortableTableHeader={SortableTableHeader} />
+                  <SortableTableHeader label="Role" sortKey="designation" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                  <SortableTableHeader label="POC fit" sortKey="pocStatus" activeKey={sortKey} direction={sortDir} onSort={toggleSort} hint={CAMPAIGN_AUTOMATION.pocFit} />
+                  <SortableTableHeader label="Email status" sortKey="deliveryStatus" activeKey={sortKey} direction={sortDir} onSort={toggleSort} hint={CAMPAIGN_AUTOMATION.emailStatus} />
+                  <SortableTableHeader label="Response" sortKey="hasResponded" activeKey={sortKey} direction={sortDir} onSort={toggleSort} hint={CAMPAIGN_AUTOMATION.responseStatus} />
+                  <th className="px-4 py-2.5 text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[var(--color-line)]">
+                {paginatedLeads.map((lead) => (
+                  <ClickableTableRow key={lead._id} onClick={() => onLeadClick?.(lead)}>
+                    <BulkSelectRowCell id={lead._id} selection={selection} ariaLabel={`Select ${lead.name || 'contact'}`} />
+                    <td className="px-4 py-2.5 font-semibold text-[var(--color-ink)]">{lead.name || '—'}</td>
+                    <td className="px-4 py-2.5 text-neutral-600">{lead.companyName || '—'}</td>
+                    <VendorEmailColumns lead={lead} />
+                    <td className="px-4 py-2.5 text-neutral-600">{lead.designation || '—'}</td>
+                    <td className="px-4 py-2.5">
+                      <PocQualificationBadge status={lead.pocQualification?.status} compact />
+                    </td>
+                    <td className="px-4 py-2.5">
+                      <DeliveryStatusBadge status={lead.deliveryStatus} />
+                    </td>
+                    <td className="px-4 py-2.5">
+                      <ResponseStatusBadge
+                        hasResponded={lead.hasResponded}
+                        respondedAt={lead.respondedAt}
+                        responseChannels={lead.responseChannels}
+                        compact
+                      />
+                    </td>
+                    <td className="px-4 py-2.5 text-center" onClick={stopRowClick}>
+                      <DeleteIconButton label={`Delete ${lead.name || 'contact'}`} onClick={() => deleteLeadItem(lead)} />
+                    </td>
+                  </ClickableTableRow>
+                ))}
+              </tbody>
+            </table>
+            </DataTableShell>
+            <TablePagination
+              page={page}
+              limit={limit}
+              total={filteredLeads.length}
+              onPageChange={setPage}
+              onLimitChange={handleLimitChange}
+              noun="contacts"
+              className="is-bottom"
+            />
+          </>
+        )
+      ) : view === 'emails' ? (
         <>
           <TablePagination
-            page={page}
-            limit={limit}
-            total={filteredLeads.length}
-            onPageChange={setPage}
-            onLimitChange={handleLimitChange}
-            noun="contacts"
+            page={emailPage}
+            limit={emailLimit}
+            total={emailTotal}
+            onPageChange={setEmailPage}
+            onLimitChange={(l) => {
+              setEmailLimit(l);
+              setEmailPage(1);
+            }}
+            noun="emails"
           />
-          <TableSortIndicator
-            sortKey={sortKey}
-            sortDir={sortDir}
-            sortLabel={sortLabel}
-            onToggle={() => toggleSort(sortKey)}
-            onClear={clearSort}
-          />
-          <BulkSelectionBar
-            count={selection.selectionCount}
-            noun="contact"
-            onDelete={handleBulkDelete}
-            onClear={selection.clearSelection}
-            deleting={bulkDeleting}
-          />
-          <DataTableShell minWidth={1200}>
-          <table className="w-full text-left text-xs">
-            <thead>
-              <tr className="crm-table-head bg-slate-100/50">
-                <BulkSelectHeaderCell selection={selection} ariaLabel="Select all contacts" />
-                <SortableTableHeader label="Name" sortKey="name" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
-                <SortableTableHeader label="Company" sortKey="companyName" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
-                <VendorEmailHeaders sortKey={sortKey} sortDir={sortDir} toggleSort={toggleSort} SortableTableHeader={SortableTableHeader} />
-                <SortableTableHeader label="Role" sortKey="designation" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
-                <SortableTableHeader label="POC fit" sortKey="pocStatus" activeKey={sortKey} direction={sortDir} onSort={toggleSort} hint={CAMPAIGN_AUTOMATION.pocFit} />
-                <SortableTableHeader label="Email status" sortKey="deliveryStatus" activeKey={sortKey} direction={sortDir} onSort={toggleSort} hint={CAMPAIGN_AUTOMATION.emailStatus} />
-                <SortableTableHeader label="Response" sortKey="hasResponded" activeKey={sortKey} direction={sortDir} onSort={toggleSort} hint={CAMPAIGN_AUTOMATION.responseStatus} />
-                <th className="px-4 py-2.5 text-center">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--color-line)]">
-              {paginatedLeads.map((lead) => (
-                <ClickableTableRow key={lead._id} onClick={() => onLeadClick?.(lead)}>
-                  <BulkSelectRowCell id={lead._id} selection={selection} ariaLabel={`Select ${lead.name || 'contact'}`} />
-                  <td className="px-4 py-2.5 font-semibold text-[var(--color-ink)]">{lead.name || '—'}</td>
-                  <td className="px-4 py-2.5 text-neutral-600">{lead.companyName || '—'}</td>
-                  <VendorEmailColumns lead={lead} />
-                  <td className="px-4 py-2.5 text-neutral-600">{lead.designation || '—'}</td>
-                  <td className="px-4 py-2.5">
-                    <PocQualificationBadge status={lead.pocQualification?.status} compact />
-                  </td>
-                  <td className="px-4 py-2.5">
-                    <DeliveryStatusBadge status={lead.deliveryStatus} />
-                  </td>
-                  <td className="px-4 py-2.5">
-                    <ResponseStatusBadge
-                      hasResponded={lead.hasResponded}
-                      respondedAt={lead.respondedAt}
-                      responseChannels={lead.responseChannels}
-                      compact
-                    />
-                  </td>
-                  <td className="px-4 py-2.5 text-center" onClick={stopRowClick}>
-                    <DeleteIconButton label={`Delete ${lead.name || 'contact'}`} onClick={() => deleteLeadItem(lead)} />
-                  </td>
-                </ClickableTableRow>
-              ))}
-            </tbody>
-          </table>
-          </DataTableShell>
+          {emailLoading && emails.length === 0 ? (
+            <div className="p-6 text-center text-xs text-neutral-400">Loading emails…</div>
+          ) : emails.length === 0 ? (
+            <EmptyState
+              icon={Mail}
+              title="No emails found"
+              description="Emails sent, sending, or failed for this sequence campaign will appear here."
+            />
+          ) : (
+            <DataTableShell minWidth={1000}>
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="crm-table-head bg-slate-100/50">
+                    <th className="px-4 py-2.5">Subject</th>
+                    <th className="px-4 py-2.5">Recipient</th>
+                    <th className="px-4 py-2.5">Company</th>
+                    <th className="px-4 py-2.5">Date</th>
+                    <th className="px-4 py-2.5 text-center">Status</th>
+                    <th className="px-4 py-2.5 text-center">Replied</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--color-line)]">
+                  {emails.map((email) => {
+                    const recipientName = email.lead?.name || '—';
+                    const companyName = email.company?.companyName || '—';
+                    const dateVal = email.status === 'pending' ? email.scheduledFor : email.sentAt;
+                    const dateText = dateVal ? new Date(dateVal).toLocaleString('en-AE', {
+                      day: 'numeric',
+                      month: 'short',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    }) : '—';
+                    const replied = email.lead?.deliveryStatus === 'Replied' || email.lead?.hasResponded;
+
+                    return (
+                      <ClickableTableRow key={email._id} onClick={() => onEmailClick?.(email)}>
+                        <td className="px-4 py-2.5 font-semibold text-[var(--color-ink)] truncate max-w-[280px]" title={email.renderedSubject}>
+                          {email.renderedSubject || '(No subject)'}
+                        </td>
+                        <td className="px-4 py-2.5">
+                          <div className="font-semibold text-[var(--color-ink)]">{recipientName}</div>
+                          <div className="text-neutral-500 text-[10px] font-mono mt-0.5">{email.recipientEmail}</div>
+                        </td>
+                        <td className="px-4 py-2.5 text-neutral-600 truncate max-w-[180px]" title={companyName}>{companyName}</td>
+                        <td className="px-4 py-2.5 text-neutral-500 font-medium">{dateText}</td>
+                        <td className="px-4 py-2.5 text-center">
+                          <SendJobStatusBadge status={email.status} />
+                        </td>
+                        <td className="px-4 py-2.5 text-center">
+                          <span className={cn(
+                            'inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1 ring-inset',
+                            replied ? 'bg-emerald-50 text-emerald-800 ring-emerald-200/50' : 'bg-neutral-100 text-neutral-500 ring-neutral-200/50'
+                          )}>
+                            {replied ? 'Yes' : 'No'}
+                          </span>
+                        </td>
+                      </ClickableTableRow>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </DataTableShell>
+          )}
           <TablePagination
-            page={page}
-            limit={limit}
-            total={filteredLeads.length}
-            onPageChange={setPage}
-            onLimitChange={handleLimitChange}
-            noun="contacts"
+            page={emailPage}
+            limit={emailLimit}
+            total={emailTotal}
+            onPageChange={setEmailPage}
+            onLimitChange={(l) => {
+              setEmailLimit(l);
+              setEmailPage(1);
+            }}
+            noun="emails"
             className="is-bottom"
           />
         </>
+      ) : view === 'queue' ? (
+        <>
+          {queueJobs.length === 0 ? (
+            <EmptyState
+              icon={Send}
+              title="Outbox queue is empty"
+              description="No contacts are currently queued for outreach in this campaign sequence. Enrol contacts in Sequence Studio first."
+            />
+          ) : (
+            <div className="p-4 space-y-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-brand-soft/20 border border-brand-soft/50 rounded-xl p-4">
+                <div className="min-w-0">
+                  <h3 className="text-xs font-bold text-brand uppercase tracking-wider">Manual Campaign Send Execution</h3>
+                  <p className="mt-1 text-xs text-neutral-500">
+                    Review the queue below and trigger the campaign send sequence. Daily cap and business hour constraints are bypassed on manual trigger.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={triggerQueueSend}
+                  disabled={sendingAll || queueJobs.length === 0}
+                  className="crm-btn-primary py-2 px-4 text-xs font-bold shrink-0 flex items-center gap-1.5"
+                >
+                  <Play className="h-3.5 w-3.5 fill-current" />
+                  {sendingAll ? 'Sending Outreach...' : 'Send Campaign'}
+                </button>
+              </div>
+
+              {sendingAll && (
+                <div className="bg-neutral-50 border border-[var(--color-line)] rounded-xl p-4 space-y-2">
+                  <div className="flex justify-between text-xs font-semibold text-neutral-600">
+                    <span>Sending progress</span>
+                    <span className="tabular-nums">{sendingProgress.current} / {sendingProgress.total}</span>
+                  </div>
+                  <div className="w-full bg-neutral-200 rounded-full h-2">
+                    <div
+                      className="bg-brand h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${(sendingProgress.current / sendingProgress.total) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
+              )}
+
+              <DataTableShell minWidth={800}>
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="crm-table-head bg-slate-100/50">
+                      <th className="px-4 py-2.5">To Recipient</th>
+                      <th className="px-4 py-2.5">Subject</th>
+                      <th className="px-4 py-2.5">Sequence Step</th>
+                      <th className="px-4 py-2.5 text-center">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[var(--color-line)]">
+                    {queueJobs.map((job) => {
+                      const recipientName = job.leadId?.name || 'Contact';
+                      return (
+                        <tr key={job._id} className="hover:bg-neutral-50/50">
+                          <td className="px-4 py-2.5">
+                            <div className="font-semibold text-[var(--color-ink)]">{recipientName}</div>
+                            <div className="text-neutral-500 text-[10px] font-mono mt-0.5">{job.recipientEmail}</div>
+                          </td>
+                          <td className="px-4 py-2.5 text-neutral-600 truncate max-w-[280px]" title={job.renderedSubject}>
+                            {job.renderedSubject || '(No subject)'}
+                          </td>
+                          <td className="px-4 py-2.5 text-neutral-500 font-medium">
+                            Step {job.stepIndex + 1}
+                          </td>
+                          <td className="px-4 py-2.5 text-center">
+                            <SendJobStatusBadge status={job.status} />
+                            {job.status === 'failed' && job.errorMessage && (
+                              <p className="mt-1 text-[10px] font-semibold text-red-500 max-w-[220px] mx-auto truncate" title={job.errorMessage}>
+                                {job.errorMessage}
+                              </p>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </DataTableShell>
+            </div>
+          )}
+        </>
+      ) : (
+        <EmptyState
+          icon={Mail}
+          title="No view selected"
+          description="Please choose companies, people, emails, or queue from the navigation bar."
+        />
       )}
     </div>
   );

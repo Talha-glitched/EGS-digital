@@ -1,16 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
-import { crmApiFetch, fetchSentEmails } from '../crmApi.js';
+import { crmApiFetch, fetchSentEmails, fetchProjectSequences } from '../crmApi.js';
 import SentEmailsWorkspace from '../components/sent/SentEmailsWorkspace.jsx';
 import { Alert, LoadingState, PageSection, PageShell } from '../components/ui/primitives.jsx';
 
 export default function SentEmailsPage() {
   const [emails, setEmails] = useState([]);
   const [campaigns, setCampaigns] = useState([]);
+  const [sequences, setSequences] = useState([]);
   const [total, setTotal] = useState(0);
   const [sentToday, setSentToday] = useState(0);
   const [pages, setPages] = useState(0);
   const [page, setPage] = useState(1);
   const [campaignId, setCampaignId] = useState('');
+  const [sequenceId, setSequenceId] = useState('');
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [repliedOnly, setRepliedOnly] = useState(false);
@@ -24,13 +26,24 @@ export default function SentEmailsPage() {
   }, []);
 
   useEffect(() => {
+    setSequenceId('');
+    if (!campaignId) {
+      setSequences([]);
+      return;
+    }
+    fetchProjectSequences(campaignId)
+      .then((rows) => setSequences(Array.isArray(rows) ? rows : []))
+      .catch(() => setSequences([]));
+  }, [campaignId]);
+
+  useEffect(() => {
     const timer = window.setTimeout(() => setDebouncedSearch(search.trim()), 250);
     return () => clearTimeout(timer);
   }, [search]);
 
   useEffect(() => {
     setPage(1);
-  }, [campaignId, debouncedSearch, repliedOnly]);
+  }, [campaignId, sequenceId, debouncedSearch, repliedOnly]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -40,6 +53,7 @@ export default function SentEmailsPage() {
         page,
         limit: 50,
         campaignId: campaignId || undefined,
+        sequenceId: sequenceId || undefined,
         q: debouncedSearch || undefined,
         repliedOnly: repliedOnly ? true : undefined,
       });
@@ -55,7 +69,7 @@ export default function SentEmailsPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, campaignId, debouncedSearch, repliedOnly]);
+  }, [page, campaignId, sequenceId, debouncedSearch, repliedOnly]);
 
   useEffect(() => {
     load().catch(console.error);
@@ -84,6 +98,9 @@ export default function SentEmailsPage() {
           campaigns={campaigns}
           campaignId={campaignId}
           onCampaignChange={setCampaignId}
+          sequences={sequences}
+          sequenceId={sequenceId}
+          onSequenceChange={setSequenceId}
           search={search}
           onSearchChange={setSearch}
           page={page}

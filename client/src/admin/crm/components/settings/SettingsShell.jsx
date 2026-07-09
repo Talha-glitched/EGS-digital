@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Shield, Activity, History } from 'lucide-react';
+import { Shield, Activity, History, Mail } from 'lucide-react';
 import { crmApiFetch } from '../../crmApi.js';
 import { usePermissions } from '../../hooks/usePermissions.js';
 
 const TABS = [
   { to: '/admin/crm/settings/team', label: 'Team', icon: Shield, permission: 'users:manage' },
+  { to: '/admin/crm/settings/email', label: 'Email settings', icon: Mail, permission: 'users:manage' },
   { to: '/admin/crm/settings/activity', label: 'Activity log', icon: Activity, permission: 'audit:read' },
   { to: '/admin/crm/settings/recovery', label: 'Data recovery', icon: History, permission: 'rollback:execute' },
 ];

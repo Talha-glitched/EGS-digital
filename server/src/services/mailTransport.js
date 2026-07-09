@@ -18,6 +18,24 @@ export function isPublicTrackableUrl(url = getBaseUrl()) {
   }
 }
 
+export function getCredentialsForEmail(fromEmail) {
+  const normalizedEmail = String(fromEmail || '').trim().toLowerCase();
+  const user1 = String(process.env.EMAIL_SMTP_USER || '').trim().toLowerCase();
+  const user2 = String(process.env.EMAIL_SMTP_USER2 || '').trim().toLowerCase();
+
+  if (user2 && normalizedEmail === user2) {
+    return {
+      user: process.env.EMAIL_SMTP_USER2.trim(),
+      pass: process.env.EMAIL_SMTP_USER2_PASS,
+    };
+  }
+
+  return {
+    user: process.env.EMAIL_SMTP_USER ? process.env.EMAIL_SMTP_USER.trim() : '',
+    pass: process.env.EMAIL_SMTP_PASS,
+  };
+}
+
 export function getMailConfigStatus() {
   const smtpReady = Boolean(
     process.env.EMAIL_SMTP_HOST &&
@@ -31,7 +49,19 @@ export function getMailConfigStatus() {
       process.env.EMAIL_SMTP_USER &&
       process.env.EMAIL_SMTP_PASS
   );
-  return { smtpReady, imapReady };
+  const smtp2Ready = Boolean(
+    process.env.EMAIL_SMTP_HOST &&
+      process.env.EMAIL_SMTP_PORT &&
+      process.env.EMAIL_SMTP_USER2 &&
+      process.env.EMAIL_SMTP_USER2_PASS
+  );
+  const imap2Ready = Boolean(
+    process.env.EMAIL_IMAP_HOST &&
+      process.env.EMAIL_IMAP_PORT &&
+      process.env.EMAIL_SMTP_USER2 &&
+      process.env.EMAIL_SMTP_USER2_PASS
+  );
+  return { smtpReady, imapReady, smtp2Ready, imap2Ready };
 }
 
 function envTlsRejectUnauthorized(imapSpecificEnv) {
@@ -50,7 +80,7 @@ function resolveSentMailboxPath() {
 }
 
 function formatFromHeader(fromName, fromEmail) {
-  const email = String(fromEmail || process.env.EMAIL_SMTP_USER || '').trim();
+  const email = String(fromEmail || '').trim();
   const name = String(fromName || process.env.EMAIL_FROM_NAME || 'Exhibit Graphic Sign').trim();
   return `"${name}" <${email}>`;
 }
@@ -70,13 +100,13 @@ async function compileOutboundMessage(mailOptions) {
   return info.message;
 }
 
-export async function appendOutboundCopyToSent(rawMessage) {
+export async function appendOutboundCopyToSent(rawMessage, fromEmail) {
   if (!shouldSaveSentCopy()) return;
-  const { imapReady } = getMailConfigStatus();
-  if (!imapReady) return;
+  const creds = getCredentialsForEmail(fromEmail);
+  if (!creds.user || !creds.pass || !process.env.EMAIL_IMAP_HOST || !process.env.EMAIL_IMAP_PORT) return;
 
   const folder = resolveSentMailboxPath();
-  const client = createImapClient();
+  const client = createImapClient(fromEmail);
   try {
     await client.connect();
     const lock = await client.getMailboxLock(folder);
@@ -86,7 +116,7 @@ export async function appendOutboundCopyToSent(rawMessage) {
       lock.release();
     }
   } catch (error) {
-    console.error('Failed to save outbound copy to Sent folder:', error.message);
+    console.error(`Failed to save outbound copy to Sent folder for ${fromEmail || 'unknown'}:`, error.message);
   } finally {
     try {
       await client.logout();
@@ -94,6 +124,16 @@ export async function appendOutboundCopyToSent(rawMessage) {
       /* ignore */
     }
   }
+}
+
+export function getResendFromEmail(fromEmail, resendDomain) {
+  const domain = resendDomain || 'masuood.exhibitgraphicsign.com';
+  if (!fromEmail) {
+    return `info@${domain}`;
+  }
+  const parts = fromEmail.split('@');
+  const localPart = parts[0] || 'info';
+  return `${localPart}@${domain}`;
 }
 
 export async function sendAuthenticatedMail({
@@ -106,11 +146,8 @@ export async function sendAuthenticatedMail({
   inReplyTo,
   references,
 }) {
-  const smtpUser = String(process.env.EMAIL_SMTP_USER || '').trim();
-  if (!smtpUser) {
-    console.error('[Email] ERROR: EMAIL_SMTP_USER is not configured in environment variables.');
-    throw new Error('EMAIL_SMTP_USER is not configured.');
-  }
+  const { getSystemSettings } = await import('./systemSettingsService.js');
+  const settings = await getSystemSettings().catch(() => ({ useResend: false, resendDomain: 'masuood.exhibitgraphicsign.com' }));
 
   const recipients = normalizeRecipientList(to);
   if (!recipients.length) {
@@ -118,13 +155,95 @@ export async function sendAuthenticatedMail({
     throw new Error('At least one recipient is required.');
   }
 
+  if (settings.useResend) {
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+      console.error('[Email] ERROR: Resend is enabled, but RESEND_API_KEY is not configured.');
+      throw new Error('Resend is enabled, but RESEND_API_KEY is not configured in environment variables.');
+    }
+
+    const resendFrom = getResendFromEmail(fromEmail, settings.resendDomain);
+    const fromHeader = formatFromHeader(fromName, resendFrom);
+
+    console.log(`[Email] Initiating email send via Resend API...`);
+    console.log(`[Email] Recipient(s): ${recipients.join(', ')}`);
+    console.log(`[Email] From Header: ${fromHeader}`);
+    console.log(`[Email] Subject: "${subject}"`);
+
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: fromHeader,
+        to: recipients,
+        reply_to: resendFrom,
+        subject,
+        text,
+        html,
+        headers: {
+          ...(inReplyTo && { 'In-Reply-To': inReplyTo }),
+          ...(references && { 'References': Array.isArray(references) ? references.join(' ') : references }),
+        },
+      }),
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error(`[Email] Resend API ERROR: ${res.status} - ${errText}`);
+      throw new Error(`Resend API failed: ${res.status} - ${errText}`);
+    }
+
+    const resultJson = await res.json();
+    console.log(`[Email] Resend send success. Message ID: ${resultJson.id}`);
+
+    try {
+      const mailOptions = {
+        from: fromHeader,
+        to: recipients,
+        replyTo: resendFrom,
+        subject,
+        text,
+        html,
+        headers: {
+          'List-Unsubscribe': `<mailto:${resendFrom}?subject=unsubscribe>`,
+          ...(inReplyTo && { 'In-Reply-To': inReplyTo }),
+          ...(references && { 'References': Array.isArray(references) ? references.join(' ') : references }),
+        },
+        envelope: {
+          from: resendFrom,
+          to: recipients,
+        },
+      };
+      const raw = await compileOutboundMessage(mailOptions);
+      await appendOutboundCopyToSent(raw, fromEmail);
+    } catch (err) {
+      console.error('[Email] Failed to append Resend email copy to IMAP Sent folder:', err.message);
+    }
+
+    return {
+      messageId: resultJson.id,
+      accepted: recipients,
+      rejected: [],
+    };
+  }
+
+  const creds = getCredentialsForEmail(fromEmail);
+  const smtpUser = creds.user;
+  if (!smtpUser) {
+    console.error('[Email] ERROR: SMTP user is not configured in environment variables.');
+    throw new Error('SMTP user is not configured.');
+  }
+
   const smtpHost = process.env.EMAIL_SMTP_HOST;
   const smtpPort = Number(process.env.EMAIL_SMTP_PORT || 465);
   const secure = smtpPort === 465;
   const rejectUnauthorized = envTlsRejectUnauthorized(process.env.EMAIL_SMTP_TLS_REJECT_UNAUTHORIZED);
-  const fromHeader = formatFromHeader(fromName, fromEmail || smtpUser);
+  const fromHeader = formatFromHeader(fromName, smtpUser);
 
-  console.log(`[Email] Initiating email send...`);
+  console.log(`[Email] Initiating email send via SMTP...`);
   console.log(`[Email] Recipient(s): ${recipients.join(', ')}`);
   console.log(`[Email] From Header: ${fromHeader}`);
   console.log(`[Email] Subject: "${subject}"`);
@@ -152,7 +271,7 @@ export async function sendAuthenticatedMail({
     console.log(`[Email] Compiling outbound message structure...`);
     const raw = await compileOutboundMessage(mailOptions);
     console.log(`[Email] Creating SMTP transport...`);
-    const transporter = createTransporter();
+    const transporter = createTransporter(fromEmail);
 
     console.log(`[Email] Sending via nodemailer.transporter.sendMail...`);
     const result = await transporter.sendMail(mailOptions);
@@ -168,7 +287,7 @@ export async function sendAuthenticatedMail({
     }
 
     console.log(`[Email] Appending outbound copy to IMAP Sent folder...`);
-    await appendOutboundCopyToSent(raw);
+    await appendOutboundCopyToSent(raw, fromEmail);
     console.log(`[Email] Successfully completed email process for: ${recipients.join(', ')}`);
     return result;
   } catch (error) {
@@ -177,32 +296,33 @@ export async function sendAuthenticatedMail({
   }
 }
 
-export function createTransporter() {
+export function createTransporter(fromEmail) {
   const rejectUnauthorized = envTlsRejectUnauthorized(process.env.EMAIL_SMTP_TLS_REJECT_UNAUTHORIZED);
-  const smtpUser = String(process.env.EMAIL_SMTP_USER || '').trim();
-  const domain = smtpUser.includes('@') ? smtpUser.split('@')[1] : 'exhibitgraphicsign.com';
+  const creds = getCredentialsForEmail(fromEmail);
+  const domain = creds.user.includes('@') ? creds.user.split('@')[1] : 'exhibitgraphicsign.com';
   return nodemailer.createTransport({
     name: domain,
     host: process.env.EMAIL_SMTP_HOST,
     port: Number(process.env.EMAIL_SMTP_PORT || 465),
     secure: Number(process.env.EMAIL_SMTP_PORT || 465) === 465,
     auth: {
-      user: smtpUser,
-      pass: process.env.EMAIL_SMTP_PASS,
+      user: creds.user,
+      pass: creds.pass,
     },
     tls: { rejectUnauthorized },
   });
 }
 
-export function createImapClient() {
+export function createImapClient(email) {
   const rejectUnauthorized = envTlsRejectUnauthorized(process.env.EMAIL_IMAP_TLS_REJECT_UNAUTHORIZED);
+  const creds = getCredentialsForEmail(email);
   return new ImapFlow({
     host: process.env.EMAIL_IMAP_HOST,
     port: Number(process.env.EMAIL_IMAP_PORT || 993),
     secure: Number(process.env.EMAIL_IMAP_PORT || 993) === 993,
     auth: {
-      user: process.env.EMAIL_SMTP_USER,
-      pass: process.env.EMAIL_SMTP_PASS,
+      user: creds.user,
+      pass: creds.pass,
     },
     logger: false,
     tls: { rejectUnauthorized },

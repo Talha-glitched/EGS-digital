@@ -18,6 +18,9 @@ import { Reply } from '../models/Reply.js';
 import { Company } from '../models/Company.js';
 import { ProjectCampaign } from '../models/ProjectCampaign.js';
 import { sendAuthenticatedMail, getFromIdentity } from '../services/mailTransport.js';
+import { getSystemSettings, updateSystemSettings } from '../services/systemSettingsService.js';
+import { getResendMetrics } from '../services/resendService.js';
+import { sendJobNow } from '../services/sendWorker.js';
 import {
   listOpportunities,
   createOpportunity,
@@ -96,6 +99,7 @@ import {
   previewAudience,
   getMailboxUsageStats,
   listSentEmails,
+  getSentEmail,
   createSequence,
   updateSequence,
   deleteSequence,
@@ -626,9 +630,15 @@ router.get('/sent-emails', asyncRoute(async (req, res) => {
     limit: req.query.limit,
     page: req.query.page,
     campaignId: req.query.campaignId,
+    sequenceId: req.query.sequenceId,
     q: req.query.q || req.query.search,
     repliedOnly: req.query.repliedOnly,
+    includeAllStatuses: req.query.includeAllStatuses,
   }));
+}));
+
+router.get('/sent-emails/:id', asyncRoute(async (req, res) => {
+  res.json(await getSentEmail(req.params.id));
 }));
 
 router.get('/sent-emails/:id/thread', asyncRoute(async (req, res) => {
@@ -1126,6 +1136,44 @@ router.post('/:resourceType/:id/restore', asyncRoute(async (req, res) => {
     return res.status(400).json({ message: `Restore not supported for ${resourceType}.` });
   }
   return res.json(await restoreRecord({ Model, resourceType, id, actor }));
+}));
+
+router.get('/system-settings', asyncRoute(async (_req, res) => {
+  res.json(await getSystemSettings());
+}));
+
+router.patch('/system-settings', asyncRoute(async (req, res) => {
+  res.json(await updateSystemSettings(req.body || {}));
+}));
+
+router.get('/resend/metrics', asyncRoute(async (_req, res) => {
+  res.json(await getResendMetrics());
+}));
+
+router.get('/projects/:projectId/queue', asyncRoute(async (req, res) => {
+  const { projectId } = req.params;
+  const { status } = req.query;
+
+  const leads = await Lead.find({ campaignId: projectId }).select('_id');
+  const leadIds = leads.map((l) => l._id);
+
+  const query = { leadId: { $in: leadIds } };
+  if (status) {
+    query.status = status;
+  }
+
+  const jobs = await SendJob.find(query)
+    .populate('leadId', 'name email deliveryStatus')
+    .sort({ scheduledFor: 1 })
+    .lean();
+
+  res.json({ items: jobs });
+}));
+
+router.post('/send-jobs/:jobId/send', asyncRoute(async (req, res) => {
+  const { jobId } = req.params;
+  const updatedJob = await sendJobNow(jobId);
+  res.json(updatedJob);
 }));
 
 router.get('/workspace/summary', asyncRoute(async (_req, res) => {

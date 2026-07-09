@@ -20,7 +20,7 @@ import {
 } from './mailTransport.js';
 
 const MAX_REPLY_TEXT = 2000;
-let isSyncing = false;
+const activeSyncs = new Set();
 let syncTimer = null;
 
 function normalizeObjectIdList(values = []) {
@@ -96,7 +96,8 @@ export function parseEmailSourceToText(source) {
 async function findLeadForMessage(message) {
   const fromAddress = String(message.envelope?.from?.[0]?.address || '').trim().toLowerCase();
   const smtpUser = String(process.env.EMAIL_SMTP_USER || '').trim().toLowerCase();
-  if (fromAddress === smtpUser) {
+  const smtpUser2 = String(process.env.EMAIL_SMTP_USER2 || '').trim().toLowerCase();
+  if (fromAddress === smtpUser || (smtpUser2 && fromAddress === smtpUser2)) {
     return null;
   }
 
@@ -220,9 +221,11 @@ async function handleHumanReply(lead, message, text) {
   return { stored: true, intent: replyIntent, confidence, companyName: company?.companyName, projectName: project?.projectName };
 }
 
-export async function syncImapMailbox() {
-  if (isSyncing) return { skipped: true };
-  isSyncing = true;
+export async function syncImapMailboxForUser(email) {
+  const normalizedEmail = String(email || '').trim().toLowerCase();
+  if (!normalizedEmail) return { skipped: true };
+  if (activeSyncs.has(normalizedEmail)) return { skipped: true };
+  activeSyncs.add(normalizedEmail);
 
   const stats = {
     scanned: 0,
@@ -234,9 +237,9 @@ export async function syncImapMailbox() {
     error: null,
   };
 
-  const client = createImapClient();
+  const client = createImapClient(normalizedEmail);
   client.on('error', (err) => {
-    console.error('IMAP client connection/stream error:', err.message);
+    console.error(`IMAP client connection/stream error for ${normalizedEmail}:`, err.message);
   });
   try {
     await client.connect();
@@ -246,13 +249,13 @@ export async function syncImapMailbox() {
       const uids = await client.search({ since });
       const maxMsgs = Math.min(Number(process.env.EMAIL_IMAP_SYNC_MAX_MESSAGES) || 4000, 20000);
       const cappedUids = uids.length > maxMsgs ? uids.slice(-maxMsgs) : uids;
-      const imapHost = process.env.EMAIL_IMAP_HOST || 'imap';
 
       for await (const message of client.fetch(cappedUids, { envelope: true, source: true, uid: true }, { uid: true })) {
         stats.scanned += 1;
         const fromAddr = String(message.envelope?.from?.[0]?.address || '').trim().toLowerCase();
         const smtpUser = String(process.env.EMAIL_SMTP_USER || '').trim().toLowerCase();
-        if (fromAddr === smtpUser) {
+        const smtpUser2 = String(process.env.EMAIL_SMTP_USER2 || '').trim().toLowerCase();
+        if (fromAddr === smtpUser || (smtpUser2 && fromAddr === smtpUser2)) {
           stats.skippedNoLead += 1;
           continue;
         }
@@ -288,13 +291,31 @@ export async function syncImapMailbox() {
     }
   } catch (error) {
     stats.error = error.message;
-    console.error('IMAP watcher failed:', error.message);
+    console.error(`IMAP watcher failed for ${normalizedEmail}:`, error.message);
   } finally {
     await client.logout().catch(() => {});
-    isSyncing = false;
+    activeSyncs.delete(normalizedEmail);
   }
 
   return stats;
+}
+
+export async function syncImapMailbox() {
+  const users = [
+    process.env.EMAIL_SMTP_USER,
+    process.env.EMAIL_SMTP_USER2,
+  ].filter(Boolean);
+
+  const results = {};
+  for (const user of users) {
+    try {
+      results[user] = await syncImapMailboxForUser(user);
+    } catch (err) {
+      console.error(`IMAP sync failed for ${user}:`, err.message);
+      results[user] = { error: err.message };
+    }
+  }
+  return results;
 }
 
 export function startImapWatcher() {

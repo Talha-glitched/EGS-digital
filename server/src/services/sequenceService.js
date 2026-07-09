@@ -354,12 +354,17 @@ function formatSentEmailRow(row) {
     stepIndex: row.stepIndex,
     stepNumber: Number(row.stepIndex) + 1,
     providerMessageId: row.providerMessageId || '',
+    status: row.status,
+    errorMessage: row.errorMessage || '',
+    scheduledFor: row.scheduledFor,
     lead: row.lead
       ? {
           _id: row.lead._id,
           name: row.lead.name || '',
           email: row.lead.email || '',
           deliveryStatus: row.lead.deliveryStatus || '',
+          designation: row.lead.designation || '',
+          hasResponded: row.lead.deliveryStatus === 'Replied' || !!row.lead.repliedAt,
         }
       : null,
     company: row.company
@@ -383,13 +388,81 @@ function formatSentEmailRow(row) {
   };
 }
 
+export async function getSentEmail(id) {
+  const pipeline = [
+    { $match: { _id: new mongoose.Types.ObjectId(String(id)) } },
+    {
+      $lookup: {
+        from: 'leads',
+        localField: 'leadId',
+        foreignField: '_id',
+        as: 'lead',
+      },
+    },
+    { $unwind: { path: '$lead', preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: 'companies',
+        localField: 'lead.companyId',
+        foreignField: '_id',
+        as: 'company',
+      },
+    },
+    { $unwind: { path: '$company', preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: 'sequenceenrollments',
+        localField: 'enrollmentId',
+        foreignField: '_id',
+        as: 'enrollment',
+      },
+    },
+    { $unwind: { path: '$enrollment', preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: 'sequences',
+        localField: 'enrollment.sequenceId',
+        foreignField: '_id',
+        as: 'sequence',
+      },
+    },
+    { $unwind: { path: '$sequence', preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: 'projectcampaigns',
+        localField: 'enrollment.campaignId',
+        foreignField: '_id',
+        as: 'campaign',
+      },
+    },
+    { $unwind: { path: '$campaign', preserveNullAndEmptyArrays: true } }
+  ];
+
+  const results = await SendJob.aggregate(pipeline);
+  if (!results.length) {
+    const error = new Error('Email not found.');
+    error.status = 404;
+    throw error;
+  }
+
+  return formatSentEmailRow(results[0]);
+}
+
 export async function listSentEmails(options = {}) {
   const limit = Math.min(Math.max(Number(options.limit) || 50, 1), 200);
   const page = Math.max(Number(options.page) || 1, 1);
   const skip = (page - 1) * limit;
 
+  const matchStage = {};
+  if (options.includeAllStatuses === 'true' || options.includeAllStatuses === true) {
+    // include pending, processing, sent, failed, cancelled
+  } else {
+    matchStage.status = 'sent';
+    matchStage.sentAt = { $ne: null };
+  }
+
   const pipeline = [
-    { $match: { status: 'sent', sentAt: { $ne: null } } },
+    { $match: matchStage },
     {
       $lookup: {
         from: 'leads',
@@ -452,6 +525,12 @@ export async function listSentEmails(options = {}) {
     });
   }
 
+  if (options.sequenceId && mongoose.isValidObjectId(String(options.sequenceId))) {
+    pipeline.push({
+      $match: { 'enrollment.sequenceId': new mongoose.Types.ObjectId(String(options.sequenceId)) },
+    });
+  }
+
   const search = String(options.q || options.search || '').trim();
   if (search) {
     const rx = new RegExp(escapeRegExp(search), 'i');
@@ -470,8 +549,12 @@ export async function listSentEmails(options = {}) {
     });
   }
 
+  const sortStage = (options.includeAllStatuses === 'true' || options.includeAllStatuses === true)
+    ? { createdAt: -1 }
+    : { sentAt: -1 };
+
   pipeline.push(
-    { $sort: { sentAt: -1 } },
+    { $sort: sortStage },
     {
       $facet: {
         total: [{ $count: 'count' }],
@@ -663,6 +746,7 @@ export async function enrollProjectLeads(projectId, sequenceId, options = {}) {
   let enrolled = 0;
   let restarted = 0;
   let skippedActive = 0;
+  const createdJobs = [];
   const now = new Date();
   const flowGraph = normalizeFlowGraph(sequence.flowGraph);
   const entryNodeId = flowGraph ? resolveEntryNodeId(flowGraph) : null;
@@ -693,7 +777,15 @@ export async function enrollProjectLeads(projectId, sequenceId, options = {}) {
       frozen: false,
     });
 
-    await scheduleEnrollmentJob(enrollment, 0, { immediate: true });
+    const job = await scheduleEnrollmentJob(enrollment, 0, { immediate: true });
+    if (job) {
+      createdJobs.push({
+        _id: job._id,
+        status: job.status,
+        recipientEmail: job.recipientEmail,
+        renderedSubject: job.renderedSubject,
+      });
+    }
     enrolled += 1;
   }
 
@@ -701,7 +793,7 @@ export async function enrollProjectLeads(projectId, sequenceId, options = {}) {
   await sequence.save();
   await syncAutoCampaignStatus(projectId);
 
-  return { enrolled, restarted, skippedActive, sequenceId, projectId };
+  return { enrolled, restarted, skippedActive, sequenceId, projectId, createdJobs };
 }
 
 export async function resetSequenceEnrollments(sequenceId, leadIds = []) {

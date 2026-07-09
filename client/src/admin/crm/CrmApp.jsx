@@ -20,6 +20,7 @@ import SequencesPage from './pages/SequencesPage.jsx';
 import SentEmailsPage from './pages/SentEmailsPage.jsx';
 import RelationshipsPage from './pages/RelationshipsPage.jsx';
 import TeamSettingsPage from './pages/TeamSettingsPage.jsx';
+import EmailSettingsPage from './pages/EmailSettingsPage.jsx';
 import UserActivityPage from './pages/UserActivityPage.jsx';
 import DataRecoveryPage from './pages/DataRecoveryPage.jsx';
 import { UndoToastProvider } from './context/UndoToastContext.jsx';
@@ -163,6 +164,7 @@ function CrmShell({ projects, onLogout, status }) {
     '/admin/crm/analytics': ['Reports', 'Campaign ROI, response performance, and source quality'],
     '/admin/crm/finance': ['Finances', 'Campaign budgets, fixed costs, and logged revenue'],
     '/admin/crm/settings/team': ['Team', 'User accounts, roles, and CRM access'],
+    '/admin/crm/settings/email': ['Email settings', 'Manage default SMTP, IMAP, and Resend API configurations'],
     '/admin/crm/settings/activity': ['Activity log', 'Who did what across the CRM'],
     '/admin/crm/settings/recovery': ['Data recovery', 'Roll back recent changes'],
   };
@@ -227,6 +229,7 @@ function CrmShell({ projects, onLogout, status }) {
               <Route path="analytics" element={<AdvancedAnalyticsPage />} />
               <Route path="finance" element={<FinancePage />} />
               <Route path="settings/team" element={<TeamSettingsPage />} />
+              <Route path="settings/email" element={<EmailSettingsPage />} />
               <Route path="settings/activity" element={<UserActivityPage />} />
               <Route path="settings/recovery" element={<DataRecoveryPage />} />
               <Route path="flows" element={<Navigate to="/admin/crm/sequences" replace />} />

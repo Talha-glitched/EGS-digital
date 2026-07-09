@@ -199,6 +199,9 @@ export default function SentEmailsWorkspace({
   campaigns = [],
   campaignId = '',
   onCampaignChange,
+  sequences = [],
+  sequenceId = '',
+  onSequenceChange,
   search = '',
   onSearchChange,
   page = 1,
@@ -285,6 +288,19 @@ export default function SentEmailsWorkspace({
               {campaigns.map((campaign) => (
                 <option key={campaign._id} value={campaign._id}>
                   {campaign.projectName || 'Campaign'}
+                </option>
+              ))}
+            </select>
+            <select
+              value={sequenceId}
+              onChange={(e) => onSequenceChange(e.target.value)}
+              className="crm-input w-full py-2 text-xs text-neutral-600 disabled:opacity-50"
+              disabled={!campaignId}
+            >
+              <option value="">All sequences</option>
+              {sequences.map((sequence) => (
+                <option key={sequence._id} value={sequence._id}>
+                  {sequence.name || 'Sequence'}
                 </option>
               ))}
             </select>

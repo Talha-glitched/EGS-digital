@@ -7,8 +7,8 @@ function getCrmLoginUrl() {
 }
 
 function assertSmtpReady() {
-  const { smtpReady } = getMailConfigStatus();
-  if (!smtpReady) {
+  const { smtpReady, smtp2Ready } = getMailConfigStatus();
+  if (!smtpReady && !smtp2Ready) {
     const error = new Error('Email is not configured. Set EMAIL_SMTP_* variables on the server.');
     error.status = 503;
     throw error;

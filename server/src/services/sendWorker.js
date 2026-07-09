@@ -334,20 +334,22 @@ async function processSendJobRecord(job) {
     return;
   }
 
-  const dailyCap = Number(process.env.MAILBOX_DAILY_CAP) || 150;
-  const currentDailyCount = await getDailySendCount();
-  if (currentDailyCount >= dailyCap) {
-    const nextWindow = getNextUaeBusinessWindow(new Date(Date.now() + 86400000));
-    console.log(`[SendWorker] Job ${job._id} rescheduled: daily cap of ${dailyCap} reached (current count: ${currentDailyCount}). Rescheduling for: ${nextWindow}`);
-    await rescheduleJob(job, nextWindow, 'daily cap');
-    return;
-  }
+  if (!job.immediateLaunch) {
+    const dailyCap = Number(process.env.MAILBOX_DAILY_CAP) || 150;
+    const currentDailyCount = await getDailySendCount();
+    if (currentDailyCount >= dailyCap) {
+      const nextWindow = getNextUaeBusinessWindow(new Date(Date.now() + 86400000));
+      console.log(`[SendWorker] Job ${job._id} rescheduled: daily cap of ${dailyCap} reached (current count: ${currentDailyCount}). Rescheduling for: ${nextWindow}`);
+      await rescheduleJob(job, nextWindow, 'daily cap');
+      return;
+    }
 
-  if (!shouldSkipBusinessHours(job) && !isWithinUaeBusinessHours()) {
-    const nextWindow = getNextUaeBusinessWindow();
-    console.log(`[SendWorker] Job ${job._id} rescheduled: outside business hours. Rescheduling for: ${nextWindow}`);
-    await rescheduleJob(job, nextWindow, 'outside business hours');
-    return;
+    if (!shouldSkipBusinessHours(job) && !isWithinUaeBusinessHours()) {
+      const nextWindow = getNextUaeBusinessWindow();
+      console.log(`[SendWorker] Job ${job._id} rescheduled: outside business hours. Rescheduling for: ${nextWindow}`);
+      await rescheduleJob(job, nextWindow, 'outside business hours');
+      return;
+    }
   }
 
   const [sequence, company, project] = await Promise.all([
@@ -479,4 +481,33 @@ export function stopSendWorker() {
 
 export async function shutdownSendWorker() {
   stopSendWorker();
+}
+
+export async function sendJobNow(jobId) {
+  const job = await SendJob.findById(jobId);
+  if (!job) {
+    throw new Error('Send job not found');
+  }
+  if (job.status === 'sent') {
+    return job;
+  }
+
+  // Force bypass checks
+  job.immediateLaunch = true;
+  job.status = 'processing';
+  await job.save();
+
+  try {
+    await processSendJobRecord(job);
+    const updated = await SendJob.findById(jobId);
+    if (updated.status === 'failed') {
+      throw new Error(updated.errorMessage || 'SMTP send failed');
+    }
+    return updated;
+  } catch (error) {
+    job.status = 'failed';
+    job.errorMessage = error.message;
+    await job.save();
+    throw error;
+  }
 }
