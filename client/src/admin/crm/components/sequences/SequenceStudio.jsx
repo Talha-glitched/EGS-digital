@@ -10,6 +10,7 @@ import {
   fetchGlobalLeads,
   fetchGlobalCompanies,
   resetSequenceEnrollments,
+  fetchSequenceDeliverySummary,
 } from '../../crmApi.js';
 import { useConfirmDelete } from '../../hooks/useConfirmDelete.js';
 import { useUndoToast } from '../../context/UndoToastContext.jsx';
@@ -25,6 +26,7 @@ import SequenceStudioToast from './SequenceStudioToast.jsx';
 import { useStudioToast } from './useStudioToast.js';
 import { LoadingState } from '../ui/primitives.jsx';
 import SequenceNodeEditorModal from './SequenceNodeEditorModal.jsx';
+import { SequenceDeliveryAlert } from '../sent/SendDeliveryIssuesWorkspace.jsx';
 import {
   appendNode,
   appendConditionWithBranches,
@@ -74,6 +76,7 @@ export default function SequenceStudio({
   const [companies, setCompanies] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [mailboxUsage, setMailboxUsage] = useState(null);
+  const [deliverySummary, setDeliverySummary] = useState(null);
 
   const [busy, setBusy] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -210,6 +213,19 @@ export default function SequenceStudio({
     showToast,
   ]);
 
+  const loadDeliverySummary = useCallback(async (sequenceId) => {
+    if (!sequenceId) {
+      setDeliverySummary(null);
+      return;
+    }
+    try {
+      const summary = await fetchSequenceDeliverySummary(sequenceId);
+      setDeliverySummary(summary);
+    } catch {
+      setDeliverySummary(null);
+    }
+  }, []);
+
   const loadSequence = useCallback(async (id) => {
     if (!id) return;
     setLoading(true);
@@ -228,12 +244,13 @@ export default function SequenceStudio({
       setIsActive(Boolean(seq.isActive));
       setFromEmail(seq.campaign?.fromEmail || '');
       setFromName(seq.campaign?.fromName || 'Exhibit Graphic Sign');
+      await loadDeliverySummary(seq._id);
     } catch {
       showToast('Failed to load sequence.', 'error');
     } finally {
       setLoading(false);
     }
-  }, [showToast, dismissToast]);
+  }, [showToast, dismissToast, loadDeliverySummary]);
 
   const resetNewSequence = useCallback((preferredCampaignId = '') => {
     const cid = preferredCampaignId || campaignParam || campaigns[0]?._id || '';
@@ -249,6 +266,7 @@ export default function SequenceStudio({
     setEdges(flow.edges);
     setSelectedNodeId(null);
     setIsActive(false);
+    setDeliverySummary(null);
     setLaunchMode('draft');
     setLaunchArmed(false);
     setAudience({ ...EMPTY_AUDIENCE });
@@ -287,6 +305,14 @@ export default function SequenceStudio({
     }, 200);
     return () => clearTimeout(timer);
   }, [campaignId, activeSequenceId, audience]);
+
+  useEffect(() => {
+    if (!activeSequenceId || !isActive) return undefined;
+    const timer = window.setInterval(() => {
+      loadDeliverySummary(activeSequenceId).catch(() => {});
+    }, 8000);
+    return () => window.clearInterval(timer);
+  }, [activeSequenceId, isActive, loadDeliverySummary]);
 
   useEffect(() => {
     const editId = searchParams.get('edit');
@@ -542,7 +568,7 @@ export default function SequenceStudio({
         setLaunchArmed(false);
         showToast(
           result.enrolled > 0
-            ? `Launched — ${result.enrolled} enrolled${result.restarted ? ` (${result.restarted} restarted)` : ''}. Sending via SMTP now.`
+            ? `Launched — ${result.enrolled} enrolled${result.restarted ? ` (${result.restarted} restarted)` : ''}. Sending via SMTP now. Check the Failed tab under Sent emails if anything does not go out.`
             : result.skippedActive
               ? 'No new contacts enrolled — selected contact(s) are still active in this sequence. Use “Reset enrollment to re-test” first.'
               : 'No new contacts were enrolled.',
@@ -656,6 +682,7 @@ export default function SequenceStudio({
         isActive={isActive}
         contentKey={activeSequenceId || 'new'}
         autosaveStatus={autosaveStatus}
+        deliverySummary={deliverySummary}
       />
     </div>
   );

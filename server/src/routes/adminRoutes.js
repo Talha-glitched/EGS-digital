@@ -100,6 +100,8 @@ import {
   getMailboxUsageStats,
   listSentEmails,
   getSentEmail,
+  listSendDeliveryIssues,
+  getSequenceDeliverySummary,
   createSequence,
   updateSequence,
   deleteSequence,
@@ -401,6 +403,10 @@ router.get('/sequences', asyncRoute(async (req, res) => {
   res.json(await listAllSequences());
 }));
 
+router.get('/sequences/:id/delivery-summary', asyncRoute(async (req, res) => {
+  res.json(await getSequenceDeliverySummary(req.params.id));
+}));
+
 router.get('/sequences/:id', asyncRoute(async (req, res) => {
   res.json(await getSequenceWithStats(req.params.id));
 }));
@@ -639,6 +645,17 @@ router.get('/sent-emails', asyncRoute(async (req, res) => {
 
 router.get('/sent-emails/:id', asyncRoute(async (req, res) => {
   res.json(await getSentEmail(req.params.id));
+}));
+
+router.get('/send-delivery/issues', asyncRoute(async (req, res) => {
+  res.json(await listSendDeliveryIssues({
+    limit: req.query.limit,
+    page: req.query.page,
+    campaignId: req.query.campaignId,
+    sequenceId: req.query.sequenceId,
+    status: req.query.status || req.query.view,
+    q: req.query.q || req.query.search,
+  }));
 }));
 
 router.get('/sent-emails/:id/thread', asyncRoute(async (req, res) => {

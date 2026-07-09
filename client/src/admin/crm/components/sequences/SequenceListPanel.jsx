@@ -9,13 +9,14 @@ import {
   Play,
   Pencil,
   ChevronRight,
+  AlertTriangle,
 } from 'lucide-react';
 import DataTableShell from '../ui/DataTableShell.jsx';
 import ClickableTableRow from '../ui/ClickableTableRow.jsx';
 import { SortableTableHeader, TableSortIndicator } from '../ui/SortableTableHeader.jsx';
 import { useTableSort } from '../../hooks/useTableSort.js';
 import { sequenceSortAccessors } from '../../hooks/tableSortAccessors.js';
-import { Badge, EmptyState } from '../ui/primitives.jsx';
+import { Badge, EmptyState, cn } from '../ui/primitives.jsx';
 
 function formatDate(value) {
   if (!value) return '—';
@@ -70,6 +71,7 @@ export default function SequenceListPanel({ sequences = [], onCreate, onEdit, lo
               <SortableTableHeader label="Status" sortKey="status" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
               <SortableTableHeader label="Enrolled" sortKey="enrolled" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
               <SortableTableHeader label="Queue" sortKey="queue" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+              <th className="text-left">Failed</th>
               <SortableTableHeader label="Updated" sortKey="updatedAt" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
               <th className="w-24" />
             </tr>
@@ -124,6 +126,16 @@ export default function SequenceListPanel({ sequences = [], onCreate, onEdit, lo
                     <div className="flex items-center gap-1.5 text-sm tabular-nums text-neutral-600">
                       <Clock className="h-3.5 w-3.5 text-neutral-400" />
                       {stats.queued || 0}
+                    </div>
+                  </td>
+                  <td>
+                    <div className={cn(
+                      'flex items-center gap-1.5 text-sm tabular-nums',
+                      stats.failed > 0 ? 'font-semibold text-red-600' : 'text-neutral-500',
+                    )}
+                    >
+                      {stats.failed > 0 ? <AlertTriangle className="h-3.5 w-3.5" /> : null}
+                      {stats.failed || 0}
                     </div>
                   </td>
                   <td className="text-sm text-neutral-500">{formatDate(seq.updatedAt)}</td>

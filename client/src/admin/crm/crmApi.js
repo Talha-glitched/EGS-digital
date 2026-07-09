@@ -244,6 +244,22 @@ export async function fetchProjectSequences(projectId) {
   return crmApiFetch(`/api/admin/projects/${projectId}/sequences`);
 }
 
+export async function fetchSendDeliveryIssues({ page, limit, campaignId, sequenceId, status, q } = {}) {
+  const query = new URLSearchParams({
+    ...(page && { page: String(page) }),
+    ...(limit && { limit: String(limit) }),
+    ...(campaignId && { campaignId }),
+    ...(sequenceId && { sequenceId }),
+    ...(status && { status }),
+    ...(q && { q }),
+  }).toString();
+  return crmApiFetch(`/api/admin/send-delivery/issues${query ? `?${query}` : ''}`);
+}
+
+export async function fetchSequenceDeliverySummary(sequenceId) {
+  return crmApiFetch(`/api/admin/sequences/${sequenceId}/delivery-summary`);
+}
+
 export async function fetchSentEmailThread(id) {
   return crmApiFetch(`/api/admin/sent-emails/${id}/thread`);
 }

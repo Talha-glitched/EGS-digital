@@ -6,7 +6,7 @@
  * using canonical Extended JSON so ObjectIds/Dates are preserved and restorable.
  *
  * Usage: node scripts/backupDatabase.js
- */
+ */ 
 import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
