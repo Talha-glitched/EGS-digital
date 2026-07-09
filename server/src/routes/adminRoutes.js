@@ -108,7 +108,17 @@ import {
   deleteSequences,
   restoreSequence,
   enrollProjectLeads,
+  launchSequence,
+  listLaunchBatches,
+  listLaunchBatchJobs,
+  removeLaunchBatchJobs,
+  sendLaunchBatchJobs,
+  getLaunchBatchSendProgress,
+  sendCampaignQueueJobs,
   resetSequenceEnrollments,
+  listCampaignQueueJobs,
+  removeSendJob,
+  removeCampaignQueueJobs,
 } from '../services/sequenceService.js';
 import {
   clearAdminCookie,
@@ -123,7 +133,6 @@ import { permissionForRequest } from '../constants/userRoles.js';
 import { getActor } from '../utils/actor.js';
 import { writeAuditLog, listAuditLogs, getUserActivitySummary, getAuditLogById } from '../services/auditService.js';
 import { getEmailDeliveryStatus, sendUserCredentialsEmail } from '../services/userEmailService.js';
-import { kickSendQueue } from '../services/sendWorker.js';
 import {
   listUsers,
   listActiveUsers,
@@ -188,8 +197,9 @@ router.use((req, res, next) => {
   return requireAdmin(req, res, () => requireRoutePermission(req, res, next));
 });
 
-router.get('/status', (req, res) => {
+router.get('/status', asyncRoute(async (req, res) => {
   const session = readAdminCookie(req);
+  const delivery = await getEmailDeliveryStatus();
   res.json({
     authenticated: Boolean(session),
     username: session?.displayName || session?.username || null,
@@ -205,8 +215,11 @@ router.get('/status', (req, res) => {
       : null,
     adminConfigured: isAdminConfigured(),
     ...getCrmAdminStatus(),
+    useResend: delivery.useResend,
+    resendReady: delivery.resendReady,
+    emailDeliveryReady: delivery.emailDeliveryReady,
   });
-});
+}));
 
 router.post('/login', asyncRoute(async (req, res) => {
   const { key, state } = getLoginAttemptState(req);
@@ -470,7 +483,7 @@ router.post('/sequences/bulk-delete', asyncRoute(async (req, res) => {
 }));
 
 router.post('/projects/:id/enroll', asyncRoute(async (req, res) => {
-  const { sequenceId, confirmEnrollment, leadIds, companyIds, enrollLimit } = req.body || {};
+  const { sequenceId, confirmEnrollment, leadIds, companyIds } = req.body || {};
   if (!sequenceId) {
     return res.status(400).json({ message: 'sequenceId is required.' });
   }
@@ -484,12 +497,90 @@ router.post('/projects/:id/enroll', asyncRoute(async (req, res) => {
     excludeLeadIds: req.body?.excludeLeadIds,
     importedCampaignIds: req.body?.importedCampaignIds,
     importCampaign: req.body?.importCampaign,
-    enrollLimit,
   });
-  if (result.enrolled > 0) {
-    kickSendQueue().catch((err) => console.error('Send queue kick failed:', err.message));
-  }
   res.json(result);
+}));
+
+router.post('/sequences/:id/launch', asyncRoute(async (req, res) => {
+  const result = await launchSequence(req.params.id, {
+    confirmEnrollment: req.body?.confirmEnrollment,
+    restart: req.body?.restart === true,
+    leadIds: req.body?.leadIds,
+    companyIds: req.body?.companyIds,
+    includeCompanyIds: req.body?.includeCompanyIds,
+    includeLeadIds: req.body?.includeLeadIds,
+    excludeCompanyIds: req.body?.excludeCompanyIds,
+    excludeLeadIds: req.body?.excludeLeadIds,
+    importedCampaignIds: req.body?.importedCampaignIds,
+    importCampaign: req.body?.importCampaign,
+  });
+  res.json(result);
+}));
+
+router.get('/email/launch-batches', asyncRoute(async (req, res) => {
+  res.json(await listLaunchBatches({
+    sequenceId: req.query.sequenceId,
+    launchBatchId: req.query.batch,
+    page: req.query.page,
+    limit: req.query.limit,
+  }));
+}));
+
+router.get('/email/launch-batches/:batchId/jobs', asyncRoute(async (req, res) => {
+  res.json(await listLaunchBatchJobs(req.params.batchId, {
+    status: req.query.status,
+  }));
+}));
+
+router.post('/email/launch-batches/:batchId/remove', asyncRoute(async (req, res) => {
+  const jobIds = Array.isArray(req.body?.jobIds) ? req.body.jobIds : [];
+  const all = req.body?.all === true;
+  res.json(await removeLaunchBatchJobs(req.params.batchId, { jobIds, all }));
+}));
+
+router.post('/email/launch-batches/:batchId/send', asyncRoute(async (req, res) => {
+  res.json(await sendLaunchBatchJobs(req.params.batchId, {
+    maxCount: req.body?.maxCount,
+    background: req.body?.background,
+  }));
+}));
+
+router.get('/email/launch-batches/:batchId/send-status', asyncRoute(async (req, res) => {
+  res.json(await getLaunchBatchSendProgress(req.params.batchId));
+}));
+
+router.get('/audience-preview', asyncRoute(async (req, res) => {
+  const {
+    sequenceId,
+    leadIds,
+    companyIds,
+    includeCompanyIds,
+    includeLeadIds,
+    excludeCompanyIds,
+    excludeLeadIds,
+    importedCampaignIds,
+    importCampaign,
+    full,
+  } = req.query || {};
+  const parseIds = (value) => (value ? String(value).split(',').filter(Boolean) : []);
+  const parseBool = (value) => value === 'true' || value === '1';
+  res.json(await previewAudience(null, {
+    sequenceId: sequenceId || undefined,
+    leadIds: parseIds(leadIds),
+    companyIds: parseIds(companyIds),
+    includeCompanyIds: parseIds(includeCompanyIds),
+    includeLeadIds: parseIds(includeLeadIds),
+    excludeCompanyIds: parseIds(excludeCompanyIds),
+    excludeLeadIds: parseIds(excludeLeadIds),
+    importedCampaignIds: parseIds(importedCampaignIds),
+    importCampaign: parseBool(importCampaign),
+    full: parseBool(full),
+  }));
+}));
+
+router.post('/sequences', asyncRoute(async (req, res) => {
+  const seq = await createSequence(null, req.body || {});
+  res.status(201).json(seq);
 }));
 
 router.post('/sequences/:id/reset-enrollments', asyncRoute(async (req, res) => {
@@ -981,7 +1072,7 @@ router.get('/users/roles', asyncRoute(async (_req, res) => {
 }));
 
 router.get('/users/email-status', asyncRoute(async (_req, res) => {
-  res.json(getEmailDeliveryStatus());
+  res.json(await getEmailDeliveryStatus());
 }));
 
 router.get('/users/:id/activity', asyncRoute(async (req, res) => {
@@ -1163,34 +1254,45 @@ router.patch('/system-settings', asyncRoute(async (req, res) => {
   res.json(await updateSystemSettings(req.body || {}));
 }));
 
-router.get('/resend/metrics', asyncRoute(async (_req, res) => {
-  res.json(await getResendMetrics());
+router.get('/resend/metrics', asyncRoute(async (req, res) => {
+  const { status, search, limit } = req.query || {};
+  res.json(await getResendMetrics({
+    status: status ? String(status) : undefined,
+    search: search ? String(search) : undefined,
+    limit: limit ? Number(limit) : undefined,
+  }));
 }));
 
 router.get('/projects/:projectId/queue', asyncRoute(async (req, res) => {
   const { projectId } = req.params;
   const { status } = req.query;
-
-  const leads = await Lead.find({ campaignId: projectId }).select('_id');
-  const leadIds = leads.map((l) => l._id);
-
-  const query = { leadId: { $in: leadIds } };
-  if (status) {
-    query.status = status;
-  }
-
-  const jobs = await SendJob.find(query)
-    .populate('leadId', 'name email deliveryStatus')
-    .sort({ scheduledFor: 1 })
-    .lean();
-
-  res.json({ items: jobs });
+  const items = await listCampaignQueueJobs(projectId, {
+    status: status ? String(status) : undefined,
+  });
+  res.json({ items, total: items.length });
 }));
 
 router.post('/send-jobs/:jobId/send', asyncRoute(async (req, res) => {
   const { jobId } = req.params;
   const updatedJob = await sendJobNow(jobId);
   res.json(updatedJob);
+}));
+
+router.delete('/send-jobs/:jobId', asyncRoute(async (req, res) => {
+  res.json(await removeSendJob(req.params.jobId));
+}));
+
+router.post('/projects/:projectId/queue/remove', asyncRoute(async (req, res) => {
+  const { projectId } = req.params;
+  const jobIds = Array.isArray(req.body?.jobIds) ? req.body.jobIds : [];
+  const all = req.body?.all === true;
+  res.json(await removeCampaignQueueJobs(projectId, { jobIds, all }));
+}));
+
+router.post('/projects/:projectId/queue/send', asyncRoute(async (req, res) => {
+  res.json(await sendCampaignQueueJobs(req.params.projectId, {
+    maxCount: req.body?.maxCount,
+  }));
 }));
 
 router.get('/workspace/summary', asyncRoute(async (_req, res) => {

@@ -62,15 +62,23 @@ export function buildAudienceSummary(audience, preview, campaignLabels = {}) {
   }
 
   const net = preview?.netNew ?? 0;
-  const eligible = preview?.eligible ?? 0;
-  const activeBlocked = preview?.alreadyEnrolled ?? 0;
-  const completed = preview?.alreadyCompleted ?? 0;
-  if (activeBlocked > 0 && net === 0 && eligible > 0) {
-    text += `. ${activeBlocked} already active in this sequence — reset to re-test.`;
-  } else if (completed > 0 && net > 0) {
-    text += `. ${net} of ${eligible} will enroll${completed ? ` (${completed} will restart from step 1)` : ''}.`;
+  const alreadySent = preview?.alreadySent ?? 0;
+  const alreadyInQueue = preview?.alreadyInQueue ?? 0;
+  const restarting = preview?.willRestart ?? 0;
+  if (alreadyInQueue > 0 && net === 0) {
+    text += `. ${alreadyInQueue} already queued — open Email → Outbox to send the remaining batch.`;
+  } else if (alreadySent > 0 && alreadyInQueue > 0 && net > 0) {
+    text += `. ${net} new will enroll (${alreadySent} already sent, ${alreadyInQueue} already queued).`;
+  } else if (alreadySent > 0 && net > 0) {
+    text += `. ${net} new will enroll (${alreadySent} already sent — won’t be emailed again).`;
+  } else if (alreadySent > 0 && net === 0) {
+    text += `. ${alreadySent} already sent — open Email → Outbox to send any remaining queue.`;
+  } else if (restarting > 0 && net > 0) {
+    text += `. ${net} will enroll (${restarting} will restart from step 1).`;
+  } else if (net > 0) {
+    text += `. ${net} will enroll.`;
   } else {
-    text += `. ${net} of ${eligible} will enroll.`;
+    text += `. 0 will enroll.`;
   }
   return text;
 }

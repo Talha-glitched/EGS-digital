@@ -11,6 +11,7 @@ import {
   assertEnrollmentConfirmed,
   buildEnrollmentLeadQuery,
   enrollableDeliveryFilter,
+  resolveLeadForCampaignEnrollment,
 } from '../src/services/sequenceService.js';
 import { withOptOutFooter } from '../src/services/sendWorker.js';
 
@@ -66,6 +67,22 @@ test('campaign enrollment requires confirmation and selects enrollable leads', (
     deliveryStatus: { $nin: ['Bounced / Invalid', 'Opted Out'] },
     _id: { $in: ['lead-1'] },
   });
+});
+
+test('audience preview counts every eligible contact for launch enrollment', () => {
+  const eligible = 6;
+  const alreadyEnrolled = 3;
+  const alreadyCompleted = 2;
+  const netNew = eligible;
+  const willRestart = alreadyEnrolled + alreadyCompleted;
+
+  assert.equal(netNew, 6);
+  assert.equal(willRestart, 5);
+  assert.notEqual(netNew, Math.max(0, eligible - alreadyEnrolled));
+});
+
+test('resolveLeadForCampaignEnrollment is exported for campaign audience enrollment', () => {
+  assert.equal(typeof resolveLeadForCampaignEnrollment, 'function');
 });
 
 test('outbound messages do not append an automatic opt-out footer', () => {

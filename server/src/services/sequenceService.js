@@ -4,18 +4,25 @@ import { SequenceEnrollment } from '../models/SequenceEnrollment.js';
 import { SendJob } from '../models/SendJob.js';
 import { Lead } from '../models/Lead.js';
 import { ProjectCampaign } from '../models/ProjectCampaign.js';
-import { scheduleEnrollmentJob, cancelLeadJobs } from './sendWorker.js';
-import { getMailConfigStatus } from './mailTransport.js';
+import { scheduleEnrollmentJob, cancelLeadJobs, sendPendingJobsBatch } from './sendWorker.js';
+import { getEmailDeliveryStatus } from './userEmailService.js';
 import { syncAutoCampaignStatus, syncCampaignResponseCounts } from './projectService.js';
 import { getGstDayBounds } from '../utils/uaeBusinessHours.js';
 import { normalizeFlowGraph, resolveEntryNodeId } from '../utils/sequenceFlowExecutor.js';
-import { Company } from '../models/Company.js';
+import { SequenceLaunch } from '../models/SequenceLaunch.js';
+import { capResendBatchSize, RESEND_MAX_EMAILS_PER_REQUEST } from '../constants/resendLimits.js';
 import {
   softDeleteRecord,
   restoreRecord,
   registerRevisionModel,
 } from './revisionService.js';
 import { formatDeliveryIssueRow } from '../utils/sendDeliveryErrors.js';
+import { buildLeadEmailQuery, getPrimaryLeadEmail, getSendTargetEmail } from '../utils/contactEmails.js';
+import { normalizeEmail } from '../utils/normalizeDomain.js';
+import {
+  getLeadsWithOpenSequenceStepJobs,
+  getLeadsWithSentSequenceStep,
+} from '../utils/sequenceSendGuards.js';
 
 function normalizeObjectIdList(values = []) {
   return [...new Set(
@@ -28,6 +35,19 @@ function normalizeObjectIdList(values = []) {
 export function assertEnrollmentConfirmed(options = {}) {
   if (options.confirmEnrollment !== true) {
     const error = new Error('Explicit launch confirmation is required.');
+    error.status = 400;
+    throw error;
+  }
+}
+
+export function assertLaunchAudience(options = {}) {
+  const imported = normalizeObjectIdList(options.importedCampaignIds || []);
+  const hasImportCampaign = options.importCampaign === true && options.projectId;
+  const hasCompanies = normalizeObjectIdList(options.includeCompanyIds || options.companyIds).length > 0;
+  const hasLeads = normalizeObjectIdList(options.includeLeadIds || options.leadIds).length > 0;
+
+  if (!imported.length && !hasImportCampaign && !hasCompanies && !hasLeads) {
+    const error = new Error('Choose an audience before launching: import a campaign list or add companies/contacts.');
     error.status = 400;
     throw error;
   }
@@ -102,15 +122,65 @@ export async function resolveAudienceLeadIds(projectId, options = {}) {
   return [...leadIdSet];
 }
 
-async function ensureLeadAssignedToCampaign(lead, projectId) {
-  if (String(lead.campaignId) === String(projectId)) return true;
+async function buildAudienceSnapshot(options = {}) {
+  const importedCampaignIds = normalizeObjectIdList(
+    options.importedCampaignIds?.length
+      ? options.importedCampaignIds
+      : (options.importCampaign === true && options.projectId ? [String(options.projectId)] : []),
+  );
+  const campaigns = importedCampaignIds.length
+    ? await ProjectCampaign.find({ _id: { $in: importedCampaignIds } }).select('projectName').lean()
+    : [];
+  const nameMap = new Map(campaigns.map((row) => [String(row._id), row.projectName]));
 
-  const duplicate = await Lead.findOne({
-    campaignId: projectId,
-    email: lead.email,
-    _id: { $ne: lead._id },
-  });
-  if (duplicate) return false;
+  return {
+    importedCampaignIds,
+    importedCampaignNames: importedCampaignIds.map((id) => nameMap.get(String(id)) || 'Campaign list'),
+    includeCompanyIds: normalizeObjectIdList(options.includeCompanyIds || options.companyIds),
+    includeLeadIds: normalizeObjectIdList(options.includeLeadIds || options.leadIds),
+    excludeCompanyIds: normalizeObjectIdList(options.excludeCompanyIds),
+    excludeLeadIds: normalizeObjectIdList(options.excludeLeadIds),
+  };
+}
+
+function resolveAudienceContextId(options = {}, audienceSnapshot = {}) {
+  if (audienceSnapshot.importedCampaignIds?.length) {
+    return String(audienceSnapshot.importedCampaignIds[0]);
+  }
+  if (options.projectId) return String(options.projectId);
+  return null;
+}
+
+function dedupeLeads(leads = []) {
+  const byId = new Map();
+  for (const lead of leads) {
+    if (lead?._id) byId.set(String(lead._id), lead);
+  }
+  return [...byId.values()];
+}
+
+const REMOVABLE_QUEUE_STATUSES = ['pending', 'processing', 'failed'];
+
+export async function resolveLeadForCampaignEnrollment(lead, projectId) {
+  if (!lead) return null;
+  if (String(lead.campaignId) === String(projectId)) {
+    return lead;
+  }
+
+  const primaryEmail = getPrimaryLeadEmail(lead);
+  if (primaryEmail) {
+    const emailQuery = buildLeadEmailQuery(primaryEmail);
+    if (emailQuery) {
+      const duplicate = await Lead.findOne({
+        campaignId: projectId,
+        _id: { $ne: lead._id },
+        ...emailQuery,
+      });
+      if (duplicate) {
+        return Lead.findById(duplicate._id);
+      }
+    }
+  }
 
   lead.campaignId = projectId;
   await lead.save();
@@ -121,7 +191,33 @@ async function ensureLeadAssignedToCampaign(lead, projectId) {
     await company.save();
   }
 
-  return true;
+  return lead;
+}
+
+async function bulkResolveLeadsForCampaignEnrollment(leads, projectId) {
+  const canonicalById = new Map();
+  const needLookup = [];
+
+  for (const lead of leads) {
+    if (String(lead.campaignId) === String(projectId)) {
+      canonicalById.set(String(lead._id), lead);
+    } else {
+      needLookup.push(lead);
+    }
+  }
+
+  const chunkSize = 25;
+  for (let index = 0; index < needLookup.length; index += chunkSize) {
+    const chunk = needLookup.slice(index, index + chunkSize);
+    const resolved = await Promise.all(
+      chunk.map((lead) => resolveLeadForCampaignEnrollment(lead, projectId)),
+    );
+    resolved.filter(Boolean).forEach((lead) => {
+      canonicalById.set(String(lead._id), lead);
+    });
+  }
+
+  return [...canonicalById.values()];
 }
 
 async function buildEnrollmentStats(sequenceIds = []) {
@@ -220,23 +316,46 @@ export async function listAllSequences() {
 
 export async function getSequenceWithStats(id) {
   const seq = await getSequence(id);
-  const campaign = await ProjectCampaign.findById(seq.campaignId)
-    .select('projectName milestone status fromEmail fromName')
-    .lean();
+  const campaign = seq.campaignId
+    ? await ProjectCampaign.findById(seq.campaignId)
+      .select('projectName milestone status fromEmail fromName')
+      .lean()
+    : null;
   const statsMap = await buildEnrollmentStats([seq._id]);
   const stats = statsMap.get(String(seq._id)) || { enrolled: 0, active: 0, completed: 0, queued: 0, failed: 0, cancelled: 0 };
   return { ...seq, campaign, stats };
 }
 
 export async function previewAudience(projectId, options = {}) {
-  const project = await ProjectCampaign.findById(projectId).select('_id projectName').lean();
-  if (!project) {
-    const error = new Error('Project not found.');
-    error.status = 404;
+  const hasAudienceSource = Boolean(
+    projectId
+    || options.importedCampaignIds?.length
+    || options.importCampaign
+    || options.includeLeadIds?.length
+    || options.leadIds?.length
+    || options.includeCompanyIds?.length
+    || options.companyIds?.length,
+  );
+  if (!hasAudienceSource) {
+    const error = new Error('Choose an audience list or contacts to preview.');
+    error.status = 400;
     throw error;
   }
 
-  const leadIds = await resolveAudienceLeadIds(projectId, options);
+  if (projectId) {
+    const project = await ProjectCampaign.findById(projectId).select('_id projectName').lean();
+    if (!project) {
+      const error = new Error('Project not found.');
+      error.status = 404;
+      throw error;
+    }
+  }
+
+  const audienceContextId = resolveAudienceContextId(
+    { ...options, projectId },
+    await buildAudienceSnapshot({ ...options, projectId }),
+  );
+  const leadIds = await resolveAudienceLeadIds(audienceContextId, options);
   const eligible = leadIds.length;
 
   const itemLimit = options.full ? 500 : 8;
@@ -250,8 +369,17 @@ export async function previewAudience(projectId, options = {}) {
 
   let alreadyEnrolled = 0;
   let alreadyCompleted = 0;
+  let alreadySent = 0;
+  let alreadyInQueue = 0;
   let blockingContacts = [];
   if (options.sequenceId && eligible) {
+    const [sentLeadIds, openLeadIds] = await Promise.all([
+      getLeadsWithSentSequenceStep(options.sequenceId, leadIds, 0),
+      getLeadsWithOpenSequenceStepJobs(options.sequenceId, leadIds, 0),
+    ]);
+    alreadySent = leadIds.filter((id) => sentLeadIds.has(String(id))).length;
+    alreadyInQueue = leadIds.filter((id) => openLeadIds.has(String(id))).length;
+
     const enrollmentRows = await SequenceEnrollment.find({
       sequenceId: options.sequenceId,
       leadId: { $in: leadIds },
@@ -287,15 +415,21 @@ export async function previewAudience(projectId, options = {}) {
   }
 
   const previouslyEnrolled = alreadyEnrolled + alreadyCompleted;
+  const netNew = options.restart === true
+    ? eligible
+    : Math.max(0, eligible - alreadySent - alreadyInQueue);
 
   return {
-    projectId,
+    projectId: projectId || audienceContextId || null,
     eligible,
     alreadyEnrolled,
     alreadyCompleted,
+    alreadySent,
+    alreadyInQueue,
     previouslyEnrolled,
     blockingContacts,
-    netNew: Math.max(0, eligible - alreadyEnrolled),
+    netNew,
+    willRestart: options.restart === true ? previouslyEnrolled : 0,
     sample: items.slice(0, 8),
     items: options.full ? items : undefined,
     totalItems: eligible,
@@ -818,7 +952,31 @@ export async function getSequence(id) {
   return seq;
 }
 
+export async function createStandaloneSequence(payload = {}) {
+  const steps = (payload.steps || []).map((step, index) => ({
+    stepOrder: index + 1,
+    dayDelay: Number(step.dayDelay) || 0,
+    delayUnit: step.delayUnit || 'days',
+    subjectTemplate: String(step.subjectTemplate || ''),
+    bodyTemplate: String(step.bodyTemplate || ''),
+    useAiPersonalization: step.useAiPersonalization !== false,
+    aiPrompt: String(step.aiPrompt || ''),
+  }));
+
+  return Sequence.create({
+    campaignId: payload.campaignId || null,
+    name: String(payload.name || 'Outreach Sequence').trim(),
+    steps,
+    flowGraph: normalizeFlowGraph(payload.flowGraph),
+    isActive: false,
+  });
+}
+
 export async function createSequence(projectId, payload) {
+  if (!projectId) {
+    return createStandaloneSequence(payload);
+  }
+
   const project = await ProjectCampaign.findById(projectId);
   if (!project) {
     const error = new Error('Project not found.');
@@ -926,96 +1084,890 @@ export async function deleteSequences(ids = []) {
   };
 }
 
-export async function enrollProjectLeads(projectId, sequenceId, options = {}) {
-  const [project, sequence] = await Promise.all([
-    ProjectCampaign.findById(projectId),
-    Sequence.findById(sequenceId),
-  ]);
-
-  if (!project || !sequence) {
-    const error = new Error('Project or sequence not found.');
+export async function recordHistoricalSequenceSends(sequenceId, {
+  sentEmails = [],
+  bouncedEmails = [],
+  campaignId = null,
+  sentAt = new Date(),
+} = {}) {
+  const sequence = await Sequence.findById(sequenceId);
+  if (!sequence) {
+    const error = new Error('Sequence not found.');
     error.status = 404;
     throw error;
   }
-  if (String(sequence.campaignId) !== String(projectId)) {
-    const error = new Error('Sequence does not belong to this project.');
-    error.status = 400;
-    throw error;
+
+  const campaignFilter = campaignId ? { campaignId } : {};
+  const results = {
+    markedSent: 0,
+    markedBounced: 0,
+    alreadyRecorded: 0,
+    notFound: [],
+  };
+
+  async function findLeadByEmail(email) {
+    const emailQuery = buildLeadEmailQuery(email);
+    if (!emailQuery) return null;
+    return Lead.findOne({ ...emailQuery, ...campaignFilter, deletedAt: null });
   }
 
+  for (const rawEmail of bouncedEmails) {
+    const email = normalizeEmail(rawEmail);
+    const lead = await findLeadByEmail(email);
+    if (!lead) {
+      results.notFound.push(email);
+      continue;
+    }
+    lead.deliveryStatus = 'Bounced / Invalid';
+    await lead.save();
+    results.markedBounced += 1;
+  }
+
+  for (const rawEmail of sentEmails) {
+    const email = normalizeEmail(rawEmail);
+    const lead = await findLeadByEmail(email);
+    if (!lead) {
+      results.notFound.push(email);
+      continue;
+    }
+
+    let enrollment = await SequenceEnrollment.findOne({ sequenceId, leadId: lead._id });
+    if (enrollment) {
+      const sentJob = await SendJob.findOne({
+        enrollmentId: enrollment._id,
+        stepIndex: 0,
+        status: 'sent',
+      }).select('_id').lean();
+      if (sentJob) {
+        results.alreadyRecorded += 1;
+        continue;
+      }
+    }
+
+    if (!enrollment) {
+      enrollment = await SequenceEnrollment.create({
+        leadId: lead._id,
+        campaignId: lead.campaignId,
+        sequenceId,
+        currentStepIndex: 0,
+        frozen: true,
+        completedAt: sentAt,
+        lastSentAt: sentAt,
+      });
+    } else {
+      enrollment.frozen = true;
+      enrollment.completedAt = enrollment.completedAt || sentAt;
+      enrollment.lastSentAt = sentAt;
+      await enrollment.save();
+    }
+
+    await SendJob.create({
+      leadId: lead._id,
+      enrollmentId: enrollment._id,
+      stepIndex: 0,
+      status: 'sent',
+      sentAt,
+      recipientEmail: email,
+      manualSend: true,
+    });
+
+    if (lead.deliveryStatus !== 'Replied') {
+      lead.deliveryStatus = 'Emailed Outbound';
+    }
+    lead.trackingMetrics = lead.trackingMetrics || {};
+    lead.trackingMetrics.emailsDeliveredCount = Math.max(lead.trackingMetrics.emailsDeliveredCount || 0, 1);
+    await lead.save();
+    results.markedSent += 1;
+  }
+
+  return results;
+}
+
+export async function launchSequence(sequenceId, options = {}) {
+  const sequence = await Sequence.findById(sequenceId);
+  if (!sequence) {
+    const error = new Error('Sequence not found.');
+    error.status = 404;
+    throw error;
+  }
   if (!sequence.steps?.length) {
     const error = new Error('Sequence must have at least one step.');
     error.status = 400;
     throw error;
   }
-  if (!getMailConfigStatus().smtpReady) {
-    const error = new Error('Email sending is not configured. Connect SMTP before launching a sequence.');
+
+  const deliveryStatus = await getEmailDeliveryStatus();
+  if (!deliveryStatus.emailDeliveryReady) {
+    const error = new Error('Email sending is not configured. Enable Resend or connect SMTP before launching a sequence.');
     error.status = 503;
     throw error;
   }
 
   assertEnrollmentConfirmed(options);
-  const resolvedLeadIds = await resolveAudienceLeadIds(projectId, options);
-  let leads = resolvedLeadIds.length
-    ? await Lead.find({ _id: { $in: resolvedLeadIds } })
-    : [];
-  leads = leads.filter((lead) => !['Bounced / Invalid', 'Opted Out'].includes(lead.deliveryStatus));
-  const enrollLimit = Number(options.enrollLimit);
-  if (Number.isFinite(enrollLimit) && enrollLimit > 0) {
-    leads = leads.slice(0, enrollLimit);
+  assertLaunchAudience(options);
+
+  const audienceSnapshot = await buildAudienceSnapshot(options);
+  if (sequence.campaignId && audienceSnapshot.importedCampaignIds?.length) {
+    const linkedCampaignId = String(sequence.campaignId);
+    const audienceIds = audienceSnapshot.importedCampaignIds.map(String);
+    if (!audienceIds.includes(linkedCampaignId)) {
+      const linkedCampaign = await ProjectCampaign.findById(sequence.campaignId).select('projectName').lean();
+      const error = new Error(
+        `Audience (${(audienceSnapshot.importedCampaignNames || []).join(', ') || 'selected lists'}) `
+        + `does not include this sequence's campaign (${linkedCampaign?.projectName || 'linked campaign'}). `
+        + 'Import the correct list before launching.',
+      );
+      error.status = 400;
+      throw error;
+    }
   }
 
-  let enrolled = 0;
-  let restarted = 0;
-  let skippedActive = 0;
-  const createdJobs = [];
+  const audienceContextId = resolveAudienceContextId(options, audienceSnapshot);
+  const resolvedLeadIds = await resolveAudienceLeadIds(audienceContextId, {
+    ...options,
+    importedCampaignIds: audienceSnapshot.importedCampaignIds,
+  });
+
+  let leads = resolvedLeadIds.length
+    ? await Lead.find({ _id: { $in: resolvedLeadIds } }).sort({ name: 1 })
+    : [];
+  leads = leads.filter((lead) => !['Bounced / Invalid', 'Opted Out'].includes(lead.deliveryStatus));
+
+  const canonicalLeads = dedupeLeads(leads);
+  if (!canonicalLeads.length) {
+    const error = new Error('No eligible contacts found for this audience.');
+    error.status = 400;
+    throw error;
+  }
+
   const now = new Date();
   const flowGraph = normalizeFlowGraph(sequence.flowGraph);
   const entryNodeId = flowGraph ? resolveEntryNodeId(flowGraph) : null;
+  const leadIds = canonicalLeads.map((lead) => lead._id);
+  const forceRestart = options.restart === true;
 
-  for (const lead of leads) {
-    const assigned = await ensureLeadAssignedToCampaign(lead, projectId);
-    if (!assigned) continue;
+  let leadsToEnroll = canonicalLeads;
+  let skippedAlreadySent = 0;
+  let skippedInQueue = 0;
 
-    const existing = await SequenceEnrollment.findOne({ leadId: lead._id, sequenceId });
-    if (existing) {
-      const isActive = !existing.frozen && !existing.completedAt;
-      if (isActive) {
-        skippedActive += 1;
-        continue;
+  if (!forceRestart) {
+    const [sentLeadIds, openLeadIds] = await Promise.all([
+      getLeadsWithSentSequenceStep(sequenceId, leadIds, 0),
+      getLeadsWithOpenSequenceStepJobs(sequenceId, leadIds, 0),
+    ]);
+
+    leadsToEnroll = canonicalLeads.filter((lead) => {
+      const key = String(lead._id);
+      if (sentLeadIds.has(key)) {
+        skippedAlreadySent += 1;
+        return false;
       }
-      await SendJob.deleteMany({ enrollmentId: existing._id });
-      await SequenceEnrollment.deleteOne({ _id: existing._id });
-      restarted += 1;
-    }
-
-    const enrollment = await SequenceEnrollment.create({
-      leadId: lead._id,
-      campaignId: projectId,
-      sequenceId,
-      currentStepIndex: 0,
-      currentNodeId: entryNodeId,
-      nextSendAt: now,
-      frozen: false,
+      if (openLeadIds.has(key)) {
+        skippedInQueue += 1;
+        return false;
+      }
+      return true;
     });
-
-    const job = await scheduleEnrollmentJob(enrollment, 0, { immediate: true });
-    if (job) {
-      createdJobs.push({
-        _id: job._id,
-        status: job.status,
-        recipientEmail: job.recipientEmail,
-        renderedSubject: job.renderedSubject,
-      });
-    }
-    enrolled += 1;
   }
+
+  console.log(
+    `[Sequence] Launching sequence ${sequenceId} for ${leadsToEnroll.length} new lead(s)`
+    + ` (${skippedAlreadySent} already sent, ${skippedInQueue} already queued, restart=${forceRestart})...`,
+  );
+
+  const launchBatch = await SequenceLaunch.create({
+    sequenceId,
+    audience: audienceSnapshot,
+    launchedAt: now,
+  });
+
+  let restarted = 0;
+  if (forceRestart && leadIds.length) {
+    const existingEnrollments = await SequenceEnrollment.find({ sequenceId, leadId: { $in: leadIds } }).select('_id').lean();
+    restarted = existingEnrollments.length;
+    if (existingEnrollments.length) {
+      const enrollmentIds = existingEnrollments.map((row) => row._id);
+      await SendJob.deleteMany({ enrollmentId: { $in: enrollmentIds } });
+      await SequenceEnrollment.deleteMany({ _id: { $in: enrollmentIds } });
+    }
+  } else if (leadsToEnroll.length) {
+    const enrollLeadIds = leadsToEnroll.map((lead) => lead._id);
+    const staleEnrollments = await SequenceEnrollment.find({
+      sequenceId,
+      leadId: { $in: enrollLeadIds },
+    }).select('_id').lean();
+    if (staleEnrollments.length) {
+      const staleIds = staleEnrollments.map((row) => row._id);
+      await SendJob.deleteMany({ enrollmentId: { $in: staleIds } });
+      await SequenceEnrollment.deleteMany({ _id: { $in: staleIds } });
+      restarted += staleEnrollments.length;
+    }
+  }
+
+  const enrollments = leadsToEnroll.length
+    ? await SequenceEnrollment.insertMany(
+      leadsToEnroll.map((lead) => ({
+        leadId: lead._id,
+        campaignId: lead.campaignId,
+        sequenceId,
+        launchBatchId: launchBatch._id,
+        currentStepIndex: 0,
+        currentNodeId: entryNodeId,
+        nextSendAt: now,
+        frozen: false,
+      })),
+      { ordered: true },
+    )
+    : [];
+
+  const jobs = enrollments.length
+    ? await SendJob.insertMany(
+      enrollments.map((enrollment) => ({
+        leadId: enrollment.leadId,
+        enrollmentId: enrollment._id,
+        stepIndex: enrollment.currentStepIndex,
+        status: 'pending',
+        scheduledFor: now,
+        immediateLaunch: true,
+        manualSend: true,
+      })),
+      { ordered: true },
+    )
+    : [];
+
+  const enrolled = enrollments.length;
+  const merged = Math.max(0, leads.length - canonicalLeads.length);
+
+  launchBatch.enrolledCount = enrolled;
+  launchBatch.restartedCount = restarted;
+  launchBatch.mergedCount = merged;
+  await launchBatch.save();
 
   sequence.isActive = true;
   await sequence.save();
-  await syncAutoCampaignStatus(projectId);
 
-  return { enrolled, restarted, skippedActive, sequenceId, projectId, createdJobs };
+  const campaignIds = [...new Set(canonicalLeads.map((lead) => String(lead.campaignId)).filter(Boolean))];
+  await Promise.all(campaignIds.map((campaignId) => syncAutoCampaignStatus(campaignId)));
+
+  console.log(`[Sequence] Launch batch ${launchBatch._id} enrolled ${enrolled} lead(s) (${restarted} restarted).`);
+
+  return {
+    enrolled,
+    restarted,
+    merged,
+    skippedAlreadySent,
+    skippedInQueue,
+    skippedActive: skippedInQueue,
+    sequenceId,
+    launchBatchId: launchBatch._id,
+    projectId: audienceContextId || null,
+    createdJobs: jobs.slice(0, 20).map((job) => ({
+      _id: job._id,
+      status: job.status,
+      recipientEmail: job.recipientEmail,
+      renderedSubject: job.renderedSubject,
+    })),
+  };
+}
+
+export async function enrollProjectLeads(projectId, sequenceId, options = {}) {
+  const project = await ProjectCampaign.findById(projectId);
+  if (!project) {
+    const error = new Error('Project not found.');
+    error.status = 404;
+    throw error;
+  }
+
+  return launchSequence(sequenceId, { ...options, projectId });
+}
+
+async function backfillLegacyLaunchBatches() {
+  const orphanGroups = await SequenceEnrollment.aggregate([
+    { $match: { launchBatchId: null } },
+    {
+      $group: {
+        _id: {
+          sequenceId: '$sequenceId',
+          launchDay: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+        },
+        enrollmentIds: { $push: '$_id' },
+        leadIds: { $push: '$leadId' },
+        launchedAt: { $min: '$createdAt' },
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+
+  if (!orphanGroups.length) return 0;
+
+  let created = 0;
+  for (const group of orphanGroups) {
+    const uniqueLeadIds = [...new Set(group.leadIds.map((id) => String(id)))];
+    const leads = await Lead.find({ _id: { $in: uniqueLeadIds } }).select('campaignId').lean();
+    const campaignIds = normalizeObjectIdList(leads.map((lead) => lead.campaignId));
+    const campaigns = campaignIds.length
+      ? await ProjectCampaign.find({ _id: { $in: campaignIds } }).select('projectName').lean()
+      : [];
+
+    const launchBatch = await SequenceLaunch.create({
+      sequenceId: group._id.sequenceId,
+      audience: {
+        importedCampaignIds: campaignIds,
+        importedCampaignNames: campaigns.map((row) => row.projectName),
+      },
+      launchedAt: group.launchedAt,
+      enrolledCount: group.count,
+      restartedCount: 0,
+      mergedCount: 0,
+    });
+
+    await SequenceEnrollment.updateMany(
+      { _id: { $in: group.enrollmentIds } },
+      { $set: { launchBatchId: launchBatch._id } },
+    );
+    created += 1;
+  }
+
+  if (created > 0) {
+    console.log(`[Sequence] Backfilled ${created} legacy launch batch(es) for orphan enrollments.`);
+  }
+
+  return created;
+}
+
+export async function listLaunchBatches(options = {}) {
+  await backfillLegacyLaunchBatches();
+
+  const query = {};
+  if (options.sequenceId) query.sequenceId = options.sequenceId;
+  if (options.launchBatchId) query._id = options.launchBatchId;
+
+  const limit = Math.min(Math.max(Number(options.limit) || 50, 1), 200);
+  const page = Math.max(Number(options.page) || 1, 1);
+  const skip = (page - 1) * limit;
+
+  const [total, batches] = await Promise.all([
+    SequenceLaunch.countDocuments(query),
+    SequenceLaunch.find(query).sort({ launchedAt: -1 }).skip(skip).limit(limit).lean(),
+  ]);
+
+  if (!batches.length) {
+    return { items: [], total, page, pages: 0 };
+  }
+
+  const batchIds = batches.map((row) => row._id);
+  const sequenceIds = [...new Set(batches.map((row) => String(row.sequenceId)))];
+
+  const [sequences, statusRows] = await Promise.all([
+    Sequence.find({ _id: { $in: sequenceIds } }).select('name').lean(),
+    SequenceEnrollment.aggregate([
+      { $match: { launchBatchId: { $in: batchIds } } },
+      {
+        $lookup: {
+          from: 'sendjobs',
+          localField: '_id',
+          foreignField: 'enrollmentId',
+          as: 'jobs',
+        },
+      },
+      { $unwind: '$jobs' },
+      {
+        $group: {
+          _id: { batchId: '$launchBatchId', status: '$jobs.status' },
+          count: { $sum: 1 },
+        },
+      },
+    ]),
+  ]);
+
+  const sequenceMap = new Map(sequences.map((row) => [String(row._id), row]));
+  const statusMap = new Map();
+  for (const row of statusRows) {
+    const batchKey = String(row._id.batchId);
+    const current = statusMap.get(batchKey) || {
+      pending: 0, processing: 0, sent: 0, failed: 0, cancelled: 0,
+    };
+    const status = row._id.status;
+    if (current[status] != null) current[status] = row.count;
+    statusMap.set(batchKey, current);
+  }
+
+  const items = batches.map((batch) => {
+    const stats = statusMap.get(String(batch._id)) || {
+      pending: 0, processing: 0, sent: 0, failed: 0, cancelled: 0,
+    };
+    const sequence = sequenceMap.get(String(batch.sequenceId));
+    const audienceLists = batch.audience?.importedCampaignNames?.length
+      ? batch.audience.importedCampaignNames
+      : ['Custom audience'];
+
+    return {
+      _id: batch._id,
+      sequenceId: batch.sequenceId,
+      sequenceName: sequence?.name || 'Sequence',
+      launchedAt: batch.launchedAt,
+      enrolledCount: batch.enrolledCount || 0,
+      restartedCount: batch.restartedCount || 0,
+      audienceLists,
+      importedCampaignIds: batch.audience?.importedCampaignIds || [],
+      stats: {
+        ...stats,
+        queued: stats.pending + stats.processing,
+      },
+    };
+  });
+
+  return {
+    items,
+    total,
+    page,
+    pages: Math.ceil(total / limit),
+  };
+}
+
+export async function listLaunchBatchJobs(launchBatchId, options = {}) {
+  const batch = await SequenceLaunch.findById(launchBatchId).lean();
+  if (!batch) {
+    const error = new Error('Launch batch not found.');
+    error.status = 404;
+    throw error;
+  }
+
+  const statusMatch = options.status
+    ? { status: options.status }
+    : { status: { $in: ['pending', 'processing', 'failed', 'sent', 'cancelled'] } };
+
+  const rows = await SendJob.aggregate([
+    {
+      $lookup: {
+        from: 'sequenceenrollments',
+        localField: 'enrollmentId',
+        foreignField: '_id',
+        as: 'enrollment',
+      },
+    },
+    { $unwind: '$enrollment' },
+    { $match: { 'enrollment.launchBatchId': new mongoose.Types.ObjectId(String(launchBatchId)), ...statusMatch } },
+    { $sort: { scheduledFor: 1 } },
+    {
+      $lookup: {
+        from: 'leads',
+        localField: 'leadId',
+        foreignField: '_id',
+        as: 'leadDoc',
+      },
+    },
+    { $unwind: { path: '$leadDoc', preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: 'sequences',
+        localField: 'enrollment.sequenceId',
+        foreignField: '_id',
+        as: 'sequenceDoc',
+      },
+    },
+    { $unwind: { path: '$sequenceDoc', preserveNullAndEmptyArrays: true } },
+  ]);
+
+  return {
+    batch,
+    items: rows.map((row) => ({
+      _id: row._id,
+      leadId: row.leadDoc
+        ? {
+            _id: row.leadDoc._id,
+            name: row.leadDoc.name,
+            email: row.leadDoc.email,
+            campaignId: row.leadDoc.campaignId,
+          }
+        : row.leadId,
+      sequenceId: row.enrollment?.sequenceId,
+      sequenceName: row.sequenceDoc?.name || '',
+      enrollmentId: row.enrollmentId,
+      stepIndex: row.stepIndex,
+      status: row.status,
+      scheduledFor: row.scheduledFor,
+      sentAt: row.sentAt,
+      recipientEmail: row.recipientEmail,
+      renderedSubject: row.renderedSubject,
+      errorMessage: row.errorMessage,
+      manualSend: row.manualSend,
+    })),
+    total: rows.length,
+  };
+}
+
+async function getLaunchBatchJobIdSet(launchBatchId) {
+  const rows = await SequenceEnrollment.find({ launchBatchId }).select('_id').lean();
+  if (!rows.length) return new Set();
+  const jobs = await SendJob.find({
+    enrollmentId: { $in: rows.map((row) => row._id) },
+    status: { $in: REMOVABLE_QUEUE_STATUSES },
+  }).select('_id').lean();
+  return new Set(jobs.map((job) => String(job._id)));
+}
+
+export async function removeLaunchBatchJobs(launchBatchId, { jobIds = [], all = false } = {}) {
+  const batch = await SequenceLaunch.findById(launchBatchId);
+  if (!batch) {
+    const error = new Error('Launch batch not found.');
+    error.status = 404;
+    throw error;
+  }
+
+  const allowed = await getLaunchBatchJobIdSet(launchBatchId);
+  let idsToRemove = [];
+
+  if (all) {
+    idsToRemove = [...allowed];
+  } else if (Array.isArray(jobIds) && jobIds.length) {
+    idsToRemove = jobIds.map(String).filter((id) => allowed.has(id));
+  } else {
+    return { removed: 0, jobIds: [] };
+  }
+
+  if (!idsToRemove.length) {
+    return { removed: 0, jobIds: [] };
+  }
+
+  const result = await SendJob.deleteMany({
+    _id: { $in: idsToRemove },
+    status: { $in: REMOVABLE_QUEUE_STATUSES },
+  });
+
+  return { removed: result.deletedCount || 0, jobIds: idsToRemove };
+}
+
+async function countPendingSendJobsForEnrollments(enrollmentIds = []) {
+  if (!enrollmentIds.length) return 0;
+  return SendJob.countDocuments({
+    enrollmentId: { $in: enrollmentIds },
+    status: { $in: ['pending', 'processing', 'failed'] },
+  });
+}
+
+async function countLaunchBatchJobStats(launchBatchId) {
+  const enrollments = await SequenceEnrollment.find({ launchBatchId }).select('_id').lean();
+  const enrollmentIds = enrollments.map((row) => row._id);
+  if (!enrollmentIds.length) {
+    return { pending: 0, sent: 0, failed: 0, processing: 0, enrollmentIds };
+  }
+
+  const rows = await SendJob.aggregate([
+    { $match: { enrollmentId: { $in: enrollmentIds } } },
+    { $group: { _id: '$status', count: { $sum: 1 } } },
+  ]);
+
+  const stats = { pending: 0, sent: 0, failed: 0, processing: 0 };
+  for (const row of rows) {
+    if (stats[row._id] != null) stats[row._id] = row.count;
+  }
+
+  return { ...stats, enrollmentIds };
+}
+
+const launchBatchSendRuns = new Map();
+
+async function sendLaunchBatchChunk(launchBatchId, options = {}) {
+  const batch = await SequenceLaunch.findById(launchBatchId);
+  if (!batch) {
+    const error = new Error('Launch batch not found.');
+    error.status = 404;
+    throw error;
+  }
+
+  const maxCount = capResendBatchSize(options.maxCount);
+  const enrollments = await SequenceEnrollment.find({ launchBatchId }).select('_id').lean();
+  const enrollmentIds = enrollments.map((row) => row._id);
+  const pendingBefore = await countPendingSendJobsForEnrollments(enrollmentIds);
+
+  const jobs = await SendJob.find({
+    enrollmentId: { $in: enrollmentIds },
+    status: { $in: ['pending', 'failed'] },
+  })
+    .sort({ scheduledFor: 1 })
+    .limit(maxCount)
+    .select('_id')
+    .lean();
+
+  const sendResult = await sendPendingJobsBatch(jobs.map((row) => row._id), { maxCount });
+  const remaining = await countPendingSendJobsForEnrollments(enrollmentIds);
+
+  return {
+    launchBatchId: String(launchBatchId),
+    ...sendResult,
+    remaining,
+    queuedBefore: pendingBefore,
+    cappedAt: RESEND_MAX_EMAILS_PER_REQUEST,
+  };
+}
+
+async function runLaunchBatchSendLoop(launchBatchId, state) {
+  try {
+    let iterations = 0;
+    while (iterations < 200) {
+      iterations += 1;
+      state.iteration = iterations;
+      const result = await sendLaunchBatchChunk(launchBatchId);
+      state.totalSent += result.sent || 0;
+      state.totalFailed += result.failed || 0;
+      state.remaining = result.remaining;
+      if (result.remaining <= 0) break;
+      if ((result.sent || 0) === 0 && (result.failed || 0) === 0) break;
+      await new Promise((resolve) => setTimeout(resolve, 400));
+    }
+  } catch (error) {
+    state.lastError = error.message || 'Launch batch send failed.';
+    console.error(`[Sequence] Launch batch ${launchBatchId} background send error:`, error);
+  } finally {
+    state.running = false;
+    state.finishedAt = new Date();
+  }
+}
+
+export async function getLaunchBatchSendProgress(launchBatchId) {
+  const key = String(launchBatchId);
+  const batch = await SequenceLaunch.findById(launchBatchId).select('_id').lean();
+  if (!batch) {
+    const error = new Error('Launch batch not found.');
+    error.status = 404;
+    throw error;
+  }
+
+  const stats = await countLaunchBatchJobStats(launchBatchId);
+  const run = launchBatchSendRuns.get(key);
+
+  return {
+    launchBatchId: key,
+    running: Boolean(run?.running),
+    pending: stats.pending + stats.processing,
+    sent: stats.sent,
+    failed: stats.failed,
+    totalSentThisRun: run?.totalSent || 0,
+    totalFailedThisRun: run?.totalFailed || 0,
+    iteration: run?.iteration || 0,
+    startedAt: run?.startedAt || null,
+    finishedAt: run?.finishedAt || null,
+    lastError: run?.lastError || null,
+  };
+}
+
+export async function sendLaunchBatchJobs(launchBatchId, options = {}) {
+  const background = options.background !== false;
+  const batch = await SequenceLaunch.findById(launchBatchId);
+  if (!batch) {
+    const error = new Error('Launch batch not found.');
+    error.status = 404;
+    throw error;
+  }
+
+  const stats = await countLaunchBatchJobStats(launchBatchId);
+  const pendingBefore = stats.pending + stats.processing;
+
+  if (pendingBefore === 0) {
+    return {
+      launchBatchId: String(launchBatchId),
+      started: false,
+      running: false,
+      remaining: 0,
+      queuedBefore: 0,
+      sent: stats.sent,
+      message: 'Nothing left to send.',
+    };
+  }
+
+  const key = String(launchBatchId);
+  if (background) {
+    const existing = launchBatchSendRuns.get(key);
+    if (existing?.running) {
+      return {
+        launchBatchId: key,
+        started: false,
+        alreadyRunning: true,
+        running: true,
+        background: true,
+        remaining: existing.remaining ?? pendingBefore,
+        queuedBefore: pendingBefore,
+        sent: stats.sent,
+        message: 'Send already running on the server.',
+      };
+    }
+
+    const state = {
+      running: true,
+      totalSent: 0,
+      totalFailed: 0,
+      remaining: pendingBefore,
+      queuedBefore: pendingBefore,
+      startedAt: new Date(),
+      iteration: 0,
+      lastError: null,
+      finishedAt: null,
+    };
+    launchBatchSendRuns.set(key, state);
+    void runLaunchBatchSendLoop(launchBatchId, state);
+
+    return {
+      launchBatchId: key,
+      started: true,
+      running: true,
+      background: true,
+      remaining: pendingBefore,
+      queuedBefore: pendingBefore,
+      sent: stats.sent,
+      message: 'Sending on the server — you can leave this page. Already-sent contacts are skipped.',
+    };
+  }
+
+  return sendLaunchBatchChunk(launchBatchId, options);
+}
+
+export async function sendCampaignQueueJobs(projectId, options = {}) {
+  const project = await ProjectCampaign.findById(projectId);
+  if (!project) {
+    const error = new Error('Project not found.');
+    error.status = 404;
+    throw error;
+  }
+
+  const maxCount = capResendBatchSize(options.maxCount);
+  const queueJobs = await listCampaignQueueJobs(projectId, { status: 'pending' });
+  const failedJobs = await listCampaignQueueJobs(projectId, { status: 'failed' });
+  const combined = [...queueJobs, ...failedJobs]
+    .sort((a, b) => new Date(a.scheduledFor || 0) - new Date(b.scheduledFor || 0))
+    .slice(0, maxCount);
+
+  const queuedBefore = queueJobs.length + failedJobs.length;
+  const sendResult = await sendPendingJobsBatch(combined.map((row) => row._id), { maxCount });
+  const remainingJobs = await listCampaignQueueJobs(projectId);
+
+  return {
+    projectId: String(projectId),
+    ...sendResult,
+    remaining: remainingJobs.length,
+    queuedBefore,
+    cappedAt: RESEND_MAX_EMAILS_PER_REQUEST,
+  };
+}
+
+export async function listCampaignQueueJobs(projectId, options = {}) {
+  const campaignObjectId = new mongoose.Types.ObjectId(String(projectId));
+  const statusMatch = options.status
+    ? { status: options.status }
+    : { status: { $in: ['pending', 'processing', 'failed'] } };
+
+  const rows = await SendJob.aggregate([
+    {
+      $lookup: {
+        from: 'sequenceenrollments',
+        localField: 'enrollmentId',
+        foreignField: '_id',
+        as: 'enrollment',
+      },
+    },
+    { $unwind: '$enrollment' },
+    {
+      $lookup: {
+        from: 'leads',
+        localField: 'leadId',
+        foreignField: '_id',
+        as: 'leadDoc',
+      },
+    },
+    { $unwind: { path: '$leadDoc', preserveNullAndEmptyArrays: true } },
+    {
+      $match: {
+        'leadDoc.campaignId': campaignObjectId,
+        ...statusMatch,
+      },
+    },
+    { $sort: { scheduledFor: 1 } },
+  ]);
+
+  return rows.map((row) => ({
+    _id: row._id,
+    leadId: row.leadDoc
+      ? {
+          _id: row.leadDoc._id,
+          name: row.leadDoc.name,
+          email: row.leadDoc.email,
+          deliveryStatus: row.leadDoc.deliveryStatus,
+          emailApollo: row.leadDoc.emailApollo,
+          emailHunter: row.leadDoc.emailHunter,
+          emailLusha: row.leadDoc.emailLusha,
+        }
+      : row.leadId,
+    enrollmentId: row.enrollmentId,
+    stepIndex: row.stepIndex,
+    status: row.status,
+    scheduledFor: row.scheduledFor,
+    sentAt: row.sentAt,
+    recipientEmail: row.recipientEmail,
+    providerMessageId: row.providerMessageId,
+    renderedSubject: row.renderedSubject,
+    renderedBody: row.renderedBody,
+    errorMessage: row.errorMessage,
+    immediateLaunch: row.immediateLaunch,
+    manualSend: row.manualSend,
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
+  }));
+}
+
+async function getCampaignQueueJobIdSet(projectId) {
+  const jobs = await listCampaignQueueJobs(projectId);
+  return new Set(jobs.map((job) => String(job._id)));
+}
+
+export async function removeSendJob(jobId, { projectId } = {}) {
+  const job = await SendJob.findById(jobId).lean();
+  if (!job) {
+    const error = new Error('Send job not found.');
+    error.status = 404;
+    throw error;
+  }
+  if (!REMOVABLE_QUEUE_STATUSES.includes(job.status)) {
+    const error = new Error('Only queued or failed sends can be removed.');
+    error.status = 400;
+    throw error;
+  }
+  if (projectId) {
+    const allowed = await getCampaignQueueJobIdSet(projectId);
+    if (!allowed.has(String(jobId))) {
+      const error = new Error('Send job does not belong to this campaign queue.');
+      error.status = 403;
+      throw error;
+    }
+  }
+  await SendJob.deleteOne({ _id: jobId, status: { $in: REMOVABLE_QUEUE_STATUSES } });
+  return { removed: 1, jobId: String(jobId) };
+}
+
+export async function removeCampaignQueueJobs(projectId, { jobIds = [], all = false } = {}) {
+  const allowed = await getCampaignQueueJobIdSet(projectId);
+  let idsToRemove = [];
+
+  if (all) {
+    idsToRemove = [...allowed];
+  } else if (Array.isArray(jobIds) && jobIds.length) {
+    idsToRemove = jobIds.map(String).filter((id) => allowed.has(id));
+  } else {
+    return { removed: 0, jobIds: [] };
+  }
+
+  if (!idsToRemove.length) {
+    return { removed: 0, jobIds: [] };
+  }
+
+  const result = await SendJob.deleteMany({
+    _id: { $in: idsToRemove },
+    status: { $in: REMOVABLE_QUEUE_STATUSES },
+  });
+
+  return {
+    removed: result.deletedCount || 0,
+    jobIds: idsToRemove,
+  };
 }
 
 export async function resetSequenceEnrollments(sequenceId, leadIds = []) {

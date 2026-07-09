@@ -6,6 +6,8 @@ import { SequenceEnrollment } from '../models/SequenceEnrollment.js';
 import { SendJob } from '../models/SendJob.js';
 import { Suppression } from '../models/Suppression.js';
 import { getSendTargetEmail } from '../utils/contactEmails.js';
+import { capResendBatchSize, RESEND_MAX_EMAILS_PER_REQUEST } from '../constants/resendLimits.js';
+import { hasLeadReceivedSequenceStep } from '../utils/sequenceSendGuards.js';
 import {
   findFlowNode,
   isShortFlowDelay,
@@ -391,7 +393,7 @@ async function pollSendQueue() {
   }
 
   const job = await SendJob.findOneAndUpdate(
-    { status: 'pending', scheduledFor: { $lte: new Date() } },
+    { status: 'pending', scheduledFor: { $lte: new Date() }, manualSend: { $ne: true } },
     { $set: { status: 'processing' } },
     { sort: { scheduledFor: 1 }, new: true }
   );
@@ -417,7 +419,7 @@ async function pollSendQueue() {
   }
 }
 
-export async function scheduleEnrollmentJob(enrollment, delayMs = 0, { immediate = false } = {}) {
+export async function scheduleEnrollmentJob(enrollment, delayMs = 0, { immediate = false, manualSend = false } = {}) {
   const scheduledFor = computeScheduledFor(enrollment, delayMs, { immediate });
 
   const existing = await SendJob.findOne({
@@ -430,6 +432,7 @@ export async function scheduleEnrollmentJob(enrollment, delayMs = 0, { immediate
     existing.scheduledFor = scheduledFor;
     existing.status = 'pending';
     existing.immediateLaunch = immediate;
+    existing.manualSend = manualSend;
     await existing.save();
     return existing;
   }
@@ -441,6 +444,7 @@ export async function scheduleEnrollmentJob(enrollment, delayMs = 0, { immediate
     status: 'pending',
     scheduledFor,
     immediateLaunch: immediate,
+    manualSend,
   });
 }
 
@@ -492,6 +496,17 @@ export async function sendJobNow(jobId) {
     return job;
   }
 
+  const enrollment = await SequenceEnrollment.findById(job.enrollmentId).select('sequenceId').lean();
+  if (
+    enrollment
+    && await hasLeadReceivedSequenceStep(job.leadId, enrollment.sequenceId, job.stepIndex)
+  ) {
+    job.status = 'cancelled';
+    job.errorMessage = 'Skipped — this contact already received this sequence step.';
+    await job.save();
+    return job;
+  }
+
   // Force bypass checks
   job.immediateLaunch = true;
   job.status = 'processing';
@@ -510,4 +525,43 @@ export async function sendJobNow(jobId) {
     await job.save();
     throw error;
   }
+}
+
+const RESEND_SEND_DELAY_MS = Number(process.env.RESEND_SEND_DELAY_MS) || 150;
+
+export async function sendPendingJobsBatch(jobIds = [], options = {}) {
+  const maxCount = capResendBatchSize(options.maxCount);
+  const ids = [...new Set((Array.isArray(jobIds) ? jobIds : []).map(String))].slice(0, maxCount);
+
+  const results = [];
+  for (let index = 0; index < ids.length; index += 1) {
+    const jobId = ids[index];
+    try {
+      const job = await SendJob.findById(jobId).select('status').lean();
+      if (!job) {
+        results.push({ id: jobId, ok: false, skipped: true, message: 'Job not found.' });
+        continue;
+      }
+      if (!['pending', 'failed'].includes(job.status)) {
+        results.push({ id: jobId, ok: false, skipped: true, message: `Job is ${job.status}.` });
+        continue;
+      }
+      await sendJobNow(jobId);
+      results.push({ id: jobId, ok: true });
+      if (index < ids.length - 1 && RESEND_SEND_DELAY_MS > 0) {
+        await new Promise((resolve) => setTimeout(resolve, RESEND_SEND_DELAY_MS));
+      }
+    } catch (error) {
+      results.push({ id: jobId, ok: false, message: error.message || 'Send failed.' });
+    }
+  }
+
+  return {
+    sent: results.filter((row) => row.ok).length,
+    failed: results.filter((row) => !row.ok && !row.skipped).length,
+    skipped: results.filter((row) => row.skipped).length,
+    processed: ids.length,
+    maxPerRequest: RESEND_MAX_EMAILS_PER_REQUEST,
+    results,
+  };
 }

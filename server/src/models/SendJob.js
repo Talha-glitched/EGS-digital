@@ -19,11 +19,12 @@ const sendJobSchema = new mongoose.Schema(
     renderedBody: { type: String, default: '' },
     errorMessage: { type: String, default: '' },
     immediateLaunch: { type: Boolean, default: false },
+    manualSend: { type: Boolean, default: false, index: true },
   },
   { timestamps: true, versionKey: false }
 );
 
-sendJobSchema.index({ status: 1, scheduledFor: 1 });
+sendJobSchema.index({ status: 1, scheduledFor: 1, manualSend: 1 });
 sendJobSchema.index({ enrollmentId: 1, stepIndex: 1, status: 1 });
 
 export const SendJob = mongoose.models.SendJob || mongoose.model('SendJob', sendJobSchema);

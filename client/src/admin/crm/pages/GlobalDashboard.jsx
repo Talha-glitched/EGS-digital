@@ -142,7 +142,7 @@ export default function GlobalDashboard() {
             <div className="flex shrink-0 flex-wrap gap-2">
               <Link to="/admin/crm/tasks" className="crm-btn-secondary">Review follow-ups<ArrowUpRight className="h-4 w-4" /></Link>
               {workspace?.metrics?.failedSendJobs > 0 ? (
-                <Link to="/admin/crm/sent?view=failed" className="crm-btn-secondary">Review failed sends<ArrowUpRight className="h-4 w-4" /></Link>
+                <Link to="/admin/crm/email?tab=failed" className="crm-btn-secondary">Review failed sends<ArrowUpRight className="h-4 w-4" /></Link>
               ) : null}
             </div>
           </div>

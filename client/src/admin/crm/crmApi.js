@@ -303,7 +303,66 @@ export async function previewSequenceAudience(campaignId, options = {}) {
   if (options.companyIds?.length) params.set('companyIds', options.companyIds.join(','));
   if (options.full) params.set('full', 'true');
   const query = params.toString();
-  return crmApiFetch(`/api/admin/projects/${campaignId}/audience-preview${query ? `?${query}` : ''}`);
+  const path = campaignId
+    ? `/api/admin/projects/${campaignId}/audience-preview`
+    : '/api/admin/audience-preview';
+  return crmApiFetch(`${path}${query ? `?${query}` : ''}`);
+}
+
+export async function launchSequence(sequenceId, body = {}) {
+  return crmApiFetch(`/api/admin/sequences/${sequenceId}/launch`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
+}
+
+export async function fetchLaunchBatches({ page, limit, sequenceId, batch } = {}) {
+  const params = new URLSearchParams();
+  if (page) params.set('page', String(page));
+  if (limit) params.set('limit', String(limit));
+  if (sequenceId) params.set('sequenceId', sequenceId);
+  if (batch) params.set('batch', batch);
+  const query = params.toString();
+  return crmApiFetch(`/api/admin/email/launch-batches${query ? `?${query}` : ''}`);
+}
+
+export async function fetchLaunchBatchJobs(batchId, { status } = {}) {
+  const params = new URLSearchParams();
+  if (status) params.set('status', status);
+  const query = params.toString();
+  return crmApiFetch(`/api/admin/email/launch-batches/${batchId}/jobs${query ? `?${query}` : ''}`);
+}
+
+export async function removeLaunchBatchJobs(batchId, { jobIds = [], all = false } = {}) {
+  return crmApiFetch(`/api/admin/email/launch-batches/${batchId}/remove`, {
+    method: 'POST',
+    body: JSON.stringify({ jobIds, all }),
+  });
+}
+
+export async function sendLaunchBatch(batchId, { maxCount, background = true } = {}) {
+  return crmApiFetch(`/api/admin/email/launch-batches/${batchId}/send`, {
+    method: 'POST',
+    body: JSON.stringify({ maxCount, background }),
+  });
+}
+
+export async function fetchLaunchBatchSendStatus(batchId) {
+  return crmApiFetch(`/api/admin/email/launch-batches/${batchId}/send-status`);
+}
+
+export async function sendCampaignQueue(projectId, { maxCount } = {}) {
+  return crmApiFetch(`/api/admin/projects/${projectId}/queue/send`, {
+    method: 'POST',
+    body: JSON.stringify({ maxCount }),
+  });
+}
+
+export async function createStandaloneSequence(payload = {}) {
+  return crmApiFetch('/api/admin/sequences', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
 }
 
 export async function resetSequenceEnrollments(sequenceId, leadIds = []) {
@@ -553,6 +612,17 @@ export async function deleteCompanies(ids = []) {
   return crmApiFetch('/api/admin/companies/bulk-delete', {
     method: 'POST',
     body: JSON.stringify({ ids }),
+  });
+}
+
+export async function removeQueueJob(jobId) {
+  return crmApiFetch(`/api/admin/send-jobs/${jobId}`, { method: 'DELETE' });
+}
+
+export async function removeQueueJobs(projectId, { jobIds = [], all = false } = {}) {
+  return crmApiFetch(`/api/admin/projects/${projectId}/queue/remove`, {
+    method: 'POST',
+    body: JSON.stringify({ jobIds, all }),
   });
 }
 

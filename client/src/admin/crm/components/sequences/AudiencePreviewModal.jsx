@@ -69,7 +69,9 @@ export default function AudiencePreviewModal({
             <div>
               <h3 className="text-sm font-bold text-[var(--color-ink)]">Audience preview</h3>
               <p className="text-[11px] text-neutral-500">
-                {previewMeta?.netNew ?? 0} will enroll · {total} in list
+                {previewMeta?.netNew ?? 0} will enroll
+                {(previewMeta?.willRestart ?? 0) > 0 ? ` (${previewMeta.willRestart} restarting)` : ''}
+                {' · '}{total} in list
               </p>
             </div>
           </div>

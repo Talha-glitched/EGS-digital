@@ -9,6 +9,7 @@ import { normalizeGenericEmails } from '../utils/companyEmails.js';
 import { computeProjectSnapshot } from './analyticsCronService.js';
 import { resolveCompanyForContact, isGenericMailboxEmail } from '../utils/companyResolver.js';
 import { pickDedupEmail, firstContactEmail } from '../utils/contactEmails.js';
+import { fixMojibakeName } from '../utils/fixMojibakeName.js';
 
 const FIELD_ALIASES = {
   email: ['email', 'emailaddress', 'mail', 'e-mail', 'workemail', 'contactemail', 'primaryemail', 'emailaddress', 'email_address', 'emailforoutreach'],
@@ -291,7 +292,7 @@ export async function blendAndIngestLeads(projectId, uploads) {
       const linkedinUrlCol = resolveColumnIndex(headers, 'LinkedIn URL') !== -1 ? resolveColumnIndex(headers, 'LinkedIn URL') : resolveColumnIndex(headers, 'Person Linkedin Url');
 
       for (const row of sheet.dataRows) {
-        const name = col.name >= 0 ? String(row[col.name] || '').trim() : '';
+        const name = fixMojibakeName(col.name >= 0 ? String(row[col.name] || '').trim() : '');
         const designation = col.designation >= 0 ? String(row[col.designation] || '').trim() : '';
         const companyName = col.companyName >= 0 ? String(row[col.companyName] || '').trim() : '';
         const rawDomain = col.domain >= 0 ? row[col.domain] : '';
@@ -574,7 +575,7 @@ export async function previewBlendAndIngestLeads(projectId, uploads) {
       const linkedinUrlCol = resolveColumnIndex(headers, 'LinkedIn URL') !== -1 ? resolveColumnIndex(headers, 'LinkedIn URL') : resolveColumnIndex(headers, 'Person Linkedin Url');
 
       for (const row of sheet.dataRows) {
-        const name = col.name >= 0 ? String(row[col.name] || '').trim() : '';
+        const name = fixMojibakeName(col.name >= 0 ? String(row[col.name] || '').trim() : '');
         const designation = col.designation >= 0 ? String(row[col.designation] || '').trim() : '';
         const companyName = col.companyName >= 0 ? String(row[col.companyName] || '').trim() : '';
         const rawDomain = col.domain >= 0 ? row[col.domain] : '';

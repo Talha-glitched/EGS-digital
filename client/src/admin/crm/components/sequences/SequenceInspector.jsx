@@ -64,7 +64,6 @@ export default function SequenceInspector({
   sequenceName,
   onSequenceNameChange,
   campaignId,
-  onCampaignChange,
   campaignOptions,
   allCampaignOptions = [],
   campaignName,
@@ -77,12 +76,6 @@ export default function SequenceInspector({
   onResetEnrollments,
   launchMode,
   onLaunchModeChange,
-  enrollLimit,
-  onEnrollLimitChange,
-  fromName,
-  onFromNameChange,
-  fromEmail,
-  onFromEmailChange,
   mailboxUsage,
   mailStatus,
   sequenceId,
@@ -146,7 +139,6 @@ export default function SequenceInspector({
               sequenceName={sequenceName}
               onSequenceNameChange={onSequenceNameChange}
               campaignId={campaignId}
-              onCampaignChange={onCampaignChange}
               allCampaignOptions={allCampaignOptions}
               audience={audience}
               patchAudience={patchAudience}
@@ -158,12 +150,6 @@ export default function SequenceInspector({
               onResetEnrollments={onResetEnrollments}
               launchMode={launchMode}
               onLaunchModeChange={onLaunchModeChange}
-              enrollLimit={enrollLimit}
-              onEnrollLimitChange={onEnrollLimitChange}
-              fromName={fromName}
-              onFromNameChange={onFromNameChange}
-              fromEmail={fromEmail}
-              onFromEmailChange={onFromEmailChange}
               mailboxUsage={mailboxUsage}
               mailStatus={mailStatus}
               deliverySummary={deliverySummary}
@@ -194,7 +180,7 @@ export default function SequenceInspector({
                 className={cn('crm-btn-primary w-full !py-2.5 text-[11px]', launchArmed && 'ring-2 ring-orange-200')}
               >
                 <Send className="h-3.5 w-3.5" />
-                {busy ? 'Launching…' : launchArmed ? `Confirm ${enrollLimit}` : `Launch ${enrollLimit}`}
+                {busy ? 'Launching…' : launchArmed ? 'Confirm launch' : 'Launch sequence'}
               </button>
             )}
           </div>
@@ -217,7 +203,6 @@ function GlobalInspector({
   sequenceName,
   onSequenceNameChange,
   campaignId,
-  onCampaignChange,
   allCampaignOptions = [],
   audience,
   patchAudience,
@@ -229,18 +214,11 @@ function GlobalInspector({
   onResetEnrollments,
   launchMode,
   onLaunchModeChange,
-  enrollLimit,
-  onEnrollLimitChange,
-  fromName,
-  onFromNameChange,
-  fromEmail,
-  onFromEmailChange,
   mailboxUsage,
   mailStatus,
   deliverySummary,
 }) {
   const [importPickerId, setImportPickerId] = useState(campaignId || '');
-  const maxEnroll = audiencePreview?.netNew || 0;
   const isSend = launchMode === 'send';
 
   useEffect(() => {
@@ -258,11 +236,7 @@ function GlobalInspector({
     if (!id) return;
     const ids = (audience.importedCampaignIds || []).map(String);
     if (ids.includes(id)) return;
-    const nextIds = [...ids, id];
-    patchAudience({ importedCampaignIds: nextIds });
-    if (!campaignId || ids.length === 0) {
-      onCampaignChange(id);
-    }
+    patchAudience({ importedCampaignIds: [...ids, id] });
   }
 
   function removeImportedList(id) {
@@ -289,6 +263,17 @@ function GlobalInspector({
             onChange={(e) => onSequenceNameChange(e.target.value)}
           />
         </CompactField>
+        {campaignId ? (
+          <p className="mt-2 text-[10px] leading-relaxed text-neutral-500">
+            Imported lists choose who receives this sequence. Launch batches appear in{' '}
+            <span className="font-semibold text-[var(--color-ink)]">Email → Outbox</span>.
+          </p>
+        ) : (
+          <p className="mt-2 text-[10px] leading-relaxed text-neutral-500">
+            Import a campaign list below, then launch. Batches appear in{' '}
+            <span className="font-semibold text-[var(--color-ink)]">Email → Outbox</span>.
+          </p>
+        )}
       </InspectorSection>
 
       <InspectorSection title="Send to" icon={Users}>
@@ -371,30 +356,10 @@ function GlobalInspector({
 
         <div className="crm-seq-audience-summary">
           <p className="text-[10px] leading-relaxed text-neutral-600">{summary}</p>
-          {(audiencePreview?.alreadyEnrolled || 0) > 0 && (audiencePreview?.netNew || 0) === 0 && (
-            <div className="crm-seq-enroll-blocked mt-2">
-              <p className="text-[10px] leading-relaxed text-amber-800">
-                {(audiencePreview.blockingContacts || []).filter((c) => c.status === 'active').map((c) => c.name || c.email).filter(Boolean).join(', ') || 'Selected contact(s)'}
-                {' '}already active in this sequence
-                {(audiencePreview.blockingContacts || []).find((c) => c.status === 'active')?.currentStepIndex != null
-                  ? ` (step ${((audiencePreview.blockingContacts.find((c) => c.status === 'active')?.currentStepIndex) || 0) + 1})`
-                  : ''}.
-              </p>
-              {onResetEnrollments && (
-                <button
-                  type="button"
-                  onClick={onResetEnrollments}
-                  className="mt-2 text-[10px] font-semibold text-brand hover:underline"
-                >
-                  Reset enrollment to re-test
-                </button>
-              )}
-            </div>
-          )}
-          {(audiencePreview?.alreadyCompleted || 0) > 0 && (audiencePreview?.netNew || 0) > 0 && (
+          {(audiencePreview?.willRestart || 0) > 0 && (audiencePreview?.netNew || 0) > 0 && (
             <p className="mt-2 text-[10px] leading-relaxed text-neutral-600">
-              {(audiencePreview.blockingContacts || []).filter((c) => c.status === 'completed').map((c) => c.name || c.email).filter(Boolean).join(', ')}
-              {' '}previously finished this sequence — relaunch will restart from step 1.
+              {(audiencePreview.blockingContacts || []).map((c) => c.name || c.email).filter(Boolean).join(', ')}
+              {' '}already in this sequence — relaunch will restart from step 1.
             </p>
           )}
           <button
@@ -430,36 +395,12 @@ function GlobalInspector({
 
         {isSend && (
           <div className="crm-seq-enroll-panel crm-seq-expand-in">
-            <div className="flex items-end gap-2">
-              <div className="min-w-0 flex-1">
-                <CompactField label="Enroll count">
-                  <input
-                    type="number"
-                    min="1"
-                    max={maxEnroll || 1}
-                    className="crm-input crm-seq-input py-2 text-[11px] tabular-nums"
-                    value={enrollLimit}
-                    onChange={(e) => onEnrollLimitChange(Math.min(maxEnroll || 1, Math.max(1, Number(e.target.value) || 1)))}
-                    disabled={!maxEnroll}
-                  />
-                </CompactField>
-              </div>
-              <MailboxUsagePopover usage={mailboxUsage} />
-            </div>
-            {!mailStatus?.smtpReady && (
-              <Alert tone="warning" className="mt-2 !py-1.5 !text-[10px]">SMTP not configured.</Alert>
+            <MailboxUsagePopover usage={mailboxUsage} />
+            {!mailStatus?.emailDeliveryReady && (
+              <Alert tone="warning" className="mt-2 !py-1.5 !text-[10px]">Email delivery is not configured.</Alert>
             )}
           </div>
         )}
-      </InspectorSection>
-
-      <InspectorSection title="Sender">
-        <CompactField label="From name">
-          <input className="crm-input crm-seq-input py-2 text-[11px]" value={fromName} onChange={(e) => onFromNameChange(e.target.value)} />
-        </CompactField>
-        <CompactField label="From email">
-          <input type="email" className="crm-input crm-seq-input py-2 text-[11px]" value={fromEmail} onChange={(e) => onFromEmailChange(e.target.value)} />
-        </CompactField>
       </InspectorSection>
     </div>
   );

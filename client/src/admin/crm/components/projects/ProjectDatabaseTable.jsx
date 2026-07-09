@@ -12,10 +12,13 @@ import { BulkSelectHeaderCell, BulkSelectRowCell, BulkSelectionBar } from '../ui
 import { useRowSelection } from '../../hooks/useRowSelection.js';
 import { useConfirmDelete } from '../../hooks/useConfirmDelete.js';
 import { useBulkDelete } from '../../hooks/useBulkDelete.js';
+import { useConfirmDeleteDialog } from '../../context/ConfirmDeleteContext.jsx';
 import { useTableSort } from '../../hooks/useTableSort.js';
 import { campaignCompanySortAccessors, leadSortAccessors } from '../../hooks/tableSortAccessors.js';
 import { SortableTableHeader, TableSortIndicator } from '../ui/SortableTableHeader.jsx';
-import { deleteCompanyWithUndo, deleteLeadWithUndo, deleteCompanies, deleteLeads, fetchSentEmails, crmApiFetch } from '../../crmApi.js';
+import { deleteCompanyWithUndo, deleteLeadWithUndo, deleteCompanies, deleteLeads, fetchSentEmails, crmApiFetch, removeQueueJob, removeQueueJobs, sendCampaignQueue } from '../../crmApi.js';
+import { RESEND_MAX_SENDS_PER_REQUEST } from '../../constants/resendLimits.js';
+import { runBatchedSendLoop } from '../../utils/batchedSend.js';
 import {
   AdvancedFilterPopover,
   AdvancedFilterChips,
@@ -26,7 +29,7 @@ import {
   buildDistinctFieldOptions,
   buildDistinctFieldOptionsFromArrays,
 } from '../ui/advancedFilter/index.js';
-import { Building2, Users, Mail, Search, Send, Play } from 'lucide-react';
+import { Building2, Users, Mail, Search, Send, Play, Trash2 } from 'lucide-react';
 
 const SEND_JOB_STATUS_CONFIG = {
   pending: { className: 'bg-amber-50 text-amber-800 ring-amber-200/70', label: 'Pending' },
@@ -89,47 +92,141 @@ export default function ProjectDatabaseTable({
   const [queueLoading, setQueueLoading] = useState(false);
   const [sendingAll, setSendingAll] = useState(false);
   const [sendingProgress, setSendingProgress] = useState({ current: 0, total: 0 });
+  const [queueDeleting, setQueueDeleting] = useState(false);
+  const [queueSendNotice, setQueueSendNotice] = useState('');
+
+  const queueSelection = useRowSelection(queueJobs);
+  const { confirmDelete: confirmQueueDelete } = useConfirmDeleteDialog();
 
   const fetchQueueJobs = useCallback(async () => {
-    if (!projectId || view !== 'queue') return;
+    if (!projectId) return;
     setQueueLoading(true);
     try {
       const data = await crmApiFetch(`/api/admin/projects/${projectId}/queue`);
-      const pendingJobs = (data.items || []).filter(j => j.status === 'pending');
-      setQueueJobs(pendingJobs);
-      setQueueTotal(pendingJobs.length);
+      const items = data.items || [];
+      setQueueJobs(items);
+      setQueueTotal(data.total ?? items.length);
     } catch (err) {
       console.error('Failed to fetch queue:', err);
+      setQueueJobs([]);
+      setQueueTotal(0);
     } finally {
       setQueueLoading(false);
     }
-  }, [projectId, view]);
+  }, [projectId]);
 
   useEffect(() => {
     fetchQueueJobs();
   }, [fetchQueueJobs]);
 
   async function triggerQueueSend() {
-    if (queueJobs.length === 0 || sendingAll) return;
+    if (queueJobs.length === 0 || sendingAll || !projectId) return;
     setSendingAll(true);
-    setSendingProgress({ current: 0, total: queueJobs.length });
+    setQueueSendNotice('');
+    const pendingCount = queueJobs.filter((job) => ['pending', 'failed'].includes(job.status)).length;
+    setSendingProgress({ current: 0, total: pendingCount });
 
-    for (let i = 0; i < queueJobs.length; i++) {
-      const currentJob = queueJobs[i];
-      setQueueJobs(prev => prev.map(j => j._id === currentJob._id ? { ...j, status: 'processing' } : j));
-      setSendingProgress(prev => ({ ...prev, current: i + 1 }));
+    try {
+      const result = await runBatchedSendLoop(
+        (opts) => sendCampaignQueue(projectId, opts),
+        {
+          onProgress: ({ totalSent, remaining, queuedBefore }) => {
+            const total = queuedBefore || pendingCount;
+            setSendingProgress({ current: totalSent, total });
+            setQueueSendNotice(`Sending… ${totalSent} of ${total} (${remaining} remaining)`);
+          },
+        },
+      );
 
-      try {
-        await crmApiFetch(`/api/admin/send-jobs/${currentJob._id}/send`, { method: 'POST' });
-        setQueueJobs(prev => prev.map(j => j._id === currentJob._id ? { ...j, status: 'sent' } : j));
-      } catch (err) {
-        console.error(`Failed to send job ${currentJob._id}:`, err);
-        setQueueJobs(prev => prev.map(j => j._id === currentJob._id ? { ...j, status: 'failed', errorMessage: err.message } : j));
+      if (result.remaining <= 0 && result.totalSent > 0) {
+        setQueueSendNotice(`Done — sent ${result.totalSent} email${result.totalSent === 1 ? '' : 's'}.`);
+      } else if (result.totalSent > 0) {
+        setQueueSendNotice(
+          `Sent ${result.totalSent}. ${result.remaining} still in queue${result.totalFailed ? ` (${result.totalFailed} failed)` : ''}.`,
+        );
       }
+      await fetchQueueJobs();
+    } catch (err) {
+      console.error('Campaign queue send failed:', err);
+      setQueueSendNotice(err.message || 'Send failed.');
+      fetchQueueJobs();
+    } finally {
+      setSendingAll(false);
     }
+  }
 
-    setSendingAll(false);
-    setTimeout(fetchQueueJobs, 1500);
+  async function deleteQueueItem(job) {
+    const recipient = job.leadId?.name || job.recipientEmail || 'this contact';
+    const ok = await confirmQueueDelete({
+      title: 'Remove from queue?',
+      message: `Remove the queued email to ${recipient}? This cannot be undone.`,
+      confirmLabel: 'Remove',
+    });
+    if (!ok) return;
+
+    setQueueDeleting(true);
+    try {
+      await removeQueueJob(job._id);
+      setQueueJobs((prev) => prev.filter((row) => row._id !== job._id));
+      setQueueTotal((prev) => Math.max(0, prev - 1));
+      queueSelection.clearSelection();
+    } catch (err) {
+      console.error('Failed to remove queue job:', err);
+      fetchQueueJobs();
+    } finally {
+      setQueueDeleting(false);
+    }
+  }
+
+  async function deleteSelectedQueueItems() {
+    const ids = queueSelection.selectedArray;
+    if (!ids.length) return;
+
+    const count = ids.length;
+    const ok = await confirmQueueDelete({
+      title: count === 1 ? 'Remove 1 queued email?' : `Remove ${count} queued emails?`,
+      message: 'Selected items will be removed from the outbox queue. This cannot be undone.',
+      confirmLabel: 'Remove',
+    });
+    if (!ok) return;
+
+    setQueueDeleting(true);
+    try {
+      const result = await removeQueueJobs(projectId, { jobIds: ids });
+      const removed = new Set((result.jobIds || ids).map(String));
+      setQueueJobs((prev) => prev.filter((row) => !removed.has(String(row._id))));
+      setQueueTotal((prev) => Math.max(0, prev - (result.removed || 0)));
+      queueSelection.clearSelection();
+    } catch (err) {
+      console.error('Failed to remove selected queue jobs:', err);
+      fetchQueueJobs();
+    } finally {
+      setQueueDeleting(false);
+    }
+  }
+
+  async function deleteAllQueueItems() {
+    if (!queueJobs.length) return;
+
+    const ok = await confirmQueueDelete({
+      title: `Remove all ${queueJobs.length} queued emails?`,
+      message: 'The entire outbox queue for this campaign will be cleared. This cannot be undone.',
+      confirmLabel: 'Remove all',
+    });
+    if (!ok) return;
+
+    setQueueDeleting(true);
+    try {
+      const result = await removeQueueJobs(projectId, { all: true });
+      setQueueJobs([]);
+      setQueueTotal(0);
+      queueSelection.clearSelection();
+    } catch (err) {
+      console.error('Failed to clear queue:', err);
+      fetchQueueJobs();
+    } finally {
+      setQueueDeleting(false);
+    }
   }
 
   const fetchEmails = useCallback(async () => {
@@ -644,27 +741,53 @@ export default function ProjectDatabaseTable({
           {queueJobs.length === 0 ? (
             <EmptyState
               icon={Send}
-              title="Outbox queue is empty"
-              description="No contacts are currently queued for outreach in this campaign sequence. Enrol contacts in Sequence Studio first."
+              title={emailTotal > 0 ? 'Queue is clear' : 'Outbox queue is empty'}
+              description={
+                emailTotal > 0
+                  ? `${emailTotal} email${emailTotal === 1 ? '' : 's'} already sent for this campaign. Launch a sequence in Email Sequences to queue the next batch, then use Send Campaign here.`
+                  : 'No contacts are queued for outreach yet. Enroll your audience in Email Sequences first, then return here to send.'
+              }
             />
           ) : (
             <div className="p-4 space-y-4">
+              <BulkSelectionBar
+                count={queueSelection.selectionCount}
+                noun="queued email"
+                onDelete={deleteSelectedQueueItems}
+                onClear={queueSelection.clearSelection}
+                deleting={queueDeleting}
+              />
+
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-brand-soft/20 border border-brand-soft/50 rounded-xl p-4">
                 <div className="min-w-0">
                   <h3 className="text-xs font-bold text-brand uppercase tracking-wider">Manual Campaign Send Execution</h3>
                   <p className="mt-1 text-xs text-neutral-500">
-                    Review the queue below and trigger the campaign send sequence. Daily cap and business hour constraints are bypassed on manual trigger.
+                    Review the queue below and send manually. Automatically continues in batches of {RESEND_MAX_SENDS_PER_REQUEST} until complete.
                   </p>
+                  {queueSendNotice ? (
+                    <p className="mt-2 text-xs font-medium text-brand">{queueSendNotice}</p>
+                  ) : null}
                 </div>
-                <button
-                  type="button"
-                  onClick={triggerQueueSend}
-                  disabled={sendingAll || queueJobs.length === 0}
-                  className="crm-btn-primary py-2 px-4 text-xs font-bold shrink-0 flex items-center gap-1.5"
-                >
-                  <Play className="h-3.5 w-3.5 fill-current" />
-                  {sendingAll ? 'Sending Outreach...' : 'Send Campaign'}
-                </button>
+                <div className="flex flex-wrap items-center gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={deleteAllQueueItems}
+                    disabled={queueDeleting || sendingAll || queueJobs.length === 0}
+                    className="crm-btn-secondary py-2 px-3 text-xs font-semibold flex items-center gap-1.5 text-rose-600 border-rose-200 hover:bg-rose-50"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Delete all
+                  </button>
+                  <button
+                    type="button"
+                    onClick={triggerQueueSend}
+                    disabled={sendingAll || queueJobs.length === 0 || queueDeleting}
+                    className="crm-btn-primary py-2 px-4 text-xs font-bold flex items-center gap-1.5"
+                  >
+                    <Play className="h-3.5 w-3.5 fill-current" />
+                    {sendingAll ? 'Sending Outreach...' : 'Send Campaign'}
+                  </button>
+                </div>
               </div>
 
               {sendingAll && (
@@ -686,17 +809,25 @@ export default function ProjectDatabaseTable({
                 <table className="w-full text-left text-xs">
                   <thead>
                     <tr className="crm-table-head bg-slate-100/50">
+                      <BulkSelectHeaderCell selection={queueSelection} ariaLabel="Select all queued emails" />
                       <th className="px-4 py-2.5">To Recipient</th>
                       <th className="px-4 py-2.5">Subject</th>
                       <th className="px-4 py-2.5">Sequence Step</th>
                       <th className="px-4 py-2.5 text-center">Status</th>
+                      <th className="px-4 py-2.5 text-right w-12" aria-label="Actions" />
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[var(--color-line)]">
                     {queueJobs.map((job) => {
                       const recipientName = job.leadId?.name || 'Contact';
+                      const isActivelySending = sendingAll && job.status === 'processing';
                       return (
                         <tr key={job._id} className="hover:bg-neutral-50/50">
+                          <BulkSelectRowCell
+                            id={job._id}
+                            selection={queueSelection}
+                            ariaLabel={`Select queued email to ${recipientName}`}
+                          />
                           <td className="px-4 py-2.5">
                             <div className="font-semibold text-[var(--color-ink)]">{recipientName}</div>
                             <div className="text-neutral-500 text-[10px] font-mono mt-0.5">{job.recipientEmail}</div>
@@ -714,6 +845,13 @@ export default function ProjectDatabaseTable({
                                 {job.errorMessage}
                               </p>
                             )}
+                          </td>
+                          <td className="px-4 py-2.5 text-right">
+                            <DeleteIconButton
+                              label={`Remove ${recipientName} from queue`}
+                              onClick={() => deleteQueueItem(job)}
+                              disabled={queueDeleting || isActivelySending}
+                            />
                           </td>
                         </tr>
                       );

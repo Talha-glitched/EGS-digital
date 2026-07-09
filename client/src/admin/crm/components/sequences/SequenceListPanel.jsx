@@ -96,14 +96,18 @@ export default function SequenceListPanel({ sequences = [], onCreate, onEdit, lo
                     </div>
                   </td>
                   <td>
-                    <Link
-                      to={`/admin/crm/projects/${seq.campaignId}`}
-                      onClick={(e) => e.stopPropagation()}
-                      className="group inline-flex max-w-[200px] items-center gap-1 text-sm text-neutral-600 hover:text-brand"
-                    >
-                      <span className="truncate">{campaign.projectName || 'Campaign'}</span>
-                      <ChevronRight className="h-3 w-3 opacity-0 transition group-hover:opacity-100" />
-                    </Link>
+                    {seq.campaignId ? (
+                      <Link
+                        to={`/admin/crm/projects/${seq.campaignId}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="group inline-flex max-w-[200px] items-center gap-1 text-sm text-neutral-600 hover:text-brand"
+                      >
+                        <span className="truncate">{campaign.projectName || 'Campaign'}</span>
+                        <ChevronRight className="h-3 w-3 opacity-0 transition group-hover:opacity-100" />
+                      </Link>
+                    ) : (
+                      <span className="text-sm text-neutral-500">Standalone</span>
+                    )}
                   </td>
                   <td>
                     <span className="text-sm font-medium tabular-nums">{seq.steps?.length || 0}</span>

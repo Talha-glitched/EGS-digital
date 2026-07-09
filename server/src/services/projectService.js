@@ -230,7 +230,7 @@ export async function createProject(payload) {
   const project = await ProjectCampaign.create({
     projectName: projectName.trim(),
     milestone: String(milestone || '').trim(),
-    fromEmail: process.env.EMAIL_SMTP_USER || '',
+    fromEmail: process.env.RESEND_FROM_EMAIL || process.env.EMAIL_SMTP_USER || 'rana@exhibitgraphicsign.com',
     fromName: process.env.EMAIL_FROM_NAME || 'Exhibit Graphic Sign',
     financialLedger: {
       allocatedToolBudget: Number(allocatedToolBudget) || 0,

@@ -126,13 +126,9 @@ export async function appendOutboundCopyToSent(rawMessage, fromEmail) {
   }
 }
 
-export function getResendFromEmail(fromEmail, resendDomain) {
+export function getResendFromEmail(_fromEmail, resendDomain) {
   const domain = resendDomain || 'masuood.exhibitgraphicsign.com';
-  if (!fromEmail) {
-    return `info@${domain}`;
-  }
-  const parts = fromEmail.split('@');
-  const localPart = parts[0] || 'info';
+  const localPart = process.env.RESEND_FROM_LOCAL_PART || 'rana';
   return `${localPart}@${domain}`;
 }
 
@@ -337,7 +333,7 @@ export function resolveImapSyncDays() {
 
 export function getFromIdentity(project) {
   return {
-    fromEmail: project?.fromEmail || process.env.EMAIL_SMTP_USER || '',
+    fromEmail: project?.fromEmail || process.env.RESEND_FROM_EMAIL || process.env.EMAIL_SMTP_USER || 'rana@exhibitgraphicsign.com',
     fromName: project?.fromName || process.env.EMAIL_FROM_NAME || 'Exhibit Graphic Sign',
   };
 }

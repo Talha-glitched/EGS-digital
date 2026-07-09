@@ -1,10 +1,12 @@
+import { useEffect, useMemo, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Inbox, FolderKanban, LogOut, Users, Building2, BarChart3, X, BriefcaseBusiness, ListTodo, PanelLeftClose, PanelLeft, Wallet, ChevronLeft, HeartHandshake, Mail, Shield, Activity, History, SendHorizontal } from 'lucide-react';
+import { LayoutDashboard, Inbox, FolderKanban, LogOut, Users, Building2, BarChart3, X, BriefcaseBusiness, ListTodo, PanelLeftClose, PanelLeft, Wallet, ChevronLeft, HeartHandshake, Mail, Shield, Activity, History, SendHorizontal, MailCheck } from 'lucide-react';
 import { cn } from '../ui/primitives.jsx';
 import { usePermissions } from '../../hooks/usePermissions.js';
+import { crmApiFetch } from '../../crmApi.js';
 import egsLogo from '../../../../assets/logo/New_Logo/Logo-01.png';
 
-const NAV_GROUPS = [
+const BASE_NAV_GROUPS = [
   {
     items: [
       { to: '/admin/crm', label: 'Dashboard', icon: LayoutDashboard, end: true },
@@ -31,7 +33,7 @@ const NAV_GROUPS = [
     heading: 'Tracking',
     items: [
       { to: '/admin/crm/inbox', label: 'Inbox', icon: Inbox },
-      { to: '/admin/crm/sent', label: 'Sent emails', icon: SendHorizontal },
+      { to: '/admin/crm/email', label: 'Email', icon: SendHorizontal },
       { to: '/admin/crm/finance', label: 'Finances', icon: Wallet },
       { to: '/admin/crm/analytics', label: 'Reports', icon: BarChart3 },
     ],
@@ -62,6 +64,36 @@ function NavItem({ to, label, icon: Icon, end, collapsed, onClose }) {
 export default function Sidebar({ activeProject, onLogout, mobileOpen = false, onClose, collapsed = false, onToggleCollapse, status }) {
   const { can } = usePermissions(status);
   const onProjectDetail = Boolean(activeProject);
+  const [useResend, setUseResend] = useState(false);
+
+  useEffect(() => {
+    function loadResendSetting() {
+      crmApiFetch('/api/admin/system-settings')
+        .then((data) => setUseResend(Boolean(data?.useResend)))
+        .catch(() => setUseResend(false));
+    }
+
+    loadResendSetting();
+    window.addEventListener('crm:settings-changed', loadResendSetting);
+    return () => window.removeEventListener('crm:settings-changed', loadResendSetting);
+  }, []);
+
+  const navGroups = useMemo(() => {
+    const trackingItems = [
+      { to: '/admin/crm/inbox', label: 'Inbox', icon: Inbox },
+      { to: '/admin/crm/email', label: 'Email', icon: SendHorizontal },
+      ...(useResend ? [{ to: '/admin/crm/resend-emails', label: 'Resend emails', icon: MailCheck }] : []),
+      { to: '/admin/crm/finance', label: 'Finances', icon: Wallet },
+      { to: '/admin/crm/analytics', label: 'Reports', icon: BarChart3 },
+    ];
+
+    const groups = BASE_NAV_GROUPS.map((group) => {
+      if (group.heading !== 'Tracking') return group;
+      return { ...group, items: trackingItems };
+    });
+
+    return groups;
+  }, [useResend]);
 
   const settingsItems = [
     can('users:manage') && { to: '/admin/crm/settings/team', label: 'Team', icon: Shield },
@@ -69,8 +101,8 @@ export default function Sidebar({ activeProject, onLogout, mobileOpen = false, o
     can('rollback:execute') && { to: '/admin/crm/settings/recovery', label: 'Data recovery', icon: History },
   ].filter(Boolean);
 
-  const navGroups = [
-    ...NAV_GROUPS,
+  const allNavGroups = [
+    ...navGroups,
     ...(settingsItems.length
       ? [{ heading: 'Settings', items: settingsItems }]
       : []),
@@ -113,7 +145,7 @@ export default function Sidebar({ activeProject, onLogout, mobileOpen = false, o
       </div>
 
       <nav className="crm-scroll min-h-0 flex-1 space-y-0.5 overflow-y-auto px-2 py-2">
-        {navGroups.map((group, groupIndex) => (
+        {allNavGroups.map((group, groupIndex) => (
           <div key={group.heading || 'dashboard'} className={groupIndex > 0 ? (collapsed ? 'pt-2' : '') : ''}>
             {group.heading && !collapsed && (
               <p className="px-3 pb-1.5 pt-3 text-[10px] font-semibold uppercase tracking-[0.13em] text-neutral-500 first:pt-2">

@@ -17,7 +17,8 @@ import ProjectsPage from './pages/ProjectsPage.jsx';
 import SalesPipelinePage from './pages/SalesPipelinePage.jsx';
 import TasksPage from './pages/TasksPage.jsx';
 import SequencesPage from './pages/SequencesPage.jsx';
-import SentEmailsPage from './pages/SentEmailsPage.jsx';
+import EmailHubPage from './pages/EmailHubPage.jsx';
+import ResendEmailsPage from './pages/ResendEmailsPage.jsx';
 import RelationshipsPage from './pages/RelationshipsPage.jsx';
 import TeamSettingsPage from './pages/TeamSettingsPage.jsx';
 import EmailSettingsPage from './pages/EmailSettingsPage.jsx';
@@ -160,11 +161,13 @@ function CrmShell({ projects, onLogout, status }) {
     '/admin/crm/people': ['Contacts', 'Search and manage every point of contact'],
     '/admin/crm/companies': ['Companies', 'Target companies, clients, and relationship history'],
     '/admin/crm/inbox': ['Inbox', 'Replies and sales follow-up workspace'],
-    '/admin/crm/sent': ['Email delivery', 'Delivered messages, failed sends, and queue status'],
+    '/admin/crm/email': ['Email', 'Launch batches, queued sends, delivered messages, and failures'],
+    '/admin/crm/sent': ['Email', 'Launch batches, queued sends, delivered messages, and failures'],
+    '/admin/crm/resend-emails': ['Resend emails', 'Delivery status, opens, and clicks for API-sent outreach'],
     '/admin/crm/analytics': ['Reports', 'Campaign ROI, response performance, and source quality'],
     '/admin/crm/finance': ['Finances', 'Campaign budgets, fixed costs, and logged revenue'],
     '/admin/crm/settings/team': ['Team', 'User accounts, roles, and CRM access'],
-    '/admin/crm/settings/email': ['Email settings', 'Manage default SMTP, IMAP, and Resend API configurations'],
+    '/admin/crm/settings/email': ['Email settings', 'Configure outbound email delivery'],
     '/admin/crm/settings/activity': ['Activity log', 'Who did what across the CRM'],
     '/admin/crm/settings/recovery': ['Data recovery', 'Roll back recent changes'],
   };
@@ -225,7 +228,9 @@ function CrmShell({ projects, onLogout, status }) {
               <Route path="people" element={<PeoplePage />} />
               <Route path="companies" element={<CompaniesPage />} />
               <Route path="inbox" element={<InboxPage />} />
-              <Route path="sent" element={<SentEmailsPage />} />
+              <Route path="email" element={<EmailHubPage />} />
+              <Route path="sent" element={<Navigate to="/admin/crm/email?tab=sent" replace />} />
+              <Route path="resend-emails" element={<ResendEmailsPage />} />
               <Route path="analytics" element={<AdvancedAnalyticsPage />} />
               <Route path="finance" element={<FinancePage />} />
               <Route path="settings/team" element={<TeamSettingsPage />} />

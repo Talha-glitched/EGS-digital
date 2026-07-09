@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   crmApiFetch,
-  updateCampaign,
   fetchMailboxUsage,
   previewSequenceAudience,
   deleteSequenceWithUndo,
@@ -11,6 +10,7 @@ import {
   fetchGlobalCompanies,
   resetSequenceEnrollments,
   fetchSequenceDeliverySummary,
+  launchSequence,
 } from '../../crmApi.js';
 import { useConfirmDelete } from '../../hooks/useConfirmDelete.js';
 import { useUndoToast } from '../../context/UndoToastContext.jsx';
@@ -69,10 +69,7 @@ export default function SequenceStudio({
   const [audience, setAudience] = useState({ ...EMPTY_AUDIENCE });
   const [audiencePreview, setAudiencePreview] = useState({ eligible: 0, netNew: 0, sample: [] });
   const [launchMode, setLaunchMode] = useState('draft');
-  const [enrollLimit, setEnrollLimit] = useState(1);
 
-  const [fromEmail, setFromEmail] = useState('');
-  const [fromName, setFromName] = useState('Exhibit Graphic Sign');
   const [companies, setCompanies] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [mailboxUsage, setMailboxUsage] = useState(null);
@@ -137,21 +134,9 @@ export default function SequenceStudio({
     name: sequenceName,
     steps: flowToSteps(nodes, edges),
     flowGraph: flowGraphFromState(nodes, edges),
-    fromName,
-    fromEmail,
-  }), [sequenceName, nodes, edges, fromName, fromEmail]);
-
-  const persistSender = useCallback(async () => {
-    if (!campaignId) return;
-    await updateCampaign(campaignId, { fromEmail, fromName });
-  }, [campaignId, fromEmail, fromName]);
+  }), [sequenceName, nodes, edges]);
 
   const persistDraft = useCallback(async ({ silent = false } = {}) => {
-    if (!campaignId) {
-      if (!silent) showToast('Import a campaign list first.', 'error');
-      return null;
-    }
-
     const steps = flowToSteps(nodes, edges);
     const flowGraph = flowGraphFromState(nodes, edges);
     if (!steps.length) {
@@ -167,10 +152,9 @@ export default function SequenceStudio({
     }
 
     try {
-      await persistSender();
       let seqId = activeSequenceId;
       if (!seqId) {
-        const created = await crmApiFetch(`/api/admin/projects/${campaignId}/sequences`, {
+        const created = await crmApiFetch('/api/admin/sequences', {
           method: 'POST',
           body: JSON.stringify({ name: sequenceName, steps, flowGraph }),
         });
@@ -207,7 +191,6 @@ export default function SequenceStudio({
     nodes,
     edges,
     onRefresh,
-    persistSender,
     sequenceName,
     setSearchParams,
     showToast,
@@ -242,8 +225,6 @@ export default function SequenceStudio({
       setEditingNodeId(null);
       setLinkingFrom(null);
       setIsActive(Boolean(seq.isActive));
-      setFromEmail(seq.campaign?.fromEmail || '');
-      setFromName(seq.campaign?.fromName || 'Exhibit Graphic Sign');
       await loadDeliverySummary(seq._id);
     } catch {
       showToast('Failed to load sequence.', 'error');
@@ -271,10 +252,6 @@ export default function SequenceStudio({
     setLaunchArmed(false);
     setAudience({ ...EMPTY_AUDIENCE });
     dismissToast();
-    if (campaign) {
-      setFromEmail(campaign.fromEmail || '');
-      setFromName(campaign.fromName || 'Exhibit Graphic Sign');
-    }
   }, [campaignParam, campaigns, dismissToast]);
 
   useEffect(() => {
@@ -286,19 +263,19 @@ export default function SequenceStudio({
   }, [loadAudienceOptions, campaignId]);
 
   useEffect(() => {
-    if (!campaignId) return undefined;
+    const hasAudience = Boolean(
+      audience.importedCampaignIds?.length
+      || audience.includeContactIds?.length
+      || audience.includeCompanyIds?.length,
+    );
+    if (!hasAudience && !campaignId) return undefined;
     const timer = setTimeout(async () => {
       try {
-        const preview = await previewSequenceAudience(campaignId, {
+        const preview = await previewSequenceAudience(campaignId || null, {
           sequenceId: activeSequenceId,
           ...buildAudienceParams(audience),
         });
         setAudiencePreview(preview);
-        setEnrollLimit((prev) => {
-          const max = preview.netNew || 1;
-          if (!prev || prev > max) return max || 1;
-          return prev;
-        });
       } catch {
         setAudiencePreview({ eligible: 0, netNew: 0, sample: [] });
       }
@@ -359,8 +336,6 @@ export default function SequenceStudio({
     sequenceName,
     nodes,
     edges,
-    fromName,
-    fromEmail,
     campaignId,
     activeSequenceId,
   ]);
@@ -513,7 +488,6 @@ export default function SequenceStudio({
         ...buildAudienceParams(audience),
       });
       setAudiencePreview(preview);
-      setEnrollLimit(Math.max(1, preview.netNew || 0));
       setLaunchArmed(false);
     } catch (err) {
       showToast(err.message || 'Reset failed.', 'error');
@@ -523,11 +497,6 @@ export default function SequenceStudio({
   }
 
   async function save({ launch = false } = {}) {
-    if (!campaignId) {
-      showToast('Import a campaign list first.', 'error');
-      return;
-    }
-
     const steps = flowToSteps(nodes, edges);
     const flowGraph = flowGraphFromState(nodes, edges);
     if (!steps.length) {
@@ -537,12 +506,27 @@ export default function SequenceStudio({
 
     if (launch && !launchArmed) {
       setLaunchArmed(true);
-      showToast(`Confirm to enroll ${enrollLimit} contact(s).`, 'warning');
+      showToast('Confirm to launch this sequence.', 'warning');
       return;
     }
 
-    if (launch && !mailStatus?.smtpReady) {
-      showToast('SMTP is not configured.', 'error');
+    if (launch && !mailStatus?.emailDeliveryReady) {
+      showToast('Email delivery is not configured.', 'error');
+      return;
+    }
+
+    if (launch && !(audiencePreview?.netNew > 0)) {
+      showToast('Import an audience list before launching.', 'error');
+      return;
+    }
+
+    const hasAudience = Boolean(
+      audience.importedCampaignIds?.length
+      || audience.includeContactIds?.length
+      || audience.includeCompanyIds?.length,
+    );
+    if (launch && !hasAudience) {
+      showToast('Import a campaign list or add companies/contacts before launching.', 'error');
       return;
     }
 
@@ -551,32 +535,39 @@ export default function SequenceStudio({
 
     try {
       const seqId = await persistDraft({ silent: true });
-      if (!seqId) return;
+      if (!seqId) {
+        showToast('Could not save the sequence before launch.', 'error');
+        return;
+      }
 
       if (launch) {
         const body = {
-          sequenceId: seqId,
           confirmEnrollment: true,
-          enrollLimit,
           ...buildAudienceParams(audience),
         };
-        const result = await crmApiFetch(`/api/admin/projects/${campaignId}/enroll`, {
-          method: 'POST',
-          body: JSON.stringify(body),
-        });
+        const result = await launchSequence(seqId, body);
         setIsActive(true);
         setLaunchArmed(false);
-        showToast(
-          result.enrolled > 0
-            ? `Launched — ${result.enrolled} enrolled${result.restarted ? ` (${result.restarted} restarted)` : ''}. Sending via SMTP now. Check the Failed tab under Sent emails if anything does not go out.`
-            : result.skippedActive
-              ? 'No new contacts enrolled — selected contact(s) are still active in this sequence. Use “Reset enrollment to re-test” first.'
-              : 'No new contacts were enrolled.',
-          result.enrolled > 0 ? 'success' : 'warning',
-        );
-        fetchMailboxUsage().then(setMailboxUsage).catch(() => {});
+
+        let launchMessage = 'No new contacts were enrolled.';
         if (result.enrolled > 0) {
-          navigate(`/admin/crm/projects/${campaignId}?tab=queue`);
+          launchMessage = `Launched — ${result.enrolled} new contact${result.enrolled === 1 ? '' : 's'} queued`
+            + `${result.skippedAlreadySent ? ` (${result.skippedAlreadySent} already sent — skipped)` : ''}.`
+            + ' Open Email → Outbox and click Send remaining.';
+        } else if ((result.skippedInQueue || 0) > 0) {
+          launchMessage = `${result.skippedAlreadySent || 0} already sent, ${result.skippedInQueue} still in queue. Open Email → Outbox to send remaining — no duplicates.`;
+        } else if ((result.skippedAlreadySent || 0) > 0) {
+          launchMessage = `All ${result.skippedAlreadySent} contacts in this audience already received this sequence. Use Reset enrollments in settings if you need to resend.`;
+        }
+
+        showToast(launchMessage, result.enrolled > 0 ? 'success' : 'warning');
+        fetchMailboxUsage().then(setMailboxUsage).catch(() => {});
+        if (result.enrolled > 0 && result.launchBatchId) {
+          navigate(`/admin/crm/email?batch=${result.launchBatchId}`);
+          return;
+        }
+        if ((result.skippedInQueue || 0) > 0) {
+          navigate('/admin/crm/email');
           return;
         }
       } else if (!launch) {
@@ -653,7 +644,6 @@ export default function SequenceStudio({
         sequenceName={sequenceName}
         onSequenceNameChange={setSequenceName}
         campaignId={campaignId}
-        onCampaignChange={setCampaignId}
         campaignOptions={campaignOptions}
         allCampaignOptions={campaignOptions}
         campaignName={campaigns.find((c) => c._id === campaignId)?.projectName}
@@ -666,12 +656,6 @@ export default function SequenceStudio({
         onResetEnrollments={handleResetEnrollments}
         launchMode={launchMode}
         onLaunchModeChange={setLaunchMode}
-        enrollLimit={enrollLimit}
-        onEnrollLimitChange={setEnrollLimit}
-        fromName={fromName}
-        onFromNameChange={setFromName}
-        fromEmail={fromEmail}
-        onFromEmailChange={setFromEmail}
         mailboxUsage={mailboxUsage}
         mailStatus={mailStatus}
         sequenceId={activeSequenceId}

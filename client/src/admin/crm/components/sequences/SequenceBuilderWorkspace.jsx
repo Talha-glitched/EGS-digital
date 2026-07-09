@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { crmApiFetch, updateCampaign } from '../../crmApi.js';
+import { crmApiFetch, launchSequence } from '../../crmApi.js';
 import {
   AUDIENCE_MODES,
   emptySequenceStep,
@@ -23,7 +23,6 @@ import {
   CheckCircle2,
   AlertCircle,
   ChevronLeft,
-  Mail,
   Users,
   Building2,
   Send,
@@ -62,9 +61,6 @@ export default function SequenceBuilderWorkspace({
   const [companyIds, setCompanyIds] = useState([]);
   const [contactIds, setContactIds] = useState([]);
   const [audiencePreview, setAudiencePreview] = useState({ eligible: 0, netNew: 0, alreadyEnrolled: 0 });
-
-  const [fromEmail, setFromEmail] = useState('');
-  const [fromName, setFromName] = useState('');
 
   const [companies, setCompanies] = useState([]);
   const [contacts, setContacts] = useState([]);
@@ -128,13 +124,9 @@ export default function SequenceBuilderWorkspace({
     if (!sequenceId) {
       if (initialCampaignId) setCampaignId(initialCampaignId);
       const campaign = campaigns.find((c) => c._id === (initialCampaignId || campaignId));
-      if (campaign) {
-        setFromEmail(campaign.fromEmail || '');
-        setFromName(campaign.fromName || 'Exhibit Graphic Sign');
-        if (isGraduationCampaign(campaign.projectName, campaign.milestone)) {
+      if (campaign && isGraduationCampaign(campaign.projectName, campaign.milestone)) {
           setSteps(GRADUATION_STEPS);
         }
-      }
       setLoading(false);
       return undefined;
     }
@@ -148,20 +140,11 @@ export default function SequenceBuilderWorkspace({
         setSequenceName(seq.name || 'Outreach sequence');
         setSteps(seq.steps?.length ? seq.steps : [emptySequenceStep(1)]);
         setIsActive(Boolean(seq.isActive));
-        setFromEmail(seq.campaign?.fromEmail || '');
-        setFromName(seq.campaign?.fromName || 'Exhibit Graphic Sign');
         setActiveStepIndex(0);
       })
       .catch(() => setError('Failed to load sequence.'))
       .finally(() => setLoading(false));
   }, [sequenceId, initialCampaignId, campaigns]);
-
-  useEffect(() => {
-    if (selectedCampaign && !sequenceId) {
-      setFromEmail(selectedCampaign.fromEmail || '');
-      setFromName(selectedCampaign.fromName || 'Exhibit Graphic Sign');
-    }
-  }, [selectedCampaign, sequenceId]);
 
   useEffect(() => {
     const timer = setTimeout(() => refreshAudience(), 250);
@@ -189,11 +172,6 @@ export default function SequenceBuilderWorkspace({
     setActiveStepIndex(Math.max(0, index - 1));
   };
 
-  async function persistSender() {
-    if (!campaignId) return;
-    await updateCampaign(campaignId, { fromEmail, fromName });
-  }
-
   async function saveSequence({ launch = false } = {}) {
     if (!campaignId) {
       setError('Select a campaign before saving.');
@@ -212,8 +190,8 @@ export default function SequenceBuilderWorkspace({
       return;
     }
 
-    if (launch && !mailStatus?.smtpReady) {
-      setError('SMTP is not configured. Connect email sending before launching.');
+    if (launch && !mailStatus?.emailDeliveryReady) {
+      setError('Email delivery is not configured. Enable Resend or connect SMTP before launching.');
       return;
     }
 
@@ -222,8 +200,6 @@ export default function SequenceBuilderWorkspace({
     setSuccess('');
 
     try {
-      await persistSender();
-
       let seqId = currentSequenceId;
       if (!seqId) {
         const created = await crmApiFetch(`/api/admin/projects/${campaignId}/sequences`, {
@@ -240,22 +216,29 @@ export default function SequenceBuilderWorkspace({
       }
 
       if (launch) {
-        const enrollBody = { sequenceId: seqId, confirmEnrollment: true };
+        const enrollBody = { confirmEnrollment: true };
         if (audienceMode === AUDIENCE_MODES.COMPANIES && companyIds.length) {
-          enrollBody.companyIds = companyIds;
+          enrollBody.includeCompanyIds = companyIds;
         }
         if (audienceMode === AUDIENCE_MODES.CONTACTS && contactIds.length) {
-          enrollBody.leadIds = contactIds;
+          enrollBody.includeLeadIds = contactIds;
+        }
+        if (audienceMode === AUDIENCE_MODES.CAMPAIGN && campaignId) {
+          enrollBody.importedCampaignIds = [campaignId];
         }
 
-        const result = await crmApiFetch(`/api/admin/projects/${campaignId}/enroll`, {
-          method: 'POST',
-          body: JSON.stringify(enrollBody),
-        });
+        const result = await launchSequence(seqId, enrollBody);
         setIsActive(true);
         setLaunchArmed(false);
-        setSuccess(`Sequence launched — ${result.enrolled} contact(s) enrolled. Sending via SMTP now. Check Sent emails → Failed if anything does not go out.`);
+        setSuccess(
+          result.enrolled > 0
+            ? `Sequence launched — ${result.enrolled} contact(s) enrolled. Open Email → Outbox and click Send batch once — it will send all automatically in groups of 100.`
+            : 'No contacts were enrolled.',
+        );
         await refreshAudience(seqId);
+        if (result.launchBatchId) {
+          window.location.assign(`/admin/crm/email?batch=${result.launchBatchId}`);
+        }
       } else {
         setLaunchArmed(false);
         setSuccess('Draft saved. No contacts were enrolled.');
@@ -539,35 +522,6 @@ export default function SequenceBuilderWorkspace({
                 <AudienceStat label="Eligible" value={audiencePreview.eligible} />
                 <AudienceStat label="Already in" value={audiencePreview.alreadyEnrolled} />
                 <AudienceStat label="Will enroll" value={audiencePreview.netNew} accent />
-              </div>
-            </section>
-
-            <section>
-              <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-[var(--color-ink)]">
-                <Mail className="h-4 w-4 text-brand" />
-                Sender
-              </h3>
-              {!mailStatus?.smtpReady && (
-                <Alert tone="warning" className="mb-3 text-xs">
-                  SMTP not connected — you can save drafts but cannot launch until email is configured.
-                </Alert>
-              )}
-              <div className="space-y-3">
-                <Field label="From name">
-                  <input
-                    className="crm-input py-2 text-sm"
-                    value={fromName}
-                    onChange={(e) => setFromName(e.target.value)}
-                  />
-                </Field>
-                <Field label="From email">
-                  <input
-                    type="email"
-                    className="crm-input py-2 text-sm"
-                    value={fromEmail}
-                    onChange={(e) => setFromEmail(e.target.value)}
-                  />
-                </Field>
               </div>
             </section>
 

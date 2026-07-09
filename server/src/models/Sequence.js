@@ -44,7 +44,7 @@ const flowGraphSchema = new mongoose.Schema(
 
 const sequenceSchema = new mongoose.Schema(
   {
-    campaignId: { type: mongoose.Schema.Types.ObjectId, ref: 'ProjectCampaign', required: true, index: true },
+    campaignId: { type: mongoose.Schema.Types.ObjectId, ref: 'ProjectCampaign', default: null, index: true },
     name: { type: String, required: true, trim: true },
     steps: [sequenceStepSchema],
     flowGraph: { type: flowGraphSchema, default: null },

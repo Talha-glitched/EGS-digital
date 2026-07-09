@@ -1,4 +1,7 @@
-export async function getResendMetrics() {
+import { capResendBatchSize, RESEND_MAX_EMAILS_PER_REQUEST } from '../constants/resendLimits.js';
+
+export async function getResendMetrics(options = {}) {
+  const { status, search, limit = 100 } = options;
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     return {
@@ -21,9 +24,10 @@ export async function getResendMetrics() {
   }
 
   try {
-    const res = await fetch('https://api.resend.com/emails?limit=100', {
+    const cappedLimit = capResendBatchSize(limit);
+    const res = await fetch(`https://api.resend.com/emails?limit=${cappedLimit}`, {
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
       },
     });
 
@@ -33,7 +37,22 @@ export async function getResendMetrics() {
     }
 
     const json = await res.json();
-    const data = json.data || [];
+    let data = json.data || [];
+
+    if (status && status !== 'all') {
+      const statusKey = String(status).toLowerCase();
+      data = data.filter((email) => String(email.last_event || '').toLowerCase() === statusKey);
+    }
+
+    if (search) {
+      const query = String(search).trim().toLowerCase();
+      data = data.filter((email) => {
+        const to = Array.isArray(email.to) ? email.to.join(' ') : String(email.to || '');
+        const subject = String(email.subject || '');
+        const from = String(email.from || '');
+        return `${to} ${subject} ${from}`.toLowerCase().includes(query);
+      });
+    }
 
     let total = data.length;
     let delivered = 0;
@@ -44,23 +63,23 @@ export async function getResendMetrics() {
     let failed = 0;
 
     for (const email of data) {
-      const status = String(email.last_event || '').toLowerCase();
-      if (status === 'delivered') {
+      const eventStatus = String(email.last_event || '').toLowerCase();
+      if (eventStatus === 'delivered') {
         delivered++;
-      } else if (status === 'opened') {
+      } else if (eventStatus === 'opened') {
         delivered++;
         opened++;
-      } else if (status === 'clicked') {
+      } else if (eventStatus === 'clicked') {
         delivered++;
         opened++;
         clicked++;
-      } else if (status === 'bounced') {
+      } else if (eventStatus === 'bounced') {
         bounced++;
-      } else if (status === 'complained') {
+      } else if (eventStatus === 'complained') {
         complained++;
-      } else if (status === 'failed') {
+      } else if (eventStatus === 'failed') {
         failed++;
-      } else if (status === 'sent') {
+      } else if (eventStatus === 'sent') {
         delivered++;
       }
     }
@@ -85,7 +104,7 @@ export async function getResendMetrics() {
         click: `${clickRate}%`,
         bounce: `${bounceRate}%`,
       },
-      emails: data.map(e => ({
+      emails: data.map((e) => ({
         id: e.id,
         from: e.from,
         to: e.to,
