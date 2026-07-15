@@ -154,7 +154,7 @@ export default function ContactBlenderModal({ open, onClose, projectId, onImport
 
         <div className="crm-modal-callout">
           <span className="crm-modal-callout-title">How matching works</span>
-          LinkedIn match first. If LinkedIn is missing, match name + domain. New emails from Apollo / Hunter / Lusha are appended to that person — sequences blast all variants until a reply confirms the working address.
+          LinkedIn match first. If LinkedIn is missing, match name + domain. New emails from Apollo / Hunter / Lusha are appended to that person — sequences send every distinct address until a reply confirms the working one (exact duplicate addresses are not re-sent).
         </div>
 
         <ModalDropzone

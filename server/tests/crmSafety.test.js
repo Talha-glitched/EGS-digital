@@ -2,8 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   buildLeadEmailQuery,
+  getBlastSendEmails,
   getLeadEmailCandidates,
   getPrimaryLeadEmail,
+  getSendTargetEmail,
   splitContactEmails,
 } from '../src/utils/contactEmails.js';
 import { buildStepPerformance } from '../src/services/projectService.js';
@@ -104,6 +106,21 @@ test('audience preview counts every eligible contact for launch enrollment', () 
 
 test('resolveLeadForCampaignEnrollment is exported for campaign audience enrollment', () => {
   assert.equal(typeof resolveLeadForCampaignEnrollment, 'function');
+});
+
+test('blast emails send every distinct address but never the same exact email twice', () => {
+  const lead = {
+    email: 'same@example.com',
+    emailApollo: 'same@example.com; apollo@example.com',
+    emailHunter: 'Apollo@Example.com',
+    emailLusha: 'lusha@example.com',
+  };
+  assert.deepEqual(getBlastSendEmails(lead), [
+    'same@example.com',
+    'apollo@example.com',
+    'lusha@example.com',
+  ]);
+  assert.equal(getSendTargetEmail(lead), 'apollo@example.com');
 });
 
 test('outbound messages do not append an automatic opt-out footer', () => {

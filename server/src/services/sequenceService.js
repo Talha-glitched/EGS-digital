@@ -1332,6 +1332,7 @@ export async function launchSequence(sequenceId, options = {}) {
   const jobDocs = [];
   for (const enrollment of enrollments) {
     const lead = leadById.get(String(enrollment.leadId));
+    // All distinct addresses for this POC; exact duplicates are already removed.
     const emails = getBlastSendEmails(lead);
     if (!emails.length) {
       jobDocs.push({

@@ -167,7 +167,7 @@ async function deliverSequenceEmail({
   return { generated, body, messageId };
 }
 
-/** Advance enrollment only after every blast job for this step is finished. */
+/** Advance enrollment only after every distinct-address job for this step is finished. */
 async function maybeAdvanceAfterBlast(enrollment, job) {
   const openSiblings = await SendJob.countDocuments({
     enrollmentId: enrollment._id,
@@ -358,7 +358,7 @@ async function processSendJobRecord(job) {
     job.status = 'cancelled';
     job.errorMessage = 'suppressed';
     await job.save();
-    // One address suppressed does not kill the other blast variants.
+    // Other address variants for this POC should still send.
     const advanced = await maybeAdvanceAfterBlast(enrollment, job);
     if (advanced) {
       const sequence = await Sequence.findById(enrollment.sequenceId);
@@ -482,6 +482,7 @@ export async function scheduleEnrollmentJob(enrollment, delayMs = 0, { immediate
   }
 
   const lead = await Lead.findById(enrollment.leadId).lean();
+  // Send every distinct address for this POC (exact duplicates already removed).
   const emails = getBlastSendEmails(lead);
   if (!emails.length) {
     return SendJob.create({
@@ -559,11 +560,57 @@ export async function sendJobNow(jobId) {
     return job;
   }
 
-  const enrollment = await SequenceEnrollment.findById(job.enrollmentId).select('sequenceId').lean();
-  if (
+  const enrollment = await SequenceEnrollment.findById(job.enrollmentId);
+  const recipient = normalizeEmail(job.recipientEmail);
+  // Only skip the exact same address — other variants for this POC still send.
+  if (enrollment && recipient) {
+    const alreadySentThisAddress = await SendJob.findOne({
+      enrollmentId: enrollment._id,
+      stepIndex: job.stepIndex,
+      status: 'sent',
+      recipientEmail: recipient,
+      _id: { $ne: job._id },
+    }).select('_id').lean();
+
+    if (alreadySentThisAddress) {
+      job.status = 'cancelled';
+      job.errorMessage = 'Skipped — this exact address already received this sequence step.';
+      await job.save();
+      const advanced = await maybeAdvanceAfterBlast(enrollment, job);
+      if (advanced) {
+        const sequence = await Sequence.findById(enrollment.sequenceId);
+        const flowGraph = normalizeFlowGraph(sequence?.flowGraph);
+        if (flowGraph) {
+          const nodeId = enrollment.currentNodeId || resolveEntryNodeId(flowGraph);
+          if (nodeId) {
+            enrollment.currentNodeId = getNextNodeAfterEmail(flowGraph, nodeId);
+            await enrollment.save();
+          }
+          const lead = await Lead.findById(job.leadId);
+          if (lead) await scheduleNextFlowStep(enrollment, flowGraph, lead);
+        } else {
+          const nextStep = sequence?.steps?.[enrollment.currentStepIndex];
+          if (nextStep) {
+            const delayMs = parseStepDelay(nextStep);
+            enrollment.nextSendAt = new Date(Date.now() + delayMs);
+            await enrollment.save();
+            await scheduleEnrollmentJob(enrollment, randomSendDelayMs(), {
+              immediate: isShortFlowDelay(delayMs),
+            });
+          } else {
+            enrollment.completedAt = new Date();
+            await enrollment.save();
+          }
+        }
+      }
+      return job;
+    }
+  } else if (
     enrollment
+    && !recipient
     && await hasLeadReceivedSequenceStep(job.leadId, enrollment.sequenceId, job.stepIndex)
   ) {
+    // Legacy jobs without recipientEmail — keep contact-level skip.
     job.status = 'cancelled';
     job.errorMessage = 'Skipped — this contact already received this sequence step.';
     await job.save();

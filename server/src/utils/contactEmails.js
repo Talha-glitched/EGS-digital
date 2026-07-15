@@ -16,7 +16,7 @@ const VENDOR_FIELD_MAP = {
   Personal: 'emailPersonal',
 };
 
-/** Discovery / blast fields — excludes confirmed outreachEmail. */
+/** Discovery fields for multi-address blast (deduped, case-insensitive). */
 const BLAST_FIELDS = ['emailApollo', 'emailHunter', 'emailLusha', 'emailPersonal', 'email'];
 
 export function splitContactEmails(value) {
@@ -45,7 +45,10 @@ export function getLeadEmailCandidates(lead) {
   return [...new Set(EMAIL_FIELDS.flatMap((field) => splitContactEmails(lead?.[field])))];
 }
 
-/** All addresses used for blast outreach (confirmed outreach wins alone). */
+/**
+ * Distinct addresses for blast outreach. Exact duplicates across vendor fields
+ * are removed. Confirmed outreachEmail wins alone once a reply confirmed it.
+ */
 export function getBlastSendEmails(lead) {
   const confirmed = getOutreachEmail(lead);
   if (confirmed) return [confirmed];
@@ -77,9 +80,8 @@ export function detectEmailVendor(lead, email) {
 }
 
 /**
- * Pick send target: confirmed outreach email first, else vendor-specific source email,
- * else the lead's primary/manual email when no vendor channel is available.
- * Prefer getBlastSendEmails for sequence blast sends.
+ * Pick send target when only one address is needed (UI previews, non-blast sends):
+ * confirmed outreach email first, else vendor discovery address, else primary/manual.
  */
 export function getSendTargetEmail(lead, { vendor } = {}) {
   const confirmed = getOutreachEmail(lead);
