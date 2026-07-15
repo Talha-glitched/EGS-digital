@@ -470,7 +470,7 @@ export default function SequenceBuilderWorkspace({
               <div className="space-y-2">
                 {[
                   { id: AUDIENCE_MODES.CAMPAIGN, label: 'Entire campaign', desc: 'All never-contacted leads in queue' },
-                  { id: AUDIENCE_MODES.COMPANIES, label: 'Specific companies', desc: 'Target selected exhibitors' },
+                  { id: AUDIENCE_MODES.COMPANIES, label: 'Specific companies', desc: 'Target selected companies' },
                   { id: AUDIENCE_MODES.CONTACTS, label: 'Specific contacts', desc: 'Hand-pick individual POCs' },
                 ].map((mode) => (
                   <label

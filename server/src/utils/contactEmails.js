@@ -1,12 +1,23 @@
 import { isValidEmail, normalizeEmail } from './normalizeDomain.js';
 
-const EMAIL_FIELDS = ['email', 'emailApollo', 'emailHunter', 'emailLusha', 'outreachEmail'];
+const EMAIL_FIELDS = [
+  'email',
+  'emailApollo',
+  'emailHunter',
+  'emailLusha',
+  'emailPersonal',
+  'outreachEmail',
+];
 
 const VENDOR_FIELD_MAP = {
   Apollo: 'emailApollo',
   Hunter: 'emailHunter',
   Lusha: 'emailLusha',
+  Personal: 'emailPersonal',
 };
+
+/** Discovery / blast fields — excludes confirmed outreachEmail. */
+const BLAST_FIELDS = ['emailApollo', 'emailHunter', 'emailLusha', 'emailPersonal', 'email'];
 
 export function splitContactEmails(value) {
   return String(value || '')
@@ -15,12 +26,31 @@ export function splitContactEmails(value) {
     .filter((email) => email && isValidEmail(email));
 }
 
+export function joinContactEmails(values = []) {
+  return [...new Set(
+    values.flatMap((value) => splitContactEmails(value)),
+  )].join('; ');
+}
+
+/** Append incoming emails onto an existing ;-separated field without duplicates. */
+export function mergeEmailField(existing, incoming) {
+  return joinContactEmails([existing, incoming]);
+}
+
 export function firstContactEmail(value) {
   return splitContactEmails(value)[0] || '';
 }
 
 export function getLeadEmailCandidates(lead) {
   return [...new Set(EMAIL_FIELDS.flatMap((field) => splitContactEmails(lead?.[field])))];
+}
+
+/** All addresses used for blast outreach (confirmed outreach wins alone). */
+export function getBlastSendEmails(lead) {
+  const confirmed = getOutreachEmail(lead);
+  if (confirmed) return [confirmed];
+
+  return [...new Set(BLAST_FIELDS.flatMap((field) => splitContactEmails(lead?.[field])))];
 }
 
 /** Internal dedup / legacy — not the confirmed outreach channel. */
@@ -49,6 +79,7 @@ export function detectEmailVendor(lead, email) {
 /**
  * Pick send target: confirmed outreach email first, else vendor-specific source email,
  * else the lead's primary/manual email when no vendor channel is available.
+ * Prefer getBlastSendEmails for sequence blast sends.
  */
 export function getSendTargetEmail(lead, { vendor } = {}) {
   const confirmed = getOutreachEmail(lead);
@@ -59,7 +90,7 @@ export function getSendTargetEmail(lead, { vendor } = {}) {
     if (vendorEmail && isValidEmail(vendorEmail)) return vendorEmail;
   }
 
-  for (const field of ['emailHunter', 'emailApollo', 'emailLusha']) {
+  for (const field of ['emailHunter', 'emailApollo', 'emailLusha', 'emailPersonal']) {
     const candidate = firstContactEmail(lead?.[field]);
     if (candidate && isValidEmail(candidate)) return candidate;
   }
@@ -168,6 +199,25 @@ export function buildLeadEmailQuery(email) {
   };
 }
 
-export function pickDedupEmail({ apolloEmail = '', hunterEmail = '', lushaEmail = '', primaryEmail = '' }) {
-  return apolloEmail || lushaEmail || hunterEmail || primaryEmail || '';
+export function pickDedupEmail({
+  apolloEmail = '',
+  hunterEmail = '',
+  lushaEmail = '',
+  personalEmail = '',
+  primaryEmail = '',
+}) {
+  return (
+    firstContactEmail(apolloEmail)
+    || firstContactEmail(lushaEmail)
+    || firstContactEmail(hunterEmail)
+    || firstContactEmail(personalEmail)
+    || firstContactEmail(primaryEmail)
+    || ''
+  );
+}
+
+export function normalizePersonName(value) {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
 }

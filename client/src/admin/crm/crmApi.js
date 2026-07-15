@@ -51,9 +51,11 @@ export async function uploadIngestFile(projectId, file, fieldMapping, vendor) {
   });
 }
 
-export async function previewIngestFile(projectId, file) {
+export async function previewIngestFile(projectId, file, fieldMapping, vendor) {
   const form = new FormData();
   form.append('file', file);
+  if (fieldMapping) form.append('fieldMapping', JSON.stringify(fieldMapping));
+  if (vendor) form.append('vendor', vendor);
   return crmApiFetch(`/api/admin/projects/${projectId}/ingest/preview`, {
     method: 'POST',
     body: form,

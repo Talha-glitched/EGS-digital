@@ -10,7 +10,7 @@ import { SendJob } from '../models/SendJob.js';
 import { Reply } from '../models/Reply.js';
 import { getMailConfigStatus } from './mailTransport.js';
 import { computeProjectSnapshot, computeVendorMatrix } from './analyticsCronService.js';
-import { normalizeDomain, normalizeEmail } from '../utils/normalizeDomain.js';
+import { normalizeDomain, normalizeEmail, isValidEmail } from '../utils/normalizeDomain.js';
 import { getLeadEmailCandidates, getPrimaryLeadEmail } from '../utils/contactEmails.js';
 import { ContactInteraction } from '../models/ContactInteraction.js';
 import {
@@ -157,27 +157,38 @@ export async function listProjects() {
     .sort({ createdAt: -1 })
     .lean();
 
-  const [pocCounts, emailedCounts, respondedCounts, reachedCounts, activeQueues] = await Promise.all([
+  const [pocCounts, emailedCounts, respondedCounts, reachedCounts, activeQueues, companyCounts, withPocCounts] = await Promise.all([
     Lead.aggregate([
-      { $match: { campaignId: { $in: projectIds } } },
+      { $match: { campaignId: { $in: projectIds }, deletedAt: null } },
       { $group: { _id: '$campaignId', count: { $sum: 1 } } },
     ]),
     Lead.aggregate([
-      { $match: { campaignId: { $in: projectIds }, deliveryStatus: { $in: EMAILED_STATUSES } } },
+      { $match: { campaignId: { $in: projectIds }, deletedAt: null, deliveryStatus: { $in: EMAILED_STATUSES } } },
       { $group: { _id: '$campaignId', count: { $sum: 1 } } },
     ]),
     Lead.aggregate([
-      { $match: { campaignId: { $in: projectIds }, deliveryStatus: 'Replied' } },
+      { $match: { campaignId: { $in: projectIds }, deletedAt: null, deliveryStatus: 'Replied' } },
       { $group: { _id: '$campaignId', count: { $sum: 1 } } },
     ]),
     Lead.aggregate([
-      { $match: { campaignId: { $in: projectIds }, deliveryStatus: { $in: EMAILED_STATUSES } } },
+      { $match: { campaignId: { $in: projectIds }, deletedAt: null, deliveryStatus: { $in: EMAILED_STATUSES } } },
       { $group: { _id: { campaignId: '$campaignId', companyId: '$companyId' } } },
       { $group: { _id: '$_id.campaignId', count: { $sum: 1 } } },
     ]),
     SequenceEnrollment.aggregate([
       { $match: { campaignId: { $in: projectIds }, frozen: false, completedAt: null } },
       { $group: { _id: '$campaignId', count: { $sum: 1 } } },
+    ]),
+    Company.aggregate([
+      { $match: { deletedAt: null, projectsAssociated: { $in: projectIds } } },
+      { $unwind: '$projectsAssociated' },
+      { $match: { projectsAssociated: { $in: projectIds } } },
+      { $group: { _id: '$projectsAssociated', count: { $sum: 1 } } },
+    ]),
+    Lead.aggregate([
+      { $match: { campaignId: { $in: projectIds }, deletedAt: null } },
+      { $group: { _id: { campaignId: '$campaignId', companyId: '$companyId' } } },
+      { $group: { _id: '$_id.campaignId', count: { $sum: 1 } } },
     ]),
   ]);
 
@@ -187,9 +198,28 @@ export async function listProjects() {
   const respondedMap = toCountMap(respondedCounts);
   const reachedMap = toCountMap(reachedCounts);
   const queueMap = toCountMap(activeQueues);
+  const companyMap = toCountMap(companyCounts);
+  const withPocMap = toCountMap(withPocCounts);
+
+  // Persist live counters so every campaign (not only opened ones) stays accurate.
+  await Promise.all(refreshedProjects.map(async (project) => {
+    const target = companyMap.get(String(project._id)) || 0;
+    const withPoc = withPocMap.get(String(project._id)) || 0;
+    if (
+      Number(project.targetCompaniesCount || 0) !== target
+      || Number(project.companiesWithPocsFound || 0) !== withPoc
+    ) {
+      await ProjectCampaign.updateOne(
+        { _id: project._id },
+        { $set: { targetCompaniesCount: target, companiesWithPocsFound: withPoc } },
+      );
+    }
+  }));
 
   return refreshedProjects.map((project) => ({
     ...project,
+    targetCompaniesCount: companyMap.get(String(project._id)) || 0,
+    companiesWithPocsFound: withPocMap.get(String(project._id)) || 0,
     pocsFound: pocMap.get(String(project._id)) || 0,
     pocsEmailed: emailedMap.get(String(project._id)) || 0,
     pocsResponded: respondedMap.get(String(project._id)) || 0,
@@ -202,6 +232,7 @@ export async function getProject(id) {
   assertDb();
   await syncAutoCampaignStatus(id);
   await syncCampaignResponseCounts(id);
+  await recalculateCampaignCoverageStats(id);
   const project = await ProjectCampaign.findById(id).lean();
   if (!project || project.deletedAt) {
     const error = new Error('Project not found.');
@@ -209,6 +240,54 @@ export async function getProject(id) {
     throw error;
   }
   return project;
+}
+
+/**
+ * Keep denormalized exhibitor / POC coverage counters in sync with live non-deleted records.
+ */
+export async function recalculateCampaignCoverageStats(projectId) {
+  assertDb();
+  if (!projectId) return null;
+  const project = await ProjectCampaign.findById(projectId);
+  if (!project || project.deletedAt) return null;
+
+  // Companies with live campaign contacts should appear in the Companies list.
+  const companyIdsWithLeads = await Lead.distinct('companyId', {
+    campaignId: projectId,
+    deletedAt: null,
+  });
+  if (companyIdsWithLeads.length) {
+    await Company.updateMany(
+      { _id: { $in: companyIdsWithLeads }, deletedAt: { $ne: null } },
+      { $set: { deletedAt: null, deletedBy: null } },
+    );
+  }
+
+  const [companyCount, pocAgg] = await Promise.all([
+    Company.countDocuments({ projectsAssociated: projectId, deletedAt: null }),
+    Lead.aggregate([
+      { $match: { campaignId: project._id, deletedAt: null } },
+      { $group: { _id: '$companyId' } },
+      { $count: 'total' },
+    ]),
+  ]);
+
+  project.targetCompaniesCount = companyCount;
+  project.companiesWithPocsFound = pocAgg[0]?.total || 0;
+  await project.save();
+  return project;
+}
+
+/** Refresh exhibitor / POC coverage counters for every active campaign. */
+export async function recalculateAllCampaignCoverageStats() {
+  assertDb();
+  const projects = await ProjectCampaign.find({ deletedAt: null }).select('_id').lean();
+  let updated = 0;
+  for (const project of projects) {
+    await recalculateCampaignCoverageStats(project._id);
+    updated += 1;
+  }
+  return { updated };
 }
 
 export async function createProject(payload) {
@@ -232,6 +311,9 @@ export async function createProject(payload) {
     milestone: String(milestone || '').trim(),
     fromEmail: process.env.RESEND_FROM_EMAIL || process.env.EMAIL_SMTP_USER || 'rana@exhibitgraphicsign.com',
     fromName: process.env.EMAIL_FROM_NAME || 'Exhibit Graphic Sign',
+    targetCompaniesCount: 0,
+    companiesWithPocsFound: 0,
+    companiesRespondedCount: 0,
     financialLedger: {
       allocatedToolBudget: Number(allocatedToolBudget) || 0,
       domainFixedCosts: Number(domainFixedCosts) || 0,
@@ -303,6 +385,7 @@ export async function importTargetCompanies(projectId, rows) {
 
   let created = 0;
   let linked = 0;
+  let contactsCreated = 0;
   const errors = [];
 
   for (const row of rows) {
@@ -313,51 +396,133 @@ export async function importTargetCompanies(projectId, rows) {
       continue;
     }
 
-    const existing = await Company.findOne({ domain }).select('_id genericEmails').lean();
+    const importedEmails = normalizeGenericEmails(row.genericEmail || row.genericEmails);
+    const genericPhone = String(row.genericPhone || '').trim();
+
+    let companyId = null;
+    const existing = await Company.findOne({ domain }).select('_id genericEmails deletedAt companyName').lean();
     if (existing) {
-      const importedEmails = normalizeGenericEmails(row.genericEmail || row.genericEmails);
       const importedFields = {
         city: String(row.city || '').trim(),
         country: String(row.country || '').trim(),
-        genericPhone: String(row.genericPhone || '').trim(),
+        genericPhone,
         notes: String(row.notes || '').trim(),
         industry: String(row.industry || '').trim(),
         boothNumber: String(row.boothNumber || row.booth || '').trim(),
       };
       const nonBlankFields = Object.fromEntries(Object.entries(importedFields).filter(([, value]) => value));
+      if (companyName && (!existing.companyName || existing.deletedAt)) {
+        nonBlankFields.companyName = companyName;
+      }
       const update = {
         $addToSet: {
           projectsAssociated: project._id,
           ...(importedEmails.length ? { genericEmails: { $each: importedEmails } } : {}),
         },
-        ...(Object.keys(nonBlankFields).length ? { $set: nonBlankFields } : {}),
+        $set: {
+          ...nonBlankFields,
+          // Re-importing must surface previously soft-deleted companies in the campaign list.
+          deletedAt: null,
+          deletedBy: null,
+        },
       };
       await Company.updateOne({ _id: existing._id }, update);
+      companyId = existing._id;
       linked += 1;
     } else {
-      await Company.create({
+      const company = await Company.create({
         companyName,
         domain,
         industry: String(row.industry || '').trim(),
         boothNumber: String(row.boothNumber || row.booth || '').trim(),
         city: String(row.city || '').trim(),
         country: String(row.country || '').trim(),
-        genericEmails: normalizeGenericEmails(row.genericEmail || row.genericEmails),
-        genericPhone: String(row.genericPhone || '').trim(),
+        genericEmails: importedEmails,
+        genericPhone,
         notes: String(row.notes || '').trim(),
         projectsAssociated: [project._id],
       });
+      companyId = company._id;
       created += 1;
     }
+
+    contactsCreated += await ensureGenericInboxContacts({
+      companyId,
+      campaignId: project._id,
+      companyName,
+      emails: importedEmails,
+      phone: genericPhone,
+    });
   }
 
-  const count = await Company.countDocuments({ projectsAssociated: project._id });
-  project.targetCompaniesCount = count;
-  await project.save();
+  // If contacts exist for soft-deleted companies in this campaign, restore them into the list.
+  const companyIdsWithLeads = await Lead.distinct('companyId', {
+    campaignId: projectId,
+    deletedAt: null,
+  });
+  if (companyIdsWithLeads.length) {
+    await Company.updateMany(
+      { _id: { $in: companyIdsWithLeads }, deletedAt: { $ne: null } },
+      { $set: { deletedAt: null, deletedBy: null } },
+    );
+  }
+
+  const count = (await recalculateCampaignCoverageStats(projectId))?.targetCompaniesCount
+    ?? await Company.countDocuments({ projectsAssociated: project._id, deletedAt: null });
 
   await computeProjectSnapshot(projectId);
 
-  return { created, linked, total: count, errors };
+  return { created, linked, contactsCreated, total: count, errors };
+}
+
+/** Create People-tab contacts from company general emails so they can be enrolled in sequences. */
+async function ensureGenericInboxContacts({
+  companyId,
+  campaignId,
+  companyName = '',
+  emails = [],
+  phone = '',
+}) {
+  let created = 0;
+  const displayName = String(companyName || '').trim();
+  for (const raw of emails) {
+    const email = normalizeEmail(raw);
+    if (!email || !isValidEmail(email)) continue;
+
+    const existing = await Lead.findOne({ campaignId, email });
+    if (existing) {
+      const patch = {};
+      if (existing.deletedAt) {
+        patch.deletedAt = null;
+        patch.deletedBy = null;
+      }
+      if (phone && !existing.phone) patch.phone = phone;
+      if (displayName && (!existing.name || existing.name === email)) patch.name = displayName;
+      if (companyId && String(existing.companyId) !== String(companyId)) patch.companyId = companyId;
+      if (Object.keys(patch).length) {
+        await Lead.updateOne({ _id: existing._id }, { $set: patch });
+      }
+      continue;
+    }
+
+    try {
+      await Lead.create({
+        companyId,
+        campaignId,
+        email,
+        name: displayName || email,
+        phone: phone || '',
+        contactKind: 'genericInbox',
+        sources: ['Manual'],
+        primarySource: 'Manual',
+        deliveryStatus: 'Pending Inqueue',
+      });
+      created += 1;
+    } catch (err) {
+      if (err?.code !== 11000) throw err;
+    }
+  }
+  return created;
 }
 
 export async function syncCampaignResponseCounts(campaignId) {
@@ -1232,25 +1397,45 @@ export async function getComprehensiveAnalytics() {
 export async function deleteLead(id, actor = {}) {
   assertDb();
   registerRevisionModel('lead', Lead);
-  return softDeleteRecord({ Model: Lead, resourceType: 'lead', id, actor });
+  const existing = await Lead.findById(id).select('campaignId').lean();
+  const result = await softDeleteRecord({ Model: Lead, resourceType: 'lead', id, actor });
+  if (existing?.campaignId) {
+    await recalculateCampaignCoverageStats(existing.campaignId);
+  }
+  return result;
 }
 
 export async function restoreLead(id, actor = {}) {
   assertDb();
   registerRevisionModel('lead', Lead);
-  return restoreRecord({ Model: Lead, resourceType: 'lead', id, actor });
+  const result = await restoreRecord({ Model: Lead, resourceType: 'lead', id, actor });
+  const restored = await Lead.findById(id).select('campaignId').lean();
+  if (restored?.campaignId) {
+    await recalculateCampaignCoverageStats(restored.campaignId);
+  }
+  return result;
 }
 
 export async function deleteCompany(id, actor = {}) {
   assertDb();
   registerRevisionModel('company', Company);
-  return softDeleteRecord({ Model: Company, resourceType: 'company', id, actor });
+  const existing = await Company.findById(id).select('projectsAssociated').lean();
+  const result = await softDeleteRecord({ Model: Company, resourceType: 'company', id, actor });
+  for (const campaignId of existing?.projectsAssociated || []) {
+    await recalculateCampaignCoverageStats(campaignId);
+  }
+  return result;
 }
 
 export async function restoreCompany(id, actor = {}) {
   assertDb();
   registerRevisionModel('company', Company);
-  return restoreRecord({ Model: Company, resourceType: 'company', id, actor });
+  const result = await restoreRecord({ Model: Company, resourceType: 'company', id, actor });
+  const restored = await Company.findById(id).select('projectsAssociated').lean();
+  for (const campaignId of restored?.projectsAssociated || []) {
+    await recalculateCampaignCoverageStats(campaignId);
+  }
+  return result;
 }
 
 export async function deleteProject(id, actor = {}) {

@@ -17,9 +17,17 @@ const FIELD_LABELS = {
   domain: 'Domain',
   city: 'City',
   country: 'Country',
-  industry: 'Industry',
-  boothNumber: 'Booth / stand',
+  genericEmail: 'General email',
+  genericPhone: 'General phone',
 };
+
+function pickMapping(suggested = {}) {
+  const mapping = {};
+  for (const key of Object.keys(FIELD_LABELS)) {
+    if (suggested[key]) mapping[key] = suggested[key];
+  }
+  return mapping;
+}
 
 export default function ExhibitorImportModal({ open, onClose, projectId, onImported }) {
   const [mode, setMode] = useState('bulk');
@@ -32,10 +40,10 @@ export default function ExhibitorImportModal({ open, onClose, projectId, onImpor
   const [single, setSingle] = useState({
     companyName: '',
     domain: '',
-    industry: '',
-    boothNumber: '',
     city: '',
     country: '',
+    genericEmail: '',
+    genericPhone: '',
   });
 
   function reset() {
@@ -45,7 +53,14 @@ export default function ExhibitorImportModal({ open, onClose, projectId, onImpor
     setHeaders([]);
     setMapping({});
     setPreview(null);
-    setSingle({ companyName: '', domain: '', industry: '', boothNumber: '', city: '', country: '' });
+    setSingle({
+      companyName: '',
+      domain: '',
+      city: '',
+      country: '',
+      genericEmail: '',
+      genericPhone: '',
+    });
   }
 
   function handleClose() {
@@ -72,7 +87,7 @@ export default function ExhibitorImportModal({ open, onClose, projectId, onImpor
       const result = await response.json();
       if (!response.ok) throw new Error(result.message || 'Preview failed');
       setHeaders(result.headers || []);
-      setMapping(result.suggestedMapping || {});
+      setMapping(pickMapping(result.suggestedMapping));
       setPreview(result);
     } catch (err) {
       setError(err.message);
@@ -96,7 +111,7 @@ export default function ExhibitorImportModal({ open, onClose, projectId, onImpor
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.message || 'Import failed');
-      onImported?.(`Imported ${result.created} new, linked ${result.linked} existing companies.`);
+      onImported?.(`Imported ${result.created} new, linked ${result.linked} existing companies${result.contactsCreated ? `, ${result.contactsCreated} general contacts` : ''}.`);
       handleClose();
     } catch (err) {
       setError(err.message);
@@ -120,7 +135,7 @@ export default function ExhibitorImportModal({ open, onClose, projectId, onImpor
           rows: [{ ...single, companyName: single.companyName.trim(), domain: single.domain.trim() }],
         }),
       });
-      onImported?.(`Added ${result.created ? 'new' : 'existing'} company: ${single.companyName.trim()}.`);
+      onImported?.(`Added ${result.created ? 'new' : 'existing'} company: ${single.companyName.trim()}${result.contactsCreated ? ` (+${result.contactsCreated} contacts)` : ''}.`);
       handleClose();
     } catch (err) {
       setError(err.message);
@@ -135,7 +150,7 @@ export default function ExhibitorImportModal({ open, onClose, projectId, onImpor
     <Modal
       open={open}
       onClose={handleClose}
-      title="Add exhibitors"
+      title="Add companies"
       subtitle="Import your target list or add a single company to this campaign."
       icon={Upload}
       accent="brand"
@@ -151,7 +166,7 @@ export default function ExhibitorImportModal({ open, onClose, projectId, onImpor
       ) : (
         <ModalActionFooter>
           <button type="button" onClick={handleClose} className="crm-btn-ghost">Cancel</button>
-          <button type="submit" form="exhibitor-single-form" disabled={busy} className="crm-btn-primary">
+          <button type="submit" form="company-single-form" disabled={busy} className="crm-btn-primary">
             {busy ? 'Adding…' : 'Add company'}
           </button>
         </ModalActionFooter>
@@ -173,7 +188,7 @@ export default function ExhibitorImportModal({ open, onClose, projectId, onImpor
           <ModalStack>
             <div className="crm-modal-callout">
               <span className="crm-modal-callout-title">Bulk import</span>
-              Upload a scraped exhibitor list. We auto-detect columns — map company name and domain before importing.
+              Upload a company list. Map company name and domain — general emails become People contacts named after the company.
             </div>
 
             <ModalDropzone
@@ -218,7 +233,7 @@ export default function ExhibitorImportModal({ open, onClose, projectId, onImpor
             ) : null}
           </ModalStack>
         ) : (
-          <form id="exhibitor-single-form" onSubmit={importSingle}>
+          <form id="company-single-form" onSubmit={importSingle}>
             <ModalStack>
               <div className="crm-modal-callout">
                 <span className="crm-modal-callout-title">Manual add</span>
@@ -232,17 +247,26 @@ export default function ExhibitorImportModal({ open, onClose, projectId, onImpor
                   <Field label="Domain" required>
                     <input className="crm-input" value={single.domain} onChange={(e) => setSingle({ ...single, domain: e.target.value })} placeholder="example.com" />
                   </Field>
-                  <Field label="Industry">
-                    <input className="crm-input" value={single.industry} onChange={(e) => setSingle({ ...single, industry: e.target.value })} />
-                  </Field>
-                  <Field label="Booth / stand">
-                    <input className="crm-input" value={single.boothNumber} onChange={(e) => setSingle({ ...single, boothNumber: e.target.value })} />
-                  </Field>
                   <Field label="City">
                     <input className="crm-input" value={single.city} onChange={(e) => setSingle({ ...single, city: e.target.value })} />
                   </Field>
                   <Field label="Country">
                     <input className="crm-input" value={single.country} onChange={(e) => setSingle({ ...single, country: e.target.value })} />
+                  </Field>
+                  <Field label="General email">
+                    <input
+                      className="crm-input"
+                      value={single.genericEmail}
+                      onChange={(e) => setSingle({ ...single, genericEmail: e.target.value })}
+                      placeholder="info@example.com"
+                    />
+                  </Field>
+                  <Field label="General phone">
+                    <input
+                      className="crm-input"
+                      value={single.genericPhone}
+                      onChange={(e) => setSingle({ ...single, genericPhone: e.target.value })}
+                    />
                   </Field>
                 </div>
               </ModalSection>

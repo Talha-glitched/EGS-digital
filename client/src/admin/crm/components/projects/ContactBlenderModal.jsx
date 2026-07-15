@@ -1,34 +1,66 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Modal } from '../ui/Modal.jsx';
-import { Alert } from '../ui/primitives.jsx';
+import { Alert, Field } from '../ui/primitives.jsx';
 import {
   ModalActionFooter,
   ModalDropzone,
   ModalPreviewMetrics,
+  ModalSection,
   ModalStack,
-  ModalStepRail,
 } from '../ui/workspaceModalParts.jsx';
-import { FileSpreadsheet, Sparkles } from 'lucide-react';
+import { Check, FileSpreadsheet, Upload } from 'lucide-react';
 
-const VENDOR_TAGS = ['Apollo', 'Hunter', 'Lusha'];
+const FIELD_LABELS = {
+  firstName: 'First name',
+  lastName: 'Last name',
+  name: 'Full name (if single column)',
+  designation: 'Job title',
+  companyName: 'Company name',
+  domain: 'Company domain / website',
+  linkedin: 'LinkedIn URL',
+  emailApollo: 'Email (Apollo)',
+  emailHunter: 'Email (Hunter)',
+  emailLusha: 'Email (Lusha) — Work',
+  emailLusha2: 'Email (Lusha) — Work 2',
+  emailPersonal: 'Personal / private email',
+  email: 'Other email',
+  phone: 'Phone',
+};
+
+const EMAIL_FIELDS = ['emailApollo', 'emailHunter', 'emailLusha', 'emailLusha2', 'emailPersonal', 'email'];
+
+const FALLBACK_SOURCES = [
+  { id: '', label: 'None — map vendor emails above' },
+  { id: 'Apollo', label: 'Apollo' },
+  { id: 'Hunter', label: 'Hunter' },
+  { id: 'Lusha', label: 'Lusha' },
+];
+
+function pickMapping(suggested = {}) {
+  const mapping = {};
+  for (const key of Object.keys(FIELD_LABELS)) {
+    if (suggested[key]) mapping[key] = suggested[key];
+  }
+  return mapping;
+}
 
 export default function ContactBlenderModal({ open, onClose, projectId, onImported }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const [files, setFiles] = useState([]);
+  const [file, setFile] = useState(null);
+  const [headers, setHeaders] = useState([]);
+  const [mapping, setMapping] = useState({});
   const [preview, setPreview] = useState(null);
-
-  const step = useMemo(() => {
-    if (!files.length) return 1;
-    if (!preview) return 2;
-    return 3;
-  }, [files.length, preview]);
+  const [fallbackSource, setFallbackSource] = useState('');
 
   function reset() {
     setBusy(false);
     setError('');
-    setFiles([]);
+    setFile(null);
+    setHeaders([]);
+    setMapping({});
     setPreview(null);
+    setFallbackSource('');
   }
 
   function handleClose() {
@@ -36,16 +68,17 @@ export default function ContactBlenderModal({ open, onClose, projectId, onImport
     onClose?.();
   }
 
-  async function handleFilesSelect(selected) {
-    if (!selected?.length || !projectId) return;
-    const fileList = Array.from(selected);
-    setFiles(fileList);
+  async function handleFileSelect(selected) {
+    setFile(selected);
+    setHeaders([]);
+    setMapping({});
     setPreview(null);
+    if (!selected || !projectId) return;
     setBusy(true);
     setError('');
     try {
       const form = new FormData();
-      fileList.forEach((file) => form.append('files', file));
+      form.append('file', selected);
       const response = await fetch(`/api/admin/projects/${projectId}/ingest/preview`, {
         method: 'POST',
         credentials: 'include',
@@ -53,7 +86,12 @@ export default function ContactBlenderModal({ open, onClose, projectId, onImport
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.message || 'Preview failed');
+      setHeaders(result.headers || []);
+      setMapping(pickMapping(result.suggestedMapping));
       setPreview(result);
+      if (result.detectedVendor && result.detectedVendor !== 'Manual') {
+        setFallbackSource(result.detectedVendor);
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -61,22 +99,26 @@ export default function ContactBlenderModal({ open, onClose, projectId, onImport
     }
   }
 
-  async function runBlender() {
-    if (!files.length || !projectId) return;
+  async function importContacts() {
+    if (!file || !projectId || !hasEmailMapping) return;
     setBusy(true);
     setError('');
     try {
       const form = new FormData();
-      files.forEach((file) => form.append('files', file));
+      form.append('file', file);
+      form.append('fieldMapping', JSON.stringify(mapping));
+      form.append('vendor', fallbackSource || 'Manual');
       const response = await fetch(`/api/admin/projects/${projectId}/ingest`, {
         method: 'POST',
         credentials: 'include',
         body: form,
       });
       const result = await response.json();
-      if (!response.ok) throw new Error(result.message || 'Blender failed');
+      if (!response.ok) throw new Error(result.message || 'Import failed');
       const created = result.companiesCreated ? `, ${result.companiesCreated} new companies` : '';
-      onImported?.(`Ingested ${result.inserted} contacts, merged ${result.merged} duplicates${created}.`);
+      onImported?.(
+        `Imported ${result.inserted} new, merged ${result.merged} existing (LinkedIn / name+domain)${created}.`,
+      );
       handleClose();
     } catch (err) {
       setError(err.message);
@@ -85,73 +127,101 @@ export default function ContactBlenderModal({ open, onClose, projectId, onImport
     }
   }
 
+  const hasEmailMapping = EMAIL_FIELDS.some((key) => Boolean(mapping[key]));
+  const canImport = Boolean(file && hasEmailMapping);
+
   return (
     <Modal
       open={open}
       onClose={handleClose}
-      title="Contact blender"
-      subtitle="Merge Apollo, Hunter, and Lusha exports into one deduplicated contact database."
-      icon={Sparkles}
+      title="Import contacts"
+      subtitle="Upload one tool at a time. Same LinkedIn (or name + domain) merges into one person and keeps every email."
+      icon={Upload}
       accent="violet"
-      size="lg"
+      size="xl"
       footer={(
         <ModalActionFooter>
           <button type="button" onClick={handleClose} className="crm-btn-ghost">Cancel</button>
-          <button type="button" onClick={runBlender} disabled={busy || !files.length || !preview} className="crm-btn-primary">
-            <Sparkles className="h-4 w-4" />
-            {busy ? 'Running blender…' : 'Run blender'}
+          <button type="button" onClick={importContacts} disabled={busy || !canImport} className="crm-btn-primary">
+            <Check className="h-4 w-4" />
+            {busy ? 'Importing…' : 'Import contacts'}
           </button>
         </ModalActionFooter>
       )}
     >
       <ModalStack>
-        <ModalStepRail
-          current={step}
-          steps={[
-            { label: 'Upload' },
-            { label: 'Preview' },
-            { label: 'Merge' },
-          ]}
-        />
-
         {error ? <Alert>{error}</Alert> : null}
 
         <div className="crm-modal-callout">
-          <span className="crm-modal-callout-title">How it works</span>
-          Drop one or more contact CSV exports. The blender normalizes emails, matches domains to target companies, and merges duplicate POCs.
-          <div className="mt-3 flex flex-wrap gap-2">
-            {VENDOR_TAGS.map((vendor) => (
-              <span
-                key={vendor}
-                className="inline-flex rounded-full border border-violet-200 bg-white/80 px-2.5 py-1 text-[10px] font-bold text-violet-700"
-              >
-                {vendor}
-              </span>
-            ))}
-          </div>
+          <span className="crm-modal-callout-title">How matching works</span>
+          LinkedIn match first. If LinkedIn is missing, match name + domain. New emails from Apollo / Hunter / Lusha are appended to that person — sequences blast all variants until a reply confirms the working address.
         </div>
 
         <ModalDropzone
           icon={FileSpreadsheet}
           busy={busy}
-          multiple
-          accept=".csv,.xlsx"
-          fileLabel={files.length ? `${files.length} file(s) selected` : 'Select discovery CSV exports'}
-          hint="You can upload multiple vendor files at once — duplicates merge automatically."
-          onSelect={handleFilesSelect}
+          accept=".csv,.xlsx,.xls,.tsv"
+          fileLabel={file ? file.name : 'Drop CSV, TSV, or Excel here'}
+          hint="Apollo, Hunter, or Lusha export — one file per upload."
+          onSelect={handleFileSelect}
         />
 
         {preview ? (
           <ModalPreviewMetrics
             items={[
-              { label: 'New POCs', value: preview.inserted, tone: 'success' },
-              { label: 'Merged', value: preview.merged },
-              { label: 'New companies', value: preview.newCompanies || 0 },
-              { label: 'Skipped emails', value: preview.invalidEmail || 0, tone: preview.invalidEmail ? 'warning' : undefined },
+              { label: 'Rows detected', value: preview.rowCount ?? '—' },
+              { label: 'Columns', value: headers.length },
+              { label: 'Mapped fields', value: Object.values(mapping).filter(Boolean).length, tone: 'success' },
+              { label: 'Ready', value: canImport ? 'Yes' : 'Map an email', tone: canImport ? 'success' : 'warning' },
             ]}
           />
-        ) : files.length > 0 && !busy ? (
-          <p className="text-center text-xs text-neutral-500">Preview failed or still processing — check your file format.</p>
+        ) : null}
+
+        {preview && headers.length > 0 ? (
+          <>
+            <ModalSection title="Column mapping" description="For Apollo map First + Last name (combined automatically). Map every email column you have.">
+              <div className="grid gap-4 sm:grid-cols-2">
+                {Object.keys(FIELD_LABELS).map((key) => (
+                  <Field
+                    key={key}
+                    label={FIELD_LABELS[key]}
+                    required={EMAIL_FIELDS.includes(key) ? !hasEmailMapping : false}
+                  >
+                    <select
+                      className="crm-select text-xs"
+                      value={mapping[key] || ''}
+                      onChange={(e) => setMapping({ ...mapping, [key]: e.target.value })}
+                    >
+                      <option value="">
+                        {EMAIL_FIELDS.includes(key) && !hasEmailMapping ? 'Select a column…' : 'Skip'}
+                      </option>
+                      {headers.map((header) => (
+                        <option key={header} value={header}>{header}</option>
+                      ))}
+                    </select>
+                  </Field>
+                ))}
+              </div>
+            </ModalSection>
+
+            <ModalSection
+              title="Fallback for “Other email”"
+              description="Only needed when you mapped a single generic Email column (Apollo/Hunter style) instead of vendor fields."
+            >
+              <Field label="Treat that column as">
+                <select
+                  className="crm-select text-xs max-w-xs"
+                  value={fallbackSource}
+                  onChange={(e) => setFallbackSource(e.target.value)}
+                  disabled={!mapping.email}
+                >
+                  {FALLBACK_SOURCES.map((option) => (
+                    <option key={option.id || 'none'} value={option.id}>{option.label}</option>
+                  ))}
+                </select>
+              </Field>
+            </ModalSection>
+          </>
         ) : null}
       </ModalStack>
     </Modal>

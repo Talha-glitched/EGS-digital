@@ -53,6 +53,8 @@ export const leadSortAccessors = {
   emailHunterLabel: 'Hunter',
   emailLusha: (r) => r.emailLusha,
   emailLushaLabel: 'Lusha',
+  emailPersonal: (r) => r.emailPersonal,
+  emailPersonalLabel: 'Personal',
   outreachEmail: (r) => r.outreachEmail,
   outreachEmailLabel: 'Outreach',
   hasResponded: (r) => (r.hasResponded ? 1 : 0),

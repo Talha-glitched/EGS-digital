@@ -5,7 +5,8 @@ import { Sequence } from '../models/Sequence.js';
 import { SequenceEnrollment } from '../models/SequenceEnrollment.js';
 import { SendJob } from '../models/SendJob.js';
 import { Suppression } from '../models/Suppression.js';
-import { getSendTargetEmail } from '../utils/contactEmails.js';
+import { getSendTargetEmail, getBlastSendEmails } from '../utils/contactEmails.js';
+import { normalizeEmail } from '../utils/normalizeDomain.js';
 import { capResendBatchSize, RESEND_MAX_EMAILS_PER_REQUEST } from '../constants/resendLimits.js';
 import { hasLeadReceivedSequenceStep } from '../utils/sequenceSendGuards.js';
 import {
@@ -161,10 +162,27 @@ async function deliverSequenceEmail({
   await job.save();
 
   enrollment.lastSentAt = new Date();
-  enrollment.currentStepIndex += 1;
   await enrollment.save();
 
   return { generated, body, messageId };
+}
+
+/** Advance enrollment only after every blast job for this step is finished. */
+async function maybeAdvanceAfterBlast(enrollment, job) {
+  const openSiblings = await SendJob.countDocuments({
+    enrollmentId: enrollment._id,
+    stepIndex: job.stepIndex,
+    status: { $in: ['pending', 'processing'] },
+  });
+  if (openSiblings > 0) {
+    return false;
+  }
+
+  if (enrollment.currentStepIndex <= job.stepIndex) {
+    enrollment.currentStepIndex = job.stepIndex + 1;
+    await enrollment.save();
+  }
+  return true;
 }
 
 async function scheduleNextFlowStep(enrollment, flowGraph, lead) {
@@ -228,9 +246,12 @@ async function processFlowGraphJob(job, enrollment, lead, sequence, company, pro
     targetEmail,
   });
 
-  enrollment.currentNodeId = getNextNodeAfterEmail(flowGraph, target.nodeId);
-  await enrollment.save();
-  await scheduleNextFlowStep(enrollment, flowGraph, lead);
+  const advanced = await maybeAdvanceAfterBlast(enrollment, job);
+  if (advanced) {
+    enrollment.currentNodeId = getNextNodeAfterEmail(flowGraph, target.nodeId);
+    await enrollment.save();
+    await scheduleNextFlowStep(enrollment, flowGraph, lead);
+  }
 
   nextAllowedSendAt = Date.now() + randomSendDelayMs();
   return true;
@@ -259,6 +280,12 @@ async function processLinearStepJob(job, enrollment, lead, sequence, company, pr
     step,
     targetEmail,
   });
+
+  const advanced = await maybeAdvanceAfterBlast(enrollment, job);
+  if (!advanced) {
+    nextAllowedSendAt = Date.now() + randomSendDelayMs();
+    return;
+  }
 
   const nextStep = sequence.steps[enrollment.currentStepIndex];
   if (nextStep) {
@@ -312,27 +339,41 @@ async function processSendJobRecord(job) {
     return;
   }
 
-  const targetEmail = getSendTargetEmail(lead, {
-    vendor: job.metadata?.emailVendor || lead.primarySource,
-  });
+  const targetEmail = normalizeEmail(job.recipientEmail)
+    || getSendTargetEmail(lead, {
+      vendor: job.metadata?.emailVendor || lead.primarySource,
+    });
   if (!targetEmail) {
     console.error(`[SendWorker] Job ${job._id} failed: No valid target email address found for lead.`);
     job.status = 'failed';
     job.errorMessage = 'No valid target email address found for lead.';
     await job.save();
+    await maybeAdvanceAfterBlast(enrollment, job);
     return;
   }
 
   const suppressed = await Suppression.findOne({ email: targetEmail });
   if (suppressed) {
     console.log(`[SendWorker] Job ${job._id} cancelled: email ${targetEmail} is suppressed.`);
-    lead.deliveryStatus = 'Opted Out';
-    await lead.save();
-    enrollment.frozen = true;
-    await enrollment.save();
     job.status = 'cancelled';
     job.errorMessage = 'suppressed';
     await job.save();
+    // One address suppressed does not kill the other blast variants.
+    const advanced = await maybeAdvanceAfterBlast(enrollment, job);
+    if (advanced) {
+      const sequence = await Sequence.findById(enrollment.sequenceId);
+      if (sequence) {
+        const nextStep = sequence.steps?.[enrollment.currentStepIndex];
+        if (nextStep) {
+          await scheduleEnrollmentJob(enrollment, randomSendDelayMs(), {
+            immediate: isShortFlowDelay(parseStepDelay(nextStep)),
+          });
+        } else {
+          enrollment.completedAt = new Date();
+          await enrollment.save();
+        }
+      }
+    }
     return;
   }
 
@@ -421,31 +462,53 @@ async function pollSendQueue() {
 
 export async function scheduleEnrollmentJob(enrollment, delayMs = 0, { immediate = false, manualSend = false } = {}) {
   const scheduledFor = computeScheduledFor(enrollment, delayMs, { immediate });
+  const stepIndex = enrollment.currentStepIndex;
 
-  const existing = await SendJob.findOne({
+  const existingPending = await SendJob.find({
     enrollmentId: enrollment._id,
-    stepIndex: enrollment.currentStepIndex,
+    stepIndex,
     status: { $in: ['pending', 'processing'] },
   });
 
-  if (existing) {
-    existing.scheduledFor = scheduledFor;
-    existing.status = 'pending';
-    existing.immediateLaunch = immediate;
-    existing.manualSend = manualSend;
-    await existing.save();
-    return existing;
+  if (existingPending.length) {
+    for (const existing of existingPending) {
+      existing.scheduledFor = scheduledFor;
+      existing.status = 'pending';
+      existing.immediateLaunch = immediate;
+      existing.manualSend = manualSend;
+      await existing.save();
+    }
+    return existingPending[0];
   }
 
-  return SendJob.create({
-    leadId: enrollment.leadId,
-    enrollmentId: enrollment._id,
-    stepIndex: enrollment.currentStepIndex,
-    status: 'pending',
-    scheduledFor,
-    immediateLaunch: immediate,
-    manualSend,
-  });
+  const lead = await Lead.findById(enrollment.leadId).lean();
+  const emails = getBlastSendEmails(lead);
+  if (!emails.length) {
+    return SendJob.create({
+      leadId: enrollment.leadId,
+      enrollmentId: enrollment._id,
+      stepIndex,
+      status: 'pending',
+      scheduledFor,
+      immediateLaunch: immediate,
+      manualSend,
+    });
+  }
+
+  const staggerMs = 1500;
+  const jobs = await SendJob.insertMany(
+    emails.map((email, index) => ({
+      leadId: enrollment.leadId,
+      enrollmentId: enrollment._id,
+      stepIndex,
+      status: 'pending',
+      scheduledFor: new Date(scheduledFor.getTime() + index * staggerMs),
+      recipientEmail: email,
+      immediateLaunch: immediate,
+      manualSend,
+    })),
+  );
+  return jobs[0];
 }
 
 export async function cancelLeadJobs(leadId) {

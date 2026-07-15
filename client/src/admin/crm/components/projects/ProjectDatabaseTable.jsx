@@ -480,7 +480,7 @@ export default function ProjectDatabaseTable({
           <EmptyState
             icon={Building2}
             title="No target companies yet"
-            description="Use Add exhibitors to upload your scraped list or add companies one at a time."
+            description="Use Add companies to upload your scraped list or add companies one at a time."
           />
         ) : (
           <>

@@ -2,7 +2,7 @@ export const CAMPAIGN_AUTOMATION = {
   stage:
     'Automatic by default — Active Planning until outreach starts, then Active Campaigning when emails are queued or sent. Pick a stage manually to override; use “Use automatic stage” to resume. Completed and Archived are manual only.',
   companiesFound:
-    'Count of target companies linked to this campaign through exhibitor imports, uploads, or manual company adds.',
+    'Count of target companies linked to this campaign through company imports, uploads, or manual company adds.',
   companiesReached:
     'Automated — unique companies where at least one contact received outbound email. Updates when the send worker dispatches sequence messages.',
   pocsFound:

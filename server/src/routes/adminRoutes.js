@@ -8,6 +8,7 @@ import {
   previewIngestion,
   buildCompanyRows,
   COMPANY_FIELDS,
+  CONTACT_FIELDS,
   blendAndIngestLeads,
   previewBlendAndIngestLeads,
 } from '../services/ingestionService.js';
@@ -73,6 +74,7 @@ import {
   addLeadToCompany,
   assignLeadToCampaign,
   getComprehensiveAnalytics,
+  recalculateAllCampaignCoverageStats,
   deleteLead,
   restoreLead,
   deleteCompany,
@@ -274,6 +276,10 @@ router.get('/projects', asyncRoute(async (_req, res) => {
   res.json(await listProjects());
 }));
 
+router.post('/projects/recalculate-coverage', asyncRoute(async (_req, res) => {
+  res.json(await recalculateAllCampaignCoverageStats());
+}));
+
 router.post('/projects', asyncRoute(async (req, res) => {
   const project = await createProject(req.body || {});
   res.status(201).json(project);
@@ -350,24 +356,51 @@ router.get('/projects/:id/leads', asyncRoute(async (req, res) => {
 }));
 
 router.post('/projects/:id/ingest/preview', upload.any(), asyncRoute(async (req, res) => {
-  if (!req.files || !req.files.length) {
-    return res.status(400).json({ message: 'At least one file is required.' });
+  const file = req.files?.[0];
+  if (!file) {
+    return res.status(400).json({ message: 'File is required.' });
   }
 
-  const uploads = [];
-  for (const file of req.files) {
-    const sheets = parseSpreadsheetBuffer(file.buffer);
-    const headers = sheets[0]?.headers || [];
-    const suggestion = suggestFieldMapping(headers);
-    uploads.push({
+  const sheets = parseSpreadsheetBuffer(file.buffer);
+  const headers = sheets[0]?.headers || [];
+  const { suggestedMapping, detectedVendor } = suggestFieldMapping(headers, CONTACT_FIELDS);
+  const rowCount = sheets.reduce((sum, sheet) => sum + sheet.dataRows.length, 0);
+  const sample = sheets[0]?.dataRows?.slice(0, 5) || [];
+
+  let fieldMapping = null;
+  try {
+    fieldMapping = req.body.fieldMapping ? JSON.parse(req.body.fieldMapping) : null;
+  } catch {
+    fieldMapping = null;
+  }
+
+  // When a mapping is provided, return a dry-run blend preview too.
+  if (fieldMapping && Object.keys(fieldMapping).length) {
+    const vendor = req.body.vendor || detectedVendor || 'Manual';
+    const stats = await previewBlendAndIngestLeads(req.params.id, [{
       sheets,
-      fieldMapping: suggestion.suggestedMapping,
-      vendor: suggestion.detectedVendor
+      fieldMapping,
+      vendor,
+    }]);
+    return res.json({
+      headers,
+      suggestedMapping,
+      detectedVendor,
+      rowCount,
+      sample,
+      fields: CONTACT_FIELDS,
+      ...stats,
     });
   }
 
-  const stats = await previewBlendAndIngestLeads(req.params.id, uploads);
-  res.json(stats);
+  res.json({
+    headers,
+    suggestedMapping,
+    detectedVendor,
+    rowCount,
+    sample,
+    fields: CONTACT_FIELDS,
+  });
 }));
 
 router.post('/projects/:id/ingest', upload.any(), asyncRoute(async (req, res) => {
@@ -375,7 +408,6 @@ router.post('/projects/:id/ingest', upload.any(), asyncRoute(async (req, res) =>
     return res.status(400).json({ message: 'At least one file is required.' });
   }
 
-  const uploads = [];
   let customMappings = {};
   try {
     customMappings = req.body.fieldMappings ? JSON.parse(req.body.fieldMappings) : {};
@@ -383,17 +415,40 @@ router.post('/projects/:id/ingest', upload.any(), asyncRoute(async (req, res) =>
     customMappings = {};
   }
 
+  let sharedMapping = null;
+  try {
+    sharedMapping = req.body.fieldMapping ? JSON.parse(req.body.fieldMapping) : null;
+  } catch {
+    sharedMapping = null;
+  }
+
+  const sharedVendor = req.body.vendor || null;
+  let customVendors = {};
+  try {
+    customVendors = typeof req.body.vendors === 'string'
+      ? JSON.parse(req.body.vendors)
+      : (req.body.vendors || {});
+  } catch {
+    customVendors = {};
+  }
+
+  const uploads = [];
   for (const file of req.files) {
     const sheets = parseSpreadsheetBuffer(file.buffer);
     const headers = sheets[0]?.headers || [];
-    const suggestion = suggestFieldMapping(headers);
-    const mapping = customMappings[file.originalname] || suggestion.suggestedMapping;
-    const vendor = req.body.vendors?.[file.originalname] || suggestion.detectedVendor;
+    const suggestion = suggestFieldMapping(headers, CONTACT_FIELDS);
+    const mapping = customMappings[file.originalname]
+      || sharedMapping
+      || suggestion.suggestedMapping;
+    const vendor = customVendors[file.originalname]
+      || sharedVendor
+      || suggestion.detectedVendor
+      || 'Manual';
 
     uploads.push({
       sheets,
       fieldMapping: mapping,
-      vendor
+      vendor,
     });
   }
 
@@ -596,7 +651,7 @@ router.patch('/leads/:id', asyncRoute(async (req, res) => {
 
   const fields = [
     'name', 'designation', 'email', 'phone', 'linkedinUrl',
-    'emailApollo', 'emailHunter', 'emailLusha',
+    'emailApollo', 'emailHunter', 'emailLusha', 'emailPersonal',
     'phoneLusha1', 'phoneLusha2', 'whatsappNumber',
     'outcome', 'deliveryStatus',
     'outreachEmail', 'outreachEmailSource',

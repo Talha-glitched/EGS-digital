@@ -46,7 +46,7 @@ export async function globalSearch(query, { limit = 5 } = {}) {
 
   const re = new RegExp(escapeRegExp(term), 'i');
   const cap = Math.min(Math.max(Number(limit) || 5, 1), 10);
-  const leadQuery = buildWordSearchQuery(['name', 'email', 'designation', 'emailApollo', 'emailHunter', 'emailLusha'], term);
+  const leadQuery = buildWordSearchQuery(['name', 'email', 'designation', 'emailApollo', 'emailHunter', 'emailLusha', 'emailPersonal'], term);
   const companyQuery = buildWordSearchQuery(['companyName', 'domain', 'city', 'industry'], term) || { $or: [{ companyName: re }, { domain: re }, { city: re }, { industry: re }, { genericEmails: re }] };
 
   const [leads, companies, projects, opportunities, tasks] = await Promise.all([

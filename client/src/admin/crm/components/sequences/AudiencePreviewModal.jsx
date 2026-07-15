@@ -97,12 +97,13 @@ export default function AudiencePreviewModal({
                     <th>Apollo</th>
                     <th>Hunter</th>
                     <th>Lusha</th>
+                    <th>Personal</th>
                   </tr>
                 </thead>
                 <tbody>
                   {!rows.length && (
                     <tr>
-                      <td colSpan={6} className="py-10 text-center text-neutral-400">No contacts match this audience.</td>
+                      <td colSpan={7} className="py-10 text-center text-neutral-400">No contacts match this audience.</td>
                     </tr>
                   )}
                   {rows.map((row) => (
@@ -113,6 +114,7 @@ export default function AudiencePreviewModal({
                       <td className="font-mono text-neutral-500">{trimEmail(row.emailApollo)}</td>
                       <td className="font-mono text-neutral-500">{trimEmail(row.emailHunter)}</td>
                       <td className="font-mono text-neutral-500">{trimEmail(row.emailLusha)}</td>
+                      <td className="font-mono text-neutral-500">{trimEmail(row.emailPersonal)}</td>
                     </tr>
                   ))}
                 </tbody>

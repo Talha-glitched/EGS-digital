@@ -28,7 +28,6 @@ import {
   Users,
   MessageCircle,
   Upload,
-  Sparkles,
   Layers,
   BarChart3,
   ChevronLeft,
@@ -161,8 +160,9 @@ export default function ProjectDetailWorkspace() {
     );
   }
 
-  const target = project.targetCompaniesCount || 0;
-  const pocPct = analytics?.pocDiscoveryPercent ?? 0;
+  const target = companies.length;
+  const withPocs = new Set(leads.map((lead) => String(lead.companyId || '')).filter(Boolean)).size;
+  const pocPct = target ? (withPocs / target) * 100 : 0;
   const replyPct = analytics?.interactionProgressPercent ?? 0;
   const pocsEmailed = leads.filter((lead) => EMAILED_STATUSES.includes(lead.deliveryStatus)).length;
   const pocsResponded = leads.filter((lead) => lead.hasResponded).length;
@@ -189,7 +189,7 @@ export default function ProjectDetailWorkspace() {
       <PageSection>
         <div className="crm-card px-4 py-3.5 lg:px-5">
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs">
-            <CompactStat icon={Building2} label="Exhibitors" value={target} />
+            <CompactStat icon={Building2} label="Companies" value={target} />
             <CompactStat icon={Users} label="POCs" value={leads.length} />
             <CompactStat
               icon={MessageCircle}
@@ -217,7 +217,7 @@ export default function ProjectDetailWorkspace() {
               label="POC discovery"
               hint={CAMPAIGN_AUTOMATION.discoveryRate}
               value={pocPct}
-              fraction={`${project.companiesWithPocsFound || 0}/${target}`}
+              fraction={`${withPocs}/${target}`}
               tone="brand"
             />
             <ProgressBlock
@@ -237,8 +237,8 @@ export default function ProjectDetailWorkspace() {
           </div>
 
           <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-[var(--color-line)] pt-3">
-            <ActionBtn icon={Upload} label="Add exhibitors" onClick={() => setModal('exhibitors')} />
-            <ActionBtn icon={Sparkles} label="Contact blender" onClick={() => setModal('blender')} />
+            <ActionBtn icon={Upload} label="Add companies" onClick={() => setModal('exhibitors')} />
+            <ActionBtn icon={Users} label="Import contacts" onClick={() => setModal('blender')} />
             <Link
               to={`/admin/crm/sequences?new=1&campaign=${id}`}
               className="crm-btn-secondary inline-flex items-center gap-1.5 py-1.5 text-xs"

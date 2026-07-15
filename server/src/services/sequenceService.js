@@ -17,7 +17,7 @@ import {
   registerRevisionModel,
 } from './revisionService.js';
 import { formatDeliveryIssueRow } from '../utils/sendDeliveryErrors.js';
-import { buildLeadEmailQuery, getPrimaryLeadEmail, getSendTargetEmail } from '../utils/contactEmails.js';
+import { buildLeadEmailQuery, getPrimaryLeadEmail, getSendTargetEmail, getBlastSendEmails } from '../utils/contactEmails.js';
 import { normalizeEmail } from '../utils/normalizeDomain.js';
 import {
   getLeadsWithOpenSequenceStepJobs,
@@ -361,7 +361,7 @@ export async function previewAudience(projectId, options = {}) {
   const itemLimit = options.full ? 500 : 8;
   const items = leadIds.length
     ? await Lead.find({ _id: { $in: leadIds } })
-      .select('name designation email emailApollo emailHunter emailLusha companyId')
+      .select('name designation email emailApollo emailHunter emailLusha emailPersonal companyId')
       .sort({ name: 1 })
       .limit(itemLimit)
       .lean()
@@ -1320,9 +1320,13 @@ export async function launchSequence(sequenceId, options = {}) {
     )
     : [];
 
-  const jobs = enrollments.length
-    ? await SendJob.insertMany(
-      enrollments.map((enrollment) => ({
+  const leadById = new Map(leadsToEnroll.map((lead) => [String(lead._id), lead]));
+  const jobDocs = [];
+  for (const enrollment of enrollments) {
+    const lead = leadById.get(String(enrollment.leadId));
+    const emails = getBlastSendEmails(lead);
+    if (!emails.length) {
+      jobDocs.push({
         leadId: enrollment.leadId,
         enrollmentId: enrollment._id,
         stepIndex: enrollment.currentStepIndex,
@@ -1330,9 +1334,25 @@ export async function launchSequence(sequenceId, options = {}) {
         scheduledFor: now,
         immediateLaunch: true,
         manualSend: true,
-      })),
-      { ordered: true },
-    )
+      });
+      continue;
+    }
+    emails.forEach((email, index) => {
+      jobDocs.push({
+        leadId: enrollment.leadId,
+        enrollmentId: enrollment._id,
+        stepIndex: enrollment.currentStepIndex,
+        status: 'pending',
+        scheduledFor: new Date(now.getTime() + index * 1500),
+        recipientEmail: email,
+        immediateLaunch: true,
+        manualSend: true,
+      });
+    });
+  }
+
+  const jobs = jobDocs.length
+    ? await SendJob.insertMany(jobDocs, { ordered: true })
     : [];
 
   const enrolled = enrollments.length;

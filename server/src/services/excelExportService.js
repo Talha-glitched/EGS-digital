@@ -8,10 +8,10 @@ export async function exportCampaignToBuffer(projectId) {
   if (!project) throw new Error('Project not found.');
 
   // Fetch Companies
-  const companies = await Company.find({ projectsAssociated: projectId }).sort({ companyName: 1 }).lean();
+  const companies = await Company.find({ projectsAssociated: projectId, deletedAt: null }).sort({ companyName: 1 }).lean();
   
   // Fetch Leads
-  const leads = await Lead.find({ campaignId: projectId }).sort({ createdAt: -1 }).lean();
+  const leads = await Lead.find({ campaignId: projectId, deletedAt: null }).sort({ createdAt: -1 }).lean();
   const companyMap = new Map(companies.map(c => [String(c._id), c]));
 
   // Build Companies Sheet
@@ -86,6 +86,7 @@ export async function exportCampaignToBuffer(projectId) {
 
       // Lusha
       'Email (Lusha)': lead.emailLusha || '',
+      'Personal / private email': lead.emailPersonal || '',
       'Phone 1': lead.phoneLusha1 || '',
       'Phone 2': lead.phoneLusha2 || '',
       'WhatsApp': lead.whatsappNumber || '',

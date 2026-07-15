@@ -2,6 +2,7 @@ import { startSendWorker } from './sendWorker.js';
 import { startImapWatcher } from './imapWatcherService.js';
 import { startAnalyticsCron } from './analyticsCronService.js';
 import { getMailConfigStatus } from './mailTransport.js';
+import { recalculateAllCampaignCoverageStats } from './projectService.js';
 
 export function initializeCrmRuntime() {
   const { imapReady, imap2Ready } = getMailConfigStatus();
@@ -16,4 +17,13 @@ export function initializeCrmRuntime() {
 
   startAnalyticsCron();
   console.info('Analytics cron started.');
+
+  // Keep exhibitor / POC coverage accurate for every campaign (existing + future imports).
+  recalculateAllCampaignCoverageStats()
+    .then((result) => {
+      console.info(`[CRM] Recalculated coverage stats for ${result.updated} campaign(s).`);
+    })
+    .catch((err) => {
+      console.error('[CRM] Coverage stats backfill failed:', err.message);
+    });
 }

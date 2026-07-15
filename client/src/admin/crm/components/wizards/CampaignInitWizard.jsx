@@ -33,16 +33,18 @@ const MILESTONE_PRESETS = ['Gitex Global 2026', 'Arab Health 2026', 'Gulfood 202
 const COMPANY_FIELD_META = [
   { key: 'companyName', label: 'Company name', required: true, hint: 'The company / organization name.' },
   { key: 'domain', label: 'Website or domain', required: true, hint: 'e.g. alfuttaim.com — used to match contacts to this company.' },
-  { key: 'industry', label: 'Industry', required: false, hint: 'Optional — sector or vertical.' },
-  { key: 'boothNumber', label: 'Booth / stand', required: false, hint: 'Optional — their stand or hall at the event.' },
+  { key: 'city', label: 'City', required: false, hint: 'Optional — HQ or primary city.' },
+  { key: 'country', label: 'Country', required: false, hint: 'Optional — country of the company.' },
+  { key: 'genericEmail', label: 'General email', required: false, hint: 'Optional — creates a People contact named after the company.' },
+  { key: 'genericPhone', label: 'General phone', required: false, hint: 'Optional — stored on the company and attached to the general-email contact.' },
 ];
 
 function downloadSampleCsv() {
-  const header = 'companyName,domain,industry,boothNumber';
+  const header = 'companyName,domain,city,country,genericEmail,genericPhone';
   const rows = [
-    'Al-Futtaim Group,alfuttaim.com,Retail,H3-A14',
-    'Emaar Properties,emaar.com,Real Estate,H1-B02',
-    'Emirates NBD,emiratesnbd.com,Banking,',
+    'Al-Futtaim Group,alfuttaim.com,Dubai,UAE,info@alfuttaim.com,+97140000000',
+    'Emaar Properties,emaar.com,Dubai,UAE,info@emaar.com,',
+    'Emirates NBD,emiratesnbd.com,Dubai,UAE,,',
   ];
   const blob = new Blob([[header, ...rows].join('\n')], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);
@@ -122,7 +124,12 @@ export default function CampaignInitWizard({ open, onClose, onComplete }) {
     try {
       const p = await previewCompaniesFile(projectId, selected);
       setHeaders(p.headers || []);
-      setMapping(p.suggestedMapping || {});
+      const suggested = p.suggestedMapping || {};
+      const cleaned = {};
+      for (const { key } of COMPANY_FIELD_META) {
+        if (suggested[key]) cleaned[key] = suggested[key];
+      }
+      setMapping(cleaned);
       setSampleRows(p.sample || []);
       setRowCount(p.rowCount || 0);
     } catch (err) {
@@ -375,7 +382,7 @@ export default function CampaignInitWizard({ open, onClose, onComplete }) {
                 <strong>{form.projectName}</strong> is ready.{' '}
                 {skippedUpload
                   ? 'Add target companies later, or jump straight to importing contacts.'
-                  : `Imported ${uploadResult?.created ?? 0} new companies and linked ${uploadResult?.linked ?? 0} existing companies (${uploadResult?.total ?? 0} total targets).`}
+                  : `Imported ${uploadResult?.created ?? 0} new companies and linked ${uploadResult?.linked ?? 0} existing (${uploadResult?.total ?? 0} total)${uploadResult?.contactsCreated ? `, ${uploadResult.contactsCreated} general contacts` : ''}.`}
               </p>
             </div>
 
@@ -386,7 +393,7 @@ export default function CampaignInitWizard({ open, onClose, onComplete }) {
             <ModalSection title="Recommended next steps" className="w-full max-w-md text-left">
               <ol className="list-decimal space-y-2 pl-5 text-sm leading-relaxed text-neutral-600">
                 <li>Open the campaign workspace</li>
-                <li>Use <strong>Contact blender</strong> to upload Apollo / Hunter / Lusha exports</li>
+                <li>Use <strong>Import contacts</strong> to upload Apollo / Hunter / Lusha exports</li>
                 <li>Go to <strong>Email Sequences</strong> to build a drip and enroll leads</li>
               </ol>
             </ModalSection>

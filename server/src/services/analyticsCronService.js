@@ -13,6 +13,7 @@ export async function computeVendorMatrix(campaignId) {
   for (const source of VENDORS) {
     const leads = await Lead.find({
       campaignId,
+      deletedAt: null,
       $or: [{ primarySource: source }, { sources: source }],
     }).lean();
 
@@ -44,9 +45,28 @@ export async function computeVendorMatrix(campaignId) {
   return matrix;
 }
 
+async function refreshCampaignCoverageCounters(project) {
+  if (!project?._id) return project;
+
+  const [companyCount, pocAgg] = await Promise.all([
+    Company.countDocuments({ projectsAssociated: project._id, deletedAt: null }),
+    Lead.aggregate([
+      { $match: { campaignId: project._id, deletedAt: null } },
+      { $group: { _id: '$companyId' } },
+      { $count: 'total' },
+    ]),
+  ]);
+
+  project.targetCompaniesCount = companyCount;
+  project.companiesWithPocsFound = pocAgg[0]?.total || 0;
+  return project;
+}
+
 export async function computeProjectSnapshot(projectId) {
   const project = await ProjectCampaign.findById(projectId);
-  if (!project) return null;
+  if (!project || project.deletedAt) return null;
+
+  await refreshCampaignCoverageCounters(project);
 
   const target = project.targetCompaniesCount || 0;
   const withPoc = project.companiesWithPocsFound || 0;
@@ -104,7 +124,7 @@ export async function computeGlobalSnapshot() {
 }
 
 export async function runAnalyticsCron() {
-  const projects = await ProjectCampaign.find().select('_id');
+  const projects = await ProjectCampaign.find({ deletedAt: null }).select('_id');
   for (const project of projects) {
     await computeProjectSnapshot(project._id);
   }

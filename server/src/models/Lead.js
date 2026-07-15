@@ -32,11 +32,13 @@ const leadSchema = new mongoose.Schema(
     emailApollo: { type: String, default: '', trim: true, lowercase: true },
     emailHunter: { type: String, default: '', trim: true, lowercase: true },
     emailLusha: { type: String, default: '', trim: true, lowercase: true },
-    /** Set automatically when a reply arrives from Apollo/Hunter/Lusha/manual email on this lead. */
+    /** Private / personal addresses (e.g. Lusha Private email). May hold multiple ;-separated values. */
+    emailPersonal: { type: String, default: '', trim: true, lowercase: true },
+    /** Set automatically when a reply arrives from a mailbox on this lead. */
     outreachEmail: { type: String, default: '', trim: true, lowercase: true, index: true },
     outreachEmailSource: {
       type: String,
-      enum: ['', 'Apollo', 'Hunter', 'Lusha', 'Manual'],
+      enum: ['', 'Apollo', 'Hunter', 'Lusha', 'Personal', 'Manual'],
       default: '',
     },
     contactKind: {

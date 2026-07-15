@@ -28,6 +28,7 @@ function populateFromLead(lead) {
     formEmailApollo: lead.emailApollo || '',
     formEmailHunter: lead.emailHunter || '',
     formEmailLusha: lead.emailLusha || '',
+    formEmailPersonal: lead.emailPersonal || '',
     formPhone: lead.phone || '',
     formPhoneLusha1: lead.phoneLusha1 || '',
     formPhoneLusha2: lead.phoneLusha2 || '',
@@ -86,14 +87,17 @@ function contactInitials(name = '') {
 function collectOutreachEmailOptions(form) {
   const options = [];
   const add = (source, email) => {
-    const trimmed = String(email || '').trim().toLowerCase();
-    if (!trimmed) return;
-    if (options.some((row) => row.email === trimmed)) return;
-    options.push({ source, email: trimmed });
+    for (const part of String(email || '').split(/[;,]/)) {
+      const trimmed = part.trim().toLowerCase();
+      if (!trimmed) continue;
+      if (options.some((row) => row.email === trimmed)) continue;
+      options.push({ source, email: trimmed });
+    }
   };
   add('Apollo', form.formEmailApollo);
   add('Hunter', form.formEmailHunter);
   add('Lusha', form.formEmailLusha);
+  add('Personal', form.formEmailPersonal);
   add('Manual', form.formEmail);
   return options;
 }
@@ -178,6 +182,7 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
     emailApollo: currentForm.formEmailApollo.trim(),
     emailHunter: currentForm.formEmailHunter.trim(),
     emailLusha: currentForm.formEmailLusha.trim(),
+    emailPersonal: currentForm.formEmailPersonal.trim(),
     phone: currentForm.formPhone.trim(),
     phoneLusha1: currentForm.formPhoneLusha1.trim(),
     phoneLusha2: currentForm.formPhoneLusha2.trim(),
@@ -572,6 +577,7 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
                   ['formEmailApollo', 'Apollo email', 'email', 'email'],
                   ['formEmailHunter', 'Hunter email', 'email', 'email'],
                   ['formEmailLusha', 'Lusha email', 'email', 'email'],
+                  ['formEmailPersonal', 'Personal / private email', 'email', 'email'],
                   ['formPhoneLusha1', 'Lusha phone 1', 'tel', 'phone'],
                   ['formPhoneLusha2', 'Lusha phone 2', 'tel', 'phone'],
                   ['formPhone', 'Outreach phone', 'tel', 'phone'],
