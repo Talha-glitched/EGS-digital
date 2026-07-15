@@ -28,9 +28,15 @@ export default function AudiencePreviewModal({
   useBodyScrollLock(mounted);
 
   useEffect(() => {
-    if (!open || !campaignId) return undefined;
+    const hasAudience = Boolean(
+      audience?.importedCampaignIds?.length
+      || audience?.includeCompanyIds?.length
+      || audience?.includeContactIds?.length
+      || audience?.importCampaign,
+    );
+    if (!open || (!campaignId && !hasAudience)) return undefined;
     setLoading(true);
-    previewSequenceAudience(campaignId, {
+    previewSequenceAudience(campaignId || null, {
       sequenceId,
       full: true,
       ...audienceToApiParams(audience),

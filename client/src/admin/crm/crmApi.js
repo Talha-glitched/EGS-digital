@@ -292,6 +292,12 @@ export async function deleteSequences(ids = []) {
   });
 }
 
+function isUsableCampaignId(value) {
+  if (value == null) return false;
+  const id = String(value).trim();
+  return Boolean(id) && id !== 'null' && id !== 'undefined' && /^[a-f\d]{24}$/i.test(id);
+}
+
 export async function previewSequenceAudience(campaignId, options = {}) {
   const params = new URLSearchParams();
   if (options.sequenceId) params.set('sequenceId', options.sequenceId);
@@ -305,8 +311,9 @@ export async function previewSequenceAudience(campaignId, options = {}) {
   if (options.companyIds?.length) params.set('companyIds', options.companyIds.join(','));
   if (options.full) params.set('full', 'true');
   const query = params.toString();
-  const path = campaignId
-    ? `/api/admin/projects/${campaignId}/audience-preview`
+  const safeCampaignId = isUsableCampaignId(campaignId) ? String(campaignId).trim() : null;
+  const path = safeCampaignId
+    ? `/api/admin/projects/${safeCampaignId}/audience-preview`
     : '/api/admin/audience-preview';
   return crmApiFetch(`${path}${query ? `?${query}` : ''}`);
 }

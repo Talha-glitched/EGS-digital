@@ -18,7 +18,12 @@ import {
   GRADUATION_STEPS,
   isGraduationCampaign,
 } from '../../constants/sequenceDefaults.js';
-import { EMPTY_AUDIENCE, audienceToApiParams } from './audienceBuilder.js';
+import {
+  EMPTY_AUDIENCE,
+  audienceToApiParams,
+  audienceWithImportedCampaign,
+  normalizeCampaignId,
+} from './audienceBuilder.js';
 import SequenceSidebar from './SequenceSidebar.jsx';
 import SequenceInspector from './SequenceInspector.jsx';
 import SequenceWhiteboard from './SequenceWhiteboard.jsx';
@@ -57,7 +62,9 @@ export default function SequenceStudio({
 
   const [activeSequenceId, setActiveSequenceId] = useState(null);
   const [sequenceName, setSequenceName] = useState('Untitled sequence');
-  const [campaignId, setCampaignId] = useState(campaignParam || campaigns[0]?._id || '');
+  const [campaignId, setCampaignId] = useState(
+    () => normalizeCampaignId(campaignParam || campaigns[0]?._id || ''),
+  );
   const [nodes, setNodes] = useState(defaultFlow().nodes);
   const [edges, setEdges] = useState(defaultFlow().edges);
   const [selectedNodeId, setSelectedNodeId] = useState(null);
@@ -216,15 +223,20 @@ export default function SequenceStudio({
     try {
       const seq = await crmApiFetch(`/api/admin/sequences/${id}`);
       const flow = flowFromSequence(seq);
+      const linkedCampaignId = normalizeCampaignId(seq.campaignId);
       setActiveSequenceId(seq._id);
       setSequenceName(seq.name || 'Untitled sequence');
-      setCampaignId(String(seq.campaignId));
+      setCampaignId(linkedCampaignId);
+      setAudience(audienceWithImportedCampaign(linkedCampaignId));
+      setAudiencePreview({ eligible: 0, netNew: 0, sample: [] });
       setNodes(flow.nodes);
       setEdges(flow.edges);
       setSelectedNodeId(null);
       setEditingNodeId(null);
       setLinkingFrom(null);
       setIsActive(Boolean(seq.isActive));
+      setLaunchMode('draft');
+      setLaunchArmed(false);
       await loadDeliverySummary(seq._id);
     } catch {
       showToast('Failed to load sequence.', 'error');
@@ -234,7 +246,7 @@ export default function SequenceStudio({
   }, [showToast, dismissToast, loadDeliverySummary]);
 
   const resetNewSequence = useCallback((preferredCampaignId = '') => {
-    const cid = preferredCampaignId || campaignParam || campaigns[0]?._id || '';
+    const cid = normalizeCampaignId(preferredCampaignId || campaignParam || campaigns[0]?._id || '');
     const campaign = campaigns.find((c) => c._id === cid);
     const flow = defaultFlow();
     if (campaign && isGraduationCampaign(campaign.projectName, campaign.milestone)) {
@@ -250,7 +262,9 @@ export default function SequenceStudio({
     setDeliverySummary(null);
     setLaunchMode('draft');
     setLaunchArmed(false);
-    setAudience({ ...EMPTY_AUDIENCE });
+    // Pre-import the preferred campaign so launching works without an extra click.
+    setAudience(audienceWithImportedCampaign(cid));
+    setAudiencePreview({ eligible: 0, netNew: 0, sample: [] });
     dismissToast();
   }, [campaignParam, campaigns, dismissToast]);
 
@@ -263,15 +277,20 @@ export default function SequenceStudio({
   }, [loadAudienceOptions, campaignId]);
 
   useEffect(() => {
+    const safeCampaignId = normalizeCampaignId(campaignId);
     const hasAudience = Boolean(
       audience.importedCampaignIds?.length
       || audience.includeContactIds?.length
       || audience.includeCompanyIds?.length,
     );
-    if (!hasAudience && !campaignId) return undefined;
+    // Standalone sequences must import a list; never preview with a bare/invalid campaignId.
+    if (!hasAudience) {
+      setAudiencePreview({ eligible: 0, netNew: 0, sample: [] });
+      return undefined;
+    }
     const timer = setTimeout(async () => {
       try {
-        const preview = await previewSequenceAudience(campaignId || null, {
+        const preview = await previewSequenceAudience(safeCampaignId || null, {
           sequenceId: activeSequenceId,
           ...buildAudienceParams(audience),
         });
@@ -483,7 +502,7 @@ export default function SequenceStudio({
           : 'No enrollments to reset for this audience.',
         result.reset > 0 ? 'success' : 'warning',
       );
-      const preview = await previewSequenceAudience(campaignId, {
+      const preview = await previewSequenceAudience(normalizeCampaignId(campaignId) || null, {
         sequenceId: activeSequenceId,
         ...buildAudienceParams(audience),
       });

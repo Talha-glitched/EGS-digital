@@ -20,7 +20,11 @@ import SearchableSelect from '../ui/SearchableSelect.jsx';
 import SearchableMultiSelect from '../ui/SearchableMultiSelect.jsx';
 import MailboxUsagePopover from './MailboxUsagePopover.jsx';
 import AudiencePreviewModal from './AudiencePreviewModal.jsx';
-import { buildAudienceSummary, buildImportedListLabels } from './audienceBuilder.js';
+import {
+  buildAudienceSummary,
+  buildImportedListLabels,
+  normalizeCampaignId,
+} from './audienceBuilder.js';
 import { DELAY_PRESETS, DELAY_UNIT_OPTIONS, formatDelayLabel } from '../../utils/sequenceDelay.js';
 import { Alert } from '../ui/primitives.jsx';
 import { cn } from '../ui/primitives.jsx';
@@ -218,11 +222,20 @@ function GlobalInspector({
   mailStatus,
   deliverySummary,
 }) {
-  const [importPickerId, setImportPickerId] = useState(campaignId || '');
+  const [importPickerId, setImportPickerId] = useState(() => normalizeCampaignId(campaignId));
   const isSend = launchMode === 'send';
 
   useEffect(() => {
-    if (campaignId && !importPickerId) setImportPickerId(campaignId);
+    const linked = normalizeCampaignId(campaignId);
+    const picked = normalizeCampaignId(importPickerId);
+    if (linked && !picked) {
+      setImportPickerId(linked);
+      return;
+    }
+    // Drop invalid leftovers such as String(null) → "null"
+    if (importPickerId && !picked) {
+      setImportPickerId(linked || '');
+    }
   }, [campaignId, importPickerId]);
 
   const campaignLabels = Object.fromEntries(
@@ -232,7 +245,7 @@ function GlobalInspector({
   const importedLists = buildImportedListLabels(audience, campaignLabels);
 
   function importCampaignList() {
-    const id = String(importPickerId || campaignId || '');
+    const id = normalizeCampaignId(importPickerId || campaignId);
     if (!id) return;
     const ids = (audience.importedCampaignIds || []).map(String);
     if (ids.includes(id)) return;
@@ -279,7 +292,8 @@ function GlobalInspector({
       <InspectorSection title="Send to" icon={Users}>
         <div className="crm-seq-send-import">
           <p className="text-[10px] leading-relaxed text-neutral-500">
-            Import one or more campaign lists, then layer companies or contacts on top.
+            Choose a campaign list, click <span className="font-semibold text-[var(--color-ink)]">Import</span>,
+            then launch. Naming a sequence after a campaign does not enroll it automatically.
           </p>
           <div className="flex gap-2">
             <div className="min-w-0 flex-1">

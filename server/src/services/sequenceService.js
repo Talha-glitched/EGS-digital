@@ -326,9 +326,17 @@ export async function getSequenceWithStats(id) {
   return { ...seq, campaign, stats };
 }
 
+export function sanitizeAudienceProjectId(projectId) {
+  if (projectId == null) return null;
+  const id = String(projectId).trim();
+  if (!id || id === 'null' || id === 'undefined' || !mongoose.isValidObjectId(id)) return null;
+  return id;
+}
+
 export async function previewAudience(projectId, options = {}) {
+  const safeProjectId = sanitizeAudienceProjectId(projectId);
   const hasAudienceSource = Boolean(
-    projectId
+    safeProjectId
     || options.importedCampaignIds?.length
     || options.importCampaign
     || options.includeLeadIds?.length
@@ -342,8 +350,8 @@ export async function previewAudience(projectId, options = {}) {
     throw error;
   }
 
-  if (projectId) {
-    const project = await ProjectCampaign.findById(projectId).select('_id projectName').lean();
+  if (safeProjectId) {
+    const project = await ProjectCampaign.findById(safeProjectId).select('_id projectName').lean();
     if (!project) {
       const error = new Error('Project not found.');
       error.status = 404;
@@ -352,8 +360,8 @@ export async function previewAudience(projectId, options = {}) {
   }
 
   const audienceContextId = resolveAudienceContextId(
-    { ...options, projectId },
-    await buildAudienceSnapshot({ ...options, projectId }),
+    { ...options, projectId: safeProjectId },
+    await buildAudienceSnapshot({ ...options, projectId: safeProjectId }),
   );
   const leadIds = await resolveAudienceLeadIds(audienceContextId, options);
   const eligible = leadIds.length;

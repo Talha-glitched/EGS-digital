@@ -6,6 +6,22 @@ export const EMPTY_AUDIENCE = {
   excludeContactIds: [],
 };
 
+/** Coerce API/DB campaign ids; String(null) must never become the path segment "null". */
+export function normalizeCampaignId(value) {
+  if (value == null) return '';
+  const id = String(value).trim();
+  if (!id || id === 'null' || id === 'undefined') return '';
+  if (!/^[a-f\d]{24}$/i.test(id)) return '';
+  return id;
+}
+
+export function audienceWithImportedCampaign(campaignId) {
+  const id = normalizeCampaignId(campaignId);
+  return id
+    ? { ...EMPTY_AUDIENCE, importedCampaignIds: [id] }
+    : { ...EMPTY_AUDIENCE };
+}
+
 export function audienceToApiParams(audience = EMPTY_AUDIENCE) {
   const params = {};
   if (audience.importedCampaignIds?.length) {

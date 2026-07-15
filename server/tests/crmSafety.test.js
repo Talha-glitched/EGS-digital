@@ -9,9 +9,11 @@ import {
 import { buildStepPerformance } from '../src/services/projectService.js';
 import {
   assertEnrollmentConfirmed,
+  assertLaunchAudience,
   buildEnrollmentLeadQuery,
   enrollableDeliveryFilter,
   resolveLeadForCampaignEnrollment,
+  sanitizeAudienceProjectId,
 } from '../src/services/sequenceService.js';
 import { withOptOutFooter } from '../src/services/sendWorker.js';
 
@@ -67,6 +69,25 @@ test('campaign enrollment requires confirmation and selects enrollable leads', (
     deliveryStatus: { $nin: ['Bounced / Invalid', 'Opted Out'] },
     _id: { $in: ['lead-1'] },
   });
+});
+
+test('audience project ids reject String(null) and other invalid ObjectId values', () => {
+  assert.equal(sanitizeAudienceProjectId(null), null);
+  assert.equal(sanitizeAudienceProjectId('null'), null);
+  assert.equal(sanitizeAudienceProjectId('undefined'), null);
+  assert.equal(sanitizeAudienceProjectId(''), null);
+  assert.equal(sanitizeAudienceProjectId('not-an-id'), null);
+  assert.equal(sanitizeAudienceProjectId('507f1f77bcf86cd799439011'), '507f1f77bcf86cd799439011');
+});
+
+test('launch audience ignores invalid imported campaign id strings like "null"', () => {
+  assert.throws(
+    () => assertLaunchAudience({ importedCampaignIds: ['null', 'undefined'] }),
+    /Choose an audience before launching/i,
+  );
+  assert.doesNotThrow(() => assertLaunchAudience({
+    importedCampaignIds: ['507f1f77bcf86cd799439011'],
+  }));
 });
 
 test('audience preview counts every eligible contact for launch enrollment', () => {
