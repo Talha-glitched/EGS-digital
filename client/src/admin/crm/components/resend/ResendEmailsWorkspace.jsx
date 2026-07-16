@@ -25,6 +25,7 @@ const STATUS_FILTERS = [
   { id: 'delivered', label: 'Delivered' },
   { id: 'opened', label: 'Opened' },
   { id: 'clicked', label: 'Clicked' },
+  { id: 'received', label: 'Received' },
   { id: 'bounced', label: 'Bounced' },
   { id: 'failed', label: 'Failed' },
 ];

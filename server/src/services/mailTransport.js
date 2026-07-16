@@ -141,6 +141,7 @@ export async function sendAuthenticatedMail({
   fromEmail,
   inReplyTo,
   references,
+  campaignId,
 }) {
   const { getSystemSettings } = await import('./systemSettingsService.js');
   const settings = await getSystemSettings().catch(() => ({ useResend: false, resendDomain: 'masuood.exhibitgraphicsign.com' }));
@@ -183,6 +184,9 @@ export async function sendAuthenticatedMail({
           ...(inReplyTo && { 'In-Reply-To': inReplyTo }),
           ...(references && { 'References': Array.isArray(references) ? references.join(' ') : references }),
         },
+        tags: [
+          ...(campaignId ? [{ name: 'campaign_id', value: String(campaignId) }] : []),
+        ],
       }),
     });
 

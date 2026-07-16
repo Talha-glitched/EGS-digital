@@ -152,10 +152,11 @@ export default function ResendAnalyticsView({ metrics }) {
   return (
     <div className="space-y-5">
       {/* 1. Radial Rate Gauges */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {renderRadialCircle(deliverabilityRate, "stroke-emerald-500", "Deliverability", CheckCircle2, "success")}
         {renderRadialCircle(openRate, "stroke-sky-500", "Open Rate", BarChart3, "info")}
         {renderRadialCircle(clickRate, "stroke-indigo-500", "Click-Through", Link2, "brand")}
+        {renderRadialCircle(parseFloat(metrics?.rates?.received || 0), "stroke-teal-500", "Received", Mail, "success")}
         {renderRadialCircle(bounceRate, bounceRate > 5 ? "stroke-red-500" : "stroke-amber-500", "Bounce Rate", AlertTriangle, "warning")}
       </div>
 
@@ -214,6 +215,20 @@ export default function ResendAnalyticsView({ metrics }) {
               {opened > 0 && (
                 <p className="text-[10px] text-neutral-400 text-right">
                   Drop-off: {(100 - clickRate).toFixed(1)}% ({opened - clicked} read without action)
+                </p>
+              )}
+            </div>
+
+            {/* Step 5: Received */}
+            <div className="space-y-1">
+              <div className="flex justify-between text-xs">
+                <span className="font-semibold text-neutral-500 uppercase tracking-wider">5. Received (Replies)</span>
+                <span className="font-bold text-[var(--color-ink)] tabular-nums">{received} <span className="text-neutral-400 font-normal">({metrics?.rates?.received || 0}% of sent)</span></span>
+              </div>
+              <ProgressBar value={parseFloat(metrics?.rates?.received || 0)} tone="success" />
+              {total > 0 && (
+                <p className="text-[10px] text-neutral-400 text-right">
+                  Unreplied: {(100 - parseFloat(metrics?.rates?.received || 0)).toFixed(1)}% ({total - received} emails)
                 </p>
               )}
             </div>

@@ -15,6 +15,8 @@ export default function ResendEmailsPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [activeTab, setActiveTab] = useState('deliveries');
+  const [campaigns, setCampaigns] = useState([]);
+  const [selectedCampaignId, setSelectedCampaignId] = useState('');
 
   const tabItems = [
     { id: 'deliveries', label: 'All Deliveries', description: 'Real-time outreach sending logs, search filters, and status codes.' },
@@ -27,7 +29,12 @@ export default function ResendEmailsPage() {
     setError('');
 
     try {
-      const data = await crmApiFetch('/api/admin/resend/metrics');
+      const queryParams = new URLSearchParams();
+      if (selectedCampaignId) {
+        queryParams.set('campaignId', selectedCampaignId);
+      }
+      const url = `/api/admin/resend/metrics?${queryParams.toString()}`;
+      const data = await crmApiFetch(url);
       setMetrics(data);
     } catch (err) {
       setError(err.message || 'Failed to load Resend emails.');
@@ -36,12 +43,16 @@ export default function ResendEmailsPage() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [selectedCampaignId]);
 
   useEffect(() => {
     crmApiFetch('/api/admin/system-settings')
       .then(setSettings)
       .catch(() => setSettings({ useResend: false }));
+
+    crmApiFetch('/api/admin/projects')
+      .then((rows) => setCampaigns(Array.isArray(rows) ? rows : []))
+      .catch(() => setCampaigns([]));
   }, []);
 
   useEffect(() => {
@@ -50,7 +61,7 @@ export default function ResendEmailsPage() {
       return;
     }
     loadMetrics().catch(console.error);
-  }, [settings?.useResend, loadMetrics]);
+  }, [settings?.useResend, selectedCampaignId, loadMetrics]);
 
   if (settings === null) {
     return (
@@ -96,7 +107,25 @@ export default function ResendEmailsPage() {
       )}
 
       <PageSection className="space-y-4">
-        <Tabs items={tabItems} active={activeTab} onChange={setActiveTab} />
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-[var(--color-line)] pb-3">
+          <Tabs items={tabItems} active={activeTab} onChange={setActiveTab} />
+          
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider whitespace-nowrap">Campaign:</span>
+            <select
+              value={selectedCampaignId}
+              onChange={(e) => setSelectedCampaignId(e.target.value)}
+              className="crm-input text-xs w-full sm:w-56"
+            >
+              <option value="">All Campaigns</option>
+              {campaigns.map((camp) => (
+                <option key={camp._id} value={camp._id}>
+                  {camp.projectName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
         
         {activeTab === 'deliveries' ? (
           <ResendEmailsWorkspace

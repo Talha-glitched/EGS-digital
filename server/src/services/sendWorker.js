@@ -128,6 +128,7 @@ async function deliverSequenceEmail({
       leadId: lead._id,
       stepIndex: enrollment.currentStepIndex,
     }),
+    campaignId: lead.campaignId,
   });
   const messageId = String(result?.messageId || '').trim();
 

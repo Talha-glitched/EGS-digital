@@ -6,6 +6,7 @@ const STATUS_CONFIGS = {
   bounced: { bg: 'bg-red-50 text-red-700', label: 'Bounced' },
   complained: { bg: 'bg-amber-50 text-amber-800', label: 'Spam' },
   failed: { bg: 'bg-red-100 text-red-800', label: 'Failed' },
+  received: { bg: 'bg-teal-50 text-teal-700', label: 'Received' },
 };
 
 export default function ResendStatusBadge({ status }) {

@@ -1310,11 +1310,12 @@ router.patch('/system-settings', asyncRoute(async (req, res) => {
 }));
 
 router.get('/resend/metrics', asyncRoute(async (req, res) => {
-  const { status, search, limit } = req.query || {};
+  const { status, search, limit, campaignId } = req.query || {};
   res.json(await getResendMetrics({
     status: status ? String(status) : undefined,
     search: search ? String(search) : undefined,
     limit: limit ? Number(limit) : undefined,
+    campaignId: campaignId ? String(campaignId) : undefined,
   }));
 }));
 
