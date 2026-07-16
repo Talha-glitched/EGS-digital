@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { Zap } from 'lucide-react';
 import { crmApiFetch } from '../crmApi.js';
 import ResendEmailsWorkspace from '../components/resend/ResendEmailsWorkspace.jsx';
-import { Alert, EmptyState, LoadingState, PageSection, PageShell } from '../components/ui/primitives.jsx';
+import ResendAnalyticsView from '../components/resend/ResendAnalyticsView.jsx';
+import { Alert, EmptyState, LoadingState, PageSection, PageShell, Tabs } from '../components/ui/primitives.jsx';
 
 export default function ResendEmailsPage() {
   const [settings, setSettings] = useState(null);
@@ -13,6 +14,12 @@ export default function ResendEmailsPage() {
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [activeTab, setActiveTab] = useState('deliveries');
+
+  const tabItems = [
+    { id: 'deliveries', label: 'All Deliveries', description: 'Real-time outreach sending logs, search filters, and status codes.' },
+    { id: 'analytics', label: 'Performance Analytics', description: 'Visual breakdown of deliverability, circular rate gauges, conversion funnel, and weekly optimizations.' }
+  ];
 
   const loadMetrics = useCallback(async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);
@@ -88,17 +95,23 @@ export default function ResendEmailsPage() {
         </PageSection>
       )}
 
-      <PageSection>
-        <ResendEmailsWorkspace
-          metrics={metrics}
-          loading={loading}
-          refreshing={refreshing}
-          onRefresh={() => loadMetrics(true)}
-          search={search}
-          onSearchChange={setSearch}
-          statusFilter={statusFilter}
-          onStatusFilterChange={setStatusFilter}
-        />
+      <PageSection className="space-y-4">
+        <Tabs items={tabItems} active={activeTab} onChange={setActiveTab} />
+        
+        {activeTab === 'deliveries' ? (
+          <ResendEmailsWorkspace
+            metrics={metrics}
+            loading={loading}
+            refreshing={refreshing}
+            onRefresh={() => loadMetrics(true)}
+            search={search}
+            onSearchChange={setSearch}
+            statusFilter={statusFilter}
+            onStatusFilterChange={setStatusFilter}
+          />
+        ) : (
+          <ResendAnalyticsView metrics={metrics} />
+        )}
       </PageSection>
     </PageShell>
   );
