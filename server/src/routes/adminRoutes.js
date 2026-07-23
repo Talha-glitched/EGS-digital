@@ -1047,7 +1047,25 @@ router.patch('/sales/pipeline-config', asyncRoute(async (req, res) => {
 }));
 
 router.get('/sales/opportunities', asyncRoute(async (req, res) => {
-  res.json(await listOpportunities(req.query));
+  const query = { ...req.query };
+  // Designers only see opportunities they are owner of or collaborate on
+  if (req.user?.role === 'designer') {
+    query._designerUser = req.user;
+  }
+  const result = await listOpportunities(query);
+  // Strip sensitive financial/POC fields for designers
+  if (req.user?.role === 'designer') {
+    result.items = result.items.map((item) => ({
+      ...item,
+      valueAed: undefined,
+      probability: undefined,
+      primaryLeadId: undefined,
+      stakeholderLeadIds: undefined,
+      notes: undefined,
+      budgetBand: undefined,
+    }));
+  }
+  res.json(result);
 }));
 
 router.get('/sales/opportunities/:id', asyncRoute(async (req, res) => {
@@ -1083,7 +1101,12 @@ router.post('/sales/opportunities/bulk-delete', asyncRoute(async (req, res) => {
 }));
 
 router.get('/sales/tasks', asyncRoute(async (req, res) => {
-  res.json(await listTasks(req.query));
+  const query = { ...req.query };
+  // Designers see tasks assigned to them OR tasks linked to their opportunities/projects
+  if (req.user?.role === 'designer') {
+    query._designerUser = req.user;
+  }
+  res.json(await listTasks(query));
 }));
 
 router.post('/sales/tasks', asyncRoute(async (req, res) => {

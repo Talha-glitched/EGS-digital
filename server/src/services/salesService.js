@@ -229,7 +229,7 @@ function withOpportunityPopulate(query) {
   return OPPORTUNITY_POPULATE.reduce((q, spec) => q.populate(spec), query);
 }
 
-export async function listOpportunities({ stage, owner, search, campaignId, companyId } = {}) {
+export async function listOpportunities({ stage, owner, search, campaignId, companyId, _designerName, _designerUser } = {}) {
   assertDb();
   const stages = await getPipelineStages();
   const query = { deletedAt: null };
@@ -237,11 +237,43 @@ export async function listOpportunities({ stage, owner, search, campaignId, comp
   if (owner && owner !== 'All') query.owner = owner;
   if (campaignId && mongoose.isValidObjectId(String(campaignId))) query.campaignId = campaignId;
   if (companyId && mongoose.isValidObjectId(String(companyId))) query.companyId = companyId;
-  if (search) {
-    query.$or = [
-      { name: new RegExp(String(search).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') },
-      { eventName: new RegExp(String(search).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') },
+
+  const designer = _designerUser || (_designerName ? { displayName: _designerName } : null);
+  if (designer) {
+    const displayName = designer.displayName || '';
+    const username = designer.username || '';
+    const userId = designer.id || designer.userId || designer._id;
+
+    // 1. Find opportunity IDs where this designer has assigned tasks
+    const taskOwnerConditions = [
+      ...(displayName ? [{ owner: displayName }] : []),
+      ...(username ? [{ owner: username }] : []),
+      ...(userId && mongoose.isValidObjectId(String(userId)) ? [{ ownerUserId: userId }] : []),
     ];
+    const designerTasks = await Task.find({
+      deletedAt: null,
+      opportunityId: { $ne: null },
+      $or: taskOwnerConditions,
+    }).select('opportunityId').lean();
+
+    const taskOppIds = designerTasks.map((t) => t.opportunityId).filter(Boolean);
+
+    // 2. An opportunity is visible to the designer if they are owner, collaborator, or assigned a task under it
+    const designerConditions = [
+      ...(displayName ? [{ owner: displayName }, { collaborators: displayName }] : []),
+      ...(username ? [{ owner: username }, { collaborators: username }] : []),
+      ...(userId && mongoose.isValidObjectId(String(userId)) ? [{ ownerUserId: userId }, { collaboratorUserIds: userId }] : []),
+      ...(taskOppIds.length ? [{ _id: { $in: taskOppIds } }] : []),
+    ];
+    if (designerConditions.length) {
+      const clause = { $or: designerConditions };
+      query.$and = query.$and ? [...query.$and, clause] : [clause];
+    }
+  }
+  if (search) {
+    const searchRe = new RegExp(String(search).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+    const searchClause = { $or: [{ name: searchRe }, { eventName: searchRe }] };
+    query.$and = query.$and ? [...query.$and, searchClause] : [searchClause];
   }
 
   const items = await withOpportunityPopulate(Opportunity.find(query))
@@ -504,7 +536,7 @@ export async function getOpportunityTimeline(id) {
   };
 }
 
-export async function listTasks({ status = 'Open', owner, opportunityId, campaignId, companyId } = {}) {
+export async function listTasks({ status = 'Open', owner, opportunityId, campaignId, companyId, _designerUser } = {}) {
   assertDb();
   const query = { deletedAt: null };
   if (status && status !== 'All') query.status = status;
@@ -518,6 +550,43 @@ export async function listTasks({ status = 'Open', owner, opportunityId, campaig
     }).distinct('_id');
     query.opportunityId = { $in: opportunityIds };
   }
+
+  if (_designerUser) {
+    const displayName = _designerUser.displayName || '';
+    const username = _designerUser.username || '';
+    const userId = _designerUser.id || _designerUser.userId || _designerUser._id;
+
+    // 1. Find all opportunities assigned to or collaborated on by this designer
+    const oppQuery = {
+      deletedAt: null,
+      $or: [
+        ...(displayName ? [{ owner: displayName }, { collaborators: displayName }] : []),
+        ...(username ? [{ owner: username }, { collaborators: username }] : []),
+        ...(userId && mongoose.isValidObjectId(String(userId)) ? [{ ownerUserId: userId }, { collaboratorUserIds: userId }] : []),
+      ],
+    };
+    const designerOpps = await Opportunity.find(oppQuery).select('_id campaignId').lean();
+    const designerOppIds = designerOpps.map((o) => o._id);
+    const designerCampaignIds = designerOpps.map((o) => o.campaignId).filter(Boolean);
+
+    // 2. A task is visible to the designer if:
+    //    - Task owner is designer (by displayName, username, or userId)
+    //    - OR task is linked to one of the designer's assigned/collaborated opportunities
+    //    - OR task is linked to one of the designer's assigned/collaborated campaigns
+    const designerConditions = [
+      ...(displayName ? [{ owner: displayName }] : []),
+      ...(username ? [{ owner: username }] : []),
+      ...(userId && mongoose.isValidObjectId(String(userId)) ? [{ ownerUserId: userId }] : []),
+      ...(designerOppIds.length ? [{ opportunityId: { $in: designerOppIds } }] : []),
+      ...(designerCampaignIds.length ? [{ campaignId: { $in: designerCampaignIds } }] : []),
+    ];
+
+    if (designerConditions.length) {
+      const clause = { $or: designerConditions };
+      query.$and = query.$and ? [...query.$and, clause] : [clause];
+    }
+  }
+
   const items = await Task.find(query)
     .sort({ status: 1, dueAt: 1, priority: -1, createdAt: -1 })
     .populate('campaignId', 'projectName')

@@ -3,6 +3,7 @@ const ROLE_STYLES = {
   sales_manager: 'bg-blue-100 text-blue-800',
   sales_rep: 'bg-emerald-100 text-emerald-800',
   viewer: 'bg-neutral-100 text-neutral-700',
+  designer: 'bg-pink-100 text-pink-800',
 };
 
 const ROLE_LABELS = {
@@ -10,6 +11,7 @@ const ROLE_LABELS = {
   sales_manager: 'Sales Manager',
   sales_rep: 'Sales Rep',
   viewer: 'Viewer',
+  designer: 'Designer',
 };
 
 export default function RoleBadge({ role }) {

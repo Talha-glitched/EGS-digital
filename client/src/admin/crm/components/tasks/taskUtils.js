@@ -57,6 +57,46 @@ export function dueTaskTone(task) {
   return 'success';
 }
 
+export function getDeadlineTone(dueAt, status) {
+  if (status === 'Done' || !dueAt) return null;
+  const date = new Date(dueAt);
+  if (Number.isNaN(date.getTime())) return null;
+  const now = new Date();
+  const due = isDateOnlyDue(dueAt)
+    ? new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999)
+    : date;
+  if (due < now) return 'overdue';
+  const todayEnd = new Date(now);
+  todayEnd.setHours(23, 59, 59, 999);
+  if (due <= todayEnd) return 'today';
+  return 'upcoming';
+}
+
+export function formatDeadlineLabel(dueAt, status) {
+  if (!dueAt) return null;
+  const date = new Date(dueAt);
+  if (Number.isNaN(date.getTime())) return null;
+  const tone = getDeadlineTone(dueAt, status);
+  if (!tone) return null;
+  const now = new Date();
+  const due = isDateOnlyDue(dueAt)
+    ? new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999)
+    : date;
+  const diffMs = due - now;
+  const diffDays = Math.round(Math.abs(diffMs) / (1000 * 60 * 60 * 24));
+  const diffHrs = Math.round(Math.abs(diffMs) / (1000 * 60 * 60));
+  if (tone === 'overdue') {
+    if (diffDays === 0) return diffHrs <= 1 ? 'Overdue 1h' : `Overdue ${diffHrs}h`;
+    return diffDays === 1 ? 'Overdue 1d' : `Overdue ${diffDays}d`;
+  }
+  if (tone === 'today') return 'Due today';
+  if (diffDays === 0) return 'Due soon';
+  if (diffDays === 1) return 'Tomorrow';
+  if (diffDays < 7) return `In ${diffDays}d`;
+  const diffWeeks = Math.round(diffDays / 7);
+  return diffWeeks === 1 ? 'In 1 week' : `In ${diffWeeks} weeks`;
+}
+
 export function normalizeTaskId(value) {
   if (!value) return '';
   if (typeof value === 'object' && value.id) return value.id;

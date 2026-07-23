@@ -12,11 +12,35 @@ import { Badge, cn } from '../ui/primitives.jsx';
 import {
   TASK_PRIORITIES,
   formatTaskDue,
+  formatDeadlineLabel,
+  getDeadlineTone,
   isDemoTask,
   normalizeTaskId,
 } from './taskUtils.js';
 
 const NONE_OPTION = { value: '', label: '—', hint: 'None' };
+
+const DEADLINE_TONE_STYLES = {
+  overdue: 'bg-red-100 text-red-700 border border-red-200',
+  today: 'bg-amber-100 text-amber-700 border border-amber-200',
+  upcoming: 'bg-emerald-100 text-emerald-700 border border-emerald-200',
+};
+
+function DeadlineBadge({ dueAt, status }) {
+  if (!dueAt) return <span className="text-neutral-400">—</span>;
+  const tone = getDeadlineTone(dueAt, status);
+  const label = formatDeadlineLabel(dueAt, status);
+  return (
+    <div className="flex flex-col gap-0.5">
+      <span className="text-[12px] text-neutral-600">{formatTaskDue(dueAt)}</span>
+      {tone && label && (
+        <span className={`inline-flex w-fit items-center rounded-full px-1.5 py-0.5 text-[10px] font-semibold leading-none ${DEADLINE_TONE_STYLES[tone]} ${tone === 'overdue' ? 'animate-pulse' : ''}`}>
+          {label}
+        </span>
+      )}
+    </div>
+  );
+}
 
 function TaskTitleCell({ task, onPatch, focus, editing }) {
   const inputRef = useRef(null);
@@ -182,30 +206,19 @@ export default function TaskTable({
                   />
                 ) : selection ? <td className="crm-bulk-select-col" /> : null}
                 <td onClick={(e) => e.stopPropagation()}>
-                  {editing ? (
-                    <button
-                      type="button"
-                      aria-label="Confirm task details"
-                      onClick={() => onConfirmTask?.(task)}
-                      className="crm-task-confirm-tick"
-                    >
-                      <Check className="h-4 w-4" strokeWidth={2.25} />
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      aria-label={done ? 'Mark task open' : 'Mark task complete'}
-                      disabled={demo}
-                      onClick={() => onToggle?.(task)}
-                      className={cn(
-                        'crm-task-complete-btn',
-                        done && 'is-done',
-                        demo && 'is-disabled',
-                      )}
-                    >
-                      {done ? <Check className="h-3.5 w-3.5" /> : <Circle className="h-3 w-3 text-neutral-300" />}
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    aria-label={done ? 'Mark task open' : 'Mark task complete'}
+                    disabled={demo}
+                    onClick={() => onToggle?.(task)}
+                    className={cn(
+                      'crm-task-complete-btn',
+                      done && 'is-done',
+                      demo && 'is-disabled',
+                    )}
+                  >
+                    {done ? <Check className="h-3.5 w-3.5" /> : <Circle className="h-4 w-4 text-neutral-400 hover:text-emerald-600" />}
+                  </button>
                 </td>
                 <td>
                   <TaskTitleCell
@@ -220,7 +233,7 @@ export default function TaskTable({
                 </td>
                 <td onClick={(e) => editing && e.stopPropagation()}>
                   {locked || demo ? (
-                    <span className="text-neutral-600">{formatTaskDue(task.dueAt)}</span>
+                    <DeadlineBadge dueAt={task.dueAt} status={task.status} />
                   ) : (
                     <DateTimePicker
                       value={task.dueAt}
@@ -325,16 +338,29 @@ export default function TaskTable({
                   )}
                 </td>
                 <td onClick={(e) => e.stopPropagation()}>
-                  {!demo && (
-                    <button
-                      type="button"
-                      aria-label={`Delete ${task.title}`}
-                      className="crm-task-delete-btn"
-                      onClick={() => onDelete?.(task)}
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  )}
+                  <div className="flex items-center justify-end gap-1">
+                    {editing && (
+                      <button
+                        type="button"
+                        aria-label="Confirm task details"
+                        onClick={() => onConfirmTask?.(task)}
+                        className="crm-task-confirm-tick"
+                        title="Done editing"
+                      >
+                        <Check className="h-4 w-4" strokeWidth={2.25} />
+                      </button>
+                    )}
+                    {!demo && (
+                      <button
+                        type="button"
+                        aria-label={`Delete ${task.title}`}
+                        className="crm-task-delete-btn"
+                        onClick={() => onDelete?.(task)}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             );

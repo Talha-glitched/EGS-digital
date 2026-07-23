@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { crmApiFetch, formatCurrency, formatPercent } from '../crmApi.js';
 import CampaignInitWizard from '../components/wizards/CampaignInitWizard.jsx';
 import { Plus, TrendingUp, Users, Inbox, FolderKanban, ChevronRight, Building2, BriefcaseBusiness, ListTodo, AlertTriangle, ArrowUpRight, Clock3, MessageCircle } from 'lucide-react';
+import { formatDeadlineLabel, getDeadlineTone } from '../components/tasks/taskUtils.js';
 import {
   PageShell,
   PageHeader,
@@ -78,6 +79,21 @@ export default function GlobalDashboard() {
     setProjects(projectList);
     setSummary(workspaceSummary);
   }, []);
+
+  async function handleToggleTask(taskId) {
+    setSummary((prev) => prev ? {
+      ...prev,
+      openTasks: prev.openTasks?.filter((t) => t._id !== taskId) || [],
+    } : prev);
+    try {
+      await crmApiFetch(`/api/admin/sales/tasks/${taskId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status: 'Done' }),
+      });
+    } catch {
+      loadDashboard().catch(() => {});
+    }
+  }
 
   useEffect(() => {
     loadDashboard()
@@ -165,17 +181,35 @@ export default function GlobalDashboard() {
             {workspace?.openTasks?.length ? (
               <ListBody>
                 {workspace.openTasks.map((task) => (
-                  <ListRow key={task._id} className="items-start">
-                    <span className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${task.priority === 'High' ? 'bg-red-500' : 'bg-sky-500'}`} />
+                  <ListRow key={task._id} className="items-center gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => handleToggleTask(task._id)}
+                      title="Mark task completed"
+                      aria-label={`Mark task completed: ${task.title}`}
+                      className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-neutral-300 bg-white text-transparent transition hover:border-emerald-500 hover:bg-emerald-50 hover:text-emerald-600"
+                    >
+                      <CheckCircle2 className="h-3.5 w-3.5 fill-current" />
+                    </button>
+                    <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${task.priority === 'High' ? 'bg-red-500' : 'bg-sky-500'}`} />
                     <div className="min-w-0 flex-1">
                       <p className="text-[13px] font-semibold text-[var(--color-ink)]">{task.title}</p>
                       <p className="mt-0.5 text-xs text-neutral-500">{task.companyId?.companyName || task.opportunityId?.name || 'General follow-up'}</p>
                     </div>
                     {task.dueAt && (
-                      <span className="flex shrink-0 items-center gap-1 text-[11px] text-neutral-400">
-                        <Clock3 className="h-3 w-3" />
-                        {new Date(task.dueAt).toLocaleDateString('en-AE', { day: 'numeric', month: 'short' })}
-                      </span>
+                      <div className="flex shrink-0 flex-col items-end gap-1">
+                        <span className="flex items-center gap-1 text-[11px] text-neutral-400">
+                          <Clock3 className="h-3 w-3" />
+                          {new Date(task.dueAt).toLocaleDateString('en-AE', { day: 'numeric', month: 'short' })}
+                        </span>
+                        {(() => {
+                          const tone = getDeadlineTone(task.dueAt, task.status);
+                          const label = formatDeadlineLabel(task.dueAt, task.status);
+                          if (!tone || !label) return null;
+                          const styles = { overdue: 'bg-red-100 text-red-700', today: 'bg-amber-100 text-amber-700', upcoming: 'bg-emerald-100 text-emerald-700' };
+                          return <span className={`inline-flex rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${styles[tone]}`}>{label}</span>;
+                        })()}
+                      </div>
                     )}
                   </ListRow>
                 ))}

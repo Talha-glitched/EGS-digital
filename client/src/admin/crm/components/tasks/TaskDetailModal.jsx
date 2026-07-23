@@ -133,9 +133,11 @@ export default function TaskDetailModal({
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Owner">
             <select className="crm-select" value={form.owner} onChange={(e) => update('owner', e.target.value)}>
-              {owners.map((owner) => (
-                <option key={owner} value={owner}>{owner}</option>
-              ))}
+              {owners.map((owner) => {
+                const val = typeof owner === 'object' ? owner.value : owner;
+                const lbl = typeof owner === 'object' ? owner.label : owner;
+                return <option key={val} value={val}>{lbl}</option>;
+              })}
             </select>
           </Field>
           {!isCreate && (

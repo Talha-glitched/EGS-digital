@@ -7,6 +7,7 @@ import TopNavbar from './components/layout/TopNavbar.jsx';
 import SpotlightSearch, { useSpotlightShortcut } from './components/layout/SpotlightSearch.jsx';
 import PreviewWorkspaceModal, { isPreviewNoticeDismissed } from './components/ui/PreviewWorkspaceModal.jsx';
 import GlobalDashboard from './pages/GlobalDashboard.jsx';
+import DesignerDashboard from './pages/DesignerDashboard.jsx';
 import ProjectDetailWorkspace from './pages/ProjectDetailWorkspace.jsx';
 import InboxPage from './pages/InboxPage.jsx';
 import PeoplePage from './pages/PeoplePage.jsx';
@@ -124,6 +125,66 @@ function LoginPanel({ onLogin, status }) {
 
 function LoginProof({ value, label }) {
   return <div className="rounded-xl border border-white/10 bg-white/[0.045] px-3.5 py-3 backdrop-blur-sm"><p className="text-sm font-semibold text-white">{value}</p><p className="mt-1 text-[10px] leading-4 text-white/35">{label}</p></div>;
+}
+
+function DesignerShell({ onLogout, status }) {
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [spotlightOpen, setSpotlightOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try { return localStorage.getItem('crm-sidebar-collapsed') === '1'; } catch { return false; }
+  });
+
+  function toggleSidebarCollapse() {
+    setSidebarCollapsed((prev) => {
+      const next = !prev;
+      try { localStorage.setItem('crm-sidebar-collapsed', next ? '1' : '0'); } catch { /* ignore */ }
+      return next;
+    });
+  }
+
+  const toggleSpotlight = useCallback(() => setSpotlightOpen((prev) => !prev), []);
+  const closeSpotlight = useCallback(() => setSpotlightOpen(false), []);
+  useSpotlightShortcut(toggleSpotlight);
+
+  return (
+    <ConfirmDeleteProvider>
+      <UndoToastProvider>
+        <SensitiveDataProvider>
+          <div className="crm-root flex h-screen overflow-hidden bg-[var(--color-canvas)]">
+            <Sidebar
+              activeProject={null}
+              onLogout={onLogout}
+              mobileOpen={mobileNavOpen}
+              onClose={() => setMobileNavOpen(false)}
+              collapsed={sidebarCollapsed}
+              onToggleCollapse={toggleSidebarCollapse}
+              status={status}
+              designerMode
+            />
+            <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+              <TopNavbar
+                title="Designer Workspace"
+                pageInfo="Your assigned tasks and active project pipeline"
+                onMenu={() => setMobileNavOpen(true)}
+                onOpenSearch={toggleSpotlight}
+                status={status}
+              />
+              <SpotlightSearch open={spotlightOpen} onClose={closeSpotlight} projects={[]} />
+              <main className="crm-scroll min-h-0 flex-1 overflow-y-auto">
+                <Routes>
+                  <Route index element={<DesignerDashboard />} />
+                  <Route path="pipeline" element={<SalesPipelinePage />} />
+                  <Route path="tasks" element={<TasksPage />} />
+                  <Route path="*" element={<Navigate to="/admin/crm" replace />} />
+                </Routes>
+              </main>
+            </div>
+            <DeleteUndoToastStack />
+          </div>
+        </SensitiveDataProvider>
+      </UndoToastProvider>
+    </ConfirmDeleteProvider>
+  );
 }
 
 function CrmShell({ projects, onLogout, status }) {
@@ -295,6 +356,11 @@ export default function CrmApp() {
 
   if (!authenticated) {
     return <LoginPanel status={status} onLogin={checkAuth} />;
+  }
+
+  const isDesigner = status?.user?.role === 'designer';
+  if (isDesigner) {
+    return <DesignerShell onLogout={logout} status={status} />;
   }
 
   return <CrmShell projects={projects} onLogout={logout} status={status} />;

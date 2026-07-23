@@ -3,6 +3,7 @@ export const ROLES = {
   SALES_MANAGER: 'sales_manager',
   SALES_REP: 'sales_rep',
   VIEWER: 'viewer',
+  DESIGNER: 'designer',
 };
 
 export const ROLE_LABELS = {
@@ -10,6 +11,7 @@ export const ROLE_LABELS = {
   [ROLES.SALES_MANAGER]: 'Sales Manager',
   [ROLES.SALES_REP]: 'Sales Rep',
   [ROLES.VIEWER]: 'Viewer',
+  [ROLES.DESIGNER]: 'Designer',
 };
 
 const ALL_READ = [
@@ -73,6 +75,13 @@ export const ROLE_PERMISSIONS = {
     'inbox:write',
   ],
   [ROLES.VIEWER]: [...ALL_READ],
+  [ROLES.DESIGNER]: [
+    'dashboard:read',
+    'pipeline:read',
+    'pipeline:write',
+    'tasks:read',
+    'tasks:write',
+  ],
 };
 
 export function getPermissionsForRole(role) {
@@ -107,6 +116,9 @@ export const ROUTE_PERMISSION_MAP = [
 
 export function permissionForRequest(method, path) {
   const normalized = path.replace(/^\/api\/admin/, '') || '/';
+  if (normalized === '/users/active' || normalized === '/users/roles') {
+    return 'dashboard:read';
+  }
   if (normalized.endsWith('/restore') || normalized.includes('/rollback')) {
     return 'rollback:execute';
   }

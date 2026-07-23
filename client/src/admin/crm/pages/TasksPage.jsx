@@ -95,8 +95,8 @@ export default function TasksPage() {
   async function load() {
     const [taskData, opportunityData, campaignData] = await Promise.all([
       crmApiFetch(`/api/admin/sales/tasks?status=${encodeURIComponent(status)}`),
-      crmApiFetch('/api/admin/sales/opportunities'),
-      crmApiFetch('/api/admin/projects'),
+      crmApiFetch('/api/admin/sales/opportunities').catch(() => ({ items: [] })),
+      crmApiFetch('/api/admin/projects').catch(() => []),
     ]);
     setTasks(taskData.items || []);
     setOpportunities(opportunityData.items || []);

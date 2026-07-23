@@ -61,12 +61,13 @@ function NavItem({ to, label, icon: Icon, end, collapsed, onClose }) {
   );
 }
 
-export default function Sidebar({ activeProject, onLogout, mobileOpen = false, onClose, collapsed = false, onToggleCollapse, status }) {
+export default function Sidebar({ activeProject, onLogout, mobileOpen = false, onClose, collapsed = false, onToggleCollapse, status, designerMode = false }) {
   const { can } = usePermissions(status);
   const onProjectDetail = Boolean(activeProject);
   const [useResend, setUseResend] = useState(false);
 
   useEffect(() => {
+    if (designerMode) return; // Don't need resend setting for designer
     function loadResendSetting() {
       crmApiFetch('/api/admin/system-settings')
         .then((data) => setUseResend(Boolean(data?.useResend)))
@@ -76,9 +77,22 @@ export default function Sidebar({ activeProject, onLogout, mobileOpen = false, o
     loadResendSetting();
     window.addEventListener('crm:settings-changed', loadResendSetting);
     return () => window.removeEventListener('crm:settings-changed', loadResendSetting);
-  }, []);
+  }, [designerMode]);
 
   const navGroups = useMemo(() => {
+    if (designerMode) {
+      return [
+        {
+          heading: 'My Workspace',
+          items: [
+            { to: '/admin/crm', label: 'Dashboard', icon: LayoutDashboard, end: true },
+            { to: '/admin/crm/pipeline', label: 'Sales Pipeline', icon: BriefcaseBusiness },
+            { to: '/admin/crm/tasks', label: 'Tasks', icon: ListTodo },
+          ],
+        },
+      ];
+    }
+
     const trackingItems = [
       { to: '/admin/crm/inbox', label: 'Inbox', icon: Inbox },
       { to: '/admin/crm/email', label: 'Email', icon: SendHorizontal },
@@ -93,9 +107,9 @@ export default function Sidebar({ activeProject, onLogout, mobileOpen = false, o
     });
 
     return groups;
-  }, [useResend]);
+  }, [useResend, designerMode]);
 
-  const settingsItems = [
+  const settingsItems = designerMode ? [] : [
     can('users:manage') && { to: '/admin/crm/settings/team', label: 'Team', icon: Shield },
     can('audit:read') && { to: '/admin/crm/settings/activity', label: 'Activity log', icon: Activity },
     can('rollback:execute') && { to: '/admin/crm/settings/recovery', label: 'Data recovery', icon: History },
@@ -122,7 +136,9 @@ export default function Sidebar({ activeProject, onLogout, mobileOpen = false, o
         {!collapsed && (
           <div className="min-w-0 flex-1">
             <img src={egsLogo} alt="Exhibit Graphic Sign" className="h-auto w-[175px] max-w-full object-contain" />
-            <p className="mt-2 text-[9px] font-semibold uppercase tracking-[0.19em] text-neutral-500">Commercial CRM</p>
+            <p className="mt-2 text-[9px] font-semibold uppercase tracking-[0.19em] text-neutral-500">
+              {designerMode ? 'Designer Portal' : 'Commercial CRM'}
+            </p>
           </div>
         )}
         {collapsed && (
@@ -158,7 +174,7 @@ export default function Sidebar({ activeProject, onLogout, mobileOpen = false, o
           </div>
         ))}
 
-        {onProjectDetail && (
+        {!designerMode && onProjectDetail && (
           <div className="pt-4">
             {!collapsed && (
               <p className="mb-1.5 px-3 text-[10px] font-semibold uppercase tracking-[0.13em] text-neutral-500">
@@ -193,6 +209,13 @@ export default function Sidebar({ activeProject, onLogout, mobileOpen = false, o
       </nav>
 
       <div className="border-t border-white/[0.06] p-2">
+        {designerMode && !collapsed && (
+          <div className="mb-1 px-3 py-1.5">
+            <p className="text-[10px] text-neutral-500">Signed in as</p>
+            <p className="truncate text-xs font-semibold text-white">{status?.user?.displayName || 'Designer'}</p>
+            <span className="mt-1 inline-flex rounded-full bg-pink-500/20 px-2 py-0.5 text-[10px] font-semibold text-pink-300">Designer</span>
+          </div>
+        )}
         <button
           type="button"
           onClick={onLogout}

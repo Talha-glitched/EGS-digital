@@ -81,6 +81,7 @@ export default function SalesPipelinePage() {
   const [campaigns, setCampaigns] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [currentUser, setCurrentUser] = useState('admin');
+  const [isDesigner, setIsDesigner] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [showStageEditor, setShowStageEditor] = useState(false);
@@ -91,18 +92,25 @@ export default function SalesPipelinePage() {
   const [bulkDeleting, setBulkDeleting] = useState(false);
 
   async function load() {
-    const [status, opportunities, companyData, projectData, leadsData] = await Promise.all([
+    const [status, opportunities] = await Promise.all([
       crmApiFetch('/api/admin/status'),
       crmApiFetch('/api/admin/sales/opportunities'),
-      crmApiFetch('/api/admin/companies?limit=500'),
-      crmApiFetch('/api/admin/projects'),
-      crmApiFetch('/api/admin/leads?limit=500').catch(() => ({ items: [] })),
     ]);
+    const designer = status?.user?.role === 'designer';
     if (status?.username) setCurrentUser(status.username);
+    setIsDesigner(designer);
     setData(opportunities);
-    setCompanies(companyData.items || []);
-    setCampaigns(projectData || []);
-    setContacts(leadsData.items || []);
+    // Designers can't access companies/contacts, skip those fetches
+    if (!designer) {
+      const [companyData, projectData, leadsData] = await Promise.all([
+        crmApiFetch('/api/admin/companies?limit=500'),
+        crmApiFetch('/api/admin/projects'),
+        crmApiFetch('/api/admin/leads?limit=500').catch(() => ({ items: [] })),
+      ]);
+      setCompanies(companyData.items || []);
+      setCampaigns(projectData || []);
+      setContacts(leadsData.items || []);
+    }
   }
 
   useEffect(() => {
@@ -255,8 +263,8 @@ export default function SalesPipelinePage() {
       <PageSection>
         <MetricGrid>
           <StatCard compact label="Active opportunities" value={active.length} helpText="Excludes won, lost and deferred" icon={BriefcaseBusiness} tone="brand" />
-          <StatCard compact label="Open pipeline" value={formatCurrency(pipelineValue)} helpText="Total potential contract value" icon={Target} />
-          <StatCard compact label="Avg deal value" value={formatCurrency(avgDealValue)} helpText="Average value across active deals" icon={TrendingUp} tone="success" />
+          {!isDesigner && <StatCard compact label="Open pipeline" value={formatCurrency(pipelineValue)} helpText="Total potential contract value" icon={Target} />}
+          {!isDesigner && <StatCard compact label="Avg deal value" value={formatCurrency(avgDealValue)} helpText="Average value across active deals" icon={TrendingUp} tone="success" />}
           <StatCard compact label="Late-stage deals" value={lateStageCount} helpText="In negotiation, review, or contract sent" icon={UserRound} tone="info" />
         </MetricGrid>
       </PageSection>
@@ -370,7 +378,8 @@ export default function SalesPipelinePage() {
               setDragOverStage={setDragOverStage}
               onMove={moveOpportunity}
               onOpen={setSelectedId}
-              onDelete={deleteOpportunityItem}
+              onDelete={isDesigner ? null : deleteOpportunityItem}
+              isDesigner={isDesigner}
             />
           ) : (
             <>
@@ -393,11 +402,12 @@ export default function SalesPipelinePage() {
               stages={stages}
               onMove={moveOpportunity}
               onOpen={setSelectedId}
-              onDelete={deleteOpportunityItem}
-              selection={selection}
+              onDelete={isDesigner ? null : deleteOpportunityItem}
+              selection={isDesigner ? null : selection}
               sortKey={sortKey}
               sortDir={sortDir}
               onSort={toggleSort}
+              isDesigner={isDesigner}
             />
             </>
           )}
@@ -432,7 +442,7 @@ export default function SalesPipelinePage() {
   );
 }
 
-function PipelineBoard({ stages, items, dragOverStage, setDragOverStage, onMove, onOpen, onDelete }) {
+function PipelineBoard({ stages, items, dragOverStage, setDragOverStage, onMove, onOpen, onDelete, isDesigner = false }) {
   return (
     <div className="crm-scroll crm-pipeline-scroll overflow-x-auto p-4">
       <div className="flex min-w-max gap-4">
@@ -458,7 +468,7 @@ function PipelineBoard({ stages, items, dragOverStage, setDragOverStage, onMove,
                   <h2 className="text-[12px] font-bold text-[var(--color-ink)]">{stage}</h2>
                   <Badge tone={STAGE_TONES[stage] || 'neutral'}>{stageItems.length}</Badge>
                 </div>
-                <p className="mt-1 text-[11px] font-medium tabular-nums text-neutral-500">{formatCurrency(stageValue)}</p>
+                {!isDesigner && <p className="mt-1 text-[11px] font-medium tabular-nums text-neutral-500">{formatCurrency(stageValue)}</p>}
               </header>
               <div className="space-y-2.5">
                 {stageItems.map((item, index) => (
@@ -470,6 +480,7 @@ function PipelineBoard({ stages, items, dragOverStage, setDragOverStage, onMove,
                     onMove={onMove}
                     onOpen={onOpen}
                     onDelete={onDelete}
+                    isDesigner={isDesigner}
                   />
                 ))}
                 {!stageItems.length && (
@@ -484,9 +495,9 @@ function PipelineBoard({ stages, items, dragOverStage, setDragOverStage, onMove,
   );
 }
 
-function PipelineTable({ items, stages, onMove, onOpen, onDelete, selection, sortKey, sortDir, onSort }) {
+function PipelineTable({ items, stages, onMove, onOpen, onDelete, selection, sortKey, sortDir, onSort, isDesigner = false }) {
   return (
-    <DataTableShell minWidth={1480}>
+    <DataTableShell minWidth={isDesigner ? 900 : 1480}>
       <table className="crm-table">
         <thead>
           <tr className="crm-table-head">
@@ -495,12 +506,12 @@ function PipelineTable({ items, stages, onMove, onOpen, onDelete, selection, sor
             <SortableTableHeader label="Company" sortKey="company" activeKey={sortKey} direction={sortDir} onSort={onSort} />
             <th className="crm-pipeline-stage-cell">Stage</th>
             <th>Workspace</th>
-            <th>Campaign</th>
-            <SortableTableHeader label="Value" sortKey="valueAed" activeKey={sortKey} direction={sortDir} onSort={onSort} align="right" />
+            {!isDesigner && <th>Campaign</th>}
+            {!isDesigner && <SortableTableHeader label="Value" sortKey="valueAed" activeKey={sortKey} direction={sortDir} onSort={onSort} align="right" />}
             <SortableTableHeader label="Owner" sortKey="owner" activeKey={sortKey} direction={sortDir} onSort={onSort} />
-            <SortableTableHeader label="Opened" sortKey="createdAt" activeKey={sortKey} direction={sortDir} onSort={onSort} />
+            {!isDesigner && <SortableTableHeader label="Opened" sortKey="createdAt" activeKey={sortKey} direction={sortDir} onSort={onSort} />}
             <SortableTableHeader label="Last updated" sortKey="updatedAt" activeKey={sortKey} direction={sortDir} onSort={onSort} />
-            <th className="text-center">Action</th>
+            {!isDesigner && <th className="text-center">Action</th>}
           </tr>
         </thead>
         <tbody>
@@ -531,29 +542,33 @@ function PipelineTable({ items, stages, onMove, onOpen, onDelete, selection, sor
               <td>
                 <PipelineWorkspaceSummary item={item} compact />
               </td>
-              <td className="text-neutral-700">
-                {item.campaignId?.projectName ? (
-                  <div className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2 py-1 text-[11px] font-medium text-blue-700">
-                    <FolderKanban className="h-3 w-3" />
-                    <span>{item.campaignId.projectName}</span>
-                  </div>
-                ) : (
-                  <span className="text-[11px] text-neutral-400">No campaign</span>
-                )}
-              </td>
-              <td className="text-right tabular-nums font-medium text-neutral-800">{formatCurrency(item.valueAed)}</td>
+              {!isDesigner && (
+                <td className="text-neutral-700">
+                  {item.campaignId?.projectName ? (
+                    <div className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2 py-1 text-[11px] font-medium text-blue-700">
+                      <FolderKanban className="h-3 w-3" />
+                      <span>{item.campaignId.projectName}</span>
+                    </div>
+                  ) : (
+                    <span className="text-[11px] text-neutral-400">No campaign</span>
+                  )}
+                </td>
+              )}
+              {!isDesigner && <td className="text-right tabular-nums font-medium text-neutral-800">{formatCurrency(item.valueAed)}</td>}
               <td className="text-neutral-700">{item.owner || '—'}</td>
-              <td className="text-neutral-500">{formatShortDate(item.createdAt || item.expectedCloseDate)}</td>
+              {!isDesigner && <td className="text-neutral-500">{formatShortDate(item.createdAt || item.expectedCloseDate)}</td>}
               <td className="text-neutral-500">
                 <span className="block">{formatShortDate(item.updatedAt)}</span>
                 <span className="text-[11px] text-neutral-400">{item.lastModifiedBy || item.owner || '—'}</span>
               </td>
-              <td className="text-center" onClick={stopRowClick}>
-                <DeleteIconButton
-                  label={`Delete ${item.name}`}
-                  onClick={() => onDelete?.(item)}
-                />
-              </td>
+              {!isDesigner && (
+                <td className="text-center" onClick={stopRowClick}>
+                  <DeleteIconButton
+                    label={`Delete ${item.name}`}
+                    onClick={() => onDelete?.(item)}
+                  />
+                </td>
+              )}
             </ClickableTableRow>
           ))}
         </tbody>
@@ -562,7 +577,7 @@ function PipelineTable({ items, stages, onMove, onOpen, onDelete, selection, sor
   );
 }
 
-function OpportunityCard({ item, stages, onMove, onOpen, onDelete, index }) {
+function OpportunityCard({ item, stages, onMove, onOpen, onDelete, index, isDesigner = false }) {
   const summary = getExecutionSummary(item);
   return (
     <article
@@ -580,7 +595,7 @@ function OpportunityCard({ item, stages, onMove, onOpen, onDelete, index }) {
           <Target className="h-3.5 w-3.5" />
         </div>
         <p className="min-w-0 flex-1 text-[13px] font-semibold leading-snug text-[var(--color-ink)]">{item.name}</p>
-        {onDelete ? (
+        {!isDesigner && onDelete ? (
           <span onClick={stopRowClick}>
             <DeleteIconButton
               label={`Delete ${item.name}`}
@@ -597,7 +612,7 @@ function OpportunityCard({ item, stages, onMove, onOpen, onDelete, index }) {
       </div>
       <div className="mt-3 flex flex-wrap gap-1.5">{(item.tags || []).map((tag) => <span key={tag} className="crm-deal-tag">{tag}</span>)}</div>
       <div className="mt-3 flex items-end justify-between gap-2">
-        <p className="text-sm font-bold tabular-nums text-[var(--color-ink)]">{formatCurrency(item.valueAed)}</p>
+        {!isDesigner && <p className="text-sm font-bold tabular-nums text-[var(--color-ink)]">{formatCurrency(item.valueAed)}</p>}
         <span className="flex items-center gap-1 text-[10px] text-neutral-500">
           <CalendarDays className="h-3 w-3" />
           {formatShortDate(item.createdAt || item.expectedCloseDate)}
