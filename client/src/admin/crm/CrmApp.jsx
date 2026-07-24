@@ -17,6 +17,7 @@ import FinancePage from './pages/FinancePage.jsx';
 import ProjectsPage from './pages/ProjectsPage.jsx';
 import SalesPipelinePage from './pages/SalesPipelinePage.jsx';
 import TasksPage from './pages/TasksPage.jsx';
+import JobsPage from './pages/JobsPage.jsx';
 import SequencesPage from './pages/SequencesPage.jsx';
 import EmailHubPage from './pages/EmailHubPage.jsx';
 import ResendEmailsPage from './pages/ResendEmailsPage.jsx';
@@ -174,6 +175,7 @@ function DesignerShell({ onLogout, status }) {
                 <Routes>
                   <Route index element={<DesignerDashboard />} />
                   <Route path="pipeline" element={<SalesPipelinePage />} />
+                  <Route path="jobs" element={<JobsPage />} />
                   <Route path="tasks" element={<TasksPage />} />
                   <Route path="*" element={<Navigate to="/admin/crm" replace />} />
                 </Routes>
@@ -217,6 +219,7 @@ function CrmShell({ projects, onLogout, status }) {
     '/admin/crm/projects': ['Campaigns', 'Exhibition outreach, target companies, and sequence performance'],
     '/admin/crm/sequences': ['Sequence Studio', 'Whiteboard builder for multi-step outreach flows'],
     '/admin/crm/pipeline': ['Sales Pipeline', 'Qualified opportunities from first response to contract award'],
+    '/admin/crm/jobs': ['Jobs', 'Completed, active, and past jobs directory & pipeline transfers'],
     '/admin/crm/tasks': ['Tasks', 'Calls, meetings, proposals, and overdue next actions'],
     '/admin/crm/relationships': ['Key Relationships', 'Confirmed right POCs, last touchpoints, and follow-up timing'],
     '/admin/crm/people': ['Contacts', 'Search and manage every point of contact'],
@@ -281,6 +284,7 @@ function CrmShell({ projects, onLogout, status }) {
             <Routes>
               <Route index element={<GlobalDashboard />} />
               <Route path="pipeline" element={<SalesPipelinePage />} />
+              <Route path="jobs" element={<JobsPage />} />
               <Route path="tasks" element={<TasksPage />} />
               <Route path="relationships" element={<RelationshipsPage />} />
               <Route path="projects" element={<ProjectsPage />} />

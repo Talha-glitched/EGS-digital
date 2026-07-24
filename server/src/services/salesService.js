@@ -20,6 +20,7 @@ import {
   stageNames,
 } from '../constants/opportunityPipeline.js';
 import { getLeadTimeline, getCompanyTimeline } from './contactTimelineService.js';
+import { createJobFromOpportunity } from './jobService.js';
 
 function assertDb() {
   if (mongoose.connection.readyState !== 1) {
@@ -149,7 +150,17 @@ function trackChanges(opportunity, payload, actor) {
 async function getPipelineStages() {
   assertDb();
   const config = await PipelineConfig.findOne({ key: 'sales' }).lean();
-  const stages = normalizeStages(config?.stages?.length ? config.stages : DEFAULT_PIPELINE_STAGES);
+  let rawStages = config?.stages;
+  const isTargetConfig = rawStages?.length === 10 && rawStages[1]?.name === 'Waiting Adv/ PO';
+  if (!isTargetConfig) {
+    rawStages = DEFAULT_PIPELINE_STAGES;
+    await PipelineConfig.findOneAndUpdate(
+      { key: 'sales' },
+      { stages: DEFAULT_PIPELINE_STAGES, updatedBy: 'system' },
+      { upsert: true, new: true, setDefaultsOnInsert: true },
+    ).catch(() => {});
+  }
+  const stages = normalizeStages(rawStages?.length ? rawStages : DEFAULT_PIPELINE_STAGES);
   return stages.length ? stages : DEFAULT_PIPELINE_STAGES.map((stage) => ({ ...stage }));
 }
 
@@ -367,7 +378,7 @@ export async function createOpportunity(payload, actor = 'admin') {
   }
 
   const stages = await getPipelineStages();
-  const stage = payload.stage || stages[0]?.name || 'New Lead';
+  const stage = payload.stage || stages[0]?.name || 'Inquiry';
   const now = new Date();
   const assignment = await resolveOwnerAssignment(payload, actor || 'admin');
   const probability = probabilityForStage(stages, stage);
@@ -409,7 +420,11 @@ export async function createOpportunity(payload, actor = 'admin') {
     }],
   });
 
-  return getPopulatedOpportunity(opportunity._id);
+  const populated = await getPopulatedOpportunity(opportunity._id);
+  if (isClosedStage(stage) || stage === 'Payment Received') {
+    await createJobFromOpportunity(populated).catch(() => {});
+  }
+  return populated;
 }
 
 export async function updateOpportunity(id, payload, actor = 'admin') {
@@ -496,7 +511,12 @@ export async function updateOpportunity(id, payload, actor = 'admin') {
 
   opportunity.lastModifiedBy = modifier;
   await opportunity.save();
-  return getPopulatedOpportunity(opportunity._id);
+
+  const populated = await getPopulatedOpportunity(opportunity._id);
+  if (isClosedStage(opportunity.stage) || opportunity.stage === 'Payment Received') {
+    await createJobFromOpportunity(populated).catch(() => {});
+  }
+  return populated;
 }
 
 export async function getOpportunityTimeline(id) {

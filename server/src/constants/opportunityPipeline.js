@@ -1,10 +1,10 @@
 export { DEFAULT_PIPELINE_STAGES } from '../models/PipelineConfig.js';
 
-export const CLOSED_WON_STAGE = 'Closed Won';
-export const CLOSED_LOST_STAGE = 'Closed Lost';
+export const CLOSED_WON_STAGE = 'Job Done';
+export const CLOSED_LOST_STAGE = 'Job Lost';
 
 export function isClosedStage(stage) {
-  return stage === CLOSED_WON_STAGE || stage === CLOSED_LOST_STAGE;
+  return stage === 'Job Done' || stage === 'Job Lost' || stage === 'Closed Won' || stage === 'Closed Lost';
 }
 
 export function stageNames(stages = []) {

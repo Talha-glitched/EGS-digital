@@ -54,10 +54,32 @@ import {
   buildOpportunityFilterSchema,
 } from '../components/ui/advancedFilter/index.js';
 
-const DEFAULT_STAGES = ['New Lead', 'Contacted', 'Qualified', 'Discovery / Site Visit', 'Brief Received', 'Estimate In Progress', 'Proposal Sent', 'Decision Maker Review', 'Negotiation', 'Contract Sent', 'Closed Won', 'Closed Lost'];
-const STAGE_TONES = { 'Closed Won': 'success', 'Closed Lost': 'neutral', Negotiation: 'warning', 'Contract Sent': 'success', 'New Lead': 'info' };
-const STAGE_ACCENTS = ['#7c3aed', '#2563eb', '#0284c7', '#0891b2', '#0d9488', '#65a30d', '#ca8a04', '#ea580c', '#dc2626', '#be123c', '#059669', '#64748b'];
-const LATE_STAGES = new Set(['Negotiation', 'Contract Sent', 'Decision Maker Review']);
+const DEFAULT_STAGES = [
+  'Inquiry',
+  'Waiting Adv/ PO',
+  'In Production',
+  'Installation',
+  'Waiting Balance Payment',
+  'Job Done',
+  'Quotation Sent',
+  'Job Lost',
+  'Design',
+  'Ready',
+];
+const STAGE_TONES = {
+  'Job Done': 'success',
+  'Job Lost': 'neutral',
+  'Waiting Balance Payment': 'warning',
+  'Waiting Adv/ PO': 'warning',
+  Inquiry: 'info',
+  Design: 'info',
+  Ready: 'success',
+  'In Production': 'warning',
+  Installation: 'info',
+  'Quotation Sent': 'info',
+};
+const STAGE_ACCENTS = ['#0284c7', '#ca8a04', '#ea580c', '#0d9488', '#d97706', '#059669', '#2563eb', '#64748b', '#7c3aed', '#0891b2'];
+const LATE_STAGES = new Set(['Installation', 'Waiting Balance Payment', 'Ready']);
 
 function formatShortDate(value) {
   if (!value) return '—';
@@ -148,7 +170,7 @@ export default function SalesPipelinePage() {
 
   const selection = useRowSelection(sortedItems);
 
-  const active = visibleItems.filter((item) => !['Closed Won', 'Closed Lost'].includes(item.stage));
+  const active = visibleItems.filter((item) => !['Job Done', 'Job Lost', 'Closed Won', 'Closed Lost'].includes(item.stage));
   const pipelineValue = active.reduce((sum, item) => sum + (item.valueAed || 0), 0);
   const lateStageCount = active.filter((item) => LATE_STAGES.has(item.stage)).length;
   const avgDealValue = active.length ? Math.round(pipelineValue / active.length) : 0;

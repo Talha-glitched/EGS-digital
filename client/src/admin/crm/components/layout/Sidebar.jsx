@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Inbox, FolderKanban, LogOut, Users, Building2, BarChart3, X, BriefcaseBusiness, ListTodo, PanelLeftClose, PanelLeft, Wallet, ChevronLeft, HeartHandshake, Mail, Shield, Activity, History, SendHorizontal, MailCheck } from 'lucide-react';
+import { LayoutDashboard, Inbox, FolderKanban, LogOut, Users, Building2, BarChart3, X, BriefcaseBusiness, ListTodo, PanelLeftClose, PanelLeft, Wallet, ChevronLeft, HeartHandshake, Mail, Shield, Activity, History, SendHorizontal, MailCheck, ClipboardList } from 'lucide-react';
 import { cn } from '../ui/primitives.jsx';
 import { usePermissions } from '../../hooks/usePermissions.js';
 import { crmApiFetch } from '../../crmApi.js';
@@ -26,6 +26,7 @@ const BASE_NAV_GROUPS = [
     heading: 'Project Management',
     items: [
       { to: '/admin/crm/pipeline', label: 'Sales Pipeline', icon: BriefcaseBusiness },
+      { to: '/admin/crm/jobs', label: 'Jobs', icon: ClipboardList },
       { to: '/admin/crm/tasks', label: 'Tasks', icon: ListTodo },
     ],
   },

@@ -1,18 +1,16 @@
 import mongoose from 'mongoose';
 
 export const DEFAULT_PIPELINE_STAGES = [
-  { name: 'New Lead', probability: 10 },
-  { name: 'Contacted', probability: 20 },
-  { name: 'Qualified', probability: 35 },
-  { name: 'Discovery / Site Visit', probability: 45 },
-  { name: 'Brief Received', probability: 50 },
-  { name: 'Estimate In Progress', probability: 60 },
-  { name: 'Proposal Sent', probability: 65 },
-  { name: 'Decision Maker Review', probability: 70 },
-  { name: 'Negotiation', probability: 80 },
-  { name: 'Contract Sent', probability: 90 },
-  { name: 'Closed Won', probability: 100 },
-  { name: 'Closed Lost', probability: 0 },
+  { name: 'Inquiry', probability: 10 },
+  { name: 'Waiting Adv/ PO', probability: 50 },
+  { name: 'In Production', probability: 70 },
+  { name: 'Installation', probability: 80 },
+  { name: 'Waiting Balance Payment', probability: 90 },
+  { name: 'Job Done', probability: 100 },
+  { name: 'Quotation Sent', probability: 40 },
+  { name: 'Job Lost', probability: 0 },
+  { name: 'Design', probability: 25 },
+  { name: 'Ready', probability: 85 },
 ];
 
 const stageSchema = new mongoose.Schema(

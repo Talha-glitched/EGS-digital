@@ -26,7 +26,7 @@ const opportunitySchema = new mongoose.Schema(
     ownerUserId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, index: true },
     collaborators: [{ type: String, trim: true }],
     collaboratorUserIds: { type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], default: [], index: true },
-    stage: { type: String, default: 'New Lead', trim: true, index: true },
+    stage: { type: String, default: 'Inquiry', trim: true, index: true },
     valueAed: { type: Number, default: 0, min: 0 },
     probability: { type: Number, default: 10, min: 0, max: 100 },
     expectedCloseDate: { type: Date, default: null, index: true },

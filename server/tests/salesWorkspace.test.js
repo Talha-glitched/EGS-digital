@@ -6,9 +6,8 @@ import { Task } from '../src/models/Task.js';
 
 test('opportunity model supports the full commercial pipeline', () => {
   assert.deepEqual(OPPORTUNITY_STAGES, [
-    'New Lead', 'Contacted', 'Qualified', 'Discovery / Site Visit', 'Brief Received',
-    'Estimate In Progress', 'Proposal Sent', 'Decision Maker Review', 'Negotiation',
-    'Contract Sent', 'Closed Won', 'Closed Lost',
+    'Inquiry', 'Waiting Adv/ PO', 'In Production', 'Installation', 'Waiting Balance Payment',
+    'Job Done', 'Quotation Sent', 'Job Lost', 'Design', 'Ready',
   ]);
   const opportunity = new Opportunity({
     name: 'GITEX stand',
@@ -17,7 +16,7 @@ test('opportunity model supports the full commercial pipeline', () => {
     probability: 40,
   });
   assert.equal(opportunity.validateSync(), undefined);
-  assert.equal(opportunity.stage, 'New Lead');
+  assert.equal(opportunity.stage, 'Inquiry');
 });
 
 test('opportunity requires an account and task requires a title', () => {

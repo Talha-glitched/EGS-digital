@@ -44,6 +44,15 @@ import {
 } from '../services/salesService.js';
 import { globalSearch } from '../services/searchService.js';
 import {
+  listJobs,
+  getJob,
+  createJob,
+  updateJob,
+  deleteJob,
+  restoreJob,
+} from '../services/jobService.js';
+import { runJobSeeding } from '../../scripts/seedJobsFromSheet.mjs';
+import {
   listInboxThreads,
   getInboxThread,
   syncImapMailbox,
@@ -1135,6 +1144,35 @@ router.post('/sales/tasks/bulk-delete', asyncRoute(async (req, res) => {
     return res.status(400).json({ message: 'ids array is required.' });
   }
   res.json(await deleteTasks(ids, getActor(req)));
+}));
+
+router.get('/sales/jobs', asyncRoute(async (req, res) => {
+  res.json(await listJobs(req.query));
+}));
+
+router.get('/sales/jobs/:id', asyncRoute(async (req, res) => {
+  res.json(await getJob(req.params.id));
+}));
+
+router.post('/sales/jobs', asyncRoute(async (req, res) => {
+  res.status(201).json(await createJob(req.body || {}));
+}));
+
+router.patch('/sales/jobs/:id', asyncRoute(async (req, res) => {
+  res.json(await updateJob(req.params.id, req.body || {}));
+}));
+
+router.delete('/sales/jobs/:id', asyncRoute(async (req, res) => {
+  res.json(await deleteJob(req.params.id, getActor(req)));
+}));
+
+router.post('/sales/jobs/:id/restore', asyncRoute(async (req, res) => {
+  res.json(await restoreJob(req.params.id, getActor(req)));
+}));
+
+router.post('/sales/jobs/seed', asyncRoute(async (_req, res) => {
+  await runJobSeeding();
+  res.json({ ok: true });
 }));
 
 router.get('/users', asyncRoute(async (_req, res) => {
