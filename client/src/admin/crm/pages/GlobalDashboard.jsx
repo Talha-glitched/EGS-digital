@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { crmApiFetch, formatCurrency, formatPercent } from '../crmApi.js';
 import CampaignInitWizard from '../components/wizards/CampaignInitWizard.jsx';
-import { Plus, TrendingUp, Users, Inbox, FolderKanban, ChevronRight, Building2, BriefcaseBusiness, ListTodo, AlertTriangle, ArrowUpRight, Clock3, MessageCircle } from 'lucide-react';
+import { Plus, TrendingUp, Users, Inbox, FolderKanban, ChevronRight, Building2, BriefcaseBusiness, ListTodo, AlertTriangle, ArrowUpRight, Clock3, MessageCircle, CheckCircle2 } from 'lucide-react';
 import { formatDeadlineLabel, getDeadlineTone } from '../components/tasks/taskUtils.js';
 import {
   PageShell,
