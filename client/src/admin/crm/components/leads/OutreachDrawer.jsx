@@ -330,10 +330,10 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
                   <Building2 className="h-3 w-3" />
                   {lead.companyName || 'Unknown company'}
                 </span>
-                {lead.email && (
-                  <span className="crm-profile-chip">
-                    <Mail className="h-3 w-3" />
-                    <SensitiveDataDisplay value={lead.email} kind="email" />
+                {(lead.outreachEmail || lead.email) && (
+                  <span className={`crm-profile-chip ${lead.outreachEmail ? 'is-accent border-emerald-300 text-emerald-800 font-semibold' : ''}`}>
+                    <Mail className="h-3 w-3 text-emerald-600" />
+                    <SensitiveDataDisplay value={lead.outreachEmail || lead.email} kind="email" />
                   </span>
                 )}
                 {lead.campaignName && (

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Mail,
@@ -8,6 +8,8 @@ import {
   BarChart3,
   Link2,
   Zap,
+  MessageSquare,
+  ArrowDownLeft,
 } from 'lucide-react';
 import {
   Alert,
@@ -16,8 +18,10 @@ import {
   EmptyState,
   MetricGrid,
   StatCard,
+  Badge,
   cn,
 } from '../ui/primitives.jsx';
+import Drawer from '../ui/Drawer.jsx';
 import ResendStatusBadge from './ResendStatusBadge.jsx';
 
 const STATUS_FILTERS = [
@@ -73,6 +77,8 @@ export default function ResendEmailsWorkspace({
   statusFilter = 'all',
   onStatusFilterChange,
 }) {
+  const [selectedEmail, setSelectedEmail] = useState(null);
+
   const filteredEmails = useMemo(() => {
     const emails = metrics?.emails || [];
     const query = search.trim().toLowerCase();
@@ -86,7 +92,8 @@ export default function ResendEmailsWorkspace({
       const to = Array.isArray(email.to) ? email.to.join(' ') : String(email.to || '');
       const subject = String(email.subject || '');
       const from = String(email.from || '');
-      const haystack = `${to} ${subject} ${from}`.toLowerCase();
+      const replyText = String(email.reply?.text || '');
+      const haystack = `${to} ${subject} ${from} ${replyText}`.toLowerCase();
       return haystack.includes(query);
     });
   }, [metrics?.emails, search, statusFilter]);
@@ -113,6 +120,8 @@ export default function ResendEmailsWorkspace({
       />
     );
   }
+
+  const recipientDisplay = (to) => (Array.isArray(to) ? to.join(', ') : to);
 
   return (
     <div className="space-y-4">
@@ -148,7 +157,7 @@ export default function ResendEmailsWorkspace({
       <Card>
         <CardHeader
           title="Resend deliveries"
-          subtitle="Latest 100 emails sent through the Resend API."
+          subtitle="Outbound delivery logs sent through the Resend API."
           action={(
             <button
               type="button"
@@ -187,7 +196,7 @@ export default function ResendEmailsWorkspace({
               type="search"
               value={search}
               onChange={(e) => onSearchChange(e.target.value)}
-              placeholder="Search recipient, subject, or from address…"
+              placeholder="Search recipient, subject, from address, or reply body…"
               className="crm-input w-full py-2 pl-9 text-xs"
             />
           </label>
@@ -215,28 +224,64 @@ export default function ResendEmailsWorkspace({
                   <th className="px-4 py-2.5">From</th>
                   <th className="px-4 py-2.5">Status</th>
                   <th className="px-4 py-2.5">Date sent</th>
+                  <th className="px-4 py-2.5 text-right">Details</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--color-line)]">
-                {filteredEmails.map((email) => (
-                  <tr key={email.id} className="transition hover:bg-neutral-50/50">
-                    <td className="max-w-[180px] truncate px-4 py-2.5 font-medium text-[var(--color-ink)]">
-                      {Array.isArray(email.to) ? email.to.join(', ') : email.to}
-                    </td>
-                    <td className="max-w-[280px] truncate px-4 py-2.5 text-neutral-600">
-                      {email.subject || '(No subject)'}
-                    </td>
-                    <td className="max-w-[200px] truncate px-4 py-2.5 text-neutral-500">
-                      {email.from}
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <ResendStatusBadge status={email.status} />
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-2.5 text-neutral-400">
-                      {formatSentAt(email.createdAt)}
-                    </td>
-                  </tr>
-                ))}
+                {filteredEmails.map((email) => {
+                  const isReceived = email.status === 'received' || Boolean(email.reply);
+                  return (
+                    <tr
+                      key={email.id}
+                      onClick={() => setSelectedEmail(email)}
+                      className={cn(
+                        'cursor-pointer transition hover:bg-neutral-50/80',
+                        isReceived && 'bg-emerald-50/30 hover:bg-emerald-50/60'
+                      )}
+                    >
+                      <td className="max-w-[180px] truncate px-4 py-2.5 font-medium text-[var(--color-ink)]">
+                        {recipientDisplay(email.to)}
+                      </td>
+                      <td className="max-w-[280px] truncate px-4 py-2.5 text-neutral-600">
+                        {email.subject || '(No subject)'}
+                      </td>
+                      <td className="max-w-[200px] truncate px-4 py-2.5 text-neutral-500">
+                        {email.from}
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <div className="flex items-center gap-1.5">
+                          <ResendStatusBadge status={email.status} />
+                          {isReceived && (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
+                              <MessageSquare className="h-3 w-3" />
+                              Replied
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-2.5 text-neutral-400">
+                        {formatSentAt(email.createdAt)}
+                      </td>
+                      <td className="px-4 py-2.5 text-right whitespace-nowrap">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedEmail(email);
+                          }}
+                          className={cn(
+                            'text-[11px] font-semibold transition',
+                            isReceived
+                              ? 'text-emerald-700 hover:text-emerald-900 underline'
+                              : 'text-neutral-500 hover:text-neutral-800'
+                          )}
+                        >
+                          {isReceived ? 'View Reply' : 'View'}
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -248,6 +293,103 @@ export default function ResendEmailsWorkspace({
           </div>
         )}
       </Card>
+
+      {/* Reply & Email Details Drawer */}
+      <Drawer
+        open={Boolean(selectedEmail)}
+        onClose={() => setSelectedEmail(null)}
+        title="Email Delivery Details"
+        subtitle={`Resend Message ID: ${selectedEmail?.id || '—'}`}
+        size="lg"
+      >
+        {selectedEmail && (
+          <div className="space-y-6">
+            {/* Outbound Email Metadata Card */}
+            <div className="bg-neutral-50 border border-[var(--color-line)] rounded-xl p-4 space-y-3 text-xs">
+              <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
+                <span className="font-bold text-[var(--color-ink)] uppercase tracking-wider text-[11px]">Outbound Outreach</span>
+                <ResendStatusBadge status={selectedEmail.status} />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-neutral-600">
+                <div>
+                  <span className="block text-[10px] text-neutral-400 font-semibold uppercase">To</span>
+                  <span className="font-medium text-[var(--color-ink)]">{recipientDisplay(selectedEmail.to)}</span>
+                </div>
+                <div>
+                  <span className="block text-[10px] text-neutral-400 font-semibold uppercase">From</span>
+                  <span className="font-medium text-[var(--color-ink)]">{selectedEmail.from}</span>
+                </div>
+                <div className="sm:col-span-2">
+                  <span className="block text-[10px] text-neutral-400 font-semibold uppercase">Subject</span>
+                  <span className="font-medium text-[var(--color-ink)]">{selectedEmail.subject || '(No subject)'}</span>
+                </div>
+                <div>
+                  <span className="block text-[10px] text-neutral-400 font-semibold uppercase">Sent At</span>
+                  <span className="font-medium text-[var(--color-ink)]">{formatSentAt(selectedEmail.createdAt)}</span>
+                </div>
+              </div>
+              {selectedEmail.body && (
+                <div className="pt-2 border-t border-neutral-200">
+                  <span className="block text-[10px] text-neutral-400 font-semibold uppercase mb-1.5">Outbound Message Body</span>
+                  <div className="bg-white border border-neutral-200 rounded-lg p-3 text-xs text-neutral-800 whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto font-mono">
+                    {selectedEmail.body}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Inbound Prospect Reply Section */}
+            {selectedEmail.reply ? (
+              <div className="border border-emerald-200 bg-emerald-50/40 rounded-xl p-4 space-y-3">
+                <div className="flex items-center justify-between border-b border-emerald-200/80 pb-2">
+                  <div className="flex items-center gap-2">
+                    <ArrowDownLeft className="h-4 w-4 text-emerald-600" />
+                    <span className="font-bold text-emerald-900 text-xs">Inbound Prospect Reply</span>
+                  </div>
+                  <Badge tone={selectedEmail.reply.intent === 'Interested' ? 'success' : selectedEmail.reply.intent === 'Opt Out' ? 'critical' : 'info'}>
+                    {selectedEmail.reply.intent || 'Neutral'}
+                  </Badge>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-neutral-600">
+                  <div>
+                    <span className="block text-[10px] text-neutral-400 font-semibold uppercase">Replied From</span>
+                    <span className="font-medium text-[var(--color-ink)]">{selectedEmail.reply.from || recipientDisplay(selectedEmail.to)}</span>
+                  </div>
+                  <div>
+                    <span className="block text-[10px] text-neutral-400 font-semibold uppercase">Received Date</span>
+                    <span className="font-medium text-[var(--color-ink)]">{formatSentAt(selectedEmail.reply.receivedAt)}</span>
+                  </div>
+                  {selectedEmail.reply.subject && (
+                    <div className="sm:col-span-2">
+                      <span className="block text-[10px] text-neutral-400 font-semibold uppercase">Reply Subject</span>
+                      <span className="font-medium text-[var(--color-ink)]">{selectedEmail.reply.subject}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="pt-2 border-t border-emerald-200/60">
+                  <span className="block text-[10px] text-neutral-400 font-semibold uppercase mb-1.5">Reply Body</span>
+                  <div className="bg-white border border-emerald-200 rounded-lg p-3 text-xs text-neutral-800 whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto font-mono">
+                    {(selectedEmail.reply.text && selectedEmail.reply.text.trim() !== '')
+                      ? selectedEmail.reply.text
+                      : '(No text body provided in inbound email)'}
+                  </div>
+                </div>
+              </div>
+            ) : selectedEmail.status === 'received' ? (
+              <div className="p-4 rounded-xl bg-sky-50 border border-sky-200 text-xs text-sky-800 space-y-1">
+                <span className="font-bold block">Reply Registered</span>
+                <p>Prospect replied to this outreach email. Details are synced in lead interaction history.</p>
+              </div>
+            ) : (
+              <div className="p-4 rounded-xl bg-neutral-50 border border-neutral-200 text-xs text-neutral-500 text-center">
+                No inbound reply received for this outreach email yet.
+              </div>
+            )}
+          </div>
+        )}
+      </Drawer>
     </div>
   );
 }

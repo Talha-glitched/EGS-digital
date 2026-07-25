@@ -26,16 +26,23 @@ export function resolveInteractionDirection(event) {
 
 export function resolveInteractionParties(event, direction) {
   const contact = event.contactName?.trim() || 'Contact';
+  const meta = event?.meta || {};
+  const targetEmail = meta.to || meta.recipientEmail || meta.confirmedEmail || '';
+  const fromEmail = meta.from || '';
+
+  const contactWithEmail = targetEmail ? `${contact} <${targetEmail}>` : contact;
+  const fromContactWithEmail = fromEmail ? `${contact} <${fromEmail}>` : contact;
+
   const actor = event.actor?.trim() || 'EGS Team';
   const teamLabel = isTeamActor(actor) ? (actor === 'admin' ? 'EGS Team' : actor) : actor;
 
   if (direction === 'inbound') {
-    return { from: contact, to: teamLabel };
+    return { from: fromContactWithEmail, to: teamLabel };
   }
   if (direction === 'internal') {
-    return { from: teamLabel, to: contact, internal: true };
+    return { from: teamLabel, to: contactWithEmail, internal: true };
   }
-  return { from: teamLabel, to: contact };
+  return { from: teamLabel, to: contactWithEmail };
 }
 
 export function resolveInteractionTypeLabel(event) {

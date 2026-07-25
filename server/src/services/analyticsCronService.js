@@ -5,32 +5,67 @@ import { SequenceEnrollment } from '../models/SequenceEnrollment.js';
 import { AnalyticsSnapshot } from '../models/AnalyticsSnapshot.js';
 import { RevenueEntry } from '../models/RevenueEntry.js';
 
-const VENDORS = ['Apollo', 'Hunter', 'Lusha', 'Manual'];
+import { resolveLeadVendorSource } from '../utils/contactEmails.js';
 
-export async function computeVendorMatrix(campaignId) {
+const VENDORS = ['Apollo', 'Hunter', 'Lusha', 'Personal', 'Manual'];
+
+export async function computeVendorMatrix(campaignId = null) {
+  const leadQuery = { deletedAt: null };
+  if (campaignId) leadQuery.campaignId = campaignId;
+
+  const allLeads = await Lead.find(leadQuery).lean();
+
+  const vendorGroups = {
+    Apollo: [],
+    Hunter: [],
+    Lusha: [],
+    Personal: [],
+    Manual: [],
+  };
+
+  for (const lead of allLeads) {
+    const vendor = resolveLeadVendorSource(lead);
+    if (vendorGroups[vendor]) {
+      vendorGroups[vendor].push(lead);
+    } else {
+      vendorGroups.Manual.push(lead);
+    }
+  }
+
   const matrix = [];
 
   for (const source of VENDORS) {
-    const leads = await Lead.find({
-      campaignId,
-      deletedAt: null,
-      $or: [{ primarySource: source }, { sources: source }],
-    }).lean();
+    const leads = vendorGroups[source] || [];
 
     if (!leads.length) {
-      matrix.push({ source, leadsCount: 0, opens: 0, bounces: 0, replies: 0, revenue: 0 });
+      matrix.push({ source, leadsCount: 0, opens: 0, bounces: 0, replies: 0, replyRate: '0.0%', revenue: 0 });
       continue;
     }
 
     const leadIds = leads.map((l) => l._id);
     const opens = leads.reduce((sum, l) => sum + (l.trackingMetrics?.totalOpenCount || 0), 0);
-    const bounces = leads.filter((l) => l.deliveryStatus === 'Bounced / Invalid').length;
-    const replies = leads.filter((l) => l.deliveryStatus === 'Replied').length;
+
+    const bounces = leads.filter((l) => {
+      const isBouncedStatus = l.deliveryStatus === 'Bounced / Invalid';
+      const hasBouncedRecord = (l.bouncedEmails || []).some((b) => b.source === source);
+      return isBouncedStatus || hasBouncedRecord;
+    }).length;
+
+    const replies = leads.filter((l) => {
+      const hasRepliedStatus = l.deliveryStatus === 'Replied' || !!l.repliedAt;
+      const hasConfirmedRecord = (l.confirmedEmails || []).some((c) => c.source === source) || l.outreachEmailSource === source;
+      return hasRepliedStatus || (l.confirmedEmails && l.confirmedEmails.length > 0 && hasConfirmedRecord);
+    }).length;
+
+    const revenueMatch = { leadId: { $in: leadIds } };
+    if (campaignId) revenueMatch.campaignId = campaignId;
 
     const revenueAgg = await RevenueEntry.aggregate([
-      { $match: { campaignId, leadId: { $in: leadIds } } },
+      { $match: revenueMatch },
       { $group: { _id: null, total: { $sum: '$amount' } } },
     ]);
+
+    const replyRate = leads.length > 0 ? ((replies / leads.length) * 100).toFixed(1) + '%' : '0.0%';
 
     matrix.push({
       source,
@@ -38,6 +73,7 @@ export async function computeVendorMatrix(campaignId) {
       opens,
       bounces,
       replies,
+      replyRate,
       revenue: revenueAgg[0]?.total || 0,
     });
   }

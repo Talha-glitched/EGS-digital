@@ -37,6 +37,8 @@ const replySchema = new mongoose.Schema(
       enum: ['Interested', 'Opt Out', 'Neutral', 'Bounce'],
       default: 'Neutral',
     },
+    systemInbox: { type: String, trim: true, lowercase: true, default: '' },
+    vendorSource: { type: String, default: '' },
     threadHistory: [threadMessageSchema],
   },
   {

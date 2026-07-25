@@ -10,7 +10,7 @@ import { freezeLeadSequence, purgeLeadFromQueue } from '../services/sequenceServ
 import { buildLeadEmailQuery, getLeadEmailCandidates, getPrimaryLeadEmail, applyOutreachEmailFromReply } from '../utils/contactEmails.js';
 
 const router = Router();
-const MAX_REPLY_TEXT = 2000;
+const MAX_REPLY_TEXT = 100000;
 
 // Helper to extract clean email address from "Name <email@domain.com>" or "email@domain.com"
 function extractEmailAddress(fromStr) {
@@ -157,12 +157,15 @@ async function handleReply(data) {
     return;
   }
 
+  const rawTo = Array.isArray(data.to) ? data.to[0] : data.to;
+  const systemInbox = extractEmailAddress(rawTo);
+
   // Classify reply intent using OpenAI
   const { intent, confidence } = await classifyReplyIntent(text);
   const replyIntent = intent === 'Opt Out' ? 'Opt Out' : intent === 'Interested' ? 'Interested' : 'Neutral';
 
   // Apply sender details to lead document
-  applyOutreachEmailFromReply(lead, senderEmail);
+  const outreachRes = applyOutreachEmailFromReply(lead, senderEmail, systemInbox);
   await lead.save();
 
   // Construct thread history entry
@@ -187,6 +190,8 @@ async function handleReply(data) {
     messageId,
     receivedAt: data.date || new Date(),
     intent: replyIntent,
+    systemInbox: systemInbox || '',
+    vendorSource: outreachRes.source || detectEmailVendor(lead, senderEmail) || 'Manual',
     threadHistory,
   });
 

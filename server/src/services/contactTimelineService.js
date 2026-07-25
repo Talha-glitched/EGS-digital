@@ -12,7 +12,49 @@ import {
   manualInteractionToEvent,
   buildRelatedContacts,
 } from './interactionService.js';
+import { getLeadEmailCandidates, detectEmailVendor } from '../utils/contactEmails.js';
 import mongoose from 'mongoose';
+
+function extractCleanEmail(raw) {
+  if (!raw) return '';
+  const str = String(raw).trim().toLowerCase();
+  const match = str.match(/<([^>]+)>/);
+  return (match && match[1] ? match[1] : str).trim().toLowerCase();
+}
+
+function extractTextFromEml(emlString) {
+  if (!emlString) return '';
+
+  const bodyMatch = emlString.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+  let htmlOrText = bodyMatch ? bodyMatch[1] : '';
+
+  if (!htmlOrText) {
+    const parts = emlString.split(/\r?\n\r?\n/);
+    if (parts.length > 1) {
+      htmlOrText = parts.slice(1).join('\n\n');
+    }
+  }
+
+  let decoded = htmlOrText
+    .replace(/=\r?\n/g, '')
+    .replace(/=3D/gi, '=')
+    .replace(/=20/g, ' ')
+    .replace(/=0A/gi, '\n')
+    .replace(/=0D/gi, '\r');
+
+  let plain = decoded
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p>/gi, '\n\n')
+    .replace(/<\/div>/gi, '\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&#\d+;/g, '')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&amp;/gi, '&');
+
+  return plain.split('\n').map((line) => line.trim()).filter(Boolean).join('\n');
+}
 
 function assertDb() {
   if (!process.env.MONGODB_URI) {
@@ -80,17 +122,6 @@ function leadOutreachEvents(lead, campaignName) {
     actor: 'System',
     channel: 'crm',
   }));
-
-  if (lead.deliveryStatus === 'Emailed Outbound') {
-    events.push(event(`lead-emailed-${lead._id}`, {
-      ...base,
-      type: 'email_outbound',
-      title: 'Sequence email sent',
-      detail: `Outbound email marked as delivered to ${lead.email}.`,
-      timestamp: lead.updatedAt,
-      channel: 'email',
-    }));
-  }
 
   if (lead.deliveryStatus === 'Replied' && lead.repliedAt) {
     events.push(event(`lead-replied-${lead._id}`, {
@@ -260,15 +291,78 @@ export async function getLeadTimeline(leadId) {
     throw error;
   }
 
+  // Collect all email address variations for this POC/Lead
+  const leadEmails = getLeadEmailCandidates(lead);
+
+  const sendJobQuery = leadEmails.length > 0
+    ? { $or: [{ leadId }, { recipientEmail: { $in: leadEmails } }], status: 'sent' }
+    : { leadId, status: 'sent' };
+
+  const replyQuery = leadEmails.length > 0
+    ? { $or: [{ leadId }, { email: { $in: leadEmails } }, { from: { $in: leadEmails } }] }
+    : { leadId };
+
   const [company, campaign, sendJobs, replies, tasks, opportunities, manualInteractions] = await Promise.all([
     Company.findById(lead.companyId).select('companyName').lean(),
     ProjectCampaign.findById(lead.campaignId).select('projectName').lean(),
-    SendJob.find({ leadId, status: 'sent' }).sort({ sentAt: 1 }).lean(),
-    Reply.find({ leadId }).sort({ receivedAt: 1 }).lean(),
+    SendJob.find(sendJobQuery).sort({ sentAt: 1 }).lean(),
+    Reply.find(replyQuery).sort({ receivedAt: 1 }).lean(),
     Task.find({ leadId }).sort({ createdAt: -1 }).lean(),
     Opportunity.find({ $or: [{ primaryLeadId: leadId }, { companyId: lead.companyId }] }).sort({ updatedAt: -1 }).lean(),
     listInteractionsForLead(leadId),
   ]);
+
+  // Fallback: If Resend API key is present and lead has replied but replies array is empty, fetch from Resend Receiving API
+  const apiKey = process.env.RESEND_API_KEY;
+  let combinedReplies = [...replies];
+  if (apiKey && combinedReplies.length === 0 && leadEmails.length > 0) {
+    try {
+      const receivingRes = await fetch('https://api.resend.com/emails/receiving?limit=100', {
+        headers: { Authorization: `Bearer ${apiKey}` },
+      });
+      if (receivingRes.ok) {
+        const receivingJson = await receivingRes.json();
+        const receivedList = receivingJson.data || [];
+        for (const rItem of receivedList) {
+          const cleanFrom = extractCleanEmail(rItem.from);
+          if (cleanFrom && leadEmails.some((e) => e.toLowerCase().trim() === cleanFrom)) {
+            let bodyText = (rItem.text || rItem.html || '').trim();
+            if (!bodyText && rItem.id) {
+              try {
+                const detailRes = await fetch(`https://api.resend.com/emails/receiving/${rItem.id}`, {
+                  headers: { Authorization: `Bearer ${apiKey}` },
+                });
+                if (detailRes.ok) {
+                  const detailJson = await detailRes.json();
+                  bodyText = (detailJson.text || detailJson.html || '').trim();
+                  if (!bodyText && detailJson.raw?.download_url) {
+                    const rawRes = await fetch(detailJson.raw.download_url);
+                    const rawEml = await rawRes.text();
+                    bodyText = extractTextFromEml(rawEml);
+                  }
+                }
+              } catch (dErr) {
+                console.warn(`[Timeline] EML fetch failed for ${rItem.id}:`, dErr.message);
+              }
+            }
+
+            combinedReplies.push({
+              _id: rItem.id,
+              leadId: lead._id,
+              from: rItem.from,
+              email: cleanFrom,
+              subject: rItem.subject,
+              text: bodyText || rItem.subject || 'Inbound prospect response received.',
+              intent: 'Neutral',
+              receivedAt: rItem.created_at || new Date(),
+            });
+          }
+        }
+      }
+    } catch (rErr) {
+      console.warn('[Timeline] Resend Receiving API fallback skipped:', rErr.message);
+    }
+  }
 
   const campaignName = campaign?.projectName || 'Campaign';
   const contactName = lead.name || lead.email;
@@ -279,27 +373,43 @@ export async function getLeadTimeline(leadId) {
       contactName,
       contactId: String(leadId),
       type: 'email_outbound',
-      title: `Sequence step ${job.stepIndex + 1} sent`,
-      detail: job.renderedSubject || job.renderedBody?.slice(0, 140) || 'Automated sequence email delivered.',
-      timestamp: job.sentAt,
+      title: job.renderedSubject ? `Sent: ${job.renderedSubject}` : `Sequence step ${job.stepIndex + 1} sent`,
+      detail: job.renderedBody || job.renderedSubject || 'Automated sequence email delivered.',
+      timestamp: job.sentAt || job.createdAt,
       actor: 'Sequence',
       channel: 'email',
-      meta: { step: job.stepIndex + 1 },
+      meta: {
+        step: job.stepIndex + 1,
+        subject: job.renderedSubject,
+        body: job.renderedBody,
+        to: job.recipientEmail,
+        providerMessageId: job.providerMessageId,
+      },
     });
     if (evt) events.push(evt);
   });
 
-  replies.forEach((reply) => {
+  combinedReplies.forEach((reply) => {
+    const vendorSource = reply.vendorSource || lead.outreachEmailSource || detectEmailVendor(lead, reply.from || reply.email) || 'Manual';
     const evt = event(`reply-${reply._id}`, {
       contactName,
       contactId: String(leadId),
       type: 'email_inbound',
-      title: `Reply: ${reply.intent || 'Inbound'}`,
-      detail: reply.text?.slice(0, 180) || reply.subject || 'Inbound email received.',
-      timestamp: reply.receivedAt,
-      actor: contactName,
+      title: reply.subject ? `Reply: ${reply.subject}` : `Reply: ${reply.intent || 'Inbound'}`,
+      detail: reply.text || reply.subject || 'Inbound email received.',
+      timestamp: reply.receivedAt || reply.createdAt,
+      actor: reply.from || contactName,
       channel: 'email',
-      meta: { intent: reply.intent },
+      meta: {
+        intent: reply.intent,
+        subject: reply.subject,
+        body: reply.text,
+        from: reply.from,
+        systemInbox: reply.systemInbox || process.env.RESEND_FROM_EMAIL || 'rana@masuood.exhibitgraphicsign.com',
+        confirmedEmail: reply.email || lead.outreachEmail || lead.email,
+        vendorSource,
+        confirmedEmails: lead.confirmedEmails || [],
+      },
     });
     if (evt) events.push(evt);
   });
@@ -383,9 +493,32 @@ export async function getCompanyTimeline(companyId) {
   const campaignIds = normalizeObjectIdList(leads.map((l) => l.campaignId));
   const campaignMap = await enrichCampaignMap(campaignIds);
 
+  const companyLeadEmailsSet = new Set();
+  leads.forEach((l) => {
+    if (l.email) companyLeadEmailsSet.add(l.email.toLowerCase().trim());
+    if (l.outreachEmail) companyLeadEmailsSet.add(l.outreachEmail.toLowerCase().trim());
+    if (l.emailApollo) companyLeadEmailsSet.add(l.emailApollo.toLowerCase().trim());
+    if (l.emailHunter) companyLeadEmailsSet.add(l.emailHunter.toLowerCase().trim());
+    if (l.emailLusha) companyLeadEmailsSet.add(l.emailLusha.toLowerCase().trim());
+    if (l.emailPersonal) {
+      l.emailPersonal.split(';').forEach((e) => {
+        if (e.trim()) companyLeadEmailsSet.add(e.toLowerCase().trim());
+      });
+    }
+  });
+  const companyLeadEmails = [...companyLeadEmailsSet];
+
+  const sendJobQuery = companyLeadEmails.length > 0
+    ? { $or: [{ leadId: { $in: leadIds } }, { recipientEmail: { $in: companyLeadEmails } }], status: 'sent' }
+    : { leadId: { $in: leadIds }, status: 'sent' };
+
+  const replyQuery = companyLeadEmails.length > 0
+    ? { $or: [{ leadId: { $in: leadIds } }, { email: { $in: companyLeadEmails } }, { from: { $in: companyLeadEmails } }] }
+    : { leadId: { $in: leadIds } };
+
   const [sendJobs, replies, tasks, opportunities, manualInteractions] = await Promise.all([
-    SendJob.find({ leadId: { $in: leadIds }, status: 'sent' }).sort({ sentAt: -1 }).lean(),
-    Reply.find({ leadId: { $in: leadIds } }).sort({ receivedAt: -1 }).lean(),
+    SendJob.find(sendJobQuery).sort({ sentAt: -1 }).lean(),
+    Reply.find(replyQuery).sort({ receivedAt: -1 }).lean(),
     Task.find({ companyId }).sort({ createdAt: -1 }).lean(),
     Opportunity.find({ companyId }).sort({ updatedAt: -1 }).lean(),
     listInteractionsForCompany(companyId),
@@ -404,13 +537,20 @@ export async function getCompanyTimeline(companyId) {
     const contactName = lead?.name || lead?.email || 'Contact';
     const evt = event(`send-${job._id}`, {
       contactName,
-      contactId: String(job.leadId),
+      contactId: String(job.leadId || ''),
       type: 'email_outbound',
-      title: `Email step ${job.stepIndex + 1} · ${contactName}`,
-      detail: job.renderedSubject || 'Sequence email delivered.',
-      timestamp: job.sentAt,
+      title: job.renderedSubject ? `Sent: ${job.renderedSubject}` : `Email step ${job.stepIndex + 1} · ${contactName}`,
+      detail: job.renderedBody || job.renderedSubject || 'Sequence email delivered.',
+      timestamp: job.sentAt || job.createdAt,
       actor: 'Sequence',
       channel: 'email',
+      meta: {
+        step: job.stepIndex + 1,
+        subject: job.renderedSubject,
+        body: job.renderedBody,
+        to: job.recipientEmail,
+        providerMessageId: job.providerMessageId,
+      },
     });
     if (evt) events.push(evt);
   });
@@ -420,13 +560,19 @@ export async function getCompanyTimeline(companyId) {
     const contactName = lead?.name || lead?.email || 'Contact';
     const evt = event(`reply-${reply._id}`, {
       contactName,
-      contactId: String(reply.leadId),
+      contactId: String(reply.leadId || ''),
       type: 'email_inbound',
-      title: `Reply from ${contactName}`,
-      detail: reply.text?.slice(0, 180) || reply.subject || 'Inbound email.',
-      timestamp: reply.receivedAt,
-      actor: contactName,
+      title: reply.subject ? `Reply from ${contactName}: ${reply.subject}` : `Reply from ${contactName}`,
+      detail: reply.text || reply.subject || 'Inbound email received.',
+      timestamp: reply.receivedAt || reply.createdAt,
+      actor: reply.from || contactName,
       channel: 'email',
+      meta: {
+        intent: reply.intent,
+        subject: reply.subject,
+        body: reply.text,
+        from: reply.from,
+      },
     });
     if (evt) events.push(evt);
   });

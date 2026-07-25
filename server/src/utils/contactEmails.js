@@ -173,7 +173,7 @@ export function inferOutreachEmail(lead, { lastSentEmail = '' } = {}) {
   return null;
 }
 
-export function applyOutreachEmailFromReply(lead, senderEmail) {
+export function applyOutreachEmailFromReply(lead, senderEmail, systemInbox = '') {
   const normalized = normalizeEmail(senderEmail);
   if (!normalized || !isValidEmail(normalized)) {
     return { applied: false, reason: 'invalid-sender' };
@@ -184,9 +184,86 @@ export function applyOutreachEmailFromReply(lead, senderEmail) {
     return { applied: false, reason: 'sender-not-on-lead' };
   }
 
+  const source = detectEmailVendor(lead, normalized) || 'Manual';
   lead.outreachEmail = normalized;
-  lead.outreachEmailSource = detectEmailVendor(lead, normalized) || 'Manual';
-  return { applied: true, outreachEmail: normalized, source: lead.outreachEmailSource };
+  lead.outreachEmailSource = source;
+  lead.deliveryStatus = 'Replied';
+  lead.repliedAt = lead.repliedAt || new Date();
+  if (lead.outcome === 'Pending' || !lead.outcome) {
+    lead.outcome = 'Replied';
+  }
+
+  if (!Array.isArray(lead.confirmedEmails)) {
+    lead.confirmedEmails = [];
+  }
+
+  const cleanInbox = normalizeEmail(systemInbox);
+  const existingIdx = lead.confirmedEmails.findIndex((c) => normalizeEmail(c.email) === normalized);
+  if (existingIdx >= 0) {
+    lead.confirmedEmails[existingIdx].source = source;
+    lead.confirmedEmails[existingIdx].confirmedAt = new Date();
+    if (cleanInbox) lead.confirmedEmails[existingIdx].systemInbox = cleanInbox;
+  } else {
+    lead.confirmedEmails.push({
+      email: normalized,
+      source,
+      confirmedAt: new Date(),
+      systemInbox: cleanInbox,
+    });
+  }
+
+  return { applied: true, outreachEmail: normalized, source, confirmedEmails: lead.confirmedEmails };
+}
+
+export function resolveLeadVendorSource(lead) {
+  if (lead?.outreachEmailSource) return lead.outreachEmailSource;
+  if (firstContactEmail(lead?.emailApollo)) return 'Apollo';
+  if (firstContactEmail(lead?.emailHunter)) return 'Hunter';
+  if (firstContactEmail(lead?.emailLusha)) return 'Lusha';
+  if (firstContactEmail(lead?.emailPersonal)) return 'Personal';
+  if (lead?.primarySource && lead.primarySource !== 'Manual') return lead.primarySource;
+  return 'Manual';
+}
+
+export function recordBouncedEmailForLead(lead, bouncedEmail, reason = 'bounced', bouncedAt = new Date()) {
+  const normalized = normalizeEmail(bouncedEmail);
+  if (!normalized || !isValidEmail(normalized)) {
+    return { applied: false, reason: 'invalid-email' };
+  }
+
+  const candidates = getLeadEmailCandidates(lead);
+  if (!candidates.includes(normalized)) {
+    return { applied: false, reason: 'email-not-on-lead' };
+  }
+
+  const source = detectEmailVendor(lead, normalized) || 'Manual';
+
+  if (!Array.isArray(lead.bouncedEmails)) {
+    lead.bouncedEmails = [];
+  }
+
+  const existingIdx = lead.bouncedEmails.findIndex((b) => normalizeEmail(b.email) === normalized);
+  if (existingIdx >= 0) {
+    lead.bouncedEmails[existingIdx].source = source;
+    lead.bouncedEmails[existingIdx].bouncedAt = bouncedAt;
+    lead.bouncedEmails[existingIdx].reason = reason;
+  } else {
+    lead.bouncedEmails.push({
+      email: normalized,
+      source,
+      bouncedAt,
+      reason,
+    });
+  }
+
+  const bouncedSet = new Set((lead.bouncedEmails || []).map((b) => normalizeEmail(b.email)));
+  const allBounced = candidates.every((cand) => bouncedSet.has(cand));
+
+  if (allBounced || candidates.length <= 1) {
+    lead.deliveryStatus = 'Bounced / Invalid';
+  }
+
+  return { applied: true, bouncedEmail: normalized, source, allBounced };
 }
 
 export function buildLeadEmailQuery(email) {

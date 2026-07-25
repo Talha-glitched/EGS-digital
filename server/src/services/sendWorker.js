@@ -160,6 +160,9 @@ async function deliverSequenceEmail({
   job.renderedSubject = generated.subject;
   job.renderedBody = body;
   job.errorMessage = '';
+  if (!job.campaignId && (lead.campaignId || enrollment.campaignId)) {
+    job.campaignId = lead.campaignId || enrollment.campaignId;
+  }
   await job.save();
 
   enrollment.lastSentAt = new Date();

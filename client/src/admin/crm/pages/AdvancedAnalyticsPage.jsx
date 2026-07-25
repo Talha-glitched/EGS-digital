@@ -12,7 +12,7 @@ import {
   LoadingState,
   Badge,
 } from '../components/ui/primitives.jsx';
-import { TrendingUp, Coins, Users, Building2, HelpCircle } from 'lucide-react';
+import { TrendingUp, Coins, Users, Building2, HelpCircle, RefreshCw, Database } from 'lucide-react';
 import ClickableTableRow from '../components/ui/ClickableTableRow.jsx';
 import {
   AdvancedFilterPopover,
@@ -23,23 +23,36 @@ import {
 import { SortableTableHeader, TableSortIndicator } from '../components/ui/SortableTableHeader.jsx';
 import { useTableSort } from '../hooks/useTableSort.js';
 import { campaignRoiSortAccessors } from '../hooks/tableSortAccessors.js';
+import VendorPerformanceGrid from '../components/analytics/VendorPerformanceGrid.jsx';
+import CampaignVendorPerformanceGrid from '../components/analytics/CampaignVendorPerformanceGrid.jsx';
 
 export default function AdvancedAnalyticsPage() {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    fetchComprehensiveAnalytics()
+  const loadAnalytics = (forceRefresh = false) => {
+    if (forceRefresh) setRefreshing(true);
+    else setLoading(true);
+
+    fetchComprehensiveAnalytics({ forceRefresh })
       .then(setData)
       .catch(console.error)
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        setRefreshing(false);
+      });
+  };
+
+  useEffect(() => {
+    loadAnalytics(false);
   }, []);
 
   if (loading) {
     return (
       <PageShell>
-        <LoadingState label="Computing advanced analytics & ROI snapshots..." />
+        <LoadingState label="Loading database analytics snapshot..." />
       </PageShell>
     );
   }
@@ -52,6 +65,7 @@ export default function AdvancedAnalyticsPage() {
     statuses = {},
     stepsPerformance = [],
     vendorPerformance = [],
+    campaignVendorPerformance = [],
     financials = {},
     campaignMetrics = []
   } = data;
@@ -109,6 +123,37 @@ export default function AdvancedAnalyticsPage() {
 
   return (
     <PageShell>
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--color-line)] bg-white px-6 py-4 shadow-sm rounded-2xl mb-6">
+        <div>
+          <h1 className="text-xl font-extrabold text-[var(--color-ink)]">Analytics & ROI Performance Reports</h1>
+          <p className="text-xs text-neutral-500 font-medium mt-0.5 flex items-center gap-2">
+            {data?.isCached ? (
+              <span className="inline-flex items-center gap-1.5 text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                <Database className="h-3.5 w-3.5 text-emerald-600" />
+                Saved Database Snapshot (Instant Load)
+                {data.computedAt && ` • Computed ${new Date(data.computedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 text-blue-700 font-semibold bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
+                <span className="h-2 w-2 rounded-full bg-blue-500" />
+                Live Recalculated Snapshot
+                {data?.computedAt && ` • Updated ${new Date(data.computedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+              </span>
+            )}
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => loadAnalytics(true)}
+          disabled={refreshing || loading}
+          className="crm-btn-primary flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow transition disabled:opacity-50"
+        >
+          <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+          <span>{refreshing ? 'Recalculating Database...' : 'Refresh All Analytics'}</span>
+        </button>
+      </div>
+
       <PageSection>
         <MetricGrid>
           <StatCard compact label="Overall Yield ROI" value={formatPercent(financials.roiPercent)} helpText={`ROI on total cost of ${formatCurrency(financials.totalCost)}`} icon={TrendingUp} tone="brand" />
@@ -126,6 +171,18 @@ export default function AdvancedAnalyticsPage() {
           <CardHeader 
             title="Revenue Won by Campaign (AED)" 
             subtitle="Validated revenue generated across campaign projects" 
+            action={
+              <button
+                type="button"
+                onClick={() => loadAnalytics(true)}
+                disabled={refreshing}
+                className="crm-btn-ghost text-xs text-neutral-600 hover:text-red-600 hover:bg-red-50 flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-neutral-200"
+                title="Recalculate revenue"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin text-red-600' : ''}`} />
+                <span>Refresh</span>
+              </button>
+            }
           />
           <div className="flex flex-1 items-end gap-6 px-6 pb-6 pt-2">
             {campaignMetrics.length === 0 ? (
@@ -160,6 +217,18 @@ export default function AdvancedAnalyticsPage() {
           <CardHeader 
             title="Lead Segment Outcomes" 
             subtitle="Proportional breakdown of point of contact status states" 
+            action={
+              <button
+                type="button"
+                onClick={() => loadAnalytics(true)}
+                disabled={refreshing}
+                className="crm-btn-ghost text-xs text-neutral-600 hover:text-red-600 hover:bg-red-50 flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-neutral-200"
+                title="Recalculate outcomes"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin text-red-600' : ''}`} />
+                <span>Refresh</span>
+              </button>
+            }
           />
           <div className="flex flex-1 items-center justify-around px-6 pb-6 pt-2">
             {outcomeDoughnut.length === 0 ? (
@@ -212,6 +281,18 @@ export default function AdvancedAnalyticsPage() {
           <CardHeader 
             title="Step-by-Step Response Rate (%)" 
             subtitle="Which message step index yields the highest reply conversions" 
+            action={
+              <button
+                type="button"
+                onClick={() => loadAnalytics(true)}
+                disabled={refreshing}
+                className="crm-btn-ghost text-xs text-neutral-600 hover:text-red-600 hover:bg-red-50 flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-neutral-200"
+                title="Recalculate response rates"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin text-red-600' : ''}`} />
+                <span>Refresh</span>
+              </button>
+            }
           />
           <div className="flex flex-1 items-end gap-6 px-6 pb-6 pt-4">
             {stepsPerformance.map((step, i) => {
@@ -238,6 +319,18 @@ export default function AdvancedAnalyticsPage() {
           <CardHeader 
             title="Discovery Source Contribution" 
             subtitle="Percentage of point of contact profiles added by source vendor" 
+            action={
+              <button
+                type="button"
+                onClick={() => loadAnalytics(true)}
+                disabled={refreshing}
+                className="crm-btn-ghost text-xs text-neutral-600 hover:text-red-600 hover:bg-red-50 flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-neutral-200"
+                title="Recalculate vendor contribution"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin text-red-600' : ''}`} />
+                <span>Refresh</span>
+              </button>
+            }
           />
           <div className="flex flex-1 items-center justify-around px-6 pb-6 pt-2">
             {vendorDoughnut.length === 0 ? (
@@ -265,7 +358,7 @@ export default function AdvancedAnalyticsPage() {
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                     <span className="text-xl font-extrabold text-neutral-800 tabular-nums">{totalVendorLeads}</span>
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-neutral-400">Blends</span>
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-neutral-400">Sources</span>
                   </div>
                 </div>
 
@@ -286,10 +379,30 @@ export default function AdvancedAnalyticsPage() {
       </PageSection>
 
       <PageSection>
+        <VendorPerformanceGrid vendorMatrix={vendorPerformance} onRefresh={() => loadAnalytics(true)} isRefreshing={refreshing} />
+      </PageSection>
+
+      <PageSection>
+        <CampaignVendorPerformanceGrid campaignVendorPerformance={campaignVendorPerformance} onRefresh={() => loadAnalytics(true)} isRefreshing={refreshing} />
+      </PageSection>
+
+      <PageSection>
       <Card>
         <CardHeader 
           title="Campaigns Yield ROI Ledger" 
           subtitle="Direct financial inputs and contract yields for active campaigns" 
+          action={
+            <button
+              type="button"
+              onClick={() => loadAnalytics(true)}
+              disabled={refreshing}
+              className="crm-btn-ghost text-xs text-neutral-600 hover:text-red-600 hover:bg-red-50 flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-neutral-200"
+              title="Recalculate ROI ledger"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin text-red-600' : ''}`} />
+              <span>Refresh</span>
+            </button>
+          }
         />
         <CampaignRoiTable campaignMetrics={campaignMetrics} navigate={navigate} />
       </Card>

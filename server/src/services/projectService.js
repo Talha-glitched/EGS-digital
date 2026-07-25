@@ -1276,17 +1276,33 @@ export async function addLeadToCompany(companyId, payload) {
   return createStandaloneLead({ ...payload, companyId });
 }
 
-export async function getComprehensiveAnalytics() {
+export async function getComprehensiveAnalytics(forceRefresh = false) {
   assertDb();
-  
+
+  if (!forceRefresh) {
+    try {
+      const cached = await AnalyticsSnapshot.findOne({ snapshotType: 'comprehensive' }).lean();
+      if (cached?.payload) {
+        return {
+          ...cached.payload,
+          computedAt: cached.computedAt,
+          isCached: true,
+        };
+      }
+    } catch (e) {
+      console.warn('AnalyticsSnapshot read cache error:', e.message);
+    }
+  }
+
   const [totalLeads, totalCompanies, totalCampaigns, campaigns] = await Promise.all([
-    Lead.countDocuments(),
-    Company.countDocuments(),
-    ProjectCampaign.countDocuments(),
-    ProjectCampaign.find().lean()
+    Lead.countDocuments({ deletedAt: null }),
+    Company.countDocuments({ deletedAt: null }),
+    ProjectCampaign.countDocuments({ deletedAt: null }),
+    ProjectCampaign.find({ deletedAt: null }).lean()
   ]);
 
   const outcomesAgg = await Lead.aggregate([
+    { $match: { deletedAt: null } },
     { $group: { _id: '$outcome', count: { $sum: 1 } } }
   ]);
   const outcomes = {
@@ -1302,6 +1318,7 @@ export async function getComprehensiveAnalytics() {
   });
 
   const statusAgg = await Lead.aggregate([
+    { $match: { deletedAt: null } },
     { $group: { _id: '$deliveryStatus', count: { $sum: 1 } } }
   ]);
   const statuses = {
@@ -1321,7 +1338,7 @@ export async function getComprehensiveAnalytics() {
     { $group: { _id: '$stepIndex', count: { $sum: 1 } } }
   ]);
   const leadRepliesAgg = await Lead.aggregate([
-    { $match: { deliveryStatus: 'Replied' } },
+    { $match: { deletedAt: null, $or: [{ deliveryStatus: 'Replied' }, { repliedAt: { $ne: null } }] } },
     {
       $lookup: {
         from: 'sendjobs',
@@ -1339,28 +1356,7 @@ export async function getComprehensiveAnalytics() {
   ]);
   const stepsPerformance = buildStepPerformance(sentJobsAgg, leadRepliesAgg);
 
-  const vendors = ['Apollo', 'Hunter', 'Lusha', 'Manual'];
-  const vendorPerformance = [];
-  for (const v of vendors) {
-    const leads = await Lead.find({
-      $or: [{ primarySource: v }, { sources: v }]
-    }).select('_id deliveryStatus').lean();
-
-    if (!leads.length) {
-      vendorPerformance.push({ source: v, leadsCount: 0, replies: 0, bounces: 0 });
-      continue;
-    }
-
-    const replies = leads.filter(l => l.deliveryStatus === 'Replied').length;
-    const bounces = leads.filter(l => l.deliveryStatus === 'Bounced / Invalid').length;
-
-    vendorPerformance.push({
-      source: v,
-      leadsCount: leads.length,
-      replies,
-      bounces
-    });
-  }
+  const vendorPerformance = await computeVendorMatrix();
 
   const totalRevenue = campaigns.reduce((sum, p) => sum + (p.financialLedger?.validatedRevenueWon || 0), 0);
   const totalCost = campaigns.reduce((sum, p) => sum + (p.financialLedger?.totalProjectCost || 0), 0);
@@ -1377,7 +1373,18 @@ export async function getComprehensiveAnalytics() {
     targetCompanies: p.targetCompaniesCount || 0
   }));
 
-  return {
+  const campaignVendorPerformance = [];
+  for (const p of campaigns) {
+    const matrix = await computeVendorMatrix(p._id);
+    campaignVendorPerformance.push({
+      campaignId: p._id,
+      projectName: p.projectName,
+      milestone: p.milestone || '',
+      matrix,
+    });
+  }
+
+  const payload = {
     totalLeads,
     totalCompanies,
     totalCampaigns,
@@ -1385,12 +1392,30 @@ export async function getComprehensiveAnalytics() {
     statuses,
     stepsPerformance,
     vendorPerformance,
+    campaignVendorPerformance,
     financials: {
       totalRevenue,
       totalCost,
       roiPercent
     },
     campaignMetrics
+  };
+
+  const now = new Date();
+  try {
+    await AnalyticsSnapshot.findOneAndUpdate(
+      { snapshotType: 'comprehensive' },
+      { payload, computedAt: now },
+      { upsert: true, new: true }
+    );
+  } catch (e) {
+    console.warn('AnalyticsSnapshot write cache error:', e.message);
+  }
+
+  return {
+    ...payload,
+    computedAt: now,
+    isCached: false,
   };
 }
 

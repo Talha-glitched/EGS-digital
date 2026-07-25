@@ -1,6 +1,6 @@
 import { formatCurrency } from '../../crmApi.js';
 import { Card, CardHeader, EmptyState } from '../ui/primitives.jsx';
-import { BarChart3 } from 'lucide-react';
+import { BarChart3, RefreshCw } from 'lucide-react';
 import {
   AdvancedFilterPopover,
   AdvancedFilterChips,
@@ -12,10 +12,11 @@ const SOURCE_DOT = {
   Apollo: 'bg-violet-500',
   Hunter: 'bg-orange-500',
   Lusha: 'bg-cyan-500',
+  Personal: 'bg-emerald-500',
   Manual: 'bg-neutral-400',
 };
 
-export default function VendorPerformanceGrid({ vendorMatrix = [] }) {
+export default function VendorPerformanceGrid({ vendorMatrix = [], onRefresh, isRefreshing = false }) {
   const {
     filtered: visibleRows,
     filters: advancedFilters,
@@ -37,7 +38,24 @@ export default function VendorPerformanceGrid({ vendorMatrix = [] }) {
 
   return (
     <Card>
-      <CardHeader title="Source performance" subtitle="Leads, engagement, and revenue by discovery tool" />
+      <CardHeader
+        title="Source performance"
+        subtitle="Leads, engagement, and revenue by discovery tool"
+        action={
+          onRefresh && (
+            <button
+              type="button"
+              onClick={onRefresh}
+              disabled={isRefreshing}
+              className="crm-btn-ghost text-xs text-neutral-600 hover:text-red-600 hover:bg-red-50 flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-neutral-200"
+              title="Recalculate source performance"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? 'animate-spin text-red-600' : ''}`} />
+              <span>Refresh</span>
+            </button>
+          )
+        }
+      />
       <div className="flex flex-wrap items-center gap-2 border-b border-[var(--color-line)] px-5 py-3">
         <AdvancedFilterPopover
           schema={VENDOR_FILTER_SCHEMA}
@@ -61,6 +79,7 @@ export default function VendorPerformanceGrid({ vendorMatrix = [] }) {
               <th className="px-5 py-3 text-right">Opens</th>
               <th className="px-5 py-3 text-right">Bounces</th>
               <th className="px-5 py-3 text-right">Replies</th>
+              <th className="px-5 py-3 text-right">Reply Rate</th>
               <th className="px-5 py-3 text-right">Revenue</th>
             </tr>
           </thead>
@@ -77,6 +96,7 @@ export default function VendorPerformanceGrid({ vendorMatrix = [] }) {
                 <td className="px-5 py-3.5 text-right tabular-nums text-neutral-700">{row.opens}</td>
                 <td className="px-5 py-3.5 text-right tabular-nums text-red-600">{row.bounces}</td>
                 <td className="px-5 py-3.5 text-right tabular-nums text-emerald-600">{row.replies}</td>
+                <td className="px-5 py-3.5 text-right tabular-nums font-semibold text-emerald-700">{row.replyRate || (row.leadsCount > 0 ? ((row.replies / row.leadsCount) * 100).toFixed(1) + '%' : '0.0%')}</td>
                 <td className="px-5 py-3.5 text-right font-semibold tabular-nums text-[var(--color-ink)]">
                   {formatCurrency(row.revenue)}
                 </td>

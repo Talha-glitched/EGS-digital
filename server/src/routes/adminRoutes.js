@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import multer from 'multer';
-import { recordEmailOpen } from '../services/analyticsCronService.js';
+import { recordEmailOpen, computeVendorMatrix } from '../services/analyticsCronService.js';
 import {
   parseSpreadsheetBuffer,
   suggestFieldMapping,
@@ -1043,8 +1043,9 @@ router.post('/companies/:id/leads', asyncRoute(async (req, res) => {
   res.json(await addLeadToCompany(req.params.id, req.body || {}));
 }));
 
-router.get('/analytics/comprehensive', asyncRoute(async (_req, res) => {
-  res.json(await getComprehensiveAnalytics());
+router.get('/analytics/comprehensive', asyncRoute(async (req, res) => {
+  const force = req.query.forceRefresh === 'true' || req.query.refresh === 'true';
+  res.json(await getComprehensiveAnalytics(force));
 }));
 
 router.get('/sales/pipeline-config', asyncRoute(async (_req, res) => {
@@ -1378,6 +1379,11 @@ router.get('/resend/metrics', asyncRoute(async (req, res) => {
     limit: limit ? Number(limit) : undefined,
     campaignId: campaignId ? String(campaignId) : undefined,
   }));
+}));
+
+router.get('/vendor-performance', asyncRoute(async (req, res) => {
+  const { campaignId } = req.query || {};
+  res.json(await computeVendorMatrix(campaignId ? String(campaignId) : null));
 }));
 
 router.get('/projects/:projectId/queue', asyncRoute(async (req, res) => {

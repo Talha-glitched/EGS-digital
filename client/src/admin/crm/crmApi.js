@@ -209,8 +209,9 @@ export async function deleteContactInteraction(interactionId) {
   });
 }
 
-export async function fetchComprehensiveAnalytics() {
-  return crmApiFetch('/api/admin/analytics/comprehensive');
+export async function fetchComprehensiveAnalytics({ forceRefresh = false } = {}) {
+  const query = forceRefresh ? '?forceRefresh=true' : '';
+  return crmApiFetch(`/api/admin/analytics/comprehensive${query}`);
 }
 
 export async function fetchWorkspaceSearch(query, { limit = 5 } = {}) {
@@ -651,4 +652,9 @@ export async function deleteOpportunities(ids = []) {
   });
   notifyWorkspaceChanged({ entity: 'opportunity', action: 'bulk-delete', ids });
   return result;
+}
+
+export async function fetchVendorPerformance(campaignId = null) {
+  const qs = campaignId ? `?campaignId=${encodeURIComponent(campaignId)}` : '';
+  return crmApiFetch(`/api/admin/crm/vendor-performance${qs}`);
 }

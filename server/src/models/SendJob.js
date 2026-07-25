@@ -4,6 +4,7 @@ const sendJobSchema = new mongoose.Schema(
   {
     bullJobId: { type: String, default: '', index: true },
     leadId: { type: mongoose.Schema.Types.ObjectId, ref: 'Lead', required: true, index: true },
+    campaignId: { type: mongoose.Schema.Types.ObjectId, ref: 'ProjectCampaign', default: null, index: true },
     enrollmentId: { type: mongoose.Schema.Types.ObjectId, ref: 'SequenceEnrollment', required: true },
     stepIndex: { type: Number, required: true },
     status: {

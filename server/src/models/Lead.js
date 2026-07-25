@@ -41,6 +41,22 @@ const leadSchema = new mongoose.Schema(
       enum: ['', 'Apollo', 'Hunter', 'Lusha', 'Personal', 'Manual'],
       default: '',
     },
+    confirmedEmails: [
+      {
+        email: { type: String, trim: true, lowercase: true },
+        source: { type: String, enum: ['Apollo', 'Hunter', 'Lusha', 'Personal', 'Manual', ''], default: 'Manual' },
+        confirmedAt: { type: Date, default: Date.now },
+        systemInbox: { type: String, trim: true, lowercase: true, default: '' },
+      },
+    ],
+    bouncedEmails: [
+      {
+        email: { type: String, trim: true, lowercase: true },
+        source: { type: String, enum: ['Apollo', 'Hunter', 'Lusha', 'Personal', 'Manual', ''], default: 'Manual' },
+        bouncedAt: { type: Date, default: Date.now },
+        reason: { type: String, default: 'bounced' },
+      },
+    ],
     contactKind: {
       type: String,
       enum: ['person', 'genericInbox'],

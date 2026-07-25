@@ -17,6 +17,8 @@ import {
   Sparkles,
   Users,
   ArrowRight,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { LoadingState, cn } from '../ui/primitives.jsx';
 import InfoTip from '../ui/InfoTip.jsx';
@@ -94,6 +96,7 @@ function TimelineEventCard({
   onEdit,
   onDelete,
 }) {
+  const [isExpanded, setIsExpanded] = useState(false);
   const meta = CHANNEL_META[event.channel] || CHANNEL_META[event.type] || CHANNEL_META.crm;
   const Icon = meta.icon;
   const isManual = event.source === 'manual' || event.editable;
@@ -103,9 +106,12 @@ function TimelineEventCard({
   const directionLabel = resolveDirectionLabel(direction, event);
   const outcomeLabel = resolveOutcomeLabel(event);
   const body = resolveInteractionBody(event);
+  const subject = event.meta?.subject || (event.type?.startsWith('email') && event.title ? event.title : null);
   const relativeWhen = formatRelativeWhen(event.timestamp);
   const absoluteWhen = formatWhen(event.timestamp);
   const dotTone = direction === 'inbound' ? 'emerald' : direction === 'internal' ? 'neutral' : meta.tone;
+  const isEmailEvent = event.channel === 'email' || event.type === 'email_outbound' || event.type === 'email_inbound';
+  const isLongBody = body && body.length > 180;
 
   return (
     <article
@@ -123,6 +129,24 @@ function TimelineEventCard({
               <span className={cn('crm-timeline-direction', `is-${directionTone(direction)}`)}>
                 {directionLabel}
               </span>
+              {event.meta?.intent && (
+                <span className={cn(
+                  'inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider',
+                  event.meta.intent === 'Interested' ? 'bg-emerald-100 text-emerald-800' : event.meta.intent === 'Opt Out' ? 'bg-rose-100 text-rose-800' : 'bg-sky-100 text-sky-800'
+                )}>
+                  {event.meta.intent}
+                </span>
+              )}
+              {event.meta?.systemInbox && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 border border-slate-200 px-2 py-0.5 text-[10px] font-medium text-slate-700" title="System Inbox account">
+                  Received at: {event.meta.systemInbox}
+                </span>
+              )}
+              {event.meta?.vendorSource && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-200 px-2 py-0.5 text-[10px] font-bold text-indigo-700" title="Discovery tool that provided this confirmed email">
+                  Confirmed ({event.meta.vendorSource})
+                </span>
+              )}
             </div>
             <div className="crm-timeline-when">
               <time dateTime={event.timestamp}>{absoluteWhen}</time>
@@ -158,8 +182,38 @@ function TimelineEventCard({
           <span className="crm-timeline-party is-to" title="To">{parties.to}</span>
         </div>
 
+        {subject && isEmailEvent && (
+          <p className="mt-1 text-xs font-semibold text-neutral-800">
+            Subject: {subject}
+          </p>
+        )}
+
         {body && (
-          <p className="crm-timeline-body">{body}</p>
+          <div className="mt-1.5">
+            <div className={cn(
+              'crm-timeline-body whitespace-pre-wrap font-sans text-xs text-neutral-700 leading-relaxed transition-all',
+              !isExpanded && isLongBody && 'line-clamp-3'
+            )}>
+              {body}
+            </div>
+            {isLongBody && (
+              <button
+                type="button"
+                onClick={() => setIsExpanded((prev) => !prev)}
+                className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-bold text-brand hover:text-brand-dark transition"
+              >
+                {isExpanded ? (
+                  <>
+                    <ChevronUp className="h-3 w-3" /> Show Less
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="h-3 w-3" /> View Full Message
+                  </>
+                )}
+              </button>
+            )}
+          </div>
         )}
 
         {event.meta?.location && (

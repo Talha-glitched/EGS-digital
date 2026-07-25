@@ -19,7 +19,7 @@ import {
   extractBouncedEmailFromBody,
 } from './mailTransport.js';
 
-const MAX_REPLY_TEXT = 2000;
+const MAX_REPLY_TEXT = 100000;
 const activeSyncs = new Set();
 let syncTimer = null;
 
@@ -40,11 +40,11 @@ export function decodeQuotedPrintable(str) {
 export function parseEmailSourceToText(source) {
   const s = String(source || '');
   const boundaryMatch = s.match(/boundary=["']?([^"'\r\n;]+)["']?/i);
-  
+
   if (boundaryMatch) {
     const boundary = boundaryMatch[1];
     const parts = s.split('--' + boundary);
-    
+
     let textPart = '';
     for (const part of parts) {
       if (/content-type:\s*text\/plain/i.test(part)) {
@@ -52,11 +52,11 @@ export function parseEmailSourceToText(source) {
         break;
       }
     }
-    
+
     if (!textPart && parts.length > 1) {
       textPart = parts.find(p => p.trim() && !p.includes('content-type:'));
     }
-    
+
     if (textPart) {
       const blankLineIdx = textPart.search(/\r?\n\r?\n/);
       let headers = '';
@@ -65,31 +65,31 @@ export function parseEmailSourceToText(source) {
         headers = textPart.slice(0, blankLineIdx);
         body = textPart.slice(blankLineIdx + 4);
       }
-      
+
       body = body.trim().replace(/--$/, '');
-      
+
       if (/content-transfer-encoding:\s*quoted-printable/i.test(headers)) {
         body = decodeQuotedPrintable(body);
       } else if (/content-transfer-encoding:\s*base64/i.test(headers)) {
         body = Buffer.from(body.replace(/\s+/g, ''), 'base64').toString('utf-8');
       }
-      
+
       return body.trim();
     }
   }
-  
+
   const blankLineIdx = s.search(/\r?\n\r?\n/);
   if (blankLineIdx === -1) return s.trim();
-  
+
   const headers = s.slice(0, blankLineIdx);
   let body = s.slice(blankLineIdx + 4).trim();
-  
+
   if (/content-transfer-encoding:\s*quoted-printable/i.test(headers)) {
     body = decodeQuotedPrintable(body);
   } else if (/content-transfer-encoding:\s*base64/i.test(headers)) {
     body = Buffer.from(body.replace(/\s+/g, ''), 'base64').toString('utf-8');
   }
-  
+
   return body.trim();
 }
 
@@ -130,10 +130,7 @@ async function findLeadForMessage(message) {
   const emailQuery = buildLeadEmailQuery(resolvedFromAddress);
   if (!emailQuery) return null;
 
-  return Lead.findOne({
-    ...emailQuery,
-    deliveryStatus: { $in: ['Emailed Outbound', 'Replied'] },
-  }).sort({ updatedAt: -1 });
+  return Lead.findOne(emailQuery).sort({ updatedAt: -1 });
 }
 
 async function handleBounceMessage(message, text) {
@@ -160,13 +157,14 @@ async function handleBounceMessage(message, text) {
   return { bouncedEmail, leadId: lead._id };
 }
 
-async function handleHumanReply(lead, message, text) {
+async function handleHumanReply(lead, message, text, systemInbox = '') {
   const messageId = String(message.envelope?.messageId || '').trim();
   if (messageId && (await Reply.exists({ messageId }))) {
     return { duplicate: true };
   }
 
   const { intent, confidence } = await classifyReplyIntent(text);
+
   const senderEmail = String(message.envelope?.from?.[0]?.address || '').trim().toLowerCase();
   const from = message.envelope?.from?.map((item) => item.address).join(', ') || getPrimaryLeadEmail(lead);
   const subject = message.envelope?.subject || '';
@@ -188,7 +186,7 @@ async function handleHumanReply(lead, message, text) {
 
   const replyIntent = intent === 'Opt Out' ? 'Opt Out' : intent === 'Interested' ? 'Interested' : 'Neutral';
 
-  applyOutreachEmailFromReply(lead, senderEmail);
+  const outreachRes = applyOutreachEmailFromReply(lead, senderEmail, systemInbox);
   await lead.save();
 
   await Reply.create({
@@ -201,6 +199,8 @@ async function handleHumanReply(lead, message, text) {
     messageId: messageId || stableSyntheticMessageId(message.uid, process.env.EMAIL_IMAP_HOST),
     receivedAt: message.envelope?.date || new Date(),
     intent: replyIntent,
+    systemInbox: systemInbox || '',
+    vendorSource: outreachRes.source || detectEmailVendor(lead, senderEmail) || 'Manual',
     threadHistory,
   });
 
@@ -280,7 +280,7 @@ export async function syncImapMailboxForUser(email) {
           continue;
         }
 
-        const result = await handleHumanReply(lead, message, text);
+        const result = await handleHumanReply(lead, message, text, normalizedEmail);
         if (result?.stored) {
           stats.replies += 1;
           if (result.intent === 'Opt Out') stats.optOuts += 1;
@@ -293,7 +293,7 @@ export async function syncImapMailboxForUser(email) {
     stats.error = error.message;
     console.error(`IMAP watcher failed for ${normalizedEmail}:`, error.message);
   } finally {
-    await client.logout().catch(() => {});
+    await client.logout().catch(() => { });
     activeSyncs.delete(normalizedEmail);
   }
 
@@ -324,7 +324,7 @@ export function startImapWatcher() {
   syncTimer = setInterval(() => {
     syncImapMailbox().catch((err) => console.error('IMAP sync error:', err.message));
   }, intervalMs);
-  syncImapMailbox().catch(() => {});
+  syncImapMailbox().catch(() => { });
 }
 
 export function stopImapWatcher() {
