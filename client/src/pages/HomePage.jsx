@@ -84,7 +84,7 @@ export default function HomePage() {
         },
         {
           "@type": "ContactPoint",
-          "telephone": "+971565348700",
+          "telephone": "+971524587992",
           "contactType": "customer service",
           "email": "info@exhibitgraphicsign.com",
           "availableLanguage": ["English", "Arabic"]

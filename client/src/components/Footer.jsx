@@ -37,7 +37,7 @@ export function Footer() {
             <ul>
               <li><a href="mailto:info@exhibitgraphicsign.com">info@exhibitgraphicsign.com</a></li>
               <li>+971 4 238 3278</li>
-              <li>+971 56 534 8700</li>
+              <li>+971 52 458 7992</li>
               <li>Al Qusais, Dubai</li>
             </ul>
           </div>

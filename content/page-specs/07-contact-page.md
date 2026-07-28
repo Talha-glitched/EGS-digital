@@ -162,7 +162,7 @@ Use current confirmed site details if available from existing website/footer:
 
 - Email: `info@exhibitgraphicsign.com`
 - Phone: `+971 4 238 3278`
-- Mobile/WhatsApp: `+971 56 534 8700`
+- Mobile/WhatsApp: `+971 52 458 7992`
 - Showroom: `Nasiriya Building, Baghdad Street, Al Qusais, Dubai`
 - Joinery: `Industrial Area 11, Sharjah`
 

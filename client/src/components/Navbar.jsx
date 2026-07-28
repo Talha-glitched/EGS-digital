@@ -47,7 +47,7 @@ const defaultItems = [
     links: [
       { label: 'Tell us about your project', inquiryType: 'general', ariaLabel: 'Tell us about your project', icon: projectIcon },
       { label: 'Email EGS', href: 'mailto:info@exhibitgraphicsign.com', ariaLabel: 'Email EGS', icon: mailIcon },
-      { label: 'Call / WhatsApp', href: 'https://wa.me/971565348700', ariaLabel: 'Call or WhatsApp EGS', icon: whatsappIcon, target: '_blank', rel: 'noopener noreferrer' },
+      { label: 'Call / WhatsApp', href: 'https://wa.me/971524587992', ariaLabel: 'Call or WhatsApp EGS', icon: whatsappIcon, target: '_blank', rel: 'noopener noreferrer' },
     ],
   },
 ];
