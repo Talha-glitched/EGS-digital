@@ -56,7 +56,7 @@ function NavItem({ to, label, icon: Icon, end, collapsed, onClose }) {
         )
       }
     >
-      <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={1.75} />
+      <Icon className="h-4.5 w-4.5 shrink-0" strokeWidth={1.75} />
       {!collapsed && label}
     </NavLink>
   );
@@ -128,15 +128,15 @@ export default function Sidebar({ activeProject, onLogout, mobileOpen = false, o
     {mobileOpen && <button type="button" aria-label="Close navigation" onClick={onClose} className="fixed inset-0 z-30 bg-neutral-950/45 lg:hidden" />}
     <aside
       className={cn(
-        'fixed inset-y-0 left-0 z-40 flex h-screen shrink-0 flex-col border-r border-white/[0.06] bg-[var(--color-sidebar)] text-white transition-[width,transform] duration-200 lg:sticky lg:top-0 lg:z-auto lg:translate-x-0',
-        collapsed ? 'w-[68px]' : 'w-[248px]',
+        'fixed inset-y-0 left-0 z-40 flex h-screen shrink-0 flex-col border-r border-white/6 bg-sidebar text-white transition-[width,transform] duration-200 lg:sticky lg:top-0 lg:z-auto lg:translate-x-0',
+        collapsed ? 'w-17' : 'w-62',
         mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
       )}
     >
       <div className={cn('flex items-center gap-2.5 py-5', collapsed ? 'justify-center px-2' : 'px-5')}>
         {!collapsed && (
           <div className="min-w-0 flex-1">
-            <img src={egsLogo} alt="Exhibit Graphic Sign" className="h-auto w-[175px] max-w-full object-contain" />
+            <img src={egsLogo} alt="Exhibit Graphic Sign" className="h-auto w-43.75 max-w-full object-contain" />
             <p className="mt-2 text-[9px] font-semibold uppercase tracking-[0.19em] text-neutral-500">
               {designerMode ? 'Designer Portal' : 'Commercial CRM'}
             </p>
@@ -187,7 +187,7 @@ export default function Sidebar({ activeProject, onLogout, mobileOpen = false, o
               onClick={onClose}
               title={collapsed ? 'All campaigns' : undefined}
               className={cn(
-                'flex items-center rounded-lg py-2 text-xs font-medium text-neutral-400 transition hover:bg-white/[0.04] hover:text-neutral-200',
+                'flex items-center rounded-lg py-2 text-xs font-medium text-neutral-400 transition hover:bg-white/4 hover:text-neutral-200',
                 collapsed ? 'justify-center px-2' : 'gap-2 px-3'
               )}
             >
@@ -198,7 +198,7 @@ export default function Sidebar({ activeProject, onLogout, mobileOpen = false, o
               className={cn(
                 'mt-0.5 flex items-center rounded-lg py-2',
                 collapsed ? 'justify-center px-2' : 'gap-2.5 px-3 text-[13px]',
-                'bg-white/[0.08] font-medium text-white'
+                'bg-white/8 font-medium text-white'
               )}
               title={activeProject.projectName}
             >
@@ -209,7 +209,7 @@ export default function Sidebar({ activeProject, onLogout, mobileOpen = false, o
         )}
       </nav>
 
-      <div className="border-t border-white/[0.06] p-2">
+      <div className="border-t border-white/6 p-2">
         {designerMode && !collapsed && (
           <div className="mb-1 px-3 py-1.5">
             <p className="text-[10px] text-neutral-500">Signed in as</p>
@@ -223,7 +223,7 @@ export default function Sidebar({ activeProject, onLogout, mobileOpen = false, o
           title={collapsed ? 'Sign out' : undefined}
           className={cn('crm-nav-idle flex w-full items-center rounded-lg py-2.5 text-sm font-medium', collapsed ? 'justify-center px-2' : 'gap-3 px-3')}
         >
-          <LogOut className="h-[18px] w-[18px]" strokeWidth={1.75} />
+          <LogOut className="h-4.5 w-4.5" strokeWidth={1.75} />
           {!collapsed && 'Sign out'}
         </button>
       </div>

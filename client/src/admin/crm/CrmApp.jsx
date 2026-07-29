@@ -62,7 +62,7 @@ function LoginPanel({ onLogin, status }) {
       <div className="grid min-h-screen lg:grid-cols-[minmax(460px,0.9fr)_minmax(560px,1.1fr)]">
         <section className="crm-login-brand-panel hidden flex-col justify-between overflow-hidden p-12 text-white lg:flex xl:p-16">
           <div className="relative z-10">
-            <img src={egsLogo} alt="Exhibit Graphic Sign" className="h-auto w-[290px] max-w-full object-contain" />
+            <img src={egsLogo} alt="Exhibit Graphic Sign" className="h-auto w-72.5 max-w-full object-contain" />
           </div>
           <div className="relative z-10 max-w-xl crm-login-copy">
             <span className="crm-login-eyebrow">Commercial workspace</span>
@@ -78,11 +78,11 @@ function LoginPanel({ onLogin, status }) {
         </section>
 
         <section className="crm-login-form-panel flex items-center justify-center p-6 sm:p-10 lg:p-14">
-          <form onSubmit={submit} className="crm-login-form w-full max-w-[440px]">
+          <form onSubmit={submit} className="crm-login-form w-full max-w-110">
             <div className="mb-8">
-              <img src={egsLogo} alt="Exhibit Graphic Sign" className="mb-10 h-auto w-[220px] object-contain lg:hidden" />
+              <img src={egsLogo} alt="Exhibit Graphic Sign" className="mb-10 h-auto w-55 object-contain lg:hidden" />
               <span className="crm-login-eyebrow text-brand">EGS Commercial CRM</span>
-              <h2 className="mt-3 text-[32px] font-bold tracking-[-0.04em] text-[var(--color-ink)]">Welcome back</h2>
+              <h2 className="mt-3 text-[32px] font-bold tracking-[-0.04em] text-ink">Welcome back</h2>
               <p className="mt-2 text-sm leading-6 text-neutral-500">Sign in to continue to your commercial workspace.</p>
             </div>
 
@@ -113,7 +113,7 @@ function LoginPanel({ onLogin, status }) {
               </Field>
 
               <div className="flex items-center justify-between text-xs text-neutral-400"><span className="flex items-center gap-1.5"><Lock className="h-3.5 w-3.5" />Secure staff access</span><span>8-hour session</span></div>
-              <button type="submit" disabled={busy || !status?.adminConfigured} className="crm-btn-primary w-full !py-3">
+              <button type="submit" disabled={busy || !status?.adminConfigured} className="crm-btn-primary w-full py-3!">
                 {busy ? 'Signing in…' : 'Sign in to CRM'}
               </button>
             </div>
@@ -125,7 +125,7 @@ function LoginPanel({ onLogin, status }) {
 }
 
 function LoginProof({ value, label }) {
-  return <div className="rounded-xl border border-white/10 bg-white/[0.045] px-3.5 py-3 backdrop-blur-sm"><p className="text-sm font-semibold text-white">{value}</p><p className="mt-1 text-[10px] leading-4 text-white/35">{label}</p></div>;
+  return <div className="rounded-xl border border-white/10 bg-white/4.5 px-3.5 py-3 backdrop-blur-sm"><p className="text-sm font-semibold text-white">{value}</p><p className="mt-1 text-[10px] leading-4 text-white/35">{label}</p></div>;
 }
 
 function DesignerShell({ onLogout, status }) {
@@ -151,7 +151,7 @@ function DesignerShell({ onLogout, status }) {
     <ConfirmDeleteProvider>
       <UndoToastProvider>
         <SensitiveDataProvider>
-          <div className="crm-root flex h-screen overflow-hidden bg-[var(--color-canvas)]">
+          <div className="crm-root flex h-screen overflow-hidden bg-canvas">
             <Sidebar
               activeProject={null}
               onLogout={onLogout}
@@ -260,7 +260,7 @@ function CrmShell({ projects, onLogout, status }) {
     <ConfirmDeleteProvider>
       <UndoToastProvider>
         <SensitiveDataProvider>
-        <div className="crm-root flex h-screen overflow-hidden bg-[var(--color-canvas)]">
+        <div className="crm-root flex h-screen overflow-hidden bg-canvas">
         <Sidebar
           activeProject={activeProject}
           onLogout={onLogout}
@@ -352,7 +352,7 @@ export default function CrmApp() {
 
   if (!status) {
     return (
-      <div className="crm-root min-h-screen bg-[var(--color-canvas)]">
+      <div className="crm-root min-h-screen bg-canvas">
         <LoadingState label="Starting CRM…" />
       </div>
     );

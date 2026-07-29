@@ -70,6 +70,8 @@ export const relationshipSortAccessors = {
   nameLabel: 'Contact',
   companyName: (r) => r.companyName,
   companyNameLabel: 'Company',
+  deliveryStatus: (r) => r.deliveryStatus,
+  deliveryStatusLabel: 'Email status',
   lastInteraction: (r) => r.lastInteractionAt,
   lastInteractionLabel: 'Last interaction',
   relationshipStatus: (r) => r.relationshipProfile?.status,

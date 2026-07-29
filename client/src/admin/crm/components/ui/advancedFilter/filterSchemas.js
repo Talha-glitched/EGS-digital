@@ -4,9 +4,10 @@ import { RELATIONSHIP_STATUS_OPTIONS, SERVICE_CATEGORY_OPTIONS } from '../../../
 const DELIVERY_STATUSES = [
   'Pending Inqueue',
   'Emailed Outbound',
-  'Bounced / Invalid',
-  'Opted Out',
   'Replied',
+  'Out of Office',
+  'Opted Out',
+  'Bounced / Invalid',
 ];
 
 const SOURCES = ['Apollo', 'Hunter', 'Lusha', 'Manual'];
@@ -64,15 +65,14 @@ function leadGroups(extra = {}) {
       label: 'Campaign',
       description: 'Source and list membership',
       fields: [
-        ...(extra.campaignOptions?.length ? [{
+        {
           key: 'campaignId',
           label: 'Campaign',
           type: 'select',
+          defaultValue: 'any',
           accessor: (r) => String(r.campaignId?._id || r.campaignId || ''),
-          options: [{ value: 'any', label: 'Any campaign' }, ...extra.campaignOptions],
-        }] : [
-          { key: 'campaignName', label: 'Campaign name', type: 'text', placeholder: 'Contains…', accessor: (r) => r.campaignName },
-        ]),
+          options: [{ value: 'any', label: 'Any campaign' }, ...(extra.campaignOptions || [])],
+        },
         {
           key: 'primarySource',
           label: 'Primary source',

@@ -8,6 +8,7 @@ import { Suppression } from '../models/Suppression.js';
 import { classifyReplyIntent } from '../services/openaiService.js';
 import { freezeLeadSequence, purgeLeadFromQueue } from '../services/sequenceService.js';
 import { buildLeadEmailQuery, getLeadEmailCandidates, getPrimaryLeadEmail, applyOutreachEmailFromReply } from '../utils/contactEmails.js';
+import { syncAllResendReplies } from '../services/resendAutoSyncService.js';
 
 const router = Router();
 const MAX_REPLY_TEXT = 100000;
@@ -61,6 +62,7 @@ router.post('/resend', async (req, res) => {
       await handleBounce(data);
     } else if (type === 'email.received') {
       await handleReply(data);
+      syncAllResendReplies().catch((e) => console.warn('[WebhookSync] Resend auto sync error:', e.message));
     }
 
     res.status(200).json({ received: true });
@@ -119,7 +121,22 @@ async function handleReply(data) {
   const rawFrom = data.from;
   const senderEmail = extractEmailAddress(rawFrom);
   const subject = data.subject || '';
-  const text = String(data.text || '').slice(0, MAX_REPLY_TEXT);
+  let text = String(data.text || data.html || '').slice(0, MAX_REPLY_TEXT);
+  const emailId = data.email_id || data.id;
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!text.trim() && emailId && apiKey) {
+    try {
+      const detailRes = await fetch(`https://api.resend.com/emails/receiving/${emailId}`, {
+        headers: { Authorization: `Bearer ${apiKey}` },
+      });
+      if (detailRes.ok) {
+        const detailJson = await detailRes.json();
+        text = String(detailJson.text || detailJson.html || '').slice(0, MAX_REPLY_TEXT);
+      }
+    } catch (dErr) {
+      console.warn(`[Webhook Reply] Detail fetch failed for ${emailId}:`, dErr.message);
+    }
+  }
 
   // Extract Resend ID from headers to match the thread
   const inReplyToHeader = data.headers?.['in-reply-to'] || data.headers?.['In-Reply-To'];

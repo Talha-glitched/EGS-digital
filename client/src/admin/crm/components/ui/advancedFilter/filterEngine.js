@@ -130,37 +130,41 @@ export function createEmptyFilters(schema) {
 }
 
 export function countActiveFilters(filters, schema) {
-  const defaults = createEmptyFilters(schema);
+  if (!schema?.groups || !Array.isArray(schema.groups) || !filters) return 0;
   let count = 0;
   schema.groups.forEach((group) => {
-    group.fields.forEach((field) => {
+    (group.fields || []).forEach((field) => {
       if (field.type === 'section') return;
-      const current = filters[field.key];
-      const baseline = defaults[field.key];
-      if (JSON.stringify(current) !== JSON.stringify(baseline)) count += 1;
+      if (isFilterActive(filters[field.key], field)) count += 1;
     });
   });
   return count;
 }
 
 export function countActiveFiltersByGroup(filters, schema) {
-  const defaults = createEmptyFilters(schema);
+  if (!schema?.groups || !Array.isArray(schema.groups) || !filters) return {};
   const counts = {};
   schema.groups.forEach((group) => {
-    counts[group.id] = group.fields.filter((field) => {
+    counts[group.id] = (group.fields || []).filter((field) => {
       if (field.type === 'section') return false;
-      const current = filters[field.key];
-      const baseline = defaults[field.key];
-      return JSON.stringify(current) !== JSON.stringify(baseline);
+      return isFilterActive(filters[field.key], field);
     }).length;
   });
   return counts;
 }
 
 export function isFilterActive(value, field) {
+  if (!field || value === undefined || value === null || value === '') return false;
+  if ((field.type === 'select' || field.type === 'tri') && (value === 'any' || value === '')) return false;
+  if (Array.isArray(value) && value.length === 0) return false;
+  if (typeof value === 'object' && !Array.isArray(value)) {
+    if (!value.min && !value.max && !value.from && !value.to && (value.value === undefined || value.value === '') && (!value.values || !value.values.length)) {
+      return false;
+    }
+  }
   const baseline = field.defaultValue ?? (
     field.type === 'multi' || field.type === 'arrayIncludes' || field.type === 'multiContains' ? [] :
-    field.type === 'tri' ? 'any' :
+    field.type === 'tri' || field.type === 'select' ? 'any' :
     field.type === 'range' ? { min: '', max: '' } :
     field.type === 'dateRange' ? { from: '', to: '' } :
     ''
@@ -196,9 +200,10 @@ function matchField(row, field, filterValue) {
 }
 
 export function applyTableFilters(items = [], filters = {}, schema, { match = 'all' } = {}) {
+  if (!schema?.groups || !Array.isArray(schema.groups) || !filters) return items;
   const activeFields = [];
   schema.groups.forEach((group) => {
-    group.fields.forEach((field) => {
+    (group.fields || []).forEach((field) => {
       if (field.type === 'section') return;
       if (isFilterActive(filters[field.key], field)) {
         activeFields.push(field);
@@ -215,9 +220,10 @@ export function applyTableFilters(items = [], filters = {}, schema, { match = 'a
 }
 
 export function summarizeActiveFilters(filters, schema) {
+  if (!schema?.groups || !Array.isArray(schema.groups) || !filters) return [];
   const summaries = [];
   schema.groups.forEach((group) => {
-    group.fields.forEach((field) => {
+    (group.fields || []).forEach((field) => {
       if (field.type === 'section') return;
       const value = filters[field.key];
       if (!isFilterActive(value, field)) return;
@@ -225,10 +231,16 @@ export function summarizeActiveFilters(filters, schema) {
       if (field.type === 'text' && value) label += `: “${value}”`;
       else if (field.type === 'combobox' && value) label += `: “${value}”`;
       else if (field.type === 'tri' && value !== 'any') label += `: ${value === 'yes' ? 'Yes' : 'No'}`;
-      else if (field.type === 'multi' && value?.length) label += `: ${value.join(', ')}`;
-      else if (field.type === 'arrayIncludes' && value?.length) label += `: ${value.join(', ')}`;
-      else if (field.type === 'select' && value && value !== 'any') label += `: ${value}`;
-      else if (field.type === 'range' && (value?.min || value?.max)) {
+      else if ((field.type === 'multi' || field.type === 'arrayIncludes') && value?.length) {
+        const displayLabels = value.map((val) => {
+          const matchOpt = (field.options || []).find((opt) => String(opt.value) === String(val));
+          return matchOpt ? matchOpt.label : val;
+        });
+        label += `: ${displayLabels.join(', ')}`;
+      } else if (field.type === 'select' && value && value !== 'any') {
+        const matchOpt = (field.options || []).find((opt) => String(opt.value) === String(value));
+        label += `: ${matchOpt ? matchOpt.label : value}`;
+      } else if (field.type === 'range' && (value?.min || value?.max)) {
         label += `: ${value.min || '…'} – ${value.max || '…'}`;
       } else if (field.type === 'dateRange' && (value?.from || value?.to)) {
         label += `: ${value.from || '…'} – ${value.to || '…'}`;

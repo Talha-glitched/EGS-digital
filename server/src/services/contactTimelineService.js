@@ -389,21 +389,37 @@ export async function getLeadTimeline(leadId) {
     if (evt) events.push(evt);
   });
 
+function formatReplyDetailText(reply) {
+  let text = (reply.text || reply.body || '').trim();
+  if (text) {
+    if (/<[a-z][\s\S]*>/i.test(text)) {
+      text = text
+        .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+        .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+  }
+  return text || reply.subject || 'Inbound email received.';
+}
+
   combinedReplies.forEach((reply) => {
     const vendorSource = reply.vendorSource || lead.outreachEmailSource || detectEmailVendor(lead, reply.from || reply.email) || 'Manual';
+    const detailText = formatReplyDetailText(reply);
     const evt = event(`reply-${reply._id}`, {
       contactName,
       contactId: String(leadId),
       type: 'email_inbound',
       title: reply.subject ? `Reply: ${reply.subject}` : `Reply: ${reply.intent || 'Inbound'}`,
-      detail: reply.text || reply.subject || 'Inbound email received.',
+      detail: detailText,
       timestamp: reply.receivedAt || reply.createdAt,
       actor: reply.from || contactName,
       channel: 'email',
       meta: {
         intent: reply.intent,
         subject: reply.subject,
-        body: reply.text,
+        body: detailText,
         from: reply.from,
         systemInbox: reply.systemInbox || process.env.RESEND_FROM_EMAIL || 'rana@masuood.exhibitgraphicsign.com',
         confirmedEmail: reply.email || lead.outreachEmail || lead.email,
@@ -558,19 +574,20 @@ export async function getCompanyTimeline(companyId) {
   replies.forEach((reply) => {
     const lead = leadMap.get(String(reply.leadId));
     const contactName = lead?.name || lead?.email || 'Contact';
+    const detailText = formatReplyDetailText(reply);
     const evt = event(`reply-${reply._id}`, {
       contactName,
       contactId: String(reply.leadId || ''),
       type: 'email_inbound',
       title: reply.subject ? `Reply from ${contactName}: ${reply.subject}` : `Reply from ${contactName}`,
-      detail: reply.text || reply.subject || 'Inbound email received.',
+      detail: detailText,
       timestamp: reply.receivedAt || reply.createdAt,
       actor: reply.from || contactName,
       channel: 'email',
       meta: {
         intent: reply.intent,
         subject: reply.subject,
-        body: reply.text,
+        body: detailText,
         from: reply.from,
       },
     });

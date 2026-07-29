@@ -17,7 +17,7 @@ const replySchema = new mongoose.Schema(
     campaignId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'ProjectCampaign',
-      required: true,
+      required: false,
       index: true,
     },
     leadId: {
@@ -34,7 +34,7 @@ const replySchema = new mongoose.Schema(
     receivedAt: { type: Date, required: true, index: true },
     intent: {
       type: String,
-      enum: ['Interested', 'Opt Out', 'Neutral', 'Bounce'],
+      enum: ['Interested', 'Opt Out', 'Neutral', 'Bounce', 'OOO'],
       default: 'Neutral',
     },
     systemInbox: { type: String, trim: true, lowercase: true, default: '' },

@@ -1,12 +1,13 @@
-import { Mail, CheckCircle, AlertTriangle, XCircle, Send, MessageCircle } from 'lucide-react';
+import { Mail, CheckCircle, AlertTriangle, XCircle, Send, MessageCircle, Clock } from 'lucide-react';
 import { cn } from '../ui/primitives.jsx';
 
 const STATUS_CONFIG = {
   'Pending Inqueue': { className: 'bg-amber-50 text-amber-800 ring-amber-200/70', icon: Mail, short: 'Pending' },
   'Emailed Outbound': { className: 'bg-sky-50 text-sky-800 ring-sky-200/70', icon: Send, short: 'Emailed' },
   'Bounced / Invalid': { className: 'bg-red-50 text-red-800 ring-red-200/70', icon: AlertTriangle, short: 'Bounced' },
-  'Opted Out': { className: 'bg-neutral-100 text-neutral-700 ring-neutral-200/70', icon: XCircle, short: 'Opted out' },
+  'Opted Out': { className: 'bg-rose-50 text-rose-800 ring-rose-200/70', icon: XCircle, short: 'Opted out' },
   Replied: { className: 'bg-emerald-50 text-emerald-800 ring-emerald-200/70', icon: CheckCircle, short: 'Replied' },
+  'Out of Office': { className: 'bg-amber-50 text-amber-800 ring-amber-300/70', icon: Clock, short: 'Out of Office' },
 };
 
 export function DeliveryStatusBadge({ status }) {

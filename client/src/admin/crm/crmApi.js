@@ -100,20 +100,25 @@ export async function updateLead(leadId, payload) {
   });
 }
 
-export async function fetchGlobalLeads({
-  search,
-  campaignId,
-  deliveryStatus,
-  pocStatus,
-  rightPocOnly,
-  relationshipStatus,
-  serviceCategory,
-  followUp,
-  sort,
-  page,
-  limit,
-} = {}) {
-  const query = new URLSearchParams({
+export async function fetchGlobalLeads(params = {}) {
+  const {
+    search,
+    campaignId,
+    deliveryStatus,
+    pocStatus,
+    rightPocOnly,
+    relationshipStatus,
+    serviceCategory,
+    followUp,
+    sort,
+    sortKey,
+    sortDir,
+    filters,
+    page,
+    limit,
+    ...extra
+  } = params;
+  const queryObj = {
     ...(search && { search }),
     ...(campaignId && { campaignId }),
     ...(deliveryStatus && { deliveryStatus }),
@@ -123,9 +128,18 @@ export async function fetchGlobalLeads({
     ...(serviceCategory && { serviceCategory }),
     ...(followUp && { followUp }),
     ...(sort && { sort }),
+    ...(sortKey && { sortKey }),
+    ...(sortDir && { sortDir }),
+    ...(filters && { filters: typeof filters === 'object' ? JSON.stringify(filters) : filters }),
     ...(page && { page }),
     ...(limit && { limit }),
-  }).toString();
+  };
+  Object.keys(extra).forEach((k) => {
+    if (extra[k] !== undefined && extra[k] !== null && extra[k] !== '') {
+      queryObj[k] = Array.isArray(extra[k]) ? extra[k].join(',') : String(extra[k]);
+    }
+  });
+  const query = new URLSearchParams(queryObj).toString();
   return crmApiFetch(`/api/admin/leads?${query}`);
 }
 
@@ -147,12 +161,22 @@ export async function fetchLeadById(id) {
   return crmApiFetch(`/api/admin/leads/${encodeURIComponent(normalizeId(id))}`);
 }
 
-export async function fetchGlobalCompanies({ search, page, limit } = {}) {
-  const query = new URLSearchParams({
+export async function fetchGlobalCompanies(params = {}) {
+  const { search, page, limit, sortKey, sortDir, filters, ...extra } = params;
+  const queryObj = {
     ...(search && { search }),
     ...(page && { page }),
     ...(limit && { limit }),
-  }).toString();
+    ...(sortKey && { sortKey }),
+    ...(sortDir && { sortDir }),
+    ...(filters && { filters: typeof filters === 'object' ? JSON.stringify(filters) : filters }),
+  };
+  Object.keys(extra).forEach((k) => {
+    if (extra[k] !== undefined && extra[k] !== null && extra[k] !== '') {
+      queryObj[k] = Array.isArray(extra[k]) ? extra[k].join(',') : String(extra[k]);
+    }
+  });
+  const query = new URLSearchParams(queryObj).toString();
   return crmApiFetch(`/api/admin/companies?${query}`);
 }
 

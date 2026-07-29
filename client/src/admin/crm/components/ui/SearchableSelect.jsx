@@ -20,6 +20,7 @@ export default function SearchableSelect({
   onSearch,
   searching = false,
   minQueryLength = 0,
+  requireTypeToSearch = false,
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -44,12 +45,17 @@ export default function SearchableSelect({
   const filtered = useMemo(() => {
     if (isAsync) return optionPool;
     const term = query.trim().toLowerCase();
-    if (!term) return options;
+    if (!term) {
+      if (requireTypeToSearch && options.length > 5) {
+        return value ? options.filter((opt) => String(opt.value) === String(value)) : [];
+      }
+      return options;
+    }
     return options.filter((option) => {
       const haystack = `${option.label || ''} ${option.hint || ''}`.toLowerCase();
       return haystack.includes(term);
     });
-  }, [isAsync, optionPool, options, query]);
+  }, [isAsync, optionPool, options, query, requireTypeToSearch, value]);
 
   const updateMenuPosition = () => {
     const el = rootRef.current;

@@ -29,6 +29,9 @@ export function audienceToApiParams(audience = EMPTY_AUDIENCE) {
   } else if (audience.importCampaign) {
     params.importCampaign = true;
   }
+  if (audience.campaignSelections && Object.keys(audience.campaignSelections).length) {
+    params.campaignSelections = audience.campaignSelections;
+  }
   if (audience.includeCompanyIds?.length) params.includeCompanyIds = audience.includeCompanyIds;
   if (audience.includeContactIds?.length) params.includeLeadIds = audience.includeContactIds;
   if (audience.excludeCompanyIds?.length) params.excludeCompanyIds = audience.excludeCompanyIds;
@@ -38,12 +41,20 @@ export function audienceToApiParams(audience = EMPTY_AUDIENCE) {
 
 export function buildAudienceSummary(audience, preview, campaignLabels = {}) {
   const parts = [];
-  const subs = [];
 
   const imported = audience.importedCampaignIds || [];
+  let totalSelectedInSelections = 0;
   if (imported.length) {
-    const names = imported.map((id) => campaignLabels[id] || 'campaign').join(', ');
-    parts.push(`imported ${imported.length} list${imported.length === 1 ? '' : 's'} (${names})`);
+    const listDescs = imported.map((id) => {
+      const name = campaignLabels[id] || 'campaign';
+      const selCount = audience.campaignSelections?.[id]?.length;
+      if (selCount != null) {
+        totalSelectedInSelections += selCount;
+        return `${name}: ${selCount} selected`;
+      }
+      return name;
+    });
+    parts.push(listDescs.join(', '));
   } else if (audience.importCampaign) {
     parts.push('imported campaign list');
   }
@@ -60,48 +71,49 @@ export function buildAudienceSummary(audience, preview, campaignLabels = {}) {
 
   if (audience.excludeCompanyIds?.length) {
     const n = audience.excludeCompanyIds.length;
-    subs.push(`${n} compan${n === 1 ? 'y' : 'ies'}`);
+    parts.push(`(excluding ${n} compan${n === 1 ? 'y' : 'ies'})`);
   }
 
-  if (audience.excludeContactIds?.length) {
-    const n = audience.excludeContactIds.length;
-    subs.push(`${n} contact${n === 1 ? '' : 's'}`);
+  if (!parts.length) {
+    return 'Import a campaign list or add contacts to build your audience.';
   }
 
-  if (!parts.length && !subs.length) {
-    return 'Import a campaign list or add companies / contacts to build your audience.';
-  }
+  const prefix = parts.join(' ');
+  const alreadySent = preview?.alreadySent || 0;
+  const alreadyInQueue = preview?.alreadyInQueue || 0;
+  const restarting = preview?.willRestart || 0;
 
-  let text = parts.join(' ');
-  if (subs.length) {
-    text += `, excluding ${subs.join(' and ')}`;
-  }
+  const eligible = (preview?.eligible > 0) ? preview.eligible : totalSelectedInSelections;
+  const net = (preview?.netNew > 0) ? preview.netNew : eligible;
 
-  const net = preview?.netNew ?? 0;
-  const alreadySent = preview?.alreadySent ?? 0;
-  const alreadyInQueue = preview?.alreadyInQueue ?? 0;
-  const restarting = preview?.willRestart ?? 0;
   if (alreadyInQueue > 0 && net === 0) {
-    text += `. ${alreadyInQueue} already queued — open Email → Outbox to send the remaining batch.`;
-  } else if (alreadySent > 0 && alreadyInQueue > 0 && net > 0) {
-    text += `. ${net} new will enroll (${alreadySent} already sent, ${alreadyInQueue} already queued).`;
-  } else if (alreadySent > 0 && net > 0) {
-    text += `. ${net} new will enroll (${alreadySent} already sent — won’t be emailed again).`;
-  } else if (alreadySent > 0 && net === 0) {
-    text += `. ${alreadySent} already sent — open Email → Outbox to send any remaining queue.`;
-  } else if (restarting > 0 && net > 0) {
-    text += `. ${net} will enroll (${restarting} will restart from step 1).`;
-  } else if (net > 0) {
-    text += `. ${net} will enroll.`;
-  } else {
-    text += `. 0 will enroll.`;
+    return `${prefix} · All ${alreadyInQueue} contacts are already queued in Email → Outbox.`;
   }
-  return text;
+  if (alreadySent > 0 && net === 0) {
+    return `${prefix} · 0 new to enroll (${alreadySent} contact${alreadySent === 1 ? '' : 's'} were already emailed in this sequence).`;
+  }
+  if (alreadySent > 0 && net > 0) {
+    return `${prefix} · ${net} new will enroll (${alreadySent} already emailed previously).`;
+  }
+  if (restarting > 0 && net > 0) {
+    return `${prefix} · ${net} will enroll (${restarting} restarting from step 1).`;
+  }
+  if (net > 0) {
+    return `${prefix} · ${net} contact${net === 1 ? '' : 's'} ready to enroll.`;
+  }
+
+  return `${prefix} · 0 contacts selected.`;
 }
 
 export function buildImportedListLabels(audience, campaignLabels = {}) {
-  return (audience.importedCampaignIds || []).map((id) => ({
-    id,
-    label: campaignLabels[id] || 'Campaign list',
-  }));
+  return (audience.importedCampaignIds || []).map((id) => {
+    const baseLabel = campaignLabels[id] || 'Campaign list';
+    const selCount = audience.campaignSelections?.[id]?.length;
+    return {
+      id,
+      label: baseLabel,
+      selectedCount: selCount,
+    };
+  });
 }
+

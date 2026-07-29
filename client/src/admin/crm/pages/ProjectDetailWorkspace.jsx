@@ -236,7 +236,7 @@ export default function ProjectDetailWorkspace() {
             />
           </div>
 
-          <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-[var(--color-line)] pt-3">
+          <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-line pt-3">
             <ActionBtn icon={Upload} label="Add companies" onClick={() => setModal('exhibitors')} />
             <ActionBtn icon={Users} label="Import contacts" onClick={() => setModal('blender')} />
             <Link
@@ -282,7 +282,7 @@ export default function ProjectDetailWorkspace() {
                 description="Campaign context is optional. Link this campaign on an opportunity when commercial work begins."
               />
             ) : (
-              <div className="divide-y divide-[var(--color-line)]">
+              <div className="divide-y divide-line">
                 {opportunities.map((opportunity) => (
                   <Link
                     key={opportunity._id}
@@ -290,13 +290,13 @@ export default function ProjectDetailWorkspace() {
                     className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-neutral-50/70"
                   >
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-[var(--color-ink)]">{opportunity.name}</p>
+                      <p className="truncate text-sm font-semibold text-ink">{opportunity.name}</p>
                       <p className="mt-0.5 truncate text-xs text-neutral-500">
                         {opportunity.companyId?.companyName || 'Unknown company'} · {opportunity.stage}
                       </p>
                     </div>
                     <div className="shrink-0 text-right">
-                      <p className="text-sm font-bold tabular-nums text-[var(--color-ink)]">{(opportunity.valueAed || 0).toLocaleString('en-AE')} AED</p>
+                      <p className="text-sm font-bold tabular-nums text-ink">{(opportunity.valueAed || 0).toLocaleString('en-AE')} AED</p>
                       <p className="text-[11px] text-neutral-400">{opportunity.owner || 'Unassigned'}</p>
                     </div>
                   </Link>
@@ -383,7 +383,7 @@ function CompactStat({ icon: Icon, label, value, accent, hint }) {
     <div className="flex items-center gap-2">
       <Icon className={`h-3.5 w-3.5 ${accent ? 'text-brand' : 'text-neutral-400'}`} strokeWidth={2} />
       <span className="text-neutral-500">{label}</span>
-      <span className={`font-bold tabular-nums ${accent ? 'text-brand' : 'text-[var(--color-ink)]'}`}>{value}</span>
+      <span className={`font-bold tabular-nums ${accent ? 'text-brand' : 'text-ink'}`}>{value}</span>
       {hint && <InfoTip text={hint} label={`About ${label}`} />}
     </div>
   );

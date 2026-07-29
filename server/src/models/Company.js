@@ -24,4 +24,8 @@ const companySchema = new mongoose.Schema(
   { timestamps: true, versionKey: false }
 );
 
+companySchema.index({ deletedAt: 1, companyName: 1 });
+companySchema.index({ deletedAt: 1, globalStatus: 1 });
+companySchema.index({ deletedAt: 1, city: 1, country: 1 });
+
 export const Company = mongoose.models.Company || mongoose.model('Company', companySchema);

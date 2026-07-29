@@ -12,9 +12,23 @@ import { RevenueEntry } from '../src/models/RevenueEntry.js';
 import { AnalyticsSnapshot } from '../src/models/AnalyticsSnapshot.js';
 import { SequenceEnrollment } from '../src/models/SequenceEnrollment.js';
 import { SendJob } from '../src/models/SendJob.js';
+import { ContactInteraction } from '../src/models/ContactInteraction.js';
 
 // Setup Mock readiness
+process.env.MONGODB_URI = 'mongodb://localhost:27017/mock_db';
 mongoose.connection.readyState = 1;
+mongoose.connection.collection = () => ({});
+RevenueEntry.aggregate = async () => [];
+SequenceEnrollment.countDocuments = async () => 0;
+AnalyticsSnapshot.create = async () => ({});
+AnalyticsSnapshot.findOne = async () => null;
+AnalyticsSnapshot.findOneAndUpdate = async () => null;
+const ciChain = { select: () => ciChain, sort: () => ciChain, lean: async () => [] };
+ContactInteraction.find = () => ciChain;
+ContactInteraction.aggregate = async () => [];
+const replyChain = { select: () => replyChain, lean: async () => [] };
+Reply.find = () => replyChain;
+SendJob.find = () => replyChain;
 
 async function runTests() {
   console.log('🚀 Starting Data Blender & CRM Workflow Unit Tests...');
@@ -52,6 +66,8 @@ async function runTests() {
       projectName: 'Test GISEC Campaign',
       companiesWithPocsFound: 0,
       targetCompaniesCount: 0,
+      recalculateCosts: async () => {},
+      getRoiPercent: () => 0,
       save: async function() { return this; }
     };
   };
@@ -71,11 +87,29 @@ async function runTests() {
   };
   Company.countDocuments = async () => createdCompanies.length;
 
+  const makeChain = (arr) => {
+    const obj = {
+      select: () => obj,
+      sort: () => obj,
+      skip: () => obj,
+      limit: () => obj,
+      populate: () => obj,
+      lean: async () => arr,
+      then: (onRes, onRej) => Promise.resolve(arr).then(onRes, onRej),
+    };
+    return obj;
+  };
+  Lead.find = () => makeChain(createdLeads);
   Lead.findOne = async ({ email }) => {
     return createdLeads.find(l => l.email === email) || null;
   };
   Lead.create = async (data) => {
-    const doc = { _id: new mongoose.Types.ObjectId(), sources: data.sources || [], ...data };
+    const doc = {
+      _id: new mongoose.Types.ObjectId(),
+      sources: data.sources || [],
+      ...data,
+      save: async function() { return this; }
+    };
     createdLeads.push(doc);
     return doc;
   };
@@ -205,14 +239,14 @@ async function runTests() {
     select: () => leadChain,
     lean: async () => [
       {
-        _id: 'lead-1',
+        _id: '507f1f77bcf86cd799439012',
         name: 'Joy Alon',
         email: 'joy@company.com',
         designation: 'Manager',
-        campaignId: 'proj-1',
+        campaignId: '507f1f77bcf86cd799439010',
         deliveryStatus: 'Replied',
         primarySource: 'Apollo',
-        companyId: { _id: 'comp-1', companyName: 'Company A', domain: 'company.com' }
+        companyId: { _id: '507f1f77bcf86cd799439011', companyName: 'Company A', domain: 'company.com' }
       }
     ]
   };
@@ -221,9 +255,9 @@ async function runTests() {
 
   ProjectCampaign.find = () => ({
     select: () => ({
-      lean: async () => [{ _id: 'proj-1', projectName: 'GISEC 2026' }]
+      lean: async () => [{ _id: '507f1f77bcf86cd799439010', projectName: 'GISEC 2026' }]
     }),
-    lean: async () => [{ _id: 'proj-1', projectName: 'GISEC 2026', financialLedger: { totalProjectCost: 2000, validatedRevenueWon: 8000 } }]
+    lean: async () => [{ _id: '507f1f77bcf86cd799439010', projectName: 'GISEC 2026', financialLedger: { totalProjectCost: 2000, validatedRevenueWon: 8000 } }]
   });
   ProjectCampaign.countDocuments = async () => 1;
 
@@ -232,14 +266,17 @@ async function runTests() {
     skip: () => compChain,
     limit: () => compChain,
     lean: async () => [
-      { _id: 'comp-1', companyName: 'Company A', domain: 'company.com', projectsAssociated: ['proj-1'] }
+      { _id: '507f1f77bcf86cd799439011', companyName: 'Company A', domain: 'company.com', projectsAssociated: ['507f1f77bcf86cd799439010'] }
     ]
   };
   Company.find = () => compChain;
   Company.countDocuments = async () => 1;
+  Company.aggregate = async () => [
+    { _id: '507f1f77bcf86cd799439011', companyName: 'Company A', domain: 'company.com', projectsAssociated: ['507f1f77bcf86cd799439010'] }
+  ];
 
   Lead.aggregate = async () => [
-    { _id: 'comp-1', count: 1 }
+    { _id: '507f1f77bcf86cd799439011', count: 1 }
   ];
 
   const { listAllLeads, listAllCompanies } = await import('../src/services/projectService.js');
@@ -261,7 +298,7 @@ async function runTests() {
   // ==========================================
   console.log('\n--- Test 5: Comprehensive ROI & Metrics Aggregation ---');
 
-  // Stub aggregations for metrics
+  RevenueEntry.aggregate = async () => [];
   SendJob.aggregate = async () => [
     { _id: 0, count: 100 },
     { _id: 1, count: 50 }

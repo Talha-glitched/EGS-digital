@@ -146,7 +146,7 @@ export default function SequenceBuilder({ projectId, project, leadCount = 0, onE
   return (
     <div className="crm-card space-y-6 p-5 sm:p-6">
       <div>
-        <h2 className="text-lg font-bold text-[var(--color-ink)]">Email sequence</h2>
+        <h2 className="text-lg font-bold text-ink">Email sequence</h2>
         <p className="mt-1 text-sm leading-relaxed text-neutral-500">
           A multi-step drip that sends one email at a time during UAE business hours (Mon–Fri, 8:30–17:30 GST) with a
           natural delay between each message.
@@ -173,14 +173,14 @@ export default function SequenceBuilder({ projectId, project, leadCount = 0, onE
 
       <div className="space-y-4">
         {steps.map((step, index) => (
-          <div key={index} className="rounded-xl border border-[var(--color-line)] bg-neutral-50/50 p-4 sm:p-5">
+          <div key={index} className="rounded-xl border border-line bg-neutral-50/50 p-4 sm:p-5">
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">
                   {index + 1}
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-[var(--color-ink)]">Step {index + 1}</p>
+                  <p className="text-sm font-semibold text-ink">Step {index + 1}</p>
                   <p className="text-xs text-neutral-500">
                     {index === 0 ? 'Sends when enrolled' : `Waits ${step.dayDelay} day(s) after previous step`}
                   </p>
@@ -211,7 +211,7 @@ export default function SequenceBuilder({ projectId, project, leadCount = 0, onE
                   />
                 </div>
               </Field>
-              <label className="flex items-center gap-3 rounded-lg border border-[var(--color-line-strong)] bg-white px-4 py-3">
+              <label className="flex items-center gap-3 rounded-lg border border-line-strong bg-white px-4 py-3">
                 <input
                   type="checkbox"
                   className="h-4 w-4 rounded border-neutral-300 text-brand focus:ring-brand/30"
@@ -219,7 +219,7 @@ export default function SequenceBuilder({ projectId, project, leadCount = 0, onE
                   onChange={(e) => updateStep(index, 'useAiPersonalization', e.target.checked)}
                 />
                 <Sparkles className="h-4 w-4 text-brand" />
-                <span className="text-sm font-medium text-[var(--color-ink)]">AI personalization</span>
+                <span className="text-sm font-medium text-ink">AI personalization</span>
               </label>
             </div>
 
@@ -240,7 +240,7 @@ export default function SequenceBuilder({ projectId, project, leadCount = 0, onE
         ))}
       </div>
 
-      <div className="flex flex-col-reverse gap-3 border-t border-[var(--color-line)] pt-5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col-reverse gap-3 border-t border-line pt-5 sm:flex-row sm:items-center sm:justify-between">
         <button type="button" onClick={addStep} className="crm-btn-secondary">
           <Plus className="h-4 w-4" />
           Add another step

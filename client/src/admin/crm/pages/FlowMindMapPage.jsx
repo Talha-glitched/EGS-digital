@@ -219,7 +219,7 @@ export default function FlowMindMapPage() {
         subtitle="Design, review, and deliberately launch multi-step outreach campaigns."
       />
 
-      <div className="crm-card p-4 flex flex-col gap-3 sm:flex-row sm:items-center justify-between border-b border-[var(--color-line)] bg-slate-50/50">
+      <div className="crm-card p-4 flex flex-col gap-3 sm:flex-row sm:items-center justify-between border-b border-line bg-slate-50/50">
         <div className="flex items-center gap-3 flex-1">
           <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Select Campaign Flow:</label>
           <SearchableSelect
@@ -255,9 +255,9 @@ export default function FlowMindMapPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6 items-start min-h-[500px]">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6 items-start min-h-125">
         {/* Visual Mind-Map Canvas */}
-        <div className="crm-card p-6 flex flex-col items-center bg-slate-50/20 border border-[var(--color-line)] h-[550px] relative overflow-y-auto">
+        <div className="crm-card p-6 flex flex-col items-center bg-slate-50/20 border border-line h-137.5 relative overflow-y-auto">
           <div className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest absolute top-4 left-4">Mind-Map Workspace Canvas</div>
           
           {/* Start node */}
@@ -367,7 +367,7 @@ export default function FlowMindMapPage() {
         </div>
 
         {/* Step configuration panel */}
-        <div className="crm-card p-5 space-y-5 border border-[var(--color-line)] h-[550px] overflow-y-auto">
+        <div className="crm-card p-5 space-y-5 border border-line h-137.5 overflow-y-auto">
           <div>
             <h3 className="text-sm font-bold text-neutral-800 flex items-center gap-1.5">
               <Clock className="h-4 w-4 text-brand" />
@@ -407,7 +407,7 @@ export default function FlowMindMapPage() {
               )}
             </Field>
 
-            <label className="flex items-center gap-2.5 rounded-lg border border-[var(--color-line)] bg-white p-2.5 cursor-pointer">
+            <label className="flex items-center gap-2.5 rounded-lg border border-line bg-white p-2.5 cursor-pointer">
               <input
                 type="checkbox"
                 className="h-3.5 w-3.5 rounded border-neutral-300 text-brand focus:ring-brand"

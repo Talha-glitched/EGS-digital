@@ -138,7 +138,7 @@ export default function GlobalDashboard() {
         action={
           <>
             <Link to="/admin/crm/projects" className="crm-btn-secondary"><FolderKanban className="h-4 w-4" />All campaigns</Link>
-            <button type="button" onClick={() => setShowWizard(true)} className="crm-btn-primary"><Plus className="h-[18px] w-[18px]" />New campaign</button>
+            <button type="button" onClick={() => setShowWizard(true)} className="crm-btn-primary"><Plus className="h-4.5 w-4.5" />New campaign</button>
           </>
         }
       />
@@ -149,7 +149,7 @@ export default function GlobalDashboard() {
             <div className="flex items-start gap-3">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-700"><AlertTriangle className="h-4 w-4" /></div>
               <div>
-                <p className="text-sm font-semibold text-[var(--color-ink)]">Attention needed</p>
+                <p className="text-sm font-semibold text-ink">Attention needed</p>
                 <p className="mt-0.5 text-xs leading-relaxed text-neutral-500">
                   {workspace.metrics.overdueTasks || 0} overdue follow-up(s), {workspace.metrics.interestedReplies7d || 0} interested reply/replies this week, and {workspace.metrics.failedSendJobs || 0} failed send job(s).
                 </p>
@@ -193,7 +193,7 @@ export default function GlobalDashboard() {
                     </button>
                     <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${task.priority === 'High' ? 'bg-red-500' : 'bg-sky-500'}`} />
                     <div className="min-w-0 flex-1">
-                      <p className="text-[13px] font-semibold text-[var(--color-ink)]">{task.title}</p>
+                      <p className="text-[13px] font-semibold text-ink">{task.title}</p>
                       <p className="mt-0.5 text-xs text-neutral-500">{task.companyId?.companyName || task.opportunityId?.name || 'General follow-up'}</p>
                     </div>
                     {task.dueAt && (
@@ -227,11 +227,11 @@ export default function GlobalDashboard() {
                   <ListRow key={item._id} as={Link} to="/admin/crm/pipeline" className="group hover:bg-neutral-50/80">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand"><BriefcaseBusiness className="h-4 w-4" /></div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[13px] font-semibold text-[var(--color-ink)] group-hover:text-brand">{item.name}</p>
+                      <p className="truncate text-[13px] font-semibold text-ink group-hover:text-brand">{item.name}</p>
                       <p className="mt-0.5 truncate text-xs text-neutral-500">{item.companyId?.companyName || 'Unknown company'} · {item.stage}</p>
                     </div>
                     <div className="shrink-0 text-right">
-                      <p className="text-[13px] font-bold tabular-nums text-[var(--color-ink)]">{formatCurrency(item.valueAed)}</p>
+                      <p className="text-[13px] font-bold tabular-nums text-ink">{formatCurrency(item.valueAed)}</p>
                       <p className="text-[10px] text-neutral-400">{item.probability || 0}% probability</p>
                     </div>
                     <ChevronRight className="h-4 w-4 shrink-0 text-neutral-300 group-hover:text-brand" />
@@ -256,7 +256,7 @@ export default function GlobalDashboard() {
 
       {!projects.length && (
         <PageSection>
-          <h2 className="text-[15px] font-semibold text-[var(--color-ink)]">Getting started</h2>
+          <h2 className="text-[15px] font-semibold text-ink">Getting started</h2>
           <WorkflowGuide steps={ONBOARDING_STEPS} />
         </PageSection>
       )}
@@ -277,7 +277,7 @@ export default function GlobalDashboard() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="truncate text-sm font-semibold text-[var(--color-ink)] group-hover:text-brand">{project.projectName}</p>
+                      <p className="truncate text-sm font-semibold text-ink group-hover:text-brand">{project.projectName}</p>
                       <Badge tone={STATUS_TONE[project.status] || 'neutral'}>{project.status}</Badge>
                     </div>
                     <p className="mt-0.5 truncate text-xs text-neutral-500">

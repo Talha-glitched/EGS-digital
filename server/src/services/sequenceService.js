@@ -90,8 +90,18 @@ export async function resolveAudienceLeadIds(projectId, options = {}) {
   const deliveryFilter = enrollableDeliveryFilter();
 
   for (const cid of importedCampaignIds) {
-    const ids = await Lead.find({ campaignId: cid, ...deliveryFilter }).distinct('_id');
-    ids.forEach((id) => leadIdSet.add(String(id)));
+    const selections = options.campaignSelections?.[cid];
+    if (Array.isArray(selections) && selections.length) {
+      const selectedIds = normalizeIdList(selections);
+      const ids = await Lead.find({
+        _id: { $in: selectedIds },
+        ...deliveryFilter,
+      }).distinct('_id');
+      ids.forEach((id) => leadIdSet.add(String(id)));
+    } else {
+      const ids = await Lead.find({ campaignId: cid, ...deliveryFilter }).distinct('_id');
+      ids.forEach((id) => leadIdSet.add(String(id)));
+    }
   }
 
   if (includeCompanyIds.length) {
@@ -960,6 +970,18 @@ export async function getSequence(id) {
   return seq;
 }
 
+function normalizeAudiencePayload(aud) {
+  if (!aud || typeof aud !== 'object') return undefined;
+  return {
+    importedCampaignIds: Array.isArray(aud.importedCampaignIds) ? aud.importedCampaignIds.map(String) : [],
+    campaignSelections: aud.campaignSelections && typeof aud.campaignSelections === 'object' ? aud.campaignSelections : {},
+    includeCompanyIds: Array.isArray(aud.includeCompanyIds) ? aud.includeCompanyIds.map(String) : [],
+    includeContactIds: Array.isArray(aud.includeContactIds) ? aud.includeContactIds.map(String) : [],
+    excludeCompanyIds: Array.isArray(aud.excludeCompanyIds) ? aud.excludeCompanyIds.map(String) : [],
+    excludeContactIds: Array.isArray(aud.excludeContactIds) ? aud.excludeContactIds.map(String) : [],
+  };
+}
+
 export async function createStandaloneSequence(payload = {}) {
   const steps = (payload.steps || []).map((step, index) => ({
     stepOrder: index + 1,
@@ -971,16 +993,20 @@ export async function createStandaloneSequence(payload = {}) {
     aiPrompt: String(step.aiPrompt || ''),
   }));
 
+  const aud = normalizeAudiencePayload(payload.audience);
+  const primaryCampaignId = payload.campaignId || aud?.importedCampaignIds?.[0] || null;
+
   return Sequence.create({
-    campaignId: payload.campaignId || null,
+    campaignId: primaryCampaignId,
     name: String(payload.name || 'Outreach Sequence').trim(),
     steps,
     flowGraph: normalizeFlowGraph(payload.flowGraph),
+    audience: aud,
     isActive: false,
   });
 }
 
-export async function createSequence(projectId, payload) {
+export async function createSequence(projectId, payload = {}) {
   if (!projectId) {
     return createStandaloneSequence(payload);
   }
@@ -1002,16 +1028,19 @@ export async function createSequence(projectId, payload) {
     aiPrompt: String(step.aiPrompt || ''),
   }));
 
+  const aud = normalizeAudiencePayload(payload.audience);
+
   return Sequence.create({
     campaignId: projectId,
     name: String(payload.name || 'Outreach Sequence').trim(),
     steps,
     flowGraph: normalizeFlowGraph(payload.flowGraph),
+    audience: aud,
     isActive: false,
   });
 }
 
-export async function updateSequence(id, payload) {
+export async function updateSequence(id, payload = {}) {
   const seq = await Sequence.findById(id);
   if (!seq) {
     const error = new Error('Sequence not found.');
@@ -1033,6 +1062,15 @@ export async function updateSequence(id, payload) {
   }
   if (payload.flowGraph !== undefined) {
     seq.flowGraph = normalizeFlowGraph(payload.flowGraph);
+  }
+  if (payload.audience !== undefined) {
+    seq.audience = normalizeAudiencePayload(payload.audience);
+    if (!seq.campaignId && seq.audience?.importedCampaignIds?.length) {
+      seq.campaignId = seq.audience.importedCampaignIds[0];
+    }
+  }
+  if (payload.campaignId) {
+    seq.campaignId = payload.campaignId;
   }
   if (payload.isActive !== undefined) seq.isActive = Boolean(payload.isActive);
   await seq.save();

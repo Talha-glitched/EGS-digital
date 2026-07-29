@@ -9,12 +9,13 @@ export default function SearchableCombobox({
   onChange,
   options = [],
   placeholder = 'Select or type…',
-  searchPlaceholder = 'Search…',
-  emptyLabel = 'No matches',
+  searchPlaceholder = 'Type to search options…',
+  emptyLabel = 'No matches found',
   allowCustom = true,
   disabled = false,
   className = '',
   menuMinWidth = 260,
+  requireTypeToSearch = true,
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -31,11 +32,16 @@ export default function SearchableCombobox({
 
   const filtered = useMemo(() => {
     const term = query.trim().toLowerCase();
-    if (!term) return options;
+    if (!term) {
+      if (requireTypeToSearch && options.length > 5) {
+        return value ? options.filter((opt) => String(opt.value) === String(value)) : [];
+      }
+      return options;
+    }
     return options.filter((option) =>
       `${option.label || ''} ${option.hint || ''}`.toLowerCase().includes(term),
     );
-  }, [options, query]);
+  }, [options, query, value, requireTypeToSearch]);
 
   const customTerm = query.trim();
   const showCustomOption = allowCustom && customTerm && !filtered.some(
@@ -146,15 +152,17 @@ export default function SearchableCombobox({
           </div>
 
           <div className="crm-searchable-select-options crm-scroll">
-            {showCustomOption && (
+            {customTerm && allowCustom && (
               <button
                 type="button"
-                className="crm-searchable-select-option is-create"
+                className="crm-searchable-select-option is-create text-left w-full py-2 px-3 hover:bg-brand/10 transition flex items-center justify-between border-b border-neutral-100 bg-brand/5"
                 onClick={() => applyValue(customTerm)}
               >
-                <span className="text-sm font-medium text-[var(--color-ink)]">
-                  Contains “{customTerm}”
+                <span className="text-xs font-semibold text-brand flex items-center gap-1.5 min-w-0 truncate">
+                  <Search className="h-3.5 w-3.5 shrink-0" />
+                  <span>Search database for <strong>"{customTerm}"</strong></span>
                 </span>
+                <span className="text-[10px] text-neutral-400 font-mono shrink-0 ml-2">Press Enter ↵</span>
               </button>
             )}
 
@@ -177,7 +185,9 @@ export default function SearchableCombobox({
                 </button>
               );
             }) : !showCustomOption ? (
-              <p className="px-3 py-4 text-center text-xs text-neutral-500">{emptyLabel}</p>
+              <p className="px-3 py-4 text-center text-xs text-neutral-400 font-medium">
+                {!query.trim() && requireTypeToSearch ? 'Type to search database options…' : emptyLabel}
+              </p>
             ) : null}
           </div>
         </div>,

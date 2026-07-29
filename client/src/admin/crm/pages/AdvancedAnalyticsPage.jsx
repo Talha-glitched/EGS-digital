@@ -123,9 +123,9 @@ export default function AdvancedAnalyticsPage() {
 
   return (
     <PageShell>
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--color-line)] bg-white px-6 py-4 shadow-sm rounded-2xl mb-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line bg-white px-6 py-4 shadow-sm rounded-2xl mb-6">
         <div>
-          <h1 className="text-xl font-extrabold text-[var(--color-ink)]">Analytics & ROI Performance Reports</h1>
+          <h1 className="text-xl font-extrabold text-ink">Analytics & ROI Performance Reports</h1>
           <p className="text-xs text-neutral-500 font-medium mt-0.5 flex items-center gap-2">
             {data?.isCached ? (
               <span className="inline-flex items-center gap-1.5 text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
@@ -167,7 +167,7 @@ export default function AdvancedAnalyticsPage() {
         <SplitGrid>
         
         {/* Graph 1: Campaign Revenue Won */}
-        <Card className="flex flex-col min-h-[340px]">
+        <Card className="flex flex-col min-h-85">
           <CardHeader 
             title="Revenue Won by Campaign (AED)" 
             subtitle="Validated revenue generated across campaign projects" 
@@ -198,7 +198,7 @@ export default function AdvancedAnalyticsPage() {
                     </div>
                     {/* Bar */}
                     <div 
-                      className="w-12 bg-gradient-to-t from-red-700 to-brand hover:to-brand-hover rounded-t-md transition-all duration-500 ease-out cursor-pointer shadow-sm"
+                      className="w-12 bg-linear-to-t from-red-700 to-brand hover:to-brand-hover rounded-t-md transition-all duration-500 ease-out cursor-pointer shadow-sm"
                       style={{ height: `${heightPercent}%` }}
                     />
                     {/* Label */}
@@ -213,7 +213,7 @@ export default function AdvancedAnalyticsPage() {
         </Card>
 
         {/* Graph 2: Lead Outcome Segmentations */}
-        <Card className="flex flex-col min-h-[340px]">
+        <Card className="flex flex-col min-h-85">
           <CardHeader 
             title="Lead Segment Outcomes" 
             subtitle="Proportional breakdown of point of contact status states" 
@@ -262,11 +262,11 @@ export default function AdvancedAnalyticsPage() {
                 </div>
 
                 {/* Legend */}
-                <div className="space-y-2.5 max-w-[200px]">
+                <div className="space-y-2.5 max-w-50">
                   {outcomeDoughnut.map((seg, i) => (
                     <div key={i} className="flex items-center gap-2 text-xs">
                       <span className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: seg.color }} />
-                      <span className="text-neutral-500 font-semibold truncate max-w-[100px]">{seg.label}:</span>
+                      <span className="text-neutral-500 font-semibold truncate max-w-25">{seg.label}:</span>
                       <span className="font-bold text-neutral-800 tabular-nums">{seg.count} ({seg.percent.toFixed(0)}%)</span>
                     </div>
                   ))}
@@ -277,7 +277,7 @@ export default function AdvancedAnalyticsPage() {
         </Card>
 
         {/* Graph 3: Sequence Performance (Reply Rates %) */}
-        <Card className="flex flex-col min-h-[340px]">
+        <Card className="flex flex-col min-h-85">
           <CardHeader 
             title="Step-by-Step Response Rate (%)" 
             subtitle="Which message step index yields the highest reply conversions" 
@@ -303,7 +303,7 @@ export default function AdvancedAnalyticsPage() {
                     {step.rate.toFixed(1)}% ({step.replies} replies)
                   </div>
                   <div 
-                    className="w-10 bg-gradient-to-t from-blue-700 to-sky-400 hover:from-blue-600 hover:to-sky-300 rounded-t-md transition-all duration-500 ease-out cursor-pointer"
+                    className="w-10 bg-linear-to-t from-blue-700 to-sky-400 hover:from-blue-600 hover:to-sky-300 rounded-t-md transition-all duration-500 ease-out cursor-pointer"
                     style={{ height: `${heightPercent}%` }}
                   />
                   <p className="text-[10px] font-bold text-neutral-500 mt-2">Step {step.step}</p>
@@ -315,7 +315,7 @@ export default function AdvancedAnalyticsPage() {
         </Card>
 
         {/* Graph 4: Data Discovery Vendors Coverage */}
-        <Card className="flex flex-col min-h-[340px]">
+        <Card className="flex flex-col min-h-85">
           <CardHeader 
             title="Discovery Source Contribution" 
             subtitle="Percentage of point of contact profiles added by source vendor" 
@@ -362,7 +362,7 @@ export default function AdvancedAnalyticsPage() {
                   </div>
                 </div>
 
-                <div className="space-y-2 max-w-[200px]">
+                <div className="space-y-2 max-w-50">
                   {vendorDoughnut.map((seg, i) => (
                     <div key={i} className="flex items-center gap-2 text-xs">
                       <span className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: seg.color }} />
@@ -429,7 +429,7 @@ function CampaignRoiTable({ campaignMetrics = [], navigate }) {
 
   return (
     <>
-      <div className="flex flex-wrap items-center gap-2 border-b border-[var(--color-line)] px-5 py-3">
+      <div className="flex flex-wrap items-center gap-2 border-b border-line px-5 py-3">
         <AdvancedFilterPopover
           schema={CAMPAIGN_ROI_FILTER_SCHEMA}
           filters={advancedFilters}
@@ -451,7 +451,7 @@ function CampaignRoiTable({ campaignMetrics = [], navigate }) {
         onClear={clearSort}
       />
       <div className="crm-scroll overflow-x-auto">
-        <table className="crm-table min-w-[700px]">
+        <table className="crm-table min-w-175">
           <thead>
             <tr className="crm-table-head">
               <SortableTableHeader label="Campaign Project" sortKey="projectName" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
@@ -468,7 +468,7 @@ function CampaignRoiTable({ campaignMetrics = [], navigate }) {
                 key={c._id}
                 onClick={() => navigate(`/admin/crm/projects/${c._id}`)}
               >
-                <td className="font-semibold text-[var(--color-ink)]">{c.projectName}</td>
+                <td className="font-semibold text-ink">{c.projectName}</td>
                 <td className="text-neutral-500 font-medium">{c.milestone || 'General Exhibition'}</td>
                 <td className="font-mono text-neutral-600">{formatCurrency(c.totalCost)}</td>
                 <td className="font-mono text-emerald-700 font-semibold">{formatCurrency(c.revenueWon)}</td>

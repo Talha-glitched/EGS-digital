@@ -21,6 +21,7 @@ import { ProjectCampaign } from '../models/ProjectCampaign.js';
 import { sendAuthenticatedMail, getFromIdentity } from '../services/mailTransport.js';
 import { getSystemSettings, updateSystemSettings } from '../services/systemSettingsService.js';
 import { getResendMetrics } from '../services/resendService.js';
+import { syncAllResendReplies } from '../services/resendAutoSyncService.js';
 import { sendJobNow } from '../services/sendWorker.js';
 import {
   listOpportunities,
@@ -207,6 +208,11 @@ router.use((req, res, next) => {
   if (PUBLIC_PATHS.has(req.path)) return next();
   return requireAdmin(req, res, () => requireRoutePermission(req, res, next));
 });
+
+router.post('/sync/resend-replies', asyncRoute(async (req, res) => {
+  const stats = await syncAllResendReplies();
+  res.json(stats);
+}));
 
 router.get('/status', asyncRoute(async (req, res) => {
   const session = readAdminCookie(req);

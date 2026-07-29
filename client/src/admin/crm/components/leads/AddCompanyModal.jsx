@@ -107,7 +107,7 @@ export default function AddCompanyModal({ open, onClose, onCreated }) {
           </Field>
         </div>
 
-        <div className="flex justify-end gap-2 border-t border-[var(--color-line)] pt-4">
+        <div className="flex justify-end gap-2 border-t border-line pt-4">
           <button type="button" className="crm-btn-secondary" onClick={handleClose} disabled={busy}>
             Cancel
           </button>

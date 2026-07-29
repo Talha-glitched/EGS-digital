@@ -55,8 +55,10 @@ function FilterComboboxRow({ label, value, onChange, options, placeholder }) {
           onChange={onChange}
           options={options || []}
           placeholder={placeholder || `Search ${label.toLowerCase()}…`}
-          searchPlaceholder={`Search ${label.toLowerCase()}…`}
-          emptyLabel="Type to filter or pick a value"
+          searchPlaceholder={`Type to search ${label.toLowerCase()}…`}
+          emptyLabel="No matches found"
+          requireTypeToSearch={false}
+          allowCustom={true}
         />
       </div>
     </div>
@@ -93,7 +95,8 @@ function FilterSelectRow({ label, value, onChange, options }) {
           onChange={onChange}
           options={options}
           placeholder="Select…"
-          searchPlaceholder={`Search ${label.toLowerCase()}…`}
+          searchPlaceholder={`Type to filter ${label.toLowerCase()}…`}
+          requireTypeToSearch={false}
         />
       </div>
     </div>
@@ -109,9 +112,12 @@ function FilterMultiRow({ label, value, onChange, options }) {
           className="crm-filter-select-full"
           values={value || []}
           onChange={onChange}
-          options={options}
+          options={options || []}
           placeholder={`Any ${label.toLowerCase()}`}
-          searchPlaceholder={`Search ${label.toLowerCase()}…`}
+          searchPlaceholder={`Type to filter ${label.toLowerCase()}…`}
+          emptyLabel="No options available"
+          requireTypeToSearch={false}
+          allowCustomQuery={false}
         />
       </div>
     </div>
@@ -279,16 +285,18 @@ function FilterPanelBody({ schema, draft, setDraft, matchMode, setMatchMode, act
 
 export function AdvancedFilterPopover({
   schema,
-  filters,
+  filters = {},
   onChange,
   matchMode = 'all',
   className = '',
   label = 'Filters',
 }) {
+  const groups = schema?.groups || [];
+  const schemaLabel = schema?.label || 'Filter';
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState(filters);
   const [draftMatch, setDraftMatch] = useState(matchMode);
-  const [activeGroupId, setActiveGroupId] = useState(schema.groups[0]?.id || '');
+  const [activeGroupId, setActiveGroupId] = useState(groups[0]?.id || '');
   const panelId = useId();
   const { mounted, visible, exiting } = useOverlayTransition(open);
 
@@ -300,7 +308,7 @@ export function AdvancedFilterPopover({
     if (!open) return undefined;
     setDraft(filters);
     setDraftMatch(matchMode);
-    setActiveGroupId(schema.groups[0]?.id || '');
+    setActiveGroupId(groups[0]?.id || '');
     const onKey = (event) => {
       if (event.key === 'Escape' && !hasOpenNestedOverlay()) setOpen(false);
     };
@@ -310,7 +318,7 @@ export function AdvancedFilterPopover({
       document.body.style.overflow = '';
       window.removeEventListener('keydown', onKey);
     };
-  }, [open, filters, matchMode, schema.groups]);
+  }, [open, filters, matchMode, groups]);
 
   function applyDraft() {
     onChange(draft, draftMatch);
@@ -325,7 +333,9 @@ export function AdvancedFilterPopover({
     setOpen(false);
   }
 
-  const showNav = schema.groups.length > 1;
+  if (!schema || !groups.length) return null;
+
+  const showNav = groups.length > 1;
 
   return (
     <>
@@ -364,12 +374,12 @@ export function AdvancedFilterPopover({
             )}
             role="dialog"
             aria-modal="true"
-            aria-label={`${schema.label} filters`}
+            aria-label={`${schemaLabel} filters`}
             onMouseDown={(e) => e.stopPropagation()}
           >
             <header className="crm-filter-dialog-header">
               <div>
-                <p className="text-base font-bold text-[var(--color-ink)]">{schema.label}</p>
+                <p className="text-base font-bold text-[var(--color-ink)]">{schemaLabel}</p>
                 <p className="text-xs text-neutral-500">Browse categories, then set filters for each facet.</p>
               </div>
               <button type="button" className="crm-icon-btn" onClick={() => setOpen(false)} aria-label="Close filters">

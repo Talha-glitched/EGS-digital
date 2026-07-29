@@ -163,7 +163,7 @@ export default function ProjectsPage() {
       <PageHeader
         action={
           <button type="button" onClick={() => setShowWizard(true)} className="crm-btn-primary">
-            <Plus className="h-[18px] w-[18px]" />
+            <Plus className="h-4.5 w-4.5" />
             New campaign
           </button>
         }
@@ -194,7 +194,7 @@ export default function ProjectsPage() {
             />
           ) : (
             <>
-              <div className="flex flex-col gap-3 border-b border-[var(--color-line)] px-4 py-3 sm:flex-row sm:items-center">
+              <div className="flex flex-col gap-3 border-b border-line px-4 py-3 sm:flex-row sm:items-center">
                 <AdvancedFilterPopover
                   schema={CAMPAIGN_FILTER_SCHEMA}
                   filters={advancedFilters}
@@ -258,7 +258,7 @@ export default function ProjectsPage() {
                         ariaLabel={`Select ${campaign.projectName}`}
                       />
                       <td>
-                        <p className="font-semibold text-[var(--color-ink)]">{campaign.projectName}</p>
+                        <p className="font-semibold text-ink">{campaign.projectName}</p>
                         {campaign.milestone ? (
                           <p className="mt-0.5 text-[11px] text-neutral-500">{campaign.milestone}</p>
                         ) : null}
@@ -328,7 +328,7 @@ function InsightChip({ icon: Icon, label, value }) {
       </div>
       <div>
         <p className="text-[10px] font-semibold uppercase tracking-wide text-neutral-500">{label}</p>
-        <p className="text-sm font-bold tabular-nums text-[var(--color-ink)]">{value}</p>
+        <p className="text-sm font-bold tabular-nums text-ink">{value}</p>
       </div>
     </div>
   );

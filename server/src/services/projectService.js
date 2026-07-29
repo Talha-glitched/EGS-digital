@@ -75,7 +75,7 @@ export function getCrmAdminStatus() {
 
 const EMAILED_STATUSES = ['Emailed Outbound', 'Replied', 'Bounced / Invalid'];
 
-const MAX_LIST_LIMIT = 500;
+const MAX_LIST_LIMIT = 50000;
 
 const CAMPAIGN_STATUSES = ['Active Planning', 'Active Campaigning', 'Completed', 'Archived'];
 const AUTO_LOCKED_STATUSES = ['Completed', 'Archived'];
@@ -848,26 +848,118 @@ export async function listAllLeads({
   serviceCategory,
   followUp,
   sort,
+  sortKey,
+  sortDir = 'asc',
+  name,
+  email,
+  designation,
+  filters,
   page = 1,
   limit = 50,
 } = {}) {
   assertDb();
   const onlyRightPoc = rightPocOnly === true || rightPocOnly === '1' || rightPocOnly === 'true';
   const query = { deletedAt: null };
-  if (campaignId && campaignId !== 'All') {
-    query.campaignId = campaignId;
+
+  let filterObj = {};
+  if (typeof filters === 'string') {
+    try { filterObj = JSON.parse(filters); } catch (e) {}
+  } else if (typeof filters === 'object' && filters !== null) {
+    filterObj = filters;
   }
-  if (deliveryStatus && deliveryStatus !== 'All') {
-    query.deliveryStatus = deliveryStatus;
+
+  const nameVal = name || filterObj.name;
+  if (nameVal && typeof nameVal === 'string' && nameVal.trim()) {
+    query.name = new RegExp(nameVal.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+  }
+
+  const emailVal = email || filterObj.email;
+  if (emailVal && typeof emailVal === 'string' && emailVal.trim()) {
+    query.email = new RegExp(emailVal.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+  }
+
+  const desigVal = designation || filterObj.designation;
+  if (desigVal && typeof desigVal === 'string' && desigVal.trim()) {
+    query.designation = new RegExp(desigVal.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+  }
+
+  const campVal = campaignId || filterObj.campaignId;
+  if (campVal && campVal !== 'All' && campVal !== 'any' && campVal !== '') {
+    query.campaignId = campVal;
+  }
+  const statusVal = deliveryStatus || filterObj.deliveryStatus;
+  if (statusVal && statusVal !== 'All') {
+    const statuses = Array.isArray(statusVal)
+      ? statusVal
+      : String(statusVal).split(',').map((s) => s.trim()).filter(Boolean);
+    if (statuses.length) {
+      if (statuses.includes('Replied')) {
+        query.$and = [
+          ...(query.$and || []),
+          {
+            $or: [
+              { deliveryStatus: { $in: statuses } },
+              { hasResponded: true },
+            ],
+          },
+        ];
+      } else {
+        query.deliveryStatus = { $in: statuses };
+      }
+    }
+  }
+
+  const respondedVal = filterObj.hasResponded;
+  if (respondedVal !== undefined && respondedVal !== null && respondedVal !== '' && respondedVal !== 'any') {
+    if (respondedVal === 'yes' || respondedVal === 'true' || respondedVal === true) {
+      query.$and = [
+        ...(query.$and || []),
+        {
+          $or: [
+            { deliveryStatus: 'Replied' },
+            { hasResponded: true },
+          ],
+        },
+      ];
+    } else if (respondedVal === 'no' || respondedVal === 'false' || respondedVal === false) {
+      query.hasResponded = { $ne: true };
+      query.deliveryStatus = { $ne: 'Replied' };
+    }
   }
   if (onlyRightPoc) {
     query['pocQualification.status'] = 'Confirmed';
   } else if (pocStatus && pocStatus !== 'All') {
     query['pocQualification.status'] = pocStatus;
   }
-  if (relationshipStatus && relationshipStatus !== 'All') {
-    query['relationshipProfile.status'] = relationshipStatus;
+  const relStatusVal = relationshipStatus || filterObj.relationshipStatus;
+  if (relStatusVal && relStatusVal !== 'All' && relStatusVal !== 'any') {
+    const statuses = Array.isArray(relStatusVal) ? relStatusVal : String(relStatusVal).split(',').map((s) => s.trim()).filter(Boolean);
+    if (statuses.length) query['relationshipProfile.status'] = { $in: statuses };
   }
+
+  const relOwnerVal = filterObj.relationshipOwner;
+  if (relOwnerVal && typeof relOwnerVal === 'string' && relOwnerVal.trim()) {
+    query['relationshipProfile.owner'] = new RegExp(relOwnerVal.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+  }
+
+  const lastIntVal = filterObj.lastInteractionAt;
+  if (lastIntVal && typeof lastIntVal === 'object') {
+    if (lastIntVal.from || lastIntVal.to) {
+      query.lastInteractionAt = {};
+      if (lastIntVal.from) query.lastInteractionAt.$gte = new Date(lastIntVal.from);
+      if (lastIntVal.to) query.lastInteractionAt.$lte = new Date(lastIntVal.to);
+    }
+  }
+
+  const nextFollowVal = filterObj.nextFollowUpAt;
+  if (nextFollowVal && typeof nextFollowVal === 'object') {
+    if (nextFollowVal.from || nextFollowVal.to) {
+      query['relationshipProfile.nextFollowUpAt'] = {};
+      if (nextFollowVal.from) query['relationshipProfile.nextFollowUpAt'].$gte = new Date(nextFollowVal.from);
+      if (nextFollowVal.to) query['relationshipProfile.nextFollowUpAt'].$lte = new Date(nextFollowVal.to);
+    }
+  }
+
   if (serviceCategory && serviceCategory !== 'All') {
     query['relationshipProfile.serviceCategories'] = serviceCategory;
   }
@@ -894,21 +986,138 @@ export async function listAllLeads({
     const re = new RegExp(search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
     query.$and = [
       ...(query.$and || []),
-      { $or: [{ name: re }, { email: re }, { designation: re }] },
+      { $or: [{ name: re }, { email: re }, { designation: re }, { companyName: re }] },
     ];
   }
 
   const p = Math.max(Number(page) || 1, 1);
-  const lim = Math.min(Math.max(Number(limit) || 50, 1), 500);
+  const lim = Math.min(Math.max(Number(limit) || 50, 1), 50000);
   const skip = (p - 1) * lim;
-  const sortSpec = sort === 'followUp'
-    ? { 'relationshipProfile.nextFollowUpAt': 1, name: 1 }
-    : { createdAt: -1 };
 
-  const [leads, total] = await Promise.all([
-    Lead.find(query).sort(sortSpec).skip(skip).limit(lim).populate('companyId').lean(),
-    Lead.countDocuments(query),
-  ]);
+  const dir = (sortDir === 'desc' || sortDir === '-1' || Number(sortDir) === -1) ? -1 : 1;
+  const activeSortKey = sortKey || (sort === 'followUp' ? 'followUp' : 'createdAt');
+  let leads = [];
+  let total = 0;
+
+  if (activeSortKey === 'companyName') {
+    const pipeline = [
+      { $match: query },
+      {
+        $lookup: {
+          from: 'companies',
+          localField: 'companyId',
+          foreignField: '_id',
+          as: '_company',
+        },
+      },
+      { $unwind: { path: '$_company', preserveNullAndEmptyArrays: true } },
+      {
+        $addFields: {
+          companyNameSort: { $ifNull: ['$_company.companyName', ''] },
+        },
+      },
+      { $sort: { companyNameSort: dir, name: 1 } },
+      { $skip: skip },
+      { $limit: lim },
+    ];
+
+    [leads, total] = await Promise.all([
+      Lead.aggregate(pipeline),
+      Lead.countDocuments(query),
+    ]);
+  } else if (activeSortKey === 'campaignName') {
+    const pipeline = [
+      { $match: query },
+      {
+        $lookup: {
+          from: 'projectcampaigns',
+          localField: 'campaignId',
+          foreignField: '_id',
+          as: '_campaign',
+        },
+      },
+      { $unwind: { path: '$_campaign', preserveNullAndEmptyArrays: true } },
+      {
+        $addFields: {
+          campaignNameSort: { $ifNull: ['$_campaign.projectName', ''] },
+        },
+      },
+      { $sort: { campaignNameSort: dir, name: 1 } },
+      { $skip: skip },
+      { $limit: lim },
+    ];
+
+    [leads, total] = await Promise.all([
+      Lead.aggregate(pipeline),
+      Lead.countDocuments(query),
+    ]);
+  } else if (activeSortKey === 'name') {
+    const pipeline = [
+      { $match: query },
+      {
+        $addFields: {
+          nameSortGroup: {
+            $cond: {
+              if: {
+                $and: [
+                  { $ne: ['$name', null] },
+                  { $ne: ['$name', ''] },
+                  { $ne: ['$name', '—'] },
+                  { $ne: ['$name', '-'] },
+                  { $regexMatch: { input: '$name', regex: '^[a-zA-Z0-9]' } }
+                ]
+              },
+              then: 1,
+              else: 2
+            }
+          }
+        }
+      },
+      { $sort: { nameSortGroup: 1, name: dir } },
+      { $skip: skip },
+      { $limit: lim }
+    ];
+
+    [leads, total] = await Promise.all([
+      Lead.aggregate(pipeline),
+      Lead.countDocuments(query),
+    ]);
+
+    const compIds = normalizeObjectIdList(leads.map((l) => l.companyId));
+    const compList = compIds.length
+      ? await Company.find({ _id: { $in: compIds } }).select('companyName domain').lean()
+      : [];
+    const compMap = new Map(compList.map((c) => [String(c._id), c]));
+    leads = leads.map((l) => ({ ...l, companyId: compMap.get(String(l.companyId)) || l.companyId }));
+  } else {
+    let sortSpec = { createdAt: -1 };
+    if (activeSortKey === 'email') {
+      sortSpec = { email: dir };
+    } else if (activeSortKey === 'designation') {
+      sortSpec = { designation: dir };
+    } else if (activeSortKey === 'deliveryStatus') {
+      sortSpec = { deliveryStatus: dir };
+    } else if (activeSortKey === 'pocStatus' || activeSortKey === 'pocQualification') {
+      sortSpec = { 'pocQualification.status': dir, name: 1 };
+    } else if (activeSortKey === 'followUp' || activeSortKey === 'nextFollowUp') {
+      sortSpec = { 'relationshipProfile.nextFollowUpAt': dir, name: 1 };
+    } else if (activeSortKey === 'lastInteraction') {
+      sortSpec = { lastInteractionAt: dir, name: 1 };
+    } else if (activeSortKey === 'relationshipStatus') {
+      sortSpec = { 'relationshipProfile.status': dir, name: 1 };
+    } else if (activeSortKey === 'owner') {
+      sortSpec = { 'relationshipProfile.owner': dir, name: 1 };
+    } else if (activeSortKey === 'notes') {
+      sortSpec = { 'relationshipProfile.reminderNotes': dir, name: 1 };
+    } else if (activeSortKey === 'createdAt') {
+      sortSpec = { createdAt: dir };
+    }
+
+    [leads, total] = await Promise.all([
+      Lead.find(query).sort(sortSpec).skip(skip).limit(lim).populate('companyId').lean(),
+      Lead.countDocuments(query),
+    ]);
+  }
 
   const campaignIds = normalizeObjectIdList(leads.map((l) => l.campaignId));
   const campaigns = campaignIds.length
@@ -918,8 +1127,8 @@ export async function listAllLeads({
 
   const enriched = leads.map((lead) => ({
     ...lead,
-    companyName: lead.companyId?.companyName || '',
-    domain: lead.companyId?.domain || '',
+    companyName: lead.companyName || lead.companyId?.companyName || lead._company?.companyName || '',
+    domain: lead.domain || lead.companyId?.domain || lead._company?.domain || '',
     campaignName: campaignMap.get(String(lead.campaignId))?.projectName || (lead.campaignId ? 'Campaign' : ''),
   }));
 
@@ -972,9 +1181,85 @@ export async function getLeadById(leadId) {
   };
 }
 
-export async function listAllCompanies({ search, page = 1, limit = 50 } = {}) {
+export async function listAllCompanies({
+  search,
+  page = 1,
+  limit = 50,
+  sortKey,
+  sortDir = 'asc',
+  globalStatus,
+  companyName,
+  domain,
+  industry,
+  city,
+  country,
+  genericEmails,
+  genericEmailContains,
+  boothNumber,
+  filters,
+} = {}) {
   assertDb();
   const query = { deletedAt: null };
+
+  let filterObj = {};
+  if (typeof filters === 'string') {
+    try { filterObj = JSON.parse(filters); } catch (e) {}
+  } else if (typeof filters === 'object' && filters !== null) {
+    filterObj = filters;
+  }
+
+  const statusVal = globalStatus || filterObj.globalStatus;
+  if (statusVal) {
+    if (Array.isArray(statusVal) && statusVal.length) {
+      query.globalStatus = { $in: statusVal };
+    } else if (typeof statusVal === 'string' && statusVal.trim()) {
+      const parts = statusVal.split(',').map((s) => s.trim()).filter(Boolean);
+      if (parts.length > 1) {
+        query.globalStatus = { $in: parts };
+      } else if (parts.length === 1) {
+        query.globalStatus = parts[0];
+      }
+    }
+  }
+
+  const compNameVal = companyName || filterObj.companyName;
+  if (compNameVal && typeof compNameVal === 'string' && compNameVal.trim()) {
+    query.companyName = new RegExp(compNameVal.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+  }
+
+  const domainVal = domain || filterObj.domain;
+  if (domainVal && typeof domainVal === 'string' && domainVal.trim()) {
+    query.domain = new RegExp(domainVal.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+  }
+
+  const industryVal = industry || filterObj.industry;
+  if (industryVal && typeof industryVal === 'string' && industryVal.trim()) {
+    query.industry = new RegExp(industryVal.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+  }
+
+  const cityVal = city || filterObj.city;
+  if (cityVal && typeof cityVal === 'string' && cityVal.trim()) {
+    query.city = new RegExp(cityVal.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+  }
+
+  const countryVal = country || filterObj.country;
+  if (countryVal && typeof countryVal === 'string' && countryVal.trim()) {
+    query.country = new RegExp(countryVal.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+  }
+
+  const boothVal = boothNumber || filterObj.boothNumber;
+  if (boothVal && typeof boothVal === 'string' && boothVal.trim()) {
+    query.boothNumber = new RegExp(boothVal.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+  }
+
+  const emailVal = genericEmailContains || genericEmails || filterObj.genericEmailContains || filterObj.genericEmails;
+  if (emailVal) {
+    const eStr = Array.isArray(emailVal) ? emailVal.join(' ') : String(emailVal);
+    if (eStr.trim()) {
+      query.genericEmails = new RegExp(eStr.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+    }
+  }
+
   if (search) {
     const re = new RegExp(search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
     query.$or = [
@@ -988,17 +1273,120 @@ export async function listAllCompanies({ search, page = 1, limit = 50 } = {}) {
   }
 
   const p = Math.max(Number(page) || 1, 1);
-  const lim = Math.min(Math.max(Number(limit) || 50, 1), 500);
+  const lim = Math.min(Math.max(Number(limit) || 50, 1), 50000);
   const skip = (p - 1) * lim;
 
-  const [companies, total] = await Promise.all([
-    Company.find(query).sort({ companyName: 1 }).skip(skip).limit(lim).lean(),
-    Company.countDocuments(query),
-  ]);
+  const dir = (sortDir === 'desc' || sortDir === '-1' || Number(sortDir) === -1) ? -1 : 1;
+  let companies = [];
+  let total = 0;
+
+  if (sortKey === 'pocCount') {
+    const pipeline = [
+      { $match: query },
+      {
+        $lookup: {
+          from: 'leads',
+          localField: '_id',
+          foreignField: 'companyId',
+          as: '_leads',
+        },
+      },
+      {
+        $addFields: {
+          pocCount: {
+            $size: {
+              $filter: {
+                input: '$_leads',
+                as: 'ld',
+                cond: { $eq: [{ $ifNull: ['$$ld.deletedAt', null] }, null] }
+              }
+            }
+          },
+        },
+      },
+      { $project: { _leads: 0 } },
+      { $sort: { pocCount: dir, companyName: 1 } },
+      { $skip: skip },
+      { $limit: lim },
+    ];
+
+    [companies, total] = await Promise.all([
+      Company.aggregate(pipeline),
+      Company.countDocuments(query),
+    ]);
+  } else if (sortKey === 'campaigns' || sortKey === 'projectsAssociated') {
+    const pipeline = [
+      { $match: query },
+      {
+        $addFields: {
+          campaignCount: { $size: { $ifNull: ['$projectsAssociated', []] } },
+        },
+      },
+      { $sort: { campaignCount: dir, companyName: 1 } },
+      { $skip: skip },
+      { $limit: lim },
+    ];
+
+    [companies, total] = await Promise.all([
+      Company.aggregate(pipeline),
+      Company.countDocuments(query),
+    ]);
+  } else if (sortKey === 'companyName' || !sortKey) {
+    const pipeline = [
+      { $match: query },
+      {
+        $addFields: {
+          companyNameSortGroup: {
+            $cond: {
+              if: {
+                $and: [
+                  { $ne: ['$companyName', null] },
+                  { $ne: ['$companyName', ''] },
+                  { $ne: ['$companyName', '—'] },
+                  { $ne: ['$companyName', '-'] },
+                  { $regexMatch: { input: '$companyName', regex: '^[a-zA-Z0-9]' } }
+                ]
+              },
+              then: 1,
+              else: 2
+            }
+          }
+        }
+      },
+      { $sort: { companyNameSortGroup: 1, companyName: dir } },
+      { $skip: skip },
+      { $limit: lim }
+    ];
+
+    [companies, total] = await Promise.all([
+      Company.aggregate(pipeline),
+      Company.countDocuments(query),
+    ]);
+  } else {
+    let sortSpec = { companyName: dir };
+    if (sortKey === 'domain') {
+      sortSpec = { domain: dir, companyName: 1 };
+    } else if (sortKey === 'location' || sortKey === 'city') {
+      sortSpec = { city: dir, country: dir, companyName: 1 };
+    } else if (sortKey === 'globalStatus') {
+      sortSpec = { globalStatus: dir, companyName: 1 };
+    } else if (sortKey === 'createdAt') {
+      sortSpec = { createdAt: dir };
+    } else if (sortKey === 'updatedAt') {
+      sortSpec = { updatedAt: dir };
+    } else if (sortKey === 'industry') {
+      sortSpec = { industry: dir, companyName: 1 };
+    }
+
+    [companies, total] = await Promise.all([
+      Company.find(query).sort(sortSpec).skip(skip).limit(lim).lean(),
+      Company.countDocuments(query),
+    ]);
+  }
 
   const companyIds = companies.map(c => c._id);
   const leadCounts = await Lead.aggregate([
-    { $match: { companyId: { $in: companyIds } } },
+    { $match: { companyId: { $in: companyIds }, deletedAt: null } },
     { $group: { _id: '$companyId', count: { $sum: 1 } } }
   ]);
   const leadCountMap = new Map(leadCounts.map(lc => [String(lc._id), lc.count]));
@@ -1011,7 +1399,7 @@ export async function listAllCompanies({ search, page = 1, limit = 50 } = {}) {
 
   const enriched = companies.map((comp) => formatCompanyRecord({
     ...comp,
-    pocCount: leadCountMap.get(String(comp._id)) || 0,
+    pocCount: comp.pocCount !== undefined ? comp.pocCount : (leadCountMap.get(String(comp._id)) || 0),
     campaignNames: (comp.projectsAssociated || [])
       .map((pid) => campaignMap.get(String(pid))?.projectName)
       .filter(Boolean),

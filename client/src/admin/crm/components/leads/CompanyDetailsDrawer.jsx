@@ -292,7 +292,7 @@ export default function CompanyDetailsDrawer({ companyId, onClose, onPersonSelec
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <p className="text-base font-bold text-[var(--color-ink)]">{companyName || 'Unnamed company'}</p>
+                  <p className="text-base font-bold text-ink">{companyName || 'Unnamed company'}</p>
                   <Badge tone={STATUS_TONE[globalStatus] || 'neutral'}>{globalStatus}</Badge>
                 </div>
                 <p className="mt-1 text-sm text-neutral-600">{industry || 'Industry not set'}</p>
@@ -382,7 +382,7 @@ export default function CompanyDetailsDrawer({ companyId, onClose, onPersonSelec
                         onDelete={handleBulkDeletePeople}
                         onClear={peopleSelection.clearSelection}
                         deleting={bulkDeleting}
-                        className="mb-3 rounded-lg border border-[var(--color-line)]"
+                        className="mb-3 rounded-lg border border-line"
                       />
                       <div className="space-y-2">
                       {data.leads.map((lead) => (
@@ -401,7 +401,7 @@ export default function CompanyDetailsDrawer({ companyId, onClose, onPersonSelec
                             className="flex min-w-0 flex-1 items-center justify-between gap-3 text-left"
                           >
                           <div className="flex min-w-0 flex-1 items-center gap-3 pr-3">
-                            <div className="crm-profile-avatar is-neutral !h-9 !w-9 !text-[11px]">
+                            <div className="crm-profile-avatar is-neutral h-9! w-9! text-[11px]!">
                               {contactInitials(lead.name)}
                             </div>
                             <div className="min-w-0">
@@ -566,7 +566,7 @@ export default function CompanyDetailsDrawer({ companyId, onClose, onPersonSelec
 
               <DrawerCollapsible title="Notes" subtitle="Internal context for the team">
                 <div className="pt-4">
-                  <textarea className="crm-input min-h-[5rem] resize-y text-sm" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Relationship notes, access restrictions, preferences…" />
+                  <textarea className="crm-input min-h-20 resize-y text-sm" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Relationship notes, access restrictions, preferences…" />
                 </div>
               </DrawerCollapsible>
             </div>

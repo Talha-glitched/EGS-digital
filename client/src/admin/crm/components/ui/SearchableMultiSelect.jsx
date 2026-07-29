@@ -17,13 +17,15 @@ export default function SearchableMultiSelect({
   onChange,
   options = [],
   placeholder = 'Select…',
-  searchPlaceholder = 'Search…',
-  emptyLabel = 'No matches',
+  searchPlaceholder = 'Type to search options…',
+  emptyLabel = 'No matches found',
   disabled = false,
   className = '',
   menuMinWidth = 260,
   onQueryChange,
   remoteLoading = false,
+  requireTypeToSearch = false,
+  allowCustomQuery = false,
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -37,11 +39,16 @@ export default function SearchableMultiSelect({
 
   const filtered = useMemo(() => {
     const term = query.trim().toLowerCase();
-    if (!term) return options;
+    if (!term) {
+      if (requireTypeToSearch && options.length > 5) {
+        return options.filter((opt) => selectedSet.has(String(opt.value)));
+      }
+      return options;
+    }
     return options.filter((option) =>
       `${option.label || ''} ${option.hint || ''}`.toLowerCase().includes(term),
     );
-  }, [options, query]);
+  }, [options, query, requireTypeToSearch, selectedSet]);
 
   const summary = summarizeSelection(options, (values || []).map(String));
 
@@ -147,6 +154,11 @@ export default function SearchableMultiSelect({
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => {
+                if (e.key === 'Enter' && query.trim()) {
+                  e.preventDefault();
+                  toggleOption(query.trim());
+                  setQuery('');
+                }
                 if (e.key === 'Escape') {
                   e.stopPropagation();
                   e.preventDefault();
@@ -168,6 +180,22 @@ export default function SearchableMultiSelect({
           )}
 
           <div className="crm-searchable-select-options crm-scroll">
+            {allowCustomQuery && query.trim() && !filtered.some((opt) => String(opt.value).toLowerCase() === query.trim().toLowerCase()) && (
+              <button
+                type="button"
+                className="crm-searchable-select-option is-create text-left w-full py-2 px-3 hover:bg-brand/10 transition flex items-center justify-between border-b border-neutral-100 bg-brand/5"
+                onClick={() => {
+                  toggleOption(query.trim());
+                  setQuery('');
+                }}
+              >
+                <span className="text-xs font-semibold text-brand flex items-center gap-1.5 min-w-0 truncate">
+                  <Search className="h-3.5 w-3.5 shrink-0" />
+                  <span>Search database for <strong>"{query.trim()}"</strong></span>
+                </span>
+                <span className="text-[10px] text-neutral-400 font-mono shrink-0 ml-2">Press Enter ↵</span>
+              </button>
+            )}
             {filtered.length ? filtered.map((option) => {
               const optionValue = String(option.value);
               const active = selectedSet.has(optionValue);
@@ -193,8 +221,8 @@ export default function SearchableMultiSelect({
                 </button>
               );
             }) : (
-              <p className="px-3 py-4 text-center text-xs text-neutral-500">
-                {remoteLoading ? 'Searching…' : emptyLabel}
+              <p className="px-3 py-4 text-center text-xs text-neutral-400 font-medium">
+                {remoteLoading ? 'Searching…' : (!query.trim() && requireTypeToSearch ? 'Type to search database options…' : emptyLabel)}
               </p>
             )}
           </div>

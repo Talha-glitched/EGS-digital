@@ -2330,9 +2330,6 @@
   pointer-events: auto;
 }
 
-.pf-persistent-logo-wrap.done.is-about .pf-persistent-logo-link {
-  /* Keep original size */
-}
 
 /* When done AND in projects/services section: shrink at top middle */
 .pf-persistent-logo-wrap.done.is-projects {
@@ -2348,9 +2345,6 @@
   top: 16px !important;
 }
 
-.pf-persistent-logo-wrap.done.is-projects .pf-persistent-logo-link {
-  /* Keep original size */
-}
 
 /* Floating "Go back" button below logo */
 .pf-go-back-btn {
@@ -2506,13 +2500,6 @@
     transform: translate(-50%, 0) !important;
   }
 
-  .pf-persistent-logo-wrap.is-about .pf-persistent-logo-link {
-    /* Keep original size */
-  }
-
-  .pf-persistent-logo-wrap.is-projects .pf-persistent-logo-link {
-    /* Keep original size */
-  }
 
   .pf-about-section {
     padding: clamp(120px, 15vw, 160px) 20px 40px !important;

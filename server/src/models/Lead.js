@@ -97,7 +97,7 @@ const leadSchema = new mongoose.Schema(
     primarySource: { type: String, default: '', trim: true },
     deliveryStatus: {
       type: String,
-      enum: ['Pending Inqueue', 'Emailed Outbound', 'Bounced / Invalid', 'Opted Out', 'Replied'],
+      enum: ['Pending Inqueue', 'Emailed Outbound', 'Bounced / Invalid', 'Opted Out', 'Replied', 'Out of Office'],
       default: 'Pending Inqueue',
       index: true,
     },
@@ -146,5 +146,9 @@ const leadSchema = new mongoose.Schema(
 );
 
 leadSchema.index({ campaignId: 1, email: 1 }, { unique: true });
+leadSchema.index({ deletedAt: 1, name: 1 });
+leadSchema.index({ deletedAt: 1, email: 1 });
+leadSchema.index({ deletedAt: 1, companyId: 1 });
+leadSchema.index({ deletedAt: 1, deliveryStatus: 1 });
 
 export const Lead = mongoose.models.Lead || mongoose.model('Lead', leadSchema);

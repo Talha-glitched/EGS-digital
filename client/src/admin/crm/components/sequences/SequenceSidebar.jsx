@@ -15,7 +15,11 @@ function buildSequenceMeta(seq, stats = {}) {
   if (campaign) parts.push(campaign);
   const steps = seq.steps?.length || 0;
   parts.push(`${steps} step${steps === 1 ? '' : 's'}`);
-  parts.push(`${stats.enrolled || 0} enrolled`);
+  if (seq.isActive) {
+    parts.push(`${stats.enrolled || 0} enrolled`);
+  } else {
+    parts.push('Draft');
+  }
   const when = formatWhen(seq.updatedAt);
   if (when) parts.push(when);
   return parts.join(' · ');
@@ -135,7 +139,14 @@ export default function SequenceSidebar({
         )}
       </div>
 
-      <div className="crm-seq-panel-list crm-scroll crm-seq-sidebar-list">
+      <div
+        className="crm-seq-panel-list crm-scroll crm-seq-sidebar-list flex flex-col flex-1 cursor-default"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            onSelect(null);
+          }
+        }}
+      >
         {!sequences.length && (
           <p className="px-3 py-6 text-center text-[10px] text-neutral-400">No sequences yet.</p>
         )}
@@ -159,7 +170,7 @@ export default function SequenceSidebar({
               </label>
               <button
                 type="button"
-                onClick={() => onSelect(seq._id)}
+                onClick={() => onSelect(active ? null : seq._id)}
                 className="crm-seq-list-item"
               >
                 <span className={cn('crm-seq-list-icon', seq.isActive && 'is-live')}>
@@ -182,6 +193,12 @@ export default function SequenceSidebar({
             </div>
           );
         })}
+        {/* Empty area filler to deselect sequence when clicking empty space below list (uses normal default cursor) */}
+        <div
+          className="flex-1 min-h-[140px] cursor-default"
+          onClick={() => onSelect(null)}
+          aria-hidden="true"
+        />
       </div>
     </aside>
   );

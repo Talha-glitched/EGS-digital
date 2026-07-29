@@ -3,6 +3,7 @@ import { startImapWatcher } from './imapWatcherService.js';
 import { startAnalyticsCron } from './analyticsCronService.js';
 import { getMailConfigStatus } from './mailTransport.js';
 import { recalculateAllCampaignCoverageStats } from './projectService.js';
+import { startResendAutoSyncCron } from './resendAutoSyncService.js';
 
 export function initializeCrmRuntime() {
   const { imapReady, imap2Ready } = getMailConfigStatus();
@@ -17,6 +18,9 @@ export function initializeCrmRuntime() {
 
   startAnalyticsCron();
   console.info('Analytics cron started.');
+
+  startResendAutoSyncCron();
+  console.info('Resend automatic reply sync started.');
 
   // Keep exhibitor / POC coverage accurate for every campaign (existing + future imports).
   recalculateAllCampaignCoverageStats()

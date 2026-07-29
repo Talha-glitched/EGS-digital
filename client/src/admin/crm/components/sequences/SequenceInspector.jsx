@@ -15,11 +15,13 @@ import {
   UserRound,
   X,
   Play,
+  SlidersHorizontal,
 } from 'lucide-react';
 import SearchableSelect from '../ui/SearchableSelect.jsx';
 import SearchableMultiSelect from '../ui/SearchableMultiSelect.jsx';
 import MailboxUsagePopover from './MailboxUsagePopover.jsx';
 import AudiencePreviewModal from './AudiencePreviewModal.jsx';
+import CampaignListImportModal from './CampaignListImportModal.jsx';
 import {
   buildAudienceSummary,
   buildImportedListLabels,
@@ -223,6 +225,7 @@ function GlobalInspector({
   deliverySummary,
 }) {
   const [importPickerId, setImportPickerId] = useState(() => normalizeCampaignId(campaignId));
+  const [importModal, setImportModal] = useState({ open: false, campaignId: '', campaignName: '', initialSelections: null });
   const isSend = launchMode === 'send';
 
   useEffect(() => {
@@ -244,23 +247,61 @@ function GlobalInspector({
   const summary = buildAudienceSummary(audience, audiencePreview, campaignLabels);
   const importedLists = buildImportedListLabels(audience, campaignLabels);
 
-  function importCampaignList() {
-    const id = normalizeCampaignId(importPickerId || campaignId);
+  function openImportModalForCampaign(cid, cname) {
+    const id = normalizeCampaignId(cid || importPickerId || campaignId);
     if (!id) return;
+    const label = cname || campaignLabels[id] || 'Campaign List';
+    const existingSelections = audience.campaignSelections?.[id] || null;
+    setImportModal({
+      open: true,
+      campaignId: id,
+      campaignName: label,
+      initialSelections: existingSelections,
+    });
+  }
+
+  function handleImportConfirm({ campaignId: cId, selectedLeadIds, unselectedLeadIds, allLeadIds, totalCampaignLeadsCount }) {
     const ids = (audience.importedCampaignIds || []).map(String);
-    if (ids.includes(id)) return;
-    patchAudience({ importedCampaignIds: [...ids, id] });
+    const nextImported = ids.includes(cId) ? ids : [...ids, cId];
+
+    const nextSelections = {
+      ...(audience.campaignSelections || {}),
+      [cId]: selectedLeadIds,
+    };
+
+    // Cleanly exclude unselected contacts from this campaign list
+    let nextExcludeContactIds = (audience.excludeContactIds || []).map(String);
+    const allSet = new Set((allLeadIds || []).map(String));
+
+    // Remove any previous exclusions belonging to this campaign list
+    nextExcludeContactIds = nextExcludeContactIds.filter((id) => !allSet.has(id));
+
+    if (selectedLeadIds.length < totalCampaignLeadsCount) {
+      // Add unselected contacts to excludeContactIds so backend enrolls ONLY selected contacts
+      const excludeSet = new Set([...nextExcludeContactIds, ...(unselectedLeadIds || [])]);
+      nextExcludeContactIds = Array.from(excludeSet);
+    }
+
+    patchAudience({
+      importedCampaignIds: nextImported,
+      campaignSelections: nextSelections,
+      excludeContactIds: nextExcludeContactIds,
+    });
   }
 
   function removeImportedList(id) {
+    const nextSelections = { ...(audience.campaignSelections || {}) };
+    delete nextSelections[id];
     patchAudience({
       importedCampaignIds: (audience.importedCampaignIds || [])
         .map(String)
         .filter((item) => item !== String(id)),
+      campaignSelections: nextSelections,
     });
   }
 
   return (
+    <>
     <div className="crm-seq-inspector-sections">
       {deliverySummary ? (
         <InspectorSection title="Delivery status">
@@ -292,8 +333,7 @@ function GlobalInspector({
       <InspectorSection title="Send to" icon={Users}>
         <div className="crm-seq-send-import">
           <p className="text-[10px] leading-relaxed text-neutral-500">
-            Choose a campaign list, click <span className="font-semibold text-[var(--color-ink)]">Import</span>,
-            then launch. Naming a sequence after a campaign does not enroll it automatically.
+            Choose a campaign list, click <span className="font-semibold text-[var(--color-ink)]">Import</span> to open filters and customize who receives emails.
           </p>
           <div className="flex gap-2">
             <div className="min-w-0 flex-1">
@@ -305,7 +345,12 @@ function GlobalInspector({
                 className="crm-seq-compact-select"
               />
             </div>
-            <button type="button" onClick={importCampaignList} className="crm-seq-import-btn shrink-0">
+            <button
+              type="button"
+              onClick={() => openImportModalForCampaign(importPickerId, campaignLabels[importPickerId])}
+              className="crm-seq-import-btn shrink-0"
+              disabled={!importPickerId}
+            >
               <Plus className="h-3 w-3" />
               Import
             </button>
@@ -357,10 +402,29 @@ function GlobalInspector({
         {importedLists.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {importedLists.map((item) => (
-              <span key={item.id} className="crm-seq-import-chip">
-                <Building2 className="h-3 w-3 shrink-0" />
-                <span className="truncate">{item.label}</span>
-                <button type="button" onClick={() => removeImportedList(item.id)} aria-label={`Remove ${item.label}`}>
+              <span key={item.id} className="crm-seq-import-chip inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-neutral-100 border border-neutral-200 text-[11px] font-medium text-neutral-800">
+                <Building2 className="h-3 w-3 shrink-0 text-brand" />
+                <span className="truncate max-w-[120px] font-semibold">{item.label}</span>
+                {item.selectedCount != null && (
+                  <span className="text-[9px] bg-brand-soft text-brand px-1 py-0.2 rounded font-bold">
+                    {item.selectedCount} sel
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => openImportModalForCampaign(item.id, item.label)}
+                  className="text-neutral-500 hover:text-brand transition-colors p-0.5"
+                  title="Edit selection / filters"
+                  aria-label={`Edit selections for ${item.label}`}
+                >
+                  <SlidersHorizontal className="h-3 w-3" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => removeImportedList(item.id)}
+                  className="text-neutral-400 hover:text-red-600 transition-colors p-0.5"
+                  aria-label={`Remove ${item.label}`}
+                >
                   <X className="h-3 w-3" />
                 </button>
               </span>
@@ -376,14 +440,23 @@ function GlobalInspector({
               {' '}already in this sequence — relaunch will restart from step 1.
             </p>
           )}
-          <button
-            type="button"
-            onClick={onOpenPreview}
-            className="mt-2 inline-flex items-center gap-1 text-[10px] font-semibold text-brand hover:underline"
-          >
-            <Eye className="h-3 w-3" />
-            Preview full list ({audiencePreview?.eligible || 0})
-          </button>
+          {(() => {
+            const totalSel = Object.values(audience.campaignSelections || {}).reduce(
+              (acc, arr) => acc + (Array.isArray(arr) ? arr.length : 0),
+              0,
+            );
+            const count = audiencePreview?.eligible || totalSel || 0;
+            return (
+              <button
+                type="button"
+                onClick={onOpenPreview}
+                className="mt-2 inline-flex items-center gap-1 text-[10px] font-semibold text-brand hover:underline"
+              >
+                <Eye className="h-3 w-3" />
+                Preview full list ({count})
+              </button>
+            );
+          })()}
         </div>
       </InspectorSection>
 
@@ -417,6 +490,16 @@ function GlobalInspector({
         )}
       </InspectorSection>
     </div>
+
+    <CampaignListImportModal
+      open={importModal.open}
+      onClose={() => setImportModal((prev) => ({ ...prev, open: false }))}
+      campaignId={importModal.campaignId}
+      campaignName={importModal.campaignName}
+      initialSelectedLeadIds={importModal.initialSelections}
+      onConfirm={handleImportConfirm}
+    />
+    </>
   );
 }
 

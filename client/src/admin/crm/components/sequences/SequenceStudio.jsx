@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { GitBranch, Plus, Mail } from 'lucide-react';
 import {
   crmApiFetch,
   fetchMailboxUsage,
@@ -63,7 +64,7 @@ export default function SequenceStudio({
   const [activeSequenceId, setActiveSequenceId] = useState(null);
   const [sequenceName, setSequenceName] = useState('Untitled sequence');
   const [campaignId, setCampaignId] = useState(
-    () => normalizeCampaignId(campaignParam || campaigns[0]?._id || ''),
+    () => normalizeCampaignId(campaignParam || ''),
   );
   const [nodes, setNodes] = useState(defaultFlow().nodes);
   const [edges, setEdges] = useState(defaultFlow().edges);
@@ -163,7 +164,7 @@ export default function SequenceStudio({
       if (!seqId) {
         const created = await crmApiFetch('/api/admin/sequences', {
           method: 'POST',
-          body: JSON.stringify({ name: sequenceName, steps, flowGraph }),
+          body: JSON.stringify({ name: sequenceName, steps, flowGraph, audience, campaignId }),
         });
         seqId = created._id;
         setActiveSequenceId(seqId);
@@ -171,7 +172,7 @@ export default function SequenceStudio({
       } else {
         await crmApiFetch(`/api/admin/sequences/${seqId}`, {
           method: 'PATCH',
-          body: JSON.stringify({ name: sequenceName, steps, flowGraph }),
+          body: JSON.stringify({ name: sequenceName, steps, flowGraph, audience, campaignId }),
         });
       }
 
@@ -192,6 +193,7 @@ export default function SequenceStudio({
     }
   }, [
     activeSequenceId,
+    audience,
     buildDraftSnapshot,
     campaignId,
     dismissToast,
@@ -224,10 +226,21 @@ export default function SequenceStudio({
       const seq = await crmApiFetch(`/api/admin/sequences/${id}`);
       const flow = flowFromSequence(seq);
       const linkedCampaignId = normalizeCampaignId(seq.campaignId);
+      const loadedAudience = (seq.audience && (seq.audience.importedCampaignIds?.length || seq.audience.includeContactIds?.length))
+        ? {
+            importedCampaignIds: seq.audience.importedCampaignIds || [],
+            campaignSelections: seq.audience.campaignSelections || {},
+            includeCompanyIds: seq.audience.includeCompanyIds || [],
+            includeContactIds: seq.audience.includeContactIds || [],
+            excludeCompanyIds: seq.audience.excludeCompanyIds || [],
+            excludeContactIds: seq.audience.excludeContactIds || [],
+          }
+        : (linkedCampaignId ? audienceWithImportedCampaign(linkedCampaignId) : { ...EMPTY_AUDIENCE });
+
       setActiveSequenceId(seq._id);
       setSequenceName(seq.name || 'Untitled sequence');
-      setCampaignId(linkedCampaignId);
-      setAudience(audienceWithImportedCampaign(linkedCampaignId));
+      setCampaignId(linkedCampaignId || loadedAudience.importedCampaignIds?.[0] || '');
+      setAudience(loadedAudience);
       setAudiencePreview({ eligible: 0, netNew: 0, sample: [] });
       setNodes(flow.nodes);
       setEdges(flow.edges);
@@ -246,8 +259,8 @@ export default function SequenceStudio({
   }, [showToast, dismissToast, loadDeliverySummary]);
 
   const resetNewSequence = useCallback((preferredCampaignId = '') => {
-    const cid = normalizeCampaignId(preferredCampaignId || campaignParam || campaigns[0]?._id || '');
-    const campaign = campaigns.find((c) => c._id === cid);
+    const cid = normalizeCampaignId(preferredCampaignId || campaignParam || '');
+    const campaign = cid ? campaigns.find((c) => c._id === cid) : null;
     const flow = defaultFlow();
     if (campaign && isGraduationCampaign(campaign.projectName, campaign.milestone)) {
       flow.nodes[0].data = { ...GRADUATION_STEPS[0] };
@@ -262,8 +275,8 @@ export default function SequenceStudio({
     setDeliverySummary(null);
     setLaunchMode('draft');
     setLaunchArmed(false);
-    // Pre-import the preferred campaign so launching works without an extra click.
-    setAudience(audienceWithImportedCampaign(cid));
+    // Start with 100% empty audience — NO campaign list preloaded!
+    setAudience({ ...EMPTY_AUDIENCE });
     setAudiencePreview({ eligible: 0, netNew: 0, sample: [] });
     dismissToast();
   }, [campaignParam, campaigns, dismissToast]);
@@ -321,10 +334,9 @@ export default function SequenceStudio({
       resetNewSequence(campaignParam || '');
       return;
     }
-    if (!searchParams.toString() && sequences[0]?._id) {
-      setSearchParams({ edit: sequences[0]._id }, { replace: true });
-    }
-  }, [searchParams, campaignParam, sequences, loadSequence, resetNewSequence, setSearchParams]);
+    // No sequence or new parameter -> clear active sequence
+    setActiveSequenceId(null);
+  }, [searchParams, campaignParam, loadSequence, resetNewSequence]);
 
   useEffect(() => {
     if (loading) return undefined;
@@ -422,7 +434,12 @@ export default function SequenceStudio({
   }
 
   function handleSelectSequence(id) {
-    setSearchParams({ edit: id });
+    if (!id || id === activeSequenceId) {
+      setSearchParams({});
+      setActiveSequenceId(null);
+    } else {
+      setSearchParams({ edit: id });
+    }
   }
 
   function handleCreate() {
@@ -602,8 +619,46 @@ export default function SequenceStudio({
     }
   }
 
+  const isStudioActive = Boolean(
+    activeSequenceId || searchParams.get('new') === '1' || searchParams.get('campaign'),
+  );
+
   if (loading && !nodes.length) {
     return <LoadingState label="Loading studio…" />;
+  }
+
+  if (!isStudioActive) {
+    return (
+      <div className="crm-seq-studio">
+        <div className="crm-seq-canvas-layer flex flex-col items-center justify-center p-8 bg-neutral-50/40 text-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-soft text-brand shadow-xs mb-4">
+            <GitBranch className="h-8 w-8 text-brand" />
+          </div>
+          <h3 className="text-base font-bold text-[var(--color-ink)]">No sequence selected</h3>
+          <p className="mt-1 text-xs text-neutral-500 max-w-sm leading-relaxed">
+            Select an existing sequence from the left list to view or edit its drip steps, or click <strong className="text-neutral-800">+ New sequence</strong> to build a new drip flow.
+          </p>
+          <button
+            type="button"
+            onClick={handleCreate}
+            className="mt-5 inline-flex items-center gap-2 rounded-xl bg-brand px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-brand/90 transition-all cursor-pointer"
+          >
+            <Plus className="h-4 w-4" />
+            New sequence
+          </button>
+        </div>
+
+        <SequenceSidebar
+          sequences={sequences}
+          activeId={activeSequenceId}
+          onSelect={handleSelectSequence}
+          onCreate={handleCreate}
+          onDelete={handleDeleteSequence}
+          onBulkDelete={handleBulkDeleteSequences}
+          deleting={deleting}
+        />
+      </div>
+    );
   }
 
   return (

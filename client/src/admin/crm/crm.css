@@ -93,7 +93,7 @@
 
 /* ── Surfaces ────────────────────────────────────────────────── */
 .crm-card {
-  @apply rounded-lg border border-[var(--color-line)] bg-white;
+  @apply rounded-lg border border-line bg-white;
   box-shadow: 0 1px 2px rgba(20, 22, 28, 0.04), 0 1px 3px rgba(20, 22, 28, 0.03);
   transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -226,7 +226,7 @@
 
 /* ── Form controls ───────────────────────────────────────────── */
 .crm-input {
-  @apply w-full rounded-md border border-[var(--color-line-strong)] bg-white px-2.5 py-1.5 text-xs text-[var(--color-ink)] outline-none transition placeholder:text-neutral-400;
+  @apply w-full rounded-md border border-line-strong bg-white px-2.5 py-1.5 text-xs text-ink outline-none transition placeholder:text-neutral-400;
   min-height: 32px;
 }
 .crm-input-has-icon {
@@ -241,7 +241,7 @@
 }
 
 .crm-select {
-  @apply w-full appearance-none rounded-md border border-[var(--color-line-strong)] bg-white px-2.5 py-1.5 pr-8 text-xs text-[var(--color-ink)] outline-none transition;
+  @apply w-full appearance-none rounded-md border border-line-strong bg-white px-2.5 py-1.5 pr-8 text-xs text-ink outline-none transition;
   min-height: 32px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23646b78' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -281,7 +281,7 @@
 }
 
 .crm-btn-secondary {
-  @apply inline-flex items-center justify-center gap-1.5 rounded-md border border-[var(--color-line-strong)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--color-ink)] transition hover:bg-neutral-50 hover:border-[var(--color-line-strong)] disabled:opacity-50;
+  @apply inline-flex items-center justify-center gap-1.5 rounded-md border border-line-strong bg-white px-3 py-1.5 text-xs font-semibold text-ink transition hover:bg-neutral-50 hover:border-line-strong disabled:opacity-50;
   transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .crm-btn-secondary:hover {
@@ -289,7 +289,7 @@
 }
 
 .crm-btn-ghost {
-  @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[var(--color-ink-muted)] transition hover:bg-neutral-100 hover:text-[var(--color-ink)];
+  @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-ink-muted transition hover:bg-neutral-100 hover:text-ink;
 }
 
 .crm-btn-wrap {
@@ -371,7 +371,7 @@
 }
 .crm-table thead th,
 .crm-table-head th {
-  @apply border-b border-[var(--color-line)] bg-neutral-50/70 px-4 py-2 text-left text-[10px] font-semibold uppercase tracking-[0.06em] text-neutral-500;
+  @apply border-b border-line bg-neutral-50/70 px-4 py-2 text-left text-[10px] font-semibold uppercase tracking-[0.06em] text-neutral-500;
   position: sticky;
   top: 0;
   z-index: 2;
@@ -380,10 +380,10 @@
   overflow: visible;
 }
 .crm-table-head {
-  @apply border-b border-[var(--color-line)] bg-neutral-50/70 text-[10px] font-semibold uppercase tracking-[0.06em] text-neutral-500;
+  @apply border-b border-line bg-neutral-50/70 text-[10px] font-semibold uppercase tracking-[0.06em] text-neutral-500;
 }
 .crm-table-row {
-  @apply border-b border-[var(--color-line)] transition-colors last:border-0 hover:bg-neutral-50/70;
+  @apply border-b border-line transition-colors last:border-0 hover:bg-neutral-50/70;
 }
 .crm-table-row.is-clickable {
   cursor: pointer;
@@ -694,20 +694,20 @@
 
 /* ── Sidebar nav ─────────────────────────────────────────────── */
 .crm-nav-active {
-  @apply bg-white/[0.08] text-white;
+  @apply bg-white/8 text-white;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 .crm-nav-idle {
-  @apply text-neutral-400 hover:bg-white/[0.04] hover:text-neutral-100;
+  @apply text-neutral-400 hover:bg-white/4 hover:text-neutral-100;
 }
 
 /* ── Tabs ────────────────────────────────────────────────────── */
 .crm-tab-active {
-  @apply bg-white text-[var(--color-ink)];
+  @apply bg-white text-ink;
   box-shadow: 0 1px 2px rgba(20, 22, 28, 0.08), inset 0 0 0 1px var(--color-line);
 }
 .crm-tab-idle {
-  @apply text-neutral-500 hover:text-[var(--color-ink)];
+  @apply text-neutral-500 hover:text-ink;
 }
 
 /* ── Bits ────────────────────────────────────────────────────── */
@@ -901,7 +901,7 @@
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
 }
 .crm-modal-panel {
-  @apply my-auto flex max-h-[94vh] w-full flex-col overflow-hidden rounded-xl border border-[var(--color-line)] bg-white;
+  @apply my-auto flex max-h-[94vh] w-full flex-col overflow-hidden rounded-xl border border-line bg-white;
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.04) inset,
     0 28px 70px -12px rgba(15, 17, 22, 0.34);
@@ -926,7 +926,7 @@
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
 }
 .crm-modal-header {
-  @apply flex shrink-0 items-start justify-between gap-3 border-b border-[var(--color-line)];
+  @apply flex shrink-0 items-start justify-between gap-3 border-b border-line;
   padding: 0.875rem 1.25rem;
 }
 
@@ -989,7 +989,7 @@
 }
 
 .crm-modal-footer {
-  @apply shrink-0 border-t border-[var(--color-line)] bg-neutral-50/80;
+  @apply shrink-0 border-t border-line bg-neutral-50/80;
   padding: 0.75rem 1.25rem;
 }
 
@@ -1319,7 +1319,7 @@
 }
 
 .crm-drawer-panel {
-  @apply fixed right-0 top-0 bottom-0 z-50 flex w-full flex-col border-l border-[var(--color-line)] bg-white;
+  @apply fixed right-0 top-0 bottom-0 z-50 flex w-full flex-col border-l border-line bg-white;
   box-shadow:
     -16px 0 48px -12px rgba(15, 17, 22, 0.28),
     0 0 0 1px rgba(255, 255, 255, 0.5) inset;
@@ -1350,23 +1350,23 @@
 }
 
 .crm-drawer-header {
-  @apply flex shrink-0 items-start justify-between gap-3 border-b border-[var(--color-line)] bg-white/90 px-5 py-3.5 backdrop-blur-sm;
+  @apply flex shrink-0 items-start justify-between gap-3 border-b border-line bg-white/90 px-5 py-3.5 backdrop-blur-sm;
 }
 .crm-drawer-title {
-  @apply text-sm font-semibold tracking-tight text-[var(--color-ink)];
+  @apply text-sm font-semibold tracking-tight text-ink;
 }
 .crm-drawer-subtitle {
   @apply mt-0.5 text-xs leading-relaxed text-neutral-500;
 }
 .crm-drawer-footer {
-  @apply shrink-0 border-t border-[var(--color-line)] bg-neutral-50/80 px-5 py-3.5 backdrop-blur-sm;
+  @apply shrink-0 border-t border-line bg-neutral-50/80 px-5 py-3.5 backdrop-blur-sm;
 }
 
 .crm-drawer-close {
   @apply inline-flex h-9 w-9 items-center justify-center rounded-lg border border-transparent text-neutral-400 transition;
 }
 .crm-drawer-close:hover {
-  @apply border-[var(--color-line)] bg-neutral-50 text-[var(--color-ink)];
+  @apply border-line bg-neutral-50 text-ink;
 }
 
 /* ── Info tip (automated field hints) ─────────────────────── */
@@ -1448,7 +1448,7 @@
   @apply border-emerald-200 bg-emerald-50 text-emerald-700;
 }
 .crm-toggle-btn-inactive {
-  @apply border-[var(--color-line)] bg-white text-neutral-500 hover:bg-neutral-50 hover:text-[var(--color-ink)];
+  @apply border-line bg-white text-neutral-500 hover:bg-neutral-50 hover:text-ink;
 }
 
 /* ── Interactive File Drag Zones ────────────────────────── */
@@ -1511,15 +1511,15 @@
 
 /* ── Spotlight search ─────────────────────────────────────── */
 .crm-spotlight-trigger {
-  @apply rounded-xl border border-[var(--color-line)] bg-neutral-50/80 px-3.5 py-2.5 transition;
+  @apply rounded-xl border border-line bg-neutral-50/80 px-3.5 py-2.5 transition;
   transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
 }
 .crm-spotlight-trigger:hover {
-  @apply border-[var(--color-line-strong)] bg-white;
+  @apply border-line-strong bg-white;
   box-shadow: 0 4px 18px rgba(15, 17, 22, 0.06);
 }
 .crm-spotlight-trigger-kbd {
-  @apply inline-flex items-center rounded-md border border-[var(--color-line)] bg-white px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-neutral-400;
+  @apply inline-flex items-center rounded-md border border-line bg-white px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-neutral-400;
 }
 .crm-spotlight-trigger-mobile {
   transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
@@ -1529,25 +1529,25 @@
 }
 
 .crm-spotlight-overlay {
-  @apply fixed inset-0 z-[200] flex items-start justify-center px-4 pt-[min(14vh,120px)];
+  @apply fixed inset-0 z-200 flex items-start justify-center px-4 pt-[min(14vh,120px)];
   background: rgba(15, 17, 22, 0.42);
   backdrop-filter: blur(10px);
   animation: crm-spotlight-overlay-in 0.22s ease-out both;
 }
 .crm-spotlight-panel {
-  @apply flex w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-[var(--color-line)] bg-white;
+  @apply flex w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-line bg-white;
   max-height: min(72vh, 640px);
   box-shadow: 0 28px 80px rgba(15, 17, 22, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
   animation: crm-spotlight-panel-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .crm-spotlight-input-wrap {
-  @apply relative flex items-center gap-3 border-b border-[var(--color-line)] px-4 py-3.5;
+  @apply relative flex items-center gap-3 border-b border-line px-4 py-3.5;
 }
 .crm-spotlight-input-icon {
-  @apply h-[18px] w-[18px] shrink-0 text-neutral-400;
+  @apply h-4.5 w-4.5 shrink-0 text-neutral-400;
 }
 .crm-spotlight-input {
-  @apply w-full bg-transparent text-[15px] text-[var(--color-ink)] outline-none placeholder:text-neutral-400;
+  @apply w-full bg-transparent text-[15px] text-ink outline-none placeholder:text-neutral-400;
 }
 .crm-spotlight-spinner {
   @apply h-4 w-4 shrink-0 rounded-full border-2 border-neutral-200 border-t-brand;
@@ -1575,7 +1575,7 @@
   box-shadow: inset 0 0 0 1px rgba(217, 38, 46, 0.08);
 }
 .crm-spotlight-item-icon {
-  @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--color-line)] bg-white text-neutral-500;
+  @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-line bg-white text-neutral-500;
   transition: border-color 0.14s ease, color 0.14s ease, background-color 0.14s ease;
 }
 .crm-spotlight-item-active .crm-spotlight-item-icon {
@@ -1589,10 +1589,10 @@
   animation: crm-slide-up-fade 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .crm-spotlight-footer {
-  @apply flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-[var(--color-line)] px-4 py-2.5 text-[11px] text-neutral-400;
+  @apply flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-line px-4 py-2.5 text-[11px] text-neutral-400;
 }
 .crm-spotlight-footer kbd {
-  @apply mr-1 inline-flex min-w-[1.25rem] items-center justify-center rounded border border-[var(--color-line)] bg-neutral-50 px-1 py-0.5 text-[10px] font-semibold uppercase text-neutral-500;
+  @apply mr-1 inline-flex min-w-5 items-center justify-center rounded border border-line bg-neutral-50 px-1 py-0.5 text-[10px] font-semibold uppercase text-neutral-500;
 }
 
 @keyframes crm-spotlight-overlay-in {
@@ -1739,7 +1739,7 @@
 }
 
 .crm-drawer-section {
-  @apply space-y-5 rounded-xl border border-[var(--color-line)] bg-neutral-50/40 p-6;
+  @apply space-y-5 rounded-xl border border-line bg-neutral-50/40 p-6;
 }
 
 .crm-drawer-section-title {
@@ -1747,13 +1747,13 @@
 }
 
 .crm-drawer-hero {
-  @apply -mx-7 -mt-6 mb-5 border-b border-[var(--color-line)] px-7 py-6;
+  @apply -mx-7 -mt-6 mb-5 border-b border-line px-7 py-6;
   background:
     radial-gradient(120% 140% at 100% 0%, rgba(217, 38, 46, 0.06) 0%, transparent 55%),
     linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
 }
 .crm-profile-avatar {
-  @apply flex shrink-0 items-center justify-center rounded-xl text-sm font-bold shadow-sm ring-1 ring-black/[0.04];
+  @apply flex shrink-0 items-center justify-center rounded-xl text-sm font-bold shadow-sm ring-1 ring-black/4;
   width: 3.25rem;
   height: 3.25rem;
 }
@@ -1767,13 +1767,13 @@
   @apply mt-3 flex flex-wrap gap-2;
 }
 .crm-profile-chip {
-  @apply inline-flex items-center gap-1.5 rounded-full border border-[var(--color-line)] bg-white/80 px-2.5 py-1 text-[11px] font-semibold text-neutral-600;
+  @apply inline-flex items-center gap-1.5 rounded-full border border-line bg-white/80 px-2.5 py-1 text-[11px] font-semibold text-neutral-600;
 }
 .crm-profile-chip.is-accent {
   @apply border-brand/15 bg-brand-soft/50 text-brand;
 }
 .crm-profile-contact-card {
-  @apply flex w-full items-center justify-between rounded-xl border border-[var(--color-line)] bg-white p-3.5 text-left transition;
+  @apply flex w-full items-center justify-between rounded-xl border border-line bg-white p-3.5 text-left transition;
   transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 .crm-profile-contact-card:hover {
@@ -1792,10 +1792,10 @@
   @apply space-y-5;
 }
 .crm-drawer-skeleton-hero {
-  @apply -mx-7 -mt-6 flex gap-4 border-b border-[var(--color-line)] px-7 py-6;
+  @apply -mx-7 -mt-6 flex gap-4 border-b border-line px-7 py-6;
 }
 .crm-drawer-skeleton-avatar {
-  @apply h-[3.25rem] w-[3.25rem] shrink-0 animate-pulse rounded-xl bg-neutral-200/80;
+  @apply h-13 w-13 shrink-0 animate-pulse rounded-xl bg-neutral-200/80;
 }
 .crm-drawer-skeleton-line {
   @apply h-3 animate-pulse rounded-md bg-neutral-200/80;

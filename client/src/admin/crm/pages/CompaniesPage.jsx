@@ -1,5 +1,5 @@
-import { useEffect, useState, useMemo, useCallback } from 'react';
-import { fetchGlobalCompanies, crmApiFetch, deleteCompanyWithUndo, deleteLeadWithUndo, deleteCompanies, deleteLeads } from '../crmApi.js';
+import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
+import { fetchGlobalCompanies, deleteCompanyWithUndo, deleteLeadWithUndo, deleteCompanies } from '../crmApi.js';
 import DeleteIconButton from '../components/ui/DeleteIconButton.jsx';
 import ClickableTableRow, { stopRowClick } from '../components/ui/ClickableTableRow.jsx';
 import { BulkSelectHeaderCell, BulkSelectRowCell, BulkSelectionBar } from '../components/ui/BulkSelectTable.jsx';
@@ -24,13 +24,14 @@ import {
   Building2, 
   ExternalLink,
   Plus,
+  Loader2,
+  Search,
+  X,
 } from 'lucide-react';
 import CompanyDetailsDrawer from '../components/leads/CompanyDetailsDrawer.jsx';
 import OutreachDrawer from '../components/leads/OutreachDrawer.jsx';
 import AddCompanyModal from '../components/leads/AddCompanyModal.jsx';
-import TablePagination from '../components/ui/TablePagination.jsx';
 import DataTableShell from '../components/ui/DataTableShell.jsx';
-import { DeliveryStatusBadge } from '../components/leads/LeadTableComponents.jsx';
 import {
   AdvancedFilterPopover,
   AdvancedFilterChips,
@@ -41,38 +42,17 @@ import {
   buildDistinctFieldOptionsFromArrays,
 } from '../components/ui/advancedFilter/index.js';
 
-function initials(name = '') {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
-  if (!parts.length) return '—';
-  return (parts[0][0] + (parts[1]?.[0] || '')).toUpperCase();
-}
-
-// Custom inline SVG for Linkedin icon
-const Linkedin = (props) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-    <rect x="2" y="9" width="4" height="12" />
-    <circle cx="4" cy="4" r="2" />
-  </svg>
-);
-
 export default function CompaniesPage() {
   const [companies, setCompanies] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(50);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const limit = 50;
+
+  // Refs to prevent duplicate concurrent page fetches and scroll flicker
+  const isFetchingRef = useRef(false);
+  const observerTarget = useRef(null);
 
   // Selected company drawer state
   const [selectedCompanyId, setSelectedCompanyId] = useState(null);
@@ -82,6 +62,12 @@ export default function CompaniesPage() {
   const [showAddCompany, setShowAddCompany] = useState(false);
   const [error, setError] = useState('');
   const [bulkDeleting, setBulkDeleting] = useState(false);
+
+  const { sortKey, sortDir, sortLabel, toggleSort, clearSort } = useTableSort({
+    defaultKey: 'companyName',
+    defaultDir: 'asc',
+    accessors: companySortAccessors,
+  });
 
   const companyFilterSchema = useMemo(
     () => withFieldOptions(COMPANY_FILTER_SCHEMA, {
@@ -97,69 +83,137 @@ export default function CompaniesPage() {
   );
 
   const {
-    filtered: advancedFilteredCompanies,
     filters: advancedFilters,
     setFilters: setAdvancedFilters,
     matchMode: advancedMatchMode,
     activeCount: advancedActiveCount,
-  } = useTableFilters(companies, companyFilterSchema);
+  } = useTableFilters([], companyFilterSchema);
 
-  const loadData = async () => {
+  // Helper to extract clean query params from advanced filters for server database query
+  const filterParams = useMemo(() => {
+    const params = {};
+    if (searchTerm.trim()) {
+      params.search = searchTerm.trim();
+    }
+    if (!advancedFilters) return params;
+    Object.keys(advancedFilters).forEach((key) => {
+      const val = advancedFilters[key];
+      if (val === undefined || val === null || val === '') return;
+      if (Array.isArray(val)) {
+        if (val.length) params[key] = val.join(',');
+      } else if (typeof val === 'object') {
+        if (val.value !== undefined && val.value !== null && val.value !== '') {
+          params[key] = val.value;
+        } else if (Array.isArray(val.values) && val.values.length) {
+          params[key] = val.values.join(',');
+        }
+      } else if (typeof val === 'string' && val.trim()) {
+        params[key] = val.trim();
+      }
+    });
+    params.filters = JSON.stringify(advancedFilters);
+    return params;
+  }, [searchTerm, advancedFilters]);
+
+  // Load initial page (page 1) whenever sort, search, or filters change
+  const loadInitialData = useCallback(async () => {
     setLoading(true);
+    isFetchingRef.current = true;
     try {
-      const useWideFetch = advancedActiveCount > 0;
       const data = await fetchGlobalCompanies({
-        page: useWideFetch ? 1 : page,
-        limit: useWideFetch ? 500 : limit,
+        page: 1,
+        limit,
+        sortKey,
+        sortDir,
+        ...filterParams,
+      });
+      setCompanies(data.items || []);
+      setTotal(data.total || 0);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to load companies.');
+    } finally {
+      setLoading(false);
+      isFetchingRef.current = false;
+    }
+  }, [sortKey, sortDir, filterParams, limit]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      loadInitialData();
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [loadInitialData]);
+
+  const hasMore = companies.length < total;
+
+  // Load next chunk of 50 companies for infinite scroll with strict ref lock
+  const loadNextPage = useCallback(async () => {
+    if (isFetchingRef.current || companies.length >= total || loading) return;
+    
+    isFetchingRef.current = true;
+    setLoadingMore(true);
+    
+    const nextPage = Math.floor(companies.length / limit) + 1;
+    try {
+      const data = await fetchGlobalCompanies({
+        page: nextPage,
+        limit,
+        sortKey,
+        sortDir,
+        ...filterParams,
+      });
+      const newItems = data.items || [];
+      if (newItems.length > 0) {
+        setCompanies((prev) => {
+          const existingIds = new Set(prev.map((c) => String(c._id)));
+          const filteredNew = newItems.filter((c) => !existingIds.has(String(c._id)));
+          return [...prev, ...filteredNew];
+        });
+      }
+      setTotal(data.total || 0);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingMore(false);
+      setTimeout(() => {
+        isFetchingRef.current = false;
+      }, 150);
+    }
+  }, [loading, companies.length, total, limit, sortKey, sortDir, filterParams]);
+
+  // Load all remaining items in one fetch
+  const loadAllData = useCallback(async () => {
+    if (isFetchingRef.current || loading) return;
+
+    isFetchingRef.current = true;
+    setLoadingMore(true);
+    try {
+      const data = await fetchGlobalCompanies({
+        page: 1,
+        limit: Math.max(total, 50000),
+        sortKey,
+        sortDir,
+        ...filterParams,
       });
       setCompanies(data.items || []);
       setTotal(data.total || 0);
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
+      setLoadingMore(false);
+      setTimeout(() => {
+        isFetchingRef.current = false;
+      }, 150);
     }
-  };
+  }, [loading, total, sortKey, sortDir, filterParams]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setPage(1);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [advancedActiveCount]);
 
-  useEffect(() => {
-    loadData();
-  }, [page, limit, advancedActiveCount]);
 
-  const tableTotal = advancedActiveCount ? advancedFilteredCompanies.length : total;
-
-  const { sortKey, sortDir, sortLabel, toggleSort, clearSort, sortItems } = useTableSort({
-    defaultKey: 'companyName',
-    defaultDir: 'asc',
-    accessors: companySortAccessors,
-  });
-
-  const sortedCompanies = useMemo(() => {
-    const base = advancedActiveCount ? advancedFilteredCompanies : companies;
-    return sortItems(base);
-  }, [advancedActiveCount, advancedFilteredCompanies, companies, sortItems]);
-
-  const tableCompanies = useMemo(() => {
-    if (!advancedActiveCount) return sortedCompanies;
-    const start = (page - 1) * limit;
-    return sortedCompanies.slice(start, start + limit);
-  }, [advancedActiveCount, sortedCompanies, page, limit]);
-
-  const selection = useRowSelection(tableCompanies);
-
-  const handleLimitChange = (nextLimit) => {
-    setLimit(nextLimit);
-    setPage(1);
-  };
+  const selection = useRowSelection(companies);
 
   const handleCompanyUpdated = () => {
-    loadData();
+    loadInitialData();
   };
 
   useSpotlightDeepLink({
@@ -176,8 +230,9 @@ export default function CompaniesPage() {
     onRemoved: (id) => {
       setCompanies((prev) => prev.filter((c) => c._id !== id));
       if (selectedCompanyId === id) setSelectedCompanyId(null);
+      setTotal((t) => Math.max(0, t - 1));
     },
-    onRestored: () => loadData(),
+    onRestored: () => loadInitialData(),
     defaultConfirm: 'Delete this company? You can undo within 30 seconds.',
   });
 
@@ -203,8 +258,9 @@ export default function CompaniesPage() {
       setCompanies((prev) => prev.filter((c) => !ids.includes(c._id)));
       if (selectedCompanyId && ids.includes(selectedCompanyId)) setSelectedCompanyId(null);
       selection.clearSelection();
+      setTotal((t) => Math.max(0, t - ids.length));
     },
-    onRestored: () => loadData(),
+    onRestored: () => loadInitialData(),
   });
 
   async function handleBulkDelete() {
@@ -251,14 +307,40 @@ export default function CompaniesPage() {
       <PageSection>
         <PageToolbar
           start={(
-            <AdvancedFilterPopover
-              schema={companyFilterSchema}
-              filters={advancedFilters}
-              matchMode={advancedMatchMode}
-              onChange={setAdvancedFilters}
-            />
+            <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
+              <AdvancedFilterPopover
+                schema={companyFilterSchema}
+                filters={advancedFilters}
+                matchMode={advancedMatchMode}
+                onChange={setAdvancedFilters}
+              />
+              <div className="relative flex-1 min-w-56 max-w-md">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-neutral-400 pointer-events-none" />
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search database by name, domain, location…"
+                  className="crm-input w-full text-xs py-1.5 pr-7"
+                  style={{ paddingLeft: '2.25rem' }}
+                />
+                {searchTerm && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchTerm('')}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
+            </div>
           )}
-          meta={<ToolbarCount>{tableTotal} total companies</ToolbarCount>}
+          meta={
+            <ToolbarCount>
+              Showing {companies.length} of {total} companies
+            </ToolbarCount>
+          }
           actions={(
             <button type="button" onClick={() => setShowAddCompany(true)} className="crm-btn-primary shrink-0">
               <Plus className="h-3.5 w-3.5" />
@@ -276,8 +358,8 @@ export default function CompaniesPage() {
 
         <Card className="overflow-hidden">
         {loading ? (
-          <LoadingState label="Fetching companies list..." />
-        ) : tableCompanies.length === 0 ? (
+          <LoadingState label="Fetching companies database…" />
+        ) : companies.length === 0 ? (
           <EmptyState
             icon={Building2}
             title="No companies found"
@@ -291,14 +373,6 @@ export default function CompaniesPage() {
           />
         ) : (
           <>
-            <TablePagination
-              page={page}
-              limit={limit}
-              total={tableTotal}
-              onPageChange={setPage}
-              onLimitChange={handleLimitChange}
-              noun="companies"
-            />
             <BulkSelectionBar
               count={selection.selectionCount}
               noun="company"
@@ -314,7 +388,7 @@ export default function CompaniesPage() {
               onClear={clearSort}
             />
             <DataTableShell minWidth={700}>
-            <table className="crm-table min-w-[700px]">
+            <table className="crm-table min-w-175">
               <thead>
                 <tr className="crm-table-head">
                   <BulkSelectHeaderCell selection={selection} ariaLabel="Select all companies" />
@@ -328,7 +402,7 @@ export default function CompaniesPage() {
                 </tr>
               </thead>
               <tbody>
-                {tableCompanies.map((comp) => (
+                {companies.map((comp) => (
                   <ClickableTableRow key={comp._id} onClick={() => setSelectedCompanyId(comp._id)}>
                     <BulkSelectRowCell
                       id={comp._id}
@@ -357,7 +431,7 @@ export default function CompaniesPage() {
                     <td className=" font-semibold text-neutral-800">
                       {comp.pocCount} person(s)
                     </td>
-                    <td className=" text-xs text-neutral-600 max-w-[200px] truncate" title={comp.campaignNames?.join(', ')}>
+                    <td className=" text-xs text-neutral-600 max-w-50 truncate" title={comp.campaignNames?.join(', ')}>
                       {comp.campaignNames?.length ? comp.campaignNames.join(', ') : '—'}
                     </td>
                     <td className=" text-center">
@@ -376,15 +450,37 @@ export default function CompaniesPage() {
               </tbody>
             </table>
             </DataTableShell>
-            <TablePagination
-              page={page}
-              limit={limit}
-              total={tableTotal}
-              onPageChange={setPage}
-              onLimitChange={handleLimitChange}
-              noun="companies"
-              className="is-bottom"
-            />
+
+            {/* Stable Bottom Infinite Scroll Footer with Load Next 50 & Show All buttons */}
+            <div className="flex flex-col items-center justify-center p-4 border-t border-neutral-100 min-h-16">
+              {loadingMore ? (
+                <div className="flex items-center gap-2 text-sm text-neutral-500 font-medium">
+                  <Loader2 className="h-4 w-4 animate-spin text-brand" />
+                  <span>Loading companies…</span>
+                </div>
+              ) : hasMore ? (
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={loadNextPage}
+                    className="crm-btn-secondary text-xs px-4 py-2 hover:bg-neutral-100 transition"
+                  >
+                    Load next 50 companies ({total - companies.length} remaining)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={loadAllData}
+                    className="crm-btn-secondary text-xs px-4 py-2 bg-brand/10 text-brand border-brand/30 hover:bg-brand/20 transition font-semibold"
+                  >
+                    Show all ({total} total)
+                  </button>
+                </div>
+              ) : (
+                <div className="text-xs text-neutral-400 font-mono">
+                  All {total} companies loaded
+                </div>
+              )}
+            </div>
           </>
         )}
       </Card>

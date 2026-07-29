@@ -42,12 +42,25 @@ const flowGraphSchema = new mongoose.Schema(
   { _id: false },
 );
 
+const audienceSchema = new mongoose.Schema(
+  {
+    importedCampaignIds: [{ type: String }],
+    campaignSelections: { type: mongoose.Schema.Types.Mixed, default: {} },
+    includeCompanyIds: [{ type: String }],
+    includeContactIds: [{ type: String }],
+    excludeCompanyIds: [{ type: String }],
+    excludeContactIds: [{ type: String }],
+  },
+  { _id: false },
+);
+
 const sequenceSchema = new mongoose.Schema(
   {
     campaignId: { type: mongoose.Schema.Types.ObjectId, ref: 'ProjectCampaign', default: null, index: true },
     name: { type: String, required: true, trim: true },
     steps: [sequenceStepSchema],
     flowGraph: { type: flowGraphSchema, default: null },
+    audience: { type: audienceSchema, default: () => ({}) },
     isActive: { type: Boolean, default: false },
     version: { type: Number, default: 0 },
     deletedAt: { type: Date, default: null, index: true },

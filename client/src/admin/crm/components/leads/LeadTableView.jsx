@@ -217,7 +217,7 @@ export default function LeadTableView({ leadsData = [], campaignsList = [], proj
 
   return (
     <div className="crm-card overflow-hidden">
-      <div className="flex flex-col gap-3 border-b border-[var(--color-line)] bg-slate-50/50 p-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex flex-col gap-3 border-b border-line bg-slate-50/50 p-4 lg:flex-row lg:items-center lg:justify-between">
         <LeadFilterToolbar
           advancedSchema={leadFilterSchema}
           advancedFilters={advancedFilters}
@@ -309,7 +309,7 @@ export default function LeadTableView({ leadsData = [], campaignsList = [], proj
                           {initials(lead.name)}
                         </div>
                         <div className="min-w-0">
-                          <div className="truncate font-semibold text-[var(--color-ink)]">
+                          <div className="truncate font-semibold text-ink">
                             {lead.name || '—'}
                           </div>
                           <div className="truncate text-xs text-neutral-500">{lead.designation || 'Decision maker'}</div>

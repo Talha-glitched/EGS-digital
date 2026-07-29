@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { fetchGlobalLeads, crmApiFetch, updateLead, deleteLeadWithUndo, deleteLeads, fetchLeadById } from '../crmApi.js';
 import DeleteIconButton from '../components/ui/DeleteIconButton.jsx';
 import ClickableTableRow, { stopRowClick } from '../components/ui/ClickableTableRow.jsx';
@@ -24,6 +24,9 @@ import {
   PhoneCall, 
   MessageSquare,
   Plus,
+  Loader2,
+  Search,
+  X,
 } from 'lucide-react';
 import DataTableShell from '../components/ui/DataTableShell.jsx';
 import { DeliveryStatusBadge } from '../components/leads/LeadTableComponents.jsx';
@@ -31,7 +34,6 @@ import PocQualificationBadge from '../components/leads/PocQualificationBadge.jsx
 import OutreachDrawer from '../components/leads/OutreachDrawer.jsx';
 import { VendorEmailColumns, VendorEmailHeaders } from '../components/leads/VendorEmailCells.jsx';
 import AddContactModal from '../components/leads/AddContactModal.jsx';
-import TablePagination from '../components/ui/TablePagination.jsx';
 import {
   AdvancedFilterPopover,
   AdvancedFilterChips,
@@ -71,14 +73,25 @@ export default function PeoplePage() {
   const [total, setTotal] = useState(0);
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(50);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const limit = 50;
+
+  // Refs to prevent duplicate concurrent fetches and scroll flicker
+  const isFetchingRef = useRef(false);
+  const observerTarget = useRef(null);
 
   // Selected lead drawer state
   const [selectedLead, setSelectedLead] = useState(null);
   const [showAddContact, setShowAddContact] = useState(false);
   const [error, setError] = useState('');
   const [bulkDeleting, setBulkDeleting] = useState(false);
+
+  const { sortKey, sortDir, sortLabel, toggleSort, clearSort } = useTableSort({
+    defaultKey: 'name',
+    defaultDir: 'asc',
+    accessors: leadSortAccessors,
+  });
 
   const leadFilterSchema = useMemo(
     () => buildLeadFilterSchema({
@@ -93,30 +106,69 @@ export default function PeoplePage() {
     }),
     [campaigns, leads],
   );
+
   const {
-    filtered: advancedFilteredLeads,
     filters: advancedFilters,
     setFilters: setAdvancedFilters,
     matchMode: advancedMatchMode,
     activeCount: advancedActiveCount,
-  } = useTableFilters(leads, leadFilterSchema);
+  } = useTableFilters([], leadFilterSchema);
 
-  const loadData = async () => {
+  const filterParams = useMemo(() => {
+    const params = {};
+    if (searchTerm.trim()) {
+      params.search = searchTerm.trim();
+    }
+    if (!advancedFilters) return params;
+    const activeFiltersObj = {};
+    Object.keys(advancedFilters).forEach((key) => {
+      const val = advancedFilters[key];
+      if (val === undefined || val === null || val === '' || val === 'any') return;
+      if (Array.isArray(val)) {
+        if (val.length) {
+          params[key] = val.join(',');
+          activeFiltersObj[key] = val;
+        }
+      } else if (typeof val === 'object') {
+        if (val.value !== undefined && val.value !== null && val.value !== '' && val.value !== 'any') {
+          params[key] = val.value;
+          activeFiltersObj[key] = val;
+        } else if (Array.isArray(val.values) && val.values.length) {
+          params[key] = val.values.join(',');
+          activeFiltersObj[key] = val;
+        }
+      } else if (typeof val === 'string' && val.trim() && val.trim() !== 'any') {
+        params[key] = val.trim();
+        activeFiltersObj[key] = val.trim();
+      }
+    });
+    if (Object.keys(activeFiltersObj).length > 0) {
+      params.filters = JSON.stringify(activeFiltersObj);
+    }
+    return params;
+  }, [searchTerm, advancedFilters]);
+
+  const loadInitialData = useCallback(async () => {
     setLoading(true);
+    isFetchingRef.current = true;
     try {
-      const useWideFetch = advancedActiveCount > 0;
       const data = await fetchGlobalLeads({
-        page: useWideFetch ? 1 : page,
-        limit: useWideFetch ? 500 : limit,
+        page: 1,
+        limit,
+        sortKey,
+        sortDir,
+        ...filterParams,
       });
       setLeads(data.items || []);
       setTotal(data.total || 0);
     } catch (err) {
       console.error(err);
+      setError('Failed to fetch contacts.');
     } finally {
       setLoading(false);
+      isFetchingRef.current = false;
     }
-  };
+  }, [sortKey, sortDir, filterParams, limit]);
 
   useEffect(() => {
     crmApiFetch('/api/admin/projects')
@@ -125,39 +177,76 @@ export default function PeoplePage() {
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => setPage(1), 300);
+    const timer = setTimeout(() => {
+      loadInitialData();
+    }, 250);
     return () => clearTimeout(timer);
-  }, [advancedActiveCount]);
+  }, [loadInitialData]);
 
-  useEffect(() => {
-    loadData();
-  }, [page, limit, advancedActiveCount]);
+  const hasMore = leads.length < total;
 
-  const tableTotal = advancedActiveCount ? advancedFilteredLeads.length : total;
+  const loadNextPage = useCallback(async () => {
+    if (isFetchingRef.current || leads.length >= total || loading) return;
+    
+    isFetchingRef.current = true;
+    setLoadingMore(true);
+    
+    const nextPage = Math.floor(leads.length / limit) + 1;
+    try {
+      const data = await fetchGlobalLeads({
+        page: nextPage,
+        limit,
+        sortKey,
+        sortDir,
+        ...filterParams,
+      });
+      const newItems = data.items || [];
+      if (newItems.length > 0) {
+        setLeads((prev) => {
+          const existingIds = new Set(prev.map((l) => String(l._id)));
+          const filteredNew = newItems.filter((l) => !existingIds.has(String(l._id)));
+          return [...prev, ...filteredNew];
+        });
+      }
+      setTotal(data.total || 0);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingMore(false);
+      setTimeout(() => {
+        isFetchingRef.current = false;
+      }, 150);
+    }
+  }, [loading, leads.length, total, limit, sortKey, sortDir, filterParams]);
 
-  const { sortKey, sortDir, sortLabel, toggleSort, clearSort, sortItems } = useTableSort({
-    defaultKey: 'name',
-    defaultDir: 'asc',
-    accessors: leadSortAccessors,
-  });
+  const loadAllData = useCallback(async () => {
+    if (isFetchingRef.current || loading) return;
 
-  const sortedLeads = useMemo(() => {
-    const base = advancedActiveCount ? advancedFilteredLeads : leads;
-    return sortItems(base);
-  }, [advancedActiveCount, advancedFilteredLeads, leads, sortItems]);
+    isFetchingRef.current = true;
+    setLoadingMore(true);
+    try {
+      const data = await fetchGlobalLeads({
+        page: 1,
+        limit: Math.max(total, 50000),
+        sortKey,
+        sortDir,
+        ...filterParams,
+      });
+      setLeads(data.items || []);
+      setTotal(data.total || 0);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingMore(false);
+      setTimeout(() => {
+        isFetchingRef.current = false;
+      }, 150);
+    }
+  }, [loading, total, sortKey, sortDir, filterParams]);
 
-  const tableLeads = useMemo(() => {
-    if (!advancedActiveCount) return sortedLeads;
-    const start = (page - 1) * limit;
-    return sortedLeads.slice(start, start + limit);
-  }, [advancedActiveCount, sortedLeads, page, limit]);
 
-  const selection = useRowSelection(tableLeads);
 
-  const handleLimitChange = (nextLimit) => {
-    setLimit(nextLimit);
-    setPage(1);
-  };
+  const selection = useRowSelection(leads);
 
   const confirmDeleteLead = useConfirmDelete({
     resourceType: 'lead',
@@ -165,8 +254,9 @@ export default function PeoplePage() {
     onRemoved: (id) => {
       setLeads((prev) => prev.filter((l) => l._id !== id));
       if (selectedLead?._id === id) setSelectedLead(null);
+      setTotal((t) => Math.max(0, t - 1));
     },
-    onRestored: () => loadData(),
+    onRestored: () => loadInitialData(),
     defaultConfirm: 'Delete this contact? You can undo within 30 seconds.',
   });
 
@@ -182,8 +272,9 @@ export default function PeoplePage() {
       setLeads((prev) => prev.filter((l) => !ids.includes(l._id)));
       if (selectedLead && ids.includes(selectedLead._id)) setSelectedLead(null);
       selection.clearSelection();
+      setTotal((t) => Math.max(0, t - ids.length));
     },
-    onRestored: () => loadData(),
+    onRestored: () => loadInitialData(),
   });
 
   async function handleBulkDelete() {
@@ -252,7 +343,6 @@ export default function PeoplePage() {
     await handleUpdate(lead._id, patch);
   };
 
-
   const launchWhatsapp = (lead) => {
     const phoneNum = lead.whatsappNumber || lead.phone || lead.phoneLusha1 || '';
     const cleanPhone = phoneNum.replace(/\D/g, ''); 
@@ -279,14 +369,40 @@ export default function PeoplePage() {
       <PageSection>
         <PageToolbar
           start={(
-            <AdvancedFilterPopover
-              schema={leadFilterSchema}
-              filters={advancedFilters}
-              matchMode={advancedMatchMode}
-              onChange={setAdvancedFilters}
-            />
+            <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
+              <AdvancedFilterPopover
+                schema={leadFilterSchema}
+                filters={advancedFilters}
+                matchMode={advancedMatchMode}
+                onChange={setAdvancedFilters}
+              />
+              <div className="relative flex-1 min-w-56 max-w-md">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-neutral-400 pointer-events-none" />
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search database by name, email, title…"
+                  className="crm-input w-full text-xs py-1.5 pr-7"
+                  style={{ paddingLeft: '2.25rem' }}
+                />
+                {searchTerm && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchTerm('')}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
+            </div>
           )}
-          meta={<ToolbarCount>{tableTotal} total records</ToolbarCount>}
+          meta={
+            <ToolbarCount>
+              Showing {leads.length} of {total} records
+            </ToolbarCount>
+          }
           actions={(
             <button type="button" onClick={() => setShowAddContact(true)} className="crm-btn-primary shrink-0">
               <Plus className="h-3.5 w-3.5" />
@@ -303,8 +419,8 @@ export default function PeoplePage() {
 
         <Card className="overflow-hidden">
         {loading ? (
-          <LoadingState label="Fetching global leads..." />
-        ) : tableLeads.length === 0 ? (
+          <LoadingState label="Fetching global contacts database…" />
+        ) : leads.length === 0 ? (
           <EmptyState
             icon={Users}
             title="No contacts found"
@@ -318,14 +434,6 @@ export default function PeoplePage() {
           />
         ) : (
           <>
-            <TablePagination
-              page={page}
-              limit={limit}
-              total={tableTotal}
-              onPageChange={setPage}
-              onLimitChange={handleLimitChange}
-              noun="leads"
-            />
             <BulkSelectionBar
               count={selection.selectionCount}
               noun="contact"
@@ -341,7 +449,7 @@ export default function PeoplePage() {
               onClear={clearSort}
             />
             <DataTableShell minWidth={1200}>
-            <table className="crm-table min-w-[1100px]">
+            <table className="crm-table min-w-275">
               <thead>
                 <tr className="crm-table-head">
                   <BulkSelectHeaderCell selection={selection} ariaLabel="Select all contacts" />
@@ -358,7 +466,7 @@ export default function PeoplePage() {
                 </tr>
               </thead>
               <tbody>
-                {tableLeads.map((lead) => {
+                {leads.map((lead) => {
                   const hasCc = lead.coldCall?.made || false;
                   const hasWa = lead.whatsapp?.sent || false;
                   return (
@@ -374,7 +482,7 @@ export default function PeoplePage() {
                             {initials(lead.name)}
                           </div>
                           <div className="min-w-0">
-                            <div className="truncate font-semibold text-[var(--color-ink)]">
+                            <div className="truncate font-semibold text-ink">
                               {lead.name || '—'}
                             </div>
                             <div className="truncate text-xs text-neutral-500">{lead.designation || 'Decision maker'}</div>
@@ -385,7 +493,7 @@ export default function PeoplePage() {
                         <div className="truncate font-medium text-neutral-800">{lead.companyName || '—'}</div>
                       </td>
                       <VendorEmailColumns lead={lead} />
-                      <td className=" font-semibold text-brand-dark max-w-[150px] truncate" title={lead.campaignName || 'No campaign'}>
+                      <td className=" font-semibold text-brand-dark max-w-37.5 truncate" title={lead.campaignName || 'No campaign'}>
                         {lead.campaignName || '—'}
                       </td>
                       <td>
@@ -451,15 +559,37 @@ export default function PeoplePage() {
               </tbody>
             </table>
             </DataTableShell>
-            <TablePagination
-              page={page}
-              limit={limit}
-              total={tableTotal}
-              onPageChange={setPage}
-              onLimitChange={handleLimitChange}
-              noun="leads"
-              className="is-bottom"
-            />
+
+            {/* Stable Bottom Infinite Scroll Footer with Load Next 50 & Show All buttons */}
+            <div className="flex flex-col items-center justify-center p-4 border-t border-neutral-100 min-h-16">
+              {loadingMore ? (
+                <div className="flex items-center gap-2 text-sm text-neutral-500 font-medium">
+                  <Loader2 className="h-4 w-4 animate-spin text-brand" />
+                  <span>Loading contacts…</span>
+                </div>
+              ) : hasMore ? (
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={loadNextPage}
+                    className="crm-btn-secondary text-xs px-4 py-2 hover:bg-neutral-100 transition"
+                  >
+                    Load next 50 contacts ({total - leads.length} remaining)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={loadAllData}
+                    className="crm-btn-secondary text-xs px-4 py-2 bg-brand/10 text-brand border-brand/30 hover:bg-brand/20 transition font-semibold"
+                  >
+                    Show all ({total} total)
+                  </button>
+                </div>
+              ) : (
+                <div className="text-xs text-neutral-400 font-mono">
+                  All {total} contacts loaded
+                </div>
+              )}
+            </div>
           </>
         )}
       </Card>
@@ -476,7 +606,7 @@ export default function PeoplePage() {
         open={showAddContact}
         onClose={() => setShowAddContact(false)}
         onCreated={(lead) => {
-          loadData();
+          loadInitialData();
           openDrawer(lead);
         }}
       />
