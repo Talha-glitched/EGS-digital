@@ -68,6 +68,9 @@ export default function PipelineStageEditorModal({ open, onClose, stages = [], o
     }
   }
 
+  const [draggedIndex, setDraggedIndex] = useState(null);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
+
   function updateItem(index, patch) {
     setItems((prev) => prev.map((item, i) => (i === index ? { ...item, ...patch } : item)));
   }
@@ -78,6 +81,17 @@ export default function PipelineStageEditorModal({ open, onClose, stages = [], o
       const target = index + direction;
       if (target < 0 || target >= next.length) return prev;
       [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
+  }
+
+  function reorderItem(fromIndex, toIndex) {
+    if (fromIndex === null || toIndex === null || fromIndex === toIndex) return;
+    setItems((prev) => {
+      if (fromIndex < 0 || fromIndex >= prev.length || toIndex < 0 || toIndex >= prev.length) return prev;
+      const next = [...prev];
+      const [moved] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, moved);
       return next;
     });
   }
@@ -134,46 +148,94 @@ export default function PipelineStageEditorModal({ open, onClose, stages = [], o
 
         <ModalSection
           title="Stage order"
-          description="Stages appear left-to-right on the board. Reorder, rename, or add stages to match your sales process, and keep win probability aligned for forecasting."
+          description="Stages appear left-to-right on the board. Drag or use arrows to reorder, rename, or add stages to match your sales process."
         >
           {updatedLabel ? <p className="text-xs text-neutral-500 mb-2">{updatedLabel}</p> : null}
           <div className="space-y-3">
-            {items.map((item, index) => (
-              <div key={`stage-${index}`} className="crm-stage-editor-row flex items-center gap-2">
-                <GripVertical className="h-4 w-4 shrink-0 text-neutral-300" aria-hidden="true" />
-                <Field label={index === 0 ? 'Stage name' : undefined} className="min-w-0 flex-1">
-                  <input
-                    className="crm-input"
-                    value={item.name}
-                    onChange={(e) => updateItem(index, { name: e.target.value })}
-                    placeholder="Proposal Sent"
-                  />
-                </Field>
-                <Field label={index === 0 ? 'Win %' : undefined} className="w-24 shrink-0">
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    step="1"
-                    className="crm-input text-right tabular-nums"
-                    value={item.probability}
-                    onChange={(e) => updateItem(index, { probability: Math.min(100, Math.max(0, Number(e.target.value || 0))) })}
-                    placeholder="65"
-                  />
-                </Field>
-                <div className="flex shrink-0 items-end gap-1 pb-0.5">
-                  <button type="button" className="crm-icon-btn h-8 w-8" onClick={() => moveItem(index, -1)} disabled={index === 0} aria-label="Move stage up">
-                    <ArrowUp className="h-3.5 w-3.5" />
-                  </button>
-                  <button type="button" className="crm-icon-btn h-8 w-8" onClick={() => moveItem(index, 1)} disabled={index === items.length - 1} aria-label="Move stage down">
-                    <ArrowDown className="h-3.5 w-3.5" />
-                  </button>
-                  <button type="button" className="crm-icon-btn h-8 w-8 text-red-500" onClick={() => removeItem(index)} disabled={items.length <= 1} aria-label="Remove stage">
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
+            {items.map((item, index) => {
+              const isDragging = draggedIndex === index;
+              const isDragOver = dragOverIndex === index && draggedIndex !== index;
+              return (
+                <div
+                  key={`stage-${index}`}
+                  className={`crm-stage-editor-row flex items-center gap-2 transition-all duration-150 ${
+                    isDragging ? 'opacity-40 border-dashed border-neutral-400 bg-neutral-50 scale-[0.99]' : ''
+                  } ${
+                    isDragOver ? 'border-brand-500 bg-brand-50/40 ring-2 ring-brand-500/20' : ''
+                  }`}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    if (dragOverIndex !== index) {
+                      setDragOverIndex(index);
+                    }
+                  }}
+                  onDragLeave={(e) => {
+                    if (!e.currentTarget.contains(e.relatedTarget)) {
+                      if (dragOverIndex === index) {
+                        setDragOverIndex(null);
+                      }
+                    }
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    if (draggedIndex !== null && draggedIndex !== index) {
+                      reorderItem(draggedIndex, index);
+                    }
+                    setDraggedIndex(null);
+                    setDragOverIndex(null);
+                  }}
+                  onDragEnd={() => {
+                    setDraggedIndex(null);
+                    setDragOverIndex(null);
+                  }}
+                >
+                  <div
+                    draggable
+                    onDragStart={(e) => {
+                      setDraggedIndex(index);
+                      e.dataTransfer.effectAllowed = 'move';
+                      e.dataTransfer.setData('text/plain', String(index));
+                    }}
+                    className="cursor-grab active:cursor-grabbing p-1 rounded hover:bg-neutral-100 shrink-0 text-neutral-400 hover:text-neutral-600 transition-colors"
+                    title="Drag to reorder stage"
+                  >
+                    <GripVertical className="h-4 w-4" aria-hidden="true" />
+                  </div>
+                  <Field label={index === 0 ? 'Stage name' : undefined} className="min-w-0 flex-1">
+                    <input
+                      className="crm-input"
+                      value={item.name}
+                      onChange={(e) => updateItem(index, { name: e.target.value })}
+                      placeholder="Proposal Sent"
+                    />
+                  </Field>
+                  <Field label={index === 0 ? 'Win %' : undefined} className="w-24 shrink-0">
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="1"
+                      className="crm-input text-right tabular-nums"
+                      value={item.probability}
+                      onChange={(e) => updateItem(index, { probability: Math.min(100, Math.max(0, Number(e.target.value || 0))) })}
+                      placeholder="65"
+                    />
+                  </Field>
+                  <div className="flex shrink-0 items-end gap-1 pb-0.5">
+                    <button type="button" className="crm-icon-btn h-8 w-8" onClick={() => moveItem(index, -1)} disabled={index === 0} aria-label="Move stage up">
+                      <ArrowUp className="h-3.5 w-3.5" />
+                    </button>
+                    <button type="button" className="crm-icon-btn h-8 w-8" onClick={() => moveItem(index, 1)} disabled={index === items.length - 1} aria-label="Move stage down">
+                      <ArrowDown className="h-3.5 w-3.5" />
+                    </button>
+                    <button type="button" className="crm-icon-btn h-8 w-8 text-red-500" onClick={() => removeItem(index)} disabled={items.length <= 1} aria-label="Remove stage">
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <button type="button" className="crm-btn-secondary mt-4" onClick={addItem}>

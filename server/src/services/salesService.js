@@ -151,8 +151,7 @@ async function getPipelineStages() {
   assertDb();
   const config = await PipelineConfig.findOne({ key: 'sales' }).lean();
   let rawStages = config?.stages;
-  const isTargetConfig = rawStages?.length === 10 && rawStages[1]?.name === 'Waiting Adv/ PO';
-  if (!isTargetConfig) {
+  if (!rawStages || !rawStages.length) {
     rawStages = DEFAULT_PIPELINE_STAGES;
     await PipelineConfig.findOneAndUpdate(
       { key: 'sales' },
@@ -290,7 +289,8 @@ export async function listOpportunities({ stage, owner, search, campaignId, comp
   const items = await withOpportunityPopulate(Opportunity.find(query))
     .sort({ updatedAt: -1, expectedCloseDate: 1 })
     .lean();
-  const stageList = mergeStagesWithOpportunityData(stages, items);
+  const stageNameSet = new Set(stages.map((s) => s.name));
+  const fallbackStage = stages[0]?.name || 'Inquiry';
   const opportunityIds = items.map((item) => item._id);
   const taskCounts = opportunityIds.length
     ? await Task.aggregate([
@@ -316,8 +316,10 @@ export async function listOpportunities({ stage, owner, search, campaignId, comp
   const taskCountMap = new Map(taskCounts.map((row) => [String(row._id), row]));
   const enrichedItems = items.map((item) => {
     const counts = taskCountMap.get(String(item._id));
+    const effectiveStage = stageNameSet.has(item.stage) ? item.stage : fallbackStage;
     return {
       ...item,
+      stage: effectiveStage,
       executionSummary: {
         totalTasks: counts?.total || 0,
         openTasks: counts?.open || 0,
@@ -331,8 +333,8 @@ export async function listOpportunities({ stage, owner, search, campaignId, comp
 
   return {
     items: enrichedItems,
-    stages: stageNames(stageList),
-    stageProbabilities: Object.fromEntries(stageList.map((s) => [s.name, s.probability])),
+    stages: stageNames(stages),
+    stageProbabilities: Object.fromEntries(stages.map((s) => [s.name, s.probability])),
     owners,
   };
 }
@@ -346,7 +348,11 @@ export async function getOpportunity(id) {
     throw error;
   }
 
-  const stages = mergeStagesWithOpportunityData(await getPipelineStages(), [opportunity]);
+  const stages = await getPipelineStages();
+  const stageNameSet = new Set(stages.map((s) => s.name));
+  if (!stageNameSet.has(opportunity.stage)) {
+    opportunity.stage = stages[0]?.name || 'Inquiry';
+  }
   let contacts = [];
   if (opportunity.companyId?._id) {
     contacts = await Lead.find({ companyId: opportunity.companyId._id, deletedAt: null })
