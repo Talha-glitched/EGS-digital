@@ -32,6 +32,8 @@ const contactInteractionSchema = new mongoose.Schema(
 
 contactInteractionSchema.index({ companyId: 1, occurredAt: -1 });
 contactInteractionSchema.index({ leadId: 1, occurredAt: -1 });
+contactInteractionSchema.index({ deletedAt: 1, leadId: 1, occurredAt: -1 });
+contactInteractionSchema.index({ deletedAt: 1, companyId: 1, occurredAt: -1 });
 
 export const ContactInteraction =
   mongoose.models.ContactInteraction ||

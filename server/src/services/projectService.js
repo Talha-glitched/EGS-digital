@@ -140,10 +140,16 @@ async function bulkSoftDelete(ids, deleteFn, actor = {}) {
   };
 }
 
-export async function listProjects() {
+export async function listProjects({ summary = false } = {}) {
   assertDb();
   const projects = await ProjectCampaign.find({ deletedAt: null }).sort({ createdAt: -1 }).lean();
   if (!projects.length) return [];
+
+  // When summary=true (e.g. dashboard sidebar), skip the 7 heavy aggregations.
+  // Counters on the document are kept up-to-date by the background analytics cron.
+  if (summary) {
+    return projects;
+  }
 
   const projectIds = projects.map((p) => p._id);
 

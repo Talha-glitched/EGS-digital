@@ -918,14 +918,48 @@ export async function getWorkspaceSummary() {
   const next30Days = new Date(now.getTime() + 30 * 86400000);
   const sevenDaysAgo = new Date(now.getTime() - 7 * 86400000);
   const stages = await getPipelineStages();
+
+  // Fetch only the fields needed for metrics + recent-card display
   const [ongoingJobs, openTasks, overdueTasks, newReplies, failedJobs, pendingContacts] = await Promise.all([
-    OngoingJob.find({ deletedAt: null, stage: { $nin: [CLOSED_LOST_STAGE] } }).sort({ updatedAt: -1 }).populate('companyId', 'companyName').lean(),
-    Task.find({ status: 'Open', deletedAt: null }).sort({ dueAt: 1 }).limit(8).populate('companyId', 'companyName').populate('opportunityId', 'name').populate('ownerUserId', 'displayName').lean(),
+    OngoingJob.aggregate([
+      { $match: { deletedAt: null, stage: { $nin: [CLOSED_LOST_STAGE] } } },
+      {
+        $lookup: {
+          from: 'companies',
+          localField: 'companyId',
+          foreignField: '_id',
+          as: '_company',
+          pipeline: [{ $project: { companyName: 1 } }],
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          stage: 1,
+          valueAed: 1,
+          probability: 1,
+          expectedCloseDate: 1,
+          owner: 1,
+          updatedAt: 1,
+          companyId: { $arrayElemAt: ['$_company', 0] },
+        },
+      },
+      { $sort: { updatedAt: -1 } },
+    ]),
+    Task.find({ status: 'Open', deletedAt: null })
+      .sort({ dueAt: 1 })
+      .limit(8)
+      .select('title dueAt status owner notes companyId opportunityId ownerUserId')
+      .populate('companyId', 'companyName')
+      .populate('opportunityId', 'name')
+      .populate('ownerUserId', 'displayName')
+      .lean(),
     Task.countDocuments({ status: 'Open', deletedAt: null, dueAt: { $lt: now } }),
     Reply.countDocuments({ receivedAt: { $gte: sevenDaysAgo }, intent: 'Interested' }),
     SendJob.countDocuments({ status: 'failed' }),
     Lead.countDocuments({ deliveryStatus: 'Pending Inqueue' }),
   ]);
+
   const active = ongoingJobs.filter((item) => item.stage !== CLOSED_WON_STAGE);
   const pipelineValue = active.reduce((sum, item) => sum + (item.valueAed || 0), 0);
   const weightedPipeline = active.reduce((sum, item) => sum + ((item.valueAed || 0) * probabilityForStage(stages, item.stage) / 100), 0);

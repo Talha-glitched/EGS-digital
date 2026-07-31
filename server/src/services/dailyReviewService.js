@@ -202,8 +202,8 @@ export async function getDashboardWorkingViewData() {
   // 1. Ongoing Jobs (All Active Jobs + Next Open Task)
   // -------------------------------------------------------------
   const jobs = await OngoingJob.find({ deletedAt: null, stage: { $ne: 'Job Lost' } })
+    .select('name companyId primaryLeadId stage owner valueAed targetDate updatedAt')
     .populate('companyId', 'companyName')
-    .populate('primaryLeadId', 'name email')
     .sort({ updatedAt: -1 })
     .lean();
 
@@ -212,7 +212,10 @@ export async function getDashboardWorkingViewData() {
     opportunityId: { $in: jobIds },
     status: 'Open',
     deletedAt: null,
-  }).sort({ dueAt: 1, createdAt: 1 }).lean();
+  })
+    .select('opportunityId title owner dueAt')
+    .sort({ dueAt: 1, createdAt: 1 })
+    .lean();
 
   const jobTaskMap = new Map();
   for (const t of openJobTasks) {
@@ -278,6 +281,7 @@ export async function getDashboardWorkingViewData() {
     'pocQualification.status': 'Confirmed',
     deletedAt: null,
   })
+    .select('name companyId relationshipProfile pocQualification repliedAt updatedAt')
     .populate('companyId', 'companyName')
     .lean();
 
@@ -288,7 +292,10 @@ export async function getDashboardWorkingViewData() {
     taskType: 'relationship_follow_up',
     status: 'Open',
     deletedAt: null,
-  }).sort({ dueAt: 1 }).lean();
+  })
+    .select('leadId title owner dueAt')
+    .sort({ dueAt: 1 })
+    .lean();
 
   const relTaskMap = new Map();
   for (const t of openRelTasks) {
@@ -297,7 +304,7 @@ export async function getDashboardWorkingViewData() {
   }
 
   const interactions = await ContactInteraction.aggregate([
-    { $match: { leadId: { $in: keyLeadIds } } },
+    { $match: { leadId: { $in: keyLeadIds }, deletedAt: null } },
     { $group: { _id: '$leadId', lastOccurredAt: { $max: '$occurredAt' } } },
   ]);
   const interactionMap = new Map(interactions.map((i) => [String(i._id), i.lastOccurredAt]));
@@ -352,25 +359,37 @@ export async function getDashboardWorkingViewData() {
     status: 'Open',
     deletedAt: null,
   })
+    .select('leadId campaignId taskType title owner dueAt createdAt')
     .populate('campaignId', 'projectName')
     .sort({ dueAt: 1, createdAt: 1 })
     .lean();
 
   const leadTaskIds = openLeadTasks.map((t) => t.leadId).filter(Boolean);
   const leadDocs = await Lead.find({ _id: { $in: leadTaskIds }, deletedAt: null })
+    .select('name companyId campaignId leadStage')
     .populate('companyId', 'companyName')
     .populate('campaignId', 'projectName')
     .lean();
   const leadMap = new Map(leadDocs.map((l) => [String(l._id), l]));
 
-  const replies = await Reply.find({ leadId: { $in: leadTaskIds }, deletedAt: null })
-    .sort({ receivedAt: -1 })
-    .lean();
-  const replyMap = new Map();
-  for (const r of replies) {
-    const key = String(r.leadId);
-    if (!replyMap.has(key)) replyMap.set(key, r);
-  }
+  // Use aggregate to get only the latest reply snippet per lead — avoids loading full
+  // text/threadHistory/etc. for every reply then doing Node-side sort & dedup.
+  const latestReplies = leadTaskIds.length
+    ? await Reply.aggregate([
+        { $match: { leadId: { $in: leadTaskIds } } },
+        { $sort: { receivedAt: -1 } },
+        {
+          $group: {
+            _id: '$leadId',
+            receivedAt: { $first: '$receivedAt' },
+            text: { $first: '$text' },
+            subject: { $first: '$subject' },
+            humanReviewStatus: { $first: '$humanReview.status' },
+          },
+        },
+      ])
+    : [];
+  const replyMap = new Map(latestReplies.map((r) => [String(r._id), r]));
 
   const contactTasksMap = new Map();
   for (const t of openLeadTasks) {
@@ -389,7 +408,7 @@ export async function getDashboardWorkingViewData() {
     const reviewTask = cTasks.find((t) => t.taskType === 'reply_review');
     const primaryTask = reviewTask || cTasks[0];
 
-    const hasUnreviewedReply = Boolean(reviewTask) || (latestReply?.humanReview?.status !== 'Reviewed');
+    const hasUnreviewedReply = Boolean(reviewTask) || (latestReply?.humanReviewStatus !== 'Reviewed');
     const isOverdue = primaryTask?.dueAt && new Date(primaryTask.dueAt) < now;
 
     let priorityRank = 4;
@@ -428,3 +447,4 @@ export async function getDashboardWorkingViewData() {
     leads: leadsList,
   };
 }
+

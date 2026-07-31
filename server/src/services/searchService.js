@@ -50,31 +50,37 @@ export async function globalSearch(query, { limit = 5 } = {}) {
   const companyQuery = buildWordSearchQuery(['companyName', 'domain', 'city', 'industry'], term) || { $or: [{ companyName: re }, { domain: re }, { city: re }, { industry: re }, { genericEmails: re }] };
 
   const [leads, companies, projects, opportunities, tasks] = await Promise.all([
-    Lead.find(leadQuery || { $or: [{ name: re }, { email: re }, { designation: re }] })
+    Lead.find({ deletedAt: null, ...(leadQuery || { $or: [{ name: re }, { email: re }, { designation: re }] }) })
       .sort({ updatedAt: -1 })
       .limit(cap)
+      .select('name email designation companyId campaignId updatedAt')
       .populate('companyId', 'companyName domain')
       .lean(),
-    Company.find(companyQuery)
+    Company.find({ deletedAt: null, ...companyQuery })
       .sort({ updatedAt: -1 })
       .limit(cap)
+      .select('companyName domain city industry globalStatus updatedAt')
       .lean(),
-    ProjectCampaign.find({ $or: [{ projectName: re }, { milestone: re }] })
+    ProjectCampaign.find({ deletedAt: null, $or: [{ projectName: re }, { milestone: re }] })
       .sort({ updatedAt: -1 })
       .limit(cap)
+      .select('projectName milestone status updatedAt')
       .lean(),
-    Opportunity.find({ $or: [{ name: re }, { eventName: re }, { owner: re }] })
+    Opportunity.find({ deletedAt: null, $or: [{ name: re }, { eventName: re }, { owner: re }] })
       .sort({ updatedAt: -1 })
       .limit(cap)
+      .select('name stage owner companyId updatedAt')
       .populate('companyId', 'companyName')
       .lean(),
-    Task.find({ $or: [{ title: re }, { notes: re }] })
+    Task.find({ deletedAt: null, $or: [{ title: re }, { notes: re }] })
       .sort({ dueAt: 1, updatedAt: -1 })
       .limit(cap)
+      .select('title owner status dueAt companyId opportunityId')
       .populate('companyId', 'companyName')
       .populate('opportunityId', 'name')
       .lean(),
   ]);
+
 
   const campaignIds = normalizeObjectIdList(leads.map((l) => l.campaignId));
   const campaigns = campaignIds.length

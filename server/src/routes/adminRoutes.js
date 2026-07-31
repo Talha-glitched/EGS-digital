@@ -309,9 +309,10 @@ router.post('/logout', asyncRoute(async (req, res) => {
   return res.json({ ok: true });
 }));
 
-router.get('/projects', asyncRoute(async (_req, res) => {
-  res.json(await listProjects());
+router.get('/projects', asyncRoute(async (req, res) => {
+  res.json(await listProjects({ summary: req.query.summary === 'true' }));
 }));
+
 
 router.post('/projects/recalculate-coverage', asyncRoute(async (_req, res) => {
   res.json(await recalculateAllCampaignCoverageStats());

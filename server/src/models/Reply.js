@@ -72,4 +72,6 @@ const replySchema = new mongoose.Schema(
   }
 );
 
+replySchema.index({ leadId: 1, 'humanReview.status': 1, receivedAt: 1 });
+
 export const Reply = mongoose.models.Reply || mongoose.model('Reply', replySchema);

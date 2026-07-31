@@ -305,10 +305,22 @@ export async function getLeadTimeline(leadId) {
   const [company, campaign, sendJobs, replies, tasks, opportunities, manualInteractions] = await Promise.all([
     Company.findById(lead.companyId).select('companyName').lean(),
     ProjectCampaign.findById(lead.campaignId).select('projectName').lean(),
-    SendJob.find(sendJobQuery).sort({ sentAt: 1 }).lean(),
-    Reply.find(replyQuery).sort({ receivedAt: 1 }).lean(),
-    Task.find({ leadId }).sort({ createdAt: -1 }).lean(),
-    Opportunity.find({ $or: [{ primaryLeadId: leadId }, { companyId: lead.companyId }] }).sort({ updatedAt: -1 }).lean(),
+    SendJob.find(sendJobQuery)
+      .select('leadId recipientEmail renderedSubject renderedBody stepIndex sentAt providerMessageId createdAt')
+      .sort({ sentAt: 1 })
+      .lean(),
+    Reply.find(replyQuery)
+      .select('leadId text body subject intent receivedAt from email systemInbox vendorSource humanReview confirmedEmail createdAt')
+      .sort({ receivedAt: 1 })
+      .lean(),
+    Task.find({ leadId })
+      .select('title status taskType dueAt completedAt notes owner priority channel leadId createdAt')
+      .sort({ createdAt: -1 })
+      .lean(),
+    Opportunity.find({ $or: [{ primaryLeadId: leadId }, { companyId: lead.companyId }] })
+      .select('name stage valueAed owner updatedAt createdAt primaryLeadId companyId')
+      .sort({ updatedAt: -1 })
+      .lean(),
     listInteractionsForLead(leadId),
   ]);
 
@@ -505,7 +517,9 @@ export async function getCompanyTimeline(companyId) {
     throw error;
   }
 
-  const leads = await Lead.find({ companyId }).lean();
+  const leads = await Lead.find({ companyId })
+    .select('name email companyId campaignId repliedAt deliveryStatus designation outcome linkedinOutreach coldCall whatsapp pocQualification outreachEmail emailApollo emailHunter emailLusha emailPersonal createdAt updatedAt confirmedEmails')
+    .lean();
   const leadIds = leads.map((l) => l._id);
   const campaignIds = normalizeObjectIdList(leads.map((l) => l.campaignId));
   const campaignMap = await enrichCampaignMap(campaignIds);
@@ -534,10 +548,22 @@ export async function getCompanyTimeline(companyId) {
     : { leadId: { $in: leadIds } };
 
   const [sendJobs, replies, tasks, opportunities, manualInteractions] = await Promise.all([
-    SendJob.find(sendJobQuery).sort({ sentAt: -1 }).lean(),
-    Reply.find(replyQuery).sort({ receivedAt: -1 }).lean(),
-    Task.find({ companyId }).sort({ createdAt: -1 }).lean(),
-    Opportunity.find({ companyId }).sort({ updatedAt: -1 }).lean(),
+    SendJob.find(sendJobQuery)
+      .select('leadId recipientEmail renderedSubject renderedBody stepIndex sentAt providerMessageId createdAt')
+      .sort({ sentAt: -1 })
+      .lean(),
+    Reply.find(replyQuery)
+      .select('leadId text body subject intent receivedAt from email createdAt')
+      .sort({ receivedAt: -1 })
+      .lean(),
+    Task.find({ companyId })
+      .select('title notes owner dueAt leadId taskType status createdAt')
+      .sort({ createdAt: -1 })
+      .lean(),
+    Opportunity.find({ companyId })
+      .select('name stage valueAed owner updatedAt createdAt primaryLeadId')
+      .sort({ updatedAt: -1 })
+      .lean(),
     listInteractionsForCompany(companyId),
   ]);
 

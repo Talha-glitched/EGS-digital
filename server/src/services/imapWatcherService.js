@@ -7,6 +7,7 @@ import { SendJob } from '../models/SendJob.js';
 import { classifyReplyIntent } from './openaiService.js';
 import { freezeLeadSequence, purgeLeadFromQueue } from './sequenceService.js';
 import { buildLeadEmailQuery, getLeadEmailCandidates, getPrimaryLeadEmail, applyOutreachEmailFromReply } from '../utils/contactEmails.js';
+import { ensureReplyReviewTask } from './replyReviewTaskService.js';
 import {
   createImapClient,
   resolveImapSyncDays,

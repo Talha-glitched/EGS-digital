@@ -13,7 +13,9 @@ export async function computeVendorMatrix(campaignId = null) {
   const leadQuery = { deletedAt: null };
   if (campaignId) leadQuery.campaignId = campaignId;
 
-  const allLeads = await Lead.find(leadQuery).lean();
+  const allLeads = await Lead.find(leadQuery)
+    .select('deliveryStatus outreachEmailSource confirmedEmails bouncedEmails repliedAt campaignId trackingMetrics sources primarySource')
+    .lean();
 
   const vendorGroups = {
     Apollo: [],
@@ -187,11 +189,16 @@ export function stopAnalyticsCron() {
 }
 
 export async function recordEmailOpen(leadId, stepId) {
-  const lead = await Lead.findById(leadId);
-  if (!lead) return false;
-  lead.trackingMetrics.isOpened = true;
-  lead.trackingMetrics.totalOpenCount += 1;
-  lead.trackingMetrics.lastOpenTimestamp = new Date();
-  await lead.save();
-  return true;
+  const result = await Lead.findByIdAndUpdate(
+    leadId,
+    {
+      $inc: { 'trackingMetrics.totalOpenCount': 1 },
+      $set: {
+        'trackingMetrics.isOpened': true,
+        'trackingMetrics.lastOpenTimestamp': new Date(),
+      },
+    },
+    { new: false }
+  );
+  return Boolean(result);
 }

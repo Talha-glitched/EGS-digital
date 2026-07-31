@@ -33,6 +33,7 @@ export default function GlobalDashboard() {
   const [reviewStatus, setReviewStatus] = useState(null);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [projectsLoading, setProjectsLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
@@ -47,26 +48,45 @@ export default function GlobalDashboard() {
   const [selectedLead, setSelectedLead] = useState(null);
   const [selectedLeadTab, setSelectedLeadTab] = useState('relationship');
 
-  const loadDashboard = useCallback(async () => {
+  // Core data: working-view + daily review (blocks initial render)
+  const loadCoreData = useCallback(async () => {
     try {
-      const [wData, rStatus, projectList] = await Promise.all([
+      const [wData, rStatus] = await Promise.all([
         crmApiFetch('/api/admin/dashboard/working-view'),
         crmApiFetch('/api/admin/daily-reviews/today'),
-        crmApiFetch('/api/admin/projects'),
       ]);
       setWorkingData(wData || { ongoingJobs: [], keyRelationships: [], leads: [] });
       setReviewStatus(rStatus?.sections || null);
-      setProjects(projectList || []);
     } catch (err) {
       console.error(err);
       setError(err.message || 'Failed to load dashboard working view.');
     }
   }, []);
 
+  // Projects: fetched asynchronously after core data renders
+  const loadProjects = useCallback(async () => {
+    setProjectsLoading(true);
+    try {
+      const projectList = await crmApiFetch('/api/admin/projects?summary=true');
+      setProjects(projectList || []);
+    } catch (err) {
+      console.error('Projects load failed:', err.message);
+    } finally {
+      setProjectsLoading(false);
+    }
+  }, []);
+
+  const loadDashboard = useCallback(async () => {
+    await loadCoreData();
+    loadProjects();
+  }, [loadCoreData, loadProjects]);
+
   useEffect(() => {
     setLoading(true);
-    loadDashboard().finally(() => setLoading(false));
-  }, [loadDashboard]);
+    loadCoreData().finally(() => setLoading(false));
+    loadProjects();
+  }, [loadCoreData, loadProjects]);
+
 
   // Sync: same-window workspace changes, window focus, and 60s modest polling
   useEffect(() => {
@@ -195,7 +215,10 @@ export default function GlobalDashboard() {
                   <FolderKanban className="h-3.5 w-3.5" />
                 </div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-xs font-bold text-ink">Recent Campaigns ({projects.length})</h3>
+                  <h3 className="text-xs font-bold text-ink">
+                    Recent Campaigns {projectsLoading ? '…' : `(${projects.length})`}
+                  </h3>
+
                   <ChevronRight
                     className={cn(
                       'h-3.5 w-3.5 text-neutral-400 transition-transform duration-300 ease-in-out',

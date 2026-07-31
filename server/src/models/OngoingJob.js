@@ -53,6 +53,7 @@ const ongoingJobSchema = new mongoose.Schema(
 );
 
 ongoingJobSchema.index({ stage: 1, expectedCloseDate: 1 });
+ongoingJobSchema.index({ deletedAt: 1, stage: 1, updatedAt: -1 });
 
 export const OngoingJob =
   mongoose.models.OngoingJob ||
