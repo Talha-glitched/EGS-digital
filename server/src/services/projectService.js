@@ -147,16 +147,6 @@ export async function listProjects() {
 
   const projectIds = projects.map((p) => p._id);
 
-  await Promise.all(
-    projects
-      .filter((project) => project.statusSource !== 'manual' && !AUTO_LOCKED_STATUSES.includes(project.status))
-      .map((project) => syncAutoCampaignStatus(project._id)),
-  );
-
-  const refreshedProjects = await ProjectCampaign.find({ _id: { $in: projectIds }, deletedAt: null })
-    .sort({ createdAt: -1 })
-    .lean();
-
   const [pocCounts, emailedCounts, respondedCounts, reachedCounts, activeQueues, companyCounts, withPocCounts] = await Promise.all([
     Lead.aggregate([
       { $match: { campaignId: { $in: projectIds }, deletedAt: null } },
@@ -201,32 +191,55 @@ export async function listProjects() {
   const companyMap = toCountMap(companyCounts);
   const withPocMap = toCountMap(withPocCounts);
 
-  // Persist live counters so every campaign (not only opened ones) stays accurate.
-  await Promise.all(refreshedProjects.map(async (project) => {
+  const bulkOps = [];
+  const result = projects.map((project) => {
     const target = companyMap.get(String(project._id)) || 0;
     const withPoc = withPocMap.get(String(project._id)) || 0;
-    if (
-      Number(project.targetCompaniesCount || 0) !== target
-      || Number(project.companiesWithPocsFound || 0) !== withPoc
-    ) {
-      await ProjectCampaign.updateOne(
-        { _id: project._id },
-        { $set: { targetCompaniesCount: target, companiesWithPocsFound: withPoc } },
-      );
-    }
-  }));
+    const activeQ = queueMap.get(String(project._id)) || 0;
+    const emailed = emailedMap.get(String(project._id)) || 0;
 
-  return refreshedProjects.map((project) => ({
-    ...project,
-    targetCompaniesCount: companyMap.get(String(project._id)) || 0,
-    companiesWithPocsFound: withPocMap.get(String(project._id)) || 0,
-    pocsFound: pocMap.get(String(project._id)) || 0,
-    pocsEmailed: emailedMap.get(String(project._id)) || 0,
-    pocsResponded: respondedMap.get(String(project._id)) || 0,
-    companiesReached: reachedMap.get(String(project._id)) || 0,
-    activeQueues: queueMap.get(String(project._id)) || 0,
-  }));
+    let currentStatus = project.status;
+    if (project.statusSource !== 'manual' && !AUTO_LOCKED_STATUSES.includes(project.status)) {
+      const derivedStatus = (activeQ > 0 || emailed > 0) ? 'Active Campaigning' : 'Active Planning';
+      if (derivedStatus !== project.status) {
+        currentStatus = derivedStatus;
+      }
+    }
+
+    const updates = {};
+    if (Number(project.targetCompaniesCount || 0) !== target) updates.targetCompaniesCount = target;
+    if (Number(project.companiesWithPocsFound || 0) !== withPoc) updates.companiesWithPocsFound = withPoc;
+    if (currentStatus !== project.status) updates.status = currentStatus;
+
+    if (Object.keys(updates).length > 0) {
+      bulkOps.push({
+        updateOne: {
+          filter: { _id: project._id },
+          update: { $set: updates },
+        },
+      });
+    }
+
+    return {
+      ...project,
+      status: currentStatus,
+      targetCompaniesCount: target,
+      companiesWithPocsFound: withPoc,
+      pocsFound: pocMap.get(String(project._id)) || 0,
+      pocsEmailed: emailed,
+      pocsResponded: respondedMap.get(String(project._id)) || 0,
+      companiesReached: reachedMap.get(String(project._id)) || 0,
+      activeQueues: activeQ,
+    };
+  });
+
+  if (bulkOps.length > 0) {
+    ProjectCampaign.bulkWrite(bulkOps).catch(console.error);
+  }
+
+  return result;
 }
+
 
 export async function getProject(id) {
   assertDb();
@@ -1233,18 +1246,11 @@ export async function listAllLeads({
       sortSpec = { createdAt: dir };
     }
 
-    const pipeline = [
-      { $match: query },
-      ...taskLookupPipeline,
-      { $sort: sortSpec },
-      { $skip: skip },
-      { $limit: lim },
-    ];
-
     [leads, total] = await Promise.all([
-      Lead.aggregate(pipeline),
+      Lead.find(query).sort(sortSpec).skip(skip).limit(lim).lean(),
       Lead.countDocuments(query),
     ]);
+
 
     const compIds = normalizeObjectIdList(leads.map((l) => l.companyId));
     const compList = compIds.length

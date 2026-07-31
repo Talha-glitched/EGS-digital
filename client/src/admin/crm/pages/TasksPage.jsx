@@ -146,17 +146,16 @@ export default function TasksPage() {
   }
 
   async function load() {
-    const [taskData, opportunityData, campaignData, leadData] = await Promise.all([
+    const [taskData, opportunityData, campaignData] = await Promise.all([
       crmApiFetch(`/api/admin/sales/tasks?status=${encodeURIComponent(status)}`),
       crmApiFetch('/api/admin/sales/opportunities').catch(() => ({ items: [] })),
       crmApiFetch('/api/admin/projects').catch(() => []),
-      crmApiFetch('/api/admin/projects/leads?limit=5000').catch(() => ({ items: [] })),
     ]);
     setTasks(taskData.items || []);
     setOpportunities(opportunityData.items || []);
     setCampaigns(campaignData || []);
-    setLeads(leadData.items || leadData || []);
   }
+
 
   useEffect(() => {
     setLoading(true);

@@ -42,10 +42,10 @@ function formatCount(value) {
   return Number(value || 0).toLocaleString('en-AE');
 }
 
-export default function ProjectsPage() {
+export default function ProjectsPage({ initialProjects }) {
   const navigate = useNavigate();
-  const [campaigns, setCampaigns] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [campaigns, setCampaigns] = useState(initialProjects || []);
+  const [loading, setLoading] = useState(!initialProjects || initialProjects.length === 0);
   const [showWizard, setShowWizard] = useState(false);
   const [savingStageId, setSavingStageId] = useState(null);
   const [bulkDeleting, setBulkDeleting] = useState(false);

@@ -54,6 +54,8 @@ taskSchema.set('toJSON', { virtuals: true });
 taskSchema.set('toObject', { virtuals: true });
 
 taskSchema.index({ status: 1, dueAt: 1 });
+taskSchema.index({ deletedAt: 1, status: 1, owner: 1, dueAt: 1 });
+taskSchema.index({ leadId: 1, taskType: 1, status: 1, deletedAt: 1 });
 taskSchema.index(
   { leadId: 1, taskType: 1, status: 1 },
   {

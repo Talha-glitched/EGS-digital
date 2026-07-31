@@ -17,6 +17,7 @@ const sequenceEnrollmentSchema = new mongoose.Schema(
 );
 
 sequenceEnrollmentSchema.index({ leadId: 1, sequenceId: 1 }, { unique: true });
+sequenceEnrollmentSchema.index({ campaignId: 1, frozen: 1, completedAt: 1 });
 
 export const SequenceEnrollment =
   mongoose.models.SequenceEnrollment || mongoose.model('SequenceEnrollment', sequenceEnrollmentSchema);

@@ -27,5 +27,7 @@ const sendJobSchema = new mongoose.Schema(
 
 sendJobSchema.index({ status: 1, scheduledFor: 1, manualSend: 1 });
 sendJobSchema.index({ enrollmentId: 1, stepIndex: 1, status: 1 });
+sendJobSchema.index({ campaignId: 1, status: 1, scheduledFor: -1 });
 
 export const SendJob = mongoose.models.SendJob || mongoose.model('SendJob', sendJobSchema);
+

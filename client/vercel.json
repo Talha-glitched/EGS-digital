@@ -142,7 +142,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://egs-digital.onrender.com/api/:path*"
+      "destination": "https://api.exhibitgraphicsign.com/api/:path*"
     },
     {
       "source": "/(.*)",

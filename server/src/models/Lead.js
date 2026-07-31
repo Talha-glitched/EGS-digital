@@ -157,5 +157,10 @@ leadSchema.index({ deletedAt: 1, name: 1 });
 leadSchema.index({ deletedAt: 1, email: 1 });
 leadSchema.index({ deletedAt: 1, companyId: 1 });
 leadSchema.index({ deletedAt: 1, deliveryStatus: 1 });
+leadSchema.index({ campaignId: 1, deletedAt: 1, deliveryStatus: 1 });
+leadSchema.index({ campaignId: 1, deletedAt: 1, companyId: 1 });
+leadSchema.index({ deletedAt: 1, 'pocQualification.status': 1 });
+leadSchema.index({ deletedAt: 1, 'relationshipProfile.status': 1, 'relationshipProfile.nextFollowUpAt': 1 });
 
 export const Lead = mongoose.models.Lead || mongoose.model('Lead', leadSchema);
+

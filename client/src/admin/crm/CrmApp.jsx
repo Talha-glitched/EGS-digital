@@ -297,7 +297,7 @@ function CrmShell({ projects, onLogout, status }) {
               <Route path="jobs" element={<Navigate to="/admin/crm/completed-jobs" replace />} />
               <Route path="tasks" element={<TasksPage />} />
               <Route path="relationships" element={<RelationshipsPage />} />
-              <Route path="projects" element={<ProjectsPage />} />
+              <Route path="projects" element={<ProjectsPage initialProjects={projects} />} />
               <Route path="projects/:id" element={<ProjectDetailWorkspace />} />
               <Route path="sequences" element={<SequencesPage />} />
               <Route path="people" element={<PeoplePage />} />
