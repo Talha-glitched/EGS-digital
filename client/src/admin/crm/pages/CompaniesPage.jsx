@@ -1,4 +1,6 @@
 import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCompaniesData, updateCompanyInState, removeCompanyFromState } from '../store/slices/companiesSlice.js';
 import { fetchGlobalCompanies, deleteCompanyWithUndo, deleteLeadWithUndo, deleteCompanies } from '../crmApi.js';
 import DeleteIconButton from '../components/ui/DeleteIconButton.jsx';
 import ClickableTableRow, { stopRowClick } from '../components/ui/ClickableTableRow.jsx';
@@ -115,6 +117,8 @@ export default function CompaniesPage() {
     return params;
   }, [searchTerm, advancedFilters]);
 
+  const dispatch = useDispatch();
+
   // Load initial page (page 1) whenever sort, search, or filters change
   const loadInitialData = useCallback(async () => {
     setLoading(true);
@@ -127,6 +131,7 @@ export default function CompaniesPage() {
         sortDir,
         ...filterParams,
       });
+      dispatch(setCompaniesData({ items: data.items || [], total: data.total || 0 }));
       setCompanies(data.items || []);
       setTotal(data.total || 0);
     } catch (err) {
@@ -136,7 +141,7 @@ export default function CompaniesPage() {
       setLoading(false);
       isFetchingRef.current = false;
     }
-  }, [sortKey, sortDir, filterParams, limit]);
+  }, [sortKey, sortDir, filterParams, limit, dispatch]);
 
   useEffect(() => {
     const timer = setTimeout(() => {

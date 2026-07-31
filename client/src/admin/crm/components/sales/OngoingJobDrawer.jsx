@@ -1,10 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { updateOngoingJobInState } from '../../store/slices/projectsSlice.js';
 import {
   CalendarDays,
   Clock3,
   Target,
   Trash2,
   UserRound,
+  Save,
+  Check,
+  Loader2,
 } from 'lucide-react';
 import Drawer from '../ui/Drawer.jsx';
 import DrawerTabs from '../leads/DrawerTabs.jsx';
@@ -16,9 +21,6 @@ import { Alert, Badge, Field, LoadingState } from '../ui/primitives.jsx';
 import PocQualificationBadge from '../leads/PocQualificationBadge.jsx';
 import OngoingJobTasksPanel from '../tasks/OngoingJobTasksPanel.jsx';
 import AddContactModal from '../leads/AddContactModal.jsx';
-import AutoSaveIndicator from '../ui/AutoSaveIndicator.jsx';
-import AutoSaveCloseNotice from '../ui/AutoSaveCloseNotice.jsx';
-import { useDebouncedAutoSave } from '../../hooks/useDebouncedAutoSave.js';
 import {
   fetchOngoingJob,
   fetchActiveUsers,
@@ -151,40 +153,34 @@ export default function OngoingJobDrawer({
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
-  const persistOngoingJob = useCallback(async (currentForm) => {
+  const dispatch = useDispatch();
+  const [saving, setSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
+  const handleSave = useCallback(async () => {
     if (!targetId) return;
+    setSaving(true);
     setError('');
+    setSaveSuccess(false);
+
     try {
       const updated = await updateOngoingJob(targetId, {
-        ...currentForm,
-        valueAed: currentForm.valueAed === '' ? 0 : Number(currentForm.valueAed),
-        primaryLeadId: currentForm.primaryLeadId || null,
+        ...form,
+        valueAed: form.valueAed === '' ? 0 : Number(form.valueAed),
+        primaryLeadId: form.primaryLeadId || null,
       });
+      dispatch(updateOngoingJobInState(updated));
       onUpdated?.(updated);
       setDetail((prev) => (prev ? { ...prev, ongoingJob: { ...(prev.ongoingJob || prev.opportunity), ...updated } } : prev));
       setTimelineRefresh((value) => value + 1);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 2500);
     } catch (err) {
       setError(err.message || 'Failed to save Ongoing Job.');
-      throw err;
+    } finally {
+      setSaving(false);
     }
-  }, [targetId, onUpdated]);
-
-  const { status: saveStatus, requestClose, closingNotice } = useDebouncedAutoSave({
-    snapshot: form,
-    onSave: persistOngoingJob,
-    enabled: Boolean(targetId) && tab === 'overview' && !loading,
-    resetKey: targetId,
-  });
-
-  const guardedClose = useCallback(
-    () => requestClose(onClose),
-    [requestClose, onClose],
-  );
-
-  useEffect(() => {
-    if (saveStatus !== 'error') return;
-    setError('Failed to save Ongoing Job changes. Please try again.');
-  }, [saveStatus]);
+  }, [targetId, form, dispatch, onUpdated]);
 
   async function savePoc(leadId) {
     if (!targetId) return;
@@ -192,6 +188,7 @@ export default function OngoingJobDrawer({
     try {
       const updated = await updateOngoingJob(targetId, { primaryLeadId: leadId || null });
       update('primaryLeadId', leadId || '');
+      dispatch(updateOngoingJobInState(updated));
       onUpdated?.(updated);
       await loadDetail();
       setTimelineRefresh((value) => value + 1);
@@ -225,7 +222,7 @@ export default function OngoingJobDrawer({
     <>
     <Drawer
       open={Boolean(targetId)}
-      onClose={guardedClose}
+      onClose={onClose}
       title={loading ? 'Loading…' : ongoingJob?.name || 'Ongoing Job'}
       subtitle={ongoingJob?.companyId?.companyName || 'Ongoing Job Workspace'}
       size="2xl"
@@ -242,8 +239,33 @@ export default function OngoingJobDrawer({
               Delete
             </button>
           ) : null}
-          {tab === 'overview' ? <AutoSaveIndicator status={saveStatus} className="flex-1" /> : <span className="flex-1" />}
-          <button type="button" className="crm-btn-secondary shrink-0" onClick={guardedClose}>Close</button>
+          <div className="flex-1" />
+          <button type="button" className="crm-btn-secondary shrink-0" onClick={onClose}>Close</button>
+          {tab === 'overview' && (
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving}
+              className="crm-btn-primary shrink-0 flex items-center gap-2"
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : saveSuccess ? (
+                <>
+                  <Check className="h-4 w-4 text-emerald-300" />
+                  Saved!
+                </>
+              ) : (
+                <>
+                  <Save className="h-4 w-4" />
+                  Save Changes
+                </>
+              )}
+            </button>
+          )}
         </div>
       )}
     >
@@ -434,7 +456,6 @@ export default function OngoingJobDrawer({
         </div>
       )}
     </Drawer>
-    <AutoSaveCloseNotice open={closingNotice} />
 
     <AddContactModal
       open={showAddContact}

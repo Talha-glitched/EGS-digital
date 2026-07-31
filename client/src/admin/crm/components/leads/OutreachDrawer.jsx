@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
-import { ExternalLink, AlertCircle, Mail, BriefcaseBusiness, Building2, Trash2 } from 'lucide-react';
+import { ExternalLink, AlertCircle, Mail, BriefcaseBusiness, Building2, Trash2, Save, Check, Loader2 } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import { updateLeadInState } from '../../store/slices/leadsSlice.js';
 import Drawer from '../ui/Drawer.jsx';
 import { Alert } from '../ui/primitives.jsx';
 import { updateLead, addLeadToCompany, crmApiFetch, normalizeId } from '../../crmApi.js';
@@ -16,9 +18,6 @@ import { DeliveryStatusBadge } from './LeadTableComponents.jsx';
 import { needsReferralDetails } from '../../constants/pocQualification.js';
 import { RELATIONSHIP_STATUS_OPTIONS, SERVICE_CATEGORY_OPTIONS, getRelationshipOption } from '../../constants/relationshipProfile.js';
 import { useLockSensitiveDataOnClose } from '../../hooks/useLockSensitiveDataOnClose.js';
-import { useDebouncedAutoSave } from '../../hooks/useDebouncedAutoSave.js';
-import AutoSaveIndicator from '../ui/AutoSaveIndicator.jsx';
-import AutoSaveCloseNotice from '../ui/AutoSaveCloseNotice.jsx';
 
 function populateFromLead(lead) {
   return {
@@ -222,66 +221,63 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
     },
   }), []);
 
-  const persistContact = useCallback(async (currentForm) => {
+  const dispatch = useDispatch();
+  const [saving, setSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
+  const handleSave = useCallback(async () => {
     const activeLead = leadRef.current;
     if (!activeLead) return;
-
+    setSaving(true);
     setError('');
-    const patch = buildPatch(currentForm);
-    const poc = currentForm.pocQualification || {};
-    const referral = poc.referral || {};
+    setSaveSuccess(false);
 
-    if (needsReferralDetails(poc.status) && referral.email?.trim() && !poc.referredLeadId) {
-      const companyId = activeLead.companyId?._id || activeLead.companyId;
-      const campaignId = activeLead.campaignId?._id || activeLead.campaignId;
-      if (companyId && campaignId) {
-        try {
-          const referred = await addLeadToCompany(companyId, {
-            campaignId,
-            email: referral.email.trim(),
-            name: referral.name?.trim() || '',
-            designation: referral.designation?.trim() || '',
-            phone: referral.phone?.trim() || '',
-            linkedinUrl: referral.linkedinUrl?.trim() || '',
-          });
-          patch.pocQualification = {
-            ...patch.pocQualification,
-            referredLeadId: referred._id,
-          };
-        } catch (referralErr) {
-          if (!String(referralErr.message || '').includes('already enrolled')) {
-            throw referralErr;
+    try {
+      const patch = buildPatch(form);
+      const poc = form.pocQualification || {};
+      const referral = poc.referral || {};
+
+      if (needsReferralDetails(poc.status) && referral.email?.trim() && !poc.referredLeadId) {
+        const companyId = activeLead.companyId?._id || activeLead.companyId;
+        const campaignId = activeLead.campaignId?._id || activeLead.campaignId;
+        if (companyId && campaignId) {
+          try {
+            const referred = await addLeadToCompany(companyId, {
+              campaignId,
+              email: referral.email.trim(),
+              name: referral.name?.trim() || '',
+              designation: referral.designation?.trim() || '',
+              phone: referral.phone?.trim() || '',
+              linkedinUrl: referral.linkedinUrl?.trim() || '',
+            });
+            patch.pocQualification = {
+              ...patch.pocQualification,
+              referredLeadId: referred._id,
+            };
+          } catch (referralErr) {
+            if (!String(referralErr.message || '').includes('already enrolled')) {
+              throw referralErr;
+            }
           }
         }
       }
-    }
 
-    try {
       const updated = await updateLead(activeLead._id, patch);
+      dispatch(updateLeadInState(updated));
       onLeadUpdated?.(updated);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 2500);
     } catch (err) {
       setError(err.message || 'Failed to update lead');
-      throw err;
+    } finally {
+      setSaving(false);
     }
-  }, [buildPatch, onLeadUpdated]);
-
-  const { status: saveStatus, requestClose, closingNotice } = useDebouncedAutoSave({
-    snapshot: form,
-    onSave: persistContact,
-    enabled: Boolean(lead) && tab !== 'timeline',
-    resetKey: lead?._id,
-  });
-
-  const guardedClose = useCallback(
-    () => requestClose(handleClose),
-    [requestClose, handleClose],
-  );
+  }, [buildPatch, form, dispatch, onLeadUpdated]);
 
   return (
-    <>
     <Drawer
       open={Boolean(lead)}
-      onClose={guardedClose}
+      onClose={handleClose}
       title={lead?.name || 'Contact profile'}
       subtitle={lead ? `${lead.companyName || 'Unknown company'} · ${lead.campaignName || 'No campaign'}` : ''}
       size="2xl"
@@ -298,10 +294,35 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
               Delete
             </button>
           ) : null}
-          {tab !== 'timeline' ? <AutoSaveIndicator status={saveStatus} className="flex-1" /> : <span className="flex-1" />}
-          <button type="button" onClick={guardedClose} className="crm-btn-secondary shrink-0">
+          <div className="flex-1" />
+          <button type="button" onClick={handleClose} className="crm-btn-secondary shrink-0">
             Close
           </button>
+          {tab !== 'timeline' && (
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving}
+              className="crm-btn-primary shrink-0 flex items-center gap-2"
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : saveSuccess ? (
+                <>
+                  <Check className="h-4 w-4 text-emerald-300" />
+                  Saved!
+                </>
+              ) : (
+                <>
+                  <Save className="h-4 w-4" />
+                  Save Changes
+                </>
+              )}
+            </button>
+          )}
         </div>
       }
     >
@@ -710,8 +731,6 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
       )}
       </div>
     </Drawer>
-    <AutoSaveCloseNotice open={closingNotice} />
-    </>
   );
 }
 

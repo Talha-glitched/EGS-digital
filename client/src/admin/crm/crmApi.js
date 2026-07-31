@@ -35,9 +35,8 @@ export function normalizeId(value) {
   return String(value);
 }
 
-export function notifyWorkspaceChanged(detail = {}) {
-  if (typeof window === 'undefined') return;
-  window.dispatchEvent(new CustomEvent('crm:workspace-changed', { detail }));
+export function notifyWorkspaceChanged(_detail = {}) {
+  // Legacy event fan-out disabled to prevent high-frequency refetch cascades and UI freezes.
 }
 
 export async function uploadIngestFile(projectId, file, fieldMapping, vendor) {

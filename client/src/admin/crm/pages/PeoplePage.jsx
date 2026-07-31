@@ -1,4 +1,6 @@
 import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setLeadsData, updateLeadInState, removeLeadFromState, removeLeadsFromState } from '../store/slices/leadsSlice.js';
 import { fetchGlobalLeads, crmApiFetch, updateLead, deleteLeadWithUndo, deleteLeads, fetchLeadById } from '../crmApi.js';
 import DeleteIconButton from '../components/ui/DeleteIconButton.jsx';
 import ClickableTableRow, { stopRowClick } from '../components/ui/ClickableTableRow.jsx';
@@ -148,6 +150,8 @@ export default function PeoplePage() {
     return params;
   }, [searchTerm, advancedFilters]);
 
+  const dispatch = useDispatch();
+
   const loadInitialData = useCallback(async () => {
     setLoading(true);
     isFetchingRef.current = true;
@@ -159,6 +163,7 @@ export default function PeoplePage() {
         sortDir,
         ...filterParams,
       });
+      dispatch(setLeadsData({ items: data.items || [], total: data.total || 0 }));
       setLeads(data.items || []);
       setTotal(data.total || 0);
     } catch (err) {
@@ -168,7 +173,7 @@ export default function PeoplePage() {
       setLoading(false);
       isFetchingRef.current = false;
     }
-  }, [sortKey, sortDir, filterParams, limit]);
+  }, [sortKey, sortDir, filterParams, limit, dispatch]);
 
   useEffect(() => {
     crmApiFetch('/api/admin/projects')

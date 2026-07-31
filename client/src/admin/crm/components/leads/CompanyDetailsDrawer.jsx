@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { updateCompanyInState } from '../../store/slices/companiesSlice.js';
 import { fetchCompanyDetails, updateCompanyDetails, addLeadToCompany, crmApiFetch, deleteLeadWithUndo, deleteLeads } from '../../crmApi.js';
-import { Plus, ExternalLink, AlertCircle, Building2, MapPin, Users, Globe, X, Trash2 } from 'lucide-react';
+import { Plus, ExternalLink, AlertCircle, Building2, MapPin, Users, Globe, X, Trash2, Save, Check, Loader2 } from 'lucide-react';
 import Drawer from '../ui/Drawer.jsx';
 import DrawerLoadingSkeleton from '../ui/DrawerLoadingSkeleton.jsx';
 import SearchableSelect from '../ui/SearchableSelect.jsx';
@@ -18,9 +20,6 @@ import { useBulkDelete } from '../../hooks/useBulkDelete.js';
 import SensitiveDataField from '../ui/SensitiveDataField.jsx';
 import SensitiveEmailList from '../ui/SensitiveEmailList.jsx';
 import { useLockSensitiveDataOnClose } from '../../hooks/useLockSensitiveDataOnClose.js';
-import { useDebouncedAutoSave } from '../../hooks/useDebouncedAutoSave.js';
-import AutoSaveIndicator from '../ui/AutoSaveIndicator.jsx';
-import AutoSaveCloseNotice from '../ui/AutoSaveCloseNotice.jsx';
 
 const STATUS_TONE = {
   'Client Partner': 'success',
@@ -170,35 +169,29 @@ export default function CompanyDetailsDrawer({ companyId, onClose, onPersonSelec
     notes,
   }), [companyName, domain, industry, boothNumber, city, country, genericEmails, genericPhone, globalStatus, notes]);
 
-  const persistCompany = useCallback(async (snapshot) => {
+  const dispatch = useDispatch();
+  const [saving, setSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
+  const handleSave = useCallback(async () => {
     if (!companyId) return;
+    setSaving(true);
     setError('');
+    setSaveSuccess(false);
+
     try {
-      const updated = await updateCompanyDetails(companyId, snapshot);
+      const updated = await updateCompanyDetails(companyId, companySnapshot);
+      dispatch(updateCompanyInState(updated));
       onUpdated?.();
       setData((prev) => (prev ? { ...prev, company: updated } : prev));
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 2500);
     } catch (err) {
       setError(err.message || 'Failed to update company.');
-      throw err;
+    } finally {
+      setSaving(false);
     }
-  }, [companyId, onUpdated]);
-
-  const { status: saveStatus, requestClose, closingNotice } = useDebouncedAutoSave({
-    snapshot: companySnapshot,
-    onSave: persistCompany,
-    enabled: Boolean(companyId) && tab === 'account' && !loading,
-    resetKey: companyId,
-  });
-
-  const guardedClose = useCallback(
-    () => requestClose(handleClose),
-    [requestClose, handleClose],
-  );
-
-  useEffect(() => {
-    if (saveStatus !== 'error') return;
-    setError('Failed to save company changes. Please try again.');
-  }, [saveStatus]);
+  }, [companyId, companySnapshot, dispatch, onUpdated]);
 
   const handleAddContact = async (e) => {
     e.preventDefault();
@@ -240,17 +233,16 @@ export default function CompanyDetailsDrawer({ companyId, onClose, onPersonSelec
   );
 
   return (
-    <>
     <Drawer
       open={Boolean(companyId)}
-      onClose={guardedClose}
+      onClose={handleClose}
       title={companyName || 'Company profile'}
       subtitle={domain ? `${domain} · relationship hub` : 'Contacts, timeline, and company details'}
       size="2xl"
       stackLevel={0}
       footer={
         !loading ? (
-          <div className="flex gap-3">
+          <div className="flex gap-3 items-center">
             {onDelete && companyId ? (
               <button
                 type="button"
@@ -261,14 +253,35 @@ export default function CompanyDetailsDrawer({ companyId, onClose, onPersonSelec
                 Delete
               </button>
             ) : null}
-            {tab === 'account' ? (
-              <AutoSaveIndicator status={saveStatus} className="flex-1" />
-            ) : (
-              <span className="flex-1" />
-            )}
-            <button type="button" onClick={guardedClose} className="crm-btn-secondary shrink-0">
+            <div className="flex-1" />
+            <button type="button" onClick={handleClose} className="crm-btn-secondary shrink-0">
               Close
             </button>
+            {tab === 'account' && (
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={saving}
+                className="crm-btn-primary shrink-0 flex items-center gap-2"
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : saveSuccess ? (
+                  <>
+                    <Check className="h-4 w-4 text-emerald-300" />
+                    Saved!
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" />
+                    Save Changes
+                  </>
+                )}
+              </button>
+            )}
           </div>
         ) : null
       }
@@ -575,7 +588,5 @@ export default function CompanyDetailsDrawer({ companyId, onClose, onPersonSelec
         </>
       )}
     </Drawer>
-    <AutoSaveCloseNotice open={closingNotice} />
-    </>
   );
 }

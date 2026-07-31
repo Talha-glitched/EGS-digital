@@ -134,8 +134,10 @@ export default function ProjectDetailWorkspace() {
     refresh();
   }
 
-  function handleLeadUpdated() {
-    refresh();
+  function handleLeadUpdated(updatedLead) {
+    if (updatedLead && updatedLead._id) {
+      setLeads((prev) => prev.map((l) => (l._id === updatedLead._id ? { ...l, ...updatedLead } : l)));
+    }
     showToast('Contact updated.');
   }
 

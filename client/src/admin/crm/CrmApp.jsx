@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from './store/store.js';
 import './crm.css';
 import { crmApiFetch } from './crmApi.js';
 import Sidebar from './components/layout/Sidebar.jsx';
@@ -371,9 +373,13 @@ export default function CrmApp() {
   }
 
   const isDesigner = status?.user?.role === 'designer';
-  if (isDesigner) {
-    return <DesignerShell onLogout={logout} status={status} />;
-  }
-
-  return <CrmShell projects={projects} onLogout={logout} status={status} />;
+  return (
+    <Provider store={store}>
+      {isDesigner ? (
+        <DesignerShell onLogout={logout} status={status} />
+      ) : (
+        <CrmShell projects={projects} onLogout={logout} status={status} />
+      )}
+    </Provider>
+  );
 }

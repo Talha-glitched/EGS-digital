@@ -29,6 +29,9 @@ import {
   ChevronRight,
   Sparkles,
   Building2,
+  Save,
+  Check,
+  Loader2,
 } from 'lucide-react';
 import {
   AdvancedFilterPopover,
@@ -39,8 +42,6 @@ import {
 import { SortableTableHeader, TableSortIndicator } from '../components/ui/SortableTableHeader.jsx';
 import { useTableSort } from '../hooks/useTableSort.js';
 import { revenueSortAccessors } from '../hooks/tableSortAccessors.js';
-import { useDebouncedAutoSave } from '../hooks/useDebouncedAutoSave.js';
-import AutoSaveIndicator from '../components/ui/AutoSaveIndicator.jsx';
 
 const STATUS_TONE = {
   'Active Planning': 'warning',
@@ -96,37 +97,34 @@ export default function FinancePage() {
     setMessage('');
   }, [selectedId, selected?.financialLedger]);
 
-  const persistOverhead = useCallback(async (snapshot) => {
+  const [savingOverhead, setSavingOverhead] = useState(false);
+  const [saveOverheadSuccess, setSaveOverheadSuccess] = useState(false);
+
+  const saveOverhead = useCallback(async (e) => {
+    if (e) e.preventDefault();
     if (!selectedId) return;
+    setSavingOverhead(true);
     setError('');
+    setSaveOverheadSuccess(false);
     try {
       await crmApiFetch('/api/admin/finance/overhead', {
         method: 'POST',
         body: JSON.stringify({
           campaignId: selectedId,
-          allocatedToolBudget: Number(snapshot.allocatedToolBudget) || 0,
-          domainFixedCosts: Number(snapshot.domainFixedCosts) || 0,
-          laborCosts: Number(snapshot.laborCosts) || 0,
+          allocatedToolBudget: Number(overheadForm.allocatedToolBudget) || 0,
+          domainFixedCosts: Number(overheadForm.domainFixedCosts) || 0,
+          laborCosts: Number(overheadForm.laborCosts) || 0,
         }),
       });
       await load();
+      setSaveOverheadSuccess(true);
+      setTimeout(() => setSaveOverheadSuccess(false), 2500);
     } catch (err) {
       setError(err.message || 'Failed to save project expenses.');
-      throw err;
+    } finally {
+      setSavingOverhead(false);
     }
-  }, [selectedId, load]);
-
-  const { status: overheadSaveStatus } = useDebouncedAutoSave({
-    snapshot: overheadForm,
-    onSave: persistOverhead,
-    enabled: Boolean(selectedId),
-    resetKey: selectedId,
-  });
-
-  useEffect(() => {
-    if (overheadSaveStatus !== 'error') return;
-    setError('Failed to save project expenses.');
-  }, [overheadSaveStatus]);
+  }, [selectedId, overheadForm, load]);
 
   async function logRevenue(event) {
     event.preventDefault();
@@ -239,7 +237,6 @@ export default function FinancePage() {
                 <div className="space-y-4 px-5 pb-5">
                   {error && <Alert>{error}</Alert>}
                   {message && <Alert tone="success">{message}</Alert>}
-                  <AutoSaveIndicator status={overheadSaveStatus} />
                   <div className="rounded-lg border border-[var(--color-line)] bg-neutral-50/60 px-4 py-3 text-xs leading-relaxed text-neutral-600">
                     <Sparkles className="mb-1 inline h-3.5 w-3.5 text-brand" /> AI email costs are tracked automatically as sequences run. Update the manual baselines below.
                   </div>
@@ -270,6 +267,29 @@ export default function FinancePage() {
                       onChange={(e) => setOverheadForm({ ...overheadForm, laborCosts: e.target.value })}
                     />
                   </Field>
+                  <button
+                    type="button"
+                    onClick={saveOverhead}
+                    disabled={savingOverhead}
+                    className="crm-btn-primary w-full flex items-center justify-center gap-2"
+                  >
+                    {savingOverhead ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Saving Overhead...
+                      </>
+                    ) : saveOverheadSuccess ? (
+                      <>
+                        <Check className="h-4 w-4 text-emerald-300" />
+                        Expenses Saved!
+                      </>
+                    ) : (
+                      <>
+                        <Save className="h-4 w-4" />
+                        Save Overhead Expenses
+                      </>
+                    )}
+                  </button>
                   <div className="grid grid-cols-2 gap-3 rounded-xl border border-[var(--color-line)] bg-white p-3 text-xs">
                     <div>
                       <p className="text-neutral-500">AI spend (auto)</p>
