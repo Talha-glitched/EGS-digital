@@ -353,7 +353,7 @@ export default function ContactLeadTasksSection({
       <div className="space-y-3 pt-2">
         <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-500 flex items-center gap-1.5">
           <CalendarDays className="h-3.5 w-3.5 text-neutral-600" />
-          Lead Follow-up Tasks ({openFollowUpTasks.length} Open)
+          Follow-up Tasks ({openFollowUpTasks.length} Open)
         </h4>
 
         {openFollowUpTasks.length === 0 && completedFollowUpTasks.length === 0 ? (

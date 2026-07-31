@@ -15,8 +15,8 @@ export default function DailyReviewConsistency() {
     return { year: now.getFullYear(), month: now.getMonth() + 1 };
   });
 
-  const loadMonthData = useCallback(async () => {
-    setLoading(true);
+  const loadMonthData = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
     setError('');
     try {
       const res = await crmApiFetch(`/api/admin/daily-reviews/month?year=${navDate.year}&month=${navDate.month}`);
@@ -24,12 +24,28 @@ export default function DailyReviewConsistency() {
     } catch (err) {
       setError(err.message || 'Failed to load daily review consistency data.');
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }, [navDate.year, navDate.month]);
 
   useEffect(() => {
     loadMonthData();
+  }, [loadMonthData]);
+
+  useEffect(() => {
+    let timer = null;
+    const handleWorkspaceChanged = () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        loadMonthData(true);
+      }, 150);
+    };
+
+    window.addEventListener('crm:workspace-changed', handleWorkspaceChanged);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener('crm:workspace-changed', handleWorkspaceChanged);
+    };
   }, [loadMonthData]);
 
   const handlePrevMonth = () => {

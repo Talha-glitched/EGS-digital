@@ -26,6 +26,7 @@ import {
   PageSection,
   MetricGrid,
   StatCard,
+  cn,
 } from '../components/ui/primitives.jsx';
 import {
   BriefcaseBusiness,
@@ -264,75 +265,50 @@ export default function OngoingJobsPage() {
 
   return (
     <PageShell className="max-w-none">
-      <PageHeader
-        action={(
-          <div className="flex flex-wrap items-center gap-2">
-            <button type="button" onClick={() => setShowStageEditor(true)} className="crm-btn-secondary">
-              <Settings2 className="h-4 w-4" />
-              Edit stages
-            </button>
-            <button type="button" onClick={() => { setError(''); setShowCreate(true); }} className="crm-btn-primary">
-              <Plus className="h-4 w-4" />
-              New Ongoing Job
-            </button>
-          </div>
-        )}
-      />
+      <PageHeader />
 
       {error && <Alert>{error}</Alert>}
 
+      {/* Reduced Compact Metrics */}
       <PageSection>
-        <MetricGrid>
-          <StatCard compact label="Active Ongoing Jobs" value={active.length} helpText="Excludes completed and lost jobs" icon={BriefcaseBusiness} tone="brand" />
-          {!isDesigner && <StatCard compact label="Open pipeline" value={formatCurrency(pipelineValue)} helpText="Total potential contract value" icon={Target} />}
-          {!isDesigner && <StatCard compact label="Avg deal value" value={formatCurrency(avgDealValue)} helpText="Average value across active jobs" icon={TrendingUp} tone="success" />}
-          <StatCard compact label="Late-stage jobs" value={lateStageCount} helpText="In installation, review, or payment pending" icon={UserRound} tone="info" />
-        </MetricGrid>
-      </PageSection>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="rounded-xl border border-neutral-200/80 bg-white p-3 shadow-2xs flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-soft text-brand shrink-0">
+              <BriefcaseBusiness className="h-4 w-4" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">Active Ongoing Jobs</p>
+              <p className="text-sm font-bold tabular-nums text-neutral-900">{active.length}</p>
+            </div>
+          </div>
 
-      <PageSection>
-        <div className="grid gap-3 lg:grid-cols-3">
-          <Card className="p-4">
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
-                <CheckSquare className="h-4 w-4" />
+          {!isDesigner && (
+            <div className="rounded-xl border border-neutral-200/80 bg-white p-3 shadow-2xs flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 shrink-0">
+                <Target className="h-4 w-4" />
               </div>
               <div className="min-w-0">
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Execution workload</p>
-                <p className="mt-1 text-lg font-bold tabular-nums text-[var(--color-ink)]">{openExecutionTasks}</p>
-                <p className="mt-1 text-xs leading-relaxed text-neutral-500">Open tasks already in motion across active Ongoing Jobs.</p>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">Open pipeline</p>
+                <p className="text-sm font-bold tabular-nums text-neutral-900">{formatCurrency(pipelineValue)}</p>
               </div>
             </div>
-          </Card>
-          <Card className="p-4">
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sky-700">
-                <MessagesSquare className="h-4 w-4" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Client people involved</p>
-                <p className="mt-1 text-lg font-bold tabular-nums text-[var(--color-ink)]">{activeStakeholders}</p>
-                <p className="mt-1 text-xs leading-relaxed text-neutral-500">Primary contacts plus additional stakeholders attached to active jobs.</p>
-              </div>
+          )}
+
+          <div className="rounded-xl border border-neutral-200/80 bg-white p-3 shadow-2xs flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-50 text-sky-600 shrink-0">
+              <UserRound className="h-4 w-4" />
             </div>
-          </Card>
-          <Card className="p-4">
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
-                <Users className="h-4 w-4" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Internal team coverage</p>
-                <p className="mt-1 text-lg font-bold tabular-nums text-[var(--color-ink)]">{activeCollaborators}</p>
-                <p className="mt-1 text-xs leading-relaxed text-neutral-500">Owners and collaborators currently attached to active job workspaces.</p>
-              </div>
+            <div className="min-w-0">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">Late-stage jobs</p>
+              <p className="text-sm font-bold tabular-nums text-neutral-900">{lateStageCount}</p>
             </div>
-          </Card>
+          </div>
         </div>
       </PageSection>
 
+      {/* Buttons & Toolbar Area Right Above Pipeline */}
       <PageSection>
-        <div className="crm-pipeline-toolbar">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
           <div className="flex flex-wrap items-center gap-2">
             <div className="crm-view-toggle" role="group" aria-label="Ongoing Jobs view">
               <button
@@ -363,20 +339,26 @@ export default function OngoingJobsPage() {
             />
           </div>
 
-          <p className="text-xs text-neutral-500">
-            {viewMode === 'board'
-              ? 'Drag cards between columns, track execution readiness, and open any card to manage people, tasks, and history'
-              : `${filtered.length} Ongoing Job${filtered.length === 1 ? '' : 's'} · table view highlights workspace coverage, campaign context, and open execution work`}
-          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <button type="button" onClick={() => setShowStageEditor(true)} className="crm-btn-secondary">
+              <Settings2 className="h-4 w-4" />
+              Edit stages
+            </button>
+            <button type="button" onClick={() => { setError(''); setShowCreate(true); }} className="crm-btn-primary">
+              <Plus className="h-4 w-4" />
+              New Ongoing Job
+            </button>
+          </div>
         </div>
+
         <AdvancedFilterChips
           schema={ongoingJobSchema}
           filters={advancedFilters}
           onChange={setAdvancedFilters}
-          className="mt-3"
+          className="mb-3"
         />
 
-        <Card className="mt-4 overflow-hidden">
+        <Card className={cn('mt-4', viewMode === 'board' ? 'p-4 sm:p-5' : 'overflow-hidden')}>
           {!filtered.length ? (
             <EmptyState
               icon={BriefcaseBusiness}
@@ -465,8 +447,8 @@ export default function OngoingJobsPage() {
 
 function OngoingJobsBoard({ stages, items, dragOverStage, setDragOverStage, onMove, onOpen, onDelete, isDesigner = false }) {
   return (
-    <div className="crm-scroll crm-pipeline-scroll overflow-x-auto p-4">
-      <div className="flex min-w-max gap-4">
+    <div className="crm-scroll crm-pipeline-scroll overflow-x-auto">
+      <div className="flex min-w-max gap-2.5 sm:gap-3">
         {stages.map((stage, stageIndex) => {
           const stageItems = items.filter((item) => item.stage === stage);
           const stageValue = stageItems.reduce((sum, item) => sum + (item.valueAed || 0), 0);
@@ -486,12 +468,12 @@ function OngoingJobsBoard({ stages, items, dragOverStage, setDragOverStage, onMo
             >
               <header className="crm-pipeline-column-head">
                 <div className="flex items-center justify-between gap-2">
-                  <h2 className="text-[12px] font-bold text-[var(--color-ink)]">{stage}</h2>
-                  <Badge tone={STAGE_TONES[stage] || 'neutral'}>{stageItems.length}</Badge>
+                  <h2 className="text-[11px] font-bold text-[var(--color-ink)] uppercase tracking-wide">{stage}</h2>
+                  <Badge tone={STAGE_TONES[stage] || 'neutral'} className="py-0 px-1.5 text-[9px]">{stageItems.length}</Badge>
                 </div>
-                {!isDesigner && <p className="mt-1 text-[11px] font-medium tabular-nums text-neutral-500">{formatCurrency(stageValue)}</p>}
+                {!isDesigner && <p className="mt-0.5 text-[10px] font-semibold tabular-nums text-neutral-500">{formatCurrency(stageValue)}</p>}
               </header>
-              <div className="space-y-2.5">
+              <div className="space-y-4">
                 {stageItems.map((item, index) => (
                   <OngoingJobCard
                     key={item._id}
@@ -505,7 +487,7 @@ function OngoingJobsBoard({ stages, items, dragOverStage, setDragOverStage, onMo
                   />
                 ))}
                 {!stageItems.length && (
-                  <div className="rounded-xl border border-dashed border-neutral-300 px-3 py-8 text-center text-[11px] text-neutral-400">No Ongoing Jobs</div>
+                  <div className="rounded-lg border border-dashed border-neutral-300 px-2 py-6 text-center text-[10px] text-neutral-400">No Ongoing Jobs</div>
                 )}
               </div>
             </section>
@@ -518,10 +500,10 @@ function OngoingJobsBoard({ stages, items, dragOverStage, setDragOverStage, onMo
 
 function OngoingJobsTable({ items, stages, onMove, onOpen, onDelete, selection, sortKey, sortDir, onSort, isDesigner = false }) {
   return (
-    <DataTableShell minWidth={isDesigner ? 900 : 1480}>
-      <table className="crm-table">
+    <DataTableShell minWidth={isDesigner ? 850 : 1380}>
+      <table className="crm-table crm-table-excel text-xs">
         <thead>
-          <tr className="crm-table-head">
+          <tr className="crm-table-head text-[10px] uppercase tracking-wider bg-neutral-100/80">
             {selection ? <BulkSelectHeaderCell selection={selection} ariaLabel="Select all Ongoing Jobs" /> : null}
             <SortableTableHeader label="Ongoing Job" sortKey="name" activeKey={sortKey} direction={sortDir} onSort={onSort} />
             <SortableTableHeader label="Company" sortKey="company" activeKey={sortKey} direction={sortDir} onSort={onSort} />
@@ -535,9 +517,9 @@ function OngoingJobsTable({ items, stages, onMove, onOpen, onDelete, selection, 
             {!isDesigner && <th className="text-center">Action</th>}
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-neutral-200/80">
           {items.map((item) => (
-            <ClickableTableRow key={item._id} onClick={() => onOpen(item._id)}>
+            <ClickableTableRow key={item._id} onClick={() => onOpen(item._id)} className="hover:bg-sky-50/50 text-[11px] h-8">
               {selection ? (
                 <BulkSelectRowCell
                   id={item._id}
@@ -545,48 +527,48 @@ function OngoingJobsTable({ items, stages, onMove, onOpen, onDelete, selection, 
                   ariaLabel={`Select ${item.name}`}
                 />
               ) : null}
-              <td>
-                <p className="font-semibold text-[var(--color-ink)]">{item.name}</p>
-                {item.eventName && <p className="mt-0.5 text-[11px] text-neutral-500">{item.eventName}</p>}
+              <td className="py-1 px-2.5">
+                <p className="font-bold text-[var(--color-ink)] truncate max-w-[220px]">{item.name}</p>
+                {item.eventName && <p className="text-[10px] text-neutral-500 truncate max-w-[220px]">{item.eventName}</p>}
               </td>
-              <td className="text-neutral-700">{item.companyId?.companyName || '—'}</td>
-              <td className="crm-pipeline-stage-cell" onClick={stopRowClick}>
+              <td className="py-1 px-2.5 text-neutral-700 truncate max-w-[150px]">{item.companyId?.companyName || '—'}</td>
+              <td className="py-1 px-2.5 crm-pipeline-stage-cell" onClick={stopRowClick}>
                 <select
                   aria-label={`Move ${item.name} to stage`}
-                  className="crm-select crm-pipeline-stage-select"
+                  className="crm-select h-6 py-0 px-1.5 text-[10px] font-semibold"
                   value={item.stage}
                   onChange={(e) => onMove(item._id, e.target.value)}
                 >
                   {stages.map((stage) => <option key={stage} value={stage}>{stage}</option>)}
                 </select>
               </td>
-              <td>
+              <td className="py-1 px-2.5">
                 <OngoingJobWorkspaceSummary item={item} compact />
               </td>
               {!isDesigner && (
-                <td className="text-neutral-700">
+                <td className="py-1 px-2.5 text-neutral-700">
                   {item.campaignId?.projectName ? (
-                    <div className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2 py-1 text-[11px] font-medium text-blue-700">
-                      <FolderKanban className="h-3 w-3" />
-                      <span>{item.campaignId.projectName}</span>
+                    <div className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-700">
+                      <FolderKanban className="h-2.5 w-2.5" />
+                      <span className="truncate max-w-[120px]">{item.campaignId.projectName}</span>
                     </div>
                   ) : (
-                    <span className="text-[11px] text-neutral-400">No campaign</span>
+                    <span className="text-[10px] text-neutral-400">No campaign</span>
                   )}
                 </td>
               )}
-              {!isDesigner && <td className="text-right tabular-nums font-medium text-neutral-800">{formatCurrency(item.valueAed)}</td>}
-              <td className="text-neutral-700">{item.owner || '—'}</td>
-              {!isDesigner && <td className="text-neutral-500">{formatShortDate(item.createdAt || item.expectedCloseDate)}</td>}
-              <td className="text-neutral-500">
-                <span className="block">{formatShortDate(item.updatedAt)}</span>
-                <span className="text-[11px] text-neutral-400">{item.lastModifiedBy || item.owner || '—'}</span>
+              {!isDesigner && <td className="py-1 px-2.5 text-right tabular-nums font-bold text-neutral-900">{formatCurrency(item.valueAed)}</td>}
+              <td className="py-1 px-2.5 text-neutral-700">{item.owner || '—'}</td>
+              {!isDesigner && <td className="py-1 px-2.5 text-neutral-500 text-[10px]">{formatShortDate(item.createdAt || item.expectedCloseDate)}</td>}
+              <td className="py-1 px-2.5 text-neutral-500 text-[10px]">
+                <span className="block font-medium">{formatShortDate(item.updatedAt)}</span>
               </td>
               {!isDesigner && (
-                <td className="text-center" onClick={stopRowClick}>
+                <td className="py-1 px-2.5 text-center" onClick={stopRowClick}>
                   <DeleteIconButton
                     label={`Delete ${item.name}`}
                     onClick={() => onDelete?.(item)}
+                    size="sm"
                   />
                 </td>
               )}
@@ -602,7 +584,7 @@ function OngoingJobCard({ item, stages, onMove, onOpen, onDelete, index, isDesig
   const summary = getExecutionSummary(item);
   return (
     <article
-      className="crm-deal-card is-clickable"
+      className="crm-deal-card is-clickable !p-3"
       draggable
       onDragStart={(e) => { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', item._id); }}
       onClick={() => onOpen(item._id)}
@@ -611,11 +593,11 @@ function OngoingJobCard({ item, stages, onMove, onOpen, onDelete, index, isDesig
       tabIndex={0}
       style={{ animationDelay: `${Math.min(index, 5) * 45}ms` }}
     >
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-brand">
-          <Target className="h-3.5 w-3.5" />
+      <div className="flex items-start justify-between gap-1.5">
+        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-brand-soft text-brand">
+          <Target className="h-3 w-3" />
         </div>
-        <p className="min-w-0 flex-1 text-[13px] font-semibold leading-snug text-[var(--color-ink)]">{item.name}</p>
+        <p className="min-w-0 flex-1 text-[11px] font-bold leading-snug text-[var(--color-ink)] truncate">{item.name}</p>
         {!isDesigner && onDelete ? (
           <span onClick={stopRowClick}>
             <DeleteIconButton
@@ -626,40 +608,41 @@ function OngoingJobCard({ item, stages, onMove, onOpen, onDelete, index, isDesig
           </span>
         ) : null}
       </div>
-      <p className="mt-2 truncate text-xs font-medium text-neutral-600">{item.companyId?.companyName || 'Unknown company'}</p>
-      {item.eventName && <p className="mt-0.5 truncate text-[11px] text-neutral-400">{item.eventName}</p>}
-      <div className="mt-3">
+      <p className="mt-1 truncate text-[10px] font-medium text-neutral-600">{item.companyId?.companyName || 'Unknown company'}</p>
+      {item.eventName && <p className="mt-0.5 truncate text-[9px] text-neutral-400">{item.eventName}</p>}
+      <div className="mt-2">
         <OngoingJobWorkspaceSummary item={item} />
       </div>
-      <div className="mt-3 flex flex-wrap gap-1.5">{(item.tags || []).map((tag) => <span key={tag} className="crm-deal-tag">{tag}</span>)}</div>
-      <div className="mt-3 flex items-end justify-between gap-2">
-        {!isDesigner && <p className="text-sm font-bold tabular-nums text-[var(--color-ink)]">{formatCurrency(item.valueAed)}</p>}
-        <span className="flex items-center gap-1 text-[10px] text-neutral-500">
-          <CalendarDays className="h-3 w-3" />
+      {!!item.tags?.length && (
+        <div className="mt-1.5 flex flex-wrap gap-1">{(item.tags || []).map((tag) => <span key={tag} className="crm-deal-tag text-[9px] py-0 px-1.5">{tag}</span>)}</div>
+      )}
+      <div className="mt-2 flex items-center justify-between gap-2">
+        {!isDesigner && <p className="text-xs font-bold tabular-nums text-[var(--color-ink)]">{formatCurrency(item.valueAed)}</p>}
+        <span className="flex items-center gap-1 text-[9px] text-neutral-400">
+          <CalendarDays className="h-2.5 w-2.5" />
           {formatShortDate(item.createdAt || item.expectedCloseDate)}
         </span>
       </div>
       {summary.openTasks > 0 && (
-        <p className="mt-2 rounded-lg bg-amber-50 px-2.5 py-2 text-[11px] leading-relaxed text-amber-900">
-          <strong>Execution:</strong> {summary.openTasks} open task{summary.openTasks === 1 ? '' : 's'} in motion for this job workspace.
+        <p className="mt-1.5 rounded bg-amber-50 px-2 py-1 text-[9px] leading-snug text-amber-900 border border-amber-200/60">
+          <strong>Execution:</strong> {summary.openTasks} open task{summary.openTasks === 1 ? '' : 's'}
         </p>
       )}
-      <div className="mt-3 flex items-center justify-between border-t border-[var(--color-line)] pt-3">
-        <span className="flex items-center gap-1.5 text-[10px] font-medium text-neutral-500">
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-neutral-800 text-[8px] font-bold text-white">
+      <div className="mt-2 flex items-center justify-between border-t border-neutral-200/60 pt-2 text-[9px]">
+        <span className="flex items-center gap-1 font-medium text-neutral-500">
+          <span className="flex h-4 w-4 items-center justify-center rounded-full bg-neutral-800 text-[7px] font-bold text-white">
             {String(item.owner || 'A').slice(0, 1).toUpperCase()}
           </span>
           {item.owner || 'admin'}
         </span>
-        <span className="text-[10px] text-neutral-400">
-          Updated {formatShortDate(item.updatedAt)}
-          {item.lastModifiedBy ? ` · ${item.lastModifiedBy}` : ''}
+        <span className="text-neutral-400">
+          {formatShortDate(item.updatedAt)}
         </span>
       </div>
-      <div className="relative mt-2.5" onClick={stopRowClick}>
+      <div className="relative mt-1.5" onClick={stopRowClick}>
         <select
           aria-label={`Move ${item.name} to stage`}
-          className="crm-select py-1.5 text-[11px] font-semibold"
+          className="crm-select py-0 px-1.5 text-[10px] font-semibold h-6"
           value={item.stage}
           onChange={(e) => onMove(item._id, e.target.value)}
         >
@@ -678,19 +661,19 @@ function OngoingJobWorkspaceSummary({ item, compact = false }) {
     { key: 'team', icon: Users, label: `${summary.internalCollaborators} internal`, tone: summary.internalCollaborators ? 'emerald' : 'neutral' },
   ];
   return (
-    <div className={compact ? 'flex flex-wrap gap-1.5' : 'flex flex-wrap gap-1.5'}>
+    <div className="flex flex-wrap gap-1">
       {chips.map(({ key, icon: Icon, label, tone }) => (
         <span
           key={key}
           className={[
-            'inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold',
+            'inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[9px] font-semibold',
             tone === 'amber' ? 'bg-amber-50 text-amber-800' : '',
             tone === 'sky' ? 'bg-sky-50 text-sky-800' : '',
             tone === 'emerald' ? 'bg-emerald-50 text-emerald-800' : '',
             tone === 'neutral' ? 'bg-neutral-100 text-neutral-600' : '',
           ].join(' ')}
         >
-          <Icon className="h-3 w-3" />
+          <Icon className="h-2.5 w-2.5" />
           {label}
         </span>
       ))}

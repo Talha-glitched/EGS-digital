@@ -270,7 +270,7 @@ export default function ContactFollowUpTasksSection({
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold text-neutral-700 uppercase tracking-wider">
-            Open Follow-ups ({openTasks.length})
+            Follow-up Tasks ({openTasks.length} Open)
           </span>
           <button
             type="button"

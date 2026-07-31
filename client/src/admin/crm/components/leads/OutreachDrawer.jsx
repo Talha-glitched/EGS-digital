@@ -9,6 +9,7 @@ import DrawerTabs from './DrawerTabs.jsx';
 import InteractionTimeline from './InteractionTimeline.jsx';
 import PocQualificationEditor from './PocQualificationEditor.jsx';
 import PocQualificationBadge from './PocQualificationBadge.jsx';
+import ContactUnifiedFollowUpsSection from './ContactUnifiedFollowUpsSection.jsx';
 import SensitiveDataField from '../ui/SensitiveDataField.jsx';
 import SensitiveDataDisplay from '../ui/SensitiveDataDisplay.jsx';
 import { DeliveryStatusBadge } from './LeadTableComponents.jsx';
@@ -104,6 +105,7 @@ function collectOutreachEmailOptions(form) {
 
 const TABS = [
   { id: 'profile', label: 'Profile' },
+  { id: 'follow_ups', label: 'Follow-ups' },
   { id: 'relationship', label: 'Relationship' },
   { id: 'timeline', label: 'Timeline' },
 ];
@@ -379,6 +381,17 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
       <div key={tab} className="crm-drawer-tab-panel">
       {tab === 'timeline' ? (
         <InteractionTimeline leadId={lead?._id} companyId={normalizeId(lead?.companyId)} />
+      ) : tab === 'follow_ups' ? (
+        <div className="pt-2">
+          <ContactUnifiedFollowUpsSection
+            leadId={lead?._id}
+            companyId={normalizeId(lead?.companyId)}
+            contactName={lead?.name}
+            leadStage={lead?.leadStage || 'contact'}
+            pocQualification={form.pocQualification}
+            ownerDefault={form.relationshipProfile?.owner || 'admin'}
+          />
+        </div>
       ) : tab === 'relationship' ? (
         <div className="space-y-0">
           <DrawerCollapsible title="Relationship state" subtitle="Manage relevant POCs even when the timing is later" defaultOpen>
