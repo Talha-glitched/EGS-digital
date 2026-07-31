@@ -5,6 +5,7 @@ import { Alert, Field } from '../ui/primitives.jsx';
 import SearchableSelect from '../ui/SearchableSelect.jsx';
 import { ModalActionFooter, ModalFieldList, ModalSection, ModalStack } from '../ui/workspaceModalParts.jsx';
 import AddCompanyModal from '../leads/AddCompanyModal.jsx';
+import AddContactModal from '../leads/AddContactModal.jsx';
 import { createOngoingJob, fetchCompanyDetails, fetchGlobalCompanies } from '../../crmApi.js';
 
 function emptyForm(owner = '') {
@@ -34,6 +35,7 @@ export default function CreateOngoingJobModal({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [showAddCompany, setShowAddCompany] = useState(false);
+  const [showAddContact, setShowAddContact] = useState(false);
   const [localCompanies, setLocalCompanies] = useState(companies);
   const [companyContacts, setCompanyContacts] = useState([]);
   const [loadingContacts, setLoadingContacts] = useState(false);
@@ -138,6 +140,12 @@ export default function CreateOngoingJobModal({
     setShowAddCompany(false);
   }
 
+  function handleContactCreated(contact) {
+    setCompanyContacts((prev) => [contact, ...prev]);
+    update('primaryLeadId', contact._id);
+    setShowAddContact(false);
+  }
+
   return (
     <>
       <Modal
@@ -222,6 +230,8 @@ export default function CreateOngoingJobModal({
                       emptyLabel={form.companyId ? (loadingContacts ? 'Loading company contacts…' : 'No contacts for this company.') : 'Choose a company first.'}
                       disabled={!form.companyId}
                       searching={loadingContacts}
+                      onCreateNew={() => setShowAddContact(true)}
+                      createLabel="Create new contact"
                     />
                   </Field>
 
@@ -287,6 +297,13 @@ export default function CreateOngoingJobModal({
         open={showAddCompany}
         onClose={() => setShowAddCompany(false)}
         onCreated={handleCompanyCreated}
+      />
+
+      <AddContactModal
+        open={showAddContact}
+        onClose={() => setShowAddContact(false)}
+        onCreated={handleContactCreated}
+        initialCompanyId={form.companyId}
       />
     </>
   );

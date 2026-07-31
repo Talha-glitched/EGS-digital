@@ -15,6 +15,7 @@ import SearchableSelect from '../ui/SearchableSelect.jsx';
 import { Alert, Badge, Field, LoadingState } from '../ui/primitives.jsx';
 import PocQualificationBadge from '../leads/PocQualificationBadge.jsx';
 import OngoingJobTasksPanel from '../tasks/OngoingJobTasksPanel.jsx';
+import AddContactModal from '../leads/AddContactModal.jsx';
 import AutoSaveIndicator from '../ui/AutoSaveIndicator.jsx';
 import AutoSaveCloseNotice from '../ui/AutoSaveCloseNotice.jsx';
 import { useDebouncedAutoSave } from '../../hooks/useDebouncedAutoSave.js';
@@ -48,6 +49,7 @@ export default function OngoingJobDrawer({
   const [error, setError] = useState('');
   const [detail, setDetail] = useState(null);
   const [timelineRefresh, setTimelineRefresh] = useState(0);
+  const [showAddContact, setShowAddContact] = useState(false);
 
   const [form, setForm] = useState({
     name: '',
@@ -196,6 +198,12 @@ export default function OngoingJobDrawer({
     } catch (err) {
       setError(err.message || 'Failed to update POC.');
     }
+  }
+
+  function handleContactCreated(newContact) {
+    const newId = normalizeId(newContact._id);
+    setShowAddContact(false);
+    savePoc(newId);
   }
 
   const stageTone = form.stage === 'Closed Won' || form.stage === 'Job Done' ? 'success' : (form.stage === 'Closed Lost' || form.stage === 'Job Lost') ? 'neutral' : 'info';
@@ -353,6 +361,8 @@ export default function OngoingJobDrawer({
                       placeholder="Select POC…"
                       searchPlaceholder="Search contacts…"
                       emptyLabel="No contacts linked to this company."
+                      onCreateNew={() => setShowAddContact(true)}
+                      createLabel="Create new contact"
                     />
                   </Field>
                   <Field label="Additional client stakeholders">
@@ -425,6 +435,14 @@ export default function OngoingJobDrawer({
       )}
     </Drawer>
     <AutoSaveCloseNotice open={closingNotice} />
+
+    <AddContactModal
+      open={showAddContact}
+      onClose={() => setShowAddContact(false)}
+      onCreated={handleContactCreated}
+      initialCompanyId={normalizeId(ongoingJob?.companyId)}
+      initialCompanyName={ongoingJob?.companyId?.companyName}
+    />
     </>
   );
 }

@@ -18,7 +18,7 @@ const EMPTY = {
   linkedinUrl: '',
 };
 
-export default function AddContactModal({ open, onClose, onCreated }) {
+export default function AddContactModal({ open, onClose, onCreated, initialCompanyId = '', initialCompanyName = '' }) {
   const [form, setForm] = useState(EMPTY);
   const [selectedCompanyOption, setSelectedCompanyOption] = useState(null);
   const [campaigns, setCampaigns] = useState([]);
@@ -30,7 +30,27 @@ export default function AddContactModal({ open, onClose, onCreated }) {
     crmApiFetch('/api/admin/projects')
       .then((projectList) => setCampaigns(projectList || []))
       .catch(console.error);
-  }, [open]);
+
+    if (initialCompanyId) {
+      setForm((prev) => ({ ...prev, mode: 'existing', companyId: initialCompanyId }));
+      crmApiFetch(`/api/admin/companies/${initialCompanyId}`)
+        .then((data) => {
+          const comp = data.company || data;
+          if (comp?.companyName) {
+            setSelectedCompanyOption({
+              value: comp._id,
+              label: comp.companyName,
+              hint: comp.domain || comp.city || '',
+            });
+          }
+        })
+        .catch(() => {
+          if (initialCompanyName) {
+            setSelectedCompanyOption({ value: initialCompanyId, label: initialCompanyName });
+          }
+        });
+    }
+  }, [open, initialCompanyId, initialCompanyName]);
 
   const searchCompanies = useCallback(async (query) => {
     const data = await fetchGlobalCompanies({
