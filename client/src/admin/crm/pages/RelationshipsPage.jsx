@@ -173,6 +173,8 @@ export default function RelationshipsPage() {
     return params;
   }, [searchTerm, advancedFilters]);
 
+  const [serverSummary, setServerSummary] = useState({ total: 0, overdue: 0, upcoming: 0, nurture: 0 });
+
   const loadInitialData = useCallback(async () => {
     setLoading(true);
     isFetchingRef.current = true;
@@ -187,6 +189,9 @@ export default function RelationshipsPage() {
       });
       setLeads(data.items || []);
       setTotal(data.total || 0);
+      if (data.summary) {
+        setServerSummary(data.summary);
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -355,10 +360,10 @@ export default function RelationshipsPage() {
     <PageShell>
       <PageSection>
         <MetricGrid cols={4}>
-          <StatCard compact label="Right POCs" value={total} icon={HeartHandshake} tone="brand" helpText="Contacts confirmed as the correct decision-maker" />
-          <StatCard compact label="Overdue follow-ups" value={summary.overdue} icon={AlertTriangle} tone="warning" helpText="On this page of loaded results" />
-          <StatCard compact label="Due this week" value={summary.upcoming} icon={Clock3} tone="info" helpText="Scheduled touches in the next 7 days" />
-          <StatCard compact label="Nurture / later" value={summary.nurture} icon={UserRound} tone="neutral" helpText="Good relationships with softer timing" />
+          <StatCard compact label="Right POCs" value={serverSummary.total || total} icon={HeartHandshake} tone="brand" helpText="Contacts confirmed as the correct decision-maker" />
+          <StatCard compact label="Overdue follow-ups" value={serverSummary.overdue} icon={AlertTriangle} tone="warning" helpText="Database-wide scheduled follow-ups past due" />
+          <StatCard compact label="Due this week" value={serverSummary.upcoming} icon={Clock3} tone="info" helpText="Scheduled touches in the next 7 days" />
+          <StatCard compact label="Nurture / later" value={serverSummary.nurture} icon={UserRound} tone="neutral" helpText="Good relationships with softer timing" />
         </MetricGrid>
       </PageSection>
 
@@ -464,7 +469,7 @@ export default function RelationshipsPage() {
                   <tbody>
                     {leads.map((lead) => {
                       const profile = lead.relationshipProfile || {};
-                      const dueTone = followUpTone(profile.nextFollowUpAt);
+                      const dueTone = followUpTone(lead.nextFollowUpAt);
                       const interactionTone = lastInteractionTone(lead.lastInteractionAt);
                       return (
                         <ClickableTableRow key={lead._id} onClick={() => openDrawer(lead)}>
@@ -501,7 +506,7 @@ export default function RelationshipsPage() {
                           </td>
                           <td className="text-xs text-neutral-600">{profile.owner || '—'}</td>
                           <td>
-                            <Badge tone={dueTone}>{formatFollowUp(profile.nextFollowUpAt)}</Badge>
+                            <Badge tone={dueTone}>{formatFollowUp(lead.nextFollowUpAt)}</Badge>
                           </td>
                           <td className="max-w-[220px]">
                             <p className="line-clamp-2 text-xs leading-relaxed text-neutral-500">

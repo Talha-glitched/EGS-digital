@@ -32,7 +32,8 @@ const QUICK_NAV = [
   { id: 'nav-companies', type: 'page', title: 'Companies', subtitle: 'Target companies and relationship history', href: '/admin/crm/companies', keywords: ['companies', 'clients'], icon: Building2 },
   { id: 'nav-people', type: 'page', title: 'Contacts', subtitle: 'People and point-of-contact records', href: '/admin/crm/people', keywords: ['contacts', 'people', 'leads'], icon: Users },
   { id: 'nav-relationships', type: 'page', title: 'Key Relationships', subtitle: 'Confirmed right POCs and nurture follow-ups', href: '/admin/crm/relationships', keywords: ['relationships', 'poc', 'nurture', 'follow up', 'right contact'], icon: HeartHandshake },
-  { id: 'nav-pipeline', type: 'page', title: 'Sales Pipeline', subtitle: 'Opportunities and deal stages', href: '/admin/crm/pipeline', keywords: ['sales', 'deals', 'pipeline', 'opportunities'], icon: BriefcaseBusiness },
+  { id: 'nav-ongoing-jobs', type: 'page', title: 'Ongoing Jobs', subtitle: 'Work in progress and deal stages', href: '/admin/crm/ongoing-jobs', keywords: ['ongoing', 'jobs', 'sales', 'pipeline', 'opportunities'], icon: BriefcaseBusiness },
+  { id: 'nav-completed-jobs', type: 'page', title: 'Jobs Done', subtitle: 'Completed and past production jobs directory', href: '/admin/crm/completed-jobs', keywords: ['completed', 'jobs', 'done', 'past'], icon: BriefcaseBusiness },
   { id: 'nav-tasks', type: 'page', title: 'Tasks', subtitle: 'Calls, meetings, and next actions', href: '/admin/crm/tasks', keywords: ['tasks', 'follow', 'todo'], icon: ListTodo },
   { id: 'nav-inbox', type: 'page', title: 'Inbox', subtitle: 'Replies and sales follow-up', href: '/admin/crm/inbox', keywords: ['inbox', 'email', 'replies'], icon: Inbox },
   { id: 'nav-email', type: 'page', title: 'Email', subtitle: 'Outbox batches, sent messages, and failed sends', href: '/admin/crm/email', keywords: ['email', 'outbox', 'sent', 'queue', 'launch', 'batch'], icon: SendHorizontal },
@@ -47,7 +48,10 @@ const TYPE_ICONS = {
   contact: UserRound,
   account: Building2,
   company: Building2,
+  ongoing_job: BriefcaseBusiness,
+  completed_job: BriefcaseBusiness,
   opportunity: BriefcaseBusiness,
+  job: BriefcaseBusiness,
   task: CheckSquare,
 };
 

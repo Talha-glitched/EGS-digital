@@ -40,6 +40,31 @@ const replySchema = new mongoose.Schema(
     systemInbox: { type: String, trim: true, lowercase: true, default: '' },
     vendorSource: { type: String, default: '' },
     threadHistory: [threadMessageSchema],
+    humanReview: {
+      outcome: {
+        type: String,
+        enum: [
+          'Interested',
+          'Ambiguous',
+          'Not Interested',
+          'Referral',
+          'Out of Office',
+          'Unsubscribe',
+          'Bounce',
+          'Automated',
+          'Other',
+        ],
+        default: null,
+      },
+      status: {
+        type: String,
+        enum: ['Unreviewed', 'Reviewed', 'Not Required'],
+        default: 'Unreviewed',
+        index: true,
+      },
+      reviewedAt: { type: Date, default: null },
+      reviewedBy: { type: String, default: null },
+    },
   },
   {
     timestamps: true,

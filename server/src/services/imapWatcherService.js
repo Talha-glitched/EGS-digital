@@ -186,10 +186,11 @@ async function handleHumanReply(lead, message, text, systemInbox = '') {
 
   const replyIntent = intent === 'Opt Out' ? 'Opt Out' : intent === 'Interested' ? 'Interested' : 'Neutral';
 
-  const outreachRes = applyOutreachEmailFromReply(lead, senderEmail, systemInbox);
+  const replyDate = message.envelope?.date ? new Date(message.envelope.date) : new Date();
+  const outreachRes = applyOutreachEmailFromReply(lead, senderEmail, systemInbox, replyDate);
   await lead.save();
 
-  await Reply.create({
+  const createdReply = await Reply.create({
     campaignId: lead.campaignId,
     leadId: lead._id,
     email: lead.email,
@@ -197,12 +198,14 @@ async function handleHumanReply(lead, message, text, systemInbox = '') {
     subject,
     text: text.slice(0, MAX_REPLY_TEXT),
     messageId: messageId || stableSyntheticMessageId(message.uid, process.env.EMAIL_IMAP_HOST),
-    receivedAt: message.envelope?.date || new Date(),
+    receivedAt: replyDate,
     intent: replyIntent,
     systemInbox: systemInbox || '',
     vendorSource: outreachRes.source || detectEmailVendor(lead, senderEmail) || 'Manual',
     threadHistory,
   });
+
+  await ensureReplyReviewTask(createdReply, lead);
 
   if (intent === 'Opt Out') {
     await freezeLeadSequence(lead._id, 'opt_out');
@@ -275,8 +278,10 @@ export async function syncImapMailboxForUser(email) {
         }
 
         const messageId = String(message.envelope?.messageId || '').trim();
-        if (messageId && (await Reply.exists({ messageId }))) {
+        const existingReply = messageId ? await Reply.findOne({ messageId }) : null;
+        if (existingReply) {
           stats.skippedDuplicate += 1;
+          await ensureReplyReviewTask(existingReply, lead);
           continue;
         }
 

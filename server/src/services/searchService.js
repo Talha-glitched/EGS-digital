@@ -136,15 +136,15 @@ export async function globalSearch(query, { limit = 5 } = {}) {
 
   if (opportunities.length) {
     groups.push({
-      id: 'opportunities',
-      label: 'Opportunities',
+      id: 'ongoing_jobs',
+      label: 'Ongoing Jobs',
       items: opportunities.map((opp) => ({
         id: `opp-${opp._id}`,
-        type: 'opportunity',
+        type: 'ongoing_job',
         recordId: opp._id,
-        title: opp.name || 'Untitled opportunity',
+        title: opp.name || 'Untitled Ongoing Job',
         subtitle: [opp.companyId?.companyName, opp.stage, opp.owner].filter(Boolean).join(' · '),
-        href: '/admin/crm/pipeline',
+        href: '/admin/crm/ongoing-jobs',
         meta: opp.stage || '',
       })),
     });

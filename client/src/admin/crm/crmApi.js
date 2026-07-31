@@ -471,31 +471,102 @@ export async function updatePipelineConfig(payload) {
   });
 }
 
-export async function fetchOpportunity(opportunityId) {
-  return crmApiFetch(`/api/admin/sales/opportunities/${encodeURIComponent(normalizeId(opportunityId))}`);
+export async function fetchOngoingJobs(params = {}) {
+  const query = new URLSearchParams(params).toString();
+  return crmApiFetch(`/api/admin/sales/ongoing-jobs${query ? `?${query}` : ''}`);
 }
 
-export async function fetchOpportunityTimeline(opportunityId) {
-  return crmApiFetch(`/api/admin/sales/opportunities/${encodeURIComponent(normalizeId(opportunityId))}/timeline`);
+export async function fetchOngoingJob(ongoingJobId) {
+  return crmApiFetch(`/api/admin/sales/ongoing-jobs/${encodeURIComponent(normalizeId(ongoingJobId))}`);
 }
 
-export async function createOpportunity(payload) {
-  const result = await crmApiFetch('/api/admin/sales/opportunities', {
+export async function fetchOngoingJobTimeline(ongoingJobId) {
+  return crmApiFetch(`/api/admin/sales/ongoing-jobs/${encodeURIComponent(normalizeId(ongoingJobId))}/timeline`);
+}
+
+export async function createOngoingJob(payload) {
+  const result = await crmApiFetch('/api/admin/sales/ongoing-jobs', {
     method: 'POST',
     body: JSON.stringify(payload),
   });
-  notifyWorkspaceChanged({ entity: 'opportunity', action: 'create', id: result?._id });
+  notifyWorkspaceChanged({ entity: 'ongoing_job', action: 'create', id: result?._id });
   return result;
 }
 
-export async function updateOpportunity(opportunityId, payload) {
-  const result = await crmApiFetch(`/api/admin/sales/opportunities/${encodeURIComponent(normalizeId(opportunityId))}`, {
+export async function updateOngoingJob(ongoingJobId, payload) {
+  const result = await crmApiFetch(`/api/admin/sales/ongoing-jobs/${encodeURIComponent(normalizeId(ongoingJobId))}`, {
     method: 'PATCH',
     body: JSON.stringify(payload),
   });
-  notifyWorkspaceChanged({ entity: 'opportunity', action: 'update', id: normalizeId(opportunityId) });
+  notifyWorkspaceChanged({ entity: 'ongoing_job', action: 'update', id: normalizeId(ongoingJobId) });
   return result;
 }
+
+export async function deleteOngoingJobWithUndo(id) {
+  const result = await crmApiFetch(`/api/admin/sales/ongoing-jobs/${encodeURIComponent(normalizeId(id))}`, {
+    method: 'DELETE',
+  });
+  notifyWorkspaceChanged({ entity: 'ongoing_job', action: 'delete', id: normalizeId(id) });
+  return result;
+}
+
+export async function deleteOngoingJobs(ids = []) {
+  const result = await crmApiFetch('/api/admin/sales/ongoing-jobs/bulk-delete', {
+    method: 'POST',
+    body: JSON.stringify({ ids }),
+  });
+  notifyWorkspaceChanged({ entity: 'ongoing_job', action: 'bulk-delete', ids });
+  return result;
+}
+
+export async function fetchCompletedJobs(params = {}) {
+  const query = new URLSearchParams(params).toString();
+  return crmApiFetch(`/api/admin/sales/completed-jobs${query ? `?${query}` : ''}`);
+}
+
+export async function fetchCompletedJob(id) {
+  return crmApiFetch(`/api/admin/sales/completed-jobs/${encodeURIComponent(normalizeId(id))}`);
+}
+
+export async function createCompletedJob(payload) {
+  const result = await crmApiFetch('/api/admin/sales/completed-jobs', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+  notifyWorkspaceChanged({ entity: 'completed_job', action: 'create', id: result?._id });
+  return result;
+}
+
+export async function updateCompletedJob(id, payload) {
+  const result = await crmApiFetch(`/api/admin/sales/completed-jobs/${encodeURIComponent(normalizeId(id))}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  });
+  notifyWorkspaceChanged({ entity: 'completed_job', action: 'update', id: normalizeId(id) });
+  return result;
+}
+
+export async function deleteCompletedJobWithUndo(id) {
+  const result = await crmApiFetch(`/api/admin/sales/completed-jobs/${encodeURIComponent(normalizeId(id))}`, {
+    method: 'DELETE',
+  });
+  notifyWorkspaceChanged({ entity: 'completed_job', action: 'delete', id: normalizeId(id) });
+  return result;
+}
+
+// Legacy aliases
+export const fetchOpportunity = fetchOngoingJob;
+export const fetchOpportunityTimeline = fetchOngoingJobTimeline;
+export const createOpportunity = createOngoingJob;
+export const updateOpportunity = updateOngoingJob;
+export const deleteOpportunityWithUndo = deleteOngoingJobWithUndo;
+export const deleteOpportunities = deleteOngoingJobs;
+
+export const fetchJobs = fetchCompletedJobs;
+export const fetchJob = fetchCompletedJob;
+export const createJob = createCompletedJob;
+export const updateJob = updateCompletedJob;
+export const deleteJobWithUndo = deleteCompletedJobWithUndo;
 
 export async function fetchUsers() {
   return crmApiFetch('/api/admin/users');
@@ -614,14 +685,6 @@ export async function deleteCompanyWithUndo(id) {
   });
 }
 
-export async function deleteOpportunityWithUndo(id) {
-  const result = await crmApiFetch(`/api/admin/sales/opportunities/${encodeURIComponent(normalizeId(id))}`, {
-    method: 'DELETE',
-  });
-  notifyWorkspaceChanged({ entity: 'opportunity', action: 'delete', id: normalizeId(id) });
-  return result;
-}
-
 export async function deleteProjectWithUndo(id) {
   return crmApiFetch(`/api/admin/projects/${encodeURIComponent(normalizeId(id))}`, {
     method: 'DELETE',
@@ -669,16 +732,8 @@ export async function deleteTasks(ids = []) {
   return result;
 }
 
-export async function deleteOpportunities(ids = []) {
-  const result = await crmApiFetch('/api/admin/sales/opportunities/bulk-delete', {
-    method: 'POST',
-    body: JSON.stringify({ ids }),
-  });
-  notifyWorkspaceChanged({ entity: 'opportunity', action: 'bulk-delete', ids });
-  return result;
-}
-
 export async function fetchVendorPerformance(campaignId = null) {
   const qs = campaignId ? `?campaignId=${encodeURIComponent(campaignId)}` : '';
   return crmApiFetch(`/api/admin/crm/vendor-performance${qs}`);
 }
+

@@ -78,15 +78,15 @@ export const relationshipSortAccessors = {
   relationshipStatusLabel: 'Relationship',
   owner: (r) => r.relationshipProfile?.owner,
   ownerLabel: 'Owner',
-  nextFollowUp: (r) => r.relationshipProfile?.nextFollowUpAt,
+  nextFollowUp: (r) => r.nextFollowUpAt || r.relationshipProfile?.nextFollowUpAt,
   nextFollowUpLabel: 'Follow-up',
   notes: (r) => r.relationshipProfile?.reminderNotes,
   notesLabel: 'Notes',
 };
 
-export const opportunitySortAccessors = {
+export const ongoingJobSortAccessors = {
   name: (r) => r.name,
-  nameLabel: 'Opportunity',
+  nameLabel: 'Ongoing Job',
   company: (r) => r.companyId?.companyName,
   companyLabel: 'Company',
   stage: (r) => r.stage,
@@ -101,6 +101,8 @@ export const opportunitySortAccessors = {
   updatedAtLabel: 'Updated',
 };
 
+export const opportunitySortAccessors = ongoingJobSortAccessors;
+
 export const taskSortAccessors = {
   title: (r) => r.title,
   titleLabel: 'Task',
@@ -108,8 +110,8 @@ export const taskSortAccessors = {
   dueAtLabel: 'Due',
   campaign: (r) => r.campaignId?.projectName,
   campaignLabel: 'Project',
-  opportunity: (r) => r.opportunityId?.name,
-  opportunityLabel: 'Opportunity',
+  opportunity: (r) => r.ongoingJobId?.name || r.opportunityId?.name,
+  opportunityLabel: 'Ongoing Job',
   company: (r) => r.companyId?.companyName,
   companyLabel: 'Company',
   owner: (r) => r.owner,

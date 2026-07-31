@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Check, Circle, Trash2 } from 'lucide-react';
+import { Check, Circle, Trash2, UserCheck } from 'lucide-react';
 import DataTableShell from '../ui/DataTableShell.jsx';
 import DateTimePicker from '../ui/DateTimePicker.jsx';
 import SearchableCombobox from '../ui/SearchableCombobox.jsx';
@@ -56,11 +56,28 @@ function TaskTitleCell({ task, onPatch, focus, editing }) {
     inputRef.current.select();
   }, [focus, task._id]);
 
+  const typeBadges = {
+    reply_review: { label: 'Reply Review', color: 'bg-sky-50 text-sky-700 border-sky-200' },
+    lead_follow_up: { label: 'Lead Follow-up', color: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
+    relationship_follow_up: { label: 'Relationship', color: 'bg-amber-50 text-amber-700 border-amber-200' },
+    ongoing_job: { label: 'Ongoing Job', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+    general: { label: 'General', color: 'bg-neutral-100 text-neutral-600 border-neutral-200' },
+  };
+
+  const badge = typeBadges[task.taskType] || (task.isRelationshipFollowUp ? typeBadges.relationship_follow_up : typeBadges.general);
+
   if (!editing) {
     return (
-      <p className={`font-semibold ${task.status === 'Done' ? 'text-neutral-400 line-through' : 'text-[var(--color-ink)]'}`}>
-        {task.title}
-      </p>
+      <div>
+        <div className="flex items-center gap-2">
+          <p className={`font-semibold ${task.status === 'Done' ? 'text-neutral-400 line-through' : 'text-[var(--color-ink)]'}`}>
+            {task.title}
+          </p>
+          <span className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-medium ${badge.color}`}>
+            {badge.label}
+          </span>
+        </div>
+      </div>
     );
   }
 
@@ -91,6 +108,7 @@ export default function TaskTable({
   onPatch,
   onConfirmTask,
   onEditTask,
+  onOpenContact,
   onDelete,
   editingTaskIds = [],
   campaigns = [],
@@ -170,12 +188,13 @@ export default function TaskTable({
             {selection ? <BulkSelectHeaderCell selection={selection} ariaLabel="Select all tasks" /> : null}
             <th className="w-10" aria-label="Complete" />
             <SortableTableHeader label="Task" sortKey="title" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+            <th className="font-semibold text-neutral-600">Contact</th>
             <SortableTableHeader label="Due" sortKey="dueAt" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
             {showCampaignColumn && (
               <SortableTableHeader label="Project" sortKey="campaign" activeKey={sortKey} direction={sortDir} onSort={toggleSort} className="crm-task-col-link" />
             )}
             {showOpportunityColumn && (
-              <SortableTableHeader label="Opportunity" sortKey="opportunity" activeKey={sortKey} direction={sortDir} onSort={toggleSort} className="crm-task-col-link" />
+              <SortableTableHeader label="Ongoing Job" sortKey="opportunity" activeKey={sortKey} direction={sortDir} onSort={toggleSort} className="crm-task-col-link" />
             )}
             {showAccountColumn && (
               <SortableTableHeader label="Company" sortKey="company" activeKey={sortKey} direction={sortDir} onSort={toggleSort} className="crm-task-col-link" />
@@ -231,6 +250,23 @@ export default function TaskTable({
                     <p className="mt-0.5 line-clamp-1 text-xs text-neutral-500">{task.notes}</p>
                   )}
                 </td>
+                <td onClick={(e) => e.stopPropagation()}>
+                  {task.leadId ? (
+                    <button
+                      type="button"
+                      onClick={() => onOpenContact?.(task.leadId?._id || task.leadId)}
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700 hover:bg-sky-100 hover:text-sky-800 transition border border-sky-200 shrink-0"
+                      title="Open contact profile"
+                    >
+                      <UserCheck className="h-3.5 w-3.5 text-sky-600 shrink-0" />
+                      <span className="truncate max-w-[130px]">
+                        {typeof task.leadId === 'object' ? (task.leadId?.name || task.leadId?.email) : 'View Contact'}
+                      </span>
+                    </button>
+                  ) : (
+                    <span className="text-neutral-400">—</span>
+                  )}
+                </td>
                 <td onClick={(e) => editing && e.stopPropagation()}>
                   {locked || demo ? (
                     <DeadlineBadge dueAt={task.dueAt} status={task.status} />
@@ -267,7 +303,7 @@ export default function TaskTable({
                   <td className="crm-task-col-link" onClick={(e) => editing && e.stopPropagation()}>
                     {locked || demo ? (
                       <div>
-                        <span className="text-neutral-700">{task.opportunityId?.name || '—'}</span>
+                        <span className="text-neutral-700">{task.ongoingJobId?.name || task.opportunityId?.name || '—'}</span>
                         {!showAccountColumn && task.companyId?.companyName && (
                           <p className="mt-0.5 text-[11px] text-neutral-500">{task.companyId.companyName}</p>
                         )}
@@ -276,12 +312,12 @@ export default function TaskTable({
                       <SearchableSelect
                         className="crm-task-table-select"
                         menuMinWidth={300}
-                        value={normalizeTaskId(task.opportunityId)}
-                        onChange={(next) => onPatch?.(task, { opportunityId: next || null })}
+                        value={normalizeTaskId(task.ongoingJobId || task.opportunityId)}
+                        onChange={(next) => onPatch?.(task, { ongoingJobId: next || null, opportunityId: next || null })}
                         options={opportunityOptions}
-                        placeholder="Link opportunity…"
-                        searchPlaceholder="Search opportunities…"
-                        emptyLabel="No opportunities match."
+                        placeholder="Link Ongoing Job…"
+                        searchPlaceholder="Search Ongoing Jobs…"
+                        emptyLabel="No Ongoing Jobs match."
                       />
                     )}
                   </td>
@@ -339,6 +375,17 @@ export default function TaskTable({
                 </td>
                 <td onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center justify-end gap-1">
+                    {task.leadId && (
+                      <button
+                        type="button"
+                        aria-label="Open contact profile"
+                        className="crm-task-delete-btn text-sky-600 hover:text-sky-800 hover:bg-sky-50 transition"
+                        onClick={() => onOpenContact?.(task.leadId?._id || task.leadId)}
+                        title="Open contact profile"
+                      >
+                        <UserCheck className="h-3.5 w-3.5" />
+                      </button>
+                    )}
                     {editing && (
                       <button
                         type="button"

@@ -1,13 +1,23 @@
 import mongoose from 'mongoose';
-import { Opportunity } from '../models/Opportunity.js';
+import { OngoingJob, Opportunity } from '../models/OngoingJob.js';
 import { PipelineConfig, DEFAULT_PIPELINE_STAGES } from '../models/PipelineConfig.js';
 import { Task } from '../models/Task.js';
 import { User } from '../models/User.js';
+import { ContactInteraction } from '../models/ContactInteraction.js';
 import {
   softDeleteRecord,
   restoreRecord,
   registerRevisionModel,
 } from './revisionService.js';
+
+const CHANNEL_TO_INTERACTION_TYPE = {
+  phone: 'phone_call',
+  email: 'email',
+  whatsapp: 'whatsapp',
+  meeting: 'meeting',
+  linkedin: 'linkedin',
+  other: 'note',
+};
 import { Company } from '../models/Company.js';
 import { Lead } from '../models/Lead.js';
 import { Reply } from '../models/Reply.js';
@@ -18,9 +28,9 @@ import {
   isClosedStage,
   probabilityForStage,
   stageNames,
-} from '../constants/opportunityPipeline.js';
+} from '../constants/ongoingJobPipeline.js';
 import { getLeadTimeline, getCompanyTimeline } from './contactTimelineService.js';
-import { createJobFromOpportunity } from './jobService.js';
+import { createCompletedJobFromOngoingJob } from './completedJobService.js';
 
 function assertDb() {
   if (mongoose.connection.readyState !== 1) {
@@ -99,9 +109,9 @@ function normalizeStages(stages = []) {
     .filter((stage) => stage.name);
 }
 
-function appendActivity(opportunity, entry, actor = 'admin') {
-  if (!Array.isArray(opportunity.activityLog)) opportunity.activityLog = [];
-  opportunity.activityLog.unshift({
+function appendActivity(ongoingJob, entry, actor = 'admin') {
+  if (!Array.isArray(ongoingJob.activityLog)) ongoingJob.activityLog = [];
+  ongoingJob.activityLog.unshift({
     action: entry.action,
     field: entry.field || '',
     from: entry.from ?? null,
@@ -109,12 +119,12 @@ function appendActivity(opportunity, entry, actor = 'admin') {
     by: actor || 'admin',
     at: new Date(),
   });
-  if (opportunity.activityLog.length > 100) {
-    opportunity.activityLog = opportunity.activityLog.slice(0, 100);
+  if (ongoingJob.activityLog.length > 100) {
+    ongoingJob.activityLog = ongoingJob.activityLog.slice(0, 100);
   }
 }
 
-function trackChanges(opportunity, payload, actor) {
+function trackChanges(ongoingJob, payload, actor) {
   const tracked = {
     name: 'name',
     companyId: 'companyId',
@@ -132,12 +142,12 @@ function trackChanges(opportunity, payload, actor) {
 
   Object.entries(tracked).forEach(([field, label]) => {
     if (payload[field] === undefined) return;
-    const current = opportunity[field];
+    const current = ongoingJob[field];
     const next = payload[field] || null;
     const currentValue = current == null ? '' : String(current);
     const nextValue = next == null ? '' : String(next);
     if (currentValue !== nextValue) {
-      appendActivity(opportunity, {
+      appendActivity(ongoingJob, {
         action: `Updated ${label}`,
         field,
         from: currentValue || null,
@@ -163,24 +173,9 @@ async function getPipelineStages() {
   return stages.length ? stages : DEFAULT_PIPELINE_STAGES.map((stage) => ({ ...stage }));
 }
 
-function mergeStagesWithOpportunityData(stages, items = []) {
-  const merged = [...stages];
-  const known = new Set(stages.map((stage) => stage.name));
-  items.forEach((item) => {
-    const name = String(item?.stage || '').trim();
-    if (!name || known.has(name)) return;
-    known.add(name);
-    merged.push({
-      name,
-      probability: cleanNumber(item?.probability, 0),
-    });
-  });
-  return merged;
-}
-
-async function getPopulatedOpportunity(id) {
+async function getPopulatedOngoingJob(id) {
   return withOpportunityPopulate(
-    Opportunity.findOne({ _id: id, deletedAt: null }),
+    OngoingJob.findOne({ _id: id, deletedAt: null }),
   ).lean();
 }
 
@@ -239,7 +234,7 @@ function withOpportunityPopulate(query) {
   return OPPORTUNITY_POPULATE.reduce((q, spec) => q.populate(spec), query);
 }
 
-export async function listOpportunities({ stage, owner, search, campaignId, companyId, _designerName, _designerUser } = {}) {
+export async function listOngoingJobs({ stage, owner, search, campaignId, companyId, _designerName, _designerUser } = {}) {
   assertDb();
   const stages = await getPipelineStages();
   const query = { deletedAt: null };
@@ -254,7 +249,6 @@ export async function listOpportunities({ stage, owner, search, campaignId, comp
     const username = designer.username || '';
     const userId = designer.id || designer.userId || designer._id;
 
-    // 1. Find opportunity IDs where this designer has assigned tasks
     const taskOwnerConditions = [
       ...(displayName ? [{ owner: displayName }] : []),
       ...(username ? [{ owner: username }] : []),
@@ -262,13 +256,12 @@ export async function listOpportunities({ stage, owner, search, campaignId, comp
     ];
     const designerTasks = await Task.find({
       deletedAt: null,
-      opportunityId: { $ne: null },
+      $or: [{ opportunityId: { $ne: null } }, { ongoingJobId: { $ne: null } }],
       $or: taskOwnerConditions,
     }).select('opportunityId').lean();
 
     const taskOppIds = designerTasks.map((t) => t.opportunityId).filter(Boolean);
 
-    // 2. An opportunity is visible to the designer if they are owner, collaborator, or assigned a task under it
     const designerConditions = [
       ...(displayName ? [{ owner: displayName }, { collaborators: displayName }] : []),
       ...(username ? [{ owner: username }, { collaborators: username }] : []),
@@ -286,7 +279,7 @@ export async function listOpportunities({ stage, owner, search, campaignId, comp
     query.$and = query.$and ? [...query.$and, searchClause] : [searchClause];
   }
 
-  const items = await withOpportunityPopulate(Opportunity.find(query))
+  const items = await withOpportunityPopulate(OngoingJob.find(query))
     .sort({ updatedAt: -1, expectedCloseDate: 1 })
     .lean();
   const stageNameSet = new Set(stages.map((s) => s.name));
@@ -297,7 +290,7 @@ export async function listOpportunities({ stage, owner, search, campaignId, comp
       {
         $match: {
           deletedAt: null,
-          opportunityId: { $in: opportunityIds },
+          $or: [{ opportunityId: { $in: opportunityIds } }, { ongoingJobId: { $in: opportunityIds } }],
         },
       },
       {
@@ -319,6 +312,7 @@ export async function listOpportunities({ stage, owner, search, campaignId, comp
     const effectiveStage = stageNameSet.has(item.stage) ? item.stage : fallbackStage;
     return {
       ...item,
+      ongoingJobId: item._id,
       stage: effectiveStage,
       executionSummary: {
         totalTasks: counts?.total || 0,
@@ -339,40 +333,41 @@ export async function listOpportunities({ stage, owner, search, campaignId, comp
   };
 }
 
-export async function getOpportunity(id) {
+export async function getOngoingJob(id) {
   assertDb();
-  const opportunity = await getPopulatedOpportunity(id);
-  if (!opportunity) {
-    const error = new Error('Opportunity not found.');
+  const ongoingJob = await getPopulatedOngoingJob(id);
+  if (!ongoingJob) {
+    const error = new Error('Ongoing Job not found.');
     error.status = 404;
     throw error;
   }
 
   const stages = await getPipelineStages();
   const stageNameSet = new Set(stages.map((s) => s.name));
-  if (!stageNameSet.has(opportunity.stage)) {
-    opportunity.stage = stages[0]?.name || 'Inquiry';
+  if (!stageNameSet.has(ongoingJob.stage)) {
+    ongoingJob.stage = stages[0]?.name || 'Inquiry';
   }
   let contacts = [];
-  if (opportunity.companyId?._id) {
-    contacts = await Lead.find({ companyId: opportunity.companyId._id, deletedAt: null })
+  if (ongoingJob.companyId?._id) {
+    contacts = await Lead.find({ companyId: ongoingJob.companyId._id, deletedAt: null })
       .select('name email designation pocQualification campaignId')
       .sort({ createdAt: -1 })
       .lean();
   }
 
   return {
-    opportunity,
+    ongoingJob: { ...ongoingJob, ongoingJobId: ongoingJob._id },
+    opportunity: { ...ongoingJob, ongoingJobId: ongoingJob._id },
     contacts,
     stages: stageNames(stages),
     stageProbabilities: Object.fromEntries(stages.map((s) => [s.name, s.probability])),
   };
 }
 
-export async function createOpportunity(payload, actor = 'admin') {
+export async function createOngoingJob(payload, actor = 'admin') {
   assertDb();
   if (!payload.name?.trim() || !payload.companyId) {
-    const error = new Error('Opportunity name and company are required.');
+    const error = new Error('Ongoing Job name and company are required.');
     error.status = 400;
     throw error;
   }
@@ -396,7 +391,7 @@ export async function createOpportunity(payload, actor = 'admin') {
   const collaboratorUserIds = normalizeObjectIdList(payload.collaboratorUserIds || []);
   const collaborators = normalizeTextList(payload.collaborators || []);
 
-  const opportunity = await Opportunity.create({
+  const ongoingJob = await OngoingJob.create({
     name: payload.name.trim(),
     companyId: payload.companyId,
     primaryLeadId: validatedContacts.primaryLeadId || null,
@@ -417,7 +412,7 @@ export async function createOpportunity(payload, actor = 'admin') {
     notes: String(payload.notes || '').trim(),
     lastModifiedBy: assignment.owner,
     activityLog: [{
-      action: 'Opportunity created',
+      action: 'Ongoing Job created',
       field: 'stage',
       from: null,
       to: stage,
@@ -426,29 +421,29 @@ export async function createOpportunity(payload, actor = 'admin') {
     }],
   });
 
-  const populated = await getPopulatedOpportunity(opportunity._id);
+  const populated = await getPopulatedOngoingJob(ongoingJob._id);
   if (isClosedStage(stage) || stage === 'Payment Received') {
-    await createJobFromOpportunity(populated).catch(() => {});
+    await createCompletedJobFromOngoingJob(populated).catch(() => {});
   }
-  return populated;
+  return { ...populated, ongoingJobId: populated._id };
 }
 
-export async function updateOpportunity(id, payload, actor = 'admin') {
+export async function updateOngoingJob(id, payload, actor = 'admin') {
   assertDb();
-  const opportunity = await Opportunity.findOne({ _id: id, deletedAt: null });
-  if (!opportunity) {
-    const error = new Error('Opportunity not found.');
+  const ongoingJob = await OngoingJob.findOne({ _id: id, deletedAt: null });
+  if (!ongoingJob) {
+    const error = new Error('Ongoing Job not found.');
     error.status = 404;
     throw error;
   }
 
   const stages = await getPipelineStages();
-  const modifier = String(actor || payload.owner || opportunity.owner || 'admin').trim();
+  const modifier = String(actor || payload.owner || ongoingJob.owner || 'admin').trim();
   let ownerPatch = null;
   if (payload.owner !== undefined || payload.ownerUserId !== undefined) {
     ownerPatch = await resolveOwnerAssignment(
       { owner: payload.owner, ownerUserId: payload.ownerUserId },
-      opportunity.owner || modifier,
+      ongoingJob.owner || modifier,
     );
   }
   const normalizedStakeholders = payload.stakeholderLeadIds !== undefined
@@ -460,9 +455,9 @@ export async function updateOpportunity(id, payload, actor = 'admin') {
     || payload.stakeholderLeadIds !== undefined
   )
     ? await validateOpportunityContacts(
-      payload.companyId || opportunity.companyId,
-      payload.primaryLeadId !== undefined ? payload.primaryLeadId : opportunity.primaryLeadId,
-      normalizedStakeholders !== undefined ? normalizedStakeholders : opportunity.stakeholderLeadIds,
+      payload.companyId || ongoingJob.companyId,
+      payload.primaryLeadId !== undefined ? payload.primaryLeadId : ongoingJob.primaryLeadId,
+      normalizedStakeholders !== undefined ? normalizedStakeholders : ongoingJob.stakeholderLeadIds,
     )
     : null;
   const trackedPayload = {
@@ -476,7 +471,7 @@ export async function updateOpportunity(id, payload, actor = 'admin') {
     ...(payload.collaboratorUserIds !== undefined ? { collaboratorUserIds: normalizeObjectIdList(payload.collaboratorUserIds) } : {}),
   };
 
-  trackChanges(opportunity, trackedPayload, modifier);
+  trackChanges(ongoingJob, trackedPayload, modifier);
 
   const fields = [
     'name', 'companyId', 'primaryLeadId', 'campaignId', 'owner', 'stage',
@@ -484,53 +479,53 @@ export async function updateOpportunity(id, payload, actor = 'admin') {
     'eventDate', 'boothNumber', 'budgetBand', 'proposalDeadline', 'lostReason', 'notes',
   ];
   fields.forEach((field) => {
-    if (trackedPayload[field] !== undefined) opportunity[field] = trackedPayload[field] || null;
+    if (trackedPayload[field] !== undefined) ongoingJob[field] = trackedPayload[field] || null;
   });
   if (contactPatch) {
-    opportunity.primaryLeadId = contactPatch.primaryLeadId || null;
-    opportunity.stakeholderLeadIds = contactPatch.stakeholderLeadIds;
+    ongoingJob.primaryLeadId = contactPatch.primaryLeadId || null;
+    ongoingJob.stakeholderLeadIds = contactPatch.stakeholderLeadIds;
   }
   if (ownerPatch) {
-    opportunity.owner = ownerPatch.owner;
-    opportunity.ownerUserId = ownerPatch.ownerUserId || null;
+    ongoingJob.owner = ownerPatch.owner;
+    ongoingJob.ownerUserId = ownerPatch.ownerUserId || null;
   }
   if (payload.collaborators !== undefined) {
-    opportunity.collaborators = normalizeTextList(payload.collaborators);
+    ongoingJob.collaborators = normalizeTextList(payload.collaborators);
   }
   if (payload.collaboratorUserIds !== undefined) {
-    opportunity.collaboratorUserIds = normalizeObjectIdList(payload.collaboratorUserIds);
+    ongoingJob.collaboratorUserIds = normalizeObjectIdList(payload.collaboratorUserIds);
   }
 
-  if (payload.valueAed !== undefined) opportunity.valueAed = Math.max(0, cleanNumber(payload.valueAed));
+  if (payload.valueAed !== undefined) ongoingJob.valueAed = Math.max(0, cleanNumber(payload.valueAed));
   if (payload.standSizeSqm !== undefined) {
-    opportunity.standSizeSqm = payload.standSizeSqm === '' ? null : Math.max(0, cleanNumber(payload.standSizeSqm));
+    ongoingJob.standSizeSqm = payload.standSizeSqm === '' ? null : Math.max(0, cleanNumber(payload.standSizeSqm));
   }
 
   if (payload.stage !== undefined) {
-    opportunity.probability = probabilityForStage(stages, opportunity.stage);
-    if (opportunity.stage === CLOSED_WON_STAGE || opportunity.stage === CLOSED_LOST_STAGE) {
-      opportunity.closedAt = new Date();
-    } else if (!isClosedStage(opportunity.stage)) {
-      opportunity.closedAt = null;
+    ongoingJob.probability = probabilityForStage(stages, ongoingJob.stage);
+    if (ongoingJob.stage === CLOSED_WON_STAGE || ongoingJob.stage === CLOSED_LOST_STAGE) {
+      ongoingJob.closedAt = new Date();
+    } else if (!isClosedStage(ongoingJob.stage)) {
+      ongoingJob.closedAt = null;
     }
   }
 
-  opportunity.lastModifiedBy = modifier;
-  await opportunity.save();
+  ongoingJob.lastModifiedBy = modifier;
+  await ongoingJob.save();
 
-  const populated = await getPopulatedOpportunity(opportunity._id);
-  if (isClosedStage(opportunity.stage) || opportunity.stage === 'Payment Received') {
-    await createJobFromOpportunity(populated).catch(() => {});
+  const populated = await getPopulatedOngoingJob(ongoingJob._id);
+  if (isClosedStage(ongoingJob.stage) || ongoingJob.stage === 'Payment Received') {
+    await createCompletedJobFromOngoingJob(populated).catch(() => {});
   }
-  return populated;
+  return { ...populated, ongoingJobId: populated._id };
 }
 
-export async function getOpportunityTimeline(id) {
+export async function getOngoingJobTimeline(id) {
   assertDb();
-  const { opportunity } = await getOpportunity(id);
-  const activityEvents = (opportunity.activityLog || []).map((entry) => ({
+  const { ongoingJob } = await getOngoingJob(id);
+  const activityEvents = (ongoingJob.activityLog || []).map((entry) => ({
     id: `opp-activity-${entry._id}`,
-    type: 'opportunity',
+    type: 'ongoing_job',
     title: entry.action,
     detail: entry.field && entry.to != null
       ? `${entry.from ? `${entry.from} → ` : ''}${entry.to}`
@@ -538,17 +533,17 @@ export async function getOpportunityTimeline(id) {
     timestamp: new Date(entry.at).toISOString(),
     actor: entry.by || 'Team',
     channel: 'pipeline',
-    source: 'opportunity',
+    source: 'ongoing_job',
     meta: { field: entry.field, from: entry.from, to: entry.to },
   }));
 
   let contactEvents = [];
-  if (opportunity.primaryLeadId?._id) {
-    const timeline = await getLeadTimeline(opportunity.primaryLeadId._id);
-    contactEvents = (timeline.events || []).filter((event) => event?.type !== 'opportunity');
-  } else if (opportunity.companyId?._id) {
-    const timeline = await getCompanyTimeline(opportunity.companyId._id);
-    contactEvents = (timeline.events || []).filter((event) => event?.type !== 'opportunity');
+  if (ongoingJob.primaryLeadId?._id) {
+    const timeline = await getLeadTimeline(ongoingJob.primaryLeadId._id);
+    contactEvents = (timeline.events || []).filter((event) => event?.type !== 'ongoing_job' && event?.type !== 'opportunity');
+  } else if (ongoingJob.companyId?._id) {
+    const timeline = await getCompanyTimeline(ongoingJob.companyId._id);
+    contactEvents = (timeline.events || []).filter((event) => event?.type !== 'ongoing_job' && event?.type !== 'opportunity');
   }
 
   const merged = [...activityEvents, ...contactEvents]
@@ -557,24 +552,32 @@ export async function getOpportunityTimeline(id) {
     .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
   return {
-    opportunityId: String(opportunity._id),
+    ongoingJobId: String(ongoingJob._id),
+    opportunityId: String(ongoingJob._id),
     events: merged,
   };
 }
 
-export async function listTasks({ status = 'Open', owner, opportunityId, campaignId, companyId, _designerUser } = {}) {
+export async function listTasks({ status = 'Open', owner, opportunityId, ongoingJobId, campaignId, companyId, leadId, taskType, isRelationshipFollowUp, _designerUser } = {}) {
   assertDb();
+  const targetJobId = ongoingJobId || opportunityId;
   const query = { deletedAt: null };
   if (status && status !== 'All') query.status = status;
   if (owner && owner !== 'All') query.owner = owner;
-  if (opportunityId) query.opportunityId = opportunityId;
+  if (targetJobId) query.opportunityId = targetJobId;
   if (companyId && mongoose.isValidObjectId(String(companyId))) query.companyId = companyId;
+  if (leadId && mongoose.isValidObjectId(String(leadId))) query.leadId = leadId;
+  if (taskType) {
+    query.taskType = taskType;
+  } else if (isRelationshipFollowUp) {
+    query.taskType = 'relationship_follow_up';
+  }
   if (campaignId && mongoose.isValidObjectId(String(campaignId))) {
-    const opportunityIds = await Opportunity.find({
+    const ongoingJobIds = await OngoingJob.find({
       deletedAt: null,
       campaignId,
     }).distinct('_id');
-    query.opportunityId = { $in: opportunityIds };
+    query.opportunityId = { $in: ongoingJobIds };
   }
 
   if (_designerUser) {
@@ -582,7 +585,6 @@ export async function listTasks({ status = 'Open', owner, opportunityId, campaig
     const username = _designerUser.username || '';
     const userId = _designerUser.id || _designerUser.userId || _designerUser._id;
 
-    // 1. Find all opportunities assigned to or collaborated on by this designer
     const oppQuery = {
       deletedAt: null,
       $or: [
@@ -591,14 +593,10 @@ export async function listTasks({ status = 'Open', owner, opportunityId, campaig
         ...(userId && mongoose.isValidObjectId(String(userId)) ? [{ ownerUserId: userId }, { collaboratorUserIds: userId }] : []),
       ],
     };
-    const designerOpps = await Opportunity.find(oppQuery).select('_id campaignId').lean();
+    const designerOpps = await OngoingJob.find(oppQuery).select('_id campaignId').lean();
     const designerOppIds = designerOpps.map((o) => o._id);
     const designerCampaignIds = designerOpps.map((o) => o.campaignId).filter(Boolean);
 
-    // 2. A task is visible to the designer if:
-    //    - Task owner is designer (by displayName, username, or userId)
-    //    - OR task is linked to one of the designer's assigned/collaborated opportunities
-    //    - OR task is linked to one of the designer's assigned/collaborated campaigns
     const designerConditions = [
       ...(displayName ? [{ owner: displayName }] : []),
       ...(username ? [{ owner: username }] : []),
@@ -648,14 +646,41 @@ export async function createTask(payload, actor = 'admin') {
     error.status = 400;
     throw error;
   }
+  const targetJobId = payload.ongoingJobId || payload.opportunityId;
+  const isRelationship = Boolean(payload.isRelationshipFollowUp);
+  const taskType = payload.taskType
+    || (isRelationship ? 'relationship_follow_up' : targetJobId ? 'ongoing_job' : 'general');
+
+  let leadId = payload.leadId || null;
+  if (taskType === 'relationship_follow_up' || taskType === 'lead_follow_up' || taskType === 'reply_review') {
+    if (leadId && mongoose.isValidObjectId(String(leadId))) {
+      const lead = await Lead.findById(leadId).select('companyId campaignId').lean();
+      if (lead) {
+        payload.companyId = lead.companyId || payload.companyId || null;
+        payload.campaignId = lead.campaignId || payload.campaignId || null;
+      }
+    }
+  }
+
+  if (taskType === 'relationship_follow_up') {
+    if (!leadId || !mongoose.isValidObjectId(String(leadId))) {
+      const error = new Error('Relationship follow-up task requires a valid leadId.');
+      error.status = 400;
+      throw error;
+    }
+  }
+
   let companyId = payload.companyId || null;
   let campaignId = payload.campaignId || null;
-  if (payload.opportunityId) {
-    const opportunity = await Opportunity.findById(payload.opportunityId).select('companyId campaignId').lean();
-    companyId = opportunity?.companyId || companyId || null;
-    campaignId = opportunity?.campaignId || campaignId || null;
+  if (targetJobId) {
+    const ongoingJob = await OngoingJob.findById(targetJobId).select('companyId campaignId').lean();
+    companyId = ongoingJob?.companyId || companyId || null;
+    campaignId = ongoingJob?.campaignId || campaignId || null;
   }
-  const assignment = await resolveOwnerAssignment(payload, actor || 'admin');
+  const assignment = payload.owner === ''
+    ? { owner: '', ownerUserId: null }
+    : await resolveOwnerAssignment(payload, actor || 'admin');
+
   return Task.create({
     title: payload.title.trim(),
     dueAt: payload.dueAt || null,
@@ -664,13 +689,16 @@ export async function createTask(payload, actor = 'admin') {
     ownerUserId: assignment.ownerUserId,
     campaignId,
     companyId,
-    leadId: payload.leadId || null,
-    opportunityId: payload.opportunityId || null,
+    leadId,
+    taskType,
+    replyId: payload.replyId || null,
+    channel: payload.channel || '',
+    opportunityId: targetJobId || null,
     notes: String(payload.notes || '').trim(),
   });
 }
 
-export async function updateTask(id, payload) {
+export async function updateTask(id, payload, actor = 'admin') {
   assertDb();
   const task = await Task.findById(id);
   if (!task) {
@@ -678,32 +706,136 @@ export async function updateTask(id, payload) {
     error.status = 404;
     throw error;
   }
-  ['title', 'dueAt', 'priority', 'campaignId', 'companyId', 'leadId', 'opportunityId', 'notes'].forEach((field) => {
+
+  if (payload.taskType !== undefined) {
+    task.taskType = payload.taskType;
+  } else if (payload.isRelationshipFollowUp !== undefined) {
+    task.taskType = payload.isRelationshipFollowUp ? 'relationship_follow_up' : 'general';
+  }
+  if (payload.channel !== undefined) {
+    task.channel = String(payload.channel || '').trim();
+  }
+
+  ['title', 'dueAt', 'priority', 'campaignId', 'companyId', 'leadId', 'replyId', 'notes'].forEach((field) => {
     if (payload[field] !== undefined) task[field] = payload[field] || null;
   });
-  if (payload.owner !== undefined || payload.ownerUserId !== undefined) {
-    const assignment = await resolveOwnerAssignment(
-      { owner: payload.owner, ownerUserId: payload.ownerUserId },
-      task.owner || 'admin',
-    );
-    task.owner = assignment.owner;
-    task.ownerUserId = assignment.ownerUserId || null;
+  if (payload.ongoingJobId !== undefined || payload.opportunityId !== undefined) {
+    task.opportunityId = payload.ongoingJobId || payload.opportunityId || null;
   }
-  if (payload.opportunityId !== undefined) {
-    if (payload.opportunityId) {
-      const opportunity = await Opportunity.findById(payload.opportunityId).select('companyId campaignId').lean();
-      task.companyId = opportunity?.companyId || null;
-      task.campaignId = opportunity?.campaignId || null;
+  if (payload.owner !== undefined || payload.ownerUserId !== undefined) {
+    if (payload.owner === '') {
+      task.owner = '';
+      task.ownerUserId = null;
+    } else {
+      const assignment = await resolveOwnerAssignment(
+        { owner: payload.owner, ownerUserId: payload.ownerUserId },
+        task.owner || 'admin',
+      );
+      task.owner = assignment.owner;
+      task.ownerUserId = assignment.ownerUserId || null;
+    }
+  }
+
+  const targetJobId = payload.ongoingJobId || payload.opportunityId;
+  if (targetJobId !== undefined) {
+    if (targetJobId) {
+      const ongoingJob = await OngoingJob.findById(targetJobId).select('companyId campaignId').lean();
+      task.companyId = ongoingJob?.companyId || null;
+      task.campaignId = ongoingJob?.campaignId || null;
     } else if (payload.companyId === undefined) {
       task.companyId = null;
       if (payload.campaignId === undefined) task.campaignId = null;
     }
   }
-  if (payload.status !== undefined) {
-    task.status = payload.status;
-    task.completedAt = payload.status === 'Done' ? new Date() : null;
+
+  if (payload.status === 'Done') {
+    const isRel = task.taskType === 'relationship_follow_up';
+    const isLeadFollowUp = task.taskType === 'lead_follow_up';
+    const channelToUse = payload.channel !== undefined ? payload.channel : task.channel;
+    if (isRel && !channelToUse) {
+      const error = new Error('Follow-up channel required to complete relationship task.');
+      error.status = 400;
+      throw error;
+    }
+    const createInteraction = isRel || (isLeadFollowUp && Boolean(channelToUse));
+    if (createInteraction) {
+      task.channel = channelToUse;
+      const mappedType = CHANNEL_TO_INTERACTION_TYPE[channelToUse] || 'note';
+      const completionTime = new Date();
+      const loggedByActor = typeof actor === 'string' ? actor : (actor.username || actor.displayName || 'admin');
+
+      let session = null;
+      let useTransaction = true;
+      try {
+        session = await mongoose.startSession();
+      } catch {
+        useTransaction = false;
+      }
+
+      if (session && useTransaction) {
+        try {
+          await session.withTransaction(async () => {
+            const existingInteractions = await ContactInteraction.find({ sourceTaskId: task._id }).session(session);
+            let targetInteraction = existingInteractions[0];
+            if (!targetInteraction) {
+              const created = await ContactInteraction.create([
+                {
+                  leadId: task.leadId,
+                  companyId: task.companyId,
+                  direction: 'outbound',
+                  type: mappedType,
+                  title: task.title,
+                  summary: task.notes || task.title,
+                  occurredAt: completionTime,
+                  loggedBy: loggedByActor,
+                  sourceTaskId: task._id,
+                },
+              ], { session });
+              targetInteraction = created[0];
+            }
+            task.status = 'Done';
+            task.completedAt = completionTime;
+            task.interactionId = targetInteraction._id;
+            await task.save({ session });
+          });
+        } catch (err) {
+          throw err;
+        } finally {
+          session.endSession();
+        }
+      } else {
+        let interaction = await ContactInteraction.findOne({ sourceTaskId: task._id });
+        if (!interaction) {
+          interaction = await ContactInteraction.create({
+            leadId: task.leadId,
+            companyId: task.companyId,
+            direction: 'outbound',
+            type: mappedType,
+            title: task.title,
+            summary: task.notes || task.title,
+            occurredAt: completionTime,
+            loggedBy: loggedByActor,
+            sourceTaskId: task._id,
+          });
+        }
+        task.status = 'Done';
+        task.completedAt = completionTime;
+        task.interactionId = interaction._id;
+        await task.save();
+      }
+    } else {
+      task.status = 'Done';
+      task.completedAt = new Date();
+      await task.save();
+    }
+  } else if (payload.status === 'Open') {
+    task.status = 'Open';
+    task.completedAt = null;
+    await task.save();
+  } else {
+    await task.save();
   }
-  await task.save();
+
   return Task.findById(id)
     .populate('campaignId', 'projectName')
     .populate('companyId', 'companyName')
@@ -725,23 +857,25 @@ export async function restoreTask(id, actor = {}) {
   return restoreRecord({ Model: Task, resourceType: 'task', id, actor });
 }
 
-export async function deleteOpportunity(id, actor = {}) {
+export async function deleteOngoingJob(id, actor = {}) {
   assertDb();
-  registerRevisionModel('opportunity', Opportunity);
-  const result = await softDeleteRecord({ Model: Opportunity, resourceType: 'opportunity', id, actor });
+  registerRevisionModel('ongoing_job', OngoingJob);
+  registerRevisionModel('opportunity', OngoingJob);
+  const result = await softDeleteRecord({ Model: OngoingJob, resourceType: 'ongoing_job', id, actor });
   await Task.updateMany(
-    { opportunityId: id, deletedAt: null },
+    { $or: [{ opportunityId: id }, { ongoingJobId: id }], deletedAt: null },
     { $set: { deletedAt: new Date(), deletedBy: actor.displayName || 'admin', deletedViaOpportunityId: id } },
   );
   return result;
 }
 
-export async function restoreOpportunity(id, actor = {}) {
+export async function restoreOngoingJob(id, actor = {}) {
   assertDb();
-  registerRevisionModel('opportunity', Opportunity);
-  const result = await restoreRecord({ Model: Opportunity, resourceType: 'opportunity', id, actor });
+  registerRevisionModel('ongoing_job', OngoingJob);
+  registerRevisionModel('opportunity', OngoingJob);
+  const result = await restoreRecord({ Model: OngoingJob, resourceType: 'ongoing_job', id, actor });
   await Task.updateMany(
-    { opportunityId: id, deletedViaOpportunityId: id, deletedAt: { $ne: null } },
+    { $or: [{ opportunityId: id }, { ongoingJobId: id }], deletedViaOpportunityId: id, deletedAt: { $ne: null } },
     { $set: { deletedAt: null, deletedBy: null, deletedViaOpportunityId: null } },
   );
   return result;
@@ -774,8 +908,8 @@ export async function deleteTasks(ids = [], actor = {}) {
   return bulkSoftDelete(ids, deleteTask, actor);
 }
 
-export async function deleteOpportunities(ids = [], actor = {}) {
-  return bulkSoftDelete(ids, deleteOpportunity, actor);
+export async function deleteOngoingJobs(ids = [], actor = {}) {
+  return bulkSoftDelete(ids, deleteOngoingJob, actor);
 }
 
 export async function getWorkspaceSummary() {
@@ -784,15 +918,15 @@ export async function getWorkspaceSummary() {
   const next30Days = new Date(now.getTime() + 30 * 86400000);
   const sevenDaysAgo = new Date(now.getTime() - 7 * 86400000);
   const stages = await getPipelineStages();
-  const [opportunities, openTasks, overdueTasks, newReplies, failedJobs, pendingContacts] = await Promise.all([
-    Opportunity.find({ deletedAt: null, stage: { $nin: [CLOSED_LOST_STAGE] } }).sort({ updatedAt: -1 }).populate('companyId', 'companyName').lean(),
+  const [ongoingJobs, openTasks, overdueTasks, newReplies, failedJobs, pendingContacts] = await Promise.all([
+    OngoingJob.find({ deletedAt: null, stage: { $nin: [CLOSED_LOST_STAGE] } }).sort({ updatedAt: -1 }).populate('companyId', 'companyName').lean(),
     Task.find({ status: 'Open', deletedAt: null }).sort({ dueAt: 1 }).limit(8).populate('companyId', 'companyName').populate('opportunityId', 'name').populate('ownerUserId', 'displayName').lean(),
     Task.countDocuments({ status: 'Open', deletedAt: null, dueAt: { $lt: now } }),
     Reply.countDocuments({ receivedAt: { $gte: sevenDaysAgo }, intent: 'Interested' }),
     SendJob.countDocuments({ status: 'failed' }),
     Lead.countDocuments({ deliveryStatus: 'Pending Inqueue' }),
   ]);
-  const active = opportunities.filter((item) => item.stage !== CLOSED_WON_STAGE);
+  const active = ongoingJobs.filter((item) => item.stage !== CLOSED_WON_STAGE);
   const pipelineValue = active.reduce((sum, item) => sum + (item.valueAed || 0), 0);
   const weightedPipeline = active.reduce((sum, item) => sum + ((item.valueAed || 0) * probabilityForStage(stages, item.stage) / 100), 0);
   const closingSoon = active.filter((item) => item.expectedCloseDate && new Date(item.expectedCloseDate) <= next30Days).length;
@@ -800,6 +934,7 @@ export async function getWorkspaceSummary() {
   return {
     metrics: {
       activeOpportunities: active.length,
+      activeOngoingJobs: active.length,
       pipelineValue,
       weightedPipeline,
       closingSoon,
@@ -809,7 +944,18 @@ export async function getWorkspaceSummary() {
       pendingContacts,
     },
     openTasks,
-    recentOpportunities: opportunities.slice(0, 6),
+    recentOpportunities: ongoingJobs.slice(0, 6),
+    recentOngoingJobs: ongoingJobs.slice(0, 6),
     computedAt: now,
   };
 }
+
+// Aliases for backward compatibility
+export const listOpportunities = listOngoingJobs;
+export const getOpportunity = getOngoingJob;
+export const createOpportunity = createOngoingJob;
+export const updateOpportunity = updateOngoingJob;
+export const getOpportunityTimeline = getOngoingJobTimeline;
+export const deleteOpportunity = deleteOngoingJob;
+export const restoreOpportunity = restoreOngoingJob;
+export const deleteOpportunities = deleteOngoingJobs;

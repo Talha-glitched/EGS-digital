@@ -134,10 +134,17 @@ const leadSchema = new mongoose.Schema(
       reminderNotes: { type: String, default: '', trim: true },
     },
 
-    financialMetrics: { type: financialMetricsSchema, default: () => ({}) },
     trackingMetrics: { type: trackingMetricsSchema, default: () => ({}) },
     lastMessageId: { type: String, default: '', index: true },
     repliedAt: { type: Date, default: null },
+    leadStage: {
+      type: String,
+      enum: ['contact', 'lead', 'qualified_lead'],
+      default: 'contact',
+      index: true,
+    },
+    qualifiedAt: { type: Date, default: null },
+    qualifiedBy: { type: String, default: null },
     version: { type: Number, default: 0 },
     deletedAt: { type: Date, default: null, index: true },
     deletedBy: { type: String, default: null, trim: true },

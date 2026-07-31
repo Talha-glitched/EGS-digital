@@ -128,7 +128,7 @@ export async function syncAllResendReplies() {
           domain: domain || (company ? company.domain : ''),
           deliveryStatus: targetStatus,
           hasResponded: true,
-          pocQualification: { status: 'Confirmed' },
+          pocQualification: { status: 'Unverified' },
           primarySource: 'Resend Inbound',
           sources: ['Resend Inbound'],
           createdAt: item.created_at ? new Date(item.created_at) : new Date(),
@@ -156,8 +156,6 @@ export async function syncAllResendReplies() {
         }
       }
 
-
-
       const existingReply = await Reply.findOne({
         $or: [
           { resendEmailId: item.id },
@@ -167,7 +165,7 @@ export async function syncAllResendReplies() {
       });
 
       if (!existingReply) {
-        await Reply.create({
+        const createdReply = await Reply.create({
           campaignId: lead.campaignId || null,
           leadId: lead._id,
           companyId: lead.companyId || null,
@@ -182,9 +180,13 @@ export async function syncAllResendReplies() {
           createdAt: item.created_at ? new Date(item.created_at) : new Date(),
         });
         repliesLogged += 1;
-      } else if (!existingReply.text && bodyText) {
-        existingReply.text = bodyText;
-        await existingReply.save();
+        await ensureReplyReviewTask(createdReply, lead);
+      } else {
+        if (!existingReply.text && bodyText) {
+          existingReply.text = bodyText;
+          await existingReply.save();
+        }
+        await ensureReplyReviewTask(existingReply, lead);
       }
     }
 

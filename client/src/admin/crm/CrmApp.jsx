@@ -15,6 +15,8 @@ import CompaniesPage from './pages/CompaniesPage.jsx';
 import AdvancedAnalyticsPage from './pages/AdvancedAnalyticsPage.jsx';
 import FinancePage from './pages/FinancePage.jsx';
 import ProjectsPage from './pages/ProjectsPage.jsx';
+import OngoingJobsPage from './pages/OngoingJobsPage.jsx';
+import CompletedJobsPage from './pages/CompletedJobsPage.jsx';
 import SalesPipelinePage from './pages/SalesPipelinePage.jsx';
 import TasksPage from './pages/TasksPage.jsx';
 import JobsPage from './pages/JobsPage.jsx';
@@ -174,8 +176,10 @@ function DesignerShell({ onLogout, status }) {
               <main className="crm-scroll min-h-0 flex-1 overflow-y-auto">
                 <Routes>
                   <Route index element={<DesignerDashboard />} />
-                  <Route path="pipeline" element={<SalesPipelinePage />} />
-                  <Route path="jobs" element={<JobsPage />} />
+                  <Route path="ongoing-jobs" element={<OngoingJobsPage />} />
+                  <Route path="completed-jobs" element={<CompletedJobsPage />} />
+                  <Route path="pipeline" element={<Navigate to="/admin/crm/ongoing-jobs" replace />} />
+                  <Route path="jobs" element={<Navigate to="/admin/crm/completed-jobs" replace />} />
                   <Route path="tasks" element={<TasksPage />} />
                   <Route path="*" element={<Navigate to="/admin/crm" replace />} />
                 </Routes>
@@ -218,8 +222,10 @@ function CrmShell({ projects, onLogout, status }) {
     '/admin/crm': ['Dashboard', 'Priority follow-ups, pipeline movement, and active campaigns'],
     '/admin/crm/projects': ['Campaigns', 'Exhibition outreach, target companies, and sequence performance'],
     '/admin/crm/sequences': ['Sequence Studio', 'Whiteboard builder for multi-step outreach flows'],
-    '/admin/crm/pipeline': ['Sales Pipeline', 'Qualified opportunities from first response to contract award'],
-    '/admin/crm/jobs': ['Jobs', 'Completed, active, and past jobs directory & pipeline transfers'],
+    '/admin/crm/ongoing-jobs': ['Ongoing Jobs', 'Work in progress from inquiry through execution'],
+    '/admin/crm/completed-jobs': ['Jobs Done', 'Completed and past production jobs directory'],
+    '/admin/crm/pipeline': ['Ongoing Jobs', 'Work in progress from inquiry through execution'],
+    '/admin/crm/jobs': ['Jobs Done', 'Completed and past production jobs directory'],
     '/admin/crm/tasks': ['Tasks', 'Calls, meetings, proposals, and overdue next actions'],
     '/admin/crm/relationships': ['Key Relationships', 'Confirmed right POCs, last touchpoints, and follow-up timing'],
     '/admin/crm/people': ['Contacts', 'Search and manage every point of contact'],
@@ -283,8 +289,10 @@ function CrmShell({ projects, onLogout, status }) {
           <main className={`crm-scroll min-h-0 flex-1 ${isSequenceStudio ? 'overflow-hidden' : 'overflow-y-auto'}`}>
             <Routes>
               <Route index element={<GlobalDashboard />} />
-              <Route path="pipeline" element={<SalesPipelinePage />} />
-              <Route path="jobs" element={<JobsPage />} />
+              <Route path="ongoing-jobs" element={<OngoingJobsPage />} />
+              <Route path="completed-jobs" element={<CompletedJobsPage />} />
+              <Route path="pipeline" element={<Navigate to="/admin/crm/ongoing-jobs" replace />} />
+              <Route path="jobs" element={<Navigate to="/admin/crm/completed-jobs" replace />} />
               <Route path="tasks" element={<TasksPage />} />
               <Route path="relationships" element={<RelationshipsPage />} />
               <Route path="projects" element={<ProjectsPage />} />

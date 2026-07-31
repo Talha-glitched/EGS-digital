@@ -25,8 +25,8 @@ const BASE_NAV_GROUPS = [
   {
     heading: 'Project Management',
     items: [
-      { to: '/admin/crm/pipeline', label: 'Sales Pipeline', icon: BriefcaseBusiness },
-      { to: '/admin/crm/jobs', label: 'Jobs', icon: ClipboardList },
+      { to: '/admin/crm/ongoing-jobs', label: 'Ongoing Jobs', icon: BriefcaseBusiness },
+      { to: '/admin/crm/completed-jobs', label: 'Jobs Done', icon: ClipboardList },
       { to: '/admin/crm/tasks', label: 'Tasks', icon: ListTodo },
     ],
   },
@@ -87,7 +87,7 @@ export default function Sidebar({ activeProject, onLogout, mobileOpen = false, o
           heading: 'My Workspace',
           items: [
             { to: '/admin/crm', label: 'Dashboard', icon: LayoutDashboard, end: true },
-            { to: '/admin/crm/pipeline', label: 'Sales Pipeline', icon: BriefcaseBusiness },
+            { to: '/admin/crm/ongoing-jobs', label: 'Ongoing Jobs', icon: BriefcaseBusiness },
             { to: '/admin/crm/tasks', label: 'Tasks', icon: ListTodo },
           ],
         },

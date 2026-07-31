@@ -11,6 +11,7 @@ const emptyForm = {
   priority: 'Normal',
   owner: 'admin',
   opportunityId: '',
+  ongoingJobId: '',
   companyId: '',
   notes: '',
   status: 'Open',
@@ -27,6 +28,7 @@ export default function TaskDetailModal({
   opportunities = [],
   companies = [],
   ownerOptions = [],
+  defaultOngoingJobId = '',
   defaultOpportunityId = '',
   defaultCompanyId = '',
   defaultOwner = 'admin',
@@ -37,37 +39,48 @@ export default function TaskDetailModal({
   useEffect(() => {
     if (!open) return;
     if (mode === 'create') {
+      const targetOpp = defaultOngoingJobId || defaultOpportunityId || '';
       setForm({
         ...emptyForm,
         owner: defaultOwner || 'admin',
-        opportunityId: defaultOpportunityId || '',
+        ongoingJobId: targetOpp,
+        opportunityId: targetOpp,
         companyId: defaultCompanyId || '',
       });
       return;
     }
     if (!task) return;
+    const targetOpp = task.ongoingJobId?._id || task.ongoingJobId || task.opportunityId?._id || task.opportunityId || '';
     setForm({
       title: task.title || '',
       dueAt: task.dueAt || null,
       priority: task.priority || 'Normal',
       owner: task.owner || 'admin',
-      opportunityId: task.opportunityId?._id || task.opportunityId || '',
+      ongoingJobId: targetOpp,
+      opportunityId: targetOpp,
       companyId: task.companyId?._id || task.companyId || '',
       notes: task.notes || '',
       status: task.status || 'Open',
     });
-  }, [open, task, mode, defaultOpportunityId, defaultCompanyId, defaultOwner]);
+  }, [open, task, mode, defaultOngoingJobId, defaultOpportunityId, defaultCompanyId, defaultOwner]);
 
   function update(field, value) {
-    setForm((prev) => ({ ...prev, [field]: value }));
+    setForm((prev) => {
+      if (field === 'ongoingJobId' || field === 'opportunityId') {
+        return { ...prev, ongoingJobId: value, opportunityId: value };
+      }
+      return { ...prev, [field]: value };
+    });
   }
 
   async function handleSubmit(event) {
     event.preventDefault();
+    const targetOpp = form.ongoingJobId || form.opportunityId || null;
     await onSave?.({
       ...form,
       dueAt: form.dueAt || null,
-      opportunityId: form.opportunityId || null,
+      ongoingJobId: targetOpp,
+      opportunityId: targetOpp,
       companyId: form.companyId || null,
     });
   }
@@ -150,14 +163,14 @@ export default function TaskDetailModal({
           )}
         </div>
         {!hideOpportunityField && (
-          <Field label="Opportunity">
+          <Field label="Ongoing Job">
             <SearchableSelect
-              value={form.opportunityId}
-              onChange={(value) => update('opportunityId', value)}
+              value={form.ongoingJobId || form.opportunityId}
+              onChange={(value) => update('ongoingJobId', value)}
               options={opportunityOptions}
-              placeholder="No linked opportunity"
-              searchPlaceholder="Search opportunities…"
-              emptyLabel="No opportunities match."
+              placeholder="No linked Ongoing Job"
+              searchPlaceholder="Search Ongoing Jobs…"
+              emptyLabel="No Ongoing Jobs match."
             />
           </Field>
         )}

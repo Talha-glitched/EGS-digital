@@ -15,6 +15,7 @@ const WIDTHS = {
 
 export default function Drawer({
   open,
+  isOpen,
   onClose,
   title,
   subtitle,
@@ -24,9 +25,10 @@ export default function Drawer({
   stackLevel = 0,
   className = '',
 }) {
+  const effectiveOpen = open !== undefined ? open : isOpen;
   const panelRef = useRef(null);
   const onCloseRef = useRef(onClose);
-  const { mounted, visible, exiting } = useOverlayTransition(open);
+  const { mounted, visible, exiting } = useOverlayTransition(effectiveOpen);
   useBodyScrollLock(mounted);
 
   onCloseRef.current = onClose;

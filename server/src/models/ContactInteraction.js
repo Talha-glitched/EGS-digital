@@ -21,6 +21,7 @@ const contactInteractionSchema = new mongoose.Schema(
     attendees: { type: String, default: '', trim: true },
     loggedBy: { type: String, default: 'admin', trim: true },
     loggedByUserId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+    sourceTaskId: { type: mongoose.Schema.Types.ObjectId, ref: 'Task', default: null, index: { unique: true, sparse: true } },
     updatedBy: { type: String, default: '', trim: true },
     version: { type: Number, default: 0 },
     deletedAt: { type: Date, default: null, index: true },

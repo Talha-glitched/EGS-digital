@@ -69,7 +69,7 @@ export default function DesignerDashboard() {
   const load = useCallback(async () => {
     const [taskData, oppData] = await Promise.all([
       crmApiFetch('/api/admin/sales/tasks?status=Open').catch(() => ({ items: [] })),
-      crmApiFetch('/api/admin/sales/opportunities').catch(() => ({ items: [] })),
+      crmApiFetch('/api/admin/sales/ongoing-jobs').catch(() => ({ items: [] })),
     ]);
     setTasks(taskData.items || []);
     setOpportunities(oppData.items || []);
@@ -196,15 +196,15 @@ export default function DesignerDashboard() {
           <Card>
             <CardHeader
               title="My projects"
-              subtitle="Sales opportunities you're involved in."
-              action={<Link to="/admin/crm/pipeline" className="text-xs font-semibold text-brand hover:underline">Open pipeline</Link>}
+              subtitle="Ongoing Jobs you're involved in."
+              action={<Link to="/admin/crm/ongoing-jobs" className="text-xs font-semibold text-brand hover:underline">Open Ongoing Jobs</Link>}
             />
             {activeOpps.length === 0 ? (
-              <EmptyState icon={BriefcaseBusiness} title="No active projects" description="You aren't assigned to any live opportunities yet." />
+              <EmptyState icon={BriefcaseBusiness} title="No active projects" description="You aren't assigned to any live jobs yet." />
             ) : (
               <ListBody>
                 {activeOpps.slice(0, 8).map((item) => (
-                  <ListRow key={item._id} as={Link} to="/admin/crm/pipeline" className="group hover:bg-neutral-50/80">
+                  <ListRow key={item._id} as={Link} to="/admin/crm/ongoing-jobs" className="group hover:bg-neutral-50/80">
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand">
                       <BriefcaseBusiness className="h-4 w-4" />
                     </div>

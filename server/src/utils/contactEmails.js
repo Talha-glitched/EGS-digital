@@ -173,7 +173,7 @@ export function inferOutreachEmail(lead, { lastSentEmail = '' } = {}) {
   return null;
 }
 
-export function applyOutreachEmailFromReply(lead, senderEmail, systemInbox = '') {
+export function applyOutreachEmailFromReply(lead, senderEmail, systemInbox = '', receivedAt = new Date()) {
   const normalized = normalizeEmail(senderEmail);
   if (!normalized || !isValidEmail(normalized)) {
     return { applied: false, reason: 'invalid-sender' };
@@ -188,7 +188,12 @@ export function applyOutreachEmailFromReply(lead, senderEmail, systemInbox = '')
   lead.outreachEmail = normalized;
   lead.outreachEmailSource = source;
   lead.deliveryStatus = 'Replied';
-  lead.repliedAt = lead.repliedAt || new Date();
+  
+  const incomingDate = receivedAt ? new Date(receivedAt) : new Date();
+  if (!lead.repliedAt || incomingDate > new Date(lead.repliedAt)) {
+    lead.repliedAt = incomingDate;
+  }
+
   if (lead.outcome === 'Pending' || !lead.outcome) {
     lead.outcome = 'Replied';
   }

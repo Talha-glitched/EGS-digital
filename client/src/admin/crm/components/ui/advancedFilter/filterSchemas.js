@@ -159,7 +159,7 @@ function leadGroups(extra = {}) {
           options: SERVICE_CATEGORY_OPTIONS.map((value) => ({ value, label: value })),
         },
         { key: 'relationshipOwner', label: 'Relationship owner', type: 'text', placeholder: 'Contains…', accessor: (r) => r.relationshipProfile?.owner },
-        { key: 'nextFollowUpAt', label: 'Next follow-up', type: 'dateRange', accessor: (r) => r.relationshipProfile?.nextFollowUpAt },
+        { key: 'nextFollowUpAt', label: 'Next follow-up', type: 'dateRange', accessor: (r) => r.nextFollowUpAt || r.relationshipProfile?.nextFollowUpAt },
       ],
     },
     {
@@ -367,17 +367,17 @@ export const CAMPAIGN_FILTER_SCHEMA = {
   ],
 };
 
-export function buildOpportunityFilterSchema(stages = []) {
+export function buildOngoingJobFilterSchema(stages = []) {
   return {
-    id: 'opportunity',
-    label: 'Opportunities',
+    id: 'ongoing_job',
+    label: 'Ongoing Jobs',
     groups: [
       {
         id: 'deal',
-        label: 'Deal',
-        description: 'Opportunity details',
+        label: 'Job',
+        description: 'Ongoing Job details',
         fields: [
-          { key: 'name', label: 'Opportunity name', type: 'text', placeholder: 'Contains…', accessor: (r) => r.name },
+          { key: 'name', label: 'Ongoing Job name', type: 'text', placeholder: 'Contains…', accessor: (r) => r.name },
           { key: 'eventName', label: 'Event / programme', type: 'text', placeholder: 'Contains…', accessor: (r) => r.eventName },
           {
             key: 'stage',
@@ -386,9 +386,8 @@ export function buildOpportunityFilterSchema(stages = []) {
             accessor: (r) => r.stage,
             options: stages.map((value) => ({ value, label: value })),
           },
-          { key: 'valueAed', label: 'Deal value (AED)', type: 'range', accessor: (r) => r.valueAed },
+          { key: 'valueAed', label: 'Job value (AED)', type: 'range', accessor: (r) => r.valueAed },
           { key: 'tags', label: 'Tags', type: 'multiContains', accessor: (r) => (r.tags || []).join(', ') },
-          { key: 'nextAction', label: 'Next action', type: 'text', placeholder: 'Contains…', accessor: (r) => r.nextAction },
         ],
       },
       {
@@ -413,6 +412,8 @@ export function buildOpportunityFilterSchema(stages = []) {
     ],
   };
 }
+
+export const buildOpportunityFilterSchema = buildOngoingJobFilterSchema;
 
 export function buildTaskFilterSchema(ownerOptions = []) {
   const normalizedOwnerOptions = ownerOptions.map((item) => (

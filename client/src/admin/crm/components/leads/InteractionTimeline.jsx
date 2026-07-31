@@ -27,8 +27,8 @@ import {
   fetchContactTimeline,
   fetchCompanyTimeline,
   fetchCompanyDetails,
-  fetchOpportunity,
-  fetchOpportunityTimeline,
+  fetchOngoingJob,
+  fetchOngoingJobTimeline,
   createContactInteraction,
   updateContactInteraction,
   deleteInteractionWithUndo,
@@ -283,6 +283,7 @@ function listenState(syncStatus) {
 export default function InteractionTimeline({
   leadId,
   companyId,
+  ongoingJobId,
   opportunityId,
   showContact = false,
   contacts = [],
@@ -305,8 +306,9 @@ export default function InteractionTimeline({
 
   const resolvedLeadId = normalizeId(leadId);
   const resolvedCompanyId = normalizeId(companyId);
-  const resolvedOpportunityId = normalizeId(opportunityId);
-  const hasScope = Boolean(resolvedLeadId || resolvedCompanyId || resolvedOpportunityId);
+  const resolvedOngoingJobId = normalizeId(ongoingJobId || opportunityId);
+  const resolvedOpportunityId = resolvedOngoingJobId;
+  const hasScope = Boolean(resolvedLeadId || resolvedCompanyId || resolvedOngoingJobId);
 
   const logContacts = useMemo(() => (
     contacts.length ? contacts : (opportunityContacts.length ? opportunityContacts : companyContacts)
@@ -320,8 +322,8 @@ export default function InteractionTimeline({
     else setSyncing(true);
     setError('');
     try {
-      const data = resolvedOpportunityId
-        ? await fetchOpportunityTimeline(resolvedOpportunityId)
+      const data = resolvedOngoingJobId
+        ? await fetchOngoingJobTimeline(resolvedOngoingJobId)
         : resolvedLeadId
           ? await fetchContactTimeline(resolvedLeadId)
           : await fetchCompanyTimeline(resolvedCompanyId);
@@ -341,7 +343,7 @@ export default function InteractionTimeline({
       if (!silent) setLoading(false);
       setSyncing(false);
     }
-  }, [hasScope, resolvedLeadId, resolvedCompanyId, resolvedOpportunityId, onCountChange]);
+  }, [hasScope, resolvedLeadId, resolvedCompanyId, resolvedOngoingJobId, onCountChange]);
 
   const loadSyncStatus = useCallback(async () => {
     try {
@@ -383,7 +385,7 @@ export default function InteractionTimeline({
       return undefined;
     }
     let cancelled = false;
-    fetchOpportunity(resolvedOpportunityId)
+    fetchOngoingJob(resolvedOpportunityId)
       .then((data) => {
         if (cancelled) return;
         const companyContacts = data.contacts || [];

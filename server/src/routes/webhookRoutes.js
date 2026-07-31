@@ -169,8 +169,10 @@ async function handleReply(data) {
 
   // Deduplicate replies based on Message-ID
   const messageId = data.headers?.['message-id'] || data.headers?.['Message-ID'] || data.id;
-  if (messageId && (await Reply.exists({ messageId }))) {
-    console.log(`[Webhook Reply] Duplicate reply skipped. Message ID: ${messageId}`);
+  const existingReply = messageId ? await Reply.findOne({ messageId }) : null;
+  if (existingReply) {
+    console.log(`[Webhook Reply] Duplicate reply payload received. Repairing review task for Message ID: ${messageId}`);
+    await ensureReplyReviewTask(existingReply, lead);
     return;
   }
 
@@ -182,7 +184,8 @@ async function handleReply(data) {
   const replyIntent = intent === 'Opt Out' ? 'Opt Out' : intent === 'Interested' ? 'Interested' : 'Neutral';
 
   // Apply sender details to lead document
-  const outreachRes = applyOutreachEmailFromReply(lead, senderEmail, systemInbox);
+  const replyDate = data.date ? new Date(data.date) : new Date();
+  const outreachRes = applyOutreachEmailFromReply(lead, senderEmail, systemInbox, replyDate);
   await lead.save();
 
   // Construct thread history entry
@@ -191,13 +194,13 @@ async function handleReply(data) {
       type: 'inbound',
       body: text,
       subject,
-      timestamp: data.date || new Date(),
+      timestamp: replyDate,
       messageId,
     },
   ];
 
   // Save the Reply document
-  await Reply.create({
+  const createdReply = await Reply.create({
     campaignId: lead.campaignId,
     leadId: lead._id,
     email: lead.email,
@@ -205,12 +208,14 @@ async function handleReply(data) {
     subject,
     text,
     messageId,
-    receivedAt: data.date || new Date(),
+    receivedAt: replyDate,
     intent: replyIntent,
     systemInbox: systemInbox || '',
-    vendorSource: outreachRes.source || detectEmailVendor(lead, senderEmail) || 'Manual',
+    vendorSource: outreachRes.source || 'Manual',
     threadHistory,
   });
+
+  await ensureReplyReviewTask(createdReply, lead);
 
   // Freeze sequence and process opt-outs
   if (intent === 'Opt Out') {

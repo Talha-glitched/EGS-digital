@@ -22,13 +22,21 @@ import { sendAuthenticatedMail, getFromIdentity } from '../services/mailTranspor
 import { getSystemSettings, updateSystemSettings } from '../services/systemSettingsService.js';
 import { getResendMetrics } from '../services/resendService.js';
 import { syncAllResendReplies } from '../services/resendAutoSyncService.js';
+import { completeReplyReview } from '../services/replyReviewTaskService.js';
+import {
+  getTodayReviewStatus,
+  completeDailyReview,
+  getMonthlyReviewHistory,
+  getDashboardWorkingViewData,
+} from '../services/dailyReviewService.js';
+import { convertOpenTasksToRelationshipFollowUps } from '../services/unifiedFollowUpService.js';
 import { sendJobNow } from '../services/sendWorker.js';
 import {
-  listOpportunities,
-  createOpportunity,
-  updateOpportunity,
-  getOpportunity,
-  getOpportunityTimeline,
+  listOngoingJobs,
+  createOngoingJob,
+  updateOngoingJob,
+  getOngoingJob,
+  getOngoingJobTimeline,
   getPipelineConfig,
   updatePipelineConfig,
   listTasks,
@@ -37,21 +45,35 @@ import {
   updateTask,
   deleteTask,
   restoreTask,
+  deleteOngoingJob,
+  restoreOngoingJob,
+  deleteTasks,
+  deleteOngoingJobs,
+  getWorkspaceSummary,
+  listOpportunities,
+  createOpportunity,
+  updateOpportunity,
+  getOpportunity,
+  getOpportunityTimeline,
   deleteOpportunity,
   restoreOpportunity,
-  deleteTasks,
   deleteOpportunities,
-  getWorkspaceSummary,
 } from '../services/salesService.js';
 import { globalSearch } from '../services/searchService.js';
 import {
+  listCompletedJobs,
+  getCompletedJob,
+  createCompletedJob,
+  updateCompletedJob,
+  deleteCompletedJob,
+  restoreCompletedJob,
   listJobs,
   getJob,
   createJob,
   updateJob,
   deleteJob,
   restoreJob,
-} from '../services/jobService.js';
+} from '../services/completedJobService.js';
 import { runJobSeeding } from '../../scripts/seedJobsFromSheet.mjs';
 import {
   listInboxThreads,
@@ -658,6 +680,16 @@ router.post('/sequences/:id/reset-enrollments', asyncRoute(async (req, res) => {
   res.json(await resetSequenceEnrollments(req.params.id, leadIds));
 }));
 
+router.get('/leads/:id', asyncRoute(async (req, res) => {
+  const lead = await Lead.findById(req.params.id)
+    .populate('companyId')
+    .populate('campaignId');
+  if (!lead) {
+    return res.status(404).json({ message: 'Contact not found.' });
+  }
+  res.json(lead);
+}));
+
 router.patch('/leads/:id', asyncRoute(async (req, res) => {
   const lead = await Lead.findById(req.params.id);
   if (!lead) {
@@ -755,14 +787,20 @@ router.patch('/leads/:id', asyncRoute(async (req, res) => {
       serviceCategories: Array.isArray(incoming.serviceCategories)
         ? incoming.serviceCategories.filter(Boolean)
         : (lead.relationshipProfile?.serviceCategories || []),
-      nextFollowUpAt: incoming.nextFollowUpAt || null,
       reminderNotes: String(incoming.reminderNotes || '').trim(),
       owner: String(incoming.owner || '').trim(),
       status: incoming.status || lead.relationshipProfile?.status || 'New',
     };
+    if (lead.relationshipProfile.nextFollowUpAt !== undefined) {
+      lead.relationshipProfile.nextFollowUpAt = undefined;
+    }
   }
 
   await lead.save();
+
+  if (lead.pocQualification?.status === 'Confirmed') {
+    await convertOpenTasksToRelationshipFollowUps(lead._id, lead.companyId, lead.name, req.admin?.username);
+  }
 
   if (lead.campaignId) {
     await syncCampaignResponseCounts(lead.campaignId);
@@ -1054,6 +1092,25 @@ router.get('/analytics/comprehensive', asyncRoute(async (req, res) => {
   res.json(await getComprehensiveAnalytics(force));
 }));
 
+router.get('/daily-reviews/today', asyncRoute(async (_req, res) => {
+  res.json(await getTodayReviewStatus());
+}));
+
+router.post('/daily-reviews/complete', asyncRoute(async (req, res) => {
+  const { section } = req.body || {};
+  const user = req.user || req.admin || { username: 'admin' };
+  res.json(await completeDailyReview(section, user));
+}));
+
+router.get('/daily-reviews/month', asyncRoute(async (req, res) => {
+  const { year, month } = req.query;
+  res.json(await getMonthlyReviewHistory(year, month));
+}));
+
+router.get('/dashboard/working-view', asyncRoute(async (_req, res) => {
+  res.json(await getDashboardWorkingViewData());
+}));
+
 router.get('/sales/pipeline-config', asyncRoute(async (_req, res) => {
   res.json(await getPipelineConfig());
 }));
@@ -1062,14 +1119,12 @@ router.patch('/sales/pipeline-config', asyncRoute(async (req, res) => {
   res.json(await updatePipelineConfig(req.body || {}, req.admin?.username));
 }));
 
-router.get('/sales/opportunities', asyncRoute(async (req, res) => {
+const handleListOngoingJobs = asyncRoute(async (req, res) => {
   const query = { ...req.query };
-  // Designers only see opportunities they are owner of or collaborate on
   if (req.user?.role === 'designer') {
     query._designerUser = req.user;
   }
-  const result = await listOpportunities(query);
-  // Strip sensitive financial/POC fields for designers
+  const result = await listOngoingJobs(query);
   if (req.user?.role === 'designer') {
     result.items = result.items.map((item) => ({
       ...item,
@@ -1082,43 +1137,59 @@ router.get('/sales/opportunities', asyncRoute(async (req, res) => {
     }));
   }
   res.json(result);
-}));
+});
 
-router.get('/sales/opportunities/:id', asyncRoute(async (req, res) => {
-  res.json(await getOpportunity(req.params.id));
-}));
+router.get('/sales/ongoing-jobs', handleListOngoingJobs);
+router.get('/sales/opportunities', handleListOngoingJobs);
 
-router.get('/sales/opportunities/:id/timeline', asyncRoute(async (req, res) => {
-  res.json(await getOpportunityTimeline(req.params.id));
-}));
+const handleGetOngoingJob = asyncRoute(async (req, res) => {
+  res.json(await getOngoingJob(req.params.id));
+});
+router.get('/sales/ongoing-jobs/:id', handleGetOngoingJob);
+router.get('/sales/opportunities/:id', handleGetOngoingJob);
 
-router.post('/sales/opportunities', asyncRoute(async (req, res) => {
-  res.status(201).json(await createOpportunity(req.body || {}, req.admin?.username));
-}));
+const handleGetOngoingJobTimeline = asyncRoute(async (req, res) => {
+  res.json(await getOngoingJobTimeline(req.params.id));
+});
+router.get('/sales/ongoing-jobs/:id/timeline', handleGetOngoingJobTimeline);
+router.get('/sales/opportunities/:id/timeline', handleGetOngoingJobTimeline);
 
-router.patch('/sales/opportunities/:id', asyncRoute(async (req, res) => {
-  res.json(await updateOpportunity(req.params.id, req.body || {}, req.admin?.username));
-}));
+const handleCreateOngoingJob = asyncRoute(async (req, res) => {
+  res.status(201).json(await createOngoingJob(req.body || {}, req.admin?.username));
+});
+router.post('/sales/ongoing-jobs', handleCreateOngoingJob);
+router.post('/sales/opportunities', handleCreateOngoingJob);
 
-router.delete('/sales/opportunities/:id', asyncRoute(async (req, res) => {
-  res.json(await deleteOpportunity(req.params.id, getActor(req)));
-}));
+const handleUpdateOngoingJob = asyncRoute(async (req, res) => {
+  res.json(await updateOngoingJob(req.params.id, req.body || {}, req.admin?.username));
+});
+router.patch('/sales/ongoing-jobs/:id', handleUpdateOngoingJob);
+router.patch('/sales/opportunities/:id', handleUpdateOngoingJob);
 
-router.post('/sales/opportunities/:id/restore', asyncRoute(async (req, res) => {
-  res.json(await restoreOpportunity(req.params.id, getActor(req)));
-}));
+const handleDeleteOngoingJob = asyncRoute(async (req, res) => {
+  res.json(await deleteOngoingJob(req.params.id, getActor(req)));
+});
+router.delete('/sales/ongoing-jobs/:id', handleDeleteOngoingJob);
+router.delete('/sales/opportunities/:id', handleDeleteOngoingJob);
 
-router.post('/sales/opportunities/bulk-delete', asyncRoute(async (req, res) => {
+const handleRestoreOngoingJob = asyncRoute(async (req, res) => {
+  res.json(await restoreOngoingJob(req.params.id, getActor(req)));
+});
+router.post('/sales/ongoing-jobs/:id/restore', handleRestoreOngoingJob);
+router.post('/sales/opportunities/:id/restore', handleRestoreOngoingJob);
+
+const handleBulkDeleteOngoingJobs = asyncRoute(async (req, res) => {
   const ids = req.body?.ids || [];
   if (!Array.isArray(ids) || !ids.length) {
     return res.status(400).json({ message: 'ids array is required.' });
   }
-  res.json(await deleteOpportunities(ids, getActor(req)));
-}));
+  res.json(await deleteOngoingJobs(ids, getActor(req)));
+});
+router.post('/sales/ongoing-jobs/bulk-delete', handleBulkDeleteOngoingJobs);
+router.post('/sales/opportunities/bulk-delete', handleBulkDeleteOngoingJobs);
 
 router.get('/sales/tasks', asyncRoute(async (req, res) => {
   const query = { ...req.query };
-  // Designers see tasks assigned to them OR tasks linked to their opportunities/projects
   if (req.user?.role === 'designer') {
     query._designerUser = req.user;
   }
@@ -1134,11 +1205,18 @@ router.get('/sales/tasks/:id', asyncRoute(async (req, res) => {
 }));
 
 router.patch('/sales/tasks/:id', asyncRoute(async (req, res) => {
-  res.json(await updateTask(req.params.id, req.body || {}));
+  const actorUsername = req.admin?.username || req.user?.username || 'admin';
+  res.json(await updateTask(req.params.id, req.body || {}, actorUsername));
 }));
 
 router.delete('/sales/tasks/:id', asyncRoute(async (req, res) => {
   res.json(await deleteTask(req.params.id, getActor(req)));
+}));
+
+router.post('/sales/tasks/:id/complete-reply-review', asyncRoute(async (req, res) => {
+  const actor = req.admin?.username || req.user?.username || req.user?.displayName || 'admin';
+  const result = await completeReplyReview(req.params.id, { ...req.body, actor });
+  res.json(result);
 }));
 
 router.post('/sales/tasks/:id/restore', asyncRoute(async (req, res) => {
@@ -1153,34 +1231,48 @@ router.post('/sales/tasks/bulk-delete', asyncRoute(async (req, res) => {
   res.json(await deleteTasks(ids, getActor(req)));
 }));
 
-router.get('/sales/jobs', asyncRoute(async (req, res) => {
-  res.json(await listJobs(req.query));
-}));
+const handleListCompletedJobs = asyncRoute(async (req, res) => {
+  res.json(await listCompletedJobs(req.query));
+});
+router.get('/sales/completed-jobs', handleListCompletedJobs);
+router.get('/sales/jobs', handleListCompletedJobs);
 
-router.get('/sales/jobs/:id', asyncRoute(async (req, res) => {
-  res.json(await getJob(req.params.id));
-}));
+const handleGetCompletedJob = asyncRoute(async (req, res) => {
+  res.json(await getCompletedJob(req.params.id));
+});
+router.get('/sales/completed-jobs/:id', handleGetCompletedJob);
+router.get('/sales/jobs/:id', handleGetCompletedJob);
 
-router.post('/sales/jobs', asyncRoute(async (req, res) => {
-  res.status(201).json(await createJob(req.body || {}));
-}));
+const handleCreateCompletedJob = asyncRoute(async (req, res) => {
+  res.status(201).json(await createCompletedJob(req.body || {}));
+});
+router.post('/sales/completed-jobs', handleCreateCompletedJob);
+router.post('/sales/jobs', handleCreateCompletedJob);
 
-router.patch('/sales/jobs/:id', asyncRoute(async (req, res) => {
-  res.json(await updateJob(req.params.id, req.body || {}));
-}));
+const handleUpdateCompletedJob = asyncRoute(async (req, res) => {
+  res.json(await updateCompletedJob(req.params.id, req.body || {}));
+});
+router.patch('/sales/completed-jobs/:id', handleUpdateCompletedJob);
+router.patch('/sales/jobs/:id', handleUpdateCompletedJob);
 
-router.delete('/sales/jobs/:id', asyncRoute(async (req, res) => {
-  res.json(await deleteJob(req.params.id, getActor(req)));
-}));
+const handleDeleteCompletedJob = asyncRoute(async (req, res) => {
+  res.json(await deleteCompletedJob(req.params.id, getActor(req)));
+});
+router.delete('/sales/completed-jobs/:id', handleDeleteCompletedJob);
+router.delete('/sales/jobs/:id', handleDeleteCompletedJob);
 
-router.post('/sales/jobs/:id/restore', asyncRoute(async (req, res) => {
-  res.json(await restoreJob(req.params.id, getActor(req)));
-}));
+const handleRestoreCompletedJob = asyncRoute(async (req, res) => {
+  res.json(await restoreCompletedJob(req.params.id, getActor(req)));
+});
+router.post('/sales/completed-jobs/:id/restore', handleRestoreCompletedJob);
+router.post('/sales/jobs/:id/restore', handleRestoreCompletedJob);
 
-router.post('/sales/jobs/seed', asyncRoute(async (_req, res) => {
+const handleSeedCompletedJobs = asyncRoute(async (_req, res) => {
   await runJobSeeding();
   res.json({ ok: true });
-}));
+});
+router.post('/sales/completed-jobs/seed', handleSeedCompletedJobs);
+router.post('/sales/jobs/seed', handleSeedCompletedJobs);
 
 router.get('/users', asyncRoute(async (_req, res) => {
   res.json(await listUsers());

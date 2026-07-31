@@ -1,42 +1,25 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { crmApiFetch, formatCurrency, formatPercent } from '../crmApi.js';
-import CampaignInitWizard from '../components/wizards/CampaignInitWizard.jsx';
-import { Plus, TrendingUp, Users, Inbox, FolderKanban, ChevronRight, Building2, BriefcaseBusiness, ListTodo, AlertTriangle, ArrowUpRight, Clock3, MessageCircle, CheckCircle2 } from 'lucide-react';
-import { formatDeadlineLabel, getDeadlineTone } from '../components/tasks/taskUtils.js';
+import { Link } from 'react-router-dom';
+import { crmApiFetch, fetchLeadById, notifyWorkspaceChanged } from '../crmApi.js';
 import {
   PageShell,
   PageHeader,
   PageSection,
-  MetricGrid,
-  SplitGrid,
+  Card,
   ListBody,
   ListRow,
-  StatBand,
-  StatBandItem,
-  Card,
-  CardHeader,
-  StatCard,
-  EmptyState,
-  LoadingState,
-  WorkflowGuide,
   Badge,
+  LoadingState,
+  Alert,
+  cn,
 } from '../components/ui/primitives.jsx';
-
-const ONBOARDING_STEPS = [
-  {
-    title: 'Create a project',
-    body: 'Name your exhibition campaign and upload the list of target companies you want to win.',
-  },
-  {
-    title: 'Import contacts',
-    body: 'Inside the project, use Import to upload Apollo, Hunter, or Lusha exports. Duplicates merge automatically.',
-  },
-  {
-    title: 'Launch sequences',
-    body: 'Open Email Sequences under Leads, build a multi-step drip, pick your audience, and launch or save as draft.',
-  },
-];
+import { FolderKanban, ChevronRight } from 'lucide-react';
+import DashboardOngoingJobsSection from '../components/dashboard/DashboardOngoingJobsSection.jsx';
+import DashboardKeyRelationshipsSection from '../components/dashboard/DashboardKeyRelationshipsSection.jsx';
+import DashboardLeadsSection from '../components/dashboard/DashboardLeadsSection.jsx';
+import DailyReviewConsistency from '../components/dashboard/DailyReviewConsistency.jsx';
+import OngoingJobDrawer from '../components/sales/OngoingJobDrawer.jsx';
+import OutreachDrawer from '../components/leads/OutreachDrawer.jsx';
 
 const STATUS_TONE = {
   'Active Planning': 'warning',
@@ -45,261 +28,240 @@ const STATUS_TONE = {
   Archived: 'neutral',
 };
 
-const DEMO_SUMMARY = {
-  metrics: { activeOpportunities: 9, pipelineValue: 3795000, weightedPipeline: 2322250, closingSoon: 5, overdueTasks: 2, interestedReplies7d: 4, failedSendJobs: 0, pendingContacts: 186 },
-  openTasks: [
-    { _id: 'demo-dash-task-1', title: 'Call Apex Energy procurement director', priority: 'High', dueAt: '2026-06-21T10:00:00', companyId: { companyName: 'Apex Energy Systems' } },
-    { _id: 'demo-dash-task-2', title: 'Send revised Gulfood proposal', priority: 'High', dueAt: '2026-06-21T14:30:00', companyId: { companyName: 'Al Noor Foods' } },
-    { _id: 'demo-dash-task-3', title: 'Confirm venue walkthrough attendees', priority: 'Normal', dueAt: '2026-06-22T09:30:00', companyId: { companyName: 'Northbridge University' } },
-    { _id: 'demo-dash-task-4', title: 'Finalize signage bill of quantities', priority: 'Normal', dueAt: '2026-06-24T16:00:00', companyId: { companyName: 'Crescent Holdings' } },
-  ],
-  recentOpportunities: [
-    { _id: 'demo-dash-opp-1', name: 'World Trade Centre pavilion', stage: 'Negotiation', valueAed: 740000, probability: 80, companyId: { companyName: 'Orion Defence' } },
-    { _id: 'demo-dash-opp-2', name: 'University ceremony programme', stage: 'Contract Sent', valueAed: 390000, probability: 90, companyId: { companyName: 'Emirates Technical University' } },
-    { _id: 'demo-dash-opp-3', name: 'Gulfood custom island stand', stage: 'Proposal Sent', valueAed: 275000, probability: 65, companyId: { companyName: 'Al Noor Foods' } },
-    { _id: 'demo-dash-opp-4', name: 'ADIPEC double-decker stand', stage: 'Discovery / Site Visit', valueAed: 680000, probability: 45, companyId: { companyName: 'Apex Energy Systems' } },
-  ],
-};
-
 export default function GlobalDashboard() {
-  const navigate = useNavigate();
-  const [analytics, setAnalytics] = useState(null);
+  const [workingData, setWorkingData] = useState({ ongoingJobs: [], keyRelationships: [], leads: [] });
+  const [reviewStatus, setReviewStatus] = useState(null);
   const [projects, setProjects] = useState([]);
-  const [summary, setSummary] = useState(null);
-  const [showWizard, setShowWizard] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+
+  // Middle row synced expand state (Key Relationships & Leads expand together)
+  const [middleRowExpanded, setMiddleRowExpanded] = useState(false);
+
+  // Recent Campaigns collapsible state
+  const [campaignsExpanded, setCampaignsExpanded] = useState(false);
+
+  // Drawers state
+  const [selectedOngoingJobId, setSelectedOngoingJobId] = useState(null);
+  const [selectedLead, setSelectedLead] = useState(null);
+  const [selectedLeadTab, setSelectedLeadTab] = useState('relationship');
 
   const loadDashboard = useCallback(async () => {
-    const [globalData, projectList, workspaceSummary] = await Promise.all([
-      crmApiFetch('/api/admin/analytics/global'),
-      crmApiFetch('/api/admin/projects'),
-      crmApiFetch('/api/admin/workspace/summary'),
-    ]);
-    setAnalytics(globalData);
-    setProjects(projectList);
-    setSummary(workspaceSummary);
+    try {
+      const [wData, rStatus, projectList] = await Promise.all([
+        crmApiFetch('/api/admin/dashboard/working-view'),
+        crmApiFetch('/api/admin/daily-reviews/today'),
+        crmApiFetch('/api/admin/projects'),
+      ]);
+      setWorkingData(wData || { ongoingJobs: [], keyRelationships: [], leads: [] });
+      setReviewStatus(rStatus?.sections || null);
+      setProjects(projectList || []);
+    } catch (err) {
+      console.error(err);
+      setError(err.message || 'Failed to load dashboard working view.');
+    }
   }, []);
 
-  async function handleToggleTask(taskId) {
-    setSummary((prev) => prev ? {
-      ...prev,
-      openTasks: prev.openTasks?.filter((t) => t._id !== taskId) || [],
-    } : prev);
-    try {
-      await crmApiFetch(`/api/admin/sales/tasks/${taskId}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ status: 'Done' }),
-      });
-    } catch {
-      loadDashboard().catch(() => {});
-    }
-  }
-
   useEffect(() => {
-    loadDashboard()
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    setLoading(true);
+    loadDashboard().finally(() => setLoading(false));
   }, [loadDashboard]);
 
+  // Sync: same-window workspace changes, window focus, and 60s modest polling
   useEffect(() => {
     let timer = null;
-    function handleWorkspaceChanged() {
+    const handleRefresh = () => {
       window.clearTimeout(timer);
       timer = window.setTimeout(() => {
         loadDashboard().catch(console.error);
       }, 150);
-    }
-    window.addEventListener('crm:workspace-changed', handleWorkspaceChanged);
+    };
+
+    window.addEventListener('crm:workspace-changed', handleRefresh);
+    window.addEventListener('focus', handleRefresh);
+    const interval = window.setInterval(handleRefresh, 60000);
+
     return () => {
       window.clearTimeout(timer);
-      window.removeEventListener('crm:workspace-changed', handleWorkspaceChanged);
+      window.clearInterval(interval);
+      window.removeEventListener('crm:workspace-changed', handleRefresh);
+      window.removeEventListener('focus', handleRefresh);
     };
   }, [loadDashboard]);
+
+  const handleCompleteReview = async (section) => {
+    setBusy(true);
+    setError('');
+    try {
+      const record = await crmApiFetch('/api/admin/daily-reviews/complete', {
+        method: 'POST',
+        body: JSON.stringify({ section }),
+      });
+
+      setReviewStatus((prev) => ({
+        ...prev,
+        [section]: {
+          isCompleted: true,
+          completedByName: record.completedByName,
+          completedAt: record.completedAt,
+        },
+      }));
+
+      notifyWorkspaceChanged({ entity: 'daily-review', action: 'complete', section });
+    } catch (err) {
+      setError(err.message || 'Failed to record daily review completion.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleOpenPersonDrawer = async (leadId, tab = 'relationship') => {
+    if (!leadId) return;
+    try {
+      const fullLead = await fetchLeadById(leadId);
+      setSelectedLead(fullLead);
+      setSelectedLeadTab(tab);
+    } catch (err) {
+      console.error('Failed to load lead profile:', err);
+      setError('Could not open contact profile.');
+    }
+  };
 
   if (loading) {
     return (
       <PageShell>
-        <LoadingState label="Loading dashboard…" />
+        <LoadingState label="Loading daily working dashboard…" />
       </PageShell>
     );
   }
 
-  const previewMode = !summary
-    || (
-      !summary?.metrics?.activeOpportunities
-      && !summary?.openTasks?.length
-      && !summary?.recentOpportunities?.length
-    );
-  const workspace = previewMode ? DEMO_SUMMARY : summary;
-
   return (
     <PageShell>
-      <PageHeader
-        action={
-          <>
-            <Link to="/admin/crm/projects" className="crm-btn-secondary"><FolderKanban className="h-4 w-4" />All campaigns</Link>
-            <button type="button" onClick={() => setShowWizard(true)} className="crm-btn-primary"><Plus className="h-4.5 w-4.5" />New campaign</button>
-          </>
-        }
-      />
+      <PageHeader />
 
-      {(workspace?.metrics?.overdueTasks > 0 || workspace?.metrics?.failedSendJobs > 0 || workspace?.metrics?.interestedReplies7d > 0) && (
+      {error && (
         <PageSection>
-          <div className="crm-card flex flex-col gap-4 border-l-4 border-l-amber-500 p-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-start gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-700"><AlertTriangle className="h-4 w-4" /></div>
-              <div>
-                <p className="text-sm font-semibold text-ink">Attention needed</p>
-                <p className="mt-0.5 text-xs leading-relaxed text-neutral-500">
-                  {workspace.metrics.overdueTasks || 0} overdue follow-up(s), {workspace.metrics.interestedReplies7d || 0} interested reply/replies this week, and {workspace.metrics.failedSendJobs || 0} failed send job(s).
-                </p>
+          <Alert tone="warning">{error}</Alert>
+        </PageSection>
+      )}
+
+      {/* 1. Ongoing Jobs — Full Width (Header is Clickable Accordion) */}
+      <PageSection>
+        <DashboardOngoingJobsSection
+          jobs={workingData.ongoingJobs}
+          reviewStatus={reviewStatus?.ongoing_jobs}
+          onCompleteReview={handleCompleteReview}
+          onOpenJob={(id) => setSelectedOngoingJobId(id)}
+          busy={busy}
+        />
+      </PageSection>
+
+      {/* 2. Key Relationships & Leads — Two Columns (Synced Accordions) */}
+      <PageSection>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <DashboardKeyRelationshipsSection
+            relationships={workingData.keyRelationships}
+            reviewStatus={reviewStatus?.key_relationships}
+            onCompleteReview={handleCompleteReview}
+            onOpenPerson={(id) => handleOpenPersonDrawer(id, 'follow_ups')}
+            busy={busy}
+            isExpanded={middleRowExpanded}
+            onToggleExpand={() => setMiddleRowExpanded((prev) => !prev)}
+          />
+          <DashboardLeadsSection
+            leads={workingData.leads}
+            reviewStatus={reviewStatus?.leads}
+            onCompleteReview={handleCompleteReview}
+            onOpenPerson={(id) => handleOpenPersonDrawer(id, 'follow_ups')}
+            busy={busy}
+            isExpanded={middleRowExpanded}
+            onToggleExpand={() => setMiddleRowExpanded((prev) => !prev)}
+          />
+        </div>
+      </PageSection>
+
+      {/* 3. Recent Campaigns (Left Column) & Daily Review Consistency (Right Column) */}
+      <PageSection>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 items-start">
+          {/* Recent Campaigns (Collapsible Header with Smooth CSS Grid Accordion) */}
+          <Card className="p-0 border border-neutral-200/90 shadow-2xs bg-white">
+            <div
+              onClick={() => setCampaignsExpanded((prev) => !prev)}
+              className="flex items-center justify-between p-3.5 bg-neutral-50/80 cursor-pointer hover:bg-neutral-100/70 transition border-b border-neutral-200/80"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-7 w-7 items-center justify-center rounded-md bg-brand-soft text-brand font-bold shrink-0">
+                  <FolderKanban className="h-3.5 w-3.5" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xs font-bold text-ink">Recent Campaigns ({projects.length})</h3>
+                  <ChevronRight
+                    className={cn(
+                      'h-3.5 w-3.5 text-neutral-400 transition-transform duration-300 ease-in-out',
+                      campaignsExpanded && 'rotate-90 text-brand'
+                    )}
+                  />
+                </div>
+              </div>
+              <Link
+                to="/admin/crm/projects"
+                onClick={(e) => e.stopPropagation()}
+                className="text-[11px] font-semibold text-brand hover:underline"
+              >
+                View all
+              </Link>
+            </div>
+
+            {/* Smooth CSS Grid Accordion Container */}
+            <div
+              className={cn(
+                'grid transition-[grid-template-rows,opacity] duration-300 ease-in-out',
+                campaignsExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0 pointer-events-none'
+              )}
+            >
+              <div className="overflow-hidden">
+                <ListBody className="divide-y divide-neutral-100 bg-white">
+                  {projects.slice(0, 5).map((project) => (
+                    <ListRow key={project._id} as={Link} to={`/admin/crm/projects/${project._id}`} className="group hover:bg-sky-50/50 py-2 px-3">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <p className="truncate text-xs font-bold text-ink group-hover:text-brand">{project.projectName}</p>
+                          <Badge tone={STATUS_TONE[project.status] || 'neutral'} className="py-0 px-1.5 text-[9px]">{project.status}</Badge>
+                        </div>
+                        <p className="mt-0.5 truncate text-[10px] text-neutral-500">
+                          {project.milestone ? `${project.milestone} · ` : ''}
+                          {project.targetCompaniesCount || 0} targets · {project.companiesWithPocsFound || 0} with POC
+                        </p>
+                      </div>
+                      <ChevronRight className="h-3.5 w-3.5 shrink-0 text-neutral-300 group-hover:text-brand transition" />
+                    </ListRow>
+                  ))}
+                </ListBody>
               </div>
             </div>
-            <div className="flex shrink-0 flex-wrap gap-2">
-              <Link to="/admin/crm/tasks" className="crm-btn-secondary">Review follow-ups<ArrowUpRight className="h-4 w-4" /></Link>
-              {workspace?.metrics?.failedSendJobs > 0 ? (
-                <Link to="/admin/crm/email?tab=failed" className="crm-btn-secondary">Review failed sends<ArrowUpRight className="h-4 w-4" /></Link>
-              ) : null}
-            </div>
-          </div>
-        </PageSection>
-      )}
-
-      <PageSection>
-        <MetricGrid>
-          <StatCard compact label="Open pipeline" value={formatCurrency(workspace?.metrics?.pipelineValue)} helpText={`${workspace?.metrics?.activeOpportunities || 0} active opportunities`} icon={BriefcaseBusiness} tone="brand" />
-          <StatCard compact label="Weighted forecast" value={formatCurrency(workspace?.metrics?.weightedPipeline)} helpText={`${workspace?.metrics?.closingSoon || 0} expected to close in 30 days`} icon={TrendingUp} tone="success" />
-          <StatCard compact label="Interested replies" value={workspace?.metrics?.interestedReplies7d || 0} helpText="Received during the last 7 days" icon={MessageCircle} tone="info" />
-          <StatCard compact label="Overdue tasks" value={workspace?.metrics?.overdueTasks || 0} helpText="Follow-ups currently past due" icon={ListTodo} tone={workspace?.metrics?.overdueTasks ? 'warning' : 'neutral'} />
-        </MetricGrid>
-      </PageSection>
-
-      <PageSection>
-        <SplitGrid>
-          <Card>
-            <CardHeader title="Next actions" subtitle="The open follow-ups with the nearest due dates." action={<Link to="/admin/crm/tasks" className="text-xs font-semibold text-brand hover:underline">View all</Link>} />
-            {workspace?.openTasks?.length ? (
-              <ListBody>
-                {workspace.openTasks.map((task) => (
-                  <ListRow key={task._id} className="items-center gap-2.5">
-                    <button
-                      type="button"
-                      onClick={() => handleToggleTask(task._id)}
-                      title="Mark task completed"
-                      aria-label={`Mark task completed: ${task.title}`}
-                      className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-neutral-300 bg-white text-transparent transition hover:border-emerald-500 hover:bg-emerald-50 hover:text-emerald-600"
-                    >
-                      <CheckCircle2 className="h-3.5 w-3.5 fill-current" />
-                    </button>
-                    <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${task.priority === 'High' ? 'bg-red-500' : 'bg-sky-500'}`} />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[13px] font-semibold text-ink">{task.title}</p>
-                      <p className="mt-0.5 text-xs text-neutral-500">{task.companyId?.companyName || task.opportunityId?.name || 'General follow-up'}</p>
-                    </div>
-                    {task.dueAt && (
-                      <div className="flex shrink-0 flex-col items-end gap-1">
-                        <span className="flex items-center gap-1 text-[11px] text-neutral-400">
-                          <Clock3 className="h-3 w-3" />
-                          {new Date(task.dueAt).toLocaleDateString('en-AE', { day: 'numeric', month: 'short' })}
-                        </span>
-                        {(() => {
-                          const tone = getDeadlineTone(task.dueAt, task.status);
-                          const label = formatDeadlineLabel(task.dueAt, task.status);
-                          if (!tone || !label) return null;
-                          const styles = { overdue: 'bg-red-100 text-red-700', today: 'bg-amber-100 text-amber-700', upcoming: 'bg-emerald-100 text-emerald-700' };
-                          return <span className={`inline-flex rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${styles[tone]}`}>{label}</span>;
-                        })()}
-                      </div>
-                    )}
-                  </ListRow>
-                ))}
-              </ListBody>
-            ) : (
-              <EmptyState icon={ListTodo} title="No open follow-ups" description="Create a task when a conversation needs a call, meeting, proposal, or reminder." action={<Link to="/admin/crm/tasks" className="crm-btn-secondary"><Plus className="h-4 w-4" />Create task</Link>} />
-            )}
           </Card>
 
-          <Card>
-            <CardHeader title="Recent opportunities" subtitle="Commercial conversations most recently updated." action={<Link to="/admin/crm/pipeline" className="text-xs font-semibold text-brand hover:underline">View pipeline</Link>} />
-            {workspace?.recentOpportunities?.length ? (
-              <ListBody>
-                {workspace.recentOpportunities.map((item) => (
-                  <ListRow key={item._id} as={Link} to="/admin/crm/pipeline" className="group hover:bg-neutral-50/80">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand"><BriefcaseBusiness className="h-4 w-4" /></div>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-[13px] font-semibold text-ink group-hover:text-brand">{item.name}</p>
-                      <p className="mt-0.5 truncate text-xs text-neutral-500">{item.companyId?.companyName || 'Unknown company'} · {item.stage}</p>
-                    </div>
-                    <div className="shrink-0 text-right">
-                      <p className="text-[13px] font-bold tabular-nums text-ink">{formatCurrency(item.valueAed)}</p>
-                      <p className="text-[10px] text-neutral-400">{item.probability || 0}% probability</p>
-                    </div>
-                    <ChevronRight className="h-4 w-4 shrink-0 text-neutral-300 group-hover:text-brand" />
-                  </ListRow>
-                ))}
-              </ListBody>
-            ) : (
-              <EmptyState icon={BriefcaseBusiness} title="No sales opportunities" description="Turn a qualified reply into a tracked opportunity with value, stage, owner, and next action." action={<Link to="/admin/crm/pipeline" className="crm-btn-primary"><Plus className="h-4 w-4" />Create opportunity</Link>} />
-            )}
-          </Card>
-        </SplitGrid>
+          {/* Daily Review Consistency */}
+          <DailyReviewConsistency />
+        </div>
       </PageSection>
 
-      <PageSection>
-        <StatBand>
-          <StatBandItem as={Link} to="/admin/crm/finance" label="Campaign ROI" value={formatPercent(analytics?.roiPercent)} detail="Manage in Finance" icon={TrendingUp} tone="brand" />
-          <StatBandItem as={Link} to="/admin/crm/finance" label="Revenue won" value={formatCurrency(analytics?.validatedRevenueWon)} detail="Log closed deals" icon={Building2} tone="success" />
-          <StatBandItem label="Contacts in campaigns" value={analytics?.leadCount ?? 0} detail="Across all projects" icon={Users} />
-          <StatBandItem as={Link} to="/admin/crm/sequences" label="Active sequences" value={analytics?.activeQueues ?? 0} detail="Manage email drips" icon={Inbox} tone="info" />
-        </StatBand>
-      </PageSection>
-
-      {!projects.length && (
-        <PageSection>
-          <h2 className="text-[15px] font-semibold text-ink">Getting started</h2>
-          <WorkflowGuide steps={ONBOARDING_STEPS} />
-        </PageSection>
+      {/* Ongoing Job Drawer */}
+      {selectedOngoingJobId && (
+        <OngoingJobDrawer
+          ongoingJobId={selectedOngoingJobId}
+          onClose={() => setSelectedOngoingJobId(null)}
+          onUpdated={() => loadDashboard()}
+        />
       )}
 
-      {projects.length > 0 && (
-        <PageSection>
-          <Card>
-            <CardHeader
-              title="Recent campaigns"
-              subtitle={`Quick access to active outreach projects.${analytics?.computedAt ? ` Updated ${new Date(analytics.computedAt).toLocaleString('en-AE')}.` : ''}`}
-              action={<Link to="/admin/crm/projects" className="text-xs font-semibold text-brand hover:underline">View all</Link>}
-            />
-            <ListBody>
-              {projects.slice(0, 5).map((project) => (
-                <ListRow key={project._id} as={Link} to={`/admin/crm/projects/${project._id}`} className="group hover:bg-neutral-50/80">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand">
-                    <FolderKanban className="h-5 w-5" strokeWidth={1.75} />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="truncate text-sm font-semibold text-ink group-hover:text-brand">{project.projectName}</p>
-                      <Badge tone={STATUS_TONE[project.status] || 'neutral'}>{project.status}</Badge>
-                    </div>
-                    <p className="mt-0.5 truncate text-xs text-neutral-500">
-                      {project.milestone ? `${project.milestone} · ` : ''}
-                      {project.targetCompaniesCount || 0} targets · {project.companiesWithPocsFound || 0} with POC
-                    </p>
-                  </div>
-                  <ChevronRight className="h-4 w-4 shrink-0 text-neutral-300 group-hover:text-brand" />
-                </ListRow>
-              ))}
-            </ListBody>
-          </Card>
-        </PageSection>
-      )}
-
-      <CampaignInitWizard
-        open={showWizard}
-        onClose={() => setShowWizard(false)}
-        onComplete={(projectId) => {
-          setShowWizard(false);
-          navigate(`/admin/crm/projects/${projectId}`);
-        }}
+      {/* Contact Drawer */}
+      <OutreachDrawer
+        lead={selectedLead}
+        initialTab={selectedLeadTab}
+        onClose={() => setSelectedLead(null)}
+        onLeadUpdated={() => loadDashboard()}
       />
     </PageShell>
   );

@@ -431,6 +431,7 @@ function formatReplyDetailText(reply) {
   });
 
   tasks.forEach((task) => {
+    if ((task.taskType === 'relationship_follow_up' || task.taskType === 'reply_review') && task.status === 'Done') return;
     const evt = event(`task-${task._id}`, {
       contactName,
       contactId: String(leadId),

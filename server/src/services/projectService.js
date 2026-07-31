@@ -963,25 +963,38 @@ export async function listAllLeads({
   if (serviceCategory && serviceCategory !== 'All') {
     query['relationshipProfile.serviceCategories'] = serviceCategory;
   }
-  if (followUp === 'overdue') {
-    query['relationshipProfile.nextFollowUpAt'] = { $lt: new Date() };
-  } else if (followUp === 'upcoming') {
-    const nextWeek = new Date();
-    nextWeek.setDate(nextWeek.getDate() + 7);
-    query['relationshipProfile.nextFollowUpAt'] = { $gte: new Date(), $lte: nextWeek };
-  } else if (followUp === 'scheduled') {
-    query['relationshipProfile.nextFollowUpAt'] = { $ne: null };
-  } else if (followUp === 'none') {
-    query.$and = [
-      ...(query.$and || []),
-      {
-        $or: [
-          { 'relationshipProfile.nextFollowUpAt': null },
-          { 'relationshipProfile.nextFollowUpAt': { $exists: false } },
+
+  const taskLookupPipeline = [
+    {
+      $lookup: {
+        from: 'tasks',
+        let: { leadId: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ['$leadId', '$$leadId'] },
+                  { $eq: ['$taskType', 'relationship_follow_up'] },
+                  { $eq: ['$status', 'Open'] },
+                  { $eq: [{ $ifNull: ['$deletedAt', null] }, null] },
+                ],
+              },
+            },
+          },
+          { $sort: { dueAt: 1 } },
+          { $limit: 1 },
         ],
+        as: '_openTask',
       },
-    ];
-  }
+    },
+    {
+      $addFields: {
+        nextFollowUpAt: { $arrayElemAt: ['$_openTask.dueAt', 0] },
+      },
+    },
+  ];
+
   if (search) {
     const re = new RegExp(search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
     query.$and = [
@@ -998,10 +1011,117 @@ export async function listAllLeads({
   const activeSortKey = sortKey || (sort === 'followUp' ? 'followUp' : 'createdAt');
   let leads = [];
   let total = 0;
+  let summary = null;
 
-  if (activeSortKey === 'companyName') {
+  if (rightPocOnly) {
+    const now = new Date();
+    const week = new Date(now.getTime() + 7 * 86400000);
+    const summaryAgg = await Lead.aggregate([
+      { $match: { pocQualification: { status: 'Confirmed' }, deletedAt: null } },
+      ...taskLookupPipeline,
+      {
+        $group: {
+          _id: null,
+          total: { $sum: 1 },
+          overdue: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $ne: ['$nextFollowUpAt', null] },
+                    { $lt: ['$nextFollowUpAt', now] },
+                  ],
+                },
+                1,
+                0,
+              ],
+            },
+          },
+          upcoming: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $ne: ['$nextFollowUpAt', null] },
+                    { $gte: ['$nextFollowUpAt', now] },
+                    { $lte: ['$nextFollowUpAt', week] },
+                  ],
+                },
+                1,
+                0,
+              ],
+            },
+          },
+          nurture: {
+            $sum: {
+              $cond: [
+                { $in: ['$relationshipProfile.status', ['Nurture', 'Later']] },
+                1,
+                0,
+              ],
+            },
+          },
+        },
+      },
+    ]);
+    const summaryRow = summaryAgg[0] || {};
+    summary = {
+      total: summaryRow.total || 0,
+      overdue: summaryRow.overdue || 0,
+      upcoming: summaryRow.upcoming || 0,
+      nurture: summaryRow.nurture || 0,
+    };
+  }
+
+  const followUpMatch = {};
+  if (followUp === 'overdue') {
+    followUpMatch.nextFollowUpAt = { $ne: null, $lt: new Date() };
+  } else if (followUp === 'upcoming') {
+    const nextWeek = new Date();
+    nextWeek.setDate(nextWeek.getDate() + 7);
+    followUpMatch.nextFollowUpAt = { $gte: new Date(), $lte: nextWeek };
+  } else if (followUp === 'scheduled') {
+    followUpMatch.nextFollowUpAt = { $ne: null };
+  } else if (followUp === 'none') {
+    followUpMatch.nextFollowUpAt = null;
+  }
+
+  const hasFollowUpFilter = Object.keys(followUpMatch).length > 0;
+  const isFollowUpSort = activeSortKey === 'followUp' || activeSortKey === 'nextFollowUp';
+
+  if (hasFollowUpFilter || isFollowUpSort) {
     const pipeline = [
       { $match: query },
+      ...taskLookupPipeline,
+      ...(hasFollowUpFilter ? [{ $match: followUpMatch }] : []),
+      { $sort: { nextFollowUpAt: dir, name: 1 } },
+      { $skip: skip },
+      { $limit: lim },
+    ];
+    const countPipeline = [
+      { $match: query },
+      ...taskLookupPipeline,
+      ...(hasFollowUpFilter ? [{ $match: followUpMatch }] : []),
+      { $count: 'count' },
+    ];
+
+    const [aggResult, countResult] = await Promise.all([
+      Lead.aggregate(pipeline),
+      Lead.aggregate(countPipeline),
+    ]);
+    leads = aggResult;
+    total = countResult[0]?.count || 0;
+
+    const compIds = normalizeObjectIdList(leads.map((l) => l.companyId));
+    const compList = compIds.length
+      ? await Company.find({ _id: { $in: compIds } }).select('companyName domain').lean()
+      : [];
+    const compMap = new Map(compList.map((c) => [String(c._id), c]));
+    leads = leads.map((l) => ({ ...l, companyId: compMap.get(String(l.companyId)) || l.companyId }));
+  } else if (activeSortKey === 'companyName') {
+    const pipeline = [
+      { $match: query },
+      ...taskLookupPipeline,
       {
         $lookup: {
           from: 'companies',
@@ -1028,6 +1148,7 @@ export async function listAllLeads({
   } else if (activeSortKey === 'campaignName') {
     const pipeline = [
       { $match: query },
+      ...taskLookupPipeline,
       {
         $lookup: {
           from: 'projectcampaigns',
@@ -1054,6 +1175,7 @@ export async function listAllLeads({
   } else if (activeSortKey === 'name') {
     const pipeline = [
       { $match: query },
+      ...taskLookupPipeline,
       {
         $addFields: {
           nameSortGroup: {
@@ -1099,8 +1221,6 @@ export async function listAllLeads({
       sortSpec = { deliveryStatus: dir };
     } else if (activeSortKey === 'pocStatus' || activeSortKey === 'pocQualification') {
       sortSpec = { 'pocQualification.status': dir, name: 1 };
-    } else if (activeSortKey === 'followUp' || activeSortKey === 'nextFollowUp') {
-      sortSpec = { 'relationshipProfile.nextFollowUpAt': dir, name: 1 };
     } else if (activeSortKey === 'lastInteraction') {
       sortSpec = { lastInteractionAt: dir, name: 1 };
     } else if (activeSortKey === 'relationshipStatus') {
@@ -1113,10 +1233,25 @@ export async function listAllLeads({
       sortSpec = { createdAt: dir };
     }
 
+    const pipeline = [
+      { $match: query },
+      ...taskLookupPipeline,
+      { $sort: sortSpec },
+      { $skip: skip },
+      { $limit: lim },
+    ];
+
     [leads, total] = await Promise.all([
-      Lead.find(query).sort(sortSpec).skip(skip).limit(lim).populate('companyId').lean(),
+      Lead.aggregate(pipeline),
       Lead.countDocuments(query),
     ]);
+
+    const compIds = normalizeObjectIdList(leads.map((l) => l.companyId));
+    const compList = compIds.length
+      ? await Company.find({ _id: { $in: compIds } }).select('companyName domain').lean()
+      : [];
+    const compMap = new Map(compList.map((c) => [String(c._id), c]));
+    leads = leads.map((l) => ({ ...l, companyId: compMap.get(String(l.companyId)) || l.companyId }));
   }
 
   const campaignIds = normalizeObjectIdList(leads.map((l) => l.campaignId));
@@ -1134,7 +1269,7 @@ export async function listAllLeads({
 
   const leadIds = enriched.map((lead) => lead._id);
   if (!leadIds.length) {
-    return { items: enriched, total, page: p, limit: lim };
+    return { items: enriched, total, page: p, limit: lim, summary };
   }
 
   const [interactions, replies, sendJobs, latestInteractionMap] = await Promise.all([
@@ -1157,6 +1292,7 @@ export async function listAllLeads({
     total,
     page: p,
     limit: lim,
+    summary,
   };
 }
 
