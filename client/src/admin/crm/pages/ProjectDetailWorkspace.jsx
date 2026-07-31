@@ -6,6 +6,7 @@ import CampaignStageControl from '../components/projects/CampaignStageControl.js
 import ExhibitorImportModal from '../components/projects/ExhibitorImportModal.jsx';
 import ContactBlenderModal from '../components/projects/ContactBlenderModal.jsx';
 import ProjectPerformanceModal from '../components/projects/ProjectPerformanceModal.jsx';
+import ProjectResourcesModal from '../components/projects/ProjectResourcesModal.jsx';
 import CompanyDetailsDrawer from '../components/leads/CompanyDetailsDrawer.jsx';
 import OutreachDrawer from '../components/leads/OutreachDrawer.jsx';
 import EmailDetailsDrawer from '../components/leads/EmailDetailsDrawer.jsx';
@@ -21,6 +22,7 @@ import {
   Card,
   CardHeader,
   EmptyState,
+  cn,
 } from '../components/ui/primitives.jsx';
 import {
   Building2,
@@ -33,6 +35,7 @@ import {
   ChevronLeft,
   TrendingUp,
   CalendarCheck2,
+  FolderKanban,
 } from 'lucide-react';
 import { buildOwnerOptions } from '../components/tasks/taskUtils.js';
 
@@ -237,16 +240,26 @@ export default function ProjectDetailWorkspace() {
           </div>
 
           <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-line pt-3">
-            <ActionBtn icon={Upload} label="Add companies" onClick={() => setModal('exhibitors')} />
-            <ActionBtn icon={Users} label="Import contacts" onClick={() => setModal('blender')} />
-            <Link
-              to={`/admin/crm/sequences?new=1&campaign=${id}`}
-              className="crm-btn-secondary inline-flex items-center gap-1.5 py-1.5 text-xs"
-            >
-              <Layers className="h-3.5 w-3.5" />
-              Email sequences
-            </Link>
-            <ActionBtn icon={BarChart3} label="Performance" onClick={() => setModal('performance')} variant="secondary" />
+            <div className="flex flex-wrap items-center gap-2">
+              <ActionBtn icon={Upload} label="Add companies" onClick={() => setModal('exhibitors')} />
+              <ActionBtn icon={Users} label="Import contacts" onClick={() => setModal('blender')} />
+              <Link
+                to={`/admin/crm/sequences?new=1&campaign=${id}`}
+                className="crm-btn-secondary inline-flex items-center gap-1.5 py-1.5 text-xs"
+              >
+                <Layers className="h-3.5 w-3.5" />
+                Email sequences
+              </Link>
+              <ActionBtn icon={BarChart3} label="Performance" onClick={() => setModal('performance')} variant="secondary" />
+            </div>
+            <div className="ml-auto">
+              <ActionBtn
+                icon={FolderKanban}
+                label="Resources"
+                onClick={() => setModal('resources')}
+                variant="secondary"
+              />
+            </div>
           </div>
         </div>
       </PageSection>
@@ -352,6 +365,12 @@ export default function ProjectDetailWorkspace() {
         leads={leads}
       />
 
+      <ProjectResourcesModal
+        open={modal === 'resources'}
+        onClose={() => setModal(null)}
+        projectName={project?.projectName}
+      />
+
       <CompanyDetailsDrawer
         companyId={selectedCompanyId}
         onClose={() => setSelectedCompanyId(null)}
@@ -404,12 +423,15 @@ function ProgressBlock({ label, hint, value, fraction, tone }) {
   );
 }
 
-function ActionBtn({ icon: Icon, label, onClick, variant = 'primary' }) {
+function ActionBtn({ icon: Icon, label, onClick, variant = 'primary', className = '' }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={variant === 'secondary' ? 'crm-btn-secondary py-1.5 text-xs' : 'crm-btn-primary py-1.5 text-xs'}
+      className={cn(
+        variant === 'secondary' ? 'crm-btn-secondary py-1.5 text-xs' : 'crm-btn-primary py-1.5 text-xs',
+        className
+      )}
     >
       <Icon className="h-3.5 w-3.5" />
       {label}
