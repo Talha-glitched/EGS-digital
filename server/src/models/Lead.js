@@ -18,6 +18,22 @@ const trackingMetricsSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const enrollmentSchema = new mongoose.Schema(
+  {
+    campaignId: { type: mongoose.Schema.Types.ObjectId, ref: 'ProjectCampaign', required: true, index: true },
+    enrolledAt: { type: Date, default: Date.now },
+    deliveryStatus: {
+      type: String,
+      enum: ['Pending Inqueue', 'Emailed Outbound', 'Bounced / Invalid', 'Opted Out', 'Replied', 'Out of Office'],
+      default: 'Pending Inqueue',
+    },
+    stepIndex: { type: Number, default: 0 },
+    lastSentAt: { type: Date, default: null },
+    outcome: { type: String, default: 'Pending' },
+  },
+  { _id: false }
+);
+
 const leadSchema = new mongoose.Schema(
   {
     companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', required: true, index: true },
@@ -134,6 +150,7 @@ const leadSchema = new mongoose.Schema(
       reminderNotes: { type: String, default: '', trim: true },
     },
 
+    enrollments: [enrollmentSchema],
     trackingMetrics: { type: trackingMetricsSchema, default: () => ({}) },
     lastMessageId: { type: String, default: '', index: true },
     repliedAt: { type: Date, default: null },
@@ -152,9 +169,8 @@ const leadSchema = new mongoose.Schema(
   { timestamps: true, versionKey: false }
 );
 
-leadSchema.index({ campaignId: 1, email: 1 }, { unique: true });
-leadSchema.index({ deletedAt: 1, name: 1 });
 leadSchema.index({ deletedAt: 1, email: 1 });
+leadSchema.index({ deletedAt: 1, name: 1 });
 leadSchema.index({ deletedAt: 1, companyId: 1 });
 leadSchema.index({ deletedAt: 1, deliveryStatus: 1 });
 leadSchema.index({ campaignId: 1, deletedAt: 1, deliveryStatus: 1 });

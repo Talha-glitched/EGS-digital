@@ -2,6 +2,7 @@ import { Lead } from '../models/Lead.js';
 import { Company } from '../models/Company.js';
 import { Reply } from '../models/Reply.js';
 import { SendJob } from '../models/SendJob.js';
+import { Email } from '../models/Email.js';
 import { Task } from '../models/Task.js';
 import { Opportunity } from '../models/Opportunity.js';
 import { ProjectCampaign } from '../models/ProjectCampaign.js';
@@ -394,6 +395,7 @@ export async function getLeadTimeline(leadId) {
         step: job.stepIndex + 1,
         subject: job.renderedSubject,
         body: job.renderedBody,
+        htmlBody: job.renderedBody || '',
         to: job.recipientEmail,
         providerMessageId: job.providerMessageId,
       },
@@ -432,6 +434,7 @@ function formatReplyDetailText(reply) {
         intent: reply.intent,
         subject: reply.subject,
         body: detailText,
+        htmlBody: reply.html || reply.htmlBody || '',
         from: reply.from,
         systemInbox: reply.systemInbox || process.env.RESEND_FROM_EMAIL || 'rana@masuood.exhibitgraphicsign.com',
         confirmedEmail: reply.email || lead.outreachEmail || lead.email,

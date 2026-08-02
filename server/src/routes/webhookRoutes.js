@@ -5,10 +5,10 @@ import { Reply } from '../models/Reply.js';
 import { Company } from '../models/Company.js';
 import { ProjectCampaign } from '../models/ProjectCampaign.js';
 import { Suppression } from '../models/Suppression.js';
-import { classifyReplyIntent } from '../services/openaiService.js';
+import { Email } from '../models/Email.js';
 import { freezeLeadSequence, purgeLeadFromQueue } from '../services/sequenceService.js';
 import { buildLeadEmailQuery, getLeadEmailCandidates, getPrimaryLeadEmail, applyOutreachEmailFromReply } from '../utils/contactEmails.js';
-import { syncAllResendReplies } from '../services/resendAutoSyncService.js';
+import { syncAllResendReplies, classifyInboundEmail } from '../services/resendAutoSyncService.js';
 
 const router = Router();
 const MAX_REPLY_TEXT = 100000;
@@ -179,9 +179,9 @@ async function handleReply(data) {
   const rawTo = Array.isArray(data.to) ? data.to[0] : data.to;
   const systemInbox = extractEmailAddress(rawTo);
 
-  // Classify reply intent using OpenAI
-  const { intent, confidence } = await classifyReplyIntent(text);
-  const replyIntent = intent === 'Opt Out' ? 'Opt Out' : intent === 'Interested' ? 'Interested' : 'Neutral';
+  // Compute deterministic suggested intent (no OpenAI call)
+  const { status: targetStatus, intent: suggestedIntent } = classifyInboundEmail(subject, text);
+  const replyIntent = suggestedIntent === 'Opt Out' ? 'Opt Out' : suggestedIntent === 'OOO' ? 'OOO' : 'Neutral';
 
   // Apply sender details to lead document
   const replyDate = data.date ? new Date(data.date) : new Date();
@@ -199,7 +199,7 @@ async function handleReply(data) {
     },
   ];
 
-  // Save the Reply document
+  // Save the Reply document for review tasks
   const createdReply = await Reply.create({
     campaignId: lead.campaignId,
     leadId: lead._id,
@@ -215,24 +215,34 @@ async function handleReply(data) {
     threadHistory,
   });
 
+  // Save persistent Email document
+  const existingEmail = await Email.findOne({ messageId });
+  if (!existingEmail) {
+    await Email.create({
+      direction: 'inbound',
+      from: rawFrom || senderEmail,
+      fromEmail: senderEmail,
+      to: Array.isArray(data.to) ? data.to : [data.to].filter(Boolean),
+      toEmail: systemInbox || senderEmail,
+      subject: subject || 'Inbound Email',
+      body: text || subject || '',
+      receivedAt: replyDate,
+      messageId,
+      resendEmailId: emailId || messageId,
+      leadId: lead._id,
+      companyId: lead.companyId || null,
+      campaignId: lead.campaignId || null,
+      status: 'received',
+      provider: 'resend',
+      suggestedIntent: replyIntent === 'OOO' ? 'Out of Office' : replyIntent === 'Opt Out' ? 'Opt Out' : 'Neutral',
+      humanReview: { status: 'Unreviewed' },
+    });
+  }
+
   await ensureReplyReviewTask(createdReply, lead);
 
-  // Freeze sequence and process opt-outs
-  if (intent === 'Opt Out') {
-    await freezeLeadSequence(lead._id, 'opt_out');
-    const suppressedEmail = buildLeadEmailQuery(senderEmail) ? senderEmail : getPrimaryLeadEmail(lead);
-    const emailsToSuppress = [...new Set([suppressedEmail, ...getLeadEmailCandidates(lead)].filter(Boolean))];
-    await Promise.all(emailsToSuppress.map((email) => Suppression.updateOne(
-      { email },
-      { $set: { email, reason: 'opted_out', campaignId: lead.campaignId, leadId: lead._id } },
-      { upsert: true }
-    )));
-    await purgeLeadFromQueue(lead._id);
-    console.log(`[Webhook Reply] Opt-out processed and sequence frozen for Lead ID: ${lead._id}`);
-  } else {
-    await freezeLeadSequence(lead._id, 'reply');
-    console.log(`[Webhook Reply] Human reply registered and sequence frozen for Lead ID: ${lead._id}`);
-  }
+  await freezeLeadSequence(lead._id, 'reply');
+  console.log(`[Webhook Reply] Human reply registered for review and sequence frozen for Lead ID: ${lead._id}`);
 }
 
 export default router;

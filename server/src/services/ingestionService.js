@@ -619,9 +619,8 @@ export async function blendAndIngestLeads(projectId, uploads) {
       emails: [...new Set(vendorEmails)],
     });
 
-    // Unique index is on campaignId+email even for soft-deleted leads.
     if (!lead) {
-      lead = await Lead.findOne({ campaignId: projectId, email });
+      lead = await Lead.findOne({ email, deletedAt: null });
     }
 
     async function applyLeadUpdates(target) {
@@ -649,6 +648,19 @@ export async function blendAndIngestLeads(projectId, uploads) {
       for (const s of sources) {
         if (!target.sources.includes(s)) target.sources.push(s);
       }
+
+      // Add campaign enrollment
+      if (!Array.isArray(target.enrollments)) target.enrollments = [];
+      const isEnrolled = target.enrollments.some((e) => String(e.campaignId) === String(projectId));
+      if (!isEnrolled) {
+        target.enrollments.push({
+          campaignId: projectId,
+          enrolledAt: new Date(),
+          deliveryStatus: target.deliveryStatus || 'Pending Inqueue',
+          outcome: target.outcome || 'Pending',
+        });
+      }
+
       await target.save();
       companyIdToDomain.set(String(company._id), company.domain || '');
       indexLead(target);
@@ -677,6 +689,14 @@ export async function blendAndIngestLeads(projectId, uploads) {
           primarySource,
           contactKind: 'person',
           deliveryStatus: 'Pending Inqueue',
+          enrollments: [
+            {
+              campaignId: projectId,
+              enrolledAt: new Date(),
+              deliveryStatus: 'Pending Inqueue',
+              outcome: 'Pending',
+            },
+          ],
         });
         companyIdToDomain.set(String(company._id), company.domain || '');
         indexLead(lead);

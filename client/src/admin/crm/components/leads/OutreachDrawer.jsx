@@ -274,12 +274,19 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
     }
   }, [buildPatch, form, dispatch, onLeadUpdated]);
 
+  const companyDisplayName = lead?.companyId?.companyName || lead?.companyName || 'Unknown company';
+  const campaignDisplayName =
+    lead?.campaignId?.projectName ||
+    lead?.campaignName ||
+    (lead?.enrollments?.map((e) => e.campaignId?.projectName || e.campaignName).filter(Boolean).join(', ')) ||
+    'No campaign';
+
   return (
     <Drawer
       open={Boolean(lead)}
       onClose={handleClose}
       title={lead?.name || 'Contact profile'}
-      subtitle={lead ? `${lead.companyName || 'Unknown company'} · ${lead.campaignName || 'No campaign'}` : ''}
+      subtitle={lead ? `${companyDisplayName} · ${campaignDisplayName}` : ''}
       size="2xl"
       stackLevel={stackLevel}
       footer={
@@ -351,7 +358,7 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
               <div className="crm-profile-meta">
                 <span className="crm-profile-chip">
                   <Building2 className="h-3 w-3" />
-                  {lead.companyName || 'Unknown company'}
+                  {companyDisplayName}
                 </span>
                 {(lead.outreachEmail || lead.email) && (
                   <span className={`crm-profile-chip ${lead.outreachEmail ? 'is-accent border-emerald-300 text-emerald-800 font-semibold' : ''}`}>
@@ -359,10 +366,10 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
                     <SensitiveDataDisplay value={lead.outreachEmail || lead.email} kind="email" />
                   </span>
                 )}
-                {lead.campaignName && (
+                {campaignDisplayName !== 'No campaign' && (
                   <span className="crm-profile-chip is-accent">
                     <BriefcaseBusiness className="h-3 w-3" />
-                    {lead.campaignName}
+                    {campaignDisplayName}
                   </span>
                 )}
                 <DeliveryStatusBadge status={form.formDeliveryStatus || lead.deliveryStatus} />

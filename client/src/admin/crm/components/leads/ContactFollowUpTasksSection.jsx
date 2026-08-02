@@ -21,6 +21,7 @@ import { crmApiFetch } from '../../crmApi.js';
 import { Modal } from '../ui/Modal.jsx';
 import DateTimePicker from '../ui/DateTimePicker.jsx';
 import { cn } from '../ui/primitives.jsx';
+import FormattedEmailViewer from '../common/FormattedEmailViewer.jsx';
 
 function FormField({ label, required, children }) {
   return (
@@ -33,241 +34,230 @@ function FormField({ label, required, children }) {
   );
 }
 
-const CHANNEL_OPTIONS = [
-  { key: 'phone', label: 'Phone call', icon: Phone, color: 'text-emerald-600 bg-emerald-50 border-emerald-200' },
-  { key: 'email', label: 'Email', icon: Mail, color: 'text-blue-600 bg-blue-50 border-blue-200' },
-  { key: 'whatsapp', label: 'WhatsApp', icon: MessageSquare, color: 'text-teal-600 bg-teal-50 border-teal-200' },
-  { key: 'meeting', label: 'Meeting', icon: Users, color: 'text-purple-600 bg-purple-50 border-purple-200' },
-  { key: 'linkedin', label: 'LinkedIn', icon: Globe, color: 'text-sky-600 bg-sky-50 border-sky-200' },
-  { key: 'other', label: 'Other / Note', icon: StickyNote, color: 'text-neutral-600 bg-neutral-100 border-neutral-200' },
-];
-
 export default function ContactFollowUpTasksSection({
   leadId,
   companyId,
-  contactName,
-  ownerDefault = 'admin',
+  contactName = '',
+  ownerDefault = '',
   onTimelineRefresh,
 }) {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Task form modal
-  const [taskModalOpen, setTaskModalOpen] = useState(false);
+  // Modals state
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
+
+  // Form state for Add/Edit Task
   const [form, setForm] = useState({
     title: '',
-    dueAt: null,
+    dueAt: '',
     priority: 'Normal',
-    owner: ownerDefault,
+    owner: ownerDefault || '',
     notes: '',
-    channel: '',
+    channel: 'email',
   });
-  const [busy, setBusy] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  // Channel completion modal
-  const [completingTask, setCompletingTask] = useState(null);
-  const [selectedChannel, setSelectedChannel] = useState('');
+  // Form state for Quick Log Completed Action
+  const [logForm, setLogForm] = useState({
+    type: 'email_sent',
+    title: 'Follow-up Email Sent',
+    notes: '',
+  });
+  const [logging, setLogging] = useState(false);
+  const [logSuccess, setLogSuccess] = useState(false);
 
-  // Quick next follow-up prompt state
-  const [showNextPrompt, setShowNextPrompt] = useState(false);
-  const [showCompletedList, setShowCompletedList] = useState(false);
+  const fetchTasks = useCallback(async () => {
+    if (!leadId && !companyId) {
+      setTasks([]);
+      setLoading(false);
+      return;
+    }
 
-  const loadTasks = useCallback(async () => {
-    if (!leadId) return;
     setLoading(true);
     setError('');
     try {
-      const res = await crmApiFetch(`/api/admin/sales/tasks?leadId=${leadId}&status=All`);
+      const params = new URLSearchParams({ status: 'All' });
+      if (leadId) params.append('leadId', leadId);
+      if (companyId) params.append('companyId', companyId);
+
+      const res = await crmApiFetch(`/api/admin/sales/tasks?${params.toString()}`);
       setTasks(res.items || []);
     } catch (err) {
-      console.error(err);
-      setError('Failed to load tasks');
+      setError(err.message || 'Failed to load follow-up tasks.');
     } finally {
       setLoading(false);
     }
-  }, [leadId]);
+  }, [leadId, companyId]);
 
   useEffect(() => {
-    loadTasks();
-  }, [loadTasks]);
+    fetchTasks();
+  }, [fetchTasks]);
 
   const openCreateModal = () => {
     setEditingTask(null);
     setForm({
-      title: contactName ? `Follow up with ${contactName}` : 'Follow up with contact',
-      dueAt: null,
+      title: '',
+      dueAt: '',
       priority: 'Normal',
-      owner: ownerDefault || 'admin',
+      owner: ownerDefault || '',
       notes: '',
-      channel: '',
+      channel: 'email',
     });
-    setTaskModalOpen(true);
+    setIsModalOpen(true);
   };
 
   const openEditModal = (task) => {
     setEditingTask(task);
     setForm({
       title: task.title || '',
-      dueAt: task.dueAt || null,
+      dueAt: task.dueAt ? new Date(task.dueAt).toISOString().slice(0, 16) : '',
       priority: task.priority || 'Normal',
-      owner: task.owner ?? '',
+      owner: task.owner || ownerDefault || '',
       notes: task.notes || '',
-      channel: task.channel || '',
+      channel: task.channel || 'email',
     });
-    setTaskModalOpen(true);
+    setIsModalOpen(true);
   };
 
   const handleSaveTask = async (e) => {
     e.preventDefault();
-    if (!form.title.trim()) return;
-    setBusy(true);
+    if (!form.title.trim()) {
+      setError('Task title is required.');
+      return;
+    }
+
+    setSaving(true);
     setError('');
+
     try {
+      const payload = {
+        title: form.title.trim(),
+        dueAt: form.dueAt ? new Date(form.dueAt).toISOString() : null,
+        priority: form.priority,
+        owner: form.owner,
+        notes: form.notes,
+        channel: form.channel,
+        leadId: leadId || null,
+        companyId: companyId || null,
+        taskType: 'relationship_follow_up',
+      };
+
       if (editingTask) {
         await crmApiFetch(`/api/admin/sales/tasks/${editingTask._id}`, {
           method: 'PATCH',
-          body: JSON.stringify({
-            title: form.title.trim(),
-            dueAt: form.dueAt || null,
-            priority: form.priority,
-            owner: form.owner,
-            notes: form.notes,
-            channel: form.channel,
-          }),
+          body: JSON.stringify(payload),
         });
       } else {
         await crmApiFetch('/api/admin/sales/tasks', {
           method: 'POST',
-          body: JSON.stringify({
-            title: form.title.trim(),
-            leadId,
-            companyId,
-            taskType: 'relationship_follow_up',
-            dueAt: form.dueAt || null,
-            priority: form.priority,
-            owner: form.owner,
-            notes: form.notes,
-            channel: form.channel,
-          }),
+          body: JSON.stringify(payload),
         });
       }
-      setTaskModalOpen(false);
-      await loadTasks();
+
+      setIsModalOpen(false);
+      fetchTasks();
       onTimelineRefresh?.();
     } catch (err) {
-      console.error(err);
-      setError(err.message || 'Failed to save task');
+      setError(err.message || 'Failed to save task.');
     } finally {
-      setBusy(false);
+      setSaving(false);
     }
   };
 
   const handleToggleComplete = async (task) => {
-    if (task.status === 'Done') {
-      // Reopen task
-      try {
-        await crmApiFetch(`/api/admin/sales/tasks/${task._id}`, {
-          method: 'PATCH',
-          body: JSON.stringify({ status: 'Open' }),
-        });
-        await loadTasks();
-        onTimelineRefresh?.();
-      } catch (err) {
-        console.error(err);
-      }
-      return;
-    }
+    const isCompleted = task.status === 'Completed';
+    const nextStatus = isCompleted ? 'Open' : 'Completed';
 
-    // Completing an open task
-    if (!task.channel) {
-      setCompletingTask(task);
-      setSelectedChannel('');
-      return;
-    }
-
-    await executeCompleteTask(task, task.channel);
-  };
-
-  const executeCompleteTask = async (task, channel) => {
-    setBusy(true);
-    setError('');
     try {
       await crmApiFetch(`/api/admin/sales/tasks/${task._id}`, {
         method: 'PATCH',
         body: JSON.stringify({
-          status: 'Done',
-          channel,
+          status: nextStatus,
+          completedAt: nextStatus === 'Completed' ? new Date().toISOString() : null,
         }),
       });
-      setCompletingTask(null);
-      await loadTasks();
-      setShowNextPrompt(true);
+      fetchTasks();
       onTimelineRefresh?.();
     } catch (err) {
-      console.error(err);
-      setError(err.message || 'Failed to complete task');
-    } finally {
-      setBusy(false);
+      setError(err.message || 'Failed to update task status.');
     }
   };
 
   const handleDeleteTask = async (taskId) => {
+    if (!window.confirm('Are you sure you want to delete this follow-up task?')) return;
+
     try {
       await crmApiFetch(`/api/admin/sales/tasks/${taskId}`, {
         method: 'DELETE',
       });
-      await loadTasks();
+      fetchTasks();
       onTimelineRefresh?.();
     } catch (err) {
-      console.error(err);
+      setError(err.message || 'Failed to delete task.');
     }
   };
 
-  const relTasks = tasks.filter((t) => t.taskType === 'relationship_follow_up' || t.isRelationshipFollowUp);
-  const openTasks = relTasks.filter((t) => t.status === 'Open');
-  const completedTasks = relTasks.filter((t) => t.status === 'Done');
+  const handleLogInteraction = async (e) => {
+    e.preventDefault();
+    if (!logForm.title.trim()) return;
+
+    setLogging(true);
+    setError('');
+    setLogSuccess(false);
+
+    try {
+      await crmApiFetch('/api/admin/interactions', {
+        method: 'POST',
+        body: JSON.stringify({
+          leadId: leadId || null,
+          companyId: companyId || null,
+          type: logForm.type,
+          title: logForm.title,
+          notes: logForm.notes,
+        }),
+      });
+
+      setLogSuccess(true);
+      setLogForm({
+        type: 'email_sent',
+        title: 'Follow-up Email Sent',
+        notes: '',
+      });
+
+      setTimeout(() => setLogSuccess(false), 3000);
+      onTimelineRefresh?.();
+    } catch (err) {
+      setError(err.message || 'Failed to log interaction.');
+    } finally {
+      setLogging(false);
+    }
+  };
+
+  const openTasks = tasks.filter((t) => t.status !== 'Completed');
+  const completedTasks = tasks.filter((t) => t.status === 'Completed');
+
+  if (loading) {
+    return (
+      <div className="p-4 text-center text-xs text-neutral-400">
+        Loading follow-up tasks…
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {error && (
-        <div className="rounded-lg bg-red-50 p-3 text-xs text-red-700">
+        <div className="rounded-xl bg-red-50 border border-red-200 p-3 text-xs text-red-700 flex items-center gap-2">
+          <AlertCircle className="h-4 w-4 shrink-0" />
           {error}
         </div>
       )}
 
-      {/* Quick Prompt Banner after completion */}
-      {showNextPrompt && (
-        <div className="flex items-center justify-between rounded-xl bg-emerald-50 border border-emerald-200 p-3.5 text-xs text-emerald-900 transition-all animate-fadeIn">
-          <div>
-            <p className="font-semibold text-emerald-950">Follow-up logged to timeline!</p>
-            <p className="mt-0.5 text-emerald-700">Would you like to schedule the next follow-up now?</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                setShowNextPrompt(false);
-                openCreateModal();
-              }}
-              className="rounded-lg bg-emerald-600 px-3 py-1.5 font-semibold text-white hover:bg-emerald-700 transition"
-            >
-              Schedule Next
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowNextPrompt(false)}
-              className="rounded-lg px-2 py-1 text-emerald-700 hover:text-emerald-900"
-            >
-              Dismiss
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Open Tasks List */}
-      <div className="space-y-2">
+      {/* Task List Section */}
+      <div className="space-y-3">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold text-neutral-700 uppercase tracking-wider">
             Follow-up Tasks ({openTasks.length} Open)
@@ -296,270 +286,257 @@ export default function ContactFollowUpTasksSection({
             </button>
           </div>
         ) : (
-          <div className="space-y-2">
-            {openTasks.map((task) => (
-              <div
-                key={task._id}
-                className="group flex items-start gap-3 rounded-xl border border-neutral-200 bg-white p-3 hover:border-neutral-300 transition"
-              >
-                <button
-                  type="button"
-                  onClick={() => handleToggleComplete(task)}
-                  className="mt-0.5 shrink-0 text-neutral-400 hover:text-emerald-600 transition"
-                  title="Mark complete"
+          <div className="space-y-3">
+            {openTasks.map((task) => {
+              const isEmailFollowUp = Boolean(task.replyId || task.taskType === 'relationship_follow_up' || task.taskType === 'reply_review' || (task.notes && task.notes.length > 15));
+
+              if (isEmailFollowUp) {
+                return (
+                  <div key={task._id} className="rounded-xl border border-neutral-200 bg-white p-4 space-y-3 shadow-xs">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="space-y-1">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => handleToggleComplete(task)}
+                            className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 text-[10px] font-semibold hover:bg-emerald-100 transition"
+                          >
+                            <Circle className="h-3 w-3" />
+                            Mark Complete
+                          </button>
+                          <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 text-slate-700 px-2 py-0.5 text-[10px] font-semibold">
+                            {task.taskType === 'relationship_follow_up' ? 'Relationship Follow-up' : 'Follow-up Task'}
+                          </span>
+                          {task.campaignId?.projectName && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 px-2 py-0.5 text-[10px] font-semibold">
+                              {task.campaignId.projectName}
+                            </span>
+                          )}
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block mt-1">Subject Heading</span>
+                          <p className="text-xs font-bold text-neutral-900">{task.title || '(No Subject)'}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => openEditModal(task)}
+                          className="p-1.5 text-neutral-400 hover:text-neutral-700 rounded-lg hover:bg-neutral-100 transition"
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteTask(task._id)}
+                          className="p-1.5 text-neutral-400 hover:text-red-600 rounded-lg hover:bg-neutral-100 transition"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="space-y-1 pt-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block">Email Content</span>
+                      <FormattedEmailViewer
+                        html={task.replyId?.html}
+                        text={task.replyId?.text || task.notes}
+                        maxHeight={350}
+                      />
+                    </div>
+                  </div>
+                );
+              }
+
+              return (
+                <div
+                  key={task._id}
+                  className="group flex items-start gap-3 rounded-xl border border-neutral-200 bg-white p-3 hover:border-neutral-300 transition"
                 >
-                  <Circle className="h-4 w-4" />
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => handleToggleComplete(task)}
+                    className="mt-0.5 shrink-0 text-neutral-400 hover:text-emerald-600 transition"
+                    title="Mark complete"
+                  >
+                    <Circle className="h-4 w-4" />
+                  </button>
 
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-semibold text-neutral-900 leading-snug">{task.title}</p>
-                  {task.notes && (
-                    <p className="mt-1 text-[11px] text-neutral-600 line-clamp-2 leading-relaxed">{task.notes}</p>
-                  )}
-                  <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] text-neutral-500">
-                    {task.dueAt ? (
-                      <span className={cn(
-                        'inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium',
-                        new Date(task.dueAt) < new Date() ? 'bg-red-50 text-red-700 font-semibold' : 'bg-neutral-100 text-neutral-700'
-                      )}>
-                        <CalendarDays className="h-3 w-3" />
-                        {new Date(task.dueAt).toLocaleString('en-AE', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}
-                      </span>
-                    ) : (
-                      <span className="text-neutral-400">No due date</span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-semibold text-neutral-900 leading-snug">{task.title}</p>
+                    {task.notes && (
+                      <p className="mt-1 text-[11px] text-neutral-600 line-clamp-2 leading-relaxed">{task.notes}</p>
                     )}
+                    <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] text-neutral-500">
+                      {task.dueAt ? (
+                        <span className={cn(
+                          'inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium',
+                          new Date(task.dueAt) < new Date() ? 'bg-red-50 text-red-700 font-semibold' : 'bg-neutral-100 text-neutral-700'
+                        )}>
+                          <CalendarDays className="h-3 w-3" />
+                          {new Date(task.dueAt).toLocaleString('en-AE', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}
+                        </span>
+                      ) : (
+                        <span className="text-neutral-400">No due date</span>
+                      )}
 
-                    {task.owner && (
-                      <span className="rounded bg-neutral-100 px-1.5 py-0.5 text-neutral-600 font-medium">
-                        Owner: {task.owner}
-                      </span>
-                    )}
+                      {task.owner && (
+                        <span className="rounded bg-neutral-100 px-1.5 py-0.5 text-neutral-600 font-medium">
+                          Owner: {task.owner}
+                        </span>
+                      )}
 
-                    {task.channel && (
-                      <span className="rounded bg-sky-50 px-1.5 py-0.5 text-sky-700 font-medium capitalize">
-                        {task.channel}
-                      </span>
-                    )}
+                      {task.channel && (
+                        <span className="rounded bg-sky-50 px-1.5 py-0.5 text-sky-700 font-medium capitalize">
+                          {task.channel}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
+                    <button
+                      type="button"
+                      onClick={() => openEditModal(task)}
+                      className="p-1 text-neutral-400 hover:text-neutral-700"
+                      title="Edit task"
+                    >
+                      <Pencil className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteTask(task._id)}
+                      className="p-1 text-neutral-400 hover:text-red-600"
+                      title="Delete task"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
                   </div>
                 </div>
-
-                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
-                  <button
-                    type="button"
-                    onClick={() => openEditModal(task)}
-                    className="p-1 text-neutral-400 hover:text-neutral-700"
-                    title="Edit task"
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteTask(task._id)}
-                    className="p-1 text-neutral-400 hover:text-red-600"
-                    title="Delete task"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
 
       {/* Completed Tasks List Collapsible */}
       {completedTasks.length > 0 && (
-        <div className="border-t border-neutral-200 pt-3">
-          <button
-            type="button"
-            onClick={() => setShowCompletedList((prev) => !prev)}
-            className="flex items-center justify-between w-full text-xs font-semibold text-neutral-500 hover:text-neutral-800 transition"
-          >
-            <span>Completed Follow-ups ({completedTasks.length})</span>
-            {showCompletedList ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-          </button>
-
-          {showCompletedList && (
-            <div className="mt-2 space-y-2">
-              {completedTasks.map((task) => (
-                <div
-                  key={task._id}
-                  className="flex items-start gap-3 rounded-xl border border-neutral-100 bg-neutral-50/60 p-2.5 opacity-75"
+        <details className="text-xs">
+          <summary className="cursor-pointer text-neutral-500 hover:text-neutral-800 font-medium py-1">
+            Completed Tasks ({completedTasks.length})
+          </summary>
+          <div className="mt-2 space-y-2 pl-2 border-l-2 border-neutral-100">
+            {completedTasks.map((task) => (
+              <div key={task._id} className="flex items-start gap-2.5 rounded-lg bg-neutral-50 p-2 text-neutral-500">
+                <button
+                  type="button"
+                  onClick={() => handleToggleComplete(task)}
+                  className="mt-0.5 text-emerald-600 hover:text-neutral-400"
                 >
-                  <button
-                    type="button"
-                    onClick={() => handleToggleComplete(task)}
-                    className="mt-0.5 shrink-0 text-emerald-600 hover:text-neutral-400 transition"
-                    title="Reopen task"
-                  >
-                    <CheckCircle2 className="h-4 w-4" />
-                  </button>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs font-medium text-neutral-600 line-through">{task.title}</p>
-                    <p className="mt-0.5 text-[10px] text-neutral-400">
-                      Completed {task.completedAt ? new Date(task.completedAt).toLocaleDateString('en-AE') : ''}
-                    </p>
-                  </div>
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                </button>
+                <div className="min-w-0 flex-1">
+                  <p className="line-through text-neutral-600">{task.title}</p>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Channel Selection Modal on Completion */}
-      {completingTask && (
-        <Modal
-          open={Boolean(completingTask)}
-          onClose={() => setCompletingTask(null)}
-          title="Select follow-up method"
-          subtitle={`How did you follow up on "${completingTask.title}"?`}
-          size="sm"
-        >
-          <div className="space-y-4 pt-2">
-            <div className="grid grid-cols-2 gap-2">
-              {CHANNEL_OPTIONS.map((opt) => {
-                const Icon = opt.icon;
-                const selected = selectedChannel === opt.key;
-                return (
-                  <button
-                    key={opt.key}
-                    type="button"
-                    onClick={() => setSelectedChannel(opt.key)}
-                    className={cn(
-                      'flex items-center gap-2.5 rounded-xl border p-3 text-left transition',
-                      selected
-                        ? 'border-brand bg-brand-soft/40 ring-2 ring-brand/20 font-semibold text-brand'
-                        : 'border-neutral-200 hover:border-neutral-300 text-neutral-700'
-                    )}
-                  >
-                    <div className={cn('flex h-7 w-7 items-center justify-center rounded-lg border', opt.color)}>
-                      <Icon className="h-3.5 w-3.5" />
-                    </div>
-                    <span className="text-xs">{opt.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="flex justify-end gap-2 border-t border-neutral-200 pt-3">
-              <button
-                type="button"
-                className="crm-btn-secondary text-xs"
-                onClick={() => setCompletingTask(null)}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                disabled={!selectedChannel || busy}
-                onClick={() => executeCompleteTask(completingTask, selectedChannel)}
-                className="crm-btn-primary text-xs"
-              >
-                {busy ? 'Saving…' : 'Complete & Log Interaction'}
-              </button>
-            </div>
+              </div>
+            ))}
           </div>
-        </Modal>
+        </details>
       )}
 
-      {/* Create / Edit Task Modal */}
-      {taskModalOpen && (
-        <Modal
-          open={taskModalOpen}
-          onClose={() => setTaskModalOpen(false)}
-          title={editingTask ? 'Edit follow-up task' : 'Schedule follow-up task'}
-          subtitle={`Contact: ${contactName}`}
-          size="md"
-        >
-          <form onSubmit={handleSaveTask} className="space-y-4 pt-2">
-            <FormField label="Task Outcome / Title" required>
+      {/* Add / Edit Task Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={editingTask ? 'Edit Follow-up Task' : 'Schedule Follow-up Task'}
+      >
+        <form onSubmit={handleSaveTask} className="space-y-4">
+          <FormField label="Task Title" required>
+            <input
+              type="text"
+              className="crm-input"
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              placeholder="e.g. Follow up on quote proposal"
+            />
+          </FormField>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <FormField label="Due Date & Time">
               <input
-                className="crm-input"
-                value={form.title}
-                onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
-                placeholder="Follow up on exhibition stand proposal"
-                required
+                type="datetime-local"
+                className="crm-input text-xs"
+                value={form.dueAt}
+                onChange={(e) => setForm({ ...form, dueAt: e.target.value })}
               />
             </FormField>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <FormField label="Due Date">
-                <DateTimePicker
-                  value={form.dueAt}
-                  onChange={(dueAt) => setForm((prev) => ({ ...prev, dueAt }))}
-                  placeholder="Set due date"
-                />
-              </FormField>
+            <FormField label="Channel">
+              <select
+                className="crm-select text-xs"
+                value={form.channel}
+                onChange={(e) => setForm({ ...form, channel: e.target.value })}
+              >
+                <option value="email">Email</option>
+                <option value="call">Phone Call</option>
+                <option value="whatsapp">WhatsApp</option>
+                <option value="meeting">In-Person / Video Meeting</option>
+                <option value="other">Other</option>
+              </select>
+            </FormField>
+          </div>
 
-              <FormField label="Priority">
-                <select
-                  className="crm-select text-xs"
-                  value={form.priority}
-                  onChange={(e) => setForm((prev) => ({ ...prev, priority: e.target.value }))}
-                >
-                  <option value="Low">Low</option>
-                  <option value="Normal">Normal</option>
-                  <option value="High">High</option>
-                </select>
-              </FormField>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <FormField label="Follow-up Channel (Optional)">
-                <select
-                  className="crm-select text-xs"
-                  value={form.channel}
-                  onChange={(e) => setForm((prev) => ({ ...prev, channel: e.target.value }))}
-                >
-                  <option value="">Select channel (or prompt on completion)</option>
-                  {CHANNEL_OPTIONS.map((c) => (
-                    <option key={c.key} value={c.key}>{c.label}</option>
-                  ))}
-                </select>
-              </FormField>
-
-              <FormField label="Owner">
-                <input
-                  type="text"
-                  className="crm-input text-xs"
-                  value={form.owner}
-                  onChange={(e) => setForm((prev) => ({ ...prev, owner: e.target.value }))}
-                  placeholder="Relationship owner"
-                />
-              </FormField>
-            </div>
-
-            <FormField label="Notes / Interaction Summary">
-              <textarea
-                rows={3}
-                className="crm-input text-xs resize-y"
-                value={form.notes}
-                onChange={(e) => setForm((prev) => ({ ...prev, notes: e.target.value }))}
-                placeholder="Key context, talking points, or reference notes for this follow-up..."
-              />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <FormField label="Priority">
+              <select
+                className="crm-select text-xs"
+                value={form.priority}
+                onChange={(e) => setForm({ ...form, priority: e.target.value })}
+              >
+                <option value="Low">Low</option>
+                <option value="Normal">Normal</option>
+                <option value="High">High</option>
+                <option value="Urgent">Urgent</option>
+              </select>
             </FormField>
 
-            <div className="flex justify-end gap-2 border-t border-neutral-200 pt-3">
-              <button
-                type="button"
-                className="crm-btn-secondary text-xs"
-                onClick={() => setTaskModalOpen(false)}
-                disabled={busy}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={busy || !form.title.trim()}
-                className="crm-btn-primary text-xs"
-              >
-                {busy ? 'Saving…' : editingTask ? 'Save Changes' : 'Schedule Task'}
-              </button>
-            </div>
-          </form>
-        </Modal>
-      )}
+            <FormField label="Assignee Owner">
+              <input
+                type="text"
+                className="crm-input text-xs"
+                value={form.owner}
+                onChange={(e) => setForm({ ...form, owner: e.target.value })}
+                placeholder="Assignee name"
+              />
+            </FormField>
+          </div>
+
+          <FormField label="Internal Notes & Context">
+            <textarea
+              className="crm-input min-h-[4rem] text-xs resize-y"
+              value={form.notes}
+              onChange={(e) => setForm({ ...form, notes: e.target.value })}
+              placeholder="Add key talking points, reminder notes, or context…"
+            />
+          </FormField>
+
+          <div className="flex justify-end gap-2 pt-3 border-t border-neutral-100">
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              className="crm-btn-secondary"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={saving}
+              className="crm-btn-primary"
+            >
+              {saving ? 'Saving…' : editingTask ? 'Update Task' : 'Create Task'}
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }

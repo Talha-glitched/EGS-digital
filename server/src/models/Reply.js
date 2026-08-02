@@ -30,6 +30,7 @@ const replySchema = new mongoose.Schema(
     from: { type: String, default: '' },
     subject: { type: String, default: '' },
     text: { type: String, default: '' },
+    html: { type: String, default: '' },
     messageId: { type: String, required: true, unique: true },
     receivedAt: { type: Date, required: true, index: true },
     intent: {

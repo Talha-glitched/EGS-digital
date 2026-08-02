@@ -5,6 +5,10 @@ import { Lead } from '../models/Lead.js';
 
 const ACTIVE_OUTCOMES = ['Interested', 'Ambiguous', 'Referral', 'Out of Office'];
 
+function formatTaskNotes(reply) {
+  return (reply?.text || reply?.body || '').trim();
+}
+
 export async function ensureReplyReviewTask(reply, lead) {
   if (!lead || !lead._id) return null;
 
@@ -45,16 +49,15 @@ export async function ensureReplyReviewTask(reply, lead) {
 
     if (existingReplyRelTask) {
       existingReplyRelTask.replyId = reply._id || existingReplyRelTask.replyId;
-      if (reply?.subject) {
-        existingReplyRelTask.notes = `Latest subject: "${reply.subject}"\n${existingReplyRelTask.notes || ''}`.trim();
-      }
+      existingReplyRelTask.title = formatTaskTitle(reply, lead);
+      existingReplyRelTask.notes = formatTaskNotes(reply);
       await existingReplyRelTask.save();
       return existingReplyRelTask;
     }
 
     // Create a new reply-linked Relationship follow-up task
     const dueAt = new Date(replyDate.getTime() + 60 * 60 * 1000);
-    const title = `Follow up with ${contactName} about their reply`;
+    const title = formatTaskTitle(reply, lead);
 
     try {
       return await Task.create({
@@ -68,7 +71,7 @@ export async function ensureReplyReviewTask(reply, lead) {
         leadId: lead._id,
         companyId: lead.companyId || null,
         campaignId: reply?.campaignId || lead.campaignId || null,
-        notes: reply?.subject ? `Inbound subject: "${reply.subject}"` : '',
+        notes: formatTaskNotes(reply),
       });
     } catch (err) {
       if (err.code === 11000) {
@@ -96,9 +99,8 @@ export async function ensureReplyReviewTask(reply, lead) {
 
   if (existingTask) {
     existingTask.replyId = reply._id || existingTask.replyId;
-    if (reply?.subject) {
-      existingTask.notes = `Latest subject: "${reply.subject}"\n${existingTask.notes || ''}`.trim();
-    }
+    existingTask.title = formatTaskTitle(reply, lead);
+    existingTask.notes = formatTaskNotes(reply);
     await existingTask.save();
     return existingTask;
   }
@@ -115,8 +117,7 @@ export async function ensureReplyReviewTask(reply, lead) {
     : replyDate;
   const dueAt = new Date(firstDate.getTime() + 60 * 60 * 1000);
 
-  const companyName = lead.companyName || 'Company';
-  const title = `Review reply and decide next step: ${contactName} — ${companyName}`;
+  const title = formatTaskTitle(reply, lead);
 
   try {
     return await Task.create({
@@ -130,7 +131,7 @@ export async function ensureReplyReviewTask(reply, lead) {
       leadId: lead._id,
       companyId: lead.companyId || null,
       campaignId: reply?.campaignId || lead.campaignId || null,
-      notes: reply?.subject ? `Inbound subject: "${reply.subject}"` : '',
+      notes: formatTaskNotes(reply),
     });
   } catch (err) {
     if (err.code === 11000) {
@@ -247,7 +248,7 @@ export async function completeReplyReview(taskId, { outcome, followUpTask, actor
         [
           {
             title: followUpTask.title.trim(),
-            taskType: 'lead_follow_up',
+            taskType: lead.pocQualification?.status === 'Confirmed' ? 'relationship_follow_up' : 'lead_follow_up',
             dueAt: followUpTask.dueAt || null,
             priority: followUpTask.priority || 'Normal',
             owner: followUpTask.owner || '',

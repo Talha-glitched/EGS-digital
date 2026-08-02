@@ -684,7 +684,8 @@ router.post('/sequences/:id/reset-enrollments', asyncRoute(async (req, res) => {
 router.get('/leads/:id', asyncRoute(async (req, res) => {
   const lead = await Lead.findById(req.params.id)
     .populate('companyId')
-    .populate('campaignId');
+    .populate('campaignId')
+    .populate('enrollments.campaignId', 'projectName');
   if (!lead) {
     return res.status(404).json({ message: 'Contact not found.' });
   }

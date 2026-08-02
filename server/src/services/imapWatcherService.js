@@ -3,8 +3,8 @@ import { Lead } from '../models/Lead.js';
 import { Company } from '../models/Company.js';
 import { ProjectCampaign } from '../models/ProjectCampaign.js';
 import { Suppression } from '../models/Suppression.js';
-import { SendJob } from '../models/SendJob.js';
-import { classifyReplyIntent } from './openaiService.js';
+import { Email } from '../models/Email.js';
+import { classifyInboundEmail } from './resendAutoSyncService.js';
 import { freezeLeadSequence, purgeLeadFromQueue } from './sequenceService.js';
 import { buildLeadEmailQuery, getLeadEmailCandidates, getPrimaryLeadEmail, applyOutreachEmailFromReply } from '../utils/contactEmails.js';
 import { ensureReplyReviewTask } from './replyReviewTaskService.js';
@@ -164,11 +164,12 @@ async function handleHumanReply(lead, message, text, systemInbox = '') {
     return { duplicate: true };
   }
 
-  const { intent, confidence } = await classifyReplyIntent(text);
+  const subject = message.envelope?.subject || '';
+  const { status: targetStatus, intent: suggestedIntent } = classifyInboundEmail(subject, text);
+  const replyIntent = suggestedIntent === 'Opt Out' ? 'Opt Out' : suggestedIntent === 'OOO' ? 'OOO' : 'Neutral';
 
   const senderEmail = String(message.envelope?.from?.[0]?.address || '').trim().toLowerCase();
   const from = message.envelope?.from?.map((item) => item.address).join(', ') || getPrimaryLeadEmail(lead);
-  const subject = message.envelope?.subject || '';
 
   const [company, project] = await Promise.all([
     Company.findById(lead.companyId).lean(),
@@ -185,11 +186,11 @@ async function handleHumanReply(lead, message, text, systemInbox = '') {
     },
   ];
 
-  const replyIntent = intent === 'Opt Out' ? 'Opt Out' : intent === 'Interested' ? 'Interested' : 'Neutral';
-
   const replyDate = message.envelope?.date ? new Date(message.envelope.date) : new Date();
   const outreachRes = applyOutreachEmailFromReply(lead, senderEmail, systemInbox, replyDate);
   await lead.save();
+
+  const finalMsgId = messageId || stableSyntheticMessageId(message.uid, process.env.EMAIL_IMAP_HOST);
 
   const createdReply = await Reply.create({
     campaignId: lead.campaignId,
@@ -198,7 +199,7 @@ async function handleHumanReply(lead, message, text, systemInbox = '') {
     from,
     subject,
     text: text.slice(0, MAX_REPLY_TEXT),
-    messageId: messageId || stableSyntheticMessageId(message.uid, process.env.EMAIL_IMAP_HOST),
+    messageId: finalMsgId,
     receivedAt: replyDate,
     intent: replyIntent,
     systemInbox: systemInbox || '',
@@ -206,23 +207,35 @@ async function handleHumanReply(lead, message, text, systemInbox = '') {
     threadHistory,
   });
 
-  await ensureReplyReviewTask(createdReply, lead);
-
-  if (intent === 'Opt Out') {
-    await freezeLeadSequence(lead._id, 'opt_out');
-    const suppressedEmail = buildLeadEmailQuery(senderEmail) ? senderEmail : getPrimaryLeadEmail(lead);
-    const emailsToSuppress = [...new Set([suppressedEmail, ...getLeadEmailCandidates(lead)].filter(Boolean))];
-    await Promise.all(emailsToSuppress.map((email) => Suppression.updateOne(
-      { email },
-      { $set: { email, reason: 'opted_out', campaignId: lead.campaignId, leadId: lead._id } },
-      { upsert: true }
-    )));
-    await purgeLeadFromQueue(lead._id);
-  } else {
-    await freezeLeadSequence(lead._id, 'reply');
+  const existingEmail = await Email.findOne({ messageId: finalMsgId });
+  if (!existingEmail) {
+    await Email.create({
+      direction: 'inbound',
+      from: from || senderEmail,
+      fromEmail: senderEmail,
+      to: [systemInbox || lead.email].filter(Boolean),
+      toEmail: systemInbox || lead.email,
+      subject: subject || 'Inbound Email',
+      body: text.slice(0, MAX_REPLY_TEXT),
+      receivedAt: replyDate,
+      messageId: finalMsgId,
+      resendEmailId: finalMsgId,
+      leadId: lead._id,
+      companyId: lead.companyId || null,
+      campaignId: lead.campaignId || null,
+      status: 'received',
+      provider: 'imap',
+      suggestedIntent: replyIntent === 'OOO' ? 'Out of Office' : replyIntent === 'Opt Out' ? 'Opt Out' : 'Neutral',
+      humanReview: { status: 'Unreviewed' },
+    });
   }
 
-  return { stored: true, intent: replyIntent, confidence, companyName: company?.companyName, projectName: project?.projectName };
+  await ensureReplyReviewTask(createdReply, lead);
+
+  await freezeLeadSequence(lead._id, 'reply');
+  console.log(`[IMAP Reply] Human reply registered for review and sequence frozen for Lead ID: ${lead._id}`);
+
+  return { stored: true, intent: replyIntent, companyName: company?.companyName, projectName: project?.projectName };
 }
 
 export async function syncImapMailboxForUser(email) {

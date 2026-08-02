@@ -4,6 +4,7 @@ import { ProjectCampaign } from '../models/ProjectCampaign.js';
 import { Sequence } from '../models/Sequence.js';
 import { SequenceEnrollment } from '../models/SequenceEnrollment.js';
 import { SendJob } from '../models/SendJob.js';
+import { Email } from '../models/Email.js';
 import { Suppression } from '../models/Suppression.js';
 import { getSendTargetEmail, getBlastSendEmails } from '../utils/contactEmails.js';
 import { normalizeEmail } from '../utils/normalizeDomain.js';
@@ -164,6 +165,34 @@ async function deliverSequenceEmail({
     job.campaignId = lead.campaignId || enrollment.campaignId;
   }
   await job.save();
+
+  try {
+    const finalMsgId = messageId || String(job._id);
+    const existingEmail = await Email.findOne({ messageId: finalMsgId });
+    if (!existingEmail) {
+      await Email.create({
+        direction: 'outbound',
+        from: `${fromName} <${fromEmail}>`,
+        fromEmail,
+        to: [targetEmail],
+        toEmail: targetEmail,
+        subject: generated.subject,
+        body,
+        htmlBody: body,
+        sentAt: job.sentAt,
+        messageId: finalMsgId,
+        resendEmailId: messageId || '',
+        leadId: lead._id,
+        companyId: lead.companyId || null,
+        campaignId: job.campaignId || lead.campaignId || null,
+        status: 'sent',
+        provider: 'resend',
+        humanReview: { status: 'Not Required' },
+      });
+    }
+  } catch (eErr) {
+    console.warn('[SendWorker] Persistent email save failed:', eErr.message);
+  }
 
   enrollment.lastSentAt = new Date();
   await enrollment.save();

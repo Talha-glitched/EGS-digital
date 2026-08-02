@@ -558,6 +558,27 @@ export async function getOngoingJobTimeline(id) {
   };
 }
 
+function enrichReplyTask(task) {
+  if (task.taskType !== 'reply_review' && task.taskType !== 'relationship_follow_up') {
+    return task;
+  }
+
+  const replySubject = task.replyId?.subject?.trim();
+  const rawReplyText = (task.replyId?.text || task.replyId?.body || '').trim();
+  const cleanReplyText = rawReplyText.replace(/Latest subject: "[^"]*"\s*/gi, '').trim();
+  const cleanTaskNotes = (task.notes || '').replace(/Latest subject: "[^"]*"\s*/gi, '').trim();
+
+  const rawTitle = (task.title || '').trim();
+  const isGenericTitle = !rawTitle || rawTitle.toLowerCase().startsWith('inbound reply') || rawTitle.toLowerCase().startsWith('review reply');
+  const finalTitle = isGenericTitle ? (replySubject || rawTitle) : rawTitle;
+
+  return {
+    ...task,
+    title: finalTitle || 'Inbound Reply',
+    notes: cleanReplyText || cleanTaskNotes || '',
+  };
+}
+
 export async function listTasks({ status = 'Open', owner, opportunityId, ongoingJobId, campaignId, companyId, leadId, taskType, isRelationshipFollowUp, _designerUser } = {}) {
   assertDb();
   const targetJobId = ongoingJobId || opportunityId;
@@ -611,32 +632,36 @@ export async function listTasks({ status = 'Open', owner, opportunityId, ongoing
     }
   }
 
-  const items = await Task.find(query)
+  const rawItems = await Task.find(query)
     .sort({ status: 1, dueAt: 1, priority: -1, createdAt: -1 })
     .populate('campaignId', 'projectName')
     .populate('companyId', 'companyName')
     .populate('leadId', 'name email')
     .populate('opportunityId', 'name stage valueAed')
     .populate('ownerUserId', 'displayName email role')
+    .populate('replyId', 'subject text html body receivedAt messageId')
     .lean();
+
+  const items = rawItems.map(enrichReplyTask);
   return { items };
 }
 
 export async function getTask(id) {
   assertDb();
-  const task = await Task.findOne({ _id: id, deletedAt: null })
+  const rawTask = await Task.findOne({ _id: id, deletedAt: null })
     .populate('campaignId', 'projectName')
     .populate('companyId', 'companyName')
     .populate('leadId', 'name email')
     .populate('opportunityId', 'name stage valueAed')
     .populate('ownerUserId', 'displayName email role')
+    .populate('replyId', 'subject text html body receivedAt messageId')
     .lean();
-  if (!task) {
+  if (!rawTask) {
     const error = new Error('Task not found.');
     error.status = 404;
     throw error;
   }
-  return task;
+  return enrichReplyTask(rawTask);
 }
 
 export async function createTask(payload, actor = 'admin') {

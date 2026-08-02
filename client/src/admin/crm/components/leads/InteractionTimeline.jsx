@@ -38,6 +38,7 @@ import { useConfirmDelete } from '../../hooks/useConfirmDelete.js';
 import LogInteractionModal from './LogInteractionModal.jsx';
 import { interactionFormFromEvent } from '../../constants/interactionTypes.js';
 import { TIMELINE_AUTOMATION } from '../../constants/automationHints.js';
+import FormattedEmailViewer from '../common/FormattedEmailViewer.jsx';
 import {
   directionTone,
   formatRelativeWhen,
@@ -190,13 +191,21 @@ function TimelineEventCard({
 
         {body && (
           <div className="mt-1.5">
-            <div className={cn(
-              'crm-timeline-body whitespace-pre-wrap font-sans text-xs text-neutral-700 leading-relaxed transition-all',
-              !isExpanded && isLongBody && 'line-clamp-3'
-            )}>
-              {body}
-            </div>
-            {isLongBody && (
+            {isEmailEvent && isExpanded ? (
+              <FormattedEmailViewer
+                html={event.meta?.htmlBody || event.meta?.html}
+                text={body}
+                maxHeight={450}
+              />
+            ) : (
+              <div className={cn(
+                'crm-timeline-body whitespace-pre-wrap font-sans text-xs text-neutral-700 leading-relaxed transition-all',
+                !isExpanded && isLongBody && 'line-clamp-3'
+              )}>
+                {body}
+              </div>
+            )}
+            {(isLongBody || (isEmailEvent && (event.meta?.htmlBody || event.meta?.html))) && (
               <button
                 type="button"
                 onClick={() => setIsExpanded((prev) => !prev)}
@@ -208,7 +217,7 @@ function TimelineEventCard({
                   </>
                 ) : (
                   <>
-                    <ChevronDown className="h-3 w-3" /> View Full Message
+                    <ChevronDown className="h-3 w-3" /> View Formatted Message
                   </>
                 )}
               </button>
