@@ -11,7 +11,7 @@ export const POC_QUALIFICATION_LABELS = {
   Confirmed: 'Right POC',
   RedirectedWithReferral: 'Redirected — gave referral',
   RedirectedNoReferral: 'Redirected — no details',
-  WrongContact: 'Wrong person',
+  WrongContact: 'Wrong POC / Dead End',
 };
 
 export const POC_QUALIFICATION_DESCRIPTIONS = {

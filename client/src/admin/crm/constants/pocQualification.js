@@ -25,7 +25,7 @@ export const POC_QUALIFICATION_OPTIONS = [
   },
   {
     value: 'WrongContact',
-    label: 'Wrong person',
+    label: 'Wrong POC / Dead End',
     description: 'Not the right contact and no useful redirect.',
     tone: 'danger',
   },

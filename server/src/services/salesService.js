@@ -824,7 +824,28 @@ export async function updateTask(id, payload, actor = 'admin') {
             await task.save({ session });
           });
         } catch (err) {
-          throw err;
+          if (err?.message?.includes('Transaction numbers are only allowed') || err?.code === 20) {
+            let interaction = await ContactInteraction.findOne({ sourceTaskId: task._id });
+            if (!interaction) {
+              interaction = await ContactInteraction.create({
+                leadId: task.leadId,
+                companyId: task.companyId,
+                direction: 'outbound',
+                type: mappedType,
+                title: task.title,
+                summary: task.notes || task.title,
+                occurredAt: completionTime,
+                loggedBy: loggedByActor,
+                sourceTaskId: task._id,
+              });
+            }
+            task.status = 'Done';
+            task.completedAt = completionTime;
+            task.interactionId = interaction._id;
+            await task.save();
+          } else {
+            throw err;
+          }
         } finally {
           session.endSession();
         }

@@ -41,6 +41,7 @@ const HUMAN_OUTCOMES = [
   { key: 'Ambiguous', label: 'Ambiguous / Neutral', color: 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100' },
   { key: 'Referral', label: 'Referral', color: 'bg-purple-50 text-purple-700 border-purple-300 hover:bg-purple-100' },
   { key: 'Out of Office', label: 'Out of Office', color: 'bg-sky-50 text-sky-700 border-sky-300 hover:bg-sky-100' },
+  { key: 'Wrong POC', label: 'Wrong POC / Dead End', color: 'bg-rose-100 text-rose-800 border-rose-300 hover:bg-rose-200', activeBadge: 'Revert to Contact' },
   { key: 'Not Interested', label: 'Not Interested', color: 'bg-neutral-100 text-neutral-700 border-neutral-300 hover:bg-neutral-200' },
   { key: 'Unsubscribe', label: 'Unsubscribe / Opt-Out', color: 'bg-red-50 text-red-700 border-red-300 hover:bg-red-100' },
   { key: 'Bounce', label: 'Bounced', color: 'bg-rose-50 text-rose-700 border-rose-300 hover:bg-rose-100' },
@@ -72,6 +73,7 @@ export default function ContactLeadTasksSection({
 
   // Review Classification Modal state
   const [reviewTaskTarget, setReviewTaskTarget] = useState(null);
+  const [activeModalTask, setActiveModalTask] = useState(null);
   const [selectedOutcome, setSelectedOutcome] = useState('');
   const [followUpForm, setFollowUpForm] = useState({
     title: '',
@@ -116,6 +118,7 @@ export default function ContactLeadTasksSection({
 
   const openReviewModal = (task) => {
     setReviewTaskTarget(task);
+    setActiveModalTask(task);
     setSelectedOutcome('');
     setFollowUpForm({
       title: `Follow up with ${contactName || 'Contact'}`,
@@ -136,6 +139,12 @@ export default function ContactLeadTasksSection({
     }
   };
 
+  const closeReviewModal = () => {
+    setReviewTaskTarget(null);
+    setSelectedOutcome('');
+    setError('');
+  };
+
   const handleCompleteReview = async (e) => {
     e.preventDefault();
     if (!reviewTaskTarget || !selectedOutcome) return;
@@ -145,21 +154,26 @@ export default function ContactLeadTasksSection({
       return;
     }
 
+    const taskToComplete = reviewTaskTarget;
+    const outcomeToComplete = selectedOutcome;
+    const followUpToComplete = (requiresFollowUp || (selectedOutcome === 'Other' && followUpForm.title.trim())) ? followUpForm : null;
+
+    // Immediately close modal after validation passes
+    closeReviewModal();
     setBusy(true);
-    setError('');
+
     try {
-      await crmApiFetch(`/api/admin/sales/tasks/${reviewTaskTarget._id}/complete-reply-review`, {
+      await crmApiFetch(`/api/admin/sales/tasks/${taskToComplete._id}/complete-reply-review`, {
         method: 'POST',
         body: JSON.stringify({
-          outcome: selectedOutcome,
-          followUpTask: requiresFollowUp ? followUpForm : null,
+          outcome: outcomeToComplete,
+          followUpTask: followUpToComplete,
         }),
       });
-      setReviewTaskTarget(null);
       await loadTasks();
       onTimelineRefresh?.();
     } catch (err) {
-      setError(err.message || 'Failed to complete reply review.');
+      console.error('Failed to complete reply review:', err);
     } finally {
       setBusy(false);
     }
@@ -515,24 +529,24 @@ export default function ContactLeadTasksSection({
       </div>
 
       {/* Human Reply Classification Modal */}
-      {reviewTaskTarget && (
-        <Modal
-          open={Boolean(reviewTaskTarget)}
-          onClose={() => setReviewTaskTarget(null)}
-          title="Classify Human Reply Outcome"
-          size="md"
-        >
+      <Modal
+        open={Boolean(reviewTaskTarget)}
+        onClose={closeReviewModal}
+        title="Classify Human Reply Outcome"
+        size="md"
+      >
+        {activeModalTask && (
           <form onSubmit={handleCompleteReview} className="space-y-4 pt-2">
             <div className="rounded-xl border border-sky-200 bg-sky-50/60 p-3 space-y-1.5">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block">Subject Heading</span>
-                <p className="text-xs font-bold text-neutral-900">{reviewTaskTarget.title || '(No Subject)'}</p>
+                <p className="text-xs font-bold text-neutral-900">{activeModalTask.title || '(No Subject)'}</p>
               </div>
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block mt-1 mb-1">Email Content</span>
                 <FormattedEmailViewer
-                  html={reviewTaskTarget.replyId?.html}
-                  text={reviewTaskTarget.notes}
+                  html={activeModalTask.replyId?.html}
+                  text={activeModalTask.notes}
                   maxHeight={260}
                 />
               </div>
@@ -599,7 +613,7 @@ export default function ContactLeadTasksSection({
             )}
 
             <div className="flex justify-end gap-2 border-t border-neutral-200 pt-3">
-              <button type="button" className="crm-btn-secondary text-xs" onClick={() => setReviewTaskTarget(null)}>
+              <button type="button" className="crm-btn-secondary text-xs" onClick={closeReviewModal}>
                 Cancel
               </button>
               <button
@@ -611,17 +625,16 @@ export default function ContactLeadTasksSection({
               </button>
             </div>
           </form>
-        </Modal>
-      )}
+        )}
+      </Modal>
 
       {/* Lead Follow-Up Create/Edit Modal */}
-      {followUpModalOpen && (
-        <Modal
-          open={followUpModalOpen}
-          onClose={() => setFollowUpModalOpen(false)}
-          title={editingTask ? 'Edit Lead Follow-up Task' : 'Add Lead Follow-up Task'}
-          size="md"
-        >
+      <Modal
+        open={followUpModalOpen}
+        onClose={() => setFollowUpModalOpen(false)}
+        title={editingTask ? 'Edit Lead Follow-up Task' : 'Add Lead Follow-up Task'}
+        size="md"
+      >
           <form onSubmit={handleCreateOrUpdateLeadFollowUp} className="space-y-4 pt-2">
             <FormField label="Task Title" required>
               <input
