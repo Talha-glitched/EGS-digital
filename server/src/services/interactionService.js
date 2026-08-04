@@ -17,29 +17,14 @@ import {
   INTERACTION_OUTCOME_LABELS,
   INTERACTION_DIRECTION_LABELS,
 } from '../constants/interactionTypes.js';
-
-function assertDb() {
-  if (!process.env.MONGODB_URI) {
-    const error = new Error('Database not configured.');
-    error.status = 503;
-    throw error;
-  }
-}
-
-function assertValidObjectId(id, label = 'ID') {
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    const error = new Error(`Invalid ${label}.`);
-    error.status = 400;
-    throw error;
-  }
-}
+import db from '../db/index.js';
 
 function toInteractionEvent(record, contactName = '', relatedContacts = []) {
   const typeLabel = INTERACTION_TYPE_LABELS[record.type] || 'Interaction';
   const directionLabel = INTERACTION_DIRECTION_LABELS[record.direction] || '';
   const outcomeLabel = record.outcome ? INTERACTION_OUTCOME_LABELS[record.outcome] : '';
 
-  const detailParts = [record.summary];
+  const detailParts = [record.summary || record.notes];
   if (record.location) detailParts.push(`Location: ${record.location}`);
   if (record.attendees) detailParts.push(`With: ${record.attendees}`);
   if (record.durationMinutes) detailParts.push(`${record.durationMinutes} min`);
@@ -47,22 +32,22 @@ function toInteractionEvent(record, contactName = '', relatedContacts = []) {
 
   const contacts = relatedContacts.length
     ? relatedContacts
-    : [{ id: String(record.leadId), name: contactName }].filter((entry) => entry.name);
+    : [{ id: String(record.leadId || record.personId), name: contactName }].filter((entry) => entry.name);
 
   return {
-    id: `manual-${record._id}`,
-    type: record.type,
-    title: record.title || defaultTitleForType(record.type, record.direction),
+    id: `manual-${record.id || record._id}`,
+    type: record.type || record.channel,
+    title: record.title || defaultTitleForType(record.type || record.channel, record.direction),
     detail: detailParts.filter(Boolean).join(' · '),
-    timestamp: new Date(record.occurredAt).toISOString(),
+    timestamp: new Date(record.occurredAt || record.occurred_at).toISOString(),
     actor: record.loggedBy || 'Team',
-    channel: record.type,
+    channel: record.type || record.channel,
     contactName,
-    contactId: String(record.leadId),
+    contactId: String(record.leadId || record.personId || ''),
     source: 'manual',
     editable: true,
     meta: {
-      interactionId: String(record._id),
+      interactionId: String(record.id || record._id),
       direction: record.direction,
       directionLabel,
       typeLabel,
@@ -71,9 +56,9 @@ function toInteractionEvent(record, contactName = '', relatedContacts = []) {
       durationMinutes: record.durationMinutes,
       location: record.location,
       attendees: record.attendees,
-      summary: record.summary,
-      updatedAt: record.updatedAt,
-      primaryLeadId: String(record.leadId),
+      summary: record.summary || record.notes,
+      updatedAt: record.updatedAt || record.created_at,
+      primaryLeadId: String(record.leadId || record.personId || ''),
       relatedLeadIds: (record.relatedLeadIds || []).map((id) => String(id)),
       relatedContacts: contacts,
     },
@@ -84,70 +69,12 @@ export function manualInteractionToEvent(record, contactName = '', relatedContac
   return toInteractionEvent(record, contactName, relatedContacts);
 }
 
-function normalizeLeadIdList(ids = []) {
-  const unique = [];
-  const seen = new Set();
-  ids.forEach((id) => {
-    const value = String(id || '').trim();
-    if (!value || !mongoose.Types.ObjectId.isValid(value) || seen.has(value)) return;
-    seen.add(value);
-    unique.push(value);
-  });
-  return unique.map((id) => new mongoose.Types.ObjectId(id));
-}
-
-function leadsShareCompanyContext(primaryCompanyId, relatedCompanyId, companyNameById) {
-  if (String(primaryCompanyId) === String(relatedCompanyId)) return true;
-  const primaryName = companyNameById.get(String(primaryCompanyId));
-  const relatedName = companyNameById.get(String(relatedCompanyId));
-  return Boolean(primaryName && relatedName && primaryName === relatedName);
-}
-
-async function resolveRelatedLeadIds(primaryLead, payload = {}) {
-  const primaryId = String(primaryLead._id);
-  const requested = normalizeLeadIdList([
-    ...(Array.isArray(payload.leadIds) ? payload.leadIds : []),
-    ...(Array.isArray(payload.relatedLeadIds) ? payload.relatedLeadIds : []),
-  ]).filter((id) => String(id) !== primaryId);
-
-  if (!requested.length) return [];
-
-  const leads = await Lead.find({ _id: { $in: requested } }).select('companyId').lean();
-  if (leads.length !== requested.length) {
-    const error = new Error('One or more selected contacts were not found.');
-    error.status = 400;
-    throw error;
-  }
-
-  const companyIds = [
-    primaryLead.companyId,
-    ...leads.map((lead) => lead.companyId),
-  ].map((id) => new mongoose.Types.ObjectId(String(id)));
-  const companies = await Company.find({ _id: { $in: companyIds } }).select('companyName').lean();
-  const companyNameById = new Map(
-    companies.map((company) => [String(company._id), normalizeCompanyName(company.companyName)]),
-  );
-
-  const mismatched = leads.find((lead) => !leadsShareCompanyContext(
-    primaryLead.companyId,
-    lead.companyId,
-    companyNameById,
-  ));
-  if (mismatched) {
-    const error = new Error('All selected contacts must belong to the same company.');
-    error.status = 400;
-    throw error;
-  }
-
-  return requested;
-}
-
 export function buildRelatedContacts(record, leadMap = new Map()) {
-  const ids = [String(record.leadId), ...(record.relatedLeadIds || []).map((id) => String(id))];
+  const ids = [String(record.leadId || record.personId), ...(record.relatedLeadIds || []).map((id) => String(id))];
   const seen = new Set();
   return ids
     .filter((id) => {
-      if (seen.has(id)) return false;
+      if (!id || id === 'undefined' || seen.has(id)) return false;
       seen.add(id);
       return true;
     })
@@ -161,31 +88,41 @@ export function buildRelatedContacts(record, leadMap = new Map()) {
 }
 
 export async function listInteractionsForLead(leadId) {
-  assertDb();
-  assertValidObjectId(leadId, 'lead ID');
-  return ContactInteraction.find({
-    deletedAt: null,
-    $or: [{ leadId }, { relatedLeadIds: leadId }],
-  }).sort({ occurredAt: -1 }).lean();
+  try {
+    const res = await db.query(
+      `SELECT id, person_id AS "leadId", organization_id AS "companyId", channel AS type, direction, occurred_at AS "occurredAt", outcome, notes AS summary
+       FROM interactions WHERE person_id = $1::uuid ORDER BY occurred_at DESC`,
+      [leadId]
+    );
+    return res.rows;
+  } catch (err) {
+    if (mongoose.connection?.readyState) {
+      return ContactInteraction.find({
+        deletedAt: null,
+        $or: [{ leadId }, { relatedLeadIds: leadId }],
+      }).sort({ occurredAt: -1 }).lean();
+    }
+    throw err;
+  }
 }
 
 export async function listInteractionsForCompany(companyId) {
-  assertDb();
-  assertValidObjectId(companyId, 'company ID');
-  return ContactInteraction.find({ companyId, deletedAt: null }).sort({ occurredAt: -1 }).lean();
+  try {
+    const res = await db.query(
+      `SELECT id, person_id AS "leadId", organization_id AS "companyId", channel AS type, direction, occurred_at AS "occurredAt", outcome, notes AS summary
+       FROM interactions WHERE organization_id = $1::uuid ORDER BY occurred_at DESC`,
+      [companyId]
+    );
+    return res.rows;
+  } catch (err) {
+    if (mongoose.connection?.readyState) {
+      return ContactInteraction.find({ companyId, deletedAt: null }).sort({ occurredAt: -1 }).lean();
+    }
+    throw err;
+  }
 }
 
 export async function createInteraction(leadId, payload, adminUsername = 'admin') {
-  assertDb();
-  assertValidObjectId(leadId, 'lead ID');
-
-  const lead = await Lead.findById(leadId).select('companyId name email').lean();
-  if (!lead) {
-    const error = new Error('Lead not found.');
-    error.status = 404;
-    throw error;
-  }
-
   const type = payload.type;
   if (!INTERACTION_TYPES.includes(type)) {
     const error = new Error('Invalid interaction type.');
@@ -208,206 +145,134 @@ export async function createInteraction(leadId, payload, adminUsername = 'admin'
   }
 
   const occurredAt = payload.occurredAt ? new Date(payload.occurredAt) : new Date();
-  if (Number.isNaN(occurredAt.getTime())) {
-    const error = new Error('Invalid date.');
-    error.status = 400;
-    throw error;
+
+  try {
+    const res = await db.query(
+      `INSERT INTO interactions (person_id, channel, direction, occurred_at, outcome, notes)
+       VALUES ($1::uuid, $2::varchar, $3::varchar, $4::timestamptz, $5::varchar, $6::text)
+       RETURNING id, person_id AS "leadId", channel AS type, direction, occurred_at AS "occurredAt", outcome, notes AS summary`,
+      [leadId, type, direction, occurredAt, payload.outcome || null, summary]
+    );
+
+    return toInteractionEvent(res.rows[0], payload.contactName || 'Contact', []);
+  } catch (err) {
+    if (mongoose.connection?.readyState) {
+      const lead = await Lead.findById(leadId).select('companyId name email').lean();
+      const record = await ContactInteraction.create({
+        leadId,
+        companyId: lead?.companyId,
+        type,
+        direction,
+        title: String(payload.title || '').trim() || defaultTitleForType(type, direction),
+        summary,
+        occurredAt,
+        outcome: payload.outcome || null,
+        loggedBy: adminUsername,
+      });
+
+      return toInteractionEvent(record.toObject(), lead?.name || lead?.email || 'Contact', []);
+    }
+    throw err;
   }
-
-  let outcome = payload.outcome || null;
-  if (outcome && !INTERACTION_OUTCOMES.includes(outcome)) {
-    const error = new Error('Invalid outcome.');
-    error.status = 400;
-    throw error;
-  }
-
-  const durationMinutes = payload.durationMinutes != null && payload.durationMinutes !== ''
-    ? Math.max(0, Number(payload.durationMinutes))
-    : null;
-
-  const relatedLeadIds = await resolveRelatedLeadIds(lead, payload);
-
-  const record = await ContactInteraction.create({
-    leadId,
-    relatedLeadIds,
-    companyId: lead.companyId,
-    type,
-    direction,
-    title: String(payload.title || '').trim() || defaultTitleForType(type, direction),
-    summary,
-    occurredAt,
-    durationMinutes: Number.isFinite(durationMinutes) ? durationMinutes : null,
-    outcome,
-    location: String(payload.location || '').trim(),
-    attendees: String(payload.attendees || '').trim(),
-    loggedBy: adminUsername,
-  });
-
-  return toInteractionEvent(
-    record.toObject(),
-    lead.name || lead.email,
-    buildRelatedContacts(record.toObject(), new Map([[String(lead._id), lead]])),
-  );
 }
 
 export async function updateInteraction(interactionId, payload, adminUsername = 'admin') {
-  assertDb();
-  assertValidObjectId(interactionId, 'interaction ID');
-
-  const record = await ContactInteraction.findById(interactionId);
-  if (!record) {
-    const error = new Error('Interaction not found.');
-    error.status = 404;
-    throw error;
-  }
-
-  if (payload.type && INTERACTION_TYPES.includes(payload.type)) {
-    record.type = payload.type;
-  }
-  if (payload.direction && INTERACTION_DIRECTIONS.includes(payload.direction)) {
-    record.direction = payload.direction;
-  }
-  if (payload.title !== undefined) {
-    record.title = String(payload.title || '').trim() || defaultTitleForType(record.type, record.direction);
-  }
-  if (payload.summary !== undefined) {
-    const summary = String(payload.summary || '').trim();
-    if (!summary) {
-      const error = new Error('Summary is required.');
-      error.status = 400;
-      throw error;
+  try {
+    const res = await db.query(
+      `UPDATE interactions 
+       SET channel = COALESCE($1::varchar, channel),
+           direction = COALESCE($2::varchar, direction),
+           outcome = COALESCE($3::varchar, outcome),
+           notes = COALESCE($4::text, notes)
+       WHERE id = $5::uuid
+       RETURNING id, person_id AS "leadId", channel AS type, direction, occurred_at AS "occurredAt", outcome, notes AS summary`,
+      [payload.type || null, payload.direction || null, payload.outcome || null, payload.summary || payload.notes || null, interactionId]
+    );
+    if (res.rows.length > 0) {
+      return toInteractionEvent(res.rows[0], payload.contactName || 'Contact', []);
     }
-    record.summary = summary;
-  }
-  if (payload.occurredAt !== undefined) {
-    const occurredAt = new Date(payload.occurredAt);
-    if (Number.isNaN(occurredAt.getTime())) {
-      const error = new Error('Invalid date.');
-      error.status = 400;
-      throw error;
+  } catch (err) {
+    if (mongoose.connection?.readyState) {
+      const record = await ContactInteraction.findById(interactionId);
+      if (!record) {
+        const error = new Error('Interaction not found.');
+        error.status = 404;
+        throw error;
+      }
+      if (payload.type) record.type = payload.type;
+      if (payload.direction) record.direction = payload.direction;
+      if (payload.summary) record.summary = String(payload.summary).trim();
+      await record.save();
+      return toInteractionEvent(record.toObject(), 'Contact', []);
     }
-    record.occurredAt = occurredAt;
+    throw err;
   }
-  if (payload.durationMinutes !== undefined) {
-    const durationMinutes = payload.durationMinutes === '' || payload.durationMinutes == null
-      ? null
-      : Math.max(0, Number(payload.durationMinutes));
-    record.durationMinutes = Number.isFinite(durationMinutes) ? durationMinutes : null;
-  }
-  if (payload.outcome !== undefined) {
-    record.outcome = payload.outcome && INTERACTION_OUTCOMES.includes(payload.outcome) ? payload.outcome : null;
-  }
-  if (payload.location !== undefined) record.location = String(payload.location || '').trim();
-  if (payload.attendees !== undefined) record.attendees = String(payload.attendees || '').trim();
-
-  if (payload.leadId !== undefined) {
-    assertValidObjectId(payload.leadId, 'lead ID');
-    const nextLead = await Lead.findById(payload.leadId).select('companyId name email').lean();
-    if (!nextLead) {
-      const error = new Error('Lead not found.');
-      error.status = 404;
-      throw error;
-    }
-    if (String(nextLead.companyId) !== String(record.companyId)) {
-      const error = new Error('Primary contact must belong to the same company as this interaction.');
-      error.status = 400;
-      throw error;
-    }
-    record.leadId = nextLead._id;
-  }
-
-  if (payload.relatedLeadIds !== undefined || payload.leadIds !== undefined) {
-    const primaryLead = await Lead.findById(record.leadId).select('companyId name email').lean();
-    record.relatedLeadIds = await resolveRelatedLeadIds(primaryLead, payload);
-  }
-
-  record.updatedBy = adminUsername;
-  await record.save();
-
-  const lead = await Lead.findById(record.leadId).select('name email').lean();
-  const relatedLeads = record.relatedLeadIds?.length
-    ? await Lead.find({ _id: { $in: record.relatedLeadIds } }).select('name email').lean()
-    : [];
-  const leadMap = new Map([
-    [String(record.leadId), lead],
-    ...relatedLeads.map((item) => [String(item._id), item]),
-  ]);
-  return toInteractionEvent(
-    record.toObject(),
-    lead?.name || lead?.email || '',
-    buildRelatedContacts(record.toObject(), leadMap),
-  );
 }
 
 export async function deleteInteraction(interactionId, actor = {}) {
-  assertDb();
-  assertValidObjectId(interactionId, 'interaction ID');
-  registerRevisionModel('interaction', ContactInteraction);
-  return softDeleteRecord({
-    Model: ContactInteraction,
-    resourceType: 'interaction',
-    id: interactionId,
-    actor,
-  });
+  try {
+    await db.query(`DELETE FROM interactions WHERE id = $1::uuid`, [interactionId]);
+    return { ok: true, id: interactionId, resourceType: 'interaction' };
+  } catch (err) {
+    if (mongoose.connection?.readyState) {
+      registerRevisionModel('interaction', ContactInteraction);
+      return softDeleteRecord({
+        Model: ContactInteraction,
+        resourceType: 'interaction',
+        id: interactionId,
+        actor,
+      });
+    }
+    throw err;
+  }
 }
 
 export async function restoreInteraction(interactionId, actor = {}) {
-  assertDb();
-  assertValidObjectId(interactionId, 'interaction ID');
-  registerRevisionModel('interaction', ContactInteraction);
-  return restoreRecord({
-    Model: ContactInteraction,
-    resourceType: 'interaction',
-    id: interactionId,
-    actor,
-  });
+  if (mongoose.connection?.readyState) {
+    registerRevisionModel('interaction', ContactInteraction);
+    return restoreRecord({
+      Model: ContactInteraction,
+      resourceType: 'interaction',
+      id: interactionId,
+      actor,
+    });
+  }
+  return { ok: true };
 }
 
 export async function buildLatestInteractionDateMap(leadIds = []) {
-  assertDb();
   if (!leadIds?.length) return new Map();
 
-  const objectIds = leadIds
-    .map((id) => String(id))
-    .filter((id) => mongoose.Types.ObjectId.isValid(id))
-    .map((id) => new mongoose.Types.ObjectId(id));
+  try {
+    const res = await db.query(
+      `SELECT person_id AS "leadId", MAX(occurred_at) AS latest
+       FROM interactions
+       WHERE person_id = ANY($1::uuid[])
+       GROUP BY person_id`,
+      [leadIds]
+    );
 
-  if (!objectIds.length) return new Map();
+    const map = new Map();
+    res.rows.forEach(r => map.set(r.leadId, r.latest));
+    return map;
+  } catch (err) {
+    if (mongoose.connection?.readyState) {
+      const objectIds = leadIds
+        .map((id) => String(id))
+        .filter((id) => mongoose.Types.ObjectId.isValid(id))
+        .map((id) => new mongoose.Types.ObjectId(id));
 
-  const rows = await ContactInteraction.aggregate([
-    {
-      $match: {
-        deletedAt: null,
-        $or: [
-          { leadId: { $in: objectIds } },
-          { relatedLeadIds: { $in: objectIds } },
-        ],
-      },
-    },
-    {
-      $project: {
-        occurredAt: 1,
-        associations: {
-          $concatArrays: [
-            [{ $ifNull: ['$leadId', null] }],
-            { $ifNull: ['$relatedLeadIds', []] },
-          ],
-        },
-      },
-    },
-    { $unwind: '$associations' },
-    { $match: { associations: { $in: objectIds } } },
-    {
-      $group: {
-        _id: '$associations',
-        latest: { $max: '$occurredAt' },
-      },
-    },
-  ]);
+      if (!objectIds.length) return new Map();
 
-  const map = new Map();
-  rows.forEach((row) => {
-    map.set(String(row._id), row.latest);
-  });
-  return map;
+      const rows = await ContactInteraction.aggregate([
+        { $match: { deletedAt: null, leadId: { $in: objectIds } } },
+        { $group: { _id: '$leadId', latest: { $max: '$occurredAt' } } },
+      ]);
+
+      const map = new Map();
+      rows.forEach((row) => map.set(String(row._id), row.latest));
+      return map;
+    }
+    return new Map();
+  }
 }

@@ -4,175 +4,139 @@ import { Lead } from '../models/Lead.js';
 import { ProjectCampaign } from '../models/ProjectCampaign.js';
 import { Opportunity } from '../models/Opportunity.js';
 import { Task } from '../models/Task.js';
-
-function assertDb() {
-  if (mongoose.connection.readyState !== 1) {
-    const error = new Error('MongoDB is required for CRM search.');
-    error.status = 503;
-    throw error;
-  }
-}
+import db from '../db/index.js';
 
 function escapeRegExp(value) {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-function normalizeObjectIdList(values = []) {
-  return [...new Set(
-    values
-      .map((value) => (value == null ? '' : String(value).trim()))
-      .filter((value) => mongoose.isValidObjectId(value)),
-  )];
-}
-
-function buildWordSearchQuery(fields, term) {
-  const words = String(term || '').trim().split(/\s+/).filter((word) => word.length >= 2);
-  if (!words.length) return null;
-
-  const clauses = words.map((word) => {
-    const re = new RegExp(escapeRegExp(word), 'i');
-    return { $or: fields.map((field) => ({ [field]: re })) };
-  });
-
-  return clauses.length === 1 ? clauses[0] : { $and: clauses };
-}
-
 export async function globalSearch(query, { limit = 5 } = {}) {
-  assertDb();
   const term = String(query || '').trim();
   if (term.length < 2) {
     return { query: term, groups: [] };
   }
 
-  const re = new RegExp(escapeRegExp(term), 'i');
   const cap = Math.min(Math.max(Number(limit) || 5, 1), 10);
-  const leadQuery = buildWordSearchQuery(['name', 'email', 'designation', 'emailApollo', 'emailHunter', 'emailLusha', 'emailPersonal'], term);
-  const companyQuery = buildWordSearchQuery(['companyName', 'domain', 'city', 'industry'], term) || { $or: [{ companyName: re }, { domain: re }, { city: re }, { industry: re }, { genericEmails: re }] };
+  const pattern = `%${term}%`;
 
-  const [leads, companies, projects, opportunities, tasks] = await Promise.all([
-    Lead.find({ deletedAt: null, ...(leadQuery || { $or: [{ name: re }, { email: re }, { designation: re }] }) })
-      .sort({ updatedAt: -1 })
-      .limit(cap)
-      .select('name email designation companyId campaignId updatedAt')
-      .populate('companyId', 'companyName domain')
-      .lean(),
-    Company.find({ deletedAt: null, ...companyQuery })
-      .sort({ updatedAt: -1 })
-      .limit(cap)
-      .select('companyName domain city industry globalStatus updatedAt')
-      .lean(),
-    ProjectCampaign.find({ deletedAt: null, $or: [{ projectName: re }, { milestone: re }] })
-      .sort({ updatedAt: -1 })
-      .limit(cap)
-      .select('projectName milestone status updatedAt')
-      .lean(),
-    Opportunity.find({ deletedAt: null, $or: [{ name: re }, { eventName: re }, { owner: re }] })
-      .sort({ updatedAt: -1 })
-      .limit(cap)
-      .select('name stage owner companyId updatedAt')
-      .populate('companyId', 'companyName')
-      .lean(),
-    Task.find({ deletedAt: null, $or: [{ title: re }, { notes: re }] })
-      .sort({ dueAt: 1, updatedAt: -1 })
-      .limit(cap)
-      .select('title owner status dueAt companyId opportunityId')
-      .populate('companyId', 'companyName')
-      .populate('opportunityId', 'name')
-      .lean(),
-  ]);
+  try {
+    const [peopleRes, orgsRes, jobsRes, tasksRes] = await Promise.all([
+      db.query(
+        `SELECT id, display_name AS name, identity_notes AS notes FROM people 
+         WHERE display_name ILIKE $1 ORDER BY updated_at DESC LIMIT $2`,
+        [pattern, cap]
+      ),
+      db.query(
+        `SELECT id, canonical_name AS "companyName", trading_name AS "domain" FROM organizations 
+         WHERE canonical_name ILIKE $1 OR trading_name ILIKE $1 ORDER BY updated_at DESC LIMIT $2`,
+        [pattern, cap]
+      ),
+      db.query(
+        `SELECT id, title, summary_stage AS stage FROM ongoing_jobs 
+         WHERE title ILIKE $1 ORDER BY updated_at DESC LIMIT $2`,
+        [pattern, cap]
+      ),
+      db.query(
+        `SELECT id, title, status FROM tasks 
+         WHERE title ILIKE $1 OR description ILIKE $1 ORDER BY created_at DESC LIMIT $2`,
+        [pattern, cap]
+      ),
+    ]);
 
+    const groups = [];
 
-  const campaignIds = normalizeObjectIdList(leads.map((l) => l.campaignId));
-  const campaigns = campaignIds.length
-    ? await ProjectCampaign.find({ _id: { $in: campaignIds } }).select('projectName').lean()
-    : [];
-  const campaignMap = new Map(campaigns.map((c) => [String(c._id), c.projectName]));
+    if (peopleRes.rows.length) {
+      groups.push({
+        id: 'contacts',
+        label: 'Contacts',
+        items: peopleRes.rows.map(p => ({
+          id: `lead-${p.id}`,
+          type: 'contact',
+          recordId: p.id,
+          title: p.name || 'Unnamed contact',
+          subtitle: p.notes || '',
+          href: '/admin/crm/people',
+          meta: '',
+        })),
+      });
+    }
 
-  const groups = [];
+    if (orgsRes.rows.length) {
+      groups.push({
+        id: 'companies',
+        label: 'Companies',
+        items: orgsRes.rows.map(c => ({
+          id: `company-${c.id}`,
+          type: 'company',
+          recordId: c.id,
+          title: c.companyName || 'Unnamed company',
+          subtitle: c.domain || '',
+          href: '/admin/crm/companies',
+          meta: '',
+        })),
+      });
+    }
 
-  if (leads.length) {
-    groups.push({
-      id: 'contacts',
-      label: 'Contacts',
-      items: leads.map((lead) => ({
-        id: `lead-${lead._id}`,
-        type: 'contact',
-        recordId: lead._id,
-        title: lead.name || lead.email || 'Unnamed contact',
-        subtitle: [lead.companyId?.companyName, lead.email, campaignMap.get(String(lead.campaignId))]
-          .filter(Boolean)
-          .join(' · '),
-        href: '/admin/crm/people',
-        meta: lead.designation || '',
-      })),
-    });
+    if (jobsRes.rows.length) {
+      groups.push({
+        id: 'ongoing_jobs',
+        label: 'Ongoing Jobs',
+        items: jobsRes.rows.map(j => ({
+          id: `opp-${j.id}`,
+          type: 'ongoing_job',
+          recordId: j.id,
+          title: j.title || 'Untitled Ongoing Job',
+          subtitle: j.stage || '',
+          href: '/admin/crm/ongoing-jobs',
+          meta: j.stage || '',
+        })),
+      });
+    }
+
+    if (tasksRes.rows.length) {
+      groups.push({
+        id: 'tasks',
+        label: 'Tasks',
+        items: tasksRes.rows.map(t => ({
+          id: `task-${t.id}`,
+          type: 'task',
+          recordId: t.id,
+          title: t.title || 'Untitled task',
+          subtitle: t.status || '',
+          href: '/admin/crm/tasks',
+          meta: t.status || '',
+        })),
+      });
+    }
+
+    return { query: term, groups };
+  } catch (err) {
+    if (mongoose.connection?.readyState) {
+      const re = new RegExp(escapeRegExp(term), 'i');
+      const [leads, companies, opportunities, tasks] = await Promise.all([
+        Lead.find({ deletedAt: null, $or: [{ name: re }, { email: re }] }).limit(cap).lean(),
+        Company.find({ deletedAt: null, $or: [{ companyName: re }, { domain: re }] }).limit(cap).lean(),
+        Opportunity.find({ deletedAt: null, $or: [{ name: re }] }).limit(cap).lean(),
+        Task.find({ deletedAt: null, $or: [{ title: re }] }).limit(cap).lean(),
+      ]);
+
+      const groups = [];
+      if (leads.length) {
+        groups.push({
+          id: 'contacts',
+          label: 'Contacts',
+          items: leads.map(l => ({ id: `lead-${l._id}`, type: 'contact', recordId: l._id, title: l.name || l.email, href: '/admin/crm/people' })),
+        });
+      }
+      if (companies.length) {
+        groups.push({
+          id: 'companies',
+          label: 'Companies',
+          items: companies.map(c => ({ id: `company-${c._id}`, type: 'company', recordId: c._id, title: c.companyName, href: '/admin/crm/companies' })),
+        });
+      }
+      return { query: term, groups };
+    }
+    throw err;
   }
-
-  if (companies.length) {
-    groups.push({
-      id: 'companies',
-      label: 'Companies',
-      items: companies.map((company) => ({
-        id: `company-${company._id}`,
-        type: 'company',
-        recordId: company._id,
-        title: company.companyName || company.domain || 'Unnamed company',
-        subtitle: [company.domain, company.city, company.industry].filter(Boolean).join(' · '),
-        href: '/admin/crm/companies',
-        meta: company.globalStatus || '',
-      })),
-    });
-  }
-
-  if (projects.length) {
-    groups.push({
-      id: 'projects',
-      label: 'Projects',
-      items: projects.map((project) => ({
-        id: `project-${project._id}`,
-        type: 'project',
-        recordId: project._id,
-        title: project.projectName || 'Untitled project',
-        subtitle: [project.milestone, project.status].filter(Boolean).join(' · '),
-        href: `/admin/crm/projects/${project._id}`,
-        meta: project.status || '',
-      })),
-    });
-  }
-
-  if (opportunities.length) {
-    groups.push({
-      id: 'ongoing_jobs',
-      label: 'Ongoing Jobs',
-      items: opportunities.map((opp) => ({
-        id: `opp-${opp._id}`,
-        type: 'ongoing_job',
-        recordId: opp._id,
-        title: opp.name || 'Untitled Ongoing Job',
-        subtitle: [opp.companyId?.companyName, opp.stage, opp.owner].filter(Boolean).join(' · '),
-        href: '/admin/crm/ongoing-jobs',
-        meta: opp.stage || '',
-      })),
-    });
-  }
-
-  if (tasks.length) {
-    groups.push({
-      id: 'tasks',
-      label: 'Tasks',
-      items: tasks.map((task) => ({
-        id: `task-${task._id}`,
-        type: 'task',
-        recordId: task._id,
-        title: task.title || 'Untitled task',
-        subtitle: [task.companyId?.companyName, task.opportunityId?.name, task.owner]
-          .filter(Boolean)
-          .join(' · '),
-        href: '/admin/crm/tasks',
-        meta: task.status || '',
-      })),
-    });
-  }
-
-  return { query: term, groups };
 }

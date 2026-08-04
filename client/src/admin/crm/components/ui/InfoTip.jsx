@@ -67,19 +67,27 @@ export default function InfoTip({
         onFocus={() => setOpen(true)}
         onBlur={() => setOpen(false)}
       >
-        <button
+        <span
           ref={triggerRef}
-          type="button"
-          className={cn('crm-info-tip-trigger', buttonSize)}
+          role="button"
+          tabIndex={0}
+          className={cn('crm-info-tip-trigger inline-flex items-center justify-center cursor-pointer', buttonSize)}
           aria-label={label}
           aria-describedby={open ? tooltipId : undefined}
           onClick={(e) => {
             e.stopPropagation();
             setOpen((prev) => !prev);
           }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              e.stopPropagation();
+              setOpen((prev) => !prev);
+            }
+          }}
         >
           <Info className={iconSize} strokeWidth={2} />
-        </button>
+        </span>
       </span>
       {bubble}
     </>

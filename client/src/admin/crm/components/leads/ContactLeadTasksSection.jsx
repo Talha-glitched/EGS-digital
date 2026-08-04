@@ -687,7 +687,6 @@ export default function ContactLeadTasksSection({
             </div>
           </form>
         </Modal>
-      )}
     </div>
   );
 }
