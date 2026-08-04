@@ -152,6 +152,7 @@ export async function completeReplyReview(taskId, { outcome, followUpTask, actor
     'Not Interested',
     'Referral',
     'Out of Office',
+    'Wrong POC',
     'Unsubscribe',
     'Bounce',
     'Automated',
@@ -231,11 +232,20 @@ export async function completeReplyReview(taskId, { outcome, followUpTask, actor
       options
     );
 
-    // 2. Update Lead stage
+    // 2. Update Lead stage and POC qualification
     if (outcome === 'Interested') {
       lead.leadStage = 'qualified_lead';
       lead.qualifiedAt = new Date();
       lead.qualifiedBy = loggedByActor;
+    } else if (outcome === 'Wrong POC') {
+      lead.leadStage = 'contact';
+      lead.pocQualification = {
+        status: 'WrongContact',
+        assessedAt: new Date(),
+        assessedBy: loggedByActor,
+        notes: lead.pocQualification?.notes || 'Classified as Wrong POC / Dead End via reply review',
+        referral: lead.pocQualification?.referral || {},
+      };
     } else if (lead.leadStage === 'contact') {
       lead.leadStage = 'lead';
     }
@@ -278,6 +288,11 @@ export async function completeReplyReview(taskId, { outcome, followUpTask, actor
         result = await executeOperations(session);
       });
       return result;
+    } catch (err) {
+      if (err?.message?.includes('Transaction numbers are only allowed') || err?.code === 20) {
+        return await executeOperations(null);
+      }
+      throw err;
     } finally {
       await session.endSession();
     }

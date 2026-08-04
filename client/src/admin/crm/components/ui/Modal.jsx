@@ -5,10 +5,11 @@ import { cn } from './primitives.jsx';
 import { useBodyScrollLock } from './useBodyScrollLock.js';
 import { useOverlayTransition } from './useOverlayTransition.js';
 
-export function Modal({ open, onClose, title, subtitle, children, footer, size = 'lg', icon: Icon, accent = 'brand' }) {
+export function Modal({ open, isOpen, onClose, title, subtitle, children, footer, size = 'lg', icon: Icon, accent = 'brand' }) {
   const panelRef = useRef(null);
   const onCloseRef = useRef(onClose);
-  const { mounted, visible, exiting } = useOverlayTransition(open);
+  const effectiveOpen = open !== undefined ? Boolean(open) : Boolean(isOpen);
+  const { mounted, visible, exiting } = useOverlayTransition(effectiveOpen);
   useBodyScrollLock(mounted);
 
   onCloseRef.current = onClose;
