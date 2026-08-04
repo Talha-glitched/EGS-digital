@@ -322,12 +322,12 @@ CREATE TABLE IF NOT EXISTS campaign_accounts (
     campaign_id UUID REFERENCES campaigns(id) ON DELETE CASCADE,
     organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE,
     pursuit_state VARCHAR(50) DEFAULT 'identified',
-    PRIMARY KEY (campaign_id, organization_id)
+    CONSTRAINT idx_campaign_org_uniq UNIQUE (campaign_id, organization_id)
 );
 
 CREATE TABLE IF NOT EXISTS campaign_contacts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    campaign_account_id UUID,
+    campaign_account_id UUID REFERENCES campaign_accounts(id) ON DELETE CASCADE,
     role_id UUID REFERENCES person_organization_roles(id) ON DELETE SET NULL,
     organization_contact_method_id UUID REFERENCES organization_contact_methods(id) ON DELETE SET NULL,
     lead_state VARCHAR(50) DEFAULT 'new',
@@ -462,7 +462,7 @@ CREATE TABLE IF NOT EXISTS endpoint_suppressions (
 CREATE TABLE IF NOT EXISTS ongoing_jobs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     customer_organization_id UUID REFERENCES organizations(id) ON DELETE SET NULL,
-    campaign_account_id UUID,
+    campaign_account_id UUID REFERENCES campaign_accounts(id) ON DELETE SET NULL,
     job_number VARCHAR(100) UNIQUE,
     title VARCHAR(255) NOT NULL,
     inquiry_source VARCHAR(100),
