@@ -13,11 +13,7 @@ import {
   previewBlendAndIngestLeads,
 } from '../services/ingestionService.js';
 import { exportCampaignToBuffer } from '../services/excelExportService.js';
-import { Lead } from '../models/Lead.js';
-import { SendJob } from '../models/SendJob.js';
-import { Reply } from '../models/Reply.js';
-import { Company } from '../models/Company.js';
-import { ProjectCampaign } from '../models/ProjectCampaign.js';
+import db from '../db/index.js';
 import { sendAuthenticatedMail, getFromIdentity } from '../services/mailTransport.js';
 import { getSystemSettings, updateSystemSettings } from '../services/systemSettingsService.js';
 import { getResendMetrics } from '../services/resendService.js';
@@ -735,18 +731,18 @@ router.patch('/leads/:id', asyncRoute(async (req, res) => {
     if (['Apollo', 'Hunter', 'Lusha', 'Manual', ''].includes(source)) {
       lead.outreachEmailSource = source;
     }
-  } else if (req.body.autoDetectOutreach) {
-    const lastJob = await SendJob.findOne({ leadId: lead._id, status: 'sent' })
-      .sort({ sentAt: -1 })
-      .select('recipientEmail')
-      .lean();
-    inferOutreachEmail(lead, { lastSentEmail: lastJob?.recipientEmail || '' });
-  } else if (req.body.deliveryStatus === 'Replied' && !lead.outreachEmail) {
-    const lastJob = await SendJob.findOne({ leadId: lead._id, status: 'sent' })
-      .sort({ sentAt: -1 })
-      .select('recipientEmail')
-      .lean();
-    inferOutreachEmail(lead, { lastSentEmail: lastJob?.recipientEmail || '' });
+  } else if (req.body.autoDetectOutreach || (req.body.deliveryStatus === 'Replied' && !lead.outreachEmail)) {
+    const lastJobRes = await db.query(
+      `SELECT m.body, m.occurred_at
+       FROM messages m
+       JOIN conversations conv ON m.conversation_id = conv.id
+       LEFT JOIN conversation_participants cp ON cp.conversation_id = conv.id
+       LEFT JOIN person_contact_methods pcm ON cp.person_contact_method_id = pcm.id
+       WHERE pcm.person_id::text = $1 OR pcm.normalized_value = $1
+       ORDER BY m.occurred_at DESC LIMIT 1`,
+      [String(lead._id || lead.id)]
+    );
+    inferOutreachEmail(lead, { lastSentEmail: lastJobRes.rows[0]?.body || '' });
   }
 
   if (req.body.linkedinOutreach) {
@@ -860,40 +856,49 @@ router.get('/send-delivery/issues', asyncRoute(async (req, res) => {
 }));
 
 router.get('/sent-emails/:id/thread', asyncRoute(async (req, res) => {
-  const job = await SendJob.findById(req.params.id);
-  if (!job) return res.status(404).json({ error: 'Email not found.' });
+  const msgRes = await db.query(
+    `SELECT m.id, m.conversation_id, m.direction, m.subject, m.body, m.occurred_at,
+            p.id AS person_id, p.display_name AS poc_name, por.title AS designation,
+            o.canonical_name AS company_name, pcm.normalized_value AS recipient_email
+     FROM messages m
+     JOIN conversations conv ON m.conversation_id = conv.id
+     LEFT JOIN conversation_participants cp ON cp.conversation_id = conv.id
+     LEFT JOIN person_contact_methods pcm ON cp.person_contact_method_id = pcm.id
+     LEFT JOIN people p ON pcm.person_id = p.id
+     LEFT JOIN person_organization_roles por ON por.person_id = p.id
+     LEFT JOIN organizations o ON por.organization_id = o.id
+     WHERE m.id::text = $1 OR conv.id::text = $1 LIMIT 1`,
+    [String(req.params.id)]
+  );
 
-  const lead = await Lead.findById(job.leadId);
-  const company = lead ? await Company.findById(lead.companyId) : null;
+  if (!msgRes.rows.length) return res.status(404).json({ error: 'Email not found.' });
+  const msg = msgRes.rows[0];
 
-  let thread = await Reply.findOne({ leadId: job.leadId });
-  let history = [];
+  const threadRes = await db.query(
+    `SELECT m.id, m.direction, m.subject, m.body, m.occurred_at AS timestamp
+     FROM messages m
+     WHERE m.conversation_id = $1::uuid
+     ORDER BY m.occurred_at ASC`,
+    [msg.conversation_id]
+  );
 
-  if (thread) {
-    history = [...thread.threadHistory];
-  } else {
-    const outboundJobs = await SendJob.find({ leadId: job.leadId, status: 'sent' }).sort({ sentAt: 1 });
-    history = outboundJobs.map((j) => ({
-      type: 'outbound',
-      step: j.stepIndex + 1,
-      subject: j.renderedSubject || '',
-      body: j.renderedBody || '',
-      timestamp: j.sentAt,
-      messageId: j.providerMessageId || '',
-    }));
-  }
-
-  history.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+  const history = threadRes.rows.map((m) => ({
+    type: m.direction,
+    subject: m.subject || '',
+    body: m.body || '',
+    timestamp: m.timestamp,
+    messageId: m.id,
+  }));
 
   res.json({
-    threadId: thread ? thread._id : null,
-    leadId: job.leadId,
-    pocName: lead?.name || job.recipientEmail,
-    designation: lead?.designation || '',
-    companyName: company?.companyName || '',
-    phoneNumber: lead?.phone || '',
-    recipientEmail: job.recipientEmail,
-    subject: job.renderedSubject,
+    threadId: msg.conversation_id,
+    leadId: msg.person_id,
+    pocName: msg.poc_name || msg.recipient_email,
+    designation: msg.designation || '',
+    companyName: msg.company_name || '',
+    phoneNumber: '',
+    recipientEmail: msg.recipient_email,
+    subject: msg.subject,
     history,
   });
 }));
@@ -904,16 +909,24 @@ router.post('/sent-emails/:id/reply', asyncRoute(async (req, res) => {
     return res.status(400).json({ error: 'Reply body is required.' });
   }
 
-  const job = await SendJob.findById(req.params.id);
-  if (!job) return res.status(404).json({ error: 'Email not found.' });
+  const msgRes = await db.query(
+    `SELECT m.id, m.conversation_id, m.subject, pcm.normalized_value AS recipient_email, c.id AS campaign_id
+     FROM messages m
+     JOIN conversations conv ON m.conversation_id = conv.id
+     LEFT JOIN conversation_participants cp ON cp.conversation_id = conv.id
+     LEFT JOIN person_contact_methods pcm ON cp.person_contact_method_id = pcm.id
+     LEFT JOIN campaign_accounts ca ON ca.organization_id = pcm.person_id
+     LEFT JOIN campaigns c ON ca.campaign_id = c.id
+     WHERE m.id::text = $1 LIMIT 1`,
+    [String(req.params.id)]
+  );
 
-  const lead = await Lead.findById(job.leadId);
-  if (!lead) return res.status(404).json({ error: 'Lead not found.' });
+  if (!msgRes.rows.length) return res.status(404).json({ error: 'Email not found.' });
+  const job = msgRes.rows[0];
 
-  const project = await ProjectCampaign.findById(lead.campaignId);
-  const { fromEmail, fromName } = getFromIdentity(project);
+  const { fromEmail, fromName } = getFromIdentity(null);
 
-  let subject = job.renderedSubject || 'Follow up';
+  let subject = job.subject || 'Follow up';
   if (!subject.toLowerCase().startsWith('re:')) {
     subject = `Re: ${subject}`;
   }
@@ -921,53 +934,23 @@ router.post('/sent-emails/:id/reply', asyncRoute(async (req, res) => {
   const result = await sendAuthenticatedMail({
     fromName,
     fromEmail,
-    to: job.recipientEmail,
+    to: job.recipient_email,
     subject,
     text: body,
     html: `<div style="font-family:sans-serif;font-size:14px;line-height:1.5;color:#333;">
       <p>${String(body).replace(/\n/g, '<br>')}</p>
     </div>`,
-    inReplyTo: job.providerMessageId || undefined,
-    references: job.providerMessageId ? [job.providerMessageId] : undefined,
   });
 
   const messageId = String(result?.messageId || '').trim();
 
-  let thread = await Reply.findOne({ leadId: job.leadId });
-  if (!thread) {
-    const originalOutbound = {
-      type: 'outbound',
-      step: job.stepIndex + 1,
-      subject: job.renderedSubject || 'Follow up',
-      body: job.renderedBody || '',
-      timestamp: job.sentAt || job.createdAt,
-      messageId: job.providerMessageId || '',
-    };
-    thread = await Reply.create({
-      campaignId: lead.campaignId,
-      leadId: lead._id,
-      email: lead.email,
-      from: lead.name || lead.email,
-      subject: job.renderedSubject || 'Follow up',
-      text: '',
-      messageId: job.providerMessageId || `synthetic-${Date.now()}`,
-      receivedAt: new Date(),
-      intent: 'Neutral',
-      threadHistory: [originalOutbound],
-    });
-  }
+  await db.query(
+    `INSERT INTO messages (conversation_id, direction, external_message_id, subject, body, delivery_state, occurred_at)
+     VALUES ($1::uuid, 'outbound', $2, $3, $4, 'sent', CURRENT_TIMESTAMP)`,
+    [job.conversation_id, messageId, subject, body]
+  );
 
-  const replyMessage = {
-    type: 'outbound',
-    subject,
-    body,
-    timestamp: new Date(),
-    messageId,
-  };
-  thread.threadHistory.push(replyMessage);
-  await thread.save();
-
-  res.json({ success: true, messageId, replyMessage });
+  res.json({ success: true, messageId });
 }));
 
 router.get('/inbox', asyncRoute(async (req, res) => {

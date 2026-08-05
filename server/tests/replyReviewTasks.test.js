@@ -24,7 +24,12 @@ test('Task-Based Contacts -> Leads -> Qualified Leads Suite', async (t) => {
     return;
   }
 
-  await mongoose.connect(process.env.MONGODB_URI);
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, { serverSelectionTimeoutMS: 2000 });
+  } catch (err) {
+    t.skip('MongoDB not connected; skipping database execution tests.');
+    return;
+  }
 
   const testSuffix = String(Date.now());
   const company = await Company.create({

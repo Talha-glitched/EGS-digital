@@ -1,8 +1,4 @@
-import mongoose from 'mongoose';
-import { Lead } from '../models/Lead.js';
-import { Company } from '../models/Company.js';
-import { Reply } from '../models/Reply.js';
-import { Email } from '../models/Email.js';
+import db from '../db/index.js';
 import { ensureReplyReviewTask } from './replyReviewTaskService.js';
 
 let cronInterval = null;
@@ -93,150 +89,84 @@ export async function syncAllResendReplies() {
 
         const { status: targetStatus, intent } = classifyInboundEmail(item.subject || '', bodyText || item.subject || '');
         const domain = email.split('@')[1] || '';
-        let lead = await Lead.findOne({
-          email: new RegExp(`^${email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'),
-          deletedAt: null,
-        });
 
-        let company = null;
-        if (domain) {
-          company = await Company.findOne({
-            domain: new RegExp(`^${domain.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'),
-            deletedAt: null,
-          });
+        // Query person in PostgreSQL by email
+        let pRes = await db.query(
+          `SELECT p.id, p.display_name, por.organization_id, cc.id AS campaign_contact_id
+           FROM person_contact_methods pcm
+           JOIN people p ON pcm.person_id = p.id
+           LEFT JOIN person_organization_roles por ON por.person_id = p.id
+           LEFT JOIN campaign_contacts cc ON cc.role_id = por.id
+           WHERE pcm.normalized_value = $1 AND pcm.type = 'email'
+           LIMIT 1`,
+          [email]
+        );
 
-          if (!company) {
-            try {
-              const compName = domain.split('.')[0].toUpperCase();
-              company = await Company.create({
-                companyName: compName,
-                domain: domain.toLowerCase(),
-                globalStatus: 'Lead',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-              });
-            } catch (e) {
-              console.warn('[ResendAutoSync] Company auto-create failed:', e.message);
-            }
-          }
-        }
+        let personId = null;
+        let campaignContactId = null;
 
-        if (!lead) {
-          lead = await Lead.create({
-            name: name || 'Contact',
-            email,
-            companyId: company ? company._id : null,
-            companyName: company ? company.companyName : (domain || ''),
-            domain: domain || (company ? company.domain : ''),
-            deliveryStatus: targetStatus,
-            hasResponded: true,
-            pocQualification: { status: 'Unverified' },
-            primarySource: 'Resend Inbound',
-            sources: ['Resend Inbound'],
-            createdAt: item.created_at ? new Date(item.created_at) : new Date(),
-            updatedAt: new Date(),
-          });
+        if (pRes.rows.length === 0) {
+          // Insert person in PostgreSQL
+          const insP = await db.query(
+            `INSERT INTO people (display_name) VALUES ($1) RETURNING id`,
+            [name]
+          );
+          personId = insP.rows[0].id;
+
+          await db.query(
+            `INSERT INTO person_contact_methods (person_id, type, original_value, normalized_value, preferred)
+             VALUES ($1::uuid, 'email', $2, $3, true)
+             ON CONFLICT DO NOTHING`,
+            [personId, email, email]
+          );
           leadsCreated += 1;
         } else {
-          let changed = false;
-          if (lead.deliveryStatus !== targetStatus && lead.deliveryStatus !== 'Replied') {
-            lead.deliveryStatus = targetStatus;
-            changed = true;
-          }
-          if (!lead.hasResponded) {
-            lead.hasResponded = true;
-            changed = true;
-          }
-          if (company && !lead.companyId) {
-            lead.companyId = company._id;
-            lead.companyName = company.companyName;
-            changed = true;
-          }
-          if (changed) {
-            await lead.save();
-            leadsUpdated += 1;
-          }
+          personId = pRes.rows[0].id;
+          campaignContactId = pRes.rows[0].campaign_contact_id;
+          leadsUpdated += 1;
+        }
+
+        // Update campaign contact lead_state
+        if (campaignContactId) {
+          await db.query(
+            `UPDATE campaign_contacts SET lead_state = $1 WHERE id = $2::uuid`,
+            [targetStatus, campaignContactId]
+          );
         }
 
         const msgId = item.message_id || item.id;
         const receivedDate = item.created_at ? new Date(item.created_at) : new Date();
 
-        // Log/Update Reply collection
-        const existingReply = await Reply.findOne({
-          $or: [
-            { resendEmailId: item.id },
-            { messageId: msgId },
-          ],
-          deletedAt: null,
-        });
+        // Check existing message in PostgreSQL
+        const existMsg = await db.query(
+          `SELECT id FROM messages WHERE external_message_id = $1 LIMIT 1`,
+          [msgId]
+        );
 
-        const htmlBody = item.html || item.html_body || '';
+        if (!existMsg.rows.length) {
+          // Create conversation & message entry
+          const convRes = await db.query(
+            `INSERT INTO conversations (channel, external_thread_id, subject)
+             VALUES ('email', $1, $2) RETURNING id`,
+            [msgId, item.subject || 'Inbound Email']
+          );
+          const convId = convRes.rows[0].id;
 
-        if (!existingReply) {
-          const createdReply = await Reply.create({
-            campaignId: lead.campaignId || null,
-            leadId: lead._id,
-            companyId: lead.companyId || null,
-            email,
-            from: item.from || email,
-            subject: item.subject || 'Inbound Email',
-            text: bodyText || item.subject || '',
-            html: htmlBody,
-            messageId: msgId,
-            resendEmailId: item.id,
-            receivedAt: receivedDate,
-            intent,
-            createdAt: receivedDate,
-          });
-          repliesLogged += 1;
-          await ensureReplyReviewTask(createdReply, lead);
-        } else {
-          let replyUpdated = false;
-          if (!existingReply.text && bodyText) {
-            existingReply.text = bodyText;
-            replyUpdated = true;
-          }
-          if (!existingReply.html && htmlBody) {
-            existingReply.html = htmlBody;
-            replyUpdated = true;
-          }
-          if (replyUpdated) {
-            await existingReply.save();
-            await ensureReplyReviewTask(existingReply, lead);
-          }
-        }
+          await db.query(
+            `INSERT INTO messages (conversation_id, direction, channel, external_message_id, subject, body, delivery_state, occurred_at)
+             VALUES ($1::uuid, 'inbound', 'email', $2, $3, $4, 'received', $5)`,
+            [convId, msgId, item.subject || 'Inbound Email', bodyText || item.subject || '', receivedDate]
+          );
 
-        // Upsert into persistent Email collection
-        const existingEmail = await Email.findOne({ messageId: msgId });
-        if (!existingEmail) {
-          await Email.create({
-            direction: 'inbound',
-            from: item.from || email,
-            fromEmail: email,
-            to: Array.isArray(item.to) ? item.to : [item.to].filter(Boolean),
-            toEmail: Array.isArray(item.to) ? parseEmailAndName(item.to[0]).email : email,
-            subject: item.subject || 'Inbound Email',
-            body: bodyText || item.subject || '',
-            htmlBody: htmlBody,
-            receivedAt: receivedDate,
-            messageId: msgId,
-            resendEmailId: item.id,
-            leadId: lead._id,
-            companyId: lead.companyId || null,
-            campaignId: lead.campaignId || null,
-            status: 'received',
-            provider: 'resend',
-            suggestedIntent: intent === 'OOO' ? 'Out of Office' : intent === 'Opt Out' ? 'Opt Out' : 'Neutral',
-            humanReview: { status: 'Unreviewed' },
-          });
           emailsStored += 1;
-        } else if (!existingEmail.htmlBody && htmlBody) {
-          existingEmail.htmlBody = htmlBody;
-          await existingEmail.save();
+          repliesLogged += 1;
+
+          await ensureReplyReviewTask(
+            { id: convId, conversation_id: convId, intent, subject: item.subject, text: bodyText },
+            { id: personId, display_name: name, email }
+          );
         }
       }
-    } else {
-      console.warn('[ResendAutoSync] Inbound API fetch status:', receivingRes.status);
     }
 
     // 2. Sync Outbound Emails from Resend Outbound API
@@ -251,36 +181,24 @@ export async function syncAllResendReplies() {
 
       for (const item of outboundItems) {
         if (!item.id) continue;
-        const existingOutbound = await Email.findOne({ messageId: item.id });
-        if (existingOutbound) continue;
+        const existOutbound = await db.query(
+          `SELECT id FROM messages WHERE external_message_id = $1 LIMIT 1`,
+          [item.id]
+        );
+        if (existOutbound.rows.length > 0) continue;
 
-        const recipientStr = Array.isArray(item.to) ? item.to[0] : item.to;
-        const { email: recipientEmail } = parseEmailAndName(recipientStr);
-        const { email: senderEmail } = parseEmailAndName(item.from);
+        const convRes = await db.query(
+          `INSERT INTO conversations (channel, external_thread_id, subject)
+           VALUES ('email', $1, $2) RETURNING id`,
+          [item.id, item.subject || 'Outbound Email']
+        );
+        const convId = convRes.rows[0].id;
 
-        const lead = recipientEmail
-          ? await Lead.findOne({ email: new RegExp(`^${recipientEmail.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'), deletedAt: null })
-          : null;
-
-        await Email.create({
-          direction: 'outbound',
-          from: item.from || 'System',
-          fromEmail: senderEmail || item.from || '',
-          to: Array.isArray(item.to) ? item.to : [item.to].filter(Boolean),
-          toEmail: recipientEmail || '',
-          subject: item.subject || '',
-          body: item.text || item.html || '',
-          htmlBody: item.html || item.text || '',
-          sentAt: item.created_at ? new Date(item.created_at) : new Date(),
-          messageId: item.id,
-          resendEmailId: item.id,
-          leadId: lead ? lead._id : null,
-          companyId: lead ? lead.companyId : null,
-          campaignId: lead ? lead.campaignId : null,
-          status: item.last_event || 'sent',
-          provider: 'resend',
-          humanReview: { status: 'Not Required' },
-        });
+        await db.query(
+          `INSERT INTO messages (conversation_id, direction, channel, external_message_id, subject, body, delivery_state, occurred_at)
+           VALUES ($1::uuid, 'outbound', 'email', $2, $3, $4, $5, $6)`,
+          [convId, item.id, item.subject || '', item.text || item.html || '', item.last_event || 'sent', item.created_at ? new Date(item.created_at) : new Date()]
+        );
         emailsStored += 1;
       }
     }

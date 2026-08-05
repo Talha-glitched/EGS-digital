@@ -1,7 +1,5 @@
 import { capResendBatchSize, RESEND_MAX_EMAILS_PER_REQUEST } from '../constants/resendLimits.js';
-import { Reply } from '../models/Reply.js';
-import { Lead } from '../models/Lead.js';
-import { SendJob } from '../models/SendJob.js';
+import db from '../db/index.js';
 
 // Helper to extract clean email address from "Name <email@domain.com>" or "email@domain.com"
 function extractCleanEmail(raw) {
@@ -47,10 +45,10 @@ function extractTextFromEml(emlString) {
 }
 
 /**
- * Synchronize external Resend API history into memory & database if needed
+ * Synchronize external Resend API history into memory
  */
 export async function syncResendHistory(apiKey, options = {}) {
-  const { campaignId, limit } = options;
+  const { limit } = options;
   let resendEmails = [];
   let hasMore = true;
   let afterCursor = null;
@@ -93,31 +91,45 @@ export async function getResendMetrics(options = {}) {
   const apiKey = process.env.RESEND_API_KEY;
 
   try {
-    // 1. Query DB SendJob for sent outreach emails
-    const sendJobQuery = { status: 'sent' };
+    // 1. Query PostgreSQL messages for sent outbound emails
+    let querySql = `
+      SELECT m.id, m.external_message_id, m.subject, m.body, m.delivery_state, m.occurred_at,
+             p.display_name AS person_name, pcm.normalized_value AS recipient_email,
+             ca.campaign_id
+      FROM messages m
+      JOIN conversations c ON m.conversation_id = c.id
+      LEFT JOIN conversation_participants cp ON cp.conversation_id = c.id AND cp.participant_role = 'recipient'
+      LEFT JOIN person_contact_methods pcm ON cp.person_contact_method_id = pcm.id
+      LEFT JOIN people p ON pcm.person_id = p.id
+      LEFT JOIN person_organization_roles por ON por.person_id = p.id
+      LEFT JOIN campaign_contacts cc ON cc.role_id = por.id
+      LEFT JOIN campaign_accounts ca ON cc.campaign_account_id = ca.id
+      WHERE m.direction = 'outbound'
+    `;
+    const queryParams = [];
+
     if (campaignId) {
-      sendJobQuery.campaignId = campaignId;
+      queryParams.push(campaignId);
+      querySql += ` AND (ca.campaign_id::text = $1::text)`;
     }
 
-    const dbSendJobs = await SendJob.find(sendJobQuery)
-      .populate({ path: 'leadId', select: 'email outreachEmail name designation campaignId' })
-      .sort({ sentAt: -1, createdAt: -1 })
-      .lean();
+    querySql += ` ORDER BY m.occurred_at DESC LIMIT 500`;
 
-    const dbEmails = dbSendJobs.map((job) => {
-      const recipient = job.recipientEmail || job.leadId?.outreachEmail || job.leadId?.email || '';
+    const dbRes = await db.query(querySql, queryParams);
+
+    const dbEmails = dbRes.rows.map((row) => {
+      const recipient = row.recipient_email || '';
       return {
-        id: job.providerMessageId || String(job._id),
-        dbJobId: String(job._id),
+        id: row.external_message_id || row.id,
+        dbJobId: row.id,
         from: process.env.RESEND_FROM_EMAIL || 'Rana <rana@masuood.exhibitgraphicsign.com>',
         to: [recipient],
-        subject: job.renderedSubject || '(No subject)',
-        body: job.renderedBody || '',
-        status: 'sent',
-        createdAt: job.sentAt || job.createdAt,
-        leadId: job.leadId?._id ? String(job.leadId._id) : null,
-        leadName: job.leadId?.name || '',
-        campaignId: job.campaignId ? String(job.campaignId) : (job.leadId?.campaignId ? String(job.leadId.campaignId) : null),
+        subject: row.subject || '(No subject)',
+        body: row.body || '',
+        status: row.delivery_state || 'sent',
+        createdAt: row.occurred_at,
+        leadName: row.person_name || '',
+        campaignId: row.campaign_id ? String(row.campaign_id) : null,
         source: 'database',
       };
     });
@@ -150,45 +162,8 @@ export async function getResendMetrics(options = {}) {
 
     let data = mergedEmails;
 
-    // Filter by campaign if campaignId is specified
-    if (campaignId) {
-      const leads = await Lead.find({ campaignId })
-        .select('email outreachEmail emailApollo emailHunter emailLusha emailPersonal lastMessageId')
-        .lean();
-
-      const campaignEmails = new Set();
-      for (const l of leads) {
-        if (l.email) campaignEmails.add(l.email.toLowerCase().trim());
-        if (l.outreachEmail) campaignEmails.add(l.outreachEmail.toLowerCase().trim());
-        if (l.emailApollo) campaignEmails.add(l.emailApollo.toLowerCase().trim());
-        if (l.emailHunter) campaignEmails.add(l.emailHunter.toLowerCase().trim());
-        if (l.emailLusha) campaignEmails.add(l.emailLusha.toLowerCase().trim());
-        if (l.emailPersonal) {
-          l.emailPersonal.split(';').forEach((e) => {
-            if (e.trim()) campaignEmails.add(e.toLowerCase().trim());
-          });
-        }
-      }
-      const campaignMessageIds = new Set(leads.map((l) => String(l.lastMessageId || '').trim()).filter(Boolean));
-
-      data = data.filter((email) => {
-        if (email.campaignId && String(email.campaignId) === String(campaignId)) {
-          return true;
-        }
-        const to = Array.isArray(email.to) ? email.to[0] : email.to;
-        const cleanTo = extractCleanEmail(to);
-        const emailId = String(email.id || '').trim();
-
-        return campaignEmails.has(cleanTo) || campaignMessageIds.has(emailId);
-      });
-    }
-
-    // 3. Map replies from database Reply collection & Resend Receiving API
+    // 3. Map replies from PostgreSQL messages table & Resend Receiving API
     try {
-      const recipientEmails = data
-        .map((email) => extractCleanEmail(Array.isArray(email.to) ? email.to[0] : email.to))
-        .filter(Boolean);
-
       const replyMap = new Map();
 
       // Fetch received emails directly from Resend Receiving API if API key is present
@@ -205,7 +180,6 @@ export async function getResendMetrics(options = {}) {
               if (cleanFrom) {
                 let apiText = (rItem.text || rItem.html || '').trim();
                 
-                // If top-level text/html is null, fetch detail or raw.download_url to extract exact email body
                 if (!apiText && rItem.id) {
                   try {
                     const detailRes = await fetch(`https://api.resend.com/emails/receiving/${rItem.id}`, {
@@ -225,16 +199,6 @@ export async function getResendMetrics(options = {}) {
                   }
                 }
 
-                if (!apiText && rItem.raw?.download_url) {
-                  try {
-                    const rawRes = await fetch(rItem.raw.download_url);
-                    const rawEml = await rawRes.text();
-                    apiText = extractTextFromEml(rawEml);
-                  } catch (rErr) {
-                    console.warn(`[ResendMetrics] Direct raw download failed for ${rItem.id}:`, rErr.message);
-                  }
-                }
-
                 replyMap.set(cleanFrom, {
                   text: apiText || '',
                   intent: 'Neutral',
@@ -250,80 +214,42 @@ export async function getResendMetrics(options = {}) {
         }
       }
 
-      // Fetch replies stored in database Reply collection
-      if (recipientEmails.length > 0) {
-        const replyQuery = campaignId
-          ? { $or: [{ campaignId }, { email: { $in: recipientEmails } }] }
-          : { email: { $in: recipientEmails } };
+      // Fetch inbound messages stored in PostgreSQL
+      const inRes = await db.query(
+        `SELECT m.subject, m.body, m.occurred_at, pcm.normalized_value AS sender_email
+         FROM messages m
+         JOIN conversations c ON m.conversation_id = c.id
+         LEFT JOIN conversation_participants cp ON cp.conversation_id = c.id AND cp.participant_role = 'sender'
+         LEFT JOIN person_contact_methods pcm ON cp.person_contact_method_id = pcm.id
+         WHERE m.direction = 'inbound'
+         ORDER BY m.occurred_at DESC LIMIT 200`
+      );
 
-        const replies = await Reply.find(replyQuery)
-          .select('email leadId from subject text intent receivedAt createdAt threadHistory')
-          .sort({ createdAt: -1 })
-          .lean();
-
-        const leadIds = replies.map((r) => r.leadId).filter(Boolean);
-        const repliedLeads = leadIds.length > 0
-          ? await Lead.find({ _id: { $in: leadIds } })
-              .select('email outreachEmail emailApollo emailHunter emailLusha emailPersonal')
-              .lean()
-          : [];
-
-        const leadToEmailsMap = new Map();
-        for (const l of repliedLeads) {
-          const emails = [];
-          if (l.email) emails.push(l.email.toLowerCase().trim());
-          if (l.outreachEmail) emails.push(l.outreachEmail.toLowerCase().trim());
-          if (l.emailApollo) emails.push(l.emailApollo.toLowerCase().trim());
-          if (l.emailHunter) emails.push(l.emailHunter.toLowerCase().trim());
-          if (l.emailLusha) emails.push(l.emailLusha.toLowerCase().trim());
-          if (l.emailPersonal) {
-            l.emailPersonal.split(';').forEach((e) => {
-              if (e.trim()) emails.push(e.toLowerCase().trim());
-            });
-          }
-          leadToEmailsMap.set(String(l._id), emails);
+      for (const row of inRes.rows) {
+        if (row.sender_email) {
+          replyMap.set(row.sender_email.toLowerCase(), {
+            text: row.body || '',
+            intent: 'Neutral',
+            receivedAt: row.occurred_at,
+            subject: row.subject || '',
+            from: row.sender_email,
+          });
         }
-
-        for (const r of replies) {
-          const replyText = (r.text || '').trim()
-            || r.threadHistory?.find((t) => t.type === 'inbound' && t.body?.trim())?.body
-            || r.threadHistory?.[0]?.body
-            || '';
-          const info = {
-            text: replyText,
-            intent: r.intent || 'Neutral',
-            receivedAt: r.receivedAt || r.createdAt,
-            subject: r.subject || '',
-            from: r.from || r.email || '',
-          };
-          if (r.email) replyMap.set(r.email.toLowerCase().trim(), info);
-          if (r.from) {
-            const cleanFrom = extractCleanEmail(r.from);
-            if (cleanFrom) replyMap.set(cleanFrom, info);
-          }
-          if (r.leadId && leadToEmailsMap.has(String(r.leadId))) {
-            for (const emailVar of leadToEmailsMap.get(String(r.leadId))) {
-              if (!replyMap.has(emailVar) || !replyMap.get(emailVar)?.text) {
-                replyMap.set(emailVar, info);
-              }
-            }
-          }
-        }
-
-        data = data.map((email) => {
-          const to = Array.isArray(email.to) ? email.to[0] : email.to;
-          const cleanTo = extractCleanEmail(to);
-          const replyInfo = replyMap.get(cleanTo);
-          if (replyInfo) {
-            return {
-              ...email,
-              last_event: 'received',
-              reply: replyInfo,
-            };
-          }
-          return email;
-        });
       }
+
+      data = data.map((email) => {
+        const to = Array.isArray(email.to) ? email.to[0] : email.to;
+        const cleanTo = extractCleanEmail(to);
+        const replyInfo = replyMap.get(cleanTo);
+        if (replyInfo) {
+          return {
+            ...email,
+            last_event: 'received',
+            reply: replyInfo,
+          };
+        }
+        return email;
+      });
     } catch (err) {
       console.error('Failed to map replies to Resend emails:', err);
     }
@@ -336,14 +262,14 @@ export async function getResendMetrics(options = {}) {
 
     // Apply search filter if requested
     if (search) {
-      const query = String(search).trim().toLowerCase();
+      const queryStr = String(search).trim().toLowerCase();
       data = data.filter((email) => {
         const to = Array.isArray(email.to) ? email.to[0] : email.to;
         const cleanTo = extractCleanEmail(to);
         const subject = String(email.subject || '');
         const from = String(email.from || '');
         const replyText = String(email.reply?.text || '');
-        return `${cleanTo} ${subject} ${from} ${replyText}`.toLowerCase().includes(query);
+        return `${cleanTo} ${subject} ${from} ${replyText}`.toLowerCase().includes(queryStr);
       });
     }
 
@@ -388,7 +314,6 @@ export async function getResendMetrics(options = {}) {
     const bounceRate = total > 0 ? ((bounced / total) * 100).toFixed(1) : '0.0';
     const receivedRate = total > 0 ? ((received / total) * 100).toFixed(1) : '0.0';
 
-    // Apply limit to returned emails array if specified
     const resultEmails = (limit && limit > 0) ? data.slice(0, limit) : data;
 
     return {
@@ -416,7 +341,6 @@ export async function getResendMetrics(options = {}) {
         body: e.body || '',
         status: e.last_event || e.status,
         createdAt: e.createdAt || e.created_at,
-        leadId: e.leadId || null,
         leadName: e.leadName || '',
         reply: e.reply || null,
       })),

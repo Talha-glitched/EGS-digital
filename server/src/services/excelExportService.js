@@ -1,17 +1,57 @@
 import XLSX from 'xlsx';
-import { Company } from '../models/Company.js';
-import { Lead } from '../models/Lead.js';
-import { ProjectCampaign } from '../models/ProjectCampaign.js';
+import db from '../db/index.js';
 
 export async function exportCampaignToBuffer(projectId) {
-  const project = await ProjectCampaign.findById(projectId).lean();
-  if (!project) throw new Error('Project not found.');
+  let project = { name: 'Campaign Export' };
+  let companies = [];
+  let leads = [];
 
-  // Fetch Companies
-  const companies = await Company.find({ projectsAssociated: projectId, deletedAt: null }).sort({ companyName: 1 }).lean();
-  
-  // Fetch Leads
-  const leads = await Lead.find({ campaignId: projectId, deletedAt: null }).sort({ createdAt: -1 }).lean();
+  try {
+    const pRes = await db.query(
+      'SELECT id, name, payload FROM campaigns WHERE id::text = $1::text OR mongo_campaign_id = $1 LIMIT 1',
+      [String(projectId)]
+    );
+    if (pRes.rows.length > 0) {
+      project = pRes.rows[0];
+      project.name = project.name || project.payload?.projectName || project.payload?.name || 'Campaign Export';
+    } else {
+      throw new Error('Project not found.');
+    }
+
+    const cRes = await db.query(
+      `SELECT DISTINCT o.id AS "_id", o.canonical_name AS "companyName",
+              oi.normalized_value AS "domain", l.geography AS "city",
+              ocm_email.normalized_value AS "genericEmail",
+              ocm_phone.normalized_value AS "genericPhone",
+              o.organization_type AS "globalStatus"
+       FROM organizations o
+       LEFT JOIN organization_identifiers oi ON oi.organization_id = o.id AND oi.type = 'domain'
+       LEFT JOIN locations l ON l.organization_id = o.id
+       LEFT JOIN organization_contact_methods ocm_email ON ocm_email.organization_id = o.id AND ocm_email.type = 'email'
+       LEFT JOIN organization_contact_methods ocm_phone ON ocm_phone.organization_id = o.id AND ocm_phone.type = 'phone'
+       WHERE o.archived_at IS NULL
+       ORDER BY o.canonical_name ASC`
+    );
+    companies = cRes.rows;
+
+    const lRes = await db.query(
+      `SELECT p.id AS "_id", p.display_name AS "name", por.title AS "designation", por.organization_id AS "companyId",
+              pcm_email.normalized_value AS "outreachEmail", pcm_phone.normalized_value AS "phone", pcm_li.normalized_value AS "linkedinUrl",
+              cc.lead_state AS "deliveryStatus", p.created_at AS "createdAt"
+       FROM people p
+       LEFT JOIN person_organization_roles por ON por.person_id = p.id
+       LEFT JOIN person_contact_methods pcm_email ON pcm_email.person_id = p.id AND pcm_email.type = 'email'
+       LEFT JOIN person_contact_methods pcm_phone ON pcm_phone.person_id = p.id AND pcm_phone.type = 'phone'
+       LEFT JOIN person_contact_methods pcm_li ON pcm_li.person_id = p.id AND pcm_li.type = 'linkedin'
+       LEFT JOIN campaign_contacts cc ON cc.role_id = por.id
+       WHERE p.archived_at IS NULL`
+    );
+    leads = lRes.rows;
+  } catch (err) {
+    if (err.message === 'Project not found.') throw err;
+    console.error('Error fetching export data from PostgreSQL:', err.message);
+  }
+
   const companyMap = new Map(companies.map(c => [String(c._id), c]));
 
   // Build Companies Sheet
@@ -20,11 +60,11 @@ export async function exportCampaignToBuffer(projectId) {
     const pocsCount = leads.filter(l => String(l.companyId) === String(comp._id)).length;
     companyRows.push({
       '#': idx + 1,
-      'Company Name': comp.companyName,
-      'Website': comp.domain,
+      'Company Name': comp.companyName || '',
+      'Website': comp.domain || '',
       'City': comp.city || '',
       'Country': comp.country || '',
-      'Generic Email': (comp.genericEmails || []).join('; '),
+      'Generic Email': comp.genericEmail || '',
       'Phone': comp.genericPhone || '',
       'POCs Found': pocsCount,
       'Status': comp.globalStatus || 'Lead',
@@ -137,3 +177,4 @@ export async function exportCampaignToBuffer(projectId) {
   const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
   return buffer;
 }
+

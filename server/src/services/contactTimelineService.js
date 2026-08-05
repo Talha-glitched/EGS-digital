@@ -1,76 +1,16 @@
-import { Lead } from '../models/Lead.js';
-import { Company } from '../models/Company.js';
-import { Reply } from '../models/Reply.js';
-import { SendJob } from '../models/SendJob.js';
-import { Email } from '../models/Email.js';
-import { Task } from '../models/Task.js';
-import { Opportunity } from '../models/Opportunity.js';
-import { ProjectCampaign } from '../models/ProjectCampaign.js';
-import { POC_QUALIFICATION_LABELS } from '../constants/pocQualification.js';
+import db from '../db/index.js';
 import {
   listInteractionsForLead,
   listInteractionsForCompany,
   manualInteractionToEvent,
   buildRelatedContacts,
 } from './interactionService.js';
-import { getLeadEmailCandidates, detectEmailVendor } from '../utils/contactEmails.js';
-import mongoose from 'mongoose';
 
 function extractCleanEmail(raw) {
   if (!raw) return '';
   const str = String(raw).trim().toLowerCase();
   const match = str.match(/<([^>]+)>/);
   return (match && match[1] ? match[1] : str).trim().toLowerCase();
-}
-
-function extractTextFromEml(emlString) {
-  if (!emlString) return '';
-
-  const bodyMatch = emlString.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-  let htmlOrText = bodyMatch ? bodyMatch[1] : '';
-
-  if (!htmlOrText) {
-    const parts = emlString.split(/\r?\n\r?\n/);
-    if (parts.length > 1) {
-      htmlOrText = parts.slice(1).join('\n\n');
-    }
-  }
-
-  let decoded = htmlOrText
-    .replace(/=\r?\n/g, '')
-    .replace(/=3D/gi, '=')
-    .replace(/=20/g, ' ')
-    .replace(/=0A/gi, '\n')
-    .replace(/=0D/gi, '\r');
-
-  let plain = decoded
-    .replace(/<br\s*\/?>/gi, '\n')
-    .replace(/<\/p>/gi, '\n\n')
-    .replace(/<\/div>/gi, '\n')
-    .replace(/<[^>]+>/g, '')
-    .replace(/&#\d+;/g, '')
-    .replace(/&nbsp;/gi, ' ')
-    .replace(/&lt;/gi, '<')
-    .replace(/&gt;/gi, '>')
-    .replace(/&amp;/gi, '&');
-
-  return plain.split('\n').map((line) => line.trim()).filter(Boolean).join('\n');
-}
-
-function assertDb() {
-  if (!process.env.MONGODB_URI) {
-    const error = new Error('Database not configured.');
-    error.status = 503;
-    throw error;
-  }
-}
-
-function assertValidObjectId(id, label = 'ID') {
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    const error = new Error(`Invalid ${label}.`);
-    error.status = 400;
-    throw error;
-  }
 }
 
 function event(id, payload) {
@@ -101,586 +41,207 @@ function event(id, payload) {
   };
 }
 
-function normalizeObjectIdList(values = []) {
-  return [...new Set(
-    values
-      .map((value) => (value == null ? '' : String(value).trim()))
-      .filter((value) => mongoose.isValidObjectId(value)),
-  )];
-}
-
-function leadOutreachEvents(lead, campaignName) {
-  const events = [];
-  const name = lead.name || lead.email;
-  const base = { contactName: name, contactId: String(lead._id) };
-
-  events.push(event(`lead-created-${lead._id}`, {
-    ...base,
-    type: 'profile',
-    title: 'Contact enrolled',
-    detail: `Added to ${campaignName || 'campaign'} as ${lead.designation || 'point of contact'}.`,
-    timestamp: lead.createdAt,
-    actor: 'System',
-    channel: 'crm',
-  }));
-
-  if (lead.deliveryStatus === 'Replied' && lead.repliedAt) {
-    events.push(event(`lead-replied-${lead._id}`, {
-      ...base,
-      type: 'email_inbound',
-      title: 'Email reply received',
-      detail: `Contact replied during ${campaignName || 'campaign'} outreach.`,
-      timestamp: lead.repliedAt,
-      channel: 'email',
-    }));
-  }
-
-  const li = lead.linkedinOutreach || {};
-  if (li.connSent) {
-    events.push(event(`li-conn-${lead._id}`, {
-      ...base,
-      type: 'linkedin',
-      title: 'LinkedIn connection sent',
-      detail: li.notes || 'Connection request logged.',
-      timestamp: li.connDate || lead.updatedAt,
-      channel: 'linkedin',
-    }));
-  }
-  if (li.accepted) {
-    events.push(event(`li-accept-${lead._id}`, {
-      ...base,
-      type: 'linkedin',
-      title: 'LinkedIn connection accepted',
-      detail: 'Connection accepted on LinkedIn.',
-      timestamp: li.acceptDate || lead.updatedAt,
-      channel: 'linkedin',
-    }));
-  }
-  if (li.inmailSent) {
-    events.push(event(`li-inmail-${lead._id}`, {
-      ...base,
-      type: 'linkedin',
-      title: 'LinkedIn InMail sent',
-      detail: li.notes || 'InMail outreach logged.',
-      timestamp: li.inmailDate || lead.updatedAt,
-      channel: 'linkedin',
-    }));
-  }
-  if (li.inmailResponded) {
-    events.push(event(`li-inmail-resp-${lead._id}`, {
-      ...base,
-      type: 'email_inbound',
-      title: 'LinkedIn InMail response',
-      detail: li.notes || 'Contact responded to InMail.',
-      timestamp: li.inmailDate || lead.updatedAt,
-      channel: 'linkedin',
-    }));
-  }
-  if (li.dmSent) {
-    events.push(event(`li-dm-${lead._id}`, {
-      ...base,
-      type: 'linkedin',
-      title: 'LinkedIn direct message sent',
-      detail: li.notes || 'DM outreach logged.',
-      timestamp: li.dmDate || lead.updatedAt,
-      channel: 'linkedin',
-    }));
-  }
-  if (li.dmResponded) {
-    events.push(event(`li-dm-resp-${lead._id}`, {
-      ...base,
-      type: 'email_inbound',
-      title: 'LinkedIn DM response',
-      detail: li.notes || 'Contact responded to direct message.',
-      timestamp: li.dmDate || lead.updatedAt,
-      channel: 'linkedin',
-    }));
-  }
-
-  const cc = lead.coldCall || {};
-  if (cc.made) {
-    events.push(event(`cc-${lead._id}`, {
-      ...base,
-      type: 'call',
-      title: 'Cold call logged',
-      detail: [cc.response, cc.notes].filter(Boolean).join(' · ') || 'Call attempt recorded.',
-      timestamp: cc.date || lead.updatedAt,
-      channel: 'phone',
-    }));
-  }
-  if (String(cc.response || '').trim()) {
-    events.push(event(`cc-resp-${lead._id}`, {
-      ...base,
-      type: 'email_inbound',
-      title: 'Cold call response',
-      detail: String(cc.response).trim(),
-      timestamp: cc.date || lead.updatedAt,
-      channel: 'phone',
-    }));
-  }
-
-  const wa = lead.whatsapp || {};
-  if (wa.sent) {
-    events.push(event(`wa-${lead._id}`, {
-      ...base,
-      type: 'whatsapp',
-      title: 'WhatsApp message sent',
-      detail: wa.response || 'WhatsApp follow-up logged.',
-      timestamp: wa.date || lead.updatedAt,
-      channel: 'whatsapp',
-    }));
-  }
-  if (String(wa.response || '').trim()) {
-    events.push(event(`wa-resp-${lead._id}`, {
-      ...base,
-      type: 'email_inbound',
-      title: 'WhatsApp response',
-      detail: String(wa.response).trim(),
-      timestamp: wa.date || lead.updatedAt,
-      channel: 'whatsapp',
-    }));
-  }
-
-  if (lead.outcome && lead.outcome !== 'Pending') {
-    events.push(event(`outcome-${lead._id}`, {
-      ...base,
-      type: 'status',
-      title: `Outcome: ${lead.outcome}`,
-      detail: `Campaign outcome updated for ${name}.`,
-      timestamp: lead.updatedAt,
-      channel: 'crm',
-    }));
-  }
-
-  const poc = lead.pocQualification || {};
-  if (poc.status && poc.status !== 'Unverified') {
-    const label = POC_QUALIFICATION_LABELS[poc.status] || poc.status;
-    let detail = poc.notes || '';
-    if (poc.status === 'RedirectedWithReferral' && poc.referral?.name) {
-      const ref = poc.referral;
-      detail = [detail, `Referred to ${ref.name}${ref.email ? ` (${ref.email})` : ''}`].filter(Boolean).join(' · ');
-    }
-    events.push(event(`poc-${lead._id}-${poc.status}`, {
-      ...base,
-      type: 'poc_qualification',
-      title: `POC: ${label}`,
-      detail: detail || `Assessed by ${poc.assessedBy || 'team'}.`,
-      timestamp: poc.assessedAt || lead.updatedAt,
-      actor: poc.assessedBy || 'Team',
-      channel: 'crm',
-      meta: { pocStatus: poc.status },
-    }));
-  }
-
-  return events.filter(Boolean);
-}
-
-async function enrichCampaignMap(campaignIds) {
-  const ids = normalizeObjectIdList(campaignIds);
-  if (!ids.length) return new Map();
-  const campaigns = await ProjectCampaign.find({ _id: { $in: ids } }).select('projectName').lean();
-  return new Map(campaigns.map((c) => [String(c._id), c.projectName]));
-}
-
 export async function getLeadTimeline(leadId) {
-  assertDb();
-  assertValidObjectId(leadId, 'lead ID');
-  const lead = await Lead.findById(leadId).lean();
-  if (!lead) {
+  // Query person details from PostgreSQL
+  const pRes = await db.query(
+    `SELECT p.id, p.display_name, por.organization_id, por.title AS designation,
+            o.canonical_name AS company_name, pcm.normalized_value AS email,
+            c.name AS campaign_name, c.id AS campaign_id
+     FROM people p
+     LEFT JOIN person_contact_methods pcm ON pcm.person_id = p.id AND pcm.type = 'email'
+     LEFT JOIN person_organization_roles por ON por.person_id = p.id
+     LEFT JOIN organizations o ON por.organization_id = o.id
+     LEFT JOIN campaign_accounts ca ON ca.organization_id = o.id
+     LEFT JOIN campaigns c ON ca.campaign_id = c.id
+     WHERE p.id::text = $1 OR pcm.normalized_value = $1
+     LIMIT 1`,
+    [String(leadId)]
+  );
+
+  if (!pRes.rows.length) {
     const error = new Error('Lead not found.');
     error.status = 404;
     throw error;
   }
 
-  // Collect all email address variations for this POC/Lead
-  const leadEmails = getLeadEmailCandidates(lead);
+  const person = pRes.rows[0];
+  const contactName = person.display_name || person.email || 'Contact';
 
-  const sendJobQuery = leadEmails.length > 0
-    ? { $or: [{ leadId }, { recipientEmail: { $in: leadEmails } }], status: 'sent' }
-    : { leadId, status: 'sent' };
+  const events = [];
 
-  const replyQuery = leadEmails.length > 0
-    ? { $or: [{ leadId }, { email: { $in: leadEmails } }, { from: { $in: leadEmails } }] }
-    : { leadId };
+  // 1. Enrollment Event
+  events.push(event(`lead-created-${person.id}`, {
+    contactName,
+    contactId: String(person.id),
+    type: 'profile',
+    title: 'Contact enrolled',
+    detail: `Added to ${person.campaign_name || 'campaign'} as ${person.designation || 'point of contact'}.`,
+    timestamp: new Date().toISOString(),
+    actor: 'System',
+    channel: 'crm',
+  }));
 
-  const [company, campaign, sendJobs, replies, tasks, opportunities, manualInteractions] = await Promise.all([
-    Company.findById(lead.companyId).select('companyName').lean(),
-    ProjectCampaign.findById(lead.campaignId).select('projectName').lean(),
-    SendJob.find(sendJobQuery)
-      .select('leadId recipientEmail renderedSubject renderedBody stepIndex sentAt providerMessageId createdAt')
-      .sort({ sentAt: 1 })
-      .lean(),
-    Reply.find(replyQuery)
-      .select('leadId text body subject intent receivedAt from email systemInbox vendorSource humanReview confirmedEmail createdAt')
-      .sort({ receivedAt: 1 })
-      .lean(),
-    Task.find({ leadId })
-      .select('title status taskType dueAt completedAt notes owner priority channel leadId createdAt')
-      .sort({ createdAt: -1 })
-      .lean(),
-    Opportunity.find({ $or: [{ primaryLeadId: leadId }, { companyId: lead.companyId }] })
-      .select('name stage valueAed owner updatedAt createdAt primaryLeadId companyId')
-      .sort({ updatedAt: -1 })
-      .lean(),
-    listInteractionsForLead(leadId),
-  ]);
+  // 2. Query Messages (Inbound & Outbound) from PostgreSQL
+  const msgRes = await db.query(
+    `SELECT m.id, m.direction, m.subject, m.body, m.delivery_state, m.occurred_at
+     FROM messages m
+     JOIN conversations conv ON m.conversation_id = conv.id
+     LEFT JOIN conversation_participants cp ON cp.conversation_id = conv.id
+     LEFT JOIN person_contact_methods pcm ON cp.person_contact_method_id = pcm.id
+     WHERE pcm.person_id = $1::uuid OR pcm.normalized_value = $2
+     ORDER BY m.occurred_at DESC`,
+    [person.id, person.email || '']
+  );
 
-  // Fallback: If Resend API key is present and lead has replied but replies array is empty, fetch from Resend Receiving API
-  const apiKey = process.env.RESEND_API_KEY;
-  let combinedReplies = [...replies];
-  if (apiKey && combinedReplies.length === 0 && leadEmails.length > 0) {
-    try {
-      const receivingRes = await fetch('https://api.resend.com/emails/receiving?limit=100', {
-        headers: { Authorization: `Bearer ${apiKey}` },
+  msgRes.rows.forEach((m) => {
+    const isOut = m.direction === 'outbound';
+    const evt = event(`msg-${m.id}`, {
+      contactName,
+      contactId: String(person.id),
+      type: isOut ? 'email_outbound' : 'email_inbound',
+      title: m.subject ? `${isOut ? 'Sent' : 'Reply'}: ${m.subject}` : `${isOut ? 'Outbound' : 'Inbound'} email`,
+      detail: (m.body || '').slice(0, 500) || 'Email message.',
+      timestamp: m.occurred_at,
+      actor: isOut ? 'Sequence' : contactName,
+      channel: 'email',
+      meta: { subject: m.subject, body: m.body, direction: m.direction },
+    });
+    if (evt) events.push(evt);
+  });
+
+  // 3. Query Tasks from PostgreSQL
+  try {
+    const taskRes = await db.query(
+      `SELECT id, title, description, status, priority, due_at, completed_at, created_at
+       FROM tasks
+       ORDER BY created_at DESC LIMIT 100`
+    );
+    taskRes.rows.forEach((t) => {
+      const evt = event(`task-${t.id}`, {
+        contactName,
+        contactId: String(person.id),
+        type: 'task',
+        title: t.status === 'completed' ? `Task completed: ${t.title}` : `Follow-up: ${t.title}`,
+        detail: t.description || '',
+        timestamp: t.completed_at || t.due_at || t.created_at,
+        actor: 'Team',
+        channel: 'task',
+        meta: { priority: t.priority, status: t.status },
       });
-      if (receivingRes.ok) {
-        const receivingJson = await receivingRes.json();
-        const receivedList = receivingJson.data || [];
-        for (const rItem of receivedList) {
-          const cleanFrom = extractCleanEmail(rItem.from);
-          if (cleanFrom && leadEmails.some((e) => e.toLowerCase().trim() === cleanFrom)) {
-            let bodyText = (rItem.text || rItem.html || '').trim();
-            if (!bodyText && rItem.id) {
-              try {
-                const detailRes = await fetch(`https://api.resend.com/emails/receiving/${rItem.id}`, {
-                  headers: { Authorization: `Bearer ${apiKey}` },
-                });
-                if (detailRes.ok) {
-                  const detailJson = await detailRes.json();
-                  bodyText = (detailJson.text || detailJson.html || '').trim();
-                  if (!bodyText && detailJson.raw?.download_url) {
-                    const rawRes = await fetch(detailJson.raw.download_url);
-                    const rawEml = await rawRes.text();
-                    bodyText = extractTextFromEml(rawEml);
-                  }
-                }
-              } catch (dErr) {
-                console.warn(`[Timeline] EML fetch failed for ${rItem.id}:`, dErr.message);
-              }
-            }
-
-            combinedReplies.push({
-              _id: rItem.id,
-              leadId: lead._id,
-              from: rItem.from,
-              email: cleanFrom,
-              subject: rItem.subject,
-              text: bodyText || rItem.subject || 'Inbound prospect response received.',
-              intent: 'Neutral',
-              receivedAt: rItem.created_at || new Date(),
-            });
-          }
-        }
-      }
-    } catch (rErr) {
-      console.warn('[Timeline] Resend Receiving API fallback skipped:', rErr.message);
-    }
-  }
-
-  const campaignName = campaign?.projectName || 'Campaign';
-  const contactName = lead.name || lead.email;
-  const events = leadOutreachEvents(lead, campaignName);
-
-  sendJobs.forEach((job) => {
-    const evt = event(`send-${job._id}`, {
-      contactName,
-      contactId: String(leadId),
-      type: 'email_outbound',
-      title: job.renderedSubject ? `Sent: ${job.renderedSubject}` : `Sequence step ${job.stepIndex + 1} sent`,
-      detail: job.renderedBody || job.renderedSubject || 'Automated sequence email delivered.',
-      timestamp: job.sentAt || job.createdAt,
-      actor: 'Sequence',
-      channel: 'email',
-      meta: {
-        step: job.stepIndex + 1,
-        subject: job.renderedSubject,
-        body: job.renderedBody,
-        htmlBody: job.renderedBody || '',
-        to: job.recipientEmail,
-        providerMessageId: job.providerMessageId,
-      },
+      if (evt) events.push(evt);
     });
-    if (evt) events.push(evt);
-  });
+  } catch (tErr) {}
 
-function formatReplyDetailText(reply) {
-  let text = (reply.text || reply.body || '').trim();
-  if (text) {
-    if (/<[a-z][\s\S]*>/i.test(text)) {
-      text = text
-        .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
-        .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
-        .replace(/<[^>]+>/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim();
-    }
-  }
-  return text || reply.subject || 'Inbound email received.';
-}
-
-  combinedReplies.forEach((reply) => {
-    const vendorSource = reply.vendorSource || lead.outreachEmailSource || detectEmailVendor(lead, reply.from || reply.email) || 'Manual';
-    const detailText = formatReplyDetailText(reply);
-    const evt = event(`reply-${reply._id}`, {
-      contactName,
-      contactId: String(leadId),
-      type: 'email_inbound',
-      title: reply.subject ? `Reply: ${reply.subject}` : `Reply: ${reply.intent || 'Inbound'}`,
-      detail: detailText,
-      timestamp: reply.receivedAt || reply.createdAt,
-      actor: reply.from || contactName,
-      channel: 'email',
-      meta: {
-        intent: reply.intent,
-        subject: reply.subject,
-        body: detailText,
-        htmlBody: reply.html || reply.htmlBody || '',
-        from: reply.from,
-        systemInbox: reply.systemInbox || process.env.RESEND_FROM_EMAIL || 'rana@masuood.exhibitgraphicsign.com',
-        confirmedEmail: reply.email || lead.outreachEmail || lead.email,
-        vendorSource,
-        confirmedEmails: lead.confirmedEmails || [],
-      },
+  // 4. Query Manual Interactions
+  try {
+    const manualInteractions = await listInteractionsForLead(person.id);
+    manualInteractions.forEach((record) => {
+      events.push(manualInteractionToEvent(
+        record,
+        contactName,
+        buildRelatedContacts(record, new Map([[String(person.id), person]]))
+      ));
     });
-    if (evt) events.push(evt);
-  });
-
-  tasks.forEach((task) => {
-    if ((task.taskType === 'relationship_follow_up' || task.taskType === 'reply_review') && task.status === 'Done') return;
-    const evt = event(`task-${task._id}`, {
-      contactName,
-      contactId: String(leadId),
-      type: 'task',
-      title: task.status === 'Done' ? `Task completed: ${task.title}` : `Follow-up: ${task.title}`,
-      detail: task.notes || (task.dueAt ? `Due ${new Date(task.dueAt).toLocaleDateString('en-AE')}` : ''),
-      timestamp: task.status === 'Done' && task.completedAt ? task.completedAt : (task.dueAt || task.createdAt),
-      actor: task.owner || 'Team',
-      channel: 'task',
-      meta: { priority: task.priority, status: task.status },
-    });
-    if (evt) events.push(evt);
-  });
-
-  opportunities.forEach((opp) => {
-    const evt = event(`opp-${opp._id}`, {
-      contactName,
-      contactId: String(leadId),
-      type: 'opportunity',
-      title: opp.name,
-      detail: `${opp.stage} · AED ${(opp.valueAed || 0).toLocaleString('en-AE')} · ${opp.owner || 'admin'}`,
-      timestamp: opp.updatedAt || opp.createdAt,
-      actor: opp.owner || 'Team',
-      channel: 'pipeline',
-      meta: { stage: opp.stage, valueAed: opp.valueAed },
-    });
-    if (evt) events.push(evt);
-  });
-
-  const relatedIds = manualInteractions.flatMap((record) => record.relatedLeadIds || []);
-  const relatedLeads = relatedIds.length
-    ? await Lead.find({ _id: { $in: relatedIds } }).select('name email').lean()
-    : [];
-  const interactionLeadMap = new Map([
-    [String(leadId), lead],
-    ...relatedLeads.map((item) => [String(item._id), item]),
-  ]);
-
-  manualInteractions.forEach((record) => {
-    const primaryLead = interactionLeadMap.get(String(record.leadId));
-    events.push(manualInteractionToEvent(
-      record,
-      primaryLead?.name || primaryLead?.email || contactName,
-      buildRelatedContacts(record, interactionLeadMap),
-    ));
-  });
+  } catch (iErr) {}
 
   events.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
   return {
     subject: {
       type: 'contact',
-      id: String(lead._id),
+      id: String(person.id),
       name: contactName,
-      designation: lead.designation || '',
-      companyName: company?.companyName || '',
-      campaignName,
-      email: lead.email,
+      designation: person.designation || '',
+      companyName: person.company_name || '',
+      campaignName: person.campaign_name || 'Campaign',
+      email: person.email,
     },
     events,
   };
 }
 
 export async function getCompanyTimeline(companyId) {
-  assertDb();
-  assertValidObjectId(companyId, 'company ID');
-  const company = await Company.findById(companyId).lean();
-  if (!company) {
+  const cRes = await db.query(
+    `SELECT o.id, o.canonical_name, oi.normalized_value AS domain
+     FROM organizations o
+     LEFT JOIN organization_identifiers oi ON oi.organization_id = o.id AND oi.type = 'domain'
+     WHERE o.id::text = $1 OR lower(o.canonical_name) = lower($1) OR oi.normalized_value = $1
+     LIMIT 1`,
+    [String(companyId)]
+  );
+
+  if (!cRes.rows.length) {
     const error = new Error('Company not found.');
     error.status = 404;
     throw error;
   }
 
-  const leads = await Lead.find({ companyId })
-    .select('name email companyId campaignId repliedAt deliveryStatus designation outcome linkedinOutreach coldCall whatsapp pocQualification outreachEmail emailApollo emailHunter emailLusha emailPersonal createdAt updatedAt confirmedEmails')
-    .lean();
-  const leadIds = leads.map((l) => l._id);
-  const campaignIds = normalizeObjectIdList(leads.map((l) => l.campaignId));
-  const campaignMap = await enrichCampaignMap(campaignIds);
+  const company = cRes.rows[0];
 
-  const companyLeadEmailsSet = new Set();
-  leads.forEach((l) => {
-    if (l.email) companyLeadEmailsSet.add(l.email.toLowerCase().trim());
-    if (l.outreachEmail) companyLeadEmailsSet.add(l.outreachEmail.toLowerCase().trim());
-    if (l.emailApollo) companyLeadEmailsSet.add(l.emailApollo.toLowerCase().trim());
-    if (l.emailHunter) companyLeadEmailsSet.add(l.emailHunter.toLowerCase().trim());
-    if (l.emailLusha) companyLeadEmailsSet.add(l.emailLusha.toLowerCase().trim());
-    if (l.emailPersonal) {
-      l.emailPersonal.split(';').forEach((e) => {
-        if (e.trim()) companyLeadEmailsSet.add(e.toLowerCase().trim());
-      });
-    }
-  });
-  const companyLeadEmails = [...companyLeadEmailsSet];
+  // Query people in this company
+  const pRes = await db.query(
+    `SELECT p.id, p.display_name, por.title AS designation, pcm.normalized_value AS email
+     FROM person_organization_roles por
+     JOIN people p ON por.person_id = p.id
+     LEFT JOIN person_contact_methods pcm ON pcm.person_id = p.id AND pcm.type = 'email'
+     WHERE por.organization_id = $1::uuid`,
+    [company.id]
+  );
 
-  const sendJobQuery = companyLeadEmails.length > 0
-    ? { $or: [{ leadId: { $in: leadIds } }, { recipientEmail: { $in: companyLeadEmails } }], status: 'sent' }
-    : { leadId: { $in: leadIds }, status: 'sent' };
-
-  const replyQuery = companyLeadEmails.length > 0
-    ? { $or: [{ leadId: { $in: leadIds } }, { email: { $in: companyLeadEmails } }, { from: { $in: companyLeadEmails } }] }
-    : { leadId: { $in: leadIds } };
-
-  const [sendJobs, replies, tasks, opportunities, manualInteractions] = await Promise.all([
-    SendJob.find(sendJobQuery)
-      .select('leadId recipientEmail renderedSubject renderedBody stepIndex sentAt providerMessageId createdAt')
-      .sort({ sentAt: -1 })
-      .lean(),
-    Reply.find(replyQuery)
-      .select('leadId text body subject intent receivedAt from email createdAt')
-      .sort({ receivedAt: -1 })
-      .lean(),
-    Task.find({ companyId })
-      .select('title notes owner dueAt leadId taskType status createdAt')
-      .sort({ createdAt: -1 })
-      .lean(),
-    Opportunity.find({ companyId })
-      .select('name stage valueAed owner updatedAt createdAt primaryLeadId')
-      .sort({ updatedAt: -1 })
-      .lean(),
-    listInteractionsForCompany(companyId),
-  ]);
-
-  const leadMap = new Map(leads.map((l) => [String(l._id), l]));
+  const people = pRes.rows;
   const events = [];
 
-  leads.forEach((lead) => {
-    const campaignName = campaignMap.get(String(lead.campaignId));
-    events.push(...leadOutreachEvents(lead, campaignName));
-  });
+  // Query messages for company
+  const msgRes = await db.query(
+    `SELECT m.id, m.direction, m.subject, m.body, m.occurred_at, p.display_name AS person_name
+     FROM messages m
+     JOIN conversations conv ON m.conversation_id = conv.id
+     LEFT JOIN conversation_participants cp ON cp.conversation_id = conv.id
+     LEFT JOIN person_contact_methods pcm ON cp.person_contact_method_id = pcm.id
+     LEFT JOIN person_organization_roles por ON por.person_id = pcm.person_id
+     LEFT JOIN people p ON pcm.person_id = p.id
+     WHERE por.organization_id = $1::uuid
+     ORDER BY m.occurred_at DESC LIMIT 100`,
+    [company.id]
+  );
 
-  sendJobs.forEach((job) => {
-    const lead = leadMap.get(String(job.leadId));
-    const contactName = lead?.name || lead?.email || 'Contact';
-    const evt = event(`send-${job._id}`, {
-      contactName,
-      contactId: String(job.leadId || ''),
-      type: 'email_outbound',
-      title: job.renderedSubject ? `Sent: ${job.renderedSubject}` : `Email step ${job.stepIndex + 1} · ${contactName}`,
-      detail: job.renderedBody || job.renderedSubject || 'Sequence email delivered.',
-      timestamp: job.sentAt || job.createdAt,
-      actor: 'Sequence',
+  msgRes.rows.forEach((m) => {
+    const isOut = m.direction === 'outbound';
+    const evt = event(`msg-${m.id}`, {
+      contactName: m.person_name || 'Contact',
+      contactId: String(company.id),
+      type: isOut ? 'email_outbound' : 'email_inbound',
+      title: m.subject ? `${isOut ? 'Sent' : 'Reply'}: ${m.subject}` : `${isOut ? 'Outbound' : 'Inbound'} email`,
+      detail: (m.body || '').slice(0, 500) || 'Email message.',
+      timestamp: m.occurred_at,
+      actor: isOut ? 'Sequence' : (m.person_name || 'Contact'),
       channel: 'email',
-      meta: {
-        step: job.stepIndex + 1,
-        subject: job.renderedSubject,
-        body: job.renderedBody,
-        to: job.recipientEmail,
-        providerMessageId: job.providerMessageId,
-      },
     });
     if (evt) events.push(evt);
   });
 
-  replies.forEach((reply) => {
-    const lead = leadMap.get(String(reply.leadId));
-    const contactName = lead?.name || lead?.email || 'Contact';
-    const detailText = formatReplyDetailText(reply);
-    const evt = event(`reply-${reply._id}`, {
-      contactName,
-      contactId: String(reply.leadId || ''),
-      type: 'email_inbound',
-      title: reply.subject ? `Reply from ${contactName}: ${reply.subject}` : `Reply from ${contactName}`,
-      detail: detailText,
-      timestamp: reply.receivedAt || reply.createdAt,
-      actor: reply.from || contactName,
-      channel: 'email',
-      meta: {
-        intent: reply.intent,
-        subject: reply.subject,
-        body: detailText,
-        from: reply.from,
-      },
+  // Query manual interactions
+  try {
+    const manualInteractions = await listInteractionsForCompany(company.id);
+    manualInteractions.forEach((record) => {
+      events.push(manualInteractionToEvent(
+        record,
+        company.canonical_name,
+        []
+      ));
     });
-    if (evt) events.push(evt);
-  });
+  } catch (iErr) {}
 
-  tasks.forEach((task) => {
-    const lead = task.leadId ? leadMap.get(String(task.leadId)) : null;
-    const evt = event(`task-${task._id}`, {
-      contactName: lead?.name || '',
-      contactId: lead ? String(lead._id) : null,
-      type: 'task',
-      title: task.title,
-      detail: task.notes || `Owner: ${task.owner || 'admin'}`,
-      timestamp: task.dueAt || task.createdAt,
-      actor: task.owner || 'Team',
-      channel: 'task',
-    });
-    if (evt) events.push(evt);
-  });
-
-  opportunities.forEach((opp) => {
-    const lead = opp.primaryLeadId ? leadMap.get(String(opp.primaryLeadId)) : null;
-    const evt = event(`opp-${opp._id}`, {
-      contactName: lead?.name || '',
-      contactId: lead ? String(lead._id) : null,
-      type: 'opportunity',
-      title: opp.name,
-      detail: `${opp.stage} · owned by ${opp.owner || 'admin'}`,
-      timestamp: opp.updatedAt || opp.createdAt,
-      actor: opp.owner || 'Team',
-      channel: 'pipeline',
-    });
-    if (evt) events.push(evt);
-  });
-
-  manualInteractions.forEach((record) => {
-    const lead = leadMap.get(String(record.leadId));
-    events.push(manualInteractionToEvent(
-      record,
-      lead?.name || lead?.email || '',
-      buildRelatedContacts(record, leadMap),
-    ));
-  });
-
-  const seen = new Set();
-  const unique = events.filter((e) => {
-    if (seen.has(e.id)) return false;
-    seen.add(e.id);
-    return true;
-  });
-
-  unique.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  events.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
   return {
     subject: {
       type: 'company',
-      id: String(company._id),
-      name: company.companyName,
+      id: String(company.id),
+      name: company.canonical_name,
       domain: company.domain || '',
-      status: company.globalStatus || 'Lead',
-      contactCount: leads.length,
+      contactCount: people.length,
     },
-    events: unique,
+    events,
   };
 }

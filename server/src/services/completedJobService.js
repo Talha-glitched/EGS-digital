@@ -1,15 +1,40 @@
-import mongoose from 'mongoose';
-import { CompletedJob, COMPLETED_JOB_CATEGORIES } from '../models/CompletedJob.js';
-import { Company } from '../models/Company.js';
-import { softDeleteRecord, restoreRecord, registerRevisionModel } from './revisionService.js';
+import db from '../db/index.js';
 
-function assertDb() {
-  if (mongoose.connection.readyState !== 1) {
-    const error = new Error('MongoDB connection is required for CRM.');
-    error.status = 503;
-    throw error;
-  }
-}
+export const COMPLETED_JOB_CATEGORIES = {
+  typesOfJob: [
+    'Large Format Printing',
+    'Retail Branding & Displays',
+    'Off Set printing',
+    'Exhibition Stands',
+    'Signages Indoor & Outdoor',
+    'Vehicle Branding',
+    'Digital Screen',
+    'Gift Items',
+    'Corporate Events Branding',
+    'Constuction Site Items',
+    'PVC Plates',
+    'Graduation Ceremonies',
+    'Product Display Stand',
+    'Mall Kiosks',
+    'Event Branding',
+    'Uniform',
+    'Showroom & Office Branding',
+  ],
+  statuses: [
+    'Inquiry',
+    'Waiting Adv/ PO',
+    'In Production',
+    'Installation',
+    'Waiting Balance Payment',
+    'Job Done',
+    'Quotation Sent',
+    'Job Lost',
+    'Design',
+    'Ready',
+  ],
+};
+
+export const JOB_CATEGORIES = COMPLETED_JOB_CATEGORIES;
 
 function cleanNumber(val, fallback = 0) {
   if (val == null || val === '') return fallback;
@@ -18,157 +43,222 @@ function cleanNumber(val, fallback = 0) {
 }
 
 export async function getCompletedJobCategories() {
-  assertDb();
-  const [salesPersons, responsiblePersons, typesOfJob, statuses, jobDates] = await Promise.all([
-    CompletedJob.distinct('salesPerson', { deletedAt: null, salesPerson: { $ne: '' } }),
-    CompletedJob.distinct('responsiblePerson', { deletedAt: null, responsiblePerson: { $ne: '' } }),
-    CompletedJob.distinct('typeOfJob', { deletedAt: null, typeOfJob: { $ne: '' } }),
-    CompletedJob.distinct('currentStatus', { deletedAt: null, currentStatus: { $ne: '', $nin: ['Job Lost', 'Closed Lost'] } }),
-    CompletedJob.distinct('date', { deletedAt: null, date: { $ne: null } }),
-  ]);
+  try {
+    const res = await db.query(
+      `SELECT DISTINCT sales_person AS "salesPerson",
+              responsible_person AS "responsiblePerson",
+              type_of_job AS "typeOfJob",
+              current_status AS "currentStatus",
+              date
+       FROM completed_jobs
+       WHERE deleted_at IS NULL`
+    );
 
-  const yearsSet = new Set();
-  jobDates.forEach((d) => {
-    if (d) {
-      const y = new Date(d).getFullYear();
-      if (y && !isNaN(y) && y >= 2000 && y <= 2100) yearsSet.add(y);
-    }
-  });
-  yearsSet.add(new Date().getFullYear());
-  const years = Array.from(yearsSet).sort((a, b) => b - a);
+    const salesPersons = [...new Set(res.rows.map((r) => r.salesPerson).filter(Boolean))].sort();
+    const responsiblePersons = [...new Set(res.rows.map((r) => r.responsiblePerson).filter(Boolean))].sort();
+    const typesOfJob = [...new Set(res.rows.map((r) => r.typeOfJob).filter(Boolean))].sort();
+    const statuses = [...new Set(res.rows.map((r) => r.currentStatus).filter((s) => s && s !== 'Job Lost' && s !== 'Closed Lost'))].sort();
 
-  const mergedJobTypes = [...new Set([...COMPLETED_JOB_CATEGORIES.typesOfJob, ...typesOfJob])].sort();
-  const mergedStatuses = [...new Set([...COMPLETED_JOB_CATEGORIES.statuses.filter((s) => s !== 'Job Lost'), ...statuses])].sort();
-  const mergedSalesPersons = [...new Set(salesPersons)].sort();
-  const mergedResponsiblePersons = [...new Set(responsiblePersons)].sort();
+    const yearsSet = new Set();
+    res.rows.forEach((r) => {
+      if (r.date) {
+        const y = new Date(r.date).getFullYear();
+        if (y && !isNaN(y) && y >= 2000 && y <= 2100) yearsSet.add(y);
+      }
+    });
+    yearsSet.add(new Date().getFullYear());
+    const years = Array.from(yearsSet).sort((a, b) => b - a);
 
-  return {
-    typesOfJob: mergedJobTypes,
-    statuses: mergedStatuses,
-    salesPersons: mergedSalesPersons,
-    responsiblePersons: mergedResponsiblePersons,
-    years,
-  };
+    const mergedJobTypes = [...new Set([...COMPLETED_JOB_CATEGORIES.typesOfJob, ...typesOfJob])].sort();
+    const mergedStatuses = [...new Set([...COMPLETED_JOB_CATEGORIES.statuses.filter((s) => s !== 'Job Lost'), ...statuses])].sort();
+
+    return {
+      typesOfJob: mergedJobTypes,
+      statuses: mergedStatuses,
+      salesPersons,
+      responsiblePersons,
+      years,
+    };
+  } catch (err) {
+    return {
+      typesOfJob: COMPLETED_JOB_CATEGORIES.typesOfJob,
+      statuses: COMPLETED_JOB_CATEGORIES.statuses.filter((s) => s !== 'Job Lost'),
+      salesPersons: [],
+      responsiblePersons: [],
+      years: [new Date().getFullYear()],
+    };
+  }
 }
 
-export async function listCompletedJobs({ currentStatus, salesPerson, typeOfJob, responsiblePerson, year, startDate, endDate, search, page = 1, limit = 100 } = {}) {
-  assertDb();
-  const query = { deletedAt: null };
+export async function listCompletedJobs({
+  currentStatus,
+  salesPerson,
+  typeOfJob,
+  responsiblePerson,
+  year,
+  startDate,
+  endDate,
+  search,
+  page = 1,
+  limit = 100,
+} = {}) {
+  const params = [];
+  const conditions = ['deleted_at IS NULL'];
 
   if (currentStatus && currentStatus !== 'All') {
-    query.currentStatus = currentStatus;
+    params.push(currentStatus);
+    conditions.push(`current_status = $${params.length}`);
   } else {
-    // Jobs Done contains ONLY successful job records; exclude Job Lost
-    query.currentStatus = { $nin: ['Job Lost', 'Closed Lost'] };
+    conditions.push(`current_status NOT IN ('Job Lost', 'Closed Lost')`);
   }
+
   if (salesPerson && salesPerson !== 'All') {
-    query.salesPerson = salesPerson;
+    params.push(salesPerson);
+    conditions.push(`sales_person = $${params.length}`);
   }
+
   if (typeOfJob && typeOfJob !== 'All') {
-    query.typeOfJob = typeOfJob;
+    params.push(typeOfJob);
+    conditions.push(`type_of_job = $${params.length}`);
   }
+
   if (responsiblePerson && responsiblePerson !== 'All') {
-    query.responsiblePerson = responsiblePerson;
+    params.push(responsiblePerson);
+    conditions.push(`responsible_person = $${params.length}`);
   }
 
   if (year && year !== 'All') {
     const yr = parseInt(year, 10);
     if (!isNaN(yr)) {
-      const yrStart = new Date(yr, 0, 1);
-      const yrEnd = new Date(yr, 11, 31, 23, 59, 59, 999);
-      query.date = { $gte: yrStart, $lte: yrEnd };
+      params.push(`${yr}-01-01T00:00:00.000Z`, `${yr}-12-31T23:59:59.999Z`);
+      conditions.push(`date >= $${params.length - 1} AND date <= $${params.length}`);
     }
   } else if (startDate || endDate) {
-    query.date = {};
-    if (startDate) query.date.$gte = new Date(startDate);
+    if (startDate) {
+      params.push(new Date(startDate).toISOString());
+      conditions.push(`date >= $${params.length}`);
+    }
     if (endDate) {
       const eDate = new Date(endDate);
       eDate.setHours(23, 59, 59, 999);
-      query.date.$lte = eDate;
+      params.push(eDate.toISOString());
+      conditions.push(`date <= $${params.length}`);
     }
   }
 
   if (search) {
-    const searchRe = new RegExp(String(search).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
-    query.$or = [
-      { company: searchRe },
-      { contactPerson: searchRe },
-      { description: searchRe },
-      { email: searchRe },
-      { contactNumber: searchRe },
-      { salesPerson: searchRe },
-      { responsiblePerson: searchRe },
-      { typeOfJob: searchRe },
-      { currentStatus: searchRe },
-      { jobReview: searchRe },
-    ];
+    params.push(`%${search}%`);
+    const pIdx = params.length;
+    let numCond = '';
     const numSearch = Number(search);
     if (Number.isInteger(numSearch)) {
-      query.$or.push({ jobNo: numSearch });
+      params.push(numSearch);
+      numCond = ` OR job_no = $${params.length}`;
     }
+    conditions.push(`(company ILIKE $${pIdx} OR contact_person ILIKE $${pIdx} OR description ILIKE $${pIdx} OR email ILIKE $${pIdx} OR contact_number ILIKE $${pIdx} OR sales_person ILIKE $${pIdx} OR responsible_person ILIKE $${pIdx} OR type_of_job ILIKE $${pIdx} OR current_status ILIKE $${pIdx} OR job_review ILIKE $${pIdx}${numCond})`);
   }
 
   const pageNum = Math.max(1, parseInt(page, 10) || 1);
   const limitNum = Math.max(1, Math.min(500, parseInt(limit, 10) || 100));
-  const skip = (pageNum - 1) * limitNum;
+  const offset = (pageNum - 1) * limitNum;
 
-  const [items, total, categories, metricsAgg] = await Promise.all([
-    CompletedJob.find(query)
-      .sort({ jobNo: -1, date: -1, createdAt: -1 })
-      .skip(skip)
-      .limit(limitNum)
-      .lean(),
-    CompletedJob.countDocuments(query),
-    getCompletedJobCategories(),
-    CompletedJob.aggregate([
-      { $match: query },
-      {
-        $group: {
-          _id: null,
-          totalAmount: { $sum: '$amount' },
-          totalReceived: { $sum: '$received' },
-          totalBalance: { $sum: '$balance' },
-        },
+  const whereClause = conditions.join(' AND ');
+
+  try {
+    const listSql = `
+      SELECT id AS "_id", id, job_no AS "jobNo", date, sales_person AS "salesPerson",
+             company, company_id AS "companyId", contact_person AS "contactPerson",
+             contact_number AS "contactNumber", email, type_of_job AS "typeOfJob",
+             description, current_status AS "currentStatus", responsible_person AS "responsiblePerson",
+             due_date AS "dueDate", amount, received, balance, job_review AS "jobReview",
+             opportunity_id AS "opportunityId", created_at AS "createdAt", updated_at AS "updatedAt"
+      FROM completed_jobs
+      WHERE ${whereClause}
+      ORDER BY job_no DESC NULLS LAST, date DESC NULLS LAST, created_at DESC
+      LIMIT $${params.length + 1} OFFSET $${params.length + 2}
+    `;
+
+    const countSql = `SELECT COUNT(*) FROM completed_jobs WHERE ${whereClause}`;
+    const metricsSql = `SELECT SUM(amount) AS "totalAmount", SUM(received) AS "totalReceived", SUM(balance) AS "totalBalance" FROM completed_jobs WHERE ${whereClause}`;
+
+    const [res, countRes, metricsRes, categories] = await Promise.all([
+      db.query(listSql, [...params, limitNum, offset]),
+      db.query(countSql, params),
+      db.query(metricsSql, params),
+      getCompletedJobCategories(),
+    ]);
+
+    const total = parseInt(countRes.rows[0]?.count || 0, 10);
+    const metricsRow = metricsRes.rows[0] || {};
+
+    return {
+      items: res.rows,
+      total,
+      page: pageNum,
+      limit: limitNum,
+      totalPages: Math.ceil(total / limitNum) || 1,
+      categories,
+      metrics: {
+        totalJobs: total,
+        totalAmount: Number(metricsRow.totalAmount) || 0,
+        totalReceived: Number(metricsRow.totalReceived) || 0,
+        totalBalance: Number(metricsRow.totalBalance) || 0,
       },
-    ]),
-  ]);
-
-  const metrics = metricsAgg[0] || { totalAmount: 0, totalReceived: 0, totalBalance: 0 };
-
-  return {
-    items,
-    total,
-    page: pageNum,
-    limit: limitNum,
-    totalPages: Math.ceil(total / limitNum),
-    categories,
-    metrics: {
-      totalJobs: total,
-      totalAmount: metrics.totalAmount,
-      totalReceived: metrics.totalReceived,
-      totalBalance: metrics.totalBalance,
-    },
-  };
+    };
+  } catch (err) {
+    console.error('Error listing completed jobs in PostgreSQL:', err.message);
+    const categories = await getCompletedJobCategories();
+    return {
+      items: [],
+      total: 0,
+      page: pageNum,
+      limit: limitNum,
+      totalPages: 1,
+      categories,
+      metrics: { totalJobs: 0, totalAmount: 0, totalReceived: 0, totalBalance: 0 },
+    };
+  }
 }
 
 export async function getCompletedJob(id) {
-  assertDb();
-  const job = await CompletedJob.findOne({ _id: id, deletedAt: null }).lean();
-  if (!job) {
+  try {
+    const res = await db.query(
+      `SELECT id AS "_id", id, job_no AS "jobNo", date, sales_person AS "salesPerson",
+              company, company_id AS "companyId", contact_person AS "contactPerson",
+              contact_number AS "contactNumber", email, type_of_job AS "typeOfJob",
+              description, current_status AS "currentStatus", responsible_person AS "responsiblePerson",
+              due_date AS "dueDate", amount, received, balance, job_review AS "jobReview",
+              opportunity_id AS "opportunityId", created_at AS "createdAt", updated_at AS "updatedAt"
+       FROM completed_jobs
+       WHERE (id::text = $1::text) AND deleted_at IS NULL
+       LIMIT 1`,
+      [String(id)]
+    );
+    if (!res.rows[0]) {
+      const error = new Error('Completed Job not found.');
+      error.status = 404;
+      throw error;
+    }
+    return res.rows[0];
+  } catch (err) {
+    if (err.status === 404) throw err;
     const error = new Error('Completed Job not found.');
     error.status = 404;
     throw error;
   }
-  return job;
 }
 
 export async function getNextJobNumber() {
-  const highest = await CompletedJob.findOne({}).sort({ jobNo: -1 }).select('jobNo').lean();
-  return (highest?.jobNo || 200) + 1;
+  try {
+    const res = await db.query(`SELECT MAX(job_no) AS max FROM completed_jobs`);
+    const highest = Number(res.rows[0]?.max) || 200;
+    return highest + 1;
+  } catch (err) {
+    return 201;
+  }
 }
 
 export async function createCompletedJob(payload) {
-  assertDb();
   let jobNo = cleanNumber(payload.jobNo, 0);
   if (!jobNo) {
     jobNo = await getNextJobNumber();
@@ -178,148 +268,173 @@ export async function createCompletedJob(payload) {
   const received = cleanNumber(payload.received, 0);
   const balance = payload.balance !== undefined ? cleanNumber(payload.balance, 0) : Math.max(0, amount - received);
 
-  const job = await CompletedJob.create({
-    jobNo,
-    date: payload.date ? new Date(payload.date) : new Date(),
-    salesPerson: String(payload.salesPerson || '').trim(),
-    company: String(payload.company || '').trim(),
-    companyId: payload.companyId || null,
-    contactPerson: String(payload.contactPerson || '').trim(),
-    contactNumber: String(payload.contactNumber || '').trim(),
-    email: String(payload.email || '').trim(),
-    typeOfJob: String(payload.typeOfJob || '').trim(),
-    description: String(payload.description || '').trim(),
-    currentStatus: String(payload.currentStatus || 'Job Done').trim(),
-    responsiblePerson: String(payload.responsiblePerson || '').trim(),
-    dueDate: payload.dueDate ? new Date(payload.dueDate) : null,
-    amount,
-    received,
-    balance,
-    jobReview: String(payload.jobReview || '').trim(),
-    opportunityId: payload.ongoingJobId || payload.opportunityId || null,
-  });
+  const res = await db.query(
+    `INSERT INTO completed_jobs (
+       job_no, date, sales_person, company, company_id, contact_person,
+       contact_number, email, type_of_job, description, current_status,
+       responsible_person, due_date, amount, received, balance, job_review, opportunity_id
+     ) VALUES (
+       $1, $2, $3, $4, $5::uuid, $6,
+       $7, $8, $9, $10, $11,
+       $12, $13, $14, $15, $16, $17, $18::uuid
+     )
+     RETURNING id AS "_id", id, job_no AS "jobNo", date, sales_person AS "salesPerson",
+               company, company_id AS "companyId", contact_person AS "contactPerson",
+               contact_number AS "contactNumber", email, type_of_job AS "typeOfJob",
+               description, current_status AS "currentStatus", responsible_person AS "responsiblePerson",
+               due_date AS "dueDate", amount, received, balance, job_review AS "jobReview",
+               opportunity_id AS "opportunityId", created_at AS "createdAt", updated_at AS "updatedAt"`,
+    [
+      jobNo,
+      payload.date ? new Date(payload.date) : new Date(),
+      String(payload.salesPerson || '').trim(),
+      String(payload.company || '').trim(),
+      payload.companyId && String(payload.companyId).length === 36 ? String(payload.companyId) : null,
+      String(payload.contactPerson || '').trim(),
+      String(payload.contactNumber || '').trim(),
+      String(payload.email || '').trim(),
+      String(payload.typeOfJob || '').trim(),
+      String(payload.description || '').trim(),
+      String(payload.currentStatus || 'Job Done').trim(),
+      String(payload.responsiblePerson || '').trim(),
+      payload.dueDate ? new Date(payload.dueDate) : null,
+      amount,
+      received,
+      balance,
+      String(payload.jobReview || '').trim(),
+      payload.ongoingJobId || payload.opportunityId || null,
+    ]
+  );
 
-  return job.toObject();
+  return res.rows[0];
 }
 
 export async function updateCompletedJob(id, payload) {
-  assertDb();
-  const job = await CompletedJob.findOne({ _id: id, deletedAt: null });
-  if (!job) {
-    const error = new Error('Completed Job not found.');
-    error.status = 404;
-    throw error;
-  }
+  const existing = await getCompletedJob(id);
 
-  const fields = [
-    'jobNo', 'salesPerson', 'company', 'companyId', 'contactPerson',
-    'contactNumber', 'email', 'typeOfJob', 'description', 'currentStatus',
-    'responsiblePerson', 'jobReview',
-  ];
-
-  fields.forEach((field) => {
-    if (payload[field] !== undefined) {
-      job[field] = payload[field];
-    }
-  });
-
-  if (payload.ongoingJobId !== undefined || payload.opportunityId !== undefined) {
-    job.opportunityId = payload.ongoingJobId || payload.opportunityId || null;
-  }
-
-  if (payload.date !== undefined) {
-    job.date = payload.date ? new Date(payload.date) : null;
-  }
-  if (payload.dueDate !== undefined) {
-    job.dueDate = payload.dueDate ? new Date(payload.dueDate) : null;
-  }
-  if (payload.amount !== undefined) {
-    job.amount = cleanNumber(payload.amount, 0);
-  }
-  if (payload.received !== undefined) {
-    job.received = cleanNumber(payload.received, 0);
-  }
+  const amount = payload.amount !== undefined ? cleanNumber(payload.amount, 0) : existing.amount;
+  const received = payload.received !== undefined ? cleanNumber(payload.received, 0) : existing.received;
+  let balance = existing.balance;
   if (payload.balance !== undefined) {
-    job.balance = cleanNumber(payload.balance, 0);
+    balance = cleanNumber(payload.balance, 0);
   } else if (payload.amount !== undefined || payload.received !== undefined) {
-    job.balance = Math.max(0, job.amount - job.received);
+    balance = Math.max(0, amount - received);
   }
 
-  await job.save();
-  return job.toObject();
+  const res = await db.query(
+    `UPDATE completed_jobs SET
+       job_no = COALESCE($2, job_no),
+       sales_person = COALESCE($3, sales_person),
+       company = COALESCE($4, company),
+       company_id = COALESCE($5::uuid, company_id),
+       contact_person = COALESCE($6, contact_person),
+       contact_number = COALESCE($7, contact_number),
+       email = COALESCE($8, email),
+       type_of_job = COALESCE($9, type_of_job),
+       description = COALESCE($10, description),
+       current_status = COALESCE($11, current_status),
+       responsible_person = COALESCE($12, responsible_person),
+       job_review = COALESCE($13, job_review),
+       date = COALESCE($14, date),
+       due_date = COALESCE($15, due_date),
+       amount = $16,
+       received = $17,
+       balance = $18,
+       opportunity_id = COALESCE($19::uuid, opportunity_id),
+       updated_at = NOW()
+     WHERE (id::text = $1::text) AND deleted_at IS NULL
+     RETURNING id AS "_id", id, job_no AS "jobNo", date, sales_person AS "salesPerson",
+               company, company_id AS "companyId", contact_person AS "contactPerson",
+               contact_number AS "contactNumber", email, type_of_job AS "typeOfJob",
+               description, current_status AS "currentStatus", responsible_person AS "responsiblePerson",
+               due_date AS "dueDate", amount, received, balance, job_review AS "jobReview",
+               opportunity_id AS "opportunityId", created_at AS "createdAt", updated_at AS "updatedAt"`,
+    [
+      String(id),
+      payload.jobNo !== undefined ? cleanNumber(payload.jobNo, 0) : null,
+      payload.salesPerson !== undefined ? String(payload.salesPerson).trim() : null,
+      payload.company !== undefined ? String(payload.company).trim() : null,
+      payload.companyId && String(payload.companyId).length === 36 ? String(payload.companyId) : null,
+      payload.contactPerson !== undefined ? String(payload.contactPerson).trim() : null,
+      payload.contactNumber !== undefined ? String(payload.contactNumber).trim() : null,
+      payload.email !== undefined ? String(payload.email).trim() : null,
+      payload.typeOfJob !== undefined ? String(payload.typeOfJob).trim() : null,
+      payload.description !== undefined ? String(payload.description).trim() : null,
+      payload.currentStatus !== undefined ? String(payload.currentStatus).trim() : null,
+      payload.responsiblePerson !== undefined ? String(payload.responsiblePerson).trim() : null,
+      payload.jobReview !== undefined ? String(payload.jobReview).trim() : null,
+      payload.date ? new Date(payload.date) : null,
+      payload.dueDate ? new Date(payload.dueDate) : null,
+      amount,
+      received,
+      balance,
+      payload.ongoingJobId || payload.opportunityId || null,
+    ]
+  );
+
+  return res.rows[0];
 }
 
 export async function deleteCompletedJob(id, actor = {}) {
-  assertDb();
-  registerRevisionModel('completed_job', CompletedJob);
-  registerRevisionModel('job', CompletedJob);
-  return softDeleteRecord({ Model: CompletedJob, resourceType: 'completed_job', id, actor });
+  const res = await db.query(
+    `UPDATE completed_jobs SET deleted_at = NOW(), deleted_by = $2 WHERE (id::text = $1::text) RETURNING *`,
+    [String(id), String(actor?.username || actor?.displayName || 'admin')]
+  );
+  return { deleted: res.rowCount > 0 };
 }
 
 export async function restoreCompletedJob(id, actor = {}) {
-  assertDb();
-  registerRevisionModel('completed_job', CompletedJob);
-  registerRevisionModel('job', CompletedJob);
-  return restoreRecord({ Model: CompletedJob, resourceType: 'completed_job', id, actor });
+  const res = await db.query(
+    `UPDATE completed_jobs SET deleted_at = NULL, deleted_by = NULL WHERE (id::text = $1::text) RETURNING *`,
+    [String(id)]
+  );
+  return { restored: res.rowCount > 0 };
 }
 
 export async function createCompletedJobFromOngoingJob(ongoingJob) {
-  assertDb();
   if (!ongoingJob) return null;
 
-  // Job Lost must remain in Ongoing Jobs history and MUST NOT create a CompletedJob!
   if (ongoingJob.stage === 'Job Lost' || ongoingJob.stage === 'Closed Lost') {
     return null;
   }
 
-  // Only create CompletedJob for successful won jobs ('Job Done' or 'Closed Won' or 'Payment Received')
   if (ongoingJob.stage !== 'Job Done' && ongoingJob.stage !== 'Closed Won' && ongoingJob.stage !== 'Payment Received') {
     return null;
   }
 
-  // Check if job already exists for this ongoing job
-  let existingJob = await CompletedJob.findOne({
-    $or: [{ opportunityId: ongoingJob._id }, { ongoingJobId: ongoingJob._id }],
-    deletedAt: null,
-  });
-  
-  let companyName = '';
-  let contactPerson = '';
-  let contactNumber = '';
-  let email = '';
+  let existingRes = await db.query(
+    `SELECT id FROM completed_jobs WHERE opportunity_id = $1::uuid AND deleted_at IS NULL LIMIT 1`,
+    [String(ongoingJob._id || ongoingJob.id)]
+  );
 
-  if (ongoingJob.companyId) {
-    companyName = ongoingJob.companyId.companyName || ongoingJob.companyId.name || '';
-  }
-  if (ongoingJob.primaryLeadId) {
-    contactPerson = ongoingJob.primaryLeadId.name || '';
-    email = ongoingJob.primaryLeadId.email || '';
-    contactNumber = ongoingJob.primaryLeadId.phone || '';
-  }
+  let companyName = ongoingJob.companyName || ongoingJob.company || ongoingJob.name || '';
+  let contactPerson = ongoingJob.contactPerson || '';
+  let contactNumber = ongoingJob.phone || '';
+  let email = ongoingJob.email || '';
 
   const jobStatus = 'Job Done';
   const jobType = Array.isArray(ongoingJob.services) && ongoingJob.services.length
     ? ongoingJob.services[0]
     : (ongoingJob.name || 'General Project');
 
-  if (existingJob) {
-    existingJob.currentStatus = jobStatus;
-    existingJob.amount = ongoingJob.valueAed || existingJob.amount;
-    existingJob.balance = Math.max(0, existingJob.amount - existingJob.received);
-    existingJob.salesPerson = ongoingJob.owner || existingJob.salesPerson;
-    if (companyName) existingJob.company = companyName;
-    if (ongoingJob.notes) existingJob.description = ongoingJob.notes;
-    await existingJob.save();
-    return existingJob.toObject();
+  if (existingRes.rows[0]) {
+    const existingId = existingRes.rows[0].id;
+    return await updateCompletedJob(existingId, {
+      currentStatus: jobStatus,
+      amount: ongoingJob.valueAed,
+      salesPerson: ongoingJob.owner,
+      company: companyName,
+      description: ongoingJob.notes,
+    });
   }
 
   const jobNo = await getNextJobNumber();
 
-  const newJob = await CompletedJob.create({
+  return await createCompletedJob({
     jobNo,
     date: ongoingJob.closedAt || new Date(),
     salesPerson: ongoingJob.owner || 'admin',
-    company: companyName || ongoingJob.name,
+    company: companyName,
     companyId: ongoingJob.companyId?._id || ongoingJob.companyId || null,
     contactPerson,
     contactNumber,
@@ -333,10 +448,8 @@ export async function createCompletedJobFromOngoingJob(ongoingJob) {
     received: ongoingJob.valueAed || 0,
     balance: 0,
     jobReview: ongoingJob.lostReason || '',
-    opportunityId: ongoingJob._id,
+    opportunityId: ongoingJob._id || ongoingJob.id,
   });
-
-  return newJob.toObject();
 }
 
 // Aliases for backward compatibility

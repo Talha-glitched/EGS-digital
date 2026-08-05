@@ -1,12 +1,6 @@
-import { Reply } from '../models/Reply.js';
-import { Lead } from '../models/Lead.js';
-import { Company } from '../models/Company.js';
-import { ProjectCampaign } from '../models/ProjectCampaign.js';
-import { Suppression } from '../models/Suppression.js';
-import { Email } from '../models/Email.js';
+import db from '../db/index.js';
 import { classifyInboundEmail } from './resendAutoSyncService.js';
 import { freezeLeadSequence, purgeLeadFromQueue } from './sequenceService.js';
-import { buildLeadEmailQuery, getLeadEmailCandidates, getPrimaryLeadEmail, applyOutreachEmailFromReply } from '../utils/contactEmails.js';
 import { ensureReplyReviewTask } from './replyReviewTaskService.js';
 import {
   createImapClient,
@@ -23,14 +17,6 @@ import {
 const MAX_REPLY_TEXT = 100000;
 const activeSyncs = new Set();
 let syncTimer = null;
-
-function normalizeObjectIdList(values = []) {
-  return [...new Set(
-    values
-      .map((value) => (value == null ? '' : String(value).trim()))
-      .filter(Boolean),
-  )];
-}
 
 export function decodeQuotedPrintable(str) {
   return String(str || '')
@@ -104,34 +90,36 @@ async function findLeadForMessage(message) {
 
   const raw = String(message.source || '');
   const headerSection = getMimeHeaderSection(raw);
-  const candidates = extractMessageIdCandidatesFromHeaders(headerSection);
-
-  if (candidates.length) {
-    const leadByMessageId = await Lead.findOne({
-      lastMessageId: { $in: candidates },
-    });
-    if (leadByMessageId) return leadByMessageId;
-
-    const normBases = new Set(candidates.map(normalizeMessageIdToken).filter(Boolean));
-    if (normBases.size) {
-      const recent = await Lead.find({ lastMessageId: { $nin: ['', null] } })
-        .sort({ updatedAt: -1 })
-        .limit(3000)
-        .select('_id lastMessageId')
-        .lean();
-      const hit = recent.find((row) => normBases.has(normalizeMessageIdToken(row.lastMessageId)));
-      if (hit) return Lead.findById(hit._id);
-    }
-  }
-
-  const resolvedFromAddress =
-    extractMailboxFromHeader(headerSection, 'Reply-To') || fromAddress;
+  const resolvedFromAddress = extractMailboxFromHeader(headerSection, 'Reply-To') || fromAddress;
   if (!resolvedFromAddress) return null;
 
-  const emailQuery = buildLeadEmailQuery(resolvedFromAddress);
-  if (!emailQuery) return null;
+  // Search person in PostgreSQL by email
+  const res = await db.query(
+    `SELECT p.id, p.display_name, por.organization_id, cc.id AS campaign_contact_id, ca.campaign_id
+     FROM person_contact_methods pcm
+     JOIN people p ON pcm.person_id = p.id
+     LEFT JOIN person_organization_roles por ON por.person_id = p.id
+     LEFT JOIN campaign_contacts cc ON cc.role_id = por.id
+     LEFT JOIN campaign_accounts ca ON cc.campaign_account_id = ca.id
+     WHERE pcm.normalized_value = $1 AND pcm.type = 'email'
+     LIMIT 1`,
+    [resolvedFromAddress.toLowerCase()]
+  );
 
-  return Lead.findOne(emailQuery).sort({ updatedAt: -1 });
+  if (res.rows.length > 0) {
+    const row = res.rows[0];
+    return {
+      _id: row.id,
+      id: row.id,
+      name: row.display_name,
+      email: resolvedFromAddress,
+      companyId: row.organization_id,
+      campaignId: row.campaign_id,
+      campaignContactId: row.campaign_contact_id,
+    };
+  }
+
+  return null;
 }
 
 async function handleBounceMessage(message, text) {
@@ -143,99 +131,67 @@ async function handleBounceMessage(message, text) {
   const bouncedEmail = extractBouncedEmailFromBody(text);
   if (!bouncedEmail) return null;
 
-  const emailQuery = buildLeadEmailQuery(bouncedEmail);
-  const lead = emailQuery ? await Lead.findOne(emailQuery).sort({ updatedAt: -1 }) : null;
-  if (!lead) return { bouncedEmail, leadFound: false };
-
-  await freezeLeadSequence(lead._id, 'bounce');
-  await Suppression.updateOne(
-    { email: bouncedEmail },
-    { $set: { email: bouncedEmail, reason: 'bounced', campaignId: lead.campaignId, leadId: lead._id } },
-    { upsert: true }
+  // Insert into PostgreSQL endpoint_suppressions
+  await db.query(
+    `INSERT INTO endpoint_suppressions (endpoint, reason)
+     VALUES ($1, 'bounced')
+     ON CONFLICT DO NOTHING`,
+    [bouncedEmail.toLowerCase()]
   );
-  await purgeLeadFromQueue(lead._id);
 
-  return { bouncedEmail, leadId: lead._id };
+  return { bouncedEmail, leadFound: true };
 }
 
 async function handleHumanReply(lead, message, text, systemInbox = '') {
   const messageId = String(message.envelope?.messageId || '').trim();
-  if (messageId && (await Reply.exists({ messageId }))) {
+  const finalMsgId = messageId || stableSyntheticMessageId(message.uid, process.env.EMAIL_IMAP_HOST);
+
+  // Check if message already exists in PostgreSQL
+  const checkMsg = await db.query(
+    `SELECT id FROM messages WHERE external_message_id = $1 LIMIT 1`,
+    [finalMsgId]
+  );
+  if (checkMsg.rows.length > 0) {
     return { duplicate: true };
   }
 
   const subject = message.envelope?.subject || '';
   const { status: targetStatus, intent: suggestedIntent } = classifyInboundEmail(subject, text);
   const replyIntent = suggestedIntent === 'Opt Out' ? 'Opt Out' : suggestedIntent === 'OOO' ? 'OOO' : 'Neutral';
-
   const senderEmail = String(message.envelope?.from?.[0]?.address || '').trim().toLowerCase();
-  const from = message.envelope?.from?.map((item) => item.address).join(', ') || getPrimaryLeadEmail(lead);
-
-  const [company, project] = await Promise.all([
-    Company.findById(lead.companyId).lean(),
-    ProjectCampaign.findById(lead.campaignId).lean(),
-  ]);
-
-  const threadHistory = [
-    {
-      type: 'inbound',
-      body: text.slice(0, MAX_REPLY_TEXT),
-      subject,
-      timestamp: message.envelope?.date || new Date(),
-      messageId,
-    },
-  ];
 
   const replyDate = message.envelope?.date ? new Date(message.envelope.date) : new Date();
-  const outreachRes = applyOutreachEmailFromReply(lead, senderEmail, systemInbox, replyDate);
-  await lead.save();
 
-  const finalMsgId = messageId || stableSyntheticMessageId(message.uid, process.env.EMAIL_IMAP_HOST);
+  // Create conversation and message in PostgreSQL
+  const convRes = await db.query(
+    `INSERT INTO conversations (channel, external_thread_id, subject)
+     VALUES ('email', $1, $2) RETURNING id`,
+    [finalMsgId, subject || 'Inbound Reply']
+  );
+  const convId = convRes.rows[0].id;
 
-  const createdReply = await Reply.create({
-    campaignId: lead.campaignId,
-    leadId: lead._id,
-    email: lead.email,
-    from,
-    subject,
-    text: text.slice(0, MAX_REPLY_TEXT),
-    messageId: finalMsgId,
-    receivedAt: replyDate,
-    intent: replyIntent,
-    systemInbox: systemInbox || '',
-    vendorSource: outreachRes.source || detectEmailVendor(lead, senderEmail) || 'Manual',
-    threadHistory,
-  });
+  await db.query(
+    `INSERT INTO messages (conversation_id, direction, channel, external_message_id, subject, body, delivery_state, occurred_at)
+     VALUES ($1::uuid, 'inbound', 'email', $2, $3, $4, 'received', $5)`,
+    [convId, finalMsgId, subject || 'Inbound Reply', text.slice(0, MAX_REPLY_TEXT), replyDate]
+  );
 
-  const existingEmail = await Email.findOne({ messageId: finalMsgId });
-  if (!existingEmail) {
-    await Email.create({
-      direction: 'inbound',
-      from: from || senderEmail,
-      fromEmail: senderEmail,
-      to: [systemInbox || lead.email].filter(Boolean),
-      toEmail: systemInbox || lead.email,
-      subject: subject || 'Inbound Email',
-      body: text.slice(0, MAX_REPLY_TEXT),
-      receivedAt: replyDate,
-      messageId: finalMsgId,
-      resendEmailId: finalMsgId,
-      leadId: lead._id,
-      companyId: lead.companyId || null,
-      campaignId: lead.campaignId || null,
-      status: 'received',
-      provider: 'imap',
-      suggestedIntent: replyIntent === 'OOO' ? 'Out of Office' : replyIntent === 'Opt Out' ? 'Opt Out' : 'Neutral',
-      humanReview: { status: 'Unreviewed' },
-    });
+  if (lead.campaignContactId) {
+    await db.query(
+      `UPDATE campaign_contacts SET lead_state = $1 WHERE id = $2::uuid`,
+      [targetStatus, lead.campaignContactId]
+    );
   }
 
-  await ensureReplyReviewTask(createdReply, lead);
+  await ensureReplyReviewTask(
+    { id: convId, conversation_id: convId, intent: replyIntent, subject, text: text.slice(0, MAX_REPLY_TEXT) },
+    lead
+  );
 
-  await freezeLeadSequence(lead._id, 'reply');
-  console.log(`[IMAP Reply] Human reply registered for review and sequence frozen for Lead ID: ${lead._id}`);
+  await freezeLeadSequence(lead.id, 'reply');
+  console.log(`[IMAP Reply] Human reply registered for review and sequence frozen for Lead ID: ${lead.id}`);
 
-  return { stored: true, intent: replyIntent, companyName: company?.companyName, projectName: project?.projectName };
+  return { stored: true, intent: replyIntent };
 }
 
 export async function syncImapMailboxForUser(email) {
@@ -281,7 +237,7 @@ export async function syncImapMailboxForUser(email) {
 
         if (isBounceSender(fromAddr) || /undeliverable|delivery status notification/i.test(text)) {
           const bounceResult = await handleBounceMessage(message, text);
-          if (bounceResult?.leadId) stats.bounces += 1;
+          if (bounceResult?.bouncedEmail) stats.bounces += 1;
           continue;
         }
 
@@ -291,18 +247,12 @@ export async function syncImapMailboxForUser(email) {
           continue;
         }
 
-        const messageId = String(message.envelope?.messageId || '').trim();
-        const existingReply = messageId ? await Reply.findOne({ messageId }) : null;
-        if (existingReply) {
-          stats.skippedDuplicate += 1;
-          await ensureReplyReviewTask(existingReply, lead);
-          continue;
-        }
-
         const result = await handleHumanReply(lead, message, text, normalizedEmail);
         if (result?.stored) {
           stats.replies += 1;
           if (result.intent === 'Opt Out') stats.optOuts += 1;
+        } else if (result?.duplicate) {
+          stats.skippedDuplicate += 1;
         }
       }
     } finally {
@@ -354,118 +304,88 @@ export function stopImapWatcher() {
 }
 
 export async function listInboxThreads({ limit = 100, campaignId } = {}) {
-  const query = {};
-  if (campaignId) query.campaignId = campaignId;
-
-  const replies = await Reply.find(query).sort({ receivedAt: -1 }).limit(500).lean();
-  if (!replies.length) return [];
-
-  const latestByLead = new Map();
-  const repliesByLead = new Map();
-  for (const reply of replies) {
-    const leadKey = String(reply.leadId);
-    if (!latestByLead.has(leadKey)) latestByLead.set(leadKey, reply);
-    const list = repliesByLead.get(leadKey) || [];
-    list.push(reply);
-    repliesByLead.set(leadKey, list);
+  let sql = `
+    SELECT c.id AS thread_id, c.subject, m.body, m.occurred_at, m.direction,
+           p.display_name AS poc_name, o.canonical_name AS company_name,
+           ca.campaign_id, cmp.name AS campaign_name
+    FROM conversations c
+    JOIN messages m ON m.conversation_id = c.id
+    LEFT JOIN conversation_participants cp ON cp.conversation_id = c.id
+    LEFT JOIN person_contact_methods pcm ON cp.person_contact_method_id = pcm.id
+    LEFT JOIN people p ON pcm.person_id = p.id
+    LEFT JOIN person_organization_roles por ON por.person_id = p.id
+    LEFT JOIN organizations o ON por.organization_id = o.id
+    LEFT JOIN campaign_accounts ca ON ca.organization_id = o.id
+    LEFT JOIN campaigns cmp ON ca.campaign_id = cmp.id
+    WHERE m.direction = 'inbound'
+  `;
+  const params = [];
+  if (campaignId) {
+    params.push(campaignId);
+    sql += ` AND ca.campaign_id = $1::uuid`;
   }
-  const threadReplies = [...latestByLead.values()].slice(0, Math.min(Number(limit) || 100, 500));
+  sql += ` ORDER BY m.occurred_at DESC LIMIT $${params.length + 1}`;
+  params.push(Math.min(Number(limit) || 100, 500));
 
-  const leadIds = threadReplies.map((r) => r.leadId);
-  const campaignIds = normalizeObjectIdList(threadReplies.map((r) => r.campaignId));
+  const res = await db.query(sql, params);
 
-  const [leads, campaigns, outboundJobs] = await Promise.all([
-    Lead.find({ _id: { $in: leadIds } }).lean(),
-    ProjectCampaign.find({ _id: { $in: campaignIds } }).select('projectName').lean(),
-    SendJob.find({ leadId: { $in: leadIds }, status: 'sent' }).sort({ sentAt: 1 }).lean(),
-  ]);
-
-  const companyIds = leads.map((l) => l.companyId).filter(Boolean);
-  const companies = await Company.find({ _id: { $in: companyIds } }).lean();
-
-  const leadMap = new Map(leads.map((l) => [String(l._id), l]));
-  const campaignMap = new Map(campaigns.map((c) => [String(c._id), c]));
-  const companyMap = new Map(companies.map((c) => [String(c._id), c]));
-
-  return threadReplies.map((reply) => {
-    const lead = leadMap.get(String(reply.leadId));
-    const company = lead ? companyMap.get(String(lead.companyId)) : null;
-    const campaign = campaignMap.get(String(reply.campaignId));
-    const history = [
-      ...outboundJobs
-        .filter((job) => String(job.leadId) === String(reply.leadId))
-        .map((job) => ({
-          type: 'outbound',
-          step: job.stepIndex + 1,
-          subject: job.renderedSubject || '',
-          body: job.renderedBody || `Sequence step ${job.stepIndex + 1} delivered.`,
-          timestamp: job.sentAt,
-          messageId: job.providerMessageId || '',
-        })),
-      ...(repliesByLead.get(String(reply.leadId)) || []).map((item) => ({
-        type: 'inbound',
-        subject: item.subject,
-        body: item.text,
-        timestamp: item.receivedAt,
-        messageId: item.messageId,
-      })),
-    ].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-
-    return {
-      _id: reply._id,
-      campaignName: campaign?.projectName || 'Campaign',
-      campaignId: reply.campaignId,
-      pocName: lead?.name || reply.email,
-      companyName: company?.companyName || '',
-      designation: lead?.designation || '',
-      phoneNumber: lead?.phone || '',
-      intent: reply.intent,
-      latestMessageBody: reply.text?.slice(0, 120) || '',
-      receivedAt: reply.receivedAt,
-      threadHistory: history,
-    };
-  });
+  return res.rows.map((row) => ({
+    _id: row.thread_id,
+    campaignName: row.campaign_name || 'Campaign',
+    campaignId: row.campaign_id,
+    pocName: row.poc_name || 'Contact',
+    companyName: row.company_name || '',
+    intent: 'Neutral',
+    latestMessageBody: (row.body || '').slice(0, 120),
+    receivedAt: row.occurred_at,
+    threadHistory: [
+      {
+        type: row.direction,
+        subject: row.subject,
+        body: row.body,
+        timestamp: row.occurred_at,
+      },
+    ],
+  }));
 }
 
 export async function getInboxThread(threadId) {
-  const reply = await Reply.findById(threadId).lean();
-  if (!reply) {
+  const res = await db.query(
+    `SELECT c.id AS thread_id, c.subject, m.body, m.direction, m.occurred_at,
+            p.display_name AS poc_name, o.canonical_name AS company_name, ca.campaign_id
+     FROM conversations c
+     JOIN messages m ON m.conversation_id = c.id
+     LEFT JOIN conversation_participants cp ON cp.conversation_id = c.id
+     LEFT JOIN person_contact_methods pcm ON cp.person_contact_method_id = pcm.id
+     LEFT JOIN people p ON pcm.person_id = p.id
+     LEFT JOIN person_organization_roles por ON por.person_id = p.id
+     LEFT JOIN organizations o ON por.organization_id = o.id
+     LEFT JOIN campaign_accounts ca ON ca.organization_id = o.id
+     WHERE c.id = $1::uuid
+     ORDER BY m.occurred_at ASC`,
+    [threadId]
+  );
+
+  if (!res.rows.length) {
     const error = new Error('Thread not found.');
     error.status = 404;
     throw error;
   }
 
-  const lead = await Lead.findById(reply.leadId).lean();
-  const company = lead ? await Company.findById(lead.companyId).lean() : null;
-  const campaign = await ProjectCampaign.findById(reply.campaignId).lean();
-  const outboundJobs = await SendJob.find({ leadId: reply.leadId, status: 'sent' })
-    .sort({ sentAt: 1 })
-    .lean();
-
-  const history = [...(reply.threadHistory || [])];
-  outboundJobs.forEach((job, idx) => {
-    history.unshift({
-      type: 'outbound',
-      step: job.stepIndex + 1,
-      subject: job.renderedSubject || '',
-      body: job.renderedBody || `Sequence step ${job.stepIndex + 1} delivered.`,
-      messageId: job.providerMessageId || '',
-      timestamp: job.sentAt,
-    });
-  });
-
-  history.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+  const first = res.rows[0];
+  const history = res.rows.map((r) => ({
+    type: r.direction,
+    subject: r.subject,
+    body: r.body,
+    timestamp: r.occurred_at,
+  }));
 
   return {
-    _id: reply._id,
-    pocName: lead?.name || reply.email,
-    designation: lead?.designation || '',
-    companyName: company?.companyName || '',
-    phoneNumber: lead?.phone || '',
-    campaignName: campaign?.projectName || '',
-    campaignId: reply.campaignId,
-    leadId: reply.leadId,
-    intent: reply.intent,
+    _id: first.thread_id,
+    pocName: first.poc_name || 'Contact',
+    companyName: first.company_name || '',
+    campaignId: first.campaign_id,
+    intent: 'Neutral',
     history,
   };
 }
