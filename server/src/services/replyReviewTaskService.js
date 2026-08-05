@@ -23,10 +23,35 @@ export async function ensureReplyReviewTask(reply, lead) {
 
   // Try PostgreSQL task creation
   try {
+    const sourceMessageId = reply?.sourceMessageId || reply?.messageId || null;
+    const conversationId = reply?.conversation_id || reply?.conversationId || null;
+    let reviewItemId = null;
+    if (sourceMessageId) {
+      const existingReview = await db.query(
+        `SELECT id FROM review_items WHERE source_message_id = $1::uuid ORDER BY opened_at LIMIT 1`,
+        [sourceMessageId]
+      );
+      if (existingReview.rows[0]) {
+        reviewItemId = existingReview.rows[0].id;
+      } else {
+        const createdReview = await db.query(
+          `INSERT INTO review_items (
+             source_message_id, conversation_id, status, opened_at, suggested_outcome, payload
+           ) VALUES ($1::uuid, $2::uuid, 'pending', NOW(), $3, $4::jsonb)
+           RETURNING id`,
+          [sourceMessageId, conversationId, reply?.intent || 'Neutral', JSON.stringify({ source: 'runtime_email_sync' })]
+        );
+        reviewItemId = createdReview.rows[0].id;
+      }
+    }
+
     const existingRes = await db.query(
-      `SELECT id, title, description AS notes FROM tasks 
-       WHERE status = 'pending' AND title LIKE $1 LIMIT 1`,
-      [`%${leadId}%`]
+      `SELECT id, title, description AS notes FROM tasks
+       WHERE status = 'pending'
+         AND (($1::uuid IS NOT NULL AND review_item_id = $1::uuid)
+           OR ($1::uuid IS NULL AND lead_id = $2::uuid AND type = 'reply_review'))
+       LIMIT 1`,
+      [reviewItemId, leadId]
     );
 
     if (existingRes.rows.length > 0) {
@@ -37,10 +62,21 @@ export async function ensureReplyReviewTask(reply, lead) {
     const title = formatTaskTitle(reply, lead);
 
     const newRes = await db.query(
-      `INSERT INTO tasks (title, description, status, priority, due_at)
-       VALUES ($1::varchar, $2::text, 'pending', 'medium', $3::timestamptz)
-       RETURNING id, title, description AS notes, status, priority, due_at AS "dueAt"`,
-      [title, formatTaskNotes(reply), dueAt]
+      `INSERT INTO tasks (
+         title, description, status, priority, due_at, type, task_type,
+         review_item_id, reply_id, lead_id, company_id, campaign_id, source_collection
+       ) VALUES (
+         $1::varchar, $2::text, 'pending', 'medium', $3::timestamptz,
+         'reply_review', 'reply_review', $4::uuid, $5::uuid, $6::uuid, $7::uuid, $8::uuid,
+         'runtime_reply_review'
+       )
+       RETURNING id, title, description AS notes, status, priority, due_at AS "dueAt",
+                 review_item_id AS "reviewItemId", lead_id AS "leadId"`,
+      [
+        title, formatTaskNotes(reply), dueAt, reviewItemId, sourceMessageId, leadId,
+        lead.companyId?._id || lead.companyId || null,
+        lead.campaignId || null,
+      ]
     );
 
     return newRes.rows[0];

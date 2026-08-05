@@ -32,8 +32,17 @@ export async function globalSearch(query, { limit = 5 } = {}) {
         [pattern, cap]
       ),
       db.query(
-        `SELECT id, title, summary_stage AS stage FROM ongoing_jobs 
-         WHERE title ILIKE $1 ORDER BY updated_at DESC LIMIT $2`,
+        `SELECT oj.id, oj.title, oj.summary_stage AS stage FROM ongoing_jobs oj
+         WHERE oj.title ILIKE $1
+           AND oj.deleted_at IS NULL
+           AND NOT EXISTS (
+             SELECT 1
+             FROM migration_entity_map legacy_job_map
+             WHERE legacy_job_map.target_table = 'ongoing_jobs'
+               AND legacy_job_map.target_entity_id = oj.id
+               AND legacy_job_map.source_collection = 'jobs'
+           )
+         ORDER BY oj.updated_at DESC LIMIT $2`,
         [pattern, cap]
       ),
       db.query(

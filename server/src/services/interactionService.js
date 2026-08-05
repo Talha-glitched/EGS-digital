@@ -90,7 +90,10 @@ export function buildRelatedContacts(record, leadMap = new Map()) {
 export async function listInteractionsForLead(leadId) {
   try {
     const res = await db.query(
-      `SELECT id, person_id AS "leadId", organization_id AS "companyId", channel AS type, direction, occurred_at AS "occurredAt", outcome, notes AS summary
+      `SELECT id, person_id AS "leadId", organization_id AS "companyId", channel AS type,
+              direction, occurred_at AS "occurredAt", outcome, notes AS summary,
+              title, duration_minutes AS "durationMinutes", location, attendees,
+              logged_by AS "loggedBy", related_person_ids AS "relatedLeadIds"
        FROM interactions WHERE person_id = $1::uuid ORDER BY occurred_at DESC`,
       [leadId]
     );
@@ -109,7 +112,10 @@ export async function listInteractionsForLead(leadId) {
 export async function listInteractionsForCompany(companyId) {
   try {
     const res = await db.query(
-      `SELECT id, person_id AS "leadId", organization_id AS "companyId", channel AS type, direction, occurred_at AS "occurredAt", outcome, notes AS summary
+      `SELECT id, person_id AS "leadId", organization_id AS "companyId", channel AS type,
+              direction, occurred_at AS "occurredAt", outcome, notes AS summary,
+              title, duration_minutes AS "durationMinutes", location, attendees,
+              logged_by AS "loggedBy", related_person_ids AS "relatedLeadIds"
        FROM interactions WHERE organization_id = $1::uuid ORDER BY occurred_at DESC`,
       [companyId]
     );
@@ -148,10 +154,25 @@ export async function createInteraction(leadId, payload, adminUsername = 'admin'
 
   try {
     const res = await db.query(
-      `INSERT INTO interactions (person_id, channel, direction, occurred_at, outcome, notes)
-       VALUES ($1::uuid, $2::varchar, $3::varchar, $4::timestamptz, $5::varchar, $6::text)
-       RETURNING id, person_id AS "leadId", channel AS type, direction, occurred_at AS "occurredAt", outcome, notes AS summary`,
-      [leadId, type, direction, occurredAt, payload.outcome || null, summary]
+      `INSERT INTO interactions (
+         person_id, organization_id, channel, direction, occurred_at, outcome, notes,
+         title, duration_minutes, location, attendees, logged_by
+       )
+       VALUES (
+         $1::uuid,
+         COALESCE($7::uuid, (SELECT organization_id FROM person_organization_roles WHERE person_id = $1::uuid ORDER BY is_current DESC NULLS LAST LIMIT 1)),
+         $2::varchar, $3::varchar, $4::timestamptz, $5::varchar, $6::text,
+         $8, $9, $10, $11, $12
+       )
+       RETURNING id, person_id AS "leadId", organization_id AS "companyId", channel AS type,
+         direction, occurred_at AS "occurredAt", outcome, notes AS summary, title,
+         duration_minutes AS "durationMinutes", location, attendees, logged_by AS "loggedBy"`,
+      [
+        leadId, type, direction, occurredAt, payload.outcome || null, summary,
+        payload.companyId || null,
+        String(payload.title || '').trim() || defaultTitleForType(type, direction),
+        payload.durationMinutes || null, payload.location || '', payload.attendees || '', adminUsername,
+      ]
     );
 
     return toInteractionEvent(res.rows[0], payload.contactName || 'Contact', []);

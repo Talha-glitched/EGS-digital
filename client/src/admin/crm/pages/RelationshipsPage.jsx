@@ -26,7 +26,8 @@ import {
 import { HeartHandshake, Clock3, UserRound, AlertTriangle, Search, X, UserPlus, Loader2 } from 'lucide-react';
 import OutreachDrawer from '../components/leads/OutreachDrawer.jsx';
 import DataTableShell from '../components/ui/DataTableShell.jsx';
-import { DeliveryStatusBadge } from '../components/leads/LeadTableComponents.jsx';
+import { DeliveryStatusBadge, ResponseStatusBadge } from '../components/leads/LeadTableComponents.jsx';
+import PocQualificationBadge from '../components/leads/PocQualificationBadge.jsx';
 import RelationshipStatusBadge from '../components/leads/RelationshipStatusBadge.jsx';
 import AddContactModal from '../components/leads/AddContactModal.jsx';
 import {
@@ -458,6 +459,8 @@ export default function RelationshipsPage() {
                       <SortableTableHeader label="Contact" sortKey="name" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
                       <SortableTableHeader label="Company" sortKey="companyName" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
                       <SortableTableHeader label="Email status" sortKey="deliveryStatus" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                      <SortableTableHeader label="Response" sortKey="hasResponded" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                      <SortableTableHeader label="Right POC" sortKey="pocStatus" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
                       <SortableTableHeader label="Last interaction" sortKey="lastInteraction" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
                       <SortableTableHeader label="Relationship" sortKey="relationshipStatus" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
                       <SortableTableHeader label="Owner" sortKey="owner" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
@@ -497,6 +500,17 @@ export default function RelationshipsPage() {
                           </td>
                           <td>
                             <DeliveryStatusBadge status={lead.deliveryStatus} />
+                          </td>
+                          <td>
+                            <ResponseStatusBadge
+                              hasResponded={lead.hasResponded}
+                              respondedAt={lead.respondedAt}
+                              responseChannels={lead.responseChannels}
+                              compact
+                            />
+                          </td>
+                          <td>
+                            <PocQualificationBadge status={lead.pocQualification?.status} compact />
                           </td>
                           <td>
                             <Badge tone={interactionTone}>{formatLastInteraction(lead.lastInteractionAt)}</Badge>

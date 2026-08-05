@@ -1,4 +1,5 @@
 import db from '../db/index.js';
+import { listAllLeads } from './projectService.js';
 
 export function getDubaiBusinessDate(date = new Date()) {
   const d = new Date(date);
@@ -211,33 +212,51 @@ export async function getDashboardWorkingViewData() {
   try {
     const ojSql = `
       SELECT oj.id AS "_id", oj.title AS "name", COALESCE(o.canonical_name, o.trading_name, '') AS "companyName",
-             oj.summary_stage AS "stage", oj.updated_at AS "updatedAt"
+             oj.summary_stage AS "stage", oj.owner, oj.value_aed AS "valueAed",
+             COALESCE(oj.target_date, oj.expected_close_date) AS "targetDate",
+             oj.updated_at AS "updatedAt",
+             next_task.id AS "nextTaskId", next_task.title AS "nextTaskTitle",
+             next_task.owner AS "nextTaskOwner", next_task.due_at AS "nextTaskDueAt"
       FROM ongoing_jobs oj
       LEFT JOIN organizations o ON oj.customer_organization_id = o.id
+      LEFT JOIN LATERAL (
+        SELECT t.id, t.title, t.owner, t.due_at
+        FROM tasks t
+        WHERE t.opportunity_id = oj.id
+          AND t.status = 'pending'
+          AND t.deleted_at IS NULL
+        ORDER BY t.due_at ASC NULLS LAST, t.created_at DESC
+        LIMIT 1
+      ) next_task ON TRUE
       WHERE oj.outcome IS DISTINCT FROM 'cancelled'
+        AND oj.deleted_at IS NULL
+        AND oj.summary_stage NOT IN ('Job Done', 'Job Lost', 'Closed Won', 'Closed Lost')
+        AND NOT EXISTS (
+          SELECT 1
+          FROM migration_entity_map legacy_job_map
+          WHERE legacy_job_map.target_table = 'ongoing_jobs'
+            AND legacy_job_map.target_entity_id = oj.id
+            AND legacy_job_map.source_collection = 'jobs'
+        )
       ORDER BY oj.updated_at DESC
     `;
     const res = await db.query(ojSql);
-    
-    // Fetch open tasks for ongoing jobs
-    let openTasks = [];
-    try {
-      const taskRes = await db.query(
-        `SELECT id AS "_id", title, due_at AS "dueAt" FROM tasks WHERE status = 'pending' ORDER BY due_at ASC`
-      );
-      openTasks = taskRes.rows;
-    } catch (err) {}
 
     ongoingJobs = res.rows.map((j) => ({
       _id: j._id,
       name: j.name,
       companyName: j.companyName || '—',
       stage: j.stage || 'Inquiry',
-      owner: 'admin',
-      valueAed: 0,
-      targetDate: null,
-      nextTask: openTasks[0] ? { _id: openTasks[0]._id, title: openTasks[0].title, owner: 'admin', dueAt: openTasks[0].dueAt } : null,
-      isOverdue: false,
+      owner: j.owner || 'Unassigned',
+      valueAed: Number(j.valueAed) || 0,
+      targetDate: j.targetDate || null,
+      nextTask: j.nextTaskId ? {
+        _id: j.nextTaskId,
+        title: j.nextTaskTitle,
+        owner: j.nextTaskOwner || '',
+        dueAt: j.nextTaskDueAt,
+      } : null,
+      isOverdue: Boolean(j.nextTaskDueAt && new Date(j.nextTaskDueAt) < now),
     }));
 
     ongoingJobs.sort((a, b) => {
@@ -249,7 +268,80 @@ export async function getDashboardWorkingViewData() {
       return 0;
     });
   } catch (err) {
+    console.error('Error loading dashboard Ongoing Jobs:', err.message);
     ongoingJobs = [];
+  }
+
+  async function loadPersonWorkContext(personIds) {
+    if (!personIds.length) return { tasks: new Map(), replies: new Map(), interactions: new Map() };
+
+    const [taskRes, replyRes, interactionRes] = await Promise.all([
+      db.query(
+        `SELECT DISTINCT ON (lead_id)
+                lead_id, id, title, owner, due_at, priority, type
+         FROM tasks
+         WHERE lead_id = ANY($1::uuid[])
+           AND status = 'pending'
+           AND deleted_at IS NULL
+         ORDER BY lead_id, due_at ASC NULLS LAST, created_at DESC`,
+        [personIds]
+      ),
+      db.query(
+        `WITH inbound AS (
+           SELECT m.id, m.body, m.occurred_at, m.suggested_intent,
+                  COALESCE(participant_method.person_id, campaign_role.person_id) AS person_id,
+                  campaign.name AS campaign_name,
+                  review.status AS review_status
+           FROM messages m
+           JOIN conversations conversation ON conversation.id = m.conversation_id
+           LEFT JOIN campaign_contacts campaign_contact ON campaign_contact.id = conversation.campaign_contact_id
+           LEFT JOIN campaign_accounts campaign_account ON campaign_account.id = campaign_contact.campaign_account_id
+           LEFT JOIN person_organization_roles campaign_role ON campaign_role.id = campaign_contact.role_id
+           LEFT JOIN conversation_participants participant ON participant.conversation_id = conversation.id
+           LEFT JOIN person_contact_methods participant_method ON participant_method.id = participant.person_contact_method_id
+           LEFT JOIN campaigns campaign ON campaign.id = COALESCE(conversation.campaign_id, campaign_account.campaign_id)
+           LEFT JOIN review_items review ON review.source_message_id = m.id
+           WHERE m.direction = 'inbound'
+             AND COALESCE(m.is_migration_duplicate, FALSE) = FALSE
+         )
+         SELECT DISTINCT ON (person_id)
+                person_id, id, body, occurred_at, suggested_intent, campaign_name, review_status
+         FROM inbound
+         WHERE person_id = ANY($1::uuid[])
+         ORDER BY person_id, occurred_at DESC`,
+        [personIds]
+      ),
+      db.query(
+        `SELECT person_id, MAX(occurred_at) AS last_interaction_at
+         FROM interactions
+         WHERE person_id = ANY($1::uuid[]) AND deleted_at IS NULL
+         GROUP BY person_id`,
+        [personIds]
+      ),
+    ]);
+
+    return {
+      tasks: new Map(taskRes.rows.map((row) => [String(row.lead_id), row])),
+      replies: new Map(replyRes.rows.map((row) => [String(row.person_id), row])),
+      interactions: new Map(interactionRes.rows.map((row) => [String(row.person_id), row.last_interaction_at])),
+    };
+  }
+
+  function taskForDashboard(task) {
+    return task ? {
+      _id: task.id,
+      title: task.title,
+      owner: task.owner || '',
+      dueAt: task.due_at,
+      priority: task.priority,
+      type: task.type,
+    } : null;
+  }
+
+  function laterTimestamp(...values) {
+    const timestamps = values.filter(Boolean).map((value) => new Date(value)).filter((value) => !Number.isNaN(value.getTime()));
+    if (!timestamps.length) return null;
+    return new Date(Math.max(...timestamps.map((value) => value.getTime()))).toISOString();
   }
 
   // -------------------------------------------------------------
@@ -257,26 +349,37 @@ export async function getDashboardWorkingViewData() {
   // -------------------------------------------------------------
   let keyRelationships = [];
   try {
-    const krSql = `
-      SELECT p.id AS "_id", p.display_name AS "name", COALESCE(o.canonical_name, o.trading_name, '') AS "companyName",
-             p.updated_at AS "lastInteractionAt"
-      FROM people p
-      LEFT JOIN person_organization_roles por ON por.person_id = p.id
-      LEFT JOIN organizations o ON por.organization_id = o.id
-      WHERE p.archived_at IS NULL
-      LIMIT 50
-    `;
-    const krRes = await db.query(krSql);
-    keyRelationships = krRes.rows.map((lead) => ({
-      _id: lead._id,
-      name: lead.name,
-      companyName: lead.companyName || '—',
-      owner: 'admin',
-      lastInteractionAt: lead.lastInteractionAt || null,
-      nextTask: null,
-      dueCategory: 3,
-    }));
+    const rightPocs = await listAllLeads({ rightPocOnly: true, limit: 500 });
+    const context = await loadPersonWorkContext(rightPocs.items.map((person) => person._id));
+    keyRelationships = rightPocs.items.map((person) => {
+      const task = context.tasks.get(String(person._id));
+      const nextTask = taskForDashboard(task);
+      const followUpAt = nextTask?.dueAt || person.relationshipProfile?.nextFollowUpAt || null;
+      const followUpDate = followUpAt ? new Date(followUpAt) : null;
+      const todayDubai = getDubaiBusinessDate(now);
+      const followUpDubai = followUpDate && !Number.isNaN(followUpDate.getTime()) ? getDubaiBusinessDate(followUpDate) : null;
+      const dueCategory = !followUpDubai ? 3 : followUpDubai < todayDubai ? 1 : followUpDubai === todayDubai ? 2 : 4;
+      return {
+        ...person,
+        _id: person._id,
+        name: person.name,
+        companyName: person.companyName || '—',
+        owner: person.relationshipProfile?.owner || nextTask?.owner || 'Unassigned',
+        lastInteractionAt: laterTimestamp(
+          person.lastRespondedAt,
+          context.interactions.get(String(person._id))
+        ),
+        nextTask: nextTask || (followUpAt ? {
+          _id: `relationship-follow-up-${person._id}`,
+          title: 'Relationship follow-up',
+          owner: person.relationshipProfile?.owner || '',
+          dueAt: followUpAt,
+        } : null),
+        dueCategory,
+      };
+    }).sort((a, b) => a.dueCategory - b.dueCategory || new Date(a.nextTask?.dueAt || 8640000000000000) - new Date(b.nextTask?.dueAt || 8640000000000000));
   } catch (err) {
+    console.error('Error loading dashboard Key Relationships:', err.message);
     keyRelationships = [];
   }
 
@@ -285,28 +388,38 @@ export async function getDashboardWorkingViewData() {
   // -------------------------------------------------------------
   let leadsList = [];
   try {
-    const leadSql = `
-      SELECT p.id AS "_id", p.display_name AS "name", COALESCE(o.canonical_name, o.trading_name, '') AS "companyName"
-      FROM people p
-      LEFT JOIN person_organization_roles por ON por.person_id = p.id
-      LEFT JOIN organizations o ON por.organization_id = o.id
-      WHERE p.archived_at IS NULL
-      LIMIT 50
-    `;
-    const lRes = await db.query(leadSql);
-    leadsList = lRes.rows.map((lead) => ({
-      _id: lead._id,
-      name: lead.name,
-      companyName: lead.companyName || '—',
-      leadStage: 'contact',
-      campaignName: '—',
-      latestReply: null,
-      currentTask: null,
-      hasUnreviewedReply: false,
-      isOverdue: false,
-      priorityRank: 4,
-    }));
+    const replyLeads = await listAllLeads({ respondedOnly: true, limit: 500 });
+    // Dashboard queues are intentionally MECE: a confirmed Right POC is worked
+    // in Key Relationships and must not also appear in the Leads queue.
+    const nonRelationshipLeads = replyLeads.items.filter(
+      (person) => person.pocQualification?.status !== 'Confirmed'
+    );
+    const context = await loadPersonWorkContext(nonRelationshipLeads.map((person) => person._id));
+    leadsList = nonRelationshipLeads.map((person) => {
+      const reply = context.replies.get(String(person._id));
+      const currentTask = taskForDashboard(context.tasks.get(String(person._id)));
+      const hasUnreviewedReply = reply?.review_status === 'pending';
+      const isOverdue = Boolean(currentTask?.dueAt && new Date(currentTask.dueAt) < now);
+      return {
+        ...person,
+        leadStage: 'lead',
+        campaignName: reply
+          ? (reply.campaign_name || 'Direct / no campaign')
+          : (person.campaignName || 'Direct / no campaign'),
+        latestReply: reply ? {
+          _id: reply.id,
+          snippet: String(reply.body || '').replace(/\s+/g, ' ').trim().slice(0, 180),
+          receivedAt: reply.occurred_at,
+          intent: reply.suggested_intent || 'Neutral',
+        } : null,
+        currentTask,
+        hasUnreviewedReply,
+        isOverdue,
+        priorityRank: hasUnreviewedReply ? 1 : isOverdue ? 2 : 3,
+      };
+    }).sort((a, b) => a.priorityRank - b.priorityRank || new Date(b.lastRespondedAt || 0) - new Date(a.lastRespondedAt || 0));
   } catch (err) {
+    console.error('Error loading dashboard Leads:', err.message);
     leadsList = [];
   }
 
@@ -314,5 +427,10 @@ export async function getDashboardWorkingViewData() {
     ongoingJobs,
     keyRelationships,
     leads: leadsList,
+    counts: {
+      ongoingJobs: ongoingJobs.length,
+      keyRelationships: keyRelationships.length,
+      leads: leadsList.length,
+    },
   };
 }

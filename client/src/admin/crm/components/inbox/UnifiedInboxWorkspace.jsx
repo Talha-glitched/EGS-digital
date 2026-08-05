@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ConversationThreadView from './ConversationThreadView.jsx';
 import { Mail, MessageSquare } from 'lucide-react';
 import { cn, EmptyState } from '../ui/primitives.jsx';
@@ -8,9 +8,32 @@ import {
   useTableFilters,
   INBOX_FILTER_SCHEMA,
 } from '../ui/advancedFilter/index.js';
+import { crmApiFetch } from '../../crmApi.js';
+import PocQualificationBadge from '../leads/PocQualificationBadge.jsx';
 
 export default function UnifiedInboxWorkspace({ initialReplies = [], onAction, replyCount }) {
   const [activeThread, setActiveThread] = useState(initialReplies[0] || null);
+
+  const selectThread = async (thread) => {
+    setActiveThread(thread);
+    try {
+      const fullThread = await crmApiFetch(`/api/admin/inbox/${thread._id}`);
+      setActiveThread(fullThread);
+    } catch (err) {
+      console.error('Failed to load full inbox thread:', err);
+    }
+  };
+
+  useEffect(() => {
+    if (!initialReplies.length) {
+      setActiveThread(null);
+      return;
+    }
+    const current = initialReplies.find((reply) => reply._id === activeThread?._id) || initialReplies[0];
+    selectThread(current);
+    // Refresh when the server-provided reply list changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialReplies]);
   const {
     filtered,
     filters: advancedFilters,
@@ -54,7 +77,7 @@ export default function UnifiedInboxWorkspace({ initialReplies = [], onAction, r
                 <button
                   key={reply._id}
                   type="button"
-                  onClick={() => setActiveThread(reply)}
+                  onClick={() => selectThread(reply)}
                   className={cn(
                     'block w-full border-b border-[var(--color-line)] px-5 py-4 text-left transition',
                     selected ? 'bg-white shadow-[inset_3px_0_0_0_var(--color-brand)]' : 'hover:bg-white/70'
@@ -68,6 +91,10 @@ export default function UnifiedInboxWorkspace({ initialReplies = [], onAction, r
                   </div>
                   <p className="truncate text-sm font-semibold text-[var(--color-ink)]">{reply.pocName}</p>
                   <p className="truncate text-xs text-neutral-500">{reply.companyName}</p>
+                  <div className="mt-2 flex items-center gap-1.5">
+                    <span className="inline-flex rounded-full bg-sky-50 px-2 py-0.5 text-[10px] font-semibold text-sky-800 ring-1 ring-inset ring-sky-200/70">Lead</span>
+                    <PocQualificationBadge status={reply.pocQualification?.status} compact />
+                  </div>
                   <p className="mt-1 line-clamp-2 text-xs italic text-neutral-400">&ldquo;{reply.latestMessageBody}&rdquo;</p>
                 </button>
               );

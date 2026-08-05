@@ -1,5 +1,7 @@
 import { MessageSquare, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import { cn } from '../ui/primitives.jsx';
+import { ResponseStatusBadge } from '../leads/LeadTableComponents.jsx';
+import PocQualificationBadge from '../leads/PocQualificationBadge.jsx';
 
 export default function ConversationThreadView({ activeThread, onAction }) {
   const openWhatsAppChat = (phone, name) => {
@@ -22,9 +24,13 @@ export default function ConversationThreadView({ activeThread, onAction }) {
             <span className="font-medium text-neutral-700">{activeThread.companyName}</span>
           </p>
         </div>
-        <span className="shrink-0 rounded-full bg-neutral-100 px-3 py-1 text-xs font-semibold text-neutral-700">
-          {activeThread.campaignName}
-        </span>
+        <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+          <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-semibold text-neutral-700">
+            Campaign: {activeThread.campaignName}
+          </span>
+          <ResponseStatusBadge hasResponded={activeThread.hasResponded} compact />
+          <PocQualificationBadge status={activeThread.pocQualification?.status} compact />
+        </div>
       </header>
 
       <div className="crm-scroll flex-1 space-y-4 overflow-y-auto bg-neutral-50/50 p-5">

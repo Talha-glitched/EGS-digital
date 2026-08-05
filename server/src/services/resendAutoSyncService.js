@@ -88,22 +88,25 @@ export async function syncAllResendReplies() {
         }
 
         const { status: targetStatus, intent } = classifyInboundEmail(item.subject || '', bodyText || item.subject || '');
-        const domain = email.split('@')[1] || '';
-
         // Query person in PostgreSQL by email
         let pRes = await db.query(
-          `SELECT p.id, p.display_name, por.organization_id, cc.id AS campaign_contact_id
+          `SELECT p.id, p.display_name, pcm.id AS person_contact_method_id,
+                  por.organization_id, cc.id AS campaign_contact_id, ca.campaign_id
            FROM person_contact_methods pcm
            JOIN people p ON pcm.person_id = p.id
            LEFT JOIN person_organization_roles por ON por.person_id = p.id
            LEFT JOIN campaign_contacts cc ON cc.role_id = por.id
+           LEFT JOIN campaign_accounts ca ON ca.id = cc.campaign_account_id
            WHERE pcm.normalized_value = $1 AND pcm.type = 'email'
+           ORDER BY cc.created_at DESC NULLS LAST
            LIMIT 1`,
           [email]
         );
 
         let personId = null;
+        let personContactMethodId = null;
         let campaignContactId = null;
+        let campaignId = null;
 
         if (pRes.rows.length === 0) {
           // Insert person in PostgreSQL
@@ -113,23 +116,38 @@ export async function syncAllResendReplies() {
           );
           personId = insP.rows[0].id;
 
-          await db.query(
+          const contactMethod = await db.query(
             `INSERT INTO person_contact_methods (person_id, type, original_value, normalized_value, preferred)
              VALUES ($1::uuid, 'email', $2, $3, true)
-             ON CONFLICT DO NOTHING`,
+             ON CONFLICT DO NOTHING
+             RETURNING id`,
             [personId, email, email]
           );
+          personContactMethodId = contactMethod.rows[0]?.id || null;
+          if (!personContactMethodId) {
+            const existingMethod = await db.query(
+              `SELECT id FROM person_contact_methods
+               WHERE person_id = $1::uuid AND type = 'email' AND normalized_value = $2
+               LIMIT 1`,
+              [personId, email]
+            );
+            personContactMethodId = existingMethod.rows[0]?.id || null;
+          }
           leadsCreated += 1;
         } else {
           personId = pRes.rows[0].id;
+          personContactMethodId = pRes.rows[0].person_contact_method_id;
           campaignContactId = pRes.rows[0].campaign_contact_id;
+          campaignId = pRes.rows[0].campaign_id;
           leadsUpdated += 1;
         }
 
         // Update campaign contact lead_state
         if (campaignContactId) {
           await db.query(
-            `UPDATE campaign_contacts SET lead_state = $1 WHERE id = $2::uuid`,
+            `UPDATE campaign_contacts
+             SET lead_state = $1, delivery_state = 'Replied', outcome = $1
+             WHERE id = $2::uuid`,
             [targetStatus, campaignContactId]
           );
         }
@@ -146,15 +164,27 @@ export async function syncAllResendReplies() {
         if (!existMsg.rows.length) {
           // Create conversation & message entry
           const convRes = await db.query(
-            `INSERT INTO conversations (channel, external_thread_id, subject)
-             VALUES ('email', $1, $2) RETURNING id`,
-            [msgId, item.subject || 'Inbound Email']
+            `INSERT INTO conversations (
+               channel, external_thread_id, subject, campaign_contact_id, campaign_id
+             ) VALUES ('email', $1, $2, $3::uuid, $4::uuid) RETURNING id`,
+            [msgId, item.subject || 'Inbound Email', campaignContactId, campaignId]
           );
           const convId = convRes.rows[0].id;
 
-          await db.query(
+          if (personContactMethodId) {
+            await db.query(
+              `INSERT INTO conversation_participants (
+                 conversation_id, person_contact_method_id, participant_role,
+                 endpoint_type_snapshot, endpoint_value_snapshot
+               ) VALUES ($1::uuid, $2::uuid, 'sender', 'email', $3)`,
+              [convId, personContactMethodId, email]
+            );
+          }
+
+          const insertedMessage = await db.query(
             `INSERT INTO messages (conversation_id, direction, channel, external_message_id, subject, body, delivery_state, occurred_at)
-             VALUES ($1::uuid, 'inbound', 'email', $2, $3, $4, 'received', $5)`,
+             VALUES ($1::uuid, 'inbound', 'email', $2, $3, $4, 'received', $5)
+             RETURNING id`,
             [convId, msgId, item.subject || 'Inbound Email', bodyText || item.subject || '', receivedDate]
           );
 
@@ -162,8 +192,22 @@ export async function syncAllResendReplies() {
           repliesLogged += 1;
 
           await ensureReplyReviewTask(
-            { id: convId, conversation_id: convId, intent, subject: item.subject, text: bodyText },
-            { id: personId, display_name: name, email }
+            {
+              id: convId,
+              conversation_id: convId,
+              sourceMessageId: insertedMessage.rows[0].id,
+              intent,
+              subject: item.subject,
+              text: bodyText,
+            },
+            {
+              id: personId,
+              display_name: name,
+              email,
+              companyId: pRes.rows[0]?.organization_id || null,
+              campaignId,
+              campaignContactId,
+            }
           );
         }
       }

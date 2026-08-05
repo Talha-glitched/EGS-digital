@@ -106,6 +106,8 @@ export async function fetchGlobalLeads(params = {}) {
     deliveryStatus,
     pocStatus,
     rightPocOnly,
+    keyRelationshipOnly,
+    respondedOnly,
     relationshipStatus,
     serviceCategory,
     followUp,
@@ -123,6 +125,8 @@ export async function fetchGlobalLeads(params = {}) {
     ...(deliveryStatus && { deliveryStatus }),
     ...(pocStatus && { pocStatus }),
     ...(rightPocOnly && { rightPocOnly: '1' }),
+    ...(keyRelationshipOnly && { keyRelationshipOnly: '1' }),
+    ...(respondedOnly && { respondedOnly: '1' }),
     ...(relationshipStatus && { relationshipStatus }),
     ...(serviceCategory && { serviceCategory }),
     ...(followUp && { followUp }),
@@ -735,4 +739,3 @@ export async function fetchVendorPerformance(campaignId = null) {
   const qs = campaignId ? `?campaignId=${encodeURIComponent(campaignId)}` : '';
   return crmApiFetch(`/api/admin/crm/vendor-performance${qs}`);
 }
-

@@ -8,7 +8,18 @@ import {
   stageNames,
 } from '../constants/ongoingJobPipeline.js';
 import { DEFAULT_PIPELINE_STAGES } from '../models/PipelineConfig.js';
-import { createCompletedJobFromOngoingJob } from './completedJobService.js';
+
+// Mongo `jobs` are deferred historical records. They remain preserved in SQL and
+// migration provenance, but they are not part of the current operational workspace.
+// The corresponding Mongo `opportunities` remain visible, including the four cases
+// where both source collections describe the same current Ongoing Job.
+const EXCLUDE_DEFERRED_LEGACY_JOBS = `NOT EXISTS (
+  SELECT 1
+  FROM migration_entity_map legacy_job_map
+  WHERE legacy_job_map.target_table = 'ongoing_jobs'
+    AND legacy_job_map.target_entity_id = oj.id
+    AND legacy_job_map.source_collection = 'jobs'
+)`;
 
 const CHANNEL_TO_INTERACTION_TYPE = {
   phone: 'phone_call',
@@ -128,7 +139,7 @@ export async function updatePipelineConfig(payload, actor = 'admin') {
 export async function listOngoingJobs({ stage, owner, search, campaignId, companyId } = {}) {
   const stages = await getPipelineStages();
   const params = [];
-  const conditions = ['oj.deleted_at IS NULL'];
+  const conditions = ['oj.deleted_at IS NULL', EXCLUDE_DEFERRED_LEGACY_JOBS];
 
   if (stage && stage !== 'All') {
     params.push(stage);
@@ -164,9 +175,28 @@ export async function listOngoingJobs({ stage, owner, search, campaignId, compan
              oj.target_date AS "targetDate", oj.expected_close_date AS "expectedCloseDate",
              oj.closed_at AS "closedAt", oj.lost_reason AS "lostReason", oj.notes,
              oj.created_at AS "createdAt", oj.updated_at AS "updatedAt",
-             o.id AS "companyId", o.canonical_name AS "companyName"
+             o.id AS "companyId", o.canonical_name AS "companyName",
+             task_summary.total_tasks AS "totalTasks", task_summary.open_tasks AS "openTasks",
+             (
+               CASE WHEN oj.primary_lead_id IS NOT NULL THEN 1 ELSE 0 END
+               + COALESCE(cardinality(oj.stakeholder_lead_ids), 0)
+               + COALESCE(stakeholder_summary.structured_stakeholders, 0)
+             ) AS "clientStakeholders",
+             (
+               CASE WHEN NULLIF(BTRIM(oj.owner), '') IS NOT NULL OR oj.owner_user_id IS NOT NULL THEN 1 ELSE 0 END
+               + GREATEST(COALESCE(cardinality(oj.collaborators), 0), COALESCE(cardinality(oj.collaborator_user_ids), 0))
+             ) AS "internalCollaborators"
       FROM ongoing_jobs oj
       LEFT JOIN organizations o ON oj.customer_organization_id = o.id
+      LEFT JOIN LATERAL (
+        SELECT COUNT(*)::int AS total_tasks,
+               COUNT(*) FILTER (WHERE status = 'pending')::int AS open_tasks
+        FROM tasks WHERE opportunity_id = oj.id AND deleted_at IS NULL
+      ) task_summary ON TRUE
+      LEFT JOIN LATERAL (
+        SELECT COUNT(*)::int AS structured_stakeholders
+        FROM customer_stakeholders WHERE ongoing_job_id = oj.id
+      ) stakeholder_summary ON TRUE
       WHERE ${whereClause}
       ORDER BY oj.updated_at DESC NULLS LAST, oj.created_at DESC
     `;
@@ -175,12 +205,13 @@ export async function listOngoingJobs({ stage, owner, search, campaignId, compan
       ...row,
       ongoingJobId: row._id,
       stage: row.stage || 'Inquiry',
+      valueAed: Number(row.valueAed) || 0,
       companyId: row.companyId ? { _id: row.companyId, companyName: row.companyName } : null,
       executionSummary: {
-        totalTasks: 0,
-        openTasks: 0,
-        clientStakeholders: 1,
-        internalCollaborators: 1,
+        totalTasks: Number(row.totalTasks) || 0,
+        openTasks: Number(row.openTasks) || 0,
+        clientStakeholders: Number(row.clientStakeholders) || 0,
+        internalCollaborators: Number(row.internalCollaborators) || 0,
       },
     }));
 
@@ -210,11 +241,17 @@ export async function getOngoingJob(id) {
               oj.summary_stage AS "stage", oj.owner, oj.value_aed AS "valueAed",
               oj.target_date AS "targetDate", oj.expected_close_date AS "expectedCloseDate",
               oj.closed_at AS "closedAt", oj.lost_reason AS "lostReason", oj.notes,
+              oj.next_action AS "nextAction", oj.event_name AS "eventName", oj.campaign_id AS "campaignId",
               oj.created_at AS "createdAt", oj.updated_at AS "updatedAt",
+              oj.primary_lead_id AS "primaryLeadId", oj.stakeholder_lead_ids AS "stakeholderLeadIds",
+              oj.collaborators, oj.collaborator_user_ids AS "collaboratorUserIds",
+              oj.activity_log AS "activityLog",
               o.id AS "companyId", o.canonical_name AS "companyName"
        FROM ongoing_jobs oj
        LEFT JOIN organizations o ON oj.customer_organization_id = o.id
-       WHERE id::text = $1::text AND oj.deleted_at IS NULL
+       WHERE oj.id = $1::uuid
+         AND oj.deleted_at IS NULL
+         AND ${EXCLUDE_DEFERRED_LEGACY_JOBS}
        LIMIT 1`,
       [String(id)]
     );
@@ -229,21 +266,55 @@ export async function getOngoingJob(id) {
     const ongoingJob = {
       ...res.rows[0],
       ongoingJobId: res.rows[0]._id,
+      valueAed: Number(res.rows[0].valueAed) || 0,
       companyId: res.rows[0].companyId ? { _id: res.rows[0].companyId, companyName: res.rows[0].companyName } : null,
     };
+    const contactIds = [...new Set([
+      ongoingJob.primaryLeadId,
+      ...(Array.isArray(ongoingJob.stakeholderLeadIds) ? ongoingJob.stakeholderLeadIds : []),
+    ].filter(Boolean).map(String))];
+    let contacts = [];
+    if (contactIds.length) {
+      const contactRows = await db.query(
+        `SELECT p.id AS "_id", p.id, p.display_name AS "name", por.title AS "designation",
+                email.normalized_value AS "email", phone.normalized_value AS "phone",
+                o.id AS "companyId", o.canonical_name AS "companyName"
+         FROM people p
+         LEFT JOIN person_organization_roles por ON por.person_id = p.id
+           AND por.organization_id = $2::uuid
+         LEFT JOIN organizations o ON o.id = por.organization_id
+         LEFT JOIN LATERAL (
+           SELECT normalized_value FROM person_contact_methods
+           WHERE person_id = p.id AND type = 'email'
+           ORDER BY preferred DESC NULLS LAST, created_at LIMIT 1
+         ) email ON TRUE
+         LEFT JOIN LATERAL (
+           SELECT normalized_value FROM person_contact_methods
+           WHERE person_id = p.id AND type = 'phone'
+           ORDER BY preferred DESC NULLS LAST, created_at LIMIT 1
+         ) phone ON TRUE
+         WHERE p.id = ANY($1::uuid[]) AND p.archived_at IS NULL
+         ORDER BY CASE WHEN p.id = $3::uuid THEN 0 ELSE 1 END, p.display_name`,
+        [contactIds, ongoingJob.companyId?._id || null, ongoingJob.primaryLeadId || null]
+      );
+      contacts = contactRows.rows.map((contact) => ({
+        ...contact,
+        isPrimary: String(contact.id) === String(ongoingJob.primaryLeadId),
+        companyId: contact.companyId ? { _id: contact.companyId, companyName: contact.companyName } : null,
+      }));
+    }
 
     return {
       ongoingJob,
       opportunity: ongoingJob,
-      contacts: [],
+      contacts,
       stages: stageNames(stages),
       stageProbabilities: Object.fromEntries(stages.map((s) => [s.name, s.probability])),
     };
   } catch (err) {
     if (err.status === 404) throw err;
-    const error = new Error('Ongoing Job not found.');
-    error.status = 404;
-    throw error;
+    console.error('Error loading Ongoing Job from PostgreSQL:', err.message);
+    throw err;
   }
 }
 
@@ -265,12 +336,18 @@ export async function createOngoingJob(payload, actor = 'admin') {
   const res = await db.query(
     `INSERT INTO ongoing_jobs (
        title, customer_organization_id, campaign_id, owner, summary_stage,
-       value_aed, expected_close_date, notes, activity_log
+       value_aed, expected_close_date, notes, activity_log,
+       primary_lead_id, stakeholder_lead_ids, collaborators, next_action, event_name
      ) VALUES (
        $1, $2::uuid, $3::uuid, $4, $5,
-       $6, $7, $8, $9::jsonb
+       $6, $7, $8, $9::jsonb,
+       $10::uuid, $11::uuid[], $12::text[], $13, $14
      )
-     RETURNING id AS "_id", id, job_number AS "jobNo", title AS "name", summary_stage AS "stage", owner, value_aed AS "valueAed", created_at AS "createdAt", updated_at AS "updatedAt"`,
+     RETURNING id AS "_id", id, job_number AS "jobNo", title AS "name", summary_stage AS "stage", owner,
+               value_aed AS "valueAed", primary_lead_id AS "primaryLeadId",
+               stakeholder_lead_ids AS "stakeholderLeadIds", collaborators,
+               next_action AS "nextAction", event_name AS "eventName",
+               created_at AS "createdAt", updated_at AS "updatedAt"`,
     [
       payload.name.trim(),
       String(payload.companyId),
@@ -281,14 +358,19 @@ export async function createOngoingJob(payload, actor = 'admin') {
       now,
       String(payload.notes || '').trim(),
       JSON.stringify(activityLog),
+      payload.primaryLeadId && String(payload.primaryLeadId).length === 36 ? String(payload.primaryLeadId) : null,
+      normalizeTextList(payload.stakeholderLeadIds).filter((value) => value.length === 36),
+      normalizeTextList(payload.collaborators),
+      String(payload.nextAction || '').trim() || null,
+      String(payload.eventName || '').trim() || null,
     ]
   );
 
-  const newJob = { ...res.rows[0], ongoingJobId: res.rows[0]._id };
-
-  if (isClosedStage(stage) || stage === 'Payment Received') {
-    await createCompletedJobFromOngoingJob(newJob).catch(() => {});
-  }
+  const newJob = {
+    ...res.rows[0],
+    ongoingJobId: res.rows[0]._id,
+    valueAed: Number(res.rows[0].valueAed) || 0,
+  };
 
   return newJob;
 }
@@ -301,6 +383,16 @@ export async function updateOngoingJob(id, payload, actor = 'admin') {
 
   const stage = payload.stage || currentJob.stage;
   const valueAed = payload.valueAed !== undefined ? Math.max(0, cleanNumber(payload.valueAed)) : currentJob.valueAed;
+  let activityLog = Array.isArray(currentJob.activityLog) ? currentJob.activityLog : [];
+  if (payload.stage !== undefined && stage !== currentJob.stage) {
+    activityLog = appendActivity(activityLog, { action: 'Stage changed', field: 'stage', from: currentJob.stage, to: stage }, modifier);
+  }
+  if (payload.valueAed !== undefined && Number(valueAed) !== Number(currentJob.valueAed || 0)) {
+    activityLog = appendActivity(activityLog, { action: 'Job value changed', field: 'valueAed', from: currentJob.valueAed || 0, to: valueAed }, modifier);
+  }
+  if (payload.owner !== undefined && payload.owner !== currentJob.owner) {
+    activityLog = appendActivity(activityLog, { action: 'Owner changed', field: 'owner', from: currentJob.owner || null, to: payload.owner || null }, modifier);
+  }
 
   let closedAt = currentJob.closedAt;
   if (payload.stage !== undefined) {
@@ -320,9 +412,19 @@ export async function updateOngoingJob(id, payload, actor = 'admin') {
        value_aed = $6,
        notes = COALESCE($7, notes),
        closed_at = $8,
+       primary_lead_id = $9::uuid,
+       stakeholder_lead_ids = $10::uuid[],
+       collaborators = $11::text[],
+       next_action = $12,
+       event_name = $13,
+       activity_log = $14::jsonb,
        updated_at = NOW()
      WHERE (id::text = $1::text) AND deleted_at IS NULL
-     RETURNING id AS "_id", id, job_number AS "jobNo", title AS "name", summary_stage AS "stage", owner, value_aed AS "valueAed", created_at AS "createdAt", updated_at AS "updatedAt"`,
+     RETURNING id AS "_id", id, job_number AS "jobNo", title AS "name", summary_stage AS "stage", owner,
+               value_aed AS "valueAed", primary_lead_id AS "primaryLeadId",
+               stakeholder_lead_ids AS "stakeholderLeadIds", collaborators,
+               next_action AS "nextAction", event_name AS "eventName",
+               created_at AS "createdAt", updated_at AS "updatedAt"`,
     [
       String(id),
       payload.name ? payload.name.trim() : null,
@@ -332,14 +434,22 @@ export async function updateOngoingJob(id, payload, actor = 'admin') {
       valueAed,
       payload.notes !== undefined ? String(payload.notes).trim() : null,
       closedAt,
+      payload.primaryLeadId !== undefined
+        ? (payload.primaryLeadId && String(payload.primaryLeadId).length === 36 ? String(payload.primaryLeadId) : null)
+        : (currentJob.primaryLeadId || null),
+      normalizeTextList(payload.stakeholderLeadIds ?? currentJob.stakeholderLeadIds).filter((value) => value.length === 36),
+      normalizeTextList(payload.collaborators ?? currentJob.collaborators),
+      payload.nextAction !== undefined ? String(payload.nextAction || '').trim() || null : currentJob.nextAction || null,
+      payload.eventName !== undefined ? String(payload.eventName || '').trim() || null : currentJob.eventName || null,
+      JSON.stringify(activityLog),
     ]
   );
 
-  const updatedJob = { ...res.rows[0], ongoingJobId: res.rows[0]._id };
-
-  if (isClosedStage(stage) || stage === 'Payment Received') {
-    await createCompletedJobFromOngoingJob(updatedJob).catch(() => {});
-  }
+  const updatedJob = {
+    ...res.rows[0],
+    ongoingJobId: res.rows[0]._id,
+    valueAed: Number(res.rows[0].valueAed) || 0,
+  };
 
   return updatedJob;
 }
@@ -362,10 +472,82 @@ export async function restoreOngoingJob(id, actor = {}) {
 
 export async function getOngoingJobTimeline(id) {
   const { ongoingJob } = await getOngoingJob(id);
+  const events = [];
+  const pushEvent = (event) => {
+    if (!event.timestamp) return;
+    const timestamp = new Date(event.timestamp);
+    if (Number.isNaN(timestamp.getTime())) return;
+    events.push({
+      id: event.id,
+      type: event.type || 'opportunity',
+      title: event.title,
+      detail: event.detail || '',
+      timestamp: timestamp.toISOString(),
+      actor: event.actor || 'EGS Team',
+      channel: event.channel || 'crm',
+      source: event.source || 'automated',
+      meta: event.meta || { direction: 'internal' },
+    });
+  };
+
+  pushEvent({
+    id: `job-created-${ongoingJob.id}`,
+    type: 'opportunity',
+    title: 'Ongoing Job created',
+    detail: ongoingJob.name,
+    timestamp: ongoingJob.createdAt,
+    actor: ongoingJob.owner || 'EGS Team',
+  });
+
+  for (const [index, activity] of (Array.isArray(ongoingJob.activityLog) ? ongoingJob.activityLog : []).entries()) {
+    pushEvent({
+      id: `job-activity-${ongoingJob.id}-${index}`,
+      type: activity.field === 'stage' ? 'pipeline' : 'opportunity',
+      title: activity.action || 'Ongoing Job updated',
+      detail: activity.from !== undefined || activity.to !== undefined
+        ? `${activity.from ?? '—'} → ${activity.to ?? '—'}`
+        : '',
+      timestamp: activity.at,
+      actor: activity.by || ongoingJob.owner,
+    });
+  }
+
+  const [tasks, jobEvents] = await Promise.all([
+    db.query(
+      `SELECT id, title, description, status, priority, due_at, completed_at, created_at
+       FROM tasks WHERE opportunity_id = $1::uuid AND deleted_at IS NULL`,
+      [ongoingJob.id]
+    ),
+    db.query(
+      `SELECT id, event_type, details, created_at
+       FROM job_events WHERE ongoing_job_id = $1::uuid`,
+      [ongoingJob.id]
+    ),
+  ]);
+
+  tasks.rows.forEach((task) => pushEvent({
+    id: `task-${task.id}`,
+    type: 'task',
+    channel: 'task',
+    title: task.status === 'completed' ? `Task completed: ${task.title}` : `Task: ${task.title}`,
+    detail: task.description || '',
+    timestamp: task.completed_at || task.due_at || task.created_at,
+    meta: { direction: 'internal', priority: task.priority, status: task.status },
+  }));
+  jobEvents.rows.forEach((jobEvent) => pushEvent({
+    id: `job-event-${jobEvent.id}`,
+    type: 'status',
+    title: jobEvent.event_type,
+    detail: jobEvent.details?.reason || jobEvent.details?.detail || '',
+    timestamp: jobEvent.created_at,
+    meta: { direction: 'internal', ...(jobEvent.details || {}) },
+  }));
+
+  events.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
   return {
     ongoingJobId: String(ongoingJob._id),
     opportunityId: String(ongoingJob._id),
-    events: [],
+    events,
   };
 }
 
@@ -381,7 +563,7 @@ export async function listTasks({ status = 'Open', owner, opportunityId, ongoing
 
   if (targetJobId) {
     params.push(String(targetJobId));
-    conditions.push(`review_item_id::text = $${params.length}::text OR id::text = $${params.length}::text`);
+    conditions.push(`opportunity_id::text = $${params.length}`);
   }
 
   if (taskType) {
@@ -389,15 +571,24 @@ export async function listTasks({ status = 'Open', owner, opportunityId, ongoing
     conditions.push(`type = $${params.length}`);
   }
 
+  if (owner) {
+    params.push(String(owner));
+    conditions.push(`(owner = $${params.length} OR owner_user_id::text = $${params.length})`);
+  }
+
   const whereClause = conditions.join(' AND ');
 
   try {
     const res = await db.query(
       `SELECT id AS "_id", id, title, type AS "taskType", status, priority, description AS "notes",
-              due_at AS "dueAt", completed_at AS "completedAt", created_at AS "createdAt"
+              due_at AS "dueAt", completed_at AS "completedAt", created_at AS "createdAt",
+              owner, owner_user_id AS "ownerUserId", campaign_id AS "campaignId",
+              company_id AS "companyId", lead_id AS "leadId", opportunity_id AS "opportunityId",
+              review_item_id AS "reviewItemId", interaction_id AS "interactionId"
        FROM tasks
        WHERE ${whereClause}
-       ORDER BY due_at ASC NULLS LAST, created_at DESC`
+       ORDER BY due_at ASC NULLS LAST, created_at DESC`,
+      params
     );
     const items = res.rows.map((row) => ({
       ...row,
@@ -448,8 +639,11 @@ export async function createTask(payload, actor = 'admin') {
   const status = payload.status === 'Done' ? 'completed' : 'pending';
 
   const res = await db.query(
-    `INSERT INTO tasks (title, description, status, priority, type, due_at)
-     VALUES ($1, $2, $3, $4, $5, $6)
+    `INSERT INTO tasks (
+       title, description, status, priority, type, due_at, owner,
+       owner_user_id, campaign_id, company_id, lead_id, opportunity_id
+     )
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8::uuid, $9::uuid, $10::uuid, $11::uuid, $12::uuid)
      RETURNING id AS "_id", id, title, type AS "taskType", status, priority, description AS "notes", due_at AS "dueAt", created_at AS "createdAt"`,
     [
       payload.title.trim(),
@@ -458,6 +652,12 @@ export async function createTask(payload, actor = 'admin') {
       payload.priority || 'medium',
       taskType,
       payload.dueAt ? new Date(payload.dueAt) : null,
+      payload.owner || (typeof actor === 'string' ? actor : actor?.username || actor?.name) || null,
+      payload.ownerUserId || null,
+      payload.campaignId || null,
+      payload.companyId || null,
+      payload.leadId || null,
+      targetJobId || null,
     ]
   );
 
@@ -561,11 +761,14 @@ export async function getWorkspaceSummary() {
               oj.owner, oj.updated_at AS "updatedAt", o.canonical_name AS "companyName"
        FROM ongoing_jobs oj
        LEFT JOIN organizations o ON oj.customer_organization_id = o.id
-       WHERE oj.deleted_at IS NULL AND oj.summary_stage NOT IN ('Job Lost', 'Closed Lost')
+       WHERE oj.deleted_at IS NULL
+         AND ${EXCLUDE_DEFERRED_LEGACY_JOBS}
+         AND oj.summary_stage NOT IN ('Job Lost', 'Closed Lost')
        ORDER BY oj.updated_at DESC`
     );
     ongoingJobs = res.rows.map((row) => ({
       ...row,
+      valueAed: Number(row.valueAed) || 0,
       companyId: row.companyName ? { companyName: row.companyName } : null,
     }));
   } catch (err) {}

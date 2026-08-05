@@ -171,7 +171,7 @@ export default function OngoingJobsPage() {
   const selection = useRowSelection(sortedItems);
 
   const active = visibleItems.filter((item) => !['Job Done', 'Job Lost', 'Closed Won', 'Closed Lost'].includes(item.stage));
-  const pipelineValue = active.reduce((sum, item) => sum + (item.valueAed || 0), 0);
+  const pipelineValue = active.reduce((sum, item) => sum + (Number(item.valueAed) || 0), 0);
   const lateStageCount = active.filter((item) => LATE_STAGES.has(item.stage)).length;
   const avgDealValue = active.length ? Math.round(pipelineValue / active.length) : 0;
   const openExecutionTasks = active.reduce((sum, item) => sum + (getExecutionSummary(item).openTasks || 0), 0);
@@ -451,7 +451,7 @@ function OngoingJobsBoard({ stages, items, dragOverStage, setDragOverStage, onMo
       <div className="flex min-w-max gap-2.5 sm:gap-3">
         {stages.map((stage, stageIndex) => {
           const stageItems = items.filter((item) => item.stage === stage);
-          const stageValue = stageItems.reduce((sum, item) => sum + (item.valueAed || 0), 0);
+          const stageValue = stageItems.reduce((sum, item) => sum + (Number(item.valueAed) || 0), 0);
           return (
             <section
               key={stage}

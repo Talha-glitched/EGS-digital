@@ -95,13 +95,15 @@ async function findLeadForMessage(message) {
 
   // Search person in PostgreSQL by email
   const res = await db.query(
-    `SELECT p.id, p.display_name, por.organization_id, cc.id AS campaign_contact_id, ca.campaign_id
+    `SELECT p.id, p.display_name, pcm.id AS person_contact_method_id,
+            por.organization_id, cc.id AS campaign_contact_id, ca.campaign_id
      FROM person_contact_methods pcm
      JOIN people p ON pcm.person_id = p.id
      LEFT JOIN person_organization_roles por ON por.person_id = p.id
      LEFT JOIN campaign_contacts cc ON cc.role_id = por.id
      LEFT JOIN campaign_accounts ca ON cc.campaign_account_id = ca.id
      WHERE pcm.normalized_value = $1 AND pcm.type = 'email'
+     ORDER BY cc.created_at DESC NULLS LAST
      LIMIT 1`,
     [resolvedFromAddress.toLowerCase()]
   );
@@ -113,6 +115,7 @@ async function findLeadForMessage(message) {
       id: row.id,
       name: row.display_name,
       email: resolvedFromAddress,
+      personContactMethodId: row.person_contact_method_id,
       companyId: row.organization_id,
       campaignId: row.campaign_id,
       campaignContactId: row.campaign_contact_id,
@@ -148,11 +151,40 @@ async function handleHumanReply(lead, message, text, systemInbox = '') {
 
   // Check if message already exists in PostgreSQL
   const checkMsg = await db.query(
-    `SELECT id FROM messages WHERE external_message_id = $1 LIMIT 1`,
+    `SELECT m.id, m.conversation_id, c.campaign_contact_id, c.campaign_id
+     FROM messages m
+     JOIN conversations c ON c.id = m.conversation_id
+     WHERE m.external_message_id = $1 LIMIT 1`,
     [finalMsgId]
   );
   if (checkMsg.rows.length > 0) {
-    return { duplicate: true };
+    const existing = checkMsg.rows[0];
+    let repairedContext = false;
+    if (lead.personContactMethodId) {
+      const participant = await db.query(
+        `INSERT INTO conversation_participants (
+           conversation_id, person_contact_method_id, participant_role,
+           endpoint_type_snapshot, endpoint_value_snapshot
+         ) SELECT $1::uuid, $2::uuid, 'sender', 'email', $3
+         WHERE NOT EXISTS (
+           SELECT 1 FROM conversation_participants
+           WHERE conversation_id = $1::uuid AND person_contact_method_id = $2::uuid
+         ) RETURNING id`,
+        [existing.conversation_id, lead.personContactMethodId, lead.email]
+      );
+      repairedContext = participant.rowCount > 0;
+    }
+    if ((!existing.campaign_contact_id && lead.campaignContactId) || (!existing.campaign_id && lead.campaignId)) {
+      await db.query(
+        `UPDATE conversations SET
+           campaign_contact_id = COALESCE(campaign_contact_id, $2::uuid),
+           campaign_id = COALESCE(campaign_id, $3::uuid)
+         WHERE id = $1::uuid`,
+        [existing.conversation_id, lead.campaignContactId || null, lead.campaignId || null]
+      );
+      repairedContext = true;
+    }
+    return { duplicate: true, repairedContext };
   }
 
   const subject = message.envelope?.subject || '';
@@ -161,30 +193,87 @@ async function handleHumanReply(lead, message, text, systemInbox = '') {
   const senderEmail = String(message.envelope?.from?.[0]?.address || '').trim().toLowerCase();
 
   const replyDate = message.envelope?.date ? new Date(message.envelope.date) : new Date();
+  const headerSection = getMimeHeaderSection(String(message.source || ''));
+  const referencedMessageIds = extractMessageIdCandidatesFromHeaders(headerSection)
+    .filter((candidate) => normalizeMessageIdToken(candidate) !== normalizeMessageIdToken(finalMsgId));
 
-  // Create conversation and message in PostgreSQL
-  const convRes = await db.query(
-    `INSERT INTO conversations (channel, external_thread_id, subject)
-     VALUES ('email', $1, $2) RETURNING id`,
-    [finalMsgId, subject || 'Inbound Reply']
-  );
-  const convId = convRes.rows[0].id;
+  let conversation = null;
+  if (referencedMessageIds.length) {
+    const existingConversation = await db.query(
+      `SELECT c.id, c.campaign_contact_id, c.campaign_id
+       FROM messages parent_message
+       JOIN conversations c ON c.id = parent_message.conversation_id
+       WHERE parent_message.external_message_id = ANY($1::text[])
+       ORDER BY parent_message.occurred_at DESC NULLS LAST
+       LIMIT 1`,
+      [referencedMessageIds]
+    );
+    conversation = existingConversation.rows[0] || null;
+  }
 
-  await db.query(
+  if (!conversation) {
+    const convRes = await db.query(
+      `INSERT INTO conversations (
+         channel, external_thread_id, subject, campaign_contact_id, campaign_id
+       ) VALUES ('email', $1, $2, $3::uuid, $4::uuid)
+       RETURNING id, campaign_contact_id, campaign_id`,
+      [finalMsgId, subject || 'Inbound Reply', lead.campaignContactId || null, lead.campaignId || null]
+    );
+    conversation = convRes.rows[0];
+  } else if ((!conversation.campaign_contact_id && lead.campaignContactId) || (!conversation.campaign_id && lead.campaignId)) {
+    const updated = await db.query(
+      `UPDATE conversations
+       SET campaign_contact_id = COALESCE(campaign_contact_id, $2::uuid),
+           campaign_id = COALESCE(campaign_id, $3::uuid)
+       WHERE id = $1::uuid
+       RETURNING id, campaign_contact_id, campaign_id`,
+      [conversation.id, lead.campaignContactId || null, lead.campaignId || null]
+    );
+    conversation = updated.rows[0];
+  }
+  const convId = conversation.id;
+
+  if (lead.personContactMethodId) {
+    await db.query(
+      `INSERT INTO conversation_participants (
+         conversation_id, person_contact_method_id, participant_role,
+         endpoint_type_snapshot, endpoint_value_snapshot
+       )
+       SELECT $1::uuid, $2::uuid, 'sender', 'email', $3
+       WHERE NOT EXISTS (
+         SELECT 1 FROM conversation_participants
+         WHERE conversation_id = $1::uuid AND participant_role = 'sender'
+           AND person_contact_method_id = $2::uuid
+       )`,
+      [convId, lead.personContactMethodId, senderEmail || lead.email]
+    );
+  }
+
+  const insertedMessage = await db.query(
     `INSERT INTO messages (conversation_id, direction, channel, external_message_id, subject, body, delivery_state, occurred_at)
-     VALUES ($1::uuid, 'inbound', 'email', $2, $3, $4, 'received', $5)`,
+     VALUES ($1::uuid, 'inbound', 'email', $2, $3, $4, 'received', $5)
+     RETURNING id`,
     [convId, finalMsgId, subject || 'Inbound Reply', text.slice(0, MAX_REPLY_TEXT), replyDate]
   );
 
   if (lead.campaignContactId) {
     await db.query(
-      `UPDATE campaign_contacts SET lead_state = $1 WHERE id = $2::uuid`,
+      `UPDATE campaign_contacts
+       SET lead_state = $1, delivery_state = 'Replied', outcome = $1
+       WHERE id = $2::uuid`,
       [targetStatus, lead.campaignContactId]
     );
   }
 
   await ensureReplyReviewTask(
-    { id: convId, conversation_id: convId, intent: replyIntent, subject, text: text.slice(0, MAX_REPLY_TEXT) },
+    {
+      id: convId,
+      conversation_id: convId,
+      sourceMessageId: insertedMessage.rows[0].id,
+      intent: replyIntent,
+      subject,
+      text: text.slice(0, MAX_REPLY_TEXT),
+    },
     lead
   );
 
@@ -305,40 +394,88 @@ export function stopImapWatcher() {
 
 export async function listInboxThreads({ limit = 100, campaignId } = {}) {
   let sql = `
-    SELECT c.id AS thread_id, c.subject, m.body, m.occurred_at, m.direction,
-           p.display_name AS poc_name, o.canonical_name AS company_name,
-           ca.campaign_id, cmp.name AS campaign_name
-    FROM conversations c
-    JOIN messages m ON m.conversation_id = c.id
-    LEFT JOIN conversation_participants cp ON cp.conversation_id = c.id
-    LEFT JOIN person_contact_methods pcm ON cp.person_contact_method_id = pcm.id
-    LEFT JOIN people p ON pcm.person_id = p.id
-    LEFT JOIN person_organization_roles por ON por.person_id = p.id
-    LEFT JOIN organizations o ON por.organization_id = o.id
-    LEFT JOIN campaign_accounts ca ON ca.organization_id = o.id
-    LEFT JOIN campaigns cmp ON ca.campaign_id = cmp.id
-    WHERE m.direction = 'inbound'
+    SELECT * FROM (
+      SELECT c.id AS thread_id, c.subject, m.body, m.occurred_at, m.direction,
+             p.display_name AS poc_name, o.canonical_name AS company_name,
+             COALESCE(c.campaign_id, ca.campaign_id) AS campaign_id, cmp.name AS campaign_name,
+             COALESCE(campaign_role.title, display_role.title) AS designation,
+             phone.normalized_value AS phone_number, ps.assessment AS poc_assessment,
+             m.suggested_intent,
+             ROW_NUMBER() OVER (PARTITION BY c.id ORDER BY m.occurred_at DESC) AS message_rank
+      FROM conversations c
+      JOIN messages m ON m.conversation_id = c.id
+      LEFT JOIN campaign_contacts cc ON cc.id = c.campaign_contact_id
+      LEFT JOIN campaign_accounts ca ON ca.id = cc.campaign_account_id
+      LEFT JOIN person_organization_roles campaign_role ON campaign_role.id = cc.role_id
+      LEFT JOIN LATERAL (
+        SELECT pcm.person_id
+        FROM conversation_participants cp
+        JOIN person_contact_methods pcm ON pcm.id = cp.person_contact_method_id
+        WHERE cp.conversation_id = c.id
+        ORDER BY CASE WHEN cp.participant_role = 'sender' THEN 0 ELSE 1 END, cp.id
+        LIMIT 1
+      ) participant_person ON TRUE
+      LEFT JOIN people p ON p.id = COALESCE(campaign_role.person_id, participant_person.person_id)
+      LEFT JOIN LATERAL (
+        SELECT por.id, por.organization_id, por.title
+        FROM person_organization_roles por
+        WHERE por.person_id = p.id
+        ORDER BY CASE WHEN por.organization_id = ca.organization_id THEN 0 ELSE 1 END,
+                 por.effective_to NULLS FIRST, por.created_at DESC
+        LIMIT 1
+      ) display_role ON TRUE
+      LEFT JOIN organizations o ON o.id = COALESCE(ca.organization_id, display_role.organization_id)
+      LEFT JOIN campaigns cmp ON cmp.id = COALESCE(c.campaign_id, ca.campaign_id)
+      LEFT JOIN LATERAL (
+        SELECT normalized_value
+        FROM person_contact_methods
+        WHERE person_id = p.id AND type = 'phone'
+        ORDER BY preferred DESC NULLS LAST, created_at
+        LIMIT 1
+      ) phone ON TRUE
+      LEFT JOIN LATERAL (
+        SELECT assessment
+        FROM poc_suitabilities
+        WHERE role_id = COALESCE(campaign_role.id, display_role.id)
+        ORDER BY assessed_at DESC NULLS LAST
+        LIMIT 1
+      ) ps ON TRUE
+      WHERE m.direction = 'inbound'
+        AND COALESCE(m.is_migration_duplicate, false) = false
   `;
   const params = [];
   if (campaignId) {
     params.push(campaignId);
-    sql += ` AND ca.campaign_id = $1::uuid`;
+    sql += ` AND COALESCE(c.campaign_id, ca.campaign_id) = $1::uuid`;
   }
-  sql += ` ORDER BY m.occurred_at DESC LIMIT $${params.length + 1}`;
+  sql += `) inbox_rows WHERE message_rank = 1 ORDER BY occurred_at DESC LIMIT $${params.length + 1}`;
   params.push(Math.min(Number(limit) || 100, 500));
 
   const res = await db.query(sql, params);
 
+  const pocStatus = (assessment) => ({
+    suitable: 'Confirmed',
+    unsuitable: 'WrongContact',
+    redirected_with_referral: 'RedirectedWithReferral',
+    redirected_without_referral: 'RedirectedNoReferral',
+    unknown: 'Unverified',
+  }[assessment] || 'Unverified');
+
   return res.rows.map((row) => ({
     _id: row.thread_id,
-    campaignName: row.campaign_name || 'Campaign',
+    campaignName: row.campaign_name || 'Direct / no campaign',
     campaignId: row.campaign_id,
     pocName: row.poc_name || 'Contact',
     companyName: row.company_name || '',
-    intent: 'Neutral',
+    designation: row.designation || '',
+    phoneNumber: row.phone_number || '',
+    hasResponded: true,
+    leadStage: 'lead',
+    pocQualification: { status: pocStatus(row.poc_assessment) },
+    intent: row.suggested_intent || 'Neutral',
     latestMessageBody: (row.body || '').slice(0, 120),
     receivedAt: row.occurred_at,
-    threadHistory: [
+    history: [
       {
         type: row.direction,
         subject: row.subject,
@@ -352,16 +489,52 @@ export async function listInboxThreads({ limit = 100, campaignId } = {}) {
 export async function getInboxThread(threadId) {
   const res = await db.query(
     `SELECT c.id AS thread_id, c.subject, m.body, m.direction, m.occurred_at,
-            p.display_name AS poc_name, o.canonical_name AS company_name, ca.campaign_id
+            p.id AS person_id, p.display_name AS poc_name, o.canonical_name AS company_name,
+            COALESCE(c.campaign_id, ca.campaign_id) AS campaign_id,
+            cmp.name AS campaign_name,
+            COALESCE(campaign_role.title, display_role.title) AS designation,
+            phone.normalized_value AS phone_number, ps.assessment AS poc_assessment,
+            m.suggested_intent
      FROM conversations c
      JOIN messages m ON m.conversation_id = c.id
-     LEFT JOIN conversation_participants cp ON cp.conversation_id = c.id
-     LEFT JOIN person_contact_methods pcm ON cp.person_contact_method_id = pcm.id
-     LEFT JOIN people p ON pcm.person_id = p.id
-     LEFT JOIN person_organization_roles por ON por.person_id = p.id
-     LEFT JOIN organizations o ON por.organization_id = o.id
-     LEFT JOIN campaign_accounts ca ON ca.organization_id = o.id
+     LEFT JOIN campaign_contacts cc ON cc.id = c.campaign_contact_id
+     LEFT JOIN campaign_accounts ca ON ca.id = cc.campaign_account_id
+     LEFT JOIN person_organization_roles campaign_role ON campaign_role.id = cc.role_id
+     LEFT JOIN LATERAL (
+       SELECT pcm.person_id
+       FROM conversation_participants cp
+       JOIN person_contact_methods pcm ON pcm.id = cp.person_contact_method_id
+       WHERE cp.conversation_id = c.id
+       ORDER BY CASE WHEN cp.participant_role = 'sender' THEN 0 ELSE 1 END, cp.id
+       LIMIT 1
+     ) participant_person ON TRUE
+     LEFT JOIN people p ON p.id = COALESCE(campaign_role.person_id, participant_person.person_id)
+     LEFT JOIN LATERAL (
+       SELECT por.id, por.organization_id, por.title
+       FROM person_organization_roles por
+       WHERE por.person_id = p.id
+       ORDER BY CASE WHEN por.organization_id = ca.organization_id THEN 0 ELSE 1 END,
+                por.effective_to NULLS FIRST, por.created_at DESC
+       LIMIT 1
+     ) display_role ON TRUE
+     LEFT JOIN organizations o ON o.id = COALESCE(ca.organization_id, display_role.organization_id)
+     LEFT JOIN campaigns cmp ON cmp.id = COALESCE(c.campaign_id, ca.campaign_id)
+     LEFT JOIN LATERAL (
+       SELECT normalized_value
+       FROM person_contact_methods
+       WHERE person_id = p.id AND type = 'phone'
+       ORDER BY preferred DESC NULLS LAST, created_at
+       LIMIT 1
+     ) phone ON TRUE
+     LEFT JOIN LATERAL (
+       SELECT assessment
+       FROM poc_suitabilities
+       WHERE role_id = COALESCE(campaign_role.id, display_role.id)
+       ORDER BY assessed_at DESC NULLS LAST
+       LIMIT 1
+     ) ps ON TRUE
      WHERE c.id = $1::uuid
+       AND COALESCE(m.is_migration_duplicate, false) = false
      ORDER BY m.occurred_at ASC`,
     [threadId]
   );
@@ -373,6 +546,13 @@ export async function getInboxThread(threadId) {
   }
 
   const first = res.rows[0];
+  const pocQualificationStatus = {
+    suitable: 'Confirmed',
+    unsuitable: 'WrongContact',
+    redirected_with_referral: 'RedirectedWithReferral',
+    redirected_without_referral: 'RedirectedNoReferral',
+    unknown: 'Unverified',
+  }[first.poc_assessment] || 'Unverified';
   const history = res.rows.map((r) => ({
     type: r.direction,
     subject: r.subject,
@@ -382,10 +562,17 @@ export async function getInboxThread(threadId) {
 
   return {
     _id: first.thread_id,
+    leadId: first.person_id,
     pocName: first.poc_name || 'Contact',
     companyName: first.company_name || '',
     campaignId: first.campaign_id,
-    intent: 'Neutral',
+    campaignName: first.campaign_name || 'Direct / no campaign',
+    designation: first.designation || '',
+    phoneNumber: first.phone_number || '',
+    hasResponded: true,
+    leadStage: 'lead',
+    pocQualification: { status: pocQualificationStatus },
+    intent: first.suggested_intent || 'Neutral',
     history,
   };
 }

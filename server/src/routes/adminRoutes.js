@@ -25,7 +25,6 @@ import {
   getMonthlyReviewHistory,
   getDashboardWorkingViewData,
 } from '../services/dailyReviewService.js';
-import { convertOpenTasksToRelationshipFollowUps } from '../services/unifiedFollowUpService.js';
 import { sendJobNow } from '../services/sendWorker.js';
 import {
   listOngoingJobs,
@@ -94,6 +93,7 @@ import {
   getCrmAdminStatus,
   listAllLeads,
   getLeadById,
+  updateLeadById,
   listAllCompanies,
   getCompanyDetails,
   updateCompanyDetails,
@@ -114,7 +114,6 @@ import {
   deleteCompanies,
   syncCampaignResponseCounts,
 } from '../services/projectService.js';
-import { inferOutreachEmail, setOutreachEmail } from '../utils/contactEmails.js';
 import { getLeadTimeline, getCompanyTimeline } from '../services/contactTimelineService.js';
 import {
   createInteraction,
@@ -678,138 +677,11 @@ router.post('/sequences/:id/reset-enrollments', asyncRoute(async (req, res) => {
 }));
 
 router.get('/leads/:id', asyncRoute(async (req, res) => {
-  const lead = await Lead.findById(req.params.id)
-    .populate('companyId')
-    .populate('campaignId')
-    .populate('enrollments.campaignId', 'projectName');
-  if (!lead) {
-    return res.status(404).json({ message: 'Contact not found.' });
-  }
-  res.json(lead);
+  res.json(await getLeadById(req.params.id));
 }));
 
 router.patch('/leads/:id', asyncRoute(async (req, res) => {
-  const lead = await Lead.findById(req.params.id);
-  if (!lead) {
-    return res.status(404).json({ message: 'Lead not found.' });
-  }
-
-  const fields = [
-    'name', 'designation', 'email', 'phone', 'linkedinUrl',
-    'emailApollo', 'emailHunter', 'emailLusha', 'emailPersonal',
-    'phoneLusha1', 'phoneLusha2', 'whatsappNumber',
-    'outcome', 'deliveryStatus',
-    'outreachEmail', 'outreachEmailSource',
-  ];
-
-  fields.forEach((f) => {
-    if (req.body[f] === undefined) return;
-    if (f === 'deliveryStatus' || f === 'outreachEmail' || f === 'outreachEmailSource') return;
-    lead[f] = req.body[f];
-  });
-
-  if (req.body.deliveryStatus !== undefined) {
-    lead.deliveryStatus = req.body.deliveryStatus;
-    if (req.body.deliveryStatus === 'Replied' && !lead.repliedAt) {
-      lead.repliedAt = new Date();
-    }
-  }
-
-  if (req.body.outreachEmail !== undefined) {
-    const trimmed = String(req.body.outreachEmail || '').trim();
-    if (!trimmed) {
-      lead.outreachEmail = '';
-      lead.outreachEmailSource = '';
-    } else {
-      const result = setOutreachEmail(lead, trimmed, req.body.outreachEmailSource);
-      if (!result.applied) {
-        return res.status(400).json({ message: 'Outreach email must match a contact email on this record.' });
-      }
-    }
-  } else if (req.body.outreachEmailSource !== undefined && lead.outreachEmail) {
-    const source = String(req.body.outreachEmailSource || '').trim();
-    if (['Apollo', 'Hunter', 'Lusha', 'Manual', ''].includes(source)) {
-      lead.outreachEmailSource = source;
-    }
-  } else if (req.body.autoDetectOutreach || (req.body.deliveryStatus === 'Replied' && !lead.outreachEmail)) {
-    const lastJobRes = await db.query(
-      `SELECT m.body, m.occurred_at
-       FROM messages m
-       JOIN conversations conv ON m.conversation_id = conv.id
-       LEFT JOIN conversation_participants cp ON cp.conversation_id = conv.id
-       LEFT JOIN person_contact_methods pcm ON cp.person_contact_method_id = pcm.id
-       WHERE pcm.person_id::text = $1 OR pcm.normalized_value = $1
-       ORDER BY m.occurred_at DESC LIMIT 1`,
-      [String(lead._id || lead.id)]
-    );
-    inferOutreachEmail(lead, { lastSentEmail: lastJobRes.rows[0]?.body || '' });
-  }
-
-  if (req.body.linkedinOutreach) {
-    lead.linkedinOutreach = { ...(lead.linkedinOutreach || {}), ...req.body.linkedinOutreach };
-  }
-  if (req.body.coldCall) {
-    lead.coldCall = { ...(lead.coldCall || {}), ...req.body.coldCall };
-  }
-  if (req.body.whatsapp) {
-    lead.whatsapp = { ...(lead.whatsapp || {}), ...req.body.whatsapp };
-  }
-
-  if (req.body.pocQualification) {
-    const incoming = req.body.pocQualification;
-    const prevStatus = lead.pocQualification?.status || 'Unverified';
-    lead.pocQualification = {
-      ...(lead.pocQualification || {}),
-      ...incoming,
-      referral: {
-        ...(lead.pocQualification?.referral || {}),
-        ...(incoming.referral || {}),
-      },
-    };
-    if (incoming.status && incoming.status !== prevStatus) {
-      lead.pocQualification.assessedAt = new Date();
-      if (req.admin?.username) {
-        lead.pocQualification.assessedBy = req.admin.username;
-      }
-    }
-    if (incoming.referredLeadId) {
-      lead.pocQualification.referredLeadId = incoming.referredLeadId;
-    }
-  }
-
-  if (req.body.relationshipProfile) {
-    const incoming = req.body.relationshipProfile;
-    lead.relationshipProfile = {
-      ...(lead.relationshipProfile || {}),
-      ...incoming,
-      serviceCategories: Array.isArray(incoming.serviceCategories)
-        ? incoming.serviceCategories.filter(Boolean)
-        : (lead.relationshipProfile?.serviceCategories || []),
-      reminderNotes: String(incoming.reminderNotes || '').trim(),
-      owner: String(incoming.owner || '').trim(),
-      status: incoming.status || lead.relationshipProfile?.status || 'New',
-    };
-    if (lead.relationshipProfile.nextFollowUpAt !== undefined) {
-      lead.relationshipProfile.nextFollowUpAt = undefined;
-    }
-  }
-
-  await lead.save();
-
-  if (lead.pocQualification?.status === 'Confirmed') {
-    await convertOpenTasksToRelationshipFollowUps(lead._id, lead.companyId, lead.name, req.admin?.username);
-  }
-
-  if (lead.campaignId) {
-    await syncCampaignResponseCounts(lead.campaignId);
-  }
-
-  if (req.body.campaignId !== undefined) {
-    const assigned = await assignLeadToCampaign(req.params.id, req.body.campaignId || null);
-    return res.json(assigned);
-  }
-
-  res.json(lead);
+  res.json(await updateLeadById(req.params.id, req.body || {}, req.admin?.username || 'admin'));
 }));
 
 router.delete('/leads/:id', asyncRoute(async (req, res) => {
@@ -859,14 +731,22 @@ router.get('/sent-emails/:id/thread', asyncRoute(async (req, res) => {
   const msgRes = await db.query(
     `SELECT m.id, m.conversation_id, m.direction, m.subject, m.body, m.occurred_at,
             p.id AS person_id, p.display_name AS poc_name, por.title AS designation,
-            o.canonical_name AS company_name, pcm.normalized_value AS recipient_email
+            o.canonical_name AS company_name,
+            COALESCE(pcm.normalized_value, cp.endpoint_value_snapshot) AS recipient_email
      FROM messages m
      JOIN conversations conv ON m.conversation_id = conv.id
-     LEFT JOIN conversation_participants cp ON cp.conversation_id = conv.id
+     LEFT JOIN campaign_contacts cc ON cc.id = conv.campaign_contact_id
+     LEFT JOIN LATERAL (
+       SELECT person_contact_method_id, endpoint_value_snapshot
+       FROM conversation_participants
+       WHERE conversation_id = conv.id AND participant_role = 'recipient'
+       ORDER BY id LIMIT 1
+     ) cp ON TRUE
      LEFT JOIN person_contact_methods pcm ON cp.person_contact_method_id = pcm.id
      LEFT JOIN people p ON pcm.person_id = p.id
-     LEFT JOIN person_organization_roles por ON por.person_id = p.id
-     LEFT JOIN organizations o ON por.organization_id = o.id
+     LEFT JOIN person_organization_roles por ON por.id = cc.role_id
+     LEFT JOIN campaign_accounts ca ON ca.id = cc.campaign_account_id
+     LEFT JOIN organizations o ON o.id = ca.organization_id
      WHERE m.id::text = $1 OR conv.id::text = $1 LIMIT 1`,
     [String(req.params.id)]
   );
@@ -878,6 +758,7 @@ router.get('/sent-emails/:id/thread', asyncRoute(async (req, res) => {
     `SELECT m.id, m.direction, m.subject, m.body, m.occurred_at AS timestamp
      FROM messages m
      WHERE m.conversation_id = $1::uuid
+       AND COALESCE(m.is_migration_duplicate, false) = false
      ORDER BY m.occurred_at ASC`,
     [msg.conversation_id]
   );
@@ -910,19 +791,22 @@ router.post('/sent-emails/:id/reply', asyncRoute(async (req, res) => {
   }
 
   const msgRes = await db.query(
-    `SELECT m.id, m.conversation_id, m.subject, pcm.normalized_value AS recipient_email, c.id AS campaign_id
+    `SELECT m.id, m.conversation_id, m.subject,
+            cp.endpoint_value_snapshot AS recipient_email, conv.campaign_id
      FROM messages m
      JOIN conversations conv ON m.conversation_id = conv.id
-     LEFT JOIN conversation_participants cp ON cp.conversation_id = conv.id
-     LEFT JOIN person_contact_methods pcm ON cp.person_contact_method_id = pcm.id
-     LEFT JOIN campaign_accounts ca ON ca.organization_id = pcm.person_id
-     LEFT JOIN campaigns c ON ca.campaign_id = c.id
+     LEFT JOIN LATERAL (
+       SELECT endpoint_value_snapshot FROM conversation_participants
+       WHERE conversation_id = conv.id AND participant_role = 'recipient'
+       ORDER BY id LIMIT 1
+     ) cp ON TRUE
      WHERE m.id::text = $1 LIMIT 1`,
     [String(req.params.id)]
   );
 
   if (!msgRes.rows.length) return res.status(404).json({ error: 'Email not found.' });
   const job = msgRes.rows[0];
+  if (!job.recipient_email) return res.status(409).json({ error: 'This thread has no verified recipient email.' });
 
   const { fromEmail, fromName } = getFromIdentity(null);
 
@@ -944,13 +828,14 @@ router.post('/sent-emails/:id/reply', asyncRoute(async (req, res) => {
 
   const messageId = String(result?.messageId || '').trim();
 
-  await db.query(
+  const inserted = await db.query(
     `INSERT INTO messages (conversation_id, direction, external_message_id, subject, body, delivery_state, occurred_at)
-     VALUES ($1::uuid, 'outbound', $2, $3, $4, 'sent', CURRENT_TIMESTAMP)`,
+     VALUES ($1::uuid, 'outbound', $2, $3, $4, 'sent', CURRENT_TIMESTAMP)
+     RETURNING id, direction, subject, body, occurred_at AS timestamp`,
     [job.conversation_id, messageId, subject, body]
   );
 
-  res.json({ success: true, messageId });
+  res.json({ success: true, messageId, replyMessage: { ...inserted.rows[0], type: inserted.rows[0].direction } });
 }));
 
 router.get('/inbox', asyncRoute(async (req, res) => {

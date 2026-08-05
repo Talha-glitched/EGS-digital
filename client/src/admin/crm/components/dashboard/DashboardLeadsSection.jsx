@@ -23,14 +23,17 @@ export default function DashboardLeadsSection({
           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-indigo-100 text-indigo-800 font-bold shrink-0">
             <UserCheck className="h-3.5 w-3.5" />
           </div>
-          <div className="flex items-center gap-2">
-            <h3 className="text-xs font-bold text-ink">Leads ({leads.length})</h3>
-            <ChevronRight
-              className={cn(
-                'h-3.5 w-3.5 text-neutral-400 transition-transform duration-300 ease-in-out',
-                isExpanded && 'rotate-90 text-brand'
-              )}
-            />
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-xs font-bold text-ink">Leads ({leads.length})</h3>
+              <ChevronRight
+                className={cn(
+                  'h-3.5 w-3.5 text-neutral-400 transition-transform duration-300 ease-in-out',
+                  isExpanded && 'rotate-90 text-brand'
+                )}
+              />
+            </div>
+            <p className="mt-0.5 text-[10px] text-neutral-500">Responders not yet classified as Key Relationships</p>
           </div>
         </div>
 
@@ -75,8 +78,6 @@ export default function DashboardLeadsSection({
           ) : (
             <div className="max-h-[460px] overflow-y-auto divide-y divide-neutral-100 bg-white scrollbar-thin">
               {leads.map((person) => {
-                const isQualified = person.leadStage === 'qualified_lead';
-
                 return (
                   <div
                     key={person._id}
@@ -96,10 +97,9 @@ export default function DashboardLeadsSection({
                           </span>
                         )}
                         <span className={cn(
-                          'rounded px-1.5 py-0.5 text-[9px] font-semibold border shrink-0',
-                          isQualified ? 'bg-emerald-50 text-emerald-700 border-emerald-300 font-bold' : 'bg-blue-50 text-blue-700 border-blue-200'
+                          'rounded px-1.5 py-0.5 text-[9px] font-semibold border shrink-0 bg-blue-50 text-blue-700 border-blue-200'
                         )}>
-                          {isQualified ? 'Qualified Lead' : 'Lead'}
+                          Lead
                         </span>
                         <p className="font-bold text-neutral-900 group-hover:text-brand transition truncate">{person.name}</p>
                       </div>
@@ -109,9 +109,13 @@ export default function DashboardLeadsSection({
                       </p>
 
                       {person.latestReply && (
-                        <p className="text-[10px] text-neutral-600 italic truncate bg-neutral-50 p-1 rounded border border-neutral-100">
-                          "{person.latestReply.snippet}"
-                        </p>
+                        <div className="text-[10px] text-neutral-600 truncate bg-neutral-50 p-1 rounded border border-neutral-100">
+                          <span className="font-semibold not-italic">
+                            Replied {person.latestReply.receivedAt ? new Date(person.latestReply.receivedAt).toLocaleDateString('en-AE') : ''}
+                            {person.latestReply.intent ? ` · ${person.latestReply.intent}` : ''}:
+                          </span>{' '}
+                          <span className="italic">&ldquo;{person.latestReply.snippet}&rdquo;</span>
+                        </div>
                       )}
 
                       {person.currentTask && (

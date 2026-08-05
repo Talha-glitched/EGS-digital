@@ -225,6 +225,12 @@ function TimelineEventCard({
           </div>
         )}
 
+        {event.meta?.bodyUnavailable && (
+          <p className="mt-1.5 rounded-md border border-amber-200 bg-amber-50 px-2.5 py-2 text-[11px] text-amber-800">
+            This migrated message did not contain recoverable body text.
+          </p>
+        )}
+
         {event.meta?.location && (
           <p className="crm-timeline-meta-line">
             <MapPin className="h-3 w-3 shrink-0" />
@@ -255,6 +261,14 @@ function TimelineEventCard({
           )}
           {event.meta?.durationMinutes ? (
             <span className="crm-timeline-meta-chip">{event.meta.durationMinutes} min</span>
+          ) : null}
+          {event.meta?.dueAt ? (
+            <span className="crm-timeline-meta-chip">
+              Due {new Date(event.meta.dueAt).toLocaleDateString('en-AE')}
+            </span>
+          ) : null}
+          {event.meta?.campaignName ? (
+            <span className="crm-timeline-meta-chip">Campaign: {event.meta.campaignName}</span>
           ) : null}
           {showContact && event.contactName && (
             <span className="crm-timeline-meta-chip">Re: {event.contactName}</span>

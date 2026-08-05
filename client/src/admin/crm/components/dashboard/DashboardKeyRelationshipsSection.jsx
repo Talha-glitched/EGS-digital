@@ -23,14 +23,17 @@ export default function DashboardKeyRelationshipsSection({
           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-amber-100 text-amber-800 font-bold shrink-0">
             <Users className="h-3.5 w-3.5" />
           </div>
-          <div className="flex items-center gap-2">
-            <h3 className="text-xs font-bold text-ink">Key Relationships ({relationships.length})</h3>
-            <ChevronRight
-              className={cn(
-                'h-3.5 w-3.5 text-neutral-400 transition-transform duration-300 ease-in-out',
-                isExpanded && 'rotate-90 text-brand'
-              )}
-            />
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-xs font-bold text-ink">Key Relationships ({relationships.length})</h3>
+              <ChevronRight
+                className={cn(
+                  'h-3.5 w-3.5 text-neutral-400 transition-transform duration-300 ease-in-out',
+                  isExpanded && 'rotate-90 text-brand'
+                )}
+              />
+            </div>
+            <p className="mt-0.5 text-[10px] text-neutral-500">Confirmed Right POCs requiring relationship care</p>
           </div>
         </div>
 
@@ -87,6 +90,12 @@ export default function DashboardKeyRelationshipsSection({
                   >
                     <div className="min-w-0 flex-1 space-y-0.5">
                       <div className="flex items-center gap-1.5">
+                        <span className="rounded bg-amber-50 px-1.5 py-0.5 text-[9px] font-bold text-amber-800 border border-amber-200 shrink-0">
+                          Right POC
+                        </span>
+                        <span className={`rounded px-1.5 py-0.5 text-[9px] font-semibold border shrink-0 ${person.hasResponded ? 'bg-sky-50 text-sky-800 border-sky-200' : 'bg-neutral-50 text-neutral-500 border-neutral-200'}`}>
+                          {person.hasResponded ? 'Lead' : 'No reply yet'}
+                        </span>
                         {isOverdue && (
                           <span className="rounded bg-red-100 px-1.5 py-0.5 text-[9px] font-bold text-red-700 border border-red-200 shrink-0">
                             Overdue

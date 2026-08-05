@@ -31,10 +31,9 @@ import {
   X,
 } from 'lucide-react';
 import DataTableShell from '../components/ui/DataTableShell.jsx';
-import { DeliveryStatusBadge } from '../components/leads/LeadTableComponents.jsx';
+import { DeliveryStatusBadge, ResponseStatusBadge } from '../components/leads/LeadTableComponents.jsx';
 import PocQualificationBadge from '../components/leads/PocQualificationBadge.jsx';
 import OutreachDrawer from '../components/leads/OutreachDrawer.jsx';
-import { VendorEmailColumns, VendorEmailHeaders } from '../components/leads/VendorEmailCells.jsx';
 import AddContactModal from '../components/leads/AddContactModal.jsx';
 import {
   AdvancedFilterPopover,
@@ -460,7 +459,9 @@ export default function PeoplePage() {
                   <BulkSelectHeaderCell selection={selection} ariaLabel="Select all contacts" />
                   <SortableTableHeader label="Contact" sortKey="name" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
                   <SortableTableHeader label="Company" sortKey="companyName" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
-                  <VendorEmailHeaders sortKey={sortKey} sortDir={sortDir} toggleSort={toggleSort} SortableTableHeader={SortableTableHeader} />
+                  <SortableTableHeader label="Email" sortKey="email" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                  <SortableTableHeader label="Type" sortKey="hasResponded" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                  <SortableTableHeader label="Response" sortKey="hasResponded" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
                   <SortableTableHeader label="Campaign Approach" sortKey="campaignName" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
                   <th className="text-center">LinkedIn Nav</th>
                   <th className="text-center">Cold Call</th>
@@ -497,7 +498,22 @@ export default function PeoplePage() {
                       <td>
                         <div className="truncate font-medium text-neutral-800">{lead.companyName || '—'}</div>
                       </td>
-                      <VendorEmailColumns lead={lead} />
+                      <td className="max-w-60 truncate text-xs text-neutral-600" title={lead.email || ''}>
+                        {lead.email || '—'}
+                      </td>
+                      <td>
+                        <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 ring-inset ${lead.hasResponded ? 'bg-sky-50 text-sky-800 ring-sky-200/70' : 'bg-neutral-100 text-neutral-600 ring-neutral-200/70'}`}>
+                          {lead.hasResponded ? 'Lead' : 'Contact'}
+                        </span>
+                      </td>
+                      <td>
+                        <ResponseStatusBadge
+                          hasResponded={lead.hasResponded}
+                          respondedAt={lead.respondedAt}
+                          responseChannels={lead.responseChannels}
+                          compact
+                        />
+                      </td>
                       <td className=" font-semibold text-brand-dark max-w-37.5 truncate" title={lead.campaignName || 'No campaign'}>
                         {lead.campaignName || '—'}
                       </td>

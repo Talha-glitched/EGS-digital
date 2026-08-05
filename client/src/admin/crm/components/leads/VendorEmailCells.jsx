@@ -22,7 +22,9 @@ export function VendorEmailCell({ value, isConfirmed = false }) {
 }
 
 export function VendorEmailColumns({ lead }) {
-  const outreach = String(lead.outreachEmail || '').trim();
+  // SQL keeps one canonical address. Use it when legacy vendor-specific fields
+  // are unavailable instead of rendering an empty or opaque value.
+  const outreach = String(lead.outreachEmail || lead.email || '').trim();
   return (
     <>
       <td className="px-3 py-2.5">

@@ -71,6 +71,7 @@ export function resolveOutcomeLabel(event) {
 export function resolveInteractionBody(event) {
   const meta = event?.meta || {};
   if (meta.summary) return meta.summary;
+  if ((event?.channel === 'email' || event?.type?.startsWith('email')) && meta.body) return meta.body;
   return event.detail || '';
 }
 
