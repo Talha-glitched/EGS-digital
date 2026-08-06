@@ -272,6 +272,13 @@ import {
   confirmJobCosts,
   reopenJobCosts,
 } from '../services/jobCostingService.js';
+import {
+  getJobSettlement,
+  setPhysicalDelivery,
+  saveMilestone,
+  deleteMilestone,
+  getSettlementQueues,
+} from '../services/jobSettlementService.js';
 import { getEmailDeliveryStatus, sendUserCredentialsEmail } from '../services/userEmailService.js';
 import {
   listUsers,
@@ -1512,6 +1519,21 @@ router.patch('/inventory/packing-lists/:packingListId/status', asyncRoute(async 
 
 router.get('/sales/ongoing-jobs/:id/costing', asyncRoute(async (req, res) => {
   res.json(await getJobCosting(req.params.id));
+}));
+router.get('/sales/settlement-queues', asyncRoute(async (req, res) => {
+  res.json(await getSettlementQueues(req.query || {}));
+}));
+router.get('/sales/ongoing-jobs/:id/settlement', asyncRoute(async (req, res) => {
+  res.json(await getJobSettlement(req.params.id));
+}));
+router.post('/sales/ongoing-jobs/:id/settlement/delivery', asyncRoute(async (req, res) => {
+  res.json(await setPhysicalDelivery(req.params.id, req.body || {}, getActor(req)));
+}));
+router.post('/sales/ongoing-jobs/:id/settlement/milestones', asyncRoute(async (req, res) => {
+  res.json(await saveMilestone(req.params.id, req.body || {}, getActor(req)));
+}));
+router.delete('/sales/ongoing-jobs/:id/settlement/milestones/:milestoneId', asyncRoute(async (req, res) => {
+  res.json(await deleteMilestone(req.params.id, req.params.milestoneId, getActor(req)));
 }));
 router.post('/sales/ongoing-jobs/:id/costing/estimates', asyncRoute(async (req, res) => {
   res.status(201).json(await createCostEstimate(req.params.id, req.body || {}, getActor(req)));

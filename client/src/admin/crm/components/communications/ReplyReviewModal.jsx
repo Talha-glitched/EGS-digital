@@ -70,8 +70,14 @@ export default function ReplyReviewModal({ item, owners = [], currentUserId = ''
         }),
       });
       notifyWorkspaceChanged({ entity: 'reply_review', action: 'resolve', id: item.reviewItemId });
-      await onResolved?.();
+      // The decision is saved. Close first so a slow or failing background refresh can
+      // never leave the reviewer stuck in a modal over work that already committed.
       onClose();
+      try {
+        await onResolved?.();
+      } catch (refreshError) {
+        console.error('Reply review saved, but refreshing the workspace failed:', refreshError);
+      }
     } catch (err) {
       setError(err.message || 'Could not complete this review.');
     } finally {

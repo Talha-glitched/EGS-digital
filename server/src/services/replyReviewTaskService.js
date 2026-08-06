@@ -190,6 +190,7 @@ export async function resolveReplyReview(reviewItemId, payload = {}, actor = {},
              COALESCE(conversation.campaign_id, campaign_account.campaign_id) AS "campaignId",
              COALESCE(campaign_account.organization_id, display_role.organization_id) AS "companyId",
              COALESCE(campaign_role.person_id, participant.person_id) AS "personId",
+             COALESCE(campaign_contact.role_id, display_role.id) AS "roleId",
              contact_method.normalized_value AS email
       FROM review_items review
       JOIN messages message ON message.id = review.source_message_id
@@ -211,7 +212,7 @@ export async function resolveReplyReview(reviewItemId, payload = {}, actor = {},
         ORDER BY preferred DESC NULLS LAST,created_at LIMIT 1
       ) contact_method ON TRUE
       LEFT JOIN LATERAL (
-        SELECT organization_id FROM person_organization_roles
+        SELECT id, organization_id FROM person_organization_roles
         WHERE person_id = participant.person_id ORDER BY effective_to NULLS FIRST, created_at DESC LIMIT 1
       ) display_role ON TRUE
       WHERE review.id = $1::uuid
@@ -229,12 +230,47 @@ export async function resolveReplyReview(reviewItemId, payload = {}, actor = {},
     await client.query(`UPDATE messages SET human_review_status='resolved' WHERE id=$1::uuid`, [context.messageId]);
     await client.query(`UPDATE tasks SET status='completed', completed_at=NOW(), completion_note=COALESCE($2, completion_note), updated_at=NOW() WHERE review_item_id=$1::uuid AND status NOT IN ('completed','cancelled')`, [reviewItemId, `Reply reviewed: ${outcome}${text(payload.reason) ? ` — ${text(payload.reason)}` : ''}`]);
 
-    if (outcome === 'Wrong POC' && context.campaignContactId) {
-      await releaseWrongPocFocus(client, {
-        campaignContactId: context.campaignContactId,
-        sourceReviewItemId: reviewItemId,
-        actor,
-      });
+    if (outcome === 'Wrong POC') {
+      // A human decided this person is not the right contact. Record the same canonical
+      // POC suitability the manual qualification editor writes, so the contact profile,
+      // Right-POC filters and Key Relationship rules all observe the decision. Without
+      // this the decision only existed as campaign focus state and the profile still
+      // showed "Not verified yet".
+      let pocSuitabilityId = null;
+      if (context.roleId) {
+        const latestAssessment = await client.query(
+          `SELECT assessment FROM poc_suitabilities
+           WHERE role_id=$1::uuid ORDER BY assessed_at DESC NULLS LAST,id DESC LIMIT 1`,
+          [context.roleId],
+        );
+        if (latestAssessment.rows[0]?.assessment !== 'unsuitable') {
+          const insertedAssessment = await client.query(
+            `INSERT INTO poc_suitabilities (
+               role_id, responsibility_context, assessment, reason, assessed_at,
+               legacy_status, assessed_by, source_payload
+             ) VALUES ($1::uuid, 'general', 'unsuitable', $2, NOW(), 'WrongContact', $3, $4::jsonb)
+             RETURNING id`,
+            [context.roleId, text(payload.reason) || 'Recorded from a human reply review.',
+              actor?.displayName || 'EGS Team',
+              JSON.stringify({ source: 'reply_review', reviewItemId, messageId: context.messageId })],
+          );
+          pocSuitabilityId = insertedAssessment.rows[0].id;
+        }
+        // Wrong POC cannot remain a confirmed Key Relationship.
+        await client.query(
+          `UPDATE key_relationship_profiles SET manually_confirmed=FALSE,confirmed_at=NULL
+           WHERE role_id=$1::uuid AND manually_confirmed=TRUE`,
+          [context.roleId],
+        );
+      }
+      if (context.campaignContactId) {
+        await releaseWrongPocFocus(client, {
+          campaignContactId: context.campaignContactId,
+          sourcePocSuitabilityId: pocSuitabilityId,
+          sourceReviewItemId: reviewItemId,
+          actor,
+        });
+      }
     }
 
     if (['Unsubscribe', 'Bounce'].includes(outcome) && context.email) {

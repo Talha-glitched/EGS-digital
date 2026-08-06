@@ -173,7 +173,10 @@ export default function ContactLeadTasksSection({
       await loadTasks();
       onTimelineRefresh?.();
     } catch (err) {
+      // The modal is already closed, so the failure must surface on the section itself.
+      // Silently logging it made a rejected decision look like a saved one.
       console.error('Failed to complete reply review:', err);
+      setError(err.message || 'Could not save that reply decision. Please try again.');
     } finally {
       setBusy(false);
     }

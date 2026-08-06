@@ -27,8 +27,10 @@ import JobProductionPanel from '../jobs/JobProductionPanel.jsx';
 import JobProcurementPanel from '../jobs/JobProcurementPanel.jsx';
 import JobCostingPanel from '../jobs/JobCostingPanel.jsx';
 import JobCloseoutPanel from '../jobs/JobCloseoutPanel.jsx';
+import JobSettlementPanel from '../jobs/JobSettlementPanel.jsx';
 import AddContactModal from '../leads/AddContactModal.jsx';
 import {
+  crmApiFetch,
   fetchOngoingJob,
   fetchActiveUsers,
   updateOngoingJob,
@@ -42,7 +44,10 @@ const TABS = [
   { id: 'artifacts', label: 'Designs & Quotes' },
   { id: 'production', label: 'Production' },
   { id: 'procurement', label: 'Suppliers' },
-  { id: 'costing', label: 'Costing' },
+  // Financial tabs are gated on finance permissions server-side. They are
+  // hidden here too so a designer is not shown a tab that will 403.
+  { id: 'costing', label: 'Costing', requires: 'finance:read' },
+  { id: 'settlement', label: 'Settlement', requires: 'finance:read' },
   { id: 'closeout', label: 'Closeout' },
   { id: 'memory', label: 'Job Memory' },
   { id: 'tasks', label: 'Tasks' },
@@ -61,6 +66,25 @@ export default function OngoingJobDrawer({
 }) {
   const targetId = ongoingJobId || opportunityId;
   const [tab, setTab] = useState('overview');
+  const [grantedPermissions, setGrantedPermissions] = useState(null);
+  useEffect(() => {
+    let cancelled = false;
+    crmApiFetch('/api/admin/status')
+      .then((status) => { if (!cancelled) setGrantedPermissions(status?.user?.permissions || []); })
+      // On failure, fall back to hiding the gated tabs rather than showing
+      // financial surfaces we could not confirm the user is allowed to open.
+      .catch(() => { if (!cancelled) setGrantedPermissions([]); });
+    return () => { cancelled = true; };
+  }, []);
+  const visibleTabs = useMemo(
+    () => TABS.filter((item) => !item.requires || (grantedPermissions || []).includes(item.requires)),
+    [grantedPermissions],
+  );
+  // If the active tab becomes hidden, fall back to Overview instead of
+  // rendering an empty panel.
+  useEffect(() => {
+    if (grantedPermissions && !visibleTabs.some((item) => item.id === tab)) setTab('overview');
+  }, [grantedPermissions, visibleTabs, tab]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [detail, setDetail] = useState(null);
@@ -311,7 +335,7 @@ export default function OngoingJobDrawer({
             <span className="crm-opp-meta-item"><Clock3 className="h-3.5 w-3.5" />Updated {formatWhen(ongoingJob?.updatedAt)} by {ongoingJob?.lastModifiedBy || ongoingJob?.owner || '—'}</span>
           </div>
 
-          <DrawerTabs tabs={TABS} active={tab} onChange={setTab} />
+          <DrawerTabs tabs={visibleTabs} active={tab} onChange={setTab} />
 
           {tab === 'overview' && (
             <div className="crm-drawer-tab-panel">
@@ -385,6 +409,11 @@ export default function OngoingJobDrawer({
           {tab === 'costing' && (
             <div className="crm-drawer-tab-panel">
               <JobCostingPanel ongoingJobId={targetId} active={tab === 'costing'} />
+            </div>
+          )}
+          {tab === 'settlement' && (
+            <div className="crm-drawer-tab-panel">
+              <JobSettlementPanel ongoingJobId={targetId} active={tab === 'settlement'} />
             </div>
           )}
           {tab === 'closeout' && (

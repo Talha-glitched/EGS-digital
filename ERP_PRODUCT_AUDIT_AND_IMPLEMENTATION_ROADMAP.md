@@ -510,6 +510,18 @@ Start the physical pilot with valuable reusable items such as AV equipment, furn
 
 ### 15. Audit, recovery and permissions
 
+**Route authorisation hardening — implemented**
+
+An audit of all 250 admin routes found three defects, each verified before and after the fix:
+
+- Unmapped routes resolved to `dashboard:read`, a permission every role holds. 41 routes fell through this way, so any authenticated user could reach them. The fall-through is now an explicit deny permission held by no role, and all 250 routes resolve to a real permission. A test fails the build if a new route is added without a mapping.
+- Financial surfaces sat under `/sales` and therefore inherited `pipeline` permissions. A designer could edit payment positions and record Job costs; a viewer could read outstanding balances and margin. Settlement, costing and reports now resolve through explicit sensitive-route rules to `finance:*` and `reports:read`, regardless of where the route sits.
+- Two routes that dispatch real outbound email (`/email/launch-batches/:id/send` and `/send-jobs/:id/send`) were unmapped and therefore reachable by every role including viewer. Both now require `sequences:write`.
+
+Permissions are derived from role at session time and are not stored per user, so the corrected map applies to existing accounts. Sessions issued before the change keep their old permission array until re-login.
+
+The Costing and Settlement tabs are hidden in the Job drawer for users without `finance:read`, and fail closed if the permission check cannot be completed.
+
 **Keep**
 
 - Append-only audit events.
