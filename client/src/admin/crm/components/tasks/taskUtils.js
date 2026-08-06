@@ -138,15 +138,15 @@ export function buildOwnerOptions(tasks = [], extraOwners = [], activeUsers = []
   const owners = new Set(DEFAULT_TASK_OWNERS);
   const options = [];
   const seen = new Set();
-  const pushOption = (value, label = value, hint = '') => {
+  const pushOption = (value, label = value, hint = '', userId = null) => {
     const key = String(value || '').trim();
     if (!key || seen.has(key)) return;
     seen.add(key);
-    options.push({ value: key, label, hint });
+    options.push({ value: key, label, hint, userId });
   };
   activeUsers.forEach((user) => {
     if (user?.displayName) owners.add(user.displayName);
-    pushOption(user?.displayName, user?.displayName, user?.email || user?.role || '');
+    pushOption(user?.displayName, user?.displayName, user?.email || user?.role || '', user?.id || null);
   });
   tasks.forEach((task) => {
     if (task.owner) owners.add(task.owner);

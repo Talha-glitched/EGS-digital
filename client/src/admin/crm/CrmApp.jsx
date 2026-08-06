@@ -11,7 +11,6 @@ import PreviewWorkspaceModal, { isPreviewNoticeDismissed } from './components/ui
 import GlobalDashboard from './pages/GlobalDashboard.jsx';
 import DesignerDashboard from './pages/DesignerDashboard.jsx';
 import ProjectDetailWorkspace from './pages/ProjectDetailWorkspace.jsx';
-import InboxPage from './pages/InboxPage.jsx';
 import PeoplePage from './pages/PeoplePage.jsx';
 import CompaniesPage from './pages/CompaniesPage.jsx';
 import AdvancedAnalyticsPage from './pages/AdvancedAnalyticsPage.jsx';
@@ -19,9 +18,14 @@ import FinancePage from './pages/FinancePage.jsx';
 import ProjectsPage from './pages/ProjectsPage.jsx';
 import OngoingJobsPage from './pages/OngoingJobsPage.jsx';
 import CompletedJobsPage from './pages/CompletedJobsPage.jsx';
-import SalesPipelinePage from './pages/SalesPipelinePage.jsx';
 import TasksPage from './pages/TasksPage.jsx';
-import JobsPage from './pages/JobsPage.jsx';
+import TodayPage from './pages/TodayPage.jsx';
+import PlanCalendarPage from './pages/PlanCalendarPage.jsx';
+import SuppliersPage from './pages/SuppliersPage.jsx';
+import ResourcesPage from './pages/ResourcesPage.jsx';
+import EmployeesPage from './pages/EmployeesPage.jsx';
+import InventoryPage from './pages/InventoryPage.jsx';
+import OperationsReportsPage from './pages/OperationsReportsPage.jsx';
 import SequencesPage from './pages/SequencesPage.jsx';
 import EmailHubPage from './pages/EmailHubPage.jsx';
 import ResendEmailsPage from './pages/ResendEmailsPage.jsx';
@@ -37,6 +41,14 @@ import DeleteUndoToastStack from './components/ui/DeleteUndoToastStack.jsx';
 import { Alert, Field, LoadingState } from './components/ui/primitives.jsx';
 import { Lock } from 'lucide-react';
 import egsLogo from '../../assets/logo/New_Logo/Logo-01.png';
+
+function LegacyCommunicationsRedirect({ defaultTab = '' }) {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  if (defaultTab && !params.has('tab') && !params.has('view')) params.set('tab', defaultTab);
+  const query = params.toString();
+  return <Navigate to={`/admin/crm/communications${query ? `?${query}` : ''}`} replace />;
+}
 
 function LoginPanel({ onLogin, status }) {
   const [username, setUsername] = useState('');
@@ -178,11 +190,17 @@ function DesignerShell({ onLogout, status }) {
               <main className="crm-scroll min-h-0 flex-1 overflow-y-auto">
                 <Routes>
                   <Route index element={<DesignerDashboard />} />
+                  <Route path="today" element={<TodayPage />} />
                   <Route path="ongoing-jobs" element={<OngoingJobsPage />} />
                   <Route path="completed-jobs" element={<CompletedJobsPage />} />
                   <Route path="pipeline" element={<Navigate to="/admin/crm/ongoing-jobs" replace />} />
                   <Route path="jobs" element={<Navigate to="/admin/crm/completed-jobs" replace />} />
                   <Route path="tasks" element={<TasksPage />} />
+                  <Route path="plan-calendar" element={<PlanCalendarPage />} />
+                  <Route path="suppliers" element={<SuppliersPage />} />
+                  <Route path="resources" element={<ResourcesPage />} />
+                  <Route path="inventory" element={<InventoryPage />} />
+                  <Route path="operations-reports" element={<OperationsReportsPage />} />
                   <Route path="*" element={<Navigate to="/admin/crm" replace />} />
                 </Routes>
               </main>
@@ -222,6 +240,7 @@ function CrmShell({ projects, onLogout, status }) {
 
   const titles = {
     '/admin/crm': ['Dashboard', 'Priority follow-ups, pipeline movement, and active campaigns'],
+    '/admin/crm/today': ['Today', 'Assigned field work, project time, site updates, problems, and photographs'],
     '/admin/crm/projects': ['Campaigns', 'Exhibition outreach, target companies, and sequence performance'],
     '/admin/crm/sequences': ['Sequence Studio', 'Whiteboard builder for multi-step outreach flows'],
     '/admin/crm/ongoing-jobs': ['Ongoing Jobs', 'Work in progress from inquiry through execution'],
@@ -229,12 +248,19 @@ function CrmShell({ projects, onLogout, status }) {
     '/admin/crm/pipeline': ['Ongoing Jobs', 'Work in progress from inquiry through execution'],
     '/admin/crm/jobs': ['Jobs Done', 'Completed and past production jobs directory'],
     '/admin/crm/tasks': ['Tasks', 'Calls, meetings, proposals, and overdue next actions'],
+    '/admin/crm/plan-calendar': ['Plan Calendar', 'Production, transport, installation, dismantling, and resource commitments'],
+    '/admin/crm/suppliers': ['Suppliers', 'Capabilities, Job history, commitments, costs, deliveries, and issues'],
+    '/admin/crm/resources': ['Resources & Time', 'People, crews, vehicles, equipment, schedule conflicts, and project time'],
+    '/admin/crm/employees': ['Employee Operations', 'Operational roles, teams, availability, compliance, assignments, and project time'],
+    '/admin/crm/inventory': ['Inventory', 'Items, assets, stock locations, reservations, packing, and barcode movements'],
+    '/admin/crm/operations-reports': ['Operations Reports', 'Exceptions, delivery coverage, supplier evidence, costs, services, and closeout'],
     '/admin/crm/relationships': ['Key Relationships', 'Confirmed right POCs, last touchpoints, and follow-up timing'],
     '/admin/crm/people': ['Contacts', 'Search and manage every point of contact'],
     '/admin/crm/companies': ['Companies', 'Target companies, clients, and relationship history'],
-    '/admin/crm/inbox': ['Inbox', 'Replies and sales follow-up workspace'],
-    '/admin/crm/email': ['Email', 'Launch batches, queued sends, delivered messages, and failures'],
-    '/admin/crm/sent': ['Email', 'Launch batches, queued sends, delivered messages, and failures'],
+    '/admin/crm/communications': ['Communications', 'Replies, outreach, delivery exceptions, search, and Job-linked evidence'],
+    '/admin/crm/inbox': ['Communications', 'Replies, outreach, delivery exceptions, search, and Job-linked evidence'],
+    '/admin/crm/email': ['Communications', 'Replies, outreach, delivery exceptions, search, and Job-linked evidence'],
+    '/admin/crm/sent': ['Communications', 'Replies, outreach, delivery exceptions, search, and Job-linked evidence'],
     '/admin/crm/resend-emails': ['Resend emails', 'Delivery status, opens, and clicks for API-sent outreach'],
     '/admin/crm/analytics': ['Reports', 'Campaign ROI, response performance, and source quality'],
     '/admin/crm/finance': ['Finances', 'Campaign budgets, fixed costs, and logged revenue'],
@@ -291,20 +317,28 @@ function CrmShell({ projects, onLogout, status }) {
           <main className={`crm-scroll min-h-0 flex-1 ${isSequenceStudio ? 'overflow-hidden' : 'overflow-y-auto'}`}>
             <Routes>
               <Route index element={<GlobalDashboard />} />
+              <Route path="today" element={<TodayPage />} />
               <Route path="ongoing-jobs" element={<OngoingJobsPage />} />
               <Route path="completed-jobs" element={<CompletedJobsPage />} />
               <Route path="pipeline" element={<Navigate to="/admin/crm/ongoing-jobs" replace />} />
               <Route path="jobs" element={<Navigate to="/admin/crm/completed-jobs" replace />} />
               <Route path="tasks" element={<TasksPage />} />
+              <Route path="plan-calendar" element={<PlanCalendarPage />} />
+              <Route path="suppliers" element={<SuppliersPage />} />
+              <Route path="resources" element={<ResourcesPage />} />
+              <Route path="employees" element={<EmployeesPage />} />
+              <Route path="inventory" element={<InventoryPage />} />
+              <Route path="operations-reports" element={<OperationsReportsPage />} />
               <Route path="relationships" element={<RelationshipsPage />} />
               <Route path="projects" element={<ProjectsPage initialProjects={projects} />} />
               <Route path="projects/:id" element={<ProjectDetailWorkspace />} />
               <Route path="sequences" element={<SequencesPage />} />
               <Route path="people" element={<PeoplePage />} />
               <Route path="companies" element={<CompaniesPage />} />
-              <Route path="inbox" element={<InboxPage />} />
-              <Route path="email" element={<EmailHubPage />} />
-              <Route path="sent" element={<Navigate to="/admin/crm/email?tab=sent" replace />} />
+              <Route path="communications" element={<EmailHubPage />} />
+              <Route path="inbox" element={<LegacyCommunicationsRedirect defaultTab="inbox" />} />
+              <Route path="email" element={<LegacyCommunicationsRedirect />} />
+              <Route path="sent" element={<LegacyCommunicationsRedirect defaultTab="sent" />} />
               <Route path="resend-emails" element={<ResendEmailsPage />} />
               <Route path="analytics" element={<AdvancedAnalyticsPage />} />
               <Route path="finance" element={<FinancePage />} />

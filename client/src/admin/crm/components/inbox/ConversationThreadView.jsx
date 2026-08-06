@@ -1,4 +1,4 @@
-import { MessageSquare, ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { MessageSquare, ShieldAlert, CheckCircle2, Link2 } from 'lucide-react';
 import { cn } from '../ui/primitives.jsx';
 import { ResponseStatusBadge } from '../leads/LeadTableComponents.jsx';
 import PocQualificationBadge from '../leads/PocQualificationBadge.jsx';
@@ -62,6 +62,7 @@ export default function ConversationThreadView({ activeThread, onAction }) {
 
       <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-line)] bg-white px-5 py-3.5">
         <div className="flex flex-wrap gap-2">
+          <button type="button" onClick={() => onAction?.('job', activeThread)} className="crm-btn-primary"><Link2 className="h-4 w-4" />Send to Job</button>
           <button
             type="button"
             onClick={() => openWhatsAppChat(activeThread.phoneNumber, activeThread.pocName)}

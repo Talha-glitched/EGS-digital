@@ -1,22 +1,27 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { crmApiFetch, fetchSentEmails, fetchProjectSequences, fetchSendDeliveryIssues } from '../crmApi.js';
+import { Link, useSearchParams } from 'react-router-dom';
+import { crmApiFetch, fetchCommunicationsWorkspace, fetchSentEmails, fetchProjectSequences, fetchSendDeliveryIssues } from '../crmApi.js';
 import SentEmailsWorkspace from '../components/sent/SentEmailsWorkspace.jsx';
 import SendDeliveryIssuesWorkspace from '../components/sent/SendDeliveryIssuesWorkspace.jsx';
 import EmailOutboxWorkspace from '../components/sent/EmailOutboxWorkspace.jsx';
+import CommunicationsOverview, { LinkedCommunicationsWorkspace } from '../components/communications/CommunicationsOverview.jsx';
+import { InboxWorkspaceContent } from './InboxPage.jsx';
 import { Alert, LoadingState, PageSection, PageShell } from '../components/ui/primitives.jsx';
 import { cn } from '../components/ui/primitives.jsx';
 
 const VIEWS = [
+  { id: 'attention', label: 'Needs attention' },
+  { id: 'inbox', label: 'Inbox' },
   { id: 'outbox', label: 'Outbox' },
   { id: 'sent', label: 'Sent' },
-  { id: 'failed', label: 'Failed' },
+  { id: 'failed', label: 'Delivery issues' },
+  { id: 'linked', label: 'Linked work' },
 ];
 
 export default function EmailHubPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const viewParam = searchParams.get('tab') || searchParams.get('view') || 'outbox';
-  const view = ['sent', 'failed'].includes(viewParam) ? viewParam : 'outbox';
+  const viewParam = searchParams.get('tab') || searchParams.get('view') || 'attention';
+  const view = VIEWS.some((item) => item.id === viewParam) ? viewParam : 'attention';
   const focusBatchId = searchParams.get('batch') || '';
 
   const [emails, setEmails] = useState([]);
@@ -35,6 +40,10 @@ export default function EmailHubPage() {
   const [repliedOnly, setRepliedOnly] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [workspace, setWorkspace] = useState(null);
+  const [workspaceSearch, setWorkspaceSearch] = useState('');
+  const [debouncedWorkspaceSearch, setDebouncedWorkspaceSearch] = useState('');
+  const [workspaceLoading, setWorkspaceLoading] = useState(true);
 
   useEffect(() => {
     crmApiFetch('/api/admin/projects')
@@ -58,13 +67,33 @@ export default function EmailHubPage() {
   }, [search]);
 
   useEffect(() => {
+    const timer = window.setTimeout(() => setDebouncedWorkspaceSearch(workspaceSearch.trim()), 250);
+    return () => clearTimeout(timer);
+  }, [workspaceSearch]);
+
+  const loadWorkspace = useCallback(async () => {
+    setWorkspaceLoading(true);
+    try {
+      setWorkspace(await fetchCommunicationsWorkspace({ q: debouncedWorkspaceSearch || undefined, limit: 50 }));
+    } catch (err) {
+      setError(err.message || 'Failed to load the communications workspace.');
+    } finally {
+      setWorkspaceLoading(false);
+    }
+  }, [debouncedWorkspaceSearch]);
+
+  useEffect(() => {
+    loadWorkspace().catch(console.error);
+  }, [loadWorkspace]);
+
+  useEffect(() => {
     setPage(1);
   }, [campaignId, sequenceId, debouncedSearch, repliedOnly, view]);
 
   const setView = useCallback((nextView) => {
     setSearchParams((prev) => {
       const params = new URLSearchParams(prev);
-      if (nextView === 'outbox') {
+      if (nextView === 'attention') {
         params.delete('tab');
         params.delete('view');
       } else {
@@ -85,7 +114,7 @@ export default function EmailHubPage() {
   }, [setSearchParams]);
 
   const load = useCallback(async () => {
-    if (view === 'outbox') {
+    if (!['sent', 'failed'].includes(view)) {
       setLoading(false);
       return;
     }
@@ -135,7 +164,7 @@ export default function EmailHubPage() {
     load().catch(console.error);
   }, [load]);
 
-  const showInitialLoader = loading && view !== 'outbox' && emails.length === 0 && issues.length === 0 && !debouncedSearch && !campaignId;
+  const showInitialLoader = loading && ['sent', 'failed'].includes(view) && emails.length === 0 && issues.length === 0 && !debouncedSearch && !campaignId;
 
   if (showInitialLoader) {
     return (
@@ -148,11 +177,14 @@ export default function EmailHubPage() {
   return (
     <PageShell>
       <PageSection>
-        <div className="mb-4">
-          <h1 className="text-lg font-semibold text-[var(--color-ink)]">Email</h1>
-          <p className="mt-1 text-xs text-neutral-500">
-            Launch batches, queued sends, delivered messages, and failures in one place.
-          </p>
+        <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="text-lg font-semibold text-[var(--color-ink)]">Communications</h1>
+            <p className="mt-1 text-xs text-neutral-500">
+              Review replies, search message evidence, manage outreach and connect client communication to Jobs.
+            </p>
+          </div>
+          <Link to="/admin/crm/resend-emails" className="crm-btn-ghost text-xs">Provider diagnostics</Link>
         </div>
 
         <div className="mb-3 flex flex-wrap gap-2">
@@ -169,6 +201,9 @@ export default function EmailHubPage() {
               )}
             >
               {tab.label}
+              {tab.id === 'attention' && Number(workspace?.summary?.needsReview || 0) > 0 ? ` (${workspace.summary.needsReview})` : ''}
+              {tab.id === 'inbox' && Number(workspace?.summary?.inboxThreads || 0) > 0 ? ` (${workspace.summary.inboxThreads})` : ''}
+              {tab.id === 'failed' && Number(workspace?.summary?.deliveryIssues || 0) > 0 ? ` (${workspace.summary.deliveryIssues})` : ''}
             </button>
           ))}
         </div>
@@ -181,7 +216,18 @@ export default function EmailHubPage() {
       )}
 
       <PageSection>
-        {view === 'outbox' ? (
+        {view === 'attention' ? (
+          <CommunicationsOverview
+            data={workspace}
+            loading={workspaceLoading}
+            search={workspaceSearch}
+            onSearchChange={setWorkspaceSearch}
+            onNavigate={setView}
+            onRefresh={loadWorkspace}
+          />
+        ) : view === 'inbox' ? (
+          <InboxWorkspaceContent embedded />
+        ) : view === 'outbox' ? (
           <EmailOutboxWorkspace focusBatchId={focusBatchId} onFocusBatchHandled={clearFocusBatch} />
         ) : view === 'sent' ? (
           <SentEmailsWorkspace
@@ -203,7 +249,7 @@ export default function EmailHubPage() {
             repliedOnly={repliedOnly}
             onRepliedOnlyChange={setRepliedOnly}
           />
-        ) : (
+        ) : view === 'failed' ? (
           <SendDeliveryIssuesWorkspace
             issues={issues}
             total={total}
@@ -222,6 +268,8 @@ export default function EmailHubPage() {
             loading={loading}
             view={view}
           />
+        ) : (
+          <LinkedCommunicationsWorkspace data={workspace} loading={workspaceLoading} />
         )}
       </PageSection>
     </PageShell>

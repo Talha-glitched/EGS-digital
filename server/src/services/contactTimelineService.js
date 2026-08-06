@@ -254,13 +254,14 @@ export async function getLeadTimeline(leadId) {
     `SELECT m.id, m.direction, m.subject, m.body, m.html_body, m.delivery_state, m.occurred_at,
             m.from_snapshot, m.to_snapshot, m.suggested_intent, m.human_review_status,
             COALESCE(conv.campaign_id, ca.campaign_id) AS campaign_id,
-            campaign.name AS campaign_name
+            campaign.name AS campaign_name, COALESCE(job_links.items,'[]') AS linked_jobs
      FROM messages m
      JOIN conversations conv ON m.conversation_id = conv.id
      LEFT JOIN campaign_contacts cc ON cc.id = conv.campaign_contact_id
      LEFT JOIN campaign_accounts ca ON ca.id = cc.campaign_account_id
      LEFT JOIN campaigns campaign ON campaign.id = COALESCE(conv.campaign_id, ca.campaign_id)
      LEFT JOIN person_organization_roles por ON por.id = cc.role_id
+     LEFT JOIN LATERAL (SELECT jsonb_agg(jsonb_build_object('id',j.id,'title',j.title,'jobNumber',j.job_number) ORDER BY j.title) items FROM conversation_job_links l JOIN ongoing_jobs j ON j.id=l.ongoing_job_id WHERE l.conversation_id=conv.id) job_links ON TRUE
      WHERE (por.person_id = $1::uuid OR EXISTS (
        SELECT 1 FROM conversation_participants cp
        JOIN person_contact_methods pcm ON pcm.id = cp.person_contact_method_id
@@ -295,6 +296,7 @@ export async function getLeadTimeline(leadId) {
         reviewStatus: m.human_review_status,
         campaignId: m.campaign_id,
         campaignName: m.campaign_name || 'Direct / no campaign',
+        linkedJobs: m.linked_jobs || [],
         bodyUnavailable: !body,
       },
     });
@@ -394,7 +396,7 @@ export async function getCompanyTimeline(companyId) {
             m.from_snapshot, m.to_snapshot, m.suggested_intent, m.human_review_status,
             p.id AS person_id, p.display_name AS person_name,
             COALESCE(conv.campaign_id, ca.campaign_id) AS campaign_id,
-            campaign.name AS campaign_name
+            campaign.name AS campaign_name, COALESCE(job_links.items,'[]') AS linked_jobs
      FROM messages m
      JOIN conversations conv ON m.conversation_id = conv.id
      LEFT JOIN campaign_contacts cc ON cc.id = conv.campaign_contact_id
@@ -416,6 +418,7 @@ export async function getCompanyTimeline(companyId) {
        ELSE participant_person.person_id
      END
      LEFT JOIN campaigns campaign ON campaign.id = COALESCE(conv.campaign_id, ca.campaign_id)
+     LEFT JOIN LATERAL (SELECT jsonb_agg(jsonb_build_object('id',j.id,'title',j.title,'jobNumber',j.job_number) ORDER BY j.title) items FROM conversation_job_links l JOIN ongoing_jobs j ON j.id=l.ongoing_job_id WHERE l.conversation_id=conv.id) job_links ON TRUE
      WHERE (ca.organization_id = $1::uuid OR participant_person.person_id IS NOT NULL)
        AND COALESCE(m.is_migration_duplicate, false) = false
      ORDER BY m.occurred_at DESC LIMIT 100`,
@@ -447,6 +450,7 @@ export async function getCompanyTimeline(companyId) {
         reviewStatus: m.human_review_status,
         campaignId: m.campaign_id,
         campaignName: m.campaign_name || 'Direct / no campaign',
+        linkedJobs: m.linked_jobs || [],
         bodyUnavailable: !body,
       },
     });

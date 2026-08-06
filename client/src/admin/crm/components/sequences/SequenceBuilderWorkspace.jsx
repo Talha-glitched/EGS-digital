@@ -237,7 +237,7 @@ export default function SequenceBuilderWorkspace({
         );
         await refreshAudience(seqId);
         if (result.launchBatchId) {
-          window.location.assign(`/admin/crm/email?batch=${result.launchBatchId}`);
+          window.location.assign(`/admin/crm/communications?tab=outbox&batch=${result.launchBatchId}`);
         }
       } else {
         setLaunchArmed(false);
@@ -518,9 +518,10 @@ export default function SequenceBuilderWorkspace({
                 </div>
               )}
 
-              <div className="mt-4 grid grid-cols-3 gap-2">
+              <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
                 <AudienceStat label="Eligible" value={audiencePreview.eligible} />
                 <AudienceStat label="Already in" value={audiencePreview.alreadyEnrolled} />
+                <AudienceStat label="Safety blocked" value={audiencePreview.blocked || 0} />
                 <AudienceStat label="Will enroll" value={audiencePreview.netNew} accent />
               </div>
             </section>
@@ -537,11 +538,11 @@ export default function SequenceBuilderWorkspace({
                 </li>
                 <li className="flex gap-2">
                   <Send className="mt-0.5 h-3.5 w-3.5 shrink-0 text-neutral-400" />
-                  <span><strong>Launch now</strong> — enrolls eligible contacts and schedules sends per step delays.</span>
+                  <span><strong>Launch now</strong> — enrolls eligible contacts and stages scheduled sends in Outbox for deliberate release.</span>
                 </li>
                 <li className="flex gap-2">
                   <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-neutral-400" />
-                  <span>Replies automatically pause the sequence for that contact.</span>
+                  <span>A reply pauses the responder and competing contacts for that company/campaign; suppression and focus holds are rechecked again at send time.</span>
                 </li>
               </ul>
             </section>

@@ -44,7 +44,7 @@ export function assertEnrollmentConfirmed(options = {}) {
 
 export function assertLaunchAudience(options = {}) {
   const imported = (options.importedCampaignIds || []).map(sanitizeAudienceProjectId).filter(Boolean);
-  const hasImportCampaign = options.importCampaign === true && options.projectId;
+  const hasImportCampaign = Boolean(options.projectId) || (options.importCampaign === true && options.projectId);
   const hasCompanies = (options.includeCompanyIds || options.companyIds || []).filter(Boolean).length > 0;
   const hasLeads = (options.includeLeadIds || options.leadIds || []).filter(Boolean).length > 0;
 
@@ -101,7 +101,8 @@ export async function listAllSequences() {
 export async function getSequence(id) {
   try {
     const res = await db.query(
-      `SELECT id AS "_id", id, mongo_sequence_id, mongo_campaign_id, name, created_at AS "createdAt", updated_at AS "updatedAt", payload
+      `SELECT id AS "_id", id, mongo_sequence_id, mongo_campaign_id, campaign_id, name, description,is_active,steps,flow_graph,audience,version,
+              created_at AS "createdAt", updated_at AS "updatedAt", payload
        FROM sequences
        WHERE (id::text = $1::text OR mongo_sequence_id = $1)
        LIMIT 1`,
@@ -124,8 +125,13 @@ export async function getSequence(id) {
       id: sid,
       sqlId: row.id,
       name: row.name || p.name || 'Unnamed Sequence',
-      campaignId: row.mongo_campaign_id || p.campaignId || null,
-      steps: unwrapBson(p.steps || []),
+      campaignId: row.campaign_id || row.mongo_campaign_id || p.campaignId || null,
+      steps: unwrapBson(row.steps?.length ? row.steps : p.steps || []),
+      flowGraph: row.flow_graph || p.flowGraph || null,
+      audience: row.audience || p.audience || {},
+      isActive: row.is_active === true,
+      version: row.version || 0,
+      description: row.description || p.description || '',
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     };
@@ -158,7 +164,9 @@ export async function listSequences(options = {}) {
   return listAllSequences();
 }
 
-export async function createSequence(payload) {
+export async function createSequence(projectIdOrPayload, maybePayload) {
+  const payload = maybePayload || projectIdOrPayload || {};
+  const projectId = maybePayload ? projectIdOrPayload : payload.campaignId;
   if (!payload.name?.trim()) {
     const error = new Error('Sequence name is required.');
     error.status = 400;
@@ -169,18 +177,28 @@ export async function createSequence(payload) {
   const description = String(payload.description || '').trim();
   const steps = Array.isArray(payload.steps) ? payload.steps : [];
 
-  const res = await db.query(
-    `INSERT INTO sequences (name, description, payload)
-     VALUES ($1, $2, $3::jsonb)
-     RETURNING id AS "_id", id, name, description, created_at AS "createdAt", updated_at AS "updatedAt"`,
-    [name, description, JSON.stringify({ name, description, steps })]
-  );
-
-  const row = res.rows[0];
-  return {
-    ...row,
-    steps,
-  };
+  const client = await db.getClient();
+  try {
+    await client.query('BEGIN');
+    const campaign = projectId ? await client.query(`SELECT id FROM campaigns WHERE id::text=$1 OR mongo_campaign_id=$1 LIMIT 1`, [String(projectId)]) : { rows: [] };
+    const res = await client.query(
+      `INSERT INTO sequences(name,description,payload,steps,flow_graph,audience,campaign_id,version,is_active,updated_at)
+       VALUES($1,$2,$3::jsonb,$4::jsonb,$5::jsonb,$6::jsonb,$7::uuid,1,FALSE,NOW())
+       RETURNING id AS "_id",id,name,description,campaign_id AS "campaignId",created_at AS "createdAt",updated_at AS "updatedAt"`,
+      [name, description, JSON.stringify({ ...payload, name, description, steps }), JSON.stringify(steps), JSON.stringify(payload.flowGraph || null), JSON.stringify(payload.audience || {}), campaign.rows[0]?.id || null],
+    );
+    const version = await client.query(`INSERT INTO sequence_versions(sequence_id,version_number,published_at) VALUES($1::uuid,1,NOW()) RETURNING id`, [res.rows[0].id]);
+    for (let index = 0; index < steps.length; index += 1) {
+      const step = steps[index] || {};
+      await client.query(
+        `INSERT INTO sequence_steps(sequence_version_id,step_number,step_type,delay_days,template_subject,template_body,delay_amount,delay_unit,payload)
+         VALUES($1::uuid,$2,'email',$3,$4,$5,$6,$7,$8::jsonb)`,
+        [version.rows[0].id, index + 1, step.delayUnit === 'days' ? Number(step.dayDelay || 0) : 0, step.subjectTemplate || '', step.bodyTemplate || '', Number(step.dayDelay || 0), step.delayUnit || 'days', JSON.stringify(step)],
+      );
+    }
+    if (payload.transactionOptions?.rollbackOnly) await client.query('ROLLBACK'); else await client.query('COMMIT');
+    return { ...res.rows[0], steps, flowGraph: payload.flowGraph || null, audience: payload.audience || {}, isActive: false };
+  } catch (error) { await client.query('ROLLBACK').catch(() => {}); throw error; } finally { client.release(); }
 }
 
 export async function updateSequence(id, payload) {
@@ -189,28 +207,35 @@ export async function updateSequence(id, payload) {
   const description = payload.description !== undefined ? String(payload.description).trim() : existing.description;
   const steps = payload.steps !== undefined ? payload.steps : existing.steps;
 
-  const res = await db.query(
-    `UPDATE sequences SET
-       name = $2,
-       description = $3,
-       payload = $4::jsonb,
-       updated_at = NOW()
-     WHERE (id::text = $1::text OR mongo_sequence_id = $1)
-     RETURNING id AS "_id", id, name, description, created_at AS "createdAt", updated_at AS "updatedAt"`,
-    [String(id), name, description, JSON.stringify({ name, description, steps })]
-  );
-
-  if (!res.rows[0]) {
-    const error = new Error('Sequence not found.');
-    error.status = 404;
-    throw error;
-  }
-
-  const row = res.rows[0];
-  return {
-    ...row,
-    steps,
-  };
+  const client = await db.getClient();
+  try {
+    await client.query('BEGIN');
+    await client.query(`SELECT pg_advisory_xact_lock(hashtext($1))`, [String(existing.sqlId || id)]);
+    const nextVersion = await client.query(
+      `SELECT COALESCE(MAX(sv.version_number),0)+1 AS value FROM sequence_versions sv JOIN sequences s ON s.id=sv.sequence_id
+       WHERE s.id::text=$1 OR s.mongo_sequence_id=$1`, [String(id)],
+    );
+    const campaign = payload.campaignId ? await client.query(`SELECT id FROM campaigns WHERE id::text=$1 OR mongo_campaign_id=$1 LIMIT 1`, [String(payload.campaignId)]) : { rows: [] };
+    const res = await client.query(
+      `UPDATE sequences SET name=$2,description=$3,payload=$4::jsonb,steps=$5::jsonb,flow_graph=$6::jsonb,
+         audience=$7::jsonb,campaign_id=COALESCE($8::uuid,campaign_id),version=$9,updated_at=NOW()
+       WHERE id::text=$1 OR mongo_sequence_id=$1
+       RETURNING id AS "_id",id,name,description,campaign_id AS "campaignId",version,created_at AS "createdAt",updated_at AS "updatedAt"`,
+      [String(id), name, description, JSON.stringify({ ...payload, name, description, steps }), JSON.stringify(steps), JSON.stringify(payload.flowGraph ?? existing.flowGraph ?? null), JSON.stringify(payload.audience ?? existing.audience ?? {}), campaign.rows[0]?.id || null, Number(nextVersion.rows[0]?.value) || 1],
+    );
+    if (!res.rows.length) throw Object.assign(new Error('Sequence not found.'), { status: 404 });
+    const version = await client.query(`INSERT INTO sequence_versions(sequence_id,version_number,published_at) VALUES($1::uuid,$2,NOW()) RETURNING id`, [res.rows[0].id, res.rows[0].version]);
+    for (let index = 0; index < steps.length; index += 1) {
+      const step = steps[index] || {};
+      await client.query(
+        `INSERT INTO sequence_steps(sequence_version_id,step_number,step_type,delay_days,template_subject,template_body,delay_amount,delay_unit,payload)
+         VALUES($1::uuid,$2,'email',$3,$4,$5,$6,$7,$8::jsonb)`,
+        [version.rows[0].id, index + 1, step.delayUnit === 'days' ? Number(step.dayDelay || 0) : 0, step.subjectTemplate || '', step.bodyTemplate || '', Number(step.dayDelay || 0), step.delayUnit || 'days', JSON.stringify(step)],
+      );
+    }
+    if (payload.transactionOptions?.rollbackOnly) await client.query('ROLLBACK'); else await client.query('COMMIT');
+    return { ...res.rows[0], steps, flowGraph: payload.flowGraph ?? existing.flowGraph ?? null, audience: payload.audience ?? existing.audience ?? {} };
+  } catch (error) { await client.query('ROLLBACK').catch(() => {}); throw error; } finally { client.release(); }
 }
 
 export async function deleteSequence(id) {
@@ -241,16 +266,93 @@ export async function restoreSequence(id) {
   return { restored: true };
 }
 
+function idList(...values) {
+  return values.flat().filter(Boolean).map((value) => String(value).trim()).filter(Boolean);
+}
+
+async function resolveSequenceSqlId(sequenceId) {
+  if (!sequenceId) return null;
+  const result = await db.query(`SELECT id FROM sequences WHERE id::text=$1 OR mongo_sequence_id=$1 LIMIT 1`, [String(sequenceId)]);
+  return result.rows[0]?.id || null;
+}
+
 export async function previewAudience(projectId, options = {}) {
-  return {
+  const campaignIds = idList(projectId, options.importedCampaignIds);
+  const companyIds = idList(options.companyIds, options.includeCompanyIds);
+  const leadIds = idList(options.leadIds, options.includeLeadIds);
+  const excludeCompanyIds = idList(options.excludeCompanyIds);
+  const excludeLeadIds = idList(options.excludeLeadIds);
+  const sequenceSqlId = await resolveSequenceSqlId(options.sequenceId);
+  if (!campaignIds.length && !companyIds.length && !leadIds.length) {
+    return { audienceContextId: String(projectId || 'global'), eligible: 0, netNew: 0, alreadyEnrolled: 0, alreadyCompleted: 0, alreadySent: 0, alreadyInQueue: 0, blocked: 0, sample: [], contacts: [] };
+  }
+  const params = [campaignIds, companyIds, leadIds, excludeCompanyIds, excludeLeadIds, sequenceSqlId];
+  const result = await db.query(`
+    SELECT cc.id AS "campaignContactId",p.id AS "leadId",p.display_name AS name,por.title AS designation,
+           o.id AS "companyId",o.canonical_name AS "companyName",ca.campaign_id AS "campaignId",c.name AS "campaignName",
+           email.normalized_value AS email,cc.delivery_state AS "deliveryStatus",cc.outreach_focus_state AS "focusState",
+           existing.id AS "enrollmentId",existing.execution_state AS "enrollmentState",
+           COALESCE(job_stats.sent_count,0)::int AS "sentCount",COALESCE(job_stats.queue_count,0)::int AS "queueCount",
+           CASE
+             WHEN email.normalized_value IS NULL THEN 'missing_email'
+             WHEN suppression.endpoint IS NOT NULL THEN 'suppressed'
+             WHEN COALESCE(cc.delivery_state,'') IN('Bounced / Invalid','Opted Out') THEN 'delivery_blocked'
+             WHEN COALESCE(cc.outreach_focus_state,'pending') NOT IN('pending','active_manual') THEN 'campaign_focus_hold'
+             ELSE NULL
+           END AS "blockedReason"
+    FROM campaign_contacts cc
+    JOIN campaign_accounts ca ON ca.id=cc.campaign_account_id
+    JOIN campaigns c ON c.id=ca.campaign_id
+    JOIN organizations o ON o.id=ca.organization_id AND o.archived_at IS NULL
+    JOIN person_organization_roles por ON por.id=cc.role_id
+    JOIN people p ON p.id=por.person_id AND p.archived_at IS NULL
+    LEFT JOIN LATERAL(SELECT normalized_value FROM person_contact_methods WHERE person_id=p.id AND type='email' AND COALESCE(validity,'valid')<>'invalid' ORDER BY preferred DESC NULLS LAST,created_at LIMIT 1)email ON TRUE
+    LEFT JOIN LATERAL(SELECT endpoint FROM endpoint_suppressions WHERE LOWER(endpoint)=LOWER(email.normalized_value) LIMIT 1)suppression ON TRUE
+    LEFT JOIN LATERAL(
+      SELECT se.id,se.execution_state FROM sequence_enrollments se
+      WHERE se.sequence_id=$6::uuid AND se.campaign_contact_id=cc.id
+        AND se.reset_at IS NULL
+      ORDER BY se.created_at DESC LIMIT 1
+    )existing ON $6::uuid IS NOT NULL
+    LEFT JOIN LATERAL(
+      SELECT COUNT(*) FILTER(WHERE sj.status='sent') AS sent_count,
+             COUNT(*) FILTER(WHERE sj.status IN('pending','processing','failed')) AS queue_count
+      FROM send_jobs sj JOIN sequence_enrollments se ON se.id=sj.enrollment_id
+      WHERE se.sequence_id=$6::uuid AND se.campaign_contact_id=cc.id AND se.reset_at IS NULL
+    )job_stats ON $6::uuid IS NOT NULL
+    WHERE (
+      (CARDINALITY($1::text[])>0 AND (ca.campaign_id::text=ANY($1::text[]) OR c.mongo_campaign_id=ANY($1::text[])))
+      OR (CARDINALITY($1::text[])=0 AND (
+        (CARDINALITY($2::text[])>0 AND o.id::text=ANY($2::text[]))
+        OR (CARDINALITY($3::text[])>0 AND p.id::text=ANY($3::text[]))
+      ))
+    )
+      AND (CARDINALITY($2::text[])=0 OR o.id::text=ANY($2::text[]))
+      AND (CARDINALITY($3::text[])=0 OR p.id::text=ANY($3::text[]))
+      AND NOT(o.id::text=ANY($4::text[])) AND NOT(p.id::text=ANY($5::text[]))
+    ORDER BY p.display_name,ca.campaign_id
+  `, params);
+  const contacts = result.rows.map((row) => {
+    const alreadySent = row.sentCount > 0 || row.enrollmentState === 'completed';
+    const alreadyInQueue = row.queueCount > 0;
+    const alreadyEnrolled = Boolean(row.enrollmentId);
+    const eligible = !row.blockedReason;
+    return { ...row, eligible, alreadySent, alreadyInQueue, alreadyEnrolled, netNew: eligible && !alreadySent && !alreadyInQueue && !alreadyEnrolled };
+  });
+  const count = (predicate) => contacts.filter(predicate).length;
+  const response = {
     audienceContextId: String(projectId || 'global'),
-    eligible: 0,
-    alreadyEnrolled: 0,
-    alreadyCompleted: 0,
-    alreadySent: 0,
-    alreadyInQueue: 0,
-    contacts: [],
+    eligible: count((row) => row.eligible),
+    netNew: count((row) => row.netNew),
+    alreadyEnrolled: count((row) => row.alreadyEnrolled),
+    alreadyCompleted: count((row) => row.enrollmentState === 'completed'),
+    alreadySent: count((row) => row.alreadySent),
+    alreadyInQueue: count((row) => row.alreadyInQueue),
+    blocked: count((row) => !row.eligible),
+    sample: contacts.slice(0, 25),
   };
+  if (options.full) response.contacts = contacts;
+  return response;
 }
 
 export async function getMailboxUsageStats() {
@@ -388,92 +490,217 @@ export async function getSequenceDeliverySummary(id) {
   return res.rows[0] || { totalEnrolled: 0, totalSent: 0, totalDelivered: 0, totalBounced: 0, totalReplied: 0 };
 }
 
-export async function enrollProjectLeads(projectId, options = {}) {
-  return { enrolledCount: 0, message: 'Leads enrolled.' };
+export async function enrollProjectLeads(projectId, sequenceIdOrOptions, maybeOptions = {}) {
+  const sequenceId = typeof sequenceIdOrOptions === 'string' ? sequenceIdOrOptions : sequenceIdOrOptions?.sequenceId;
+  const options = typeof sequenceIdOrOptions === 'string' ? maybeOptions : sequenceIdOrOptions || {};
+  return launchSequence(sequenceId, { ...options, projectId });
 }
 
-export async function launchSequence(options = {}) {
+function delayMs(amount, unit = 'days') {
+  const value = Math.max(0, Number(amount) || 0);
+  if (unit === 'minutes') return value * 60000;
+  if (unit === 'hours') return value * 3600000;
+  return value * 86400000;
+}
+
+export async function launchSequence(sequenceId, options = {}) {
   assertEnrollmentConfirmed(options);
-  assertLaunchAudience(options);
+  const seq = await getSequence(sequenceId);
+  const projectId = options.projectId || seq.campaignId || null;
+  assertLaunchAudience({ ...options, projectId });
+  const preview = await previewAudience(projectId, { ...options, sequenceId: seq.sqlId, full: true });
+  const candidates = (preview.contacts || []).filter((row) => row.netNew);
+  if (!candidates.length) return {
+    launchBatchId: null, launchId: null, enrolled: 0, enrolledCount: 0,
+    skippedAlreadySent: preview.alreadySent, skippedInQueue: preview.alreadyInQueue,
+    skippedBlocked: preview.blocked, eligible: preview.eligible,
+  };
 
-  const seq = await getSequence(options.sequenceId);
-
+  const client = await db.getClient();
+  let launchId;
+  let enrolled = 0;
   try {
-    const res = await db.query(
-      `INSERT INTO sequence_launches (sequence_id, campaign_id, status, payload, audience, launched_at)
-       VALUES (
-         $1::uuid,
-         (SELECT id FROM campaigns WHERE id::text = $2 OR mongo_campaign_id = $2 LIMIT 1),
-         'active', $3::jsonb, $4::jsonb, CURRENT_TIMESTAMP
-       )
-       RETURNING id AS "_id", id, status, created_at AS "createdAt"`,
-      [
-        seq.sqlId,
-        String(options.projectId || ''),
-        JSON.stringify({ sequenceId: seq._id, ...options }),
-        JSON.stringify(options.audience || options),
-      ]
+    await client.query('BEGIN');
+    await client.query(`SELECT pg_advisory_xact_lock(hashtext($1))`, [String(seq.sqlId)]);
+    let version = await client.query(`SELECT id FROM sequence_versions WHERE sequence_id=$1::uuid ORDER BY version_number DESC LIMIT 1`, [seq.sqlId]);
+    if (!version.rows.length) {
+      version = await client.query(`INSERT INTO sequence_versions(sequence_id,version_number,published_at) VALUES($1::uuid,1,NOW()) RETURNING id`, [seq.sqlId]);
+    }
+    const firstStep = await client.query(
+      `SELECT id,step_number,delay_amount,delay_unit,delay_days,template_subject,template_body,payload
+       FROM sequence_steps WHERE sequence_version_id=$1::uuid ORDER BY step_number LIMIT 1`, [version.rows[0].id],
     );
-    return {
-      launchId: res.rows[0]?.id,
-      sequence: seq,
-      enrolledCount: 0,
-    };
-  } catch (err) {
-    return {
-      launchId: 'launched',
-      sequence: seq,
-      enrolledCount: 0,
-    };
-  }
-}
-
-export async function listLaunchBatches() {
-  try {
-    const res = await db.query(
-      `SELECT id AS "_id", id, status, enrolled_count AS "totalEnrolled", created_at AS "createdAt"
-       FROM sequence_launches ORDER BY created_at DESC`
+    if (!firstStep.rows.length) throw Object.assign(new Error('Save at least one email step before launching.'), { status: 400 });
+    const campaign = projectId ? await client.query(`SELECT id FROM campaigns WHERE id::text=$1 OR mongo_campaign_id=$1 LIMIT 1`, [String(projectId)]) : { rows: [] };
+    const launch = await client.query(
+      `INSERT INTO sequence_launches(sequence_id,campaign_id,status,payload,audience,enrolled_count,restarted_count,merged_count,launched_at,launched_by_user_id)
+       VALUES($1::uuid,$2::uuid,'queued',$3::jsonb,$4::jsonb,0,0,0,NOW(),$5::uuid) RETURNING id`,
+      [seq.sqlId, campaign.rows[0]?.id || null, JSON.stringify({ sequenceId: seq._id, ...options }), JSON.stringify(options), options.actor?.userId || null],
     );
-    return res.rows;
-  } catch (err) {
-    return [];
-  }
+    launchId = launch.rows[0].id;
+    const step = firstStep.rows[0];
+    const scheduledFor = new Date(Date.now() + delayMs(step.delay_amount ?? step.delay_days, step.delay_unit || 'days'));
+    const candidatePayload = candidates.map((contact) => ({
+      campaign_contact_id: contact.campaignContactId,
+      lead_id: contact.leadId,
+      campaign_id: contact.campaignId,
+      email: contact.email,
+    }));
+    const inserted = await client.query(`
+      WITH input AS(
+        SELECT * FROM jsonb_to_recordset($1::jsonb) AS candidate(campaign_contact_id uuid,lead_id uuid,campaign_id uuid,email text)
+      ),new_enrollments AS(
+        INSERT INTO sequence_enrollments(campaign_contact_id,sequence_version_id,execution_state,enrolled_at,lead_id,campaign_id,sequence_id,launch_batch_id,current_step_index,next_send_at,frozen,payload)
+        SELECT candidate.campaign_contact_id,$2::uuid,'active',NOW(),candidate.lead_id,candidate.campaign_id,$3::uuid,$4::uuid,0,$5,FALSE,'{"source":"runtime_launch"}'::jsonb
+        FROM input candidate WHERE NOT EXISTS(
+          SELECT 1 FROM sequence_enrollments existing WHERE existing.sequence_id=$3::uuid
+            AND existing.campaign_contact_id=candidate.campaign_contact_id AND existing.reset_at IS NULL
+            AND (existing.execution_state<>'cancelled' OR EXISTS(SELECT 1 FROM send_jobs sent WHERE sent.enrollment_id=existing.id AND sent.status='sent'))
+        ) RETURNING id,campaign_contact_id,lead_id,campaign_id
+      )
+      INSERT INTO send_jobs(lead_id,campaign_id,enrollment_id,step_index,status,scheduled_for,recipient_email,rendered_subject,rendered_body,immediate_launch,manual_send,idempotency_key,payload)
+      SELECT enrollment.lead_id,enrollment.campaign_id,enrollment.id,0,'pending',$5,input.email,$6,$7,FALSE,TRUE,
+             $4::text||':'||enrollment.campaign_contact_id::text||':0',jsonb_build_object('launchBatchId',$4::text,'sequenceId',$3::text)
+      FROM new_enrollments enrollment JOIN input ON input.campaign_contact_id=enrollment.campaign_contact_id
+      ON CONFLICT(idempotency_key) WHERE idempotency_key IS NOT NULL DO NOTHING RETURNING id
+    `, [JSON.stringify(candidatePayload), version.rows[0].id, seq.sqlId, launchId, scheduledFor, step.template_subject || '', step.template_body || '']);
+    enrolled = inserted.rowCount;
+    await client.query(`UPDATE sequence_launches SET enrolled_count=$2,updated_at=NOW() WHERE id=$1::uuid`, [launchId, enrolled]);
+    await client.query(`UPDATE sequences SET is_active=TRUE,updated_at=NOW() WHERE id=$1::uuid`, [seq.sqlId]);
+    if (options.transactionOptions?.rollbackOnly) await client.query('ROLLBACK'); else await client.query('COMMIT');
+  } catch (error) { await client.query('ROLLBACK').catch(() => {}); throw error; } finally { client.release(); }
+  return {
+    launchBatchId: launchId, launchId, enrolled, enrolledCount: enrolled,
+    skippedAlreadySent: preview.alreadySent, skippedInQueue: preview.alreadyInQueue,
+    skippedBlocked: preview.blocked, eligible: preview.eligible, dryRun: Boolean(options.transactionOptions?.rollbackOnly),
+  };
 }
 
-export async function listLaunchBatchJobs(batchId) {
-  return [];
+export async function listLaunchBatches(options = {}) {
+  const page = Math.max(1, Number(options.page) || 1);
+  const limit = Math.min(100, Math.max(1, Number(options.limit) || 25));
+  const params = [];
+  let where = `WHERE sl.status<>'historical'`;
+  if (options.sequenceId) { params.push(String(options.sequenceId)); where += ` AND (s.id::text=$${params.length} OR s.mongo_sequence_id=$${params.length})`; }
+  if (options.launchBatchId) { params.push(String(options.launchBatchId)); where += ` AND sl.id::text=$${params.length}`; }
+  const total = await db.query(`SELECT COUNT(*)::int AS count FROM sequence_launches sl JOIN sequences s ON s.id=sl.sequence_id ${where}`, params);
+  params.push(limit, (page - 1) * limit);
+  const res = await db.query(`
+    SELECT sl.id AS "_id",sl.id,sl.status,sl.audience,sl.enrolled_count AS "enrolledCount",sl.restarted_count AS "restartedCount",
+           sl.launched_at AS "launchedAt",s.id AS "sequenceId",s.name AS "sequenceName",
+           COALESCE(c.name,'Mixed / selected audience') AS "campaignName",
+           jsonb_build_object(
+             'queued',COUNT(sj.id) FILTER(WHERE sj.status IN('pending','processing','failed')),
+             'sent',COUNT(sj.id) FILTER(WHERE sj.status='sent'),
+             'failed',COUNT(sj.id) FILTER(WHERE sj.status='failed'),
+             'cancelled',COUNT(sj.id) FILTER(WHERE sj.status='cancelled')
+           ) AS stats
+    FROM sequence_launches sl JOIN sequences s ON s.id=sl.sequence_id LEFT JOIN campaigns c ON c.id=sl.campaign_id
+    LEFT JOIN sequence_enrollments se ON se.launch_batch_id=sl.id LEFT JOIN send_jobs sj ON sj.enrollment_id=se.id
+    ${where} GROUP BY sl.id,s.id,c.name ORDER BY sl.launched_at DESC LIMIT $${params.length - 1} OFFSET $${params.length}
+  `, params);
+  return { items: res.rows.map((row) => ({ ...row, audienceLists: row.campaignName ? [row.campaignName] : [] })), total: total.rows[0]?.count || 0, page, pages: Math.ceil((total.rows[0]?.count || 0) / limit) };
 }
 
-export async function removeLaunchBatchJobs(batchId) {
-  return { removed: 0 };
+export async function listLaunchBatchJobs(batchId, options = {}) {
+  const params = [batchId];
+  let status = '';
+  if (options.status) { params.push(options.status); status = `AND sj.status=$2`; }
+  const result = await db.query(`
+    SELECT sj.id AS "_id",sj.id,sj.status,sj.step_index AS "stepIndex",sj.scheduled_for AS "scheduledFor",sj.sent_at AS "sentAt",
+           sj.recipient_email AS "recipientEmail",sj.rendered_subject AS "renderedSubject",sj.error_message AS "errorMessage",
+           jsonb_build_object('_id',p.id,'name',p.display_name,'email',sj.recipient_email) AS "leadId"
+    FROM send_jobs sj JOIN sequence_enrollments se ON se.id=sj.enrollment_id JOIN people p ON p.id=se.lead_id
+    WHERE se.launch_batch_id=$1::uuid ${status} ORDER BY sj.created_at,sj.step_index`, params,
+  );
+  return { items: result.rows, total: result.rowCount };
 }
 
-export async function sendLaunchBatchJobs(batchId) {
-  return { sent: 0 };
+export async function removeLaunchBatchJobs(batchId, options = {}) {
+  const ids = idList(options.jobIds);
+  const result = await db.query(
+    `UPDATE send_jobs sj SET status='cancelled',error_message='Removed from Outbox by user',updated_at=NOW()
+     WHERE sj.enrollment_id IN(SELECT id FROM sequence_enrollments WHERE launch_batch_id=$1::uuid)
+       AND sj.status IN('pending','failed') AND ($2::boolean OR sj.id::text=ANY($3::text[])) RETURNING sj.id`,
+    [batchId, options.all === true, ids],
+  );
+  return { removed: result.rowCount };
+}
+
+export async function sendLaunchBatchJobs(batchId, options = {}) {
+  const maxCount = Math.min(1000, Math.max(1, Number(options.maxCount) || 1000));
+  const jobs = await db.query(
+    `WITH selected AS(SELECT sj.id FROM send_jobs sj JOIN sequence_enrollments se ON se.id=sj.enrollment_id
+       WHERE se.launch_batch_id=$1::uuid AND sj.status IN('pending','failed') ORDER BY sj.created_at LIMIT $2)
+     UPDATE send_jobs sj SET status='pending',manual_send=FALSE,error_message='',updated_at=NOW()
+     FROM selected WHERE sj.id=selected.id RETURNING sj.id`, [batchId, maxCount],
+  );
+  if (jobs.rowCount) await db.query(`UPDATE sequence_launches SET status='active',updated_at=NOW() WHERE id=$1::uuid`, [batchId]);
+  if (jobs.rowCount) { const { kickSendQueue } = await import('./sendWorker.js'); kickSendQueue().catch(() => {}); }
+  return { started: jobs.rowCount > 0, running: jobs.rowCount > 0, queued: jobs.rowCount, remaining: jobs.rowCount, message: jobs.rowCount ? `${jobs.rowCount} email(s) released to the safe send worker.` : 'Nothing left to send.' };
 }
 
 export async function getLaunchBatchSendProgress(batchId) {
-  return { total: 0, sent: 0, pending: 0, failed: 0 };
+  const result = await db.query(`SELECT COUNT(*)::int AS total,COUNT(*) FILTER(WHERE sj.status='sent')::int AS sent,
+    COUNT(*) FILTER(WHERE sj.status IN('pending','processing'))::int AS pending,COUNT(*) FILTER(WHERE sj.status='failed')::int AS failed,
+    COUNT(*) FILTER(WHERE sj.status='processing')::int AS processing,
+    COUNT(*) FILTER(WHERE sj.status='pending' AND COALESCE(sj.manual_send,FALSE)=FALSE AND COALESCE(sj.scheduled_for,NOW())<=NOW())::int AS due
+    FROM send_jobs sj JOIN sequence_enrollments se ON se.id=sj.enrollment_id WHERE se.launch_batch_id=$1::uuid`, [batchId]);
+  const row = result.rows[0];
+  return { ...row, running: Number(row.processing) > 0 || Number(row.due) > 0, lastError: null };
 }
 
-export async function sendCampaignQueueJobs(campaignId) {
-  return { sent: 0 };
+export async function sendCampaignQueueJobs(campaignId, options = {}) {
+  const campaign = await db.query(`SELECT id FROM campaigns WHERE id::text=$1 OR mongo_campaign_id=$1 LIMIT 1`, [String(campaignId)]);
+  if (!campaign.rows.length) throw Object.assign(new Error('Campaign not found.'), { status: 404 });
+  const maxCount = Math.min(1000, Math.max(1, Number(options.maxCount) || 1000));
+  const result = await db.query(`WITH selected AS(SELECT id FROM send_jobs WHERE campaign_id=$1::uuid AND status IN('pending','failed') ORDER BY created_at LIMIT $2)
+    UPDATE send_jobs sj SET status='pending',manual_send=FALSE,error_message='',updated_at=NOW() FROM selected WHERE sj.id=selected.id RETURNING sj.id`, [campaign.rows[0].id, maxCount]);
+  if (result.rowCount) { const { kickSendQueue } = await import('./sendWorker.js'); kickSendQueue().catch(() => {}); }
+  return { sent: 0, queued: result.rowCount, started: result.rowCount > 0 };
 }
 
-export async function resetSequenceEnrollments(sequenceId) {
-  return { resetCount: 0 };
+export async function resetSequenceEnrollments(sequenceId, leadIds = []) {
+  const sequenceSqlId = await resolveSequenceSqlId(sequenceId);
+  if (!sequenceSqlId) throw Object.assign(new Error('Sequence not found.'), { status: 404 });
+  const ids = idList(leadIds);
+  const client = await db.getClient();
+  try {
+    await client.query('BEGIN');
+    const result = await client.query(`UPDATE sequence_enrollments SET reset_at=NOW(),execution_state='cancelled',stop_reason='manual resend reset',updated_at=NOW()
+      WHERE sequence_id=$1::uuid AND reset_at IS NULL AND (CARDINALITY($2::text[])=0 OR lead_id::text=ANY($2::text[])) RETURNING id`, [sequenceSqlId, ids]);
+    const enrollmentIds = result.rows.map((row) => row.id);
+    if (enrollmentIds.length) await client.query(
+      `UPDATE send_jobs SET status='cancelled',error_message='Enrollment reset for deliberate resend',updated_at=NOW()
+       WHERE enrollment_id=ANY($1::uuid[]) AND status IN('pending','failed','processing')`, [enrollmentIds],
+    );
+    await client.query('COMMIT');
+    return { reset: result.rowCount, resetCount: result.rowCount };
+  } catch (error) { await client.query('ROLLBACK').catch(() => {}); throw error; } finally { client.release(); }
 }
 
-export async function listCampaignQueueJobs(campaignId) {
-  return [];
+export async function listCampaignQueueJobs(campaignId, options = {}) {
+  const campaign = await db.query(`SELECT id FROM campaigns WHERE id::text=$1 OR mongo_campaign_id=$1 LIMIT 1`, [String(campaignId)]);
+  if (!campaign.rows.length) return [];
+  const params = [campaign.rows[0].id];
+  let filter = '';
+  if (options.status) { params.push(options.status); filter = `AND sj.status=$2`; }
+  return (await db.query(`SELECT sj.id AS "_id",sj.*,p.display_name AS "leadName" FROM send_jobs sj LEFT JOIN people p ON p.id=sj.lead_id
+    WHERE sj.campaign_id=$1::uuid ${filter} ORDER BY sj.created_at DESC`, params)).rows;
 }
 
 export async function removeSendJob(jobId) {
-  return { removed: true };
+  const result = await db.query(`UPDATE send_jobs SET status='cancelled',error_message='Removed by user',updated_at=NOW() WHERE id=$1::uuid AND status IN('pending','failed') RETURNING id`, [jobId]);
+  return { removed: result.rowCount > 0 };
 }
 
-export async function removeCampaignQueueJobs(campaignId) {
-  return { removed: 0 };
+export async function removeCampaignQueueJobs(campaignId, options = {}) {
+  const campaign = await db.query(`SELECT id FROM campaigns WHERE id::text=$1 OR mongo_campaign_id=$1 LIMIT 1`, [String(campaignId)]);
+  if (!campaign.rows.length) return { removed: 0 };
+  const ids = idList(options.jobIds);
+  const result = await db.query(`UPDATE send_jobs SET status='cancelled',error_message='Removed by user',updated_at=NOW()
+    WHERE campaign_id=$1::uuid AND status IN('pending','failed') AND ($2::boolean OR id::text=ANY($3::text[])) RETURNING id`, [campaign.rows[0].id, options.all === true, ids]);
+  return { removed: result.rowCount };
 }
 
 export async function freezeLeadSequence(leadId, reason = '') {

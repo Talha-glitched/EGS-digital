@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { SendHorizontal, AlertCircle, Clock, Calendar, Mail, CheckCircle2, XCircle } from 'lucide-react';
+import { SendHorizontal, AlertCircle, Clock, Calendar, Mail, CheckCircle2, XCircle, Link2 } from 'lucide-react';
 import Drawer from '../ui/Drawer.jsx';
 import { fetchSentEmailThread, sendSentEmailReply } from '../../crmApi.js';
 import { cn } from '../ui/primitives.jsx';
+import CommunicationJobModal from '../communications/CommunicationJobModal.jsx';
 
 function formatTime(value) {
   if (!value) return '—';
@@ -52,6 +53,7 @@ export default function EmailDetailsDrawer({
   const [replyText, setReplyText] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
   const [replyError, setReplyError] = useState('');
+  const [jobActionOpen, setJobActionOpen] = useState(false);
 
   useEffect(() => {
     if (!email?._id || email.status !== 'sent') {
@@ -178,6 +180,7 @@ export default function EmailDetailsDrawer({
             </div>
           )}
         </div>
+        {thread?.threadId && <button type="button" className="crm-btn-primary text-xs" onClick={() => setJobActionOpen(true)}><Link2 className="h-4 w-4" />Send to Job</button>}
 
         {/* Conversation History / Outbound Body */}
         <div>
@@ -251,6 +254,7 @@ export default function EmailDetailsDrawer({
           </div>
         )}
       </div>
+      <CommunicationJobModal open={jobActionOpen} onClose={() => setJobActionOpen(false)} conversationId={thread?.threadId} defaultMessageId={thread?.history?.at(-1)?.messageId} />
     </Drawer>
   );
 }

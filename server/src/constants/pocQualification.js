@@ -11,7 +11,7 @@ export const POC_QUALIFICATION_LABELS = {
   Confirmed: 'Right POC',
   RedirectedWithReferral: 'Redirected — gave referral',
   RedirectedNoReferral: 'Redirected — no details',
-  WrongContact: 'Wrong POC / Dead End',
+  WrongContact: 'Wrong POC',
 };
 
 export const POC_QUALIFICATION_DESCRIPTIONS = {
@@ -19,7 +19,7 @@ export const POC_QUALIFICATION_DESCRIPTIONS = {
   Confirmed: 'Verified as the right point of contact for this company.',
   RedirectedWithReferral: 'They redirected you and shared details for the correct person.',
   RedirectedNoReferral: 'They redirected you but did not share contact details.',
-  WrongContact: 'Wrong person with no useful redirect.',
+  WrongContact: 'Wrong person for this responsibility; the account remains available for future outreach.',
 };
 
 export function isRelevantPocStatus(status) {

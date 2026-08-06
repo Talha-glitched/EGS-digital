@@ -98,7 +98,7 @@ function getExecutionSummary(item) {
   };
 }
 
-export default function OngoingJobsPage() {
+export default function OngoingJobsPage({ completedOnly = false }) {
   const [data, setData] = useState({ items: [], stages: DEFAULT_STAGES, owners: [] });
   const [companies, setCompanies] = useState([]);
   const [campaigns, setCampaigns] = useState([]);
@@ -110,14 +110,14 @@ export default function OngoingJobsPage() {
   const [showStageEditor, setShowStageEditor] = useState(false);
   const [selectedId, setSelectedId] = useState('');
   const [error, setError] = useState('');
-  const [viewMode, setViewMode] = useState('board');
+  const [viewMode, setViewMode] = useState(completedOnly ? 'table' : 'board');
   const [dragOverStage, setDragOverStage] = useState('');
   const [bulkDeleting, setBulkDeleting] = useState(false);
 
   async function load() {
     const [status, ongoingJobs] = await Promise.all([
       crmApiFetch('/api/admin/status'),
-      crmApiFetch('/api/admin/sales/ongoing-jobs'),
+      crmApiFetch(`/api/admin/sales/ongoing-jobs${completedOnly ? '?stage=Job%20Done' : ''}`),
     ]);
     const designer = status?.user?.role === 'designer';
     if (status?.username) setCurrentUser(status.username);
@@ -148,7 +148,7 @@ export default function OngoingJobsPage() {
   });
 
   const visibleItems = data.items || [];
-  const stages = data.stages?.length ? data.stages : DEFAULT_STAGES;
+  const stages = completedOnly ? ['Job Done'] : (data.stages?.length ? data.stages : DEFAULT_STAGES);
 
   const ongoingJobSchema = useMemo(() => buildOngoingJobFilterSchema(stages), [stages]);
   const {
@@ -170,7 +170,7 @@ export default function OngoingJobsPage() {
 
   const selection = useRowSelection(sortedItems);
 
-  const active = visibleItems.filter((item) => !['Job Done', 'Job Lost', 'Closed Won', 'Closed Lost'].includes(item.stage));
+  const active = completedOnly ? visibleItems : visibleItems.filter((item) => !['Job Done', 'Job Lost', 'Closed Won', 'Closed Lost'].includes(item.stage));
   const pipelineValue = active.reduce((sum, item) => sum + (Number(item.valueAed) || 0), 0);
   const lateStageCount = active.filter((item) => LATE_STAGES.has(item.stage)).length;
   const avgDealValue = active.length ? Math.round(pipelineValue / active.length) : 0;
@@ -277,7 +277,7 @@ export default function OngoingJobsPage() {
               <BriefcaseBusiness className="h-4 w-4" />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">Active Ongoing Jobs</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">{completedOnly ? 'Jobs done' : 'Active Ongoing Jobs'}</p>
               <p className="text-sm font-bold tabular-nums text-neutral-900">{active.length}</p>
             </div>
           </div>
@@ -288,7 +288,7 @@ export default function OngoingJobsPage() {
                 <Target className="h-4 w-4" />
               </div>
               <div className="min-w-0">
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">Open pipeline</p>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">{completedOnly ? 'Delivered value' : 'Open pipeline'}</p>
                 <p className="text-sm font-bold tabular-nums text-neutral-900">{formatCurrency(pipelineValue)}</p>
               </div>
             </div>
@@ -299,8 +299,8 @@ export default function OngoingJobsPage() {
               <UserRound className="h-4 w-4" />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">Late-stage jobs</p>
-              <p className="text-sm font-bold tabular-nums text-neutral-900">{lateStageCount}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">{completedOnly ? 'Open execution tasks' : 'Late-stage jobs'}</p>
+              <p className="text-sm font-bold tabular-nums text-neutral-900">{completedOnly ? openExecutionTasks : lateStageCount}</p>
             </div>
           </div>
         </div>
@@ -340,14 +340,12 @@ export default function OngoingJobsPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <button type="button" onClick={() => setShowStageEditor(true)} className="crm-btn-secondary">
-              <Settings2 className="h-4 w-4" />
-              Edit stages
-            </button>
-            <button type="button" onClick={() => { setError(''); setShowCreate(true); }} className="crm-btn-primary">
-              <Plus className="h-4 w-4" />
-              New Ongoing Job
-            </button>
+            {!completedOnly && <button type="button" onClick={() => setShowStageEditor(true)} className="crm-btn-secondary">
+              <Settings2 className="h-4 w-4" />Edit stages
+            </button>}
+            {!completedOnly && <button type="button" onClick={() => { setError(''); setShowCreate(true); }} className="crm-btn-primary">
+              <Plus className="h-4 w-4" />New Ongoing Job
+            </button>}
           </div>
         </div>
 
@@ -362,11 +360,11 @@ export default function OngoingJobsPage() {
           {!filtered.length ? (
             <EmptyState
               icon={BriefcaseBusiness}
-              title={visibleItems.length ? 'No Ongoing Jobs match' : 'No Ongoing Jobs yet'}
+              title={visibleItems.length ? 'No Jobs match' : (completedOnly ? 'No Jobs Done yet' : 'No Ongoing Jobs yet')}
               description={visibleItems.length
-                ? 'Try adjusting your search or filters, or create a new Ongoing Job.'
-                : 'Create your first Ongoing Job to start tracking work in progress.'}
-              action={!visibleItems.length ? (
+                ? 'Try adjusting your filters.'
+                : (completedOnly ? 'Jobs appear here when their stage becomes Job Done.' : 'Create your first Ongoing Job to start tracking work in progress.')}
+              action={!completedOnly && !visibleItems.length ? (
                 <button type="button" onClick={() => setShowCreate(true)} className="crm-btn-primary">
                   <Plus className="h-4 w-4" />
                   Create Ongoing Job
@@ -417,7 +415,7 @@ export default function OngoingJobsPage() {
         </Card>
       </PageSection>
 
-      <CreateOngoingJobModal
+      {!completedOnly && <CreateOngoingJobModal
         open={showCreate}
         onClose={() => setShowCreate(false)}
         onCreated={() => load().catch((err) => setError(err.message))}
@@ -425,14 +423,14 @@ export default function OngoingJobsPage() {
         campaigns={campaigns}
         contacts={contacts}
         currentUser={currentUser}
-      />
+      />}
 
-      <OngoingJobStageEditorModal
+      {!completedOnly && <OngoingJobStageEditorModal
         open={showStageEditor}
         onClose={() => setShowStageEditor(false)}
         stages={stages}
         onSaved={handlePipelineSaved}
-      />
+      />}
 
       <OngoingJobDrawer
         ongoingJobId={selectedId || ''}

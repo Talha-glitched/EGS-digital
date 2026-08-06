@@ -9,7 +9,6 @@ import {
   ListTodo,
   Building2,
   Users,
-  Inbox,
   BarChart3,
   FolderKanban,
   UserRound,
@@ -19,7 +18,10 @@ import {
   HeartHandshake,
   Mail,
   SendHorizontal,
-  MailCheck,
+  PackageSearch,
+  HardHat,
+  Boxes,
+  ClipboardList,
 } from 'lucide-react';
 import { fetchWorkspaceSearch } from '../../crmApi.js';
 import { cn } from '../ui/primitives.jsx';
@@ -34,12 +36,14 @@ const QUICK_NAV = [
   { id: 'nav-relationships', type: 'page', title: 'Key Relationships', subtitle: 'Confirmed right POCs and nurture follow-ups', href: '/admin/crm/relationships', keywords: ['relationships', 'poc', 'nurture', 'follow up', 'right contact'], icon: HeartHandshake },
   { id: 'nav-ongoing-jobs', type: 'page', title: 'Ongoing Jobs', subtitle: 'Work in progress and deal stages', href: '/admin/crm/ongoing-jobs', keywords: ['ongoing', 'jobs', 'sales', 'pipeline', 'opportunities'], icon: BriefcaseBusiness },
   { id: 'nav-completed-jobs', type: 'page', title: 'Jobs Done', subtitle: 'Completed and past production jobs directory', href: '/admin/crm/completed-jobs', keywords: ['completed', 'jobs', 'done', 'past'], icon: BriefcaseBusiness },
+  { id: 'nav-suppliers', type: 'page', title: 'Suppliers', subtitle: 'Capabilities, commitments, delivery, and costs', href: '/admin/crm/suppliers', keywords: ['suppliers', 'vendors', 'procurement', 'outsourcing', 'capabilities'], icon: PackageSearch },
+  { id: 'nav-resources', type: 'page', title: 'Resources & Time', subtitle: 'Crews, vehicles, equipment, conflicts, and project time', href: '/admin/crm/resources', keywords: ['resources', 'crew', 'employees', 'vehicles', 'equipment', 'time'], icon: HardHat },
+  { id: 'nav-inventory', type: 'page', title: 'Inventory', subtitle: 'Stock, assets, locations, packing, and barcode movements', href: '/admin/crm/inventory', keywords: ['inventory', 'stock', 'barcode', 'assets', 'warehouse', 'packing'], icon: Boxes },
   { id: 'nav-tasks', type: 'page', title: 'Tasks', subtitle: 'Calls, meetings, and next actions', href: '/admin/crm/tasks', keywords: ['tasks', 'follow', 'todo'], icon: ListTodo },
-  { id: 'nav-inbox', type: 'page', title: 'Inbox', subtitle: 'Replies and sales follow-up', href: '/admin/crm/inbox', keywords: ['inbox', 'email', 'replies'], icon: Inbox },
-  { id: 'nav-email', type: 'page', title: 'Email', subtitle: 'Outbox batches, sent messages, and failed sends', href: '/admin/crm/email', keywords: ['email', 'outbox', 'sent', 'queue', 'launch', 'batch'], icon: SendHorizontal },
-  { id: 'nav-resend', type: 'page', title: 'Resend emails', subtitle: 'Delivery status, opens, and clicks for API-sent outreach', href: '/admin/crm/resend-emails', keywords: ['resend', 'api', 'delivery', 'opens', 'clicks', 'bounces'], icon: MailCheck },
+  { id: 'nav-communications', type: 'page', title: 'Communications', subtitle: 'Replies, outreach, message search, delivery issues, and Job links', href: '/admin/crm/communications', keywords: ['communications', 'inbox', 'email', 'replies', 'outbox', 'sent', 'queue', 'launch', 'batch', 'resend', 'delivery'], icon: SendHorizontal },
   { id: 'nav-finance', type: 'page', title: 'Finances', subtitle: 'Campaign budgets, costs, and revenue', href: '/admin/crm/finance', keywords: ['finance', 'finances', 'budget', 'revenue', 'roi'], icon: Wallet },
-  { id: 'nav-analytics', type: 'page', title: 'Reports', subtitle: 'Performance and ROI analytics', href: '/admin/crm/analytics', keywords: ['reports', 'analytics', 'roi'], icon: BarChart3 },
+  { id: 'nav-analytics', type: 'page', title: 'Commercial Reports', subtitle: 'Campaign performance and ROI analytics', href: '/admin/crm/analytics', keywords: ['reports', 'analytics', 'roi', 'commercial'], icon: BarChart3 },
+  { id: 'nav-operations-reports', type: 'page', title: 'Operations Reports', subtitle: 'Job delivery, resources, suppliers, inventory, and closeout', href: '/admin/crm/operations-reports', keywords: ['operations', 'reports', 'delivery', 'coverage', 'costs', 'exceptions'], icon: ClipboardList },
 ];
 
 const TYPE_ICONS = {

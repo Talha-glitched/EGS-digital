@@ -67,6 +67,13 @@ function TaskTitleCell({ task, onPatch, focus, editing }) {
   const badge = typeBadges[task.taskType] || (task.isRelationshipFollowUp ? typeBadges.relationship_follow_up : typeBadges.general);
 
   if (!editing) {
+    const stateTone = task.status === 'Blocked'
+      ? 'bg-red-50 text-red-700 border-red-200'
+      : task.status === 'Waiting'
+        ? 'bg-violet-50 text-violet-700 border-violet-200'
+        : task.isBlockedByDependency
+          ? 'bg-orange-50 text-orange-700 border-orange-200'
+          : '';
     return (
       <div>
         <div className="flex items-center gap-2">
@@ -76,7 +83,15 @@ function TaskTitleCell({ task, onPatch, focus, editing }) {
           <span className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-medium ${badge.color}`}>
             {badge.label}
           </span>
+          {stateTone && <span className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-semibold ${stateTone}`}>{task.isBlockedByDependency && task.status !== 'Blocked' ? 'Dependency blocked' : task.status}</span>}
         </div>
+        {(task.jobTitle || task.workPackageTitle || task.phaseName || task.locationName || task.activityTitle) && (
+          <p className="mt-1 line-clamp-1 text-[10px] text-neutral-500">
+            {[task.jobNumber && task.jobTitle ? `${task.jobNumber} · ${task.jobTitle}` : task.jobTitle, task.workPackageTitle, task.phaseName, task.locationName, task.activityTitle].filter(Boolean).join(' › ')}
+          </p>
+        )}
+        {task.status === 'Blocked' && task.blockedReason && <p className="mt-1 line-clamp-1 text-[10px] font-medium text-red-600">Blocked: {task.blockedReason}</p>}
+        {task.status === 'Waiting' && task.waitingOn && <p className="mt-1 line-clamp-1 text-[10px] font-medium text-violet-600">Waiting on: {task.waitingOn}</p>}
       </div>
     );
   }

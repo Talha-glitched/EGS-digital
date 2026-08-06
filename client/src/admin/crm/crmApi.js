@@ -201,6 +201,18 @@ export async function addLeadToCompany(companyId, payload) {
   });
 }
 
+export async function setKeyRelationshipConfirmation(leadId, confirmed) {
+  return crmApiFetch(`/api/admin/leads/${encodeURIComponent(normalizeId(leadId))}/key-relationship/${confirmed ? 'confirm' : 'remove'}`, {
+    method: 'POST',
+  });
+}
+
+export async function selectCampaignContactFocus(campaignId, leadId) {
+  return crmApiFetch(`/api/admin/campaigns/${encodeURIComponent(normalizeId(campaignId))}/contacts/${encodeURIComponent(normalizeId(leadId))}/focus`, {
+    method: 'POST',
+  });
+}
+
 export async function fetchContactTimeline(leadId) {
   const id = normalizeId(leadId);
   if (!id) throw new Error('Contact ID is missing.');
@@ -284,6 +296,14 @@ export async function fetchSendDeliveryIssues({ page, limit, campaignId, sequenc
     ...(q && { q }),
   }).toString();
   return crmApiFetch(`/api/admin/send-delivery/issues${query ? `?${query}` : ''}`);
+}
+
+export async function fetchCommunicationsWorkspace({ q, limit } = {}) {
+  const params = new URLSearchParams();
+  if (q) params.set('q', q);
+  if (limit) params.set('limit', String(limit));
+  const suffix = params.toString();
+  return crmApiFetch(`/api/admin/communications-workspace${suffix ? `?${suffix}` : ''}`);
 }
 
 export async function fetchSequenceDeliverySummary(sequenceId) {

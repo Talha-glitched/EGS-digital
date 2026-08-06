@@ -174,7 +174,7 @@ export default function RelationshipsPage() {
     return params;
   }, [searchTerm, advancedFilters]);
 
-  const [serverSummary, setServerSummary] = useState({ total: 0, overdue: 0, upcoming: 0, nurture: 0 });
+  const [serverSummary, setServerSummary] = useState({ total: 0, keyRelationships: 0, overdue: 0, upcoming: 0, nurture: 0 });
 
   const loadInitialData = useCallback(async () => {
     setLoading(true);
@@ -361,10 +361,10 @@ export default function RelationshipsPage() {
     <PageShell>
       <PageSection>
         <MetricGrid cols={4}>
-          <StatCard compact label="Right POCs" value={serverSummary.total || total} icon={HeartHandshake} tone="brand" helpText="Contacts confirmed as the correct decision-maker" />
+          <StatCard compact label="Right POCs" value={serverSummary.total || total} icon={HeartHandshake} tone="brand" helpText="Candidates; Key Relationships require a separate manual confirmation" />
+          <StatCard compact label="Key Relationships" value={serverSummary.keyRelationships} icon={UserRound} tone="success" helpText="Right POCs explicitly confirmed by an EGS user" />
           <StatCard compact label="Overdue follow-ups" value={serverSummary.overdue} icon={AlertTriangle} tone="warning" helpText="Database-wide scheduled follow-ups past due" />
           <StatCard compact label="Due this week" value={serverSummary.upcoming} icon={Clock3} tone="info" helpText="Scheduled touches in the next 7 days" />
-          <StatCard compact label="Nurture / later" value={serverSummary.nurture} icon={UserRound} tone="neutral" helpText="Good relationships with softer timing" />
         </MetricGrid>
       </PageSection>
 
@@ -516,7 +516,12 @@ export default function RelationshipsPage() {
                             <Badge tone={interactionTone}>{formatLastInteraction(lead.lastInteractionAt)}</Badge>
                           </td>
                           <td>
-                            <RelationshipStatusBadge status={profile.status || 'New'} compact />
+                            <div className="flex flex-col items-start gap-1">
+                              <Badge tone={profile.manuallyConfirmed ? 'success' : 'neutral'}>
+                                {profile.manuallyConfirmed ? 'Key Relationship' : 'Right POC candidate'}
+                              </Badge>
+                              <RelationshipStatusBadge status={profile.status || 'New'} compact />
+                            </div>
                           </td>
                           <td className="text-xs text-neutral-600">{profile.owner || '—'}</td>
                           <td>

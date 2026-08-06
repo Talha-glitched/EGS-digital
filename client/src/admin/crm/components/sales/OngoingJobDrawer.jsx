@@ -20,6 +20,13 @@ import SearchableSelect from '../ui/SearchableSelect.jsx';
 import { Alert, Badge, Field, LoadingState } from '../ui/primitives.jsx';
 import PocQualificationBadge from '../leads/PocQualificationBadge.jsx';
 import OngoingJobTasksPanel from '../tasks/OngoingJobTasksPanel.jsx';
+import JobMemoryPanel from '../jobs/JobMemoryPanel.jsx';
+import JobDeliveryPanel from '../jobs/JobDeliveryPanel.jsx';
+import JobArtifactsPanel from '../jobs/JobArtifactsPanel.jsx';
+import JobProductionPanel from '../jobs/JobProductionPanel.jsx';
+import JobProcurementPanel from '../jobs/JobProcurementPanel.jsx';
+import JobCostingPanel from '../jobs/JobCostingPanel.jsx';
+import JobCloseoutPanel from '../jobs/JobCloseoutPanel.jsx';
 import AddContactModal from '../leads/AddContactModal.jsx';
 import {
   fetchOngoingJob,
@@ -31,6 +38,13 @@ import {
 
 const TABS = [
   { id: 'overview', label: 'Overview' },
+  { id: 'delivery', label: 'Scope & Plan' },
+  { id: 'artifacts', label: 'Designs & Quotes' },
+  { id: 'production', label: 'Production' },
+  { id: 'procurement', label: 'Suppliers' },
+  { id: 'costing', label: 'Costing' },
+  { id: 'closeout', label: 'Closeout' },
+  { id: 'memory', label: 'Job Memory' },
   { id: 'tasks', label: 'Tasks' },
   { id: 'poc', label: 'POC' },
   { id: 'timeline', label: 'Timeline' },
@@ -57,9 +71,7 @@ export default function OngoingJobDrawer({
     name: '',
     stage: '',
     valueAed: '',
-    nextAction: '',
     eventName: '',
-    notes: '',
     primaryLeadId: '',
     stakeholderLeadIds: [],
     campaignId: '',
@@ -80,9 +92,7 @@ export default function OngoingJobDrawer({
         name: job.name || '',
         stage: job.stage || '',
         valueAed: job.valueAed ?? '',
-        nextAction: job.nextAction || '',
         eventName: job.eventName || '',
-        notes: job.notes || '',
         primaryLeadId: normalizeId(job.primaryLeadId) || '',
         stakeholderLeadIds: (job.stakeholderLeadIds || []).map((lead) => normalizeId(lead)).filter(Boolean),
         campaignId: normalizeId(job.campaignId) || '',
@@ -346,10 +356,50 @@ export default function OngoingJobDrawer({
                     emptyLabel="No users match."
                   />
                 </Field>
-                <Field label="Notes">
-                  <textarea className="crm-input min-h-[112px] resize-y" value={form.notes} onChange={(e) => update('notes', e.target.value)} />
-                </Field>
               </div>
+            </div>
+          )}
+
+          {tab === 'delivery' && (
+            <div className="crm-drawer-tab-panel">
+              <JobDeliveryPanel ongoingJobId={targetId} active={tab === 'delivery'} />
+            </div>
+          )}
+
+          {tab === 'artifacts' && (
+            <div className="crm-drawer-tab-panel">
+              <JobArtifactsPanel ongoingJobId={targetId} contacts={contacts} active={tab === 'artifacts'} />
+            </div>
+          )}
+
+          {tab === 'production' && (
+            <div className="crm-drawer-tab-panel">
+              <JobProductionPanel ongoingJobId={targetId} active={tab === 'production'} />
+            </div>
+          )}
+          {tab === 'procurement' && (
+            <div className="crm-opp-section">
+              <JobProcurementPanel ongoingJobId={targetId} active={tab === 'procurement'} />
+            </div>
+          )}
+          {tab === 'costing' && (
+            <div className="crm-drawer-tab-panel">
+              <JobCostingPanel ongoingJobId={targetId} active={tab === 'costing'} />
+            </div>
+          )}
+          {tab === 'closeout' && (
+            <div className="crm-drawer-tab-panel">
+              <JobCloseoutPanel ongoingJobId={targetId} contacts={contacts} active={tab === 'closeout'} onChanged={() => setTimelineRefresh((value) => value + 1)} />
+            </div>
+          )}
+
+          {tab === 'memory' && (
+            <div className="crm-drawer-tab-panel">
+              <JobMemoryPanel
+                ongoingJobId={targetId}
+                active={tab === 'memory'}
+                onChanged={() => setTimelineRefresh((value) => value + 1)}
+              />
             </div>
           )}
 

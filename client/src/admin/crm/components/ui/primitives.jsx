@@ -324,6 +324,7 @@ export function Badge({ children, tone = 'neutral', className = '' }) {
     success: 'bg-emerald-50 text-emerald-700 ring-emerald-200/70',
     warning: 'bg-amber-50 text-amber-800 ring-amber-200/70',
     info: 'bg-sky-50 text-sky-700 ring-sky-200/70',
+    danger: 'bg-red-50 text-red-700 ring-red-200/70',
   };
   return (
     <span className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ring-1 ring-inset whitespace-nowrap', tones[tone] || tones.neutral, className)}>

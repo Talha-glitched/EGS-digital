@@ -173,7 +173,7 @@ export async function listOngoingJobs({ stage, owner, search, campaignId, compan
       SELECT oj.id AS "_id", oj.id, oj.job_number AS "jobNo", oj.title AS "name",
              oj.summary_stage AS "stage", oj.owner, oj.value_aed AS "valueAed",
              oj.target_date AS "targetDate", oj.expected_close_date AS "expectedCloseDate",
-             oj.closed_at AS "closedAt", oj.lost_reason AS "lostReason", oj.notes,
+             oj.closed_at AS "closedAt", oj.lost_reason AS "lostReason",
              oj.created_at AS "createdAt", oj.updated_at AS "updatedAt",
              o.id AS "companyId", o.canonical_name AS "companyName",
              task_summary.total_tasks AS "totalTasks", task_summary.open_tasks AS "openTasks",
@@ -240,8 +240,8 @@ export async function getOngoingJob(id) {
       `SELECT oj.id AS "_id", oj.id, oj.job_number AS "jobNo", oj.title AS "name",
               oj.summary_stage AS "stage", oj.owner, oj.value_aed AS "valueAed",
               oj.target_date AS "targetDate", oj.expected_close_date AS "expectedCloseDate",
-              oj.closed_at AS "closedAt", oj.lost_reason AS "lostReason", oj.notes,
-              oj.next_action AS "nextAction", oj.event_name AS "eventName", oj.campaign_id AS "campaignId",
+              oj.closed_at AS "closedAt", oj.lost_reason AS "lostReason",
+              oj.event_name AS "eventName", oj.campaign_id AS "campaignId",
               oj.created_at AS "createdAt", oj.updated_at AS "updatedAt",
               oj.primary_lead_id AS "primaryLeadId", oj.stakeholder_lead_ids AS "stakeholderLeadIds",
               oj.collaborators, oj.collaborator_user_ids AS "collaboratorUserIds",
@@ -336,17 +336,16 @@ export async function createOngoingJob(payload, actor = 'admin') {
   const res = await db.query(
     `INSERT INTO ongoing_jobs (
        title, customer_organization_id, campaign_id, owner, summary_stage,
-       value_aed, expected_close_date, notes, activity_log,
-       primary_lead_id, stakeholder_lead_ids, collaborators, next_action, event_name
+       value_aed, expected_close_date, activity_log,
+       primary_lead_id, stakeholder_lead_ids, collaborators, event_name
      ) VALUES (
        $1, $2::uuid, $3::uuid, $4, $5,
-       $6, $7, $8, $9::jsonb,
-       $10::uuid, $11::uuid[], $12::text[], $13, $14
+       $6, $7, $8::jsonb,
+       $9::uuid, $10::uuid[], $11::text[], $12
      )
      RETURNING id AS "_id", id, job_number AS "jobNo", title AS "name", summary_stage AS "stage", owner,
                value_aed AS "valueAed", primary_lead_id AS "primaryLeadId",
-               stakeholder_lead_ids AS "stakeholderLeadIds", collaborators,
-               next_action AS "nextAction", event_name AS "eventName",
+               stakeholder_lead_ids AS "stakeholderLeadIds", collaborators, event_name AS "eventName",
                created_at AS "createdAt", updated_at AS "updatedAt"`,
     [
       payload.name.trim(),
@@ -356,12 +355,10 @@ export async function createOngoingJob(payload, actor = 'admin') {
       stage,
       valueAed,
       now,
-      String(payload.notes || '').trim(),
       JSON.stringify(activityLog),
       payload.primaryLeadId && String(payload.primaryLeadId).length === 36 ? String(payload.primaryLeadId) : null,
       normalizeTextList(payload.stakeholderLeadIds).filter((value) => value.length === 36),
       normalizeTextList(payload.collaborators),
-      String(payload.nextAction || '').trim() || null,
       String(payload.eventName || '').trim() || null,
     ]
   );
@@ -382,6 +379,14 @@ export async function updateOngoingJob(id, payload, actor = 'admin') {
   const modifier = String(actor || payload.owner || currentJob.owner || 'admin').trim();
 
   const stage = payload.stage || currentJob.stage;
+  if (payload.stage !== undefined && stage === CLOSED_WON_STAGE && currentJob.stage !== CLOSED_WON_STAGE) {
+    const evidence = await db.query(`SELECT COUNT(*)::int AS count FROM job_closeout_evidence WHERE ongoing_job_id = $1::uuid AND evidence_type = 'final_photo'`, [String(id)]);
+    if (!evidence.rows[0]?.count) {
+      const error = new Error('Upload at least one Final delivery photo in Closeout before marking this Job Done.');
+      error.status = 409;
+      throw error;
+    }
+  }
   const valueAed = payload.valueAed !== undefined ? Math.max(0, cleanNumber(payload.valueAed)) : currentJob.valueAed;
   let activityLog = Array.isArray(currentJob.activityLog) ? currentJob.activityLog : [];
   if (payload.stage !== undefined && stage !== currentJob.stage) {
@@ -410,20 +415,17 @@ export async function updateOngoingJob(id, payload, actor = 'admin') {
        owner = COALESCE($4, owner),
        summary_stage = COALESCE($5, summary_stage),
        value_aed = $6,
-       notes = COALESCE($7, notes),
-       closed_at = $8,
-       primary_lead_id = $9::uuid,
-       stakeholder_lead_ids = $10::uuid[],
-       collaborators = $11::text[],
-       next_action = $12,
-       event_name = $13,
-       activity_log = $14::jsonb,
+       closed_at = $7,
+       primary_lead_id = $8::uuid,
+       stakeholder_lead_ids = $9::uuid[],
+       collaborators = $10::text[],
+       event_name = $11,
+       activity_log = $12::jsonb,
        updated_at = NOW()
      WHERE (id::text = $1::text) AND deleted_at IS NULL
      RETURNING id AS "_id", id, job_number AS "jobNo", title AS "name", summary_stage AS "stage", owner,
                value_aed AS "valueAed", primary_lead_id AS "primaryLeadId",
-               stakeholder_lead_ids AS "stakeholderLeadIds", collaborators,
-               next_action AS "nextAction", event_name AS "eventName",
+               stakeholder_lead_ids AS "stakeholderLeadIds", collaborators, event_name AS "eventName",
                created_at AS "createdAt", updated_at AS "updatedAt"`,
     [
       String(id),
@@ -432,14 +434,12 @@ export async function updateOngoingJob(id, payload, actor = 'admin') {
       payload.owner ? String(payload.owner).trim() : null,
       payload.stage ? String(payload.stage).trim() : null,
       valueAed,
-      payload.notes !== undefined ? String(payload.notes).trim() : null,
       closedAt,
       payload.primaryLeadId !== undefined
         ? (payload.primaryLeadId && String(payload.primaryLeadId).length === 36 ? String(payload.primaryLeadId) : null)
         : (currentJob.primaryLeadId || null),
       normalizeTextList(payload.stakeholderLeadIds ?? currentJob.stakeholderLeadIds).filter((value) => value.length === 36),
       normalizeTextList(payload.collaborators ?? currentJob.collaborators),
-      payload.nextAction !== undefined ? String(payload.nextAction || '').trim() || null : currentJob.nextAction || null,
       payload.eventName !== undefined ? String(payload.eventName || '').trim() || null : currentJob.eventName || null,
       JSON.stringify(activityLog),
     ]
@@ -512,15 +512,89 @@ export async function getOngoingJobTimeline(id) {
     });
   }
 
-  const [tasks, jobEvents] = await Promise.all([
+  const [tasks, supplierEvents, jobEvents, memoryEntries, closeoutEvidence, snagEvents, linkedMessages] = await Promise.all([
     db.query(
-      `SELECT id, title, description, status, priority, due_at, completed_at, created_at
-       FROM tasks WHERE opportunity_id = $1::uuid AND deleted_at IS NULL`,
+      `SELECT t.id, t.title, t.description, t.status, t.priority, t.due_at, t.completed_at, t.created_at,
+              source.conversation_id AS source_conversation_id, source.message_id AS source_message_id
+       FROM tasks t
+       LEFT JOIN LATERAL (
+         SELECT cjl.conversation_id, cja.message_id
+         FROM communication_job_actions cja
+         JOIN conversation_job_links cjl ON cjl.id = cja.conversation_job_link_id
+         WHERE cja.target_table = 'tasks' AND cja.target_entity_id = t.id
+         ORDER BY cja.created_at DESC LIMIT 1
+       ) source ON TRUE
+       WHERE t.opportunity_id = $1::uuid AND t.deleted_at IS NULL`,
+      [ongoingJob.id]
+    ),
+    db.query(
+      `SELECT scu.id, scu.update_type, scu.note, scu.created_at,
+              o.canonical_name AS supplier_name, sc.description,
+              COALESCE(u.name, 'EGS Team') AS author_name
+       FROM supplier_commitment_updates scu
+       JOIN supplier_commitments sc ON sc.id = scu.supplier_commitment_id
+       JOIN supplier_profiles sp ON sp.id = sc.supplier_profile_id
+       JOIN organizations o ON o.id = sp.organization_id
+       LEFT JOIN users u ON u.id = scu.created_by_user_id
+       WHERE sc.ongoing_job_id = $1::uuid`,
       [ongoingJob.id]
     ),
     db.query(
       `SELECT id, event_type, details, created_at
        FROM job_events WHERE ongoing_job_id = $1::uuid`,
+      [ongoingJob.id]
+    ),
+    db.query(
+      `SELECT n.id, n.note_type, n.content, n.current_version_number, n.is_pinned,
+              n.created_at, n.updated_at, COALESCE(u.name, 'EGS Team') AS author_name,
+              source.conversation_id AS source_conversation_id, source.message_id AS source_message_id,
+              COALESCE(
+                jsonb_agg(
+                  jsonb_build_object('fileName', na.file_name, 'url', na.public_url, 'mimeType', na.mime_type)
+                  ORDER BY na.created_at
+                ) FILTER (WHERE na.id IS NOT NULL),
+                '[]'::jsonb
+              ) AS attachments
+       FROM notes n
+       LEFT JOIN users u ON u.id = n.author_user_id
+       LEFT JOIN note_versions nv
+         ON nv.note_id = n.id AND nv.version_number = n.current_version_number
+       LEFT JOIN note_attachments na ON na.note_version_id = nv.id
+       LEFT JOIN LATERAL (
+         SELECT cjl.conversation_id, cja.message_id
+         FROM communication_job_actions cja
+         JOIN conversation_job_links cjl ON cjl.id = cja.conversation_job_link_id
+         WHERE cja.target_table = 'notes' AND cja.target_entity_id = n.id
+         ORDER BY cja.created_at DESC LIMIT 1
+       ) source ON TRUE
+       WHERE n.target_entity_type = 'ongoing_job'
+         AND n.target_entity_id = $1::uuid
+         AND n.archived_at IS NULL
+       GROUP BY n.id, u.name, source.conversation_id, source.message_id`,
+      [ongoingJob.id]
+    ),
+    db.query(
+      `SELECT e.id, e.evidence_type, e.title, e.file_name, e.public_url, e.created_at,
+              COALESCE(u.name, 'EGS Team') AS author_name
+       FROM job_closeout_evidence e LEFT JOIN users u ON u.id = e.uploaded_by_user_id
+       WHERE e.ongoing_job_id = $1::uuid`,
+      [ongoingJob.id]
+    ),
+    db.query(
+      `SELECT s.id, s.title, s.severity, s.status, s.resolution, s.created_at, s.updated_at,
+              COALESCE(u.name, 'EGS Team') AS owner_name
+       FROM job_snags s LEFT JOIN users u ON u.id = s.owner_user_id
+       WHERE s.ongoing_job_id = $1::uuid`,
+      [ongoingJob.id]
+    ),
+    db.query(
+      `SELECT m.id,m.direction,m.subject,m.body,m.html_body,m.occurred_at,m.from_snapshot,m.to_snapshot,l.conversation_id,
+              l.id AS link_id,COALESCE(u.name,'EGS Team') AS linked_by,
+              COALESCE(jsonb_agg(jsonb_build_object('type',a.action_type,'summary',a.summary,'targetTable',a.target_table,'targetId',a.target_entity_id)) FILTER(WHERE a.id IS NOT NULL),'[]') AS actions
+       FROM conversation_job_links l JOIN messages m ON m.conversation_id=l.conversation_id
+       LEFT JOIN users u ON u.id=l.linked_by_user_id LEFT JOIN communication_job_actions a ON a.conversation_job_link_id=l.id AND (a.message_id=m.id OR a.message_id IS NULL)
+       WHERE l.ongoing_job_id=$1::uuid AND COALESCE(m.is_migration_duplicate,FALSE)=FALSE
+       GROUP BY m.id,l.id,u.name ORDER BY m.occurred_at`,
       [ongoingJob.id]
     ),
   ]);
@@ -532,7 +606,7 @@ export async function getOngoingJobTimeline(id) {
     title: task.status === 'completed' ? `Task completed: ${task.title}` : `Task: ${task.title}`,
     detail: task.description || '',
     timestamp: task.completed_at || task.due_at || task.created_at,
-    meta: { direction: 'internal', priority: task.priority, status: task.status },
+    meta: { direction: 'internal', priority: task.priority, status: task.status, sourceConversationId: task.source_conversation_id, sourceMessageId: task.source_message_id },
   }));
   jobEvents.rows.forEach((jobEvent) => pushEvent({
     id: `job-event-${jobEvent.id}`,
@@ -541,6 +615,69 @@ export async function getOngoingJobTimeline(id) {
     detail: jobEvent.details?.reason || jobEvent.details?.detail || '',
     timestamp: jobEvent.created_at,
     meta: { direction: 'internal', ...(jobEvent.details || {}) },
+  }));
+  memoryEntries.rows.forEach((entry) => pushEvent({
+    id: `job-memory-${entry.id}`,
+    type: 'note',
+    channel: 'note',
+    title: String(entry.note_type || 'update').replaceAll('_', ' '),
+    detail: entry.content || '',
+    timestamp: entry.updated_at || entry.created_at,
+    actor: entry.author_name,
+    source: 'job_memory',
+    meta: {
+      direction: 'internal',
+      noteType: entry.note_type,
+      version: entry.current_version_number,
+      pinned: entry.is_pinned,
+      attachments: entry.attachments || [],
+      sourceConversationId: entry.source_conversation_id,
+      sourceMessageId: entry.source_message_id,
+    },
+  }));
+  supplierEvents.rows.forEach((entry) => pushEvent({
+    id: `supplier-update-${entry.id}`,
+    type: entry.update_type === 'issue' ? 'status' : 'opportunity',
+    channel: 'procurement',
+    title: `Supplier ${String(entry.update_type).replaceAll('_', ' ')} · ${entry.supplier_name}`,
+    detail: `${entry.description}: ${entry.note}`,
+    timestamp: entry.created_at,
+    actor: entry.author_name,
+    source: 'supplier_commitment',
+    meta: { direction: 'internal', updateType: entry.update_type },
+  }));
+  closeoutEvidence.rows.forEach((entry) => pushEvent({
+    id: `closeout-evidence-${entry.id}`,
+    type: 'status',
+    channel: 'closeout',
+    title: `Closeout evidence · ${String(entry.evidence_type).replaceAll('_', ' ')}`,
+    detail: entry.title || entry.file_name,
+    timestamp: entry.created_at,
+    actor: entry.author_name,
+    source: 'job_closeout',
+    meta: { direction: 'internal', attachments: [{ fileName: entry.file_name, url: entry.public_url }] },
+  }));
+  snagEvents.rows.forEach((entry) => pushEvent({
+    id: `job-snag-${entry.id}`,
+    type: 'status',
+    channel: 'closeout',
+    title: `Snag · ${entry.title}`,
+    detail: entry.resolution || `${entry.severity} · ${entry.status}`,
+    timestamp: entry.updated_at || entry.created_at,
+    actor: entry.owner_name,
+    source: 'job_snag',
+    meta: { direction: 'internal', severity: entry.severity, status: entry.status },
+  }));
+  linkedMessages.rows.forEach((entry) => pushEvent({
+    id: `linked-message-${entry.link_id}-${entry.id}`,
+    type: entry.direction === 'inbound' ? 'email_inbound' : 'email_outbound',
+    channel: 'email',
+    title: entry.subject || (entry.direction === 'inbound' ? 'Linked inbound email' : 'Linked outbound email'),
+    detail: entry.body || '',
+    timestamp: entry.occurred_at,
+    actor: entry.direction === 'inbound' ? entry.from_snapshot || 'Client' : entry.linked_by,
+    source: 'communication_job_link',
+    meta: { direction: entry.direction, subject: entry.subject, htmlBody: entry.html_body, from: entry.from_snapshot, to: entry.to_snapshot, linkedToJob: true, sourceConversationId: entry.conversation_id, sourceMessageId: entry.id, communicationActions: entry.actions || [] },
   }));
 
   events.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));

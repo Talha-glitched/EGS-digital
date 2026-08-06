@@ -1,0 +1,73 @@
+import { useCallback, useEffect, useState } from 'react';
+import { BadgeDollarSign, CheckCircle2, CircleAlert, LockKeyhole, Plus, RotateCcw, Trash2 } from 'lucide-react';
+import { crmApiFetch } from '../../crmApi.js';
+import { Alert, Badge, EmptyState, LoadingState, StatCard } from '../ui/primitives.jsx';
+
+const LABELS = { material: 'Material', labor: 'Labour', supplier: 'Supplier / subcontract', transport: 'Transport', permit: 'Permit / approval', rental: 'Rental', petty_cash: 'Petty cash', other: 'Other' };
+const money = (value) => new Intl.NumberFormat('en-AE', { style: 'currency', currency: 'AED', maximumFractionDigits: 0 }).format(Number(value || 0));
+const when = (value) => value ? new Date(value).toLocaleDateString('en-AE', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+
+export default function JobCostingPanel({ ongoingJobId, active = true }) {
+  const base = `/api/admin/sales/ongoing-jobs/${encodeURIComponent(ongoingJobId)}/costing`;
+  const [data, setData] = useState(null); const [loading, setLoading] = useState(true); const [busy, setBusy] = useState(false); const [error, setError] = useState('');
+  const [estimate, setEstimate] = useState({ category: 'material', description: '', amount: '', workPackageId: '' });
+  const [actual, setActual] = useState({ category: 'transport', description: '', amount: '', reference: '', occurredAt: new Date().toISOString().slice(0, 10), workPackageId: '' });
+  const load = useCallback(async () => { try { setError(''); setData(await crmApiFetch(base)); } catch (err) { setError(err.message || 'Failed to load Job costing.'); } finally { setLoading(false); } }, [base]);
+  useEffect(() => { if (active) { setLoading(true); load(); } }, [active, load]);
+  async function request(path, options = {}, after) { setBusy(true); setError(''); try { await crmApiFetch(`${base}${path}`, options); after?.(); await load(); } catch (err) { setError(err.message || 'Could not update Job costing.'); } finally { setBusy(false); } }
+  if (loading) return <LoadingState label="Loading Job costing…" />;
+
+  const summary = data.summary; const issues = data.issues;
+  const issueCount = issues.supplierActualsMissing + issues.laborRatesMissing + issues.materialPricesMissing;
+  return <div className="space-y-5">
+    {error && <Alert>{error}</Alert>}
+    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <StatCard compact label="Approved revenue" value={money(summary.approvedRevenue)} />
+      <StatCard compact label="Estimated cost" value={money(summary.estimatedTotal)} />
+      <StatCard compact label="Actual cost captured" value={money(summary.actualTotal)} />
+      <StatCard compact label="Actual margin" value={summary.marginReady ? money(summary.actualMargin) : 'Not earned'} tone={summary.marginReady ? (summary.actualMargin >= 0 ? 'success' : 'warning') : 'neutral'} />
+    </div>
+
+    <section className="overflow-hidden rounded-xl border border-neutral-200 bg-white"><div className="p-4"><h3 className="text-sm font-semibold">Work-package reconciliation</h3><p className="mt-1 text-[11px] text-neutral-500">Quotation revenue, internal estimate, supplier commitment and all actual-cost sources at the same operational grain.</p></div><div className="overflow-x-auto"><table className="crm-table w-full text-xs"><thead><tr className="crm-table-head"><th>Work package</th><th>Quoted revenue</th><th>Estimated cost</th><th>Supplier committed</th><th>Actual cost</th><th>Estimate remaining</th><th>Confirmed margin</th></tr></thead><tbody>{data.reconciliation.map((item) => <tr key={item.workPackageId || 'whole-job'}><td><strong>{item.workPackageTitle}</strong></td><td>{money(item.quotedRevenue)}</td><td>{money(item.estimated)}</td><td>{money(item.committed)}</td><td>{money(item.actual)}</td><td className={item.estimatedVariance < 0 ? 'font-semibold text-amber-700' : ''}>{money(item.estimatedVariance)}</td><td>{item.actualMargin == null ? <span className="text-neutral-400">Not earned</span> : <strong className={item.actualMargin < 0 ? 'text-rose-700' : 'text-emerald-700'}>{money(item.actualMargin)}</strong>}</td></tr>)}</tbody></table>{!data.reconciliation.length && <EmptyState title="No work-package costing yet" description="Add scope, quotation lines or cost records to begin reconciliation." />}</div></section>
+
+    <section className={`rounded-xl border p-4 ${data.confirmation?.active ? 'border-emerald-200 bg-emerald-50/50' : 'border-neutral-200 bg-white'}`}>
+      <div className="flex flex-wrap items-start justify-between gap-3"><div className="flex gap-3"><LockKeyhole className="mt-0.5 h-4 w-4 text-brand" /><div><h3 className="text-sm font-semibold">Cost completeness</h3><p className="mt-1 text-[11px] text-neutral-500">Margin is shown only after source exceptions are cleared and a person confirms all Job costs are recorded.</p></div></div>{data.confirmation?.active ? <button className="crm-btn-secondary" disabled={busy} onClick={() => { const reason = window.prompt('Why are costs being reopened?'); if (reason) request('/reopen', { method: 'POST', body: JSON.stringify({ reason }) }); }}><RotateCcw className="h-4 w-4" />Reopen</button> : <button className="crm-btn-primary" disabled={busy || issueCount > 0} onClick={() => request('/confirm', { method: 'POST', body: JSON.stringify({}) })}><CheckCircle2 className="h-4 w-4" />Confirm costs complete</button>}</div>
+      <div className="mt-3 flex flex-wrap gap-2"><Badge tone={issues.approvedQuotationMissing ? 'warning' : 'success'}>{issues.approvedQuotationMissing ? 'Approved quotation missing' : 'Revenue source ready'}</Badge><Badge tone={issues.supplierActualsMissing ? 'warning' : 'success'}>{issues.supplierActualsMissing ? `${issues.supplierActualsMissing} supplier actuals missing` : 'Supplier actuals ready'}</Badge><Badge tone={issues.laborRatesMissing ? 'warning' : 'success'}>{issues.laborRatesMissing ? `${issues.laborRatesMissing} labour rates missing` : 'Labour rates ready'}</Badge><Badge tone={issues.materialPricesMissing ? 'warning' : 'success'}>{issues.materialPricesMissing ? `${issues.materialPricesMissing} material prices missing` : 'Material prices ready'}</Badge></div>
+      {data.confirmation?.active && <p className="mt-3 text-[10px] text-emerald-700">Confirmed by {data.confirmation.confirmedBy} on {when(data.confirmation.confirmedAt)}.</p>}
+    </section>
+
+    <div className="grid gap-5 xl:grid-cols-2">
+      <section className="rounded-xl border border-neutral-200 bg-white p-4">
+        <div className="flex items-center gap-2"><BadgeDollarSign className="h-4 w-4 text-brand" /><h3 className="text-sm font-semibold">Cost estimate</h3></div><p className="mt-1 text-[11px] text-neutral-500">A simple internal baseline; it does not replace the quotation.</p>
+        <form className="mt-3 grid gap-2 sm:grid-cols-2" onSubmit={(e) => { e.preventDefault(); request('/estimates', { method: 'POST', body: JSON.stringify(estimate) }, () => setEstimate({ category: 'material', description: '', amount: '', workPackageId: '' })); }}>
+          <select className="crm-select text-xs" value={estimate.category} onChange={(e) => setEstimate((v) => ({ ...v, category: e.target.value }))}>{data.categories.estimates.map((item) => <option key={item} value={item}>{LABELS[item]}</option>)}</select>
+          <select className="crm-select text-xs" value={estimate.workPackageId} onChange={(e) => setEstimate((v) => ({ ...v, workPackageId: e.target.value }))}><option value="">Whole Job</option>{data.workPackages.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select>
+          <input className="crm-input text-xs" value={estimate.description} onChange={(e) => setEstimate((v) => ({ ...v, description: e.target.value }))} placeholder="What is being estimated?" required />
+          <div className="flex gap-2"><input type="number" min="0" step="0.01" className="crm-input min-w-0 flex-1 text-xs" value={estimate.amount} onChange={(e) => setEstimate((v) => ({ ...v, amount: e.target.value }))} placeholder="AED" required /><button className="crm-btn-primary" disabled={busy}><Plus className="h-4 w-4" /></button></div>
+        </form>
+        <div className="mt-4 space-y-2">{data.estimates.map((item) => <div key={item.id} className="grid grid-cols-[minmax(0,1fr)_120px_auto] items-center gap-2 rounded-lg bg-neutral-50 p-2.5"><div><p className="text-xs font-medium">{item.description}</p><p className="text-[10px] text-neutral-400">{LABELS[item.category]} · {item.workPackageTitle || 'Whole Job'}</p></div><input type="number" min="0" step="0.01" className="crm-input text-right text-[11px]" defaultValue={item.amount} onBlur={(e) => { if (Number(e.target.value) !== item.amount) request(`/estimates/${item.id}`, { method: 'PATCH', body: JSON.stringify({ amount: e.target.value }) }); }} /><button className="crm-btn-ghost p-2! text-rose-600" onClick={() => request(`/estimates/${item.id}`, { method: 'DELETE' })}><Trash2 className="h-3.5 w-3.5" /></button></div>)}{!data.estimates.length && <EmptyState title="No internal estimate" description="Add only the cost groups needed to control this Job." />}</div>
+      </section>
+
+      <section className="rounded-xl border border-neutral-200 bg-white p-4">
+        <div className="flex items-center gap-2"><Plus className="h-4 w-4 text-brand" /><h3 className="text-sm font-semibold">Other actual cost</h3></div><p className="mt-1 text-[11px] text-neutral-500">For permits, transport, rentals, petty cash and other costs not already captured through suppliers, time or inventory.</p>
+        <form className="mt-3 grid gap-2 sm:grid-cols-2" onSubmit={(e) => { e.preventDefault(); request('/actuals', { method: 'POST', body: JSON.stringify(actual) }, () => setActual({ category: 'transport', description: '', amount: '', reference: '', occurredAt: new Date().toISOString().slice(0, 10), workPackageId: '' })); }}>
+          <select className="crm-select text-xs" value={actual.category} onChange={(e) => setActual((v) => ({ ...v, category: e.target.value }))}>{data.categories.otherActuals.map((item) => <option key={item} value={item}>{LABELS[item]}</option>)}</select>
+          <select className="crm-select text-xs" value={actual.workPackageId} onChange={(e) => setActual((v) => ({ ...v, workPackageId: e.target.value }))}><option value="">Whole Job</option>{data.workPackages.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select>
+          <input className="crm-input text-xs" value={actual.description} onChange={(e) => setActual((v) => ({ ...v, description: e.target.value }))} placeholder="Cost description" required />
+          <input type="number" min="0" step="0.01" className="crm-input text-xs" value={actual.amount} onChange={(e) => setActual((v) => ({ ...v, amount: e.target.value }))} placeholder="Amount AED" required />
+          <input className="crm-input text-xs" value={actual.reference} onChange={(e) => setActual((v) => ({ ...v, reference: e.target.value }))} placeholder="Receipt / Zoho reference" />
+          <div className="flex gap-2"><input type="date" className="crm-input min-w-0 flex-1 text-xs" value={actual.occurredAt} onChange={(e) => setActual((v) => ({ ...v, occurredAt: e.target.value }))} /><button className="crm-btn-primary" disabled={busy}><Plus className="h-4 w-4" />Record</button></div>
+        </form>
+        <div className="mt-4 space-y-2">{data.actuals.other.map((item) => <div key={item.id} className="flex items-center justify-between gap-3 rounded-lg bg-neutral-50 p-2.5"><div><p className="text-xs font-medium">{item.description} · {money(item.amount)}</p><p className="text-[10px] text-neutral-400">{LABELS[item.category]} · {item.workPackageTitle || 'Whole Job'} · {item.reference || when(item.occurredAt)}</p></div><button className="crm-btn-ghost p-2! text-rose-600" onClick={() => { const reason = window.prompt('Why should this actual cost be voided?'); if (reason) request(`/actuals/${item.id}/void`, { method: 'POST', body: JSON.stringify({ reason }) }); }}><Trash2 className="h-3.5 w-3.5" /></button></div>)}{!data.actuals.other.length && <p className="py-4 text-center text-[11px] text-neutral-400">No other actual costs.</p>}</div>
+      </section>
+    </div>
+
+    <section className="overflow-hidden rounded-xl border border-neutral-200 bg-white"><div className="p-4"><h3 className="text-sm font-semibold">Actual cost sources</h3><p className="mt-1 text-[11px] text-neutral-500">These are calculated from their operational source; do not re-enter them above.</p></div><div className="overflow-x-auto"><table className="crm-table w-full text-xs"><thead><tr className="crm-table-head"><th>Source</th><th>Detail</th><th>Work package</th><th>Actual</th><th>Completeness</th></tr></thead><tbody>
+      {data.actuals.suppliers.map((item) => <tr key={`supplier-${item.id}`}><td>Supplier</td><td>{item.supplierName} · {item.description}</td><td>{item.workPackageTitle || 'Whole Job'}</td><td>{item.actual == null ? '—' : money(item.actual)}</td><td><Badge tone={item.actual == null ? 'warning' : 'success'}>{item.actual == null ? 'Missing actual' : 'Recorded'}</Badge></td></tr>)}
+      {data.actuals.labor.map((item, index) => <tr key={`labor-${item.workPackageId || index}`}><td>Labour</td><td>{(item.minutes / 60).toFixed(1)} hours</td><td>{item.workPackageTitle || 'Whole Job'}</td><td>{money(item.actual)}</td><td><Badge tone="success">From time</Badge></td></tr>)}
+      {data.actuals.materials.map((item) => <tr key={`material-${item.id}`}><td>Material</td><td>{item.itemName} · {item.quantity} consumed/lost</td><td>{item.workPackageTitle || 'Whole Job'}</td><td>{item.actual == null ? '—' : money(item.actual)}</td><td><Badge tone={item.unitCost == null ? 'warning' : 'success'}>{item.unitCost == null ? 'Unpriced' : 'Cost snapshot'}</Badge></td></tr>)}
+    </tbody></table>{!data.actuals.suppliers.length && !data.actuals.labor.length && !data.actuals.materials.length && <EmptyState title="No derived actual costs yet" description="They appear automatically as suppliers, project time and consumed inventory are recorded." />}</div></section>
+    {summary.actualMargin != null && <Alert tone={summary.actualMargin >= 0 ? 'success' : 'warning'}><CheckCircle2 className="mr-2 inline h-4 w-4" />Confirmed actual margin: <strong>{money(summary.actualMargin)}</strong> ({summary.actualMarginPercent.toFixed(1)}%).</Alert>}
+    {issueCount > 0 && <p className="flex items-center gap-2 text-[10px] text-amber-700"><CircleAlert className="h-3.5 w-3.5" />Resolve highlighted source records before confirming cost completeness.</p>}
+  </div>;
+}

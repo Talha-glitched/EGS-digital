@@ -15,9 +15,8 @@ function emptyForm(owner = '') {
     campaignId: '',
     primaryLeadId: '',
     valueAed: '',
-    nextAction: '',
     eventName: '',
-    notes: '',
+    initialBrief: '',
     owner,
   };
 }
@@ -30,6 +29,7 @@ export default function CreateOngoingJobModal({
   campaigns = [],
   contacts = [],
   currentUser = 'admin',
+  defaultCompanyId = '',
 }) {
   const [form, setForm] = useState(() => emptyForm(currentUser));
   const [busy, setBusy] = useState(false);
@@ -46,10 +46,10 @@ export default function CreateOngoingJobModal({
 
   useEffect(() => {
     if (open) {
-      setForm(emptyForm(currentUser));
+      setForm({ ...emptyForm(currentUser), companyId: defaultCompanyId || '' });
       setError('');
     }
-  }, [open, currentUser]);
+  }, [open, currentUser, defaultCompanyId]);
 
   const companyOptions = useMemo(
     () => localCompanies.map((company) => ({
@@ -279,12 +279,12 @@ export default function CreateOngoingJobModal({
                   </Field>
                 </div>
 
-                <Field label="Notes">
+                <Field label="Initial brief" hint="Saved as the first pinned, versioned Job Memory entry.">
                   <textarea
                     className="crm-input min-h-[96px] resize-y"
-                    value={form.notes}
-                    onChange={(e) => update('notes', e.target.value)}
-                    placeholder="Context, stakeholders, or internal notes…"
+                    value={form.initialBrief}
+                    onChange={(e) => update('initialBrief', e.target.value)}
+                    placeholder="What the client needs, the deadline, and anything the team must know…"
                   />
                 </Field>
               </ModalFieldList>

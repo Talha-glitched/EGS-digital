@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
-import { ExternalLink, AlertCircle, Mail, BriefcaseBusiness, Building2, Trash2, Save, Check, Loader2 } from 'lucide-react';
+import { ExternalLink, AlertCircle, Mail, BriefcaseBusiness, Building2, Trash2, Save, Check, Loader2, HeartHandshake, UserRound, X } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { updateLeadInState } from '../../store/slices/leadsSlice.js';
 import Drawer from '../ui/Drawer.jsx';
-import { Alert } from '../ui/primitives.jsx';
-import { updateLead, addLeadToCompany, crmApiFetch, normalizeId } from '../../crmApi.js';
+import { Alert, Badge } from '../ui/primitives.jsx';
+import { updateLead, setKeyRelationshipConfirmation, selectCampaignContactFocus, crmApiFetch, normalizeId } from '../../crmApi.js';
 import SearchableSelect from '../ui/SearchableSelect.jsx';
 import DrawerCollapsible from './DrawerCollapsible.jsx';
 import DrawerTabs from './DrawerTabs.jsx';
@@ -15,7 +15,6 @@ import ContactUnifiedFollowUpsSection from './ContactUnifiedFollowUpsSection.jsx
 import SensitiveDataField from '../ui/SensitiveDataField.jsx';
 import SensitiveDataDisplay from '../ui/SensitiveDataDisplay.jsx';
 import { DeliveryStatusBadge } from './LeadTableComponents.jsx';
-import { needsReferralDetails } from '../../constants/pocQualification.js';
 import { RELATIONSHIP_STATUS_OPTIONS, SERVICE_CATEGORY_OPTIONS, getRelationshipOption } from '../../constants/relationshipProfile.js';
 import { useLockSensitiveDataOnClose } from '../../hooks/useLockSensitiveDataOnClose.js';
 
@@ -35,6 +34,8 @@ function populateFromLead(lead) {
     formWhatsappNumber: lead.whatsappNumber || '',
     formOutcome: lead.outcome || 'Pending',
     formCampaignId: lead.campaignId?._id || lead.campaignId || '',
+    campaignFocusState: lead.campaignFocusState || 'pending',
+    campaignFocusReason: lead.campaignFocusReason || '',
     formDeliveryStatus: lead.deliveryStatus || 'Pending Inqueue',
     formLiConnSent: lead.linkedinOutreach?.connSent || false,
     formLiAccepted: lead.linkedinOutreach?.accepted || false,
@@ -62,6 +63,7 @@ function populateFromLead(lead) {
     },
     relationshipProfile: {
       status: lead.relationshipProfile?.status || 'New',
+      manuallyConfirmed: lead.relationshipProfile?.manuallyConfirmed === true,
       owner: lead.relationshipProfile?.owner || '',
       serviceCategories: lead.relationshipProfile?.serviceCategories || [],
       nextFollowUpAt: toDateTimeLocal(lead.relationshipProfile?.nextFollowUpAt),
@@ -234,34 +236,6 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
 
     try {
       const patch = buildPatch(form);
-      const poc = form.pocQualification || {};
-      const referral = poc.referral || {};
-
-      if (needsReferralDetails(poc.status) && referral.email?.trim() && !poc.referredLeadId) {
-        const companyId = activeLead.companyId?._id || activeLead.companyId;
-        const campaignId = activeLead.campaignId?._id || activeLead.campaignId;
-        if (companyId && campaignId) {
-          try {
-            const referred = await addLeadToCompany(companyId, {
-              campaignId,
-              email: referral.email.trim(),
-              name: referral.name?.trim() || '',
-              designation: referral.designation?.trim() || '',
-              phone: referral.phone?.trim() || '',
-              linkedinUrl: referral.linkedinUrl?.trim() || '',
-            });
-            patch.pocQualification = {
-              ...patch.pocQualification,
-              referredLeadId: referred._id,
-            };
-          } catch (referralErr) {
-            if (!String(referralErr.message || '').includes('already enrolled')) {
-              throw referralErr;
-            }
-          }
-        }
-      }
-
       const updated = await updateLead(activeLead._id, patch);
       dispatch(updateLeadInState(updated));
       onLeadUpdated?.(updated);
@@ -273,6 +247,45 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
       setSaving(false);
     }
   }, [buildPatch, form, dispatch, onLeadUpdated]);
+
+  const [confirmingRelationship, setConfirmingRelationship] = useState(false);
+  const [selectingCampaignFocus, setSelectingCampaignFocus] = useState(false);
+  const handleRelationshipConfirmation = useCallback(async (confirmed) => {
+    const activeLead = leadRef.current;
+    if (!activeLead) return;
+    setConfirmingRelationship(true);
+    setError('');
+    try {
+      const saved = await updateLead(activeLead._id, buildPatch(form));
+      const updated = await setKeyRelationshipConfirmation(saved._id, confirmed);
+      setForm(populateFromLead(updated));
+      dispatch(updateLeadInState(updated));
+      onLeadUpdated?.(updated);
+    } catch (err) {
+      setError(err.message || 'Could not update Key Relationship confirmation.');
+    } finally {
+      setConfirmingRelationship(false);
+    }
+  }, [buildPatch, form, dispatch, onLeadUpdated]);
+
+  const handleSelectCampaignFocus = useCallback(async () => {
+    const activeLead = leadRef.current;
+    const campaignId = form.formCampaignId;
+    if (!activeLead || !campaignId) return;
+    setSelectingCampaignFocus(true);
+    setError('');
+    try {
+      await selectCampaignContactFocus(campaignId, activeLead._id);
+      const updated = await updateLead(activeLead._id, {});
+      setForm(populateFromLead(updated));
+      dispatch(updateLeadInState(updated));
+      onLeadUpdated?.(updated);
+    } catch (err) {
+      setError(err.message || 'Could not select this campaign contact.');
+    } finally {
+      setSelectingCampaignFocus(false);
+    }
+  }, [form.formCampaignId, dispatch, onLeadUpdated]);
 
   const companyDisplayName = lead?.companyId?.companyName || lead?.companyName || 'Unknown company';
   const campaignDisplayName =
@@ -433,6 +446,62 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
                   This workspace is most useful once the contact is marked as the right POC, but you can still prepare the relationship plan now.
                 </Alert>
               )}
+
+              <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-3.5">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="flex min-w-0 gap-3">
+                    <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${form.relationshipProfile?.manuallyConfirmed ? 'bg-emerald-100 text-emerald-700' : 'bg-white text-neutral-500'}`}>
+                      <HeartHandshake className="h-4 w-4" />
+                    </span>
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="text-sm font-semibold text-[var(--color-ink)]">Key Relationship</p>
+                        <Badge tone={form.relationshipProfile?.manuallyConfirmed ? 'success' : 'neutral'}>
+                          {form.relationshipProfile?.manuallyConfirmed ? 'Manually confirmed' : 'Not confirmed'}
+                        </Badge>
+                      </div>
+                      <p className="mt-1 max-w-xl text-xs leading-relaxed text-neutral-500">
+                        A reply makes this contact a Lead. Right POC verifies suitability. This separate confirmation promotes the person to a Key Relationship.
+                      </p>
+                    </div>
+                  </div>
+                  {form.relationshipProfile?.manuallyConfirmed ? (
+                    <button type="button" className="crm-btn-secondary text-xs" disabled={confirmingRelationship} onClick={() => handleRelationshipConfirmation(false)}>
+                      {confirmingRelationship ? <Loader2 className="h-4 w-4 animate-spin" /> : <X className="h-4 w-4" />}
+                      Remove confirmation
+                    </button>
+                  ) : (
+                    <button type="button" className="crm-btn-primary text-xs" disabled={confirmingRelationship || form.pocQualification?.status !== 'Confirmed'} onClick={() => handleRelationshipConfirmation(true)}>
+                      {confirmingRelationship ? <Loader2 className="h-4 w-4 animate-spin" /> : <HeartHandshake className="h-4 w-4" />}
+                      Confirm Key Relationship
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {form.formCampaignId ? (
+                <div className="rounded-xl border border-sky-200 bg-sky-50/60 p-3.5">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="text-sm font-semibold text-[var(--color-ink)]">Campaign follow-up focus</p>
+                        <Badge tone={String(form.campaignFocusState).startsWith('active_') ? 'success' : 'info'}>
+                          {String(form.campaignFocusState).startsWith('active_') ? 'Active focus' : 'Not the active focus'}
+                        </Badge>
+                      </div>
+                      <p className="mt-1 max-w-xl text-xs leading-relaxed text-neutral-500">
+                        {form.campaignFocusReason || 'Controls which person EGS follows up with after a company replies. Selecting a focus does not restart automated sending.'}
+                      </p>
+                    </div>
+                    {!String(form.campaignFocusState).startsWith('active_') ? (
+                      <button type="button" className="crm-btn-secondary text-xs" disabled={selectingCampaignFocus} onClick={handleSelectCampaignFocus}>
+                        {selectingCampaignFocus ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserRound className="h-4 w-4" />}
+                        Make follow-up focus
+                      </button>
+                    ) : null}
+                  </div>
+                </div>
+              ) : null}
 
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {RELATIONSHIP_STATUS_OPTIONS.map((option) => {

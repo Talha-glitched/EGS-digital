@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Search, SendHorizontal } from 'lucide-react';
+import { Link2, Mail, Search, SendHorizontal } from 'lucide-react';
 import { cn, EmptyState } from '../ui/primitives.jsx';
 import { fetchSentEmailThread, sendSentEmailReply } from '../../crmApi.js';
+import CommunicationJobModal from '../communications/CommunicationJobModal.jsx';
 
 function formatSentAt(value) {
   if (!value) return '—';
@@ -25,6 +26,7 @@ function SentEmailDetail({ email }) {
   const [replyText, setReplyText] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
   const [replyError, setReplyError] = useState('');
+  const [jobActionOpen, setJobActionOpen] = useState(false);
 
   useEffect(() => {
     if (!email?._id) {
@@ -119,6 +121,7 @@ function SentEmailDetail({ email }) {
             </Link>
           </div>
         )}
+        {thread?.threadId && <button type="button" className="crm-btn-primary mt-4 text-xs" onClick={() => setJobActionOpen(true)}><Link2 className="h-4 w-4" />Send to Job</button>}
       </div>
 
       <div className="flex-1 bg-neutral-50/50 p-6">
@@ -188,6 +191,7 @@ function SentEmailDetail({ email }) {
           </form>
         </div>
       </div>
+      <CommunicationJobModal open={jobActionOpen} onClose={() => setJobActionOpen(false)} conversationId={thread?.threadId} defaultMessageId={thread?.history?.at(-1)?.messageId} />
     </div>
   );
 }

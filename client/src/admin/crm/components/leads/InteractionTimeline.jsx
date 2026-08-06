@@ -4,9 +4,11 @@ import {
   CalendarDays,
   Clock3,
   Mail,
+  MailSearch,
   MapPin,
   MessageCircle,
   Pencil,
+  Paperclip,
   Phone,
   Plus,
   Share2,
@@ -39,6 +41,7 @@ import LogInteractionModal from './LogInteractionModal.jsx';
 import { interactionFormFromEvent } from '../../constants/interactionTypes.js';
 import { TIMELINE_AUTOMATION } from '../../constants/automationHints.js';
 import FormattedEmailViewer from '../common/FormattedEmailViewer.jsx';
+import CommunicationSourceDrawer from '../communications/CommunicationSourceDrawer.jsx';
 import {
   directionTone,
   formatRelativeWhen,
@@ -96,10 +99,12 @@ function TimelineEventCard({
   isDeleting,
   onEdit,
   onDelete,
+  onViewSource,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const meta = CHANNEL_META[event.channel] || CHANNEL_META[event.type] || CHANNEL_META.crm;
   const Icon = meta.icon;
+  const isJobMemory = event.source === 'job_memory';
   const isManual = event.source === 'manual' || event.editable;
   const direction = resolveInteractionDirection(event);
   const parties = resolveInteractionParties(event, direction);
@@ -231,6 +236,23 @@ function TimelineEventCard({
           </p>
         )}
 
+        {Array.isArray(event.meta?.attachments) && event.meta.attachments.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-2">
+            {event.meta.attachments.map((attachment) => (
+              <a
+                key={attachment.url || attachment.fileName}
+                href={attachment.url}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex max-w-full items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-2 py-1.5 text-[10px] font-medium text-neutral-600 hover:border-brand/40 hover:text-brand"
+              >
+                <Paperclip className="h-3 w-3 shrink-0" />
+                <span className="truncate">{attachment.fileName || 'Attachment'}</span>
+              </a>
+            ))}
+          </div>
+        )}
+
         {event.meta?.location && (
           <p className="crm-timeline-meta-line">
             <MapPin className="h-3 w-3 shrink-0" />
@@ -254,7 +276,7 @@ function TimelineEventCard({
 
         <div className="crm-timeline-card-foot">
           <span className={cn('crm-timeline-badge', isManual ? 'is-manual' : 'is-automated')}>
-            {isManual ? 'Manual log' : 'Automated'}
+            {isJobMemory ? 'Job Memory' : isManual ? 'Manual log' : 'Automated'}
           </span>
           {outcomeLabel && (
             <span className="crm-timeline-outcome">{outcomeLabel}</span>
@@ -270,11 +292,19 @@ function TimelineEventCard({
           {event.meta?.campaignName ? (
             <span className="crm-timeline-meta-chip">Campaign: {event.meta.campaignName}</span>
           ) : null}
+          {event.meta?.linkedJobs?.map((job) => (
+            <span key={job.id} className="crm-timeline-meta-chip">Job: {job.jobNumber ? `${job.jobNumber} · ` : ''}{job.title}</span>
+          ))}
+          {event.meta?.sourceConversationId && (
+            <button type="button" className="crm-timeline-meta-chip inline-flex items-center gap-1 font-semibold text-brand hover:text-brand-dark" onClick={() => onViewSource?.({ conversationId: event.meta.sourceConversationId, messageId: event.meta.sourceMessageId })}>
+              <MailSearch className="h-3 w-3" />View source email
+            </button>
+          )}
           {showContact && event.contactName && (
             <span className="crm-timeline-meta-chip">Re: {event.contactName}</span>
           )}
-          {isManual && event.actor && (
-            <span className="crm-timeline-meta-chip">Logged by {event.actor}</span>
+          {(isManual || isJobMemory) && event.actor && (
+            <span className="crm-timeline-meta-chip">Recorded by {event.actor}</span>
           )}
         </div>
       </div>
@@ -325,6 +355,7 @@ export default function InteractionTimeline({
   const [deletingId, setDeletingId] = useState('');
   const [opportunityContacts, setOpportunityContacts] = useState([]);
   const [companyContacts, setCompanyContacts] = useState([]);
+  const [communicationSource, setCommunicationSource] = useState(null);
   const mountedRef = useRef(true);
 
   const resolvedLeadId = normalizeId(leadId);
@@ -606,6 +637,7 @@ export default function InteractionTimeline({
                     isDeleting={deletingId === event?.meta?.interactionId}
                     onEdit={openEdit}
                     onDelete={handleDelete}
+                    onViewSource={setCommunicationSource}
                   />
                 ))}
               </div>
@@ -632,6 +664,7 @@ export default function InteractionTimeline({
         saving={saving}
         mode={modalMode}
       />
+      <CommunicationSourceDrawer source={communicationSource} onClose={() => setCommunicationSource(null)} />
     </div>
   );
 }

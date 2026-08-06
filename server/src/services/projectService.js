@@ -1,6 +1,63 @@
 import db from '../db/index.js';
 import { unwrapBson } from '../utils/bsonUnwrap.js';
 import { getMailConfigStatus } from './mailTransport.js';
+import { writeAuditLog } from './auditService.js';
+import { applyReferralFocus, releaseWrongPocFocus } from './campaignContactCoordinationService.js';
+
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const cleanText = (value) => String(value ?? '').trim();
+const cleanUuid = (value) => UUID_PATTERN.test(cleanText(value)) ? cleanText(value) : null;
+
+async function resolveReferralPerson(client, { organizationId, campaignId, referral = {}, referredPersonId }) {
+  const name = cleanText(referral.name);
+  const email = cleanText(referral.email).toLowerCase();
+  const linkedin = cleanText(referral.linkedinUrl).toLowerCase().replace(/\/$/, '');
+  const phone = cleanText(referral.phone);
+  if (!name) throw Object.assign(new Error('Referral name is required.'), { status: 400 });
+  if (!email && !linkedin && !phone) throw Object.assign(new Error('Add at least one referral contact method.'), { status: 400 });
+
+  let personId = cleanUuid(referredPersonId);
+  if (personId) {
+    const existing = await client.query(`SELECT id FROM people WHERE id=$1::uuid AND archived_at IS NULL`, [personId]);
+    if (!existing.rows.length) throw Object.assign(new Error('The selected referred contact no longer exists.'), { status: 400 });
+  } else if (email || linkedin) {
+    const matches = await client.query(`SELECT DISTINCT person_id FROM person_contact_methods WHERE (type='email' AND normalized_value=LOWER($1)) OR (type='linkedin' AND LOWER(RTRIM(normalized_value,'/'))=$2)`, [email || '__none__', linkedin || '__none__']);
+    if (matches.rows.length > 1) throw Object.assign(new Error('The referral email and LinkedIn match different contacts. Resolve the duplicate manually before continuing.'), { status: 409 });
+    if (matches.rows.length) throw Object.assign(new Error('This referral matches an existing contact. Open that contact and confirm the identity before linking it as the referral.'), { status: 409, existingPersonId: matches.rows[0].person_id });
+  }
+  if (!personId) {
+    const created = await client.query(`INSERT INTO people(display_name,identity_notes,updated_at) VALUES($1,'Created from a manually confirmed referral',NOW()) RETURNING id`, [name]);
+    personId = created.rows[0].id;
+  }
+
+  const methods = [['email', email], ['linkedin', linkedin], ['phone', phone]].filter(([, value]) => value);
+  for (const [type, value] of methods) {
+    const collision = await client.query(`SELECT person_id FROM person_contact_methods WHERE type=$1 AND LOWER(RTRIM(normalized_value,'/'))=LOWER(RTRIM($2,'/')) LIMIT 1`, [type, value]);
+    if (collision.rows[0] && String(collision.rows[0].person_id) !== String(personId)) throw Object.assign(new Error(`That referral ${type} belongs to another contact. Resolve the duplicate manually.`), { status: 409 });
+    await client.query(`INSERT INTO person_contact_methods(person_id,type,original_value,normalized_value,preferred,source) SELECT $1::uuid,$2,$3,$4,NOT EXISTS(SELECT 1 FROM person_contact_methods WHERE person_id=$1::uuid AND type=$2),'Referral' WHERE NOT EXISTS(SELECT 1 FROM person_contact_methods WHERE person_id=$1::uuid AND type=$2 AND LOWER(RTRIM(normalized_value,'/'))=LOWER(RTRIM($4,'/')))`, [personId, type, value, value]);
+  }
+
+  let role = await client.query(`SELECT id FROM person_organization_roles WHERE person_id=$1::uuid AND organization_id=$2::uuid AND effective_to IS NULL ORDER BY created_at DESC LIMIT 1`, [personId, organizationId]);
+  if (!role.rows.length) role = await client.query(`INSERT INTO person_organization_roles(person_id,organization_id,title,effective_from) VALUES($1::uuid,$2::uuid,$3,CURRENT_DATE) RETURNING id`, [personId, organizationId, cleanText(referral.designation) || null]);
+  else if (cleanText(referral.designation)) await client.query(`UPDATE person_organization_roles SET title=COALESCE(NULLIF(title,''),$2) WHERE id=$1::uuid`, [role.rows[0].id, cleanText(referral.designation)]);
+
+  const resolvedCampaignId = cleanUuid(campaignId);
+  let campaignContactId = null;
+  if (resolvedCampaignId) {
+    const account = await client.query(`INSERT INTO campaign_accounts(campaign_id,organization_id,pursuit_state) VALUES($1::uuid,$2::uuid,'identified') ON CONFLICT(campaign_id,organization_id) DO UPDATE SET pursuit_state=campaign_accounts.pursuit_state RETURNING id`, [resolvedCampaignId, organizationId]);
+    const campaignContact = await client.query(
+      `INSERT INTO campaign_contacts(campaign_account_id,role_id,lead_state,outreach_focus_state)
+       SELECT $1::uuid,$2::uuid,'new','pending'
+       WHERE NOT EXISTS(SELECT 1 FROM campaign_contacts WHERE campaign_account_id=$1::uuid AND role_id=$2::uuid)
+       RETURNING id`, [account.rows[0].id, role.rows[0].id],
+    );
+    campaignContactId = campaignContact.rows[0]?.id || (await client.query(
+      `SELECT id FROM campaign_contacts WHERE campaign_account_id=$1::uuid AND role_id=$2::uuid LIMIT 1`,
+      [account.rows[0].id, role.rows[0].id],
+    )).rows[0]?.id || null;
+  }
+  return { personId, roleId: role.rows[0].id, campaignContactId, name, email, phone, linkedinUrl: linkedin, designation: cleanText(referral.designation) };
+}
 
 export function buildStepPerformance(sentRows = [], replyRows = [], maxSteps = 5) {
   const sentMap = new Map(sentRows.map((row) => [Number(row._id), Number(row.count) || 0]));
@@ -35,7 +92,7 @@ const EMAILED_STATUSES = ['Emailed Outbound', 'Replied', 'Bounced / Invalid'];
 const CAMPAIGN_STATUSES = ['Active Planning', 'Active Campaigning', 'Completed', 'Archived'];
 const AUTO_LOCKED_STATUSES = ['Completed', 'Archived'];
 
-function contactResponseCte(campaignExpression = 'NULL::uuid') {
+export function contactResponseCte(campaignExpression = 'NULL::uuid') {
   return `
   WITH canonical_inbound_events AS (
     SELECT DISTINCT m.id AS event_id,
@@ -72,6 +129,7 @@ function contactResponseCte(campaignExpression = 'NULL::uuid') {
     SELECT person_id,
            MIN(occurred_at) AS responded_at,
            MAX(occurred_at) AS last_responded_at,
+           COUNT(*) AS reply_count,
            ARRAY_AGG(DISTINCT channel ORDER BY channel) AS response_channels
     FROM response_events
     WHERE (${campaignExpression} IS NULL OR campaign_id = ${campaignExpression})
@@ -529,14 +587,36 @@ export async function createCompany(payload) {
 export async function updateCompanyDetails(id, payload) {
   const existing = await getCompanyDetails(id);
   const companyName = payload.companyName ? payload.companyName.trim() : existing.companyName;
-
-  const res = await db.query(
-    `UPDATE organizations SET canonical_name = $2, updated_at = NOW()
-     WHERE (id::text = $1::text) AND archived_at IS NULL
-     RETURNING id AS "_id", id, canonical_name AS "companyName", created_at AS "createdAt"`,
-    [String(id), companyName]
-  );
-  return res.rows[0];
+  const allowedTypes = new Set(['prospect', 'client', 'partner', 'supplier']);
+  const organizationType = allowedTypes.has(String(payload.organizationType || '').toLowerCase())
+    ? String(payload.organizationType).toLowerCase()
+    : undefined;
+  const client = await db.getClient();
+  try {
+    await client.query('BEGIN');
+    const res = await client.query(
+      `UPDATE organizations SET canonical_name=$2,trading_name=CASE WHEN trading_name IS NULL OR trading_name=$3 THEN $2 ELSE trading_name END,
+              organization_type=COALESCE($4,organization_type),updated_at=NOW()
+       WHERE id::text=$1::text AND archived_at IS NULL
+       RETURNING id AS "_id",id,canonical_name AS "companyName",organization_type AS "organizationType",created_at AS "createdAt"`,
+      [String(id), companyName, existing.companyName, organizationType || null],
+    );
+    if (!res.rows.length) throw Object.assign(new Error('Company not found.'), { status: 404 });
+    if (Object.hasOwn(payload, 'domain')) {
+      const domain = String(payload.domain || '').trim().toLowerCase().replace(/^https?:\/\//, '').replace(/\/$/, '');
+      const current = await client.query(`SELECT id FROM organization_identifiers WHERE organization_id=$1::uuid AND type='domain' ORDER BY created_at DESC LIMIT 1`, [id]);
+      if (domain && current.rows.length) await client.query(`UPDATE organization_identifiers SET original_value=$2,normalized_value=$2,validity='valid' WHERE id=$1::uuid`, [current.rows[0].id, domain]);
+      else if (domain) await client.query(`INSERT INTO organization_identifiers(organization_id,type,original_value,normalized_value,validity) VALUES($1::uuid,'domain',$2,$2,'valid')`, [id, domain]);
+      else if (current.rows.length) await client.query(`UPDATE organization_identifiers SET validity='invalid' WHERE id=$1::uuid`, [current.rows[0].id]);
+    }
+    await client.query('COMMIT');
+    return res.rows[0];
+  } catch (error) {
+    await client.query('ROLLBACK').catch(() => {});
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 export async function deleteCompany(id, actor = {}) {
@@ -591,10 +671,9 @@ export async function listAllLeads(options = {}) {
   }
 
   if (rightPocOnly === true || rightPocOnly === '1' || rightPocOnly === 'true') {
-    conditions.push(`EXISTS (
-      SELECT 1 FROM poc_suitabilities right_poc
-      WHERE right_poc.role_id = por.id AND right_poc.assessment = 'suitable'
-    )`);
+    conditions.push(`(SELECT right_poc.assessment FROM poc_suitabilities right_poc
+      WHERE right_poc.role_id = por.id ORDER BY right_poc.assessed_at DESC NULLS LAST, right_poc.id DESC LIMIT 1
+    ) = 'suitable'`);
   }
 
   if (keyRelationshipOnly === true || keyRelationshipOnly === '1' || keyRelationshipOnly === 'true') {
@@ -638,10 +717,9 @@ export async function listAllLeads(options = {}) {
       RedirectedNoReferral: 'redirected_without_referral',
     };
     params.push(assessmentByLegacyStatus[pocStatus] || String(pocStatus));
-    conditions.push(`EXISTS (
-      SELECT 1 FROM poc_suitabilities filtered_poc
-      WHERE filtered_poc.role_id = por.id AND filtered_poc.assessment = $${params.length}
-    )`);
+    conditions.push(`(SELECT filtered_poc.assessment FROM poc_suitabilities filtered_poc
+      WHERE filtered_poc.role_id = por.id ORDER BY filtered_poc.assessed_at DESC NULLS LAST, filtered_poc.id DESC LIMIT 1
+    ) = $${params.length}`);
   }
 
   const pageNum = Math.max(1, parseInt(page, 10) || 1);
@@ -663,9 +741,11 @@ export async function listAllLeads(options = {}) {
              CASE WHEN response.person_id IS NOT NULL THEN 'Replied'
                   ELSE COALESCE(campaign_state.delivery_state, campaign_state.lead_state, 'Pending Inqueue')
              END AS "deliveryStatus",
-             campaign_state.outcome, campaign_state.campaign_id AS "campaignId",
+             campaign_state.outcome, campaign_state.outreach_focus_state AS "campaignFocusState",
+             campaign_state.focus_reason AS "campaignFocusReason", campaign_state.campaign_id AS "campaignId",
              campaign_state.campaign_name AS "campaignName",
              ps.assessment AS "pocAssessment", ps.reason AS "pocNotes", ps.assessed_at AS "pocAssessedAt",
+             ps.referral AS "pocReferral", ps.referred_person_id AS "referredPersonId",
              kr.standing AS "relationshipStatus", kr.manually_confirmed AS "relationshipConfirmed",
              kr.owner_name AS "relationshipOwner", kr.service_categories AS "relationshipServiceCategories",
              kr.next_follow_up_at AS "relationshipNextFollowUpAt", kr.reminder_notes AS "relationshipReminderNotes"
@@ -681,10 +761,10 @@ export async function listAllLeads(options = {}) {
         LIMIT 1
       ) pcm ON TRUE
       LEFT JOIN LATERAL (
-        SELECT assessment, reason, assessed_at
+        SELECT assessment, reason, assessed_at, referral, referred_person_id
         FROM poc_suitabilities
         WHERE role_id = por.id
-        ORDER BY assessed_at DESC NULLS LAST
+        ORDER BY assessed_at DESC NULLS LAST, id DESC
         LIMIT 1
       ) ps ON TRUE
       LEFT JOIN LATERAL (
@@ -695,7 +775,7 @@ export async function listAllLeads(options = {}) {
         LIMIT 1
       ) kr ON TRUE
       LEFT JOIN LATERAL (
-        SELECT cc.delivery_state, cc.lead_state, cc.outcome,
+        SELECT cc.delivery_state, cc.lead_state, cc.outcome,cc.outreach_focus_state,cc.focus_reason,
                ca.campaign_id, campaign.name AS campaign_name
         FROM campaign_contacts cc
         JOIN campaign_accounts ca ON ca.id = cc.campaign_account_id
@@ -712,7 +792,11 @@ export async function listAllLeads(options = {}) {
     `;
     const countSql = `
       ${contactResponseCte('$1::uuid')}
-      SELECT COUNT(DISTINCT p.id)
+      SELECT COUNT(DISTINCT p.id),
+             COUNT(DISTINCT p.id) FILTER(WHERE kr_summary.manually_confirmed=TRUE) AS key_relationships,
+             COUNT(DISTINCT p.id) FILTER(WHERE kr_summary.next_follow_up_at<NOW()) AS overdue,
+             COUNT(DISTINCT p.id) FILTER(WHERE kr_summary.next_follow_up_at>=NOW() AND kr_summary.next_follow_up_at<NOW()+INTERVAL '7 days') AS upcoming,
+             COUNT(DISTINCT p.id) FILTER(WHERE kr_summary.standing IN('Nurture','Later')) AS nurture
       FROM people p
       LEFT JOIN person_organization_roles por ON por.person_id = p.id
       LEFT JOIN response_summary response ON response.person_id = p.id
@@ -723,6 +807,13 @@ export async function listAllLeads(options = {}) {
         ORDER BY preferred DESC NULLS LAST, created_at
         LIMIT 1
       ) pcm ON TRUE
+      LEFT JOIN LATERAL (
+        SELECT manually_confirmed,next_follow_up_at,standing
+        FROM key_relationship_profiles
+        WHERE role_id=por.id
+        ORDER BY confirmed_at DESC NULLS LAST,created_at DESC NULLS LAST
+        LIMIT 1
+      ) kr_summary ON TRUE
       LEFT JOIN LATERAL (
         SELECT cc.delivery_state, cc.lead_state, cc.outcome
         FROM campaign_contacts cc
@@ -757,6 +848,8 @@ export async function listAllLeads(options = {}) {
         status: statusByAssessment[row.pocAssessment] || 'Unverified',
         notes: row.pocNotes || '',
         assessedAt: row.pocAssessedAt || null,
+        referral: row.pocReferral || {},
+        referredLeadId: row.referredPersonId || null,
       },
       relationshipProfile: {
         status: row.relationshipStatus || 'New',
@@ -775,7 +868,13 @@ export async function listAllLeads(options = {}) {
       page: pageNum,
       limit: limitNum,
       totalPages: Math.ceil(total / limitNum) || 1,
-      summary: { total, overdue: 0, upcoming: 0, nurture: 0 },
+      summary: {
+        total,
+        keyRelationships: Number(countRes.rows[0]?.key_relationships) || 0,
+        overdue: Number(countRes.rows[0]?.overdue) || 0,
+        upcoming: Number(countRes.rows[0]?.upcoming) || 0,
+        nurture: Number(countRes.rows[0]?.nurture) || 0,
+      },
     };
   } catch (err) {
     console.error('Error listing contacts from PostgreSQL:', err.message);
@@ -804,9 +903,12 @@ export async function getLeadById(id) {
               CASE WHEN response.person_id IS NOT NULL THEN 'Replied'
                    ELSE COALESCE(campaign_state.delivery_state, campaign_state.lead_state, 'Pending Inqueue')
               END AS "deliveryStatus",
-              campaign_state.outcome,
+              campaign_state.outcome, campaign_state.outreach_focus_state AS "campaignFocusState",
+              campaign_state.focus_reason AS "campaignFocusReason", campaign_state.campaign_id AS "campaignId",
+              campaign_state.campaign_name AS "campaignName",
               ps.assessment AS "pocAssessment",
               ps.reason AS "pocNotes", ps.assessed_at AS "pocAssessedAt",
+              ps.referral AS "pocReferral", ps.referred_person_id AS "referredPersonId",
               kr.standing AS "relationshipStatus", kr.manually_confirmed AS "relationshipConfirmed",
               kr.owner_name AS "relationshipOwner", kr.service_categories AS "relationshipServiceCategories",
               kr.next_follow_up_at AS "relationshipNextFollowUpAt", kr.reminder_notes AS "relationshipReminderNotes"
@@ -817,11 +919,14 @@ export async function getLeadById(id) {
        LEFT JOIN LATERAL (SELECT normalized_value FROM person_contact_methods WHERE person_id = p.id AND type = 'email' ORDER BY preferred DESC NULLS LAST, created_at LIMIT 1) email ON TRUE
        LEFT JOIN LATERAL (SELECT normalized_value FROM person_contact_methods WHERE person_id = p.id AND type = 'phone' ORDER BY preferred DESC NULLS LAST, created_at LIMIT 1) phone ON TRUE
        LEFT JOIN LATERAL (SELECT original_value FROM person_contact_methods WHERE person_id = p.id AND type = 'linkedin' ORDER BY preferred DESC NULLS LAST, created_at LIMIT 1) linkedin ON TRUE
-       LEFT JOIN LATERAL (SELECT assessment, reason, assessed_at FROM poc_suitabilities WHERE role_id = por.id ORDER BY assessed_at DESC NULLS LAST LIMIT 1) ps ON TRUE
+       LEFT JOIN LATERAL (SELECT assessment, reason, assessed_at, referral, referred_person_id FROM poc_suitabilities WHERE role_id = por.id ORDER BY assessed_at DESC NULLS LAST, id DESC LIMIT 1) ps ON TRUE
        LEFT JOIN LATERAL (SELECT standing, manually_confirmed, owner_name, service_categories, next_follow_up_at, reminder_notes FROM key_relationship_profiles WHERE role_id = por.id ORDER BY confirmed_at DESC NULLS LAST, created_at DESC NULLS LAST LIMIT 1) kr ON TRUE
        LEFT JOIN LATERAL (
-         SELECT cc.delivery_state, cc.lead_state, cc.outcome
+         SELECT cc.delivery_state, cc.lead_state, cc.outcome,cc.outreach_focus_state,cc.focus_reason,
+                ca.campaign_id,campaign.name AS campaign_name
          FROM campaign_contacts cc
+         JOIN campaign_accounts ca ON ca.id=cc.campaign_account_id
+         JOIN campaigns campaign ON campaign.id=ca.campaign_id
          WHERE cc.role_id = por.id
          ORDER BY CASE WHEN cc.outcome = 'Replied' OR cc.delivery_state = 'Replied' OR cc.lead_state = 'Replied' THEN 0 ELSE 1 END,
                   cc.created_at DESC NULLS LAST
@@ -848,6 +953,8 @@ export async function getLeadById(id) {
         status: statusByAssessment[row.pocAssessment] || 'Unverified',
         notes: row.pocNotes || '',
         assessedAt: row.pocAssessedAt || null,
+        referral: row.pocReferral || {},
+        referredLeadId: row.referredPersonId || null,
       },
       relationshipProfile: {
         status: row.relationshipStatus || 'New',
@@ -865,7 +972,7 @@ export async function getLeadById(id) {
   }
 }
 
-export async function updateLeadById(id, payload = {}, actor = 'admin') {
+export async function updateLeadById(id, payload = {}, actor = {}) {
   const client = await db.getClient();
   const legacyStatusToAssessment = {
     Confirmed: 'suitable',
@@ -874,6 +981,7 @@ export async function updateLeadById(id, payload = {}, actor = 'admin') {
     RedirectedWithReferral: 'redirected_with_referral',
     RedirectedNoReferral: 'redirected_without_referral',
   };
+  let pocAssessmentChanged = false;
 
   async function setContactMethod(personId, type, value) {
     if (value === undefined) return;
@@ -909,7 +1017,7 @@ export async function updateLeadById(id, payload = {}, actor = 'admin') {
   try {
     await client.query('BEGIN');
     const context = await client.query(
-      `SELECT p.id, por.id AS role_id
+      `SELECT p.id, por.id AS role_id, por.organization_id
        FROM people p
        LEFT JOIN person_organization_roles por ON por.person_id = p.id
        WHERE p.id = $1::uuid AND p.archived_at IS NULL
@@ -922,7 +1030,7 @@ export async function updateLeadById(id, payload = {}, actor = 'admin') {
       error.status = 404;
       throw error;
     }
-    const { id: personId, role_id: roleId } = context.rows[0];
+    const { id: personId, role_id: roleId, organization_id: organizationId } = context.rows[0];
 
     if (payload.name !== undefined) {
       const displayName = String(payload.name || '').trim();
@@ -943,37 +1051,79 @@ export async function updateLeadById(id, payload = {}, actor = 'admin') {
 
     if (payload.pocQualification && roleId) {
       const poc = payload.pocQualification;
-      const current = await client.query(
-        `SELECT id FROM poc_suitabilities WHERE role_id = $1::uuid ORDER BY assessed_at DESC NULLS LAST LIMIT 1`,
-        [roleId]
-      );
       const status = poc.status || 'Unverified';
+      let referral = poc.referral || {};
+      let referredPersonId = cleanUuid(poc.referredLeadId);
+      let referralResolution = null;
+      if (status === 'RedirectedWithReferral') {
+        if (!organizationId) throw Object.assign(new Error('Link this contact to a company before recording a referral.'), { status: 400 });
+        const resolved = await resolveReferralPerson(client, {
+          organizationId,
+          campaignId: payload.campaignId,
+          referral,
+          referredPersonId,
+        });
+        referral = resolved;
+        referredPersonId = resolved.personId;
+        referralResolution = resolved;
+      }
       const values = [
         roleId,
         legacyStatusToAssessment[status] || 'unknown',
         String(poc.notes || '').trim(),
         status,
-        String(actor || '').trim(),
-        JSON.stringify(poc.referral || {}),
-        poc.referredLeadId || null,
-        JSON.stringify(poc),
+        cleanText(actor.displayName || actor.username || actor || 'admin'),
+        JSON.stringify(referral),
+        referredPersonId,
+        JSON.stringify({ ...poc, referral, referredLeadId: referredPersonId }),
       ];
-      if (current.rows[0]) {
-        await client.query(
-          `UPDATE poc_suitabilities SET
-             assessment = $2, reason = $3, assessed_at = NOW(), legacy_status = $4,
-             assessed_by = $5, referral = $6::jsonb, referred_person_id = $7::uuid,
-             source_payload = $8::jsonb
-           WHERE id = $1::uuid`,
-          [current.rows[0].id, ...values.slice(1)]
-        );
-      } else {
-        await client.query(
+      const current = await client.query(
+        `SELECT assessment,reason,referral,referred_person_id FROM poc_suitabilities
+         WHERE role_id=$1::uuid ORDER BY assessed_at DESC NULLS LAST,id DESC LIMIT 1`, [roleId],
+      );
+      const previous = current.rows[0];
+      const unchanged = previous
+        && previous.assessment === values[1]
+        && cleanText(previous.reason) === values[2]
+        && JSON.stringify(previous.referral || {}) === JSON.stringify(referral || {})
+        && String(previous.referred_person_id || '') === String(referredPersonId || '');
+      if (!unchanged) {
+        const insertedAssessment = await client.query(
           `INSERT INTO poc_suitabilities (
              role_id, responsibility_context, assessment, reason, assessed_at,
              legacy_status, assessed_by, referral, referred_person_id, source_payload
-           ) VALUES ($1::uuid, 'general', $2, $3, NOW(), $4, $5, $6::jsonb, $7::uuid, $8::jsonb)`,
+           ) VALUES ($1::uuid, 'general', $2, $3, NOW(), $4, $5, $6::jsonb, $7::uuid, $8::jsonb)
+           RETURNING id`,
           values
+        );
+        const resolvedCampaignId = cleanUuid(payload.campaignId);
+        if (resolvedCampaignId) {
+          const sourceCampaignContact = await client.query(
+            `SELECT cc.id FROM campaign_contacts cc JOIN campaign_accounts ca ON ca.id=cc.campaign_account_id
+             WHERE cc.role_id=$1::uuid AND ca.campaign_id=$2::uuid LIMIT 1`, [roleId, resolvedCampaignId],
+          );
+          if (status === 'RedirectedWithReferral' && referralResolution?.campaignContactId && sourceCampaignContact.rows[0]?.id) {
+            await applyReferralFocus(client, {
+              sourceCampaignContactId: sourceCampaignContact.rows[0].id,
+              referredCampaignContactId: referralResolution.campaignContactId,
+              sourcePocSuitabilityId: insertedAssessment.rows[0].id,
+              actor,
+            });
+          } else if (['WrongContact', 'RedirectedNoReferral'].includes(status) && sourceCampaignContact.rows[0]?.id) {
+            await releaseWrongPocFocus(client, {
+              campaignContactId: sourceCampaignContact.rows[0].id,
+              sourcePocSuitabilityId: insertedAssessment.rows[0].id,
+              actor,
+            });
+          }
+        }
+        pocAssessmentChanged = true;
+      }
+      if (status !== 'Confirmed') {
+        await client.query(
+          `UPDATE key_relationship_profiles SET manually_confirmed=FALSE,confirmed_at=NULL
+           WHERE role_id=$1::uuid AND manually_confirmed=TRUE`,
+          [roleId],
         );
       }
     }
@@ -1014,6 +1164,13 @@ export async function updateLeadById(id, payload = {}, actor = 'admin') {
     }
 
     await client.query('COMMIT');
+    if (pocAssessmentChanged) {
+      await writeAuditLog({
+        userId: cleanUuid(actor.userId), userDisplayName: actor.displayName || 'admin',
+        action: 'contact.poc_assessed', resource: 'contact', resourceId: personId,
+        summary: `POC assessment recorded as ${payload.pocQualification.status || 'Unverified'}`,
+      });
+    }
     return await getLeadById(personId);
   } catch (error) {
     try { await client.query('ROLLBACK'); } catch {}
@@ -1024,37 +1181,114 @@ export async function updateLeadById(id, payload = {}, actor = 'admin') {
 }
 
 export async function createStandaloneLead(payload) {
-  if (!payload.name?.trim()) {
-    const error = new Error('Lead name is required.');
-    error.status = 400;
-    throw error;
-  }
-
-  const name = payload.name.trim();
-  const res = await db.query(
-    `INSERT INTO people (display_name)
-     VALUES ($1)
-     RETURNING id AS "_id", id, display_name AS "name", created_at AS "createdAt"`,
-    [name]
-  );
-
-  const lead = res.rows[0];
-  if (payload.email) {
-    await db.query(
-      `INSERT INTO person_contact_methods (person_id, type, original_value, normalized_value)
-       VALUES ($1::uuid, 'email', $2, $2)`,
-      [lead.id, String(payload.email).trim().toLowerCase()]
+  const name = cleanText(payload.name);
+  if (!name) throw Object.assign(new Error('Contact name is required.'), { status: 400 });
+  const email = cleanText(payload.email).toLowerCase();
+  const linkedin = cleanText(payload.linkedinUrl).toLowerCase().replace(/\/$/, '');
+  const phone = cleanText(payload.phone);
+  const organizationId = cleanUuid(payload.companyId);
+  const campaignId = cleanUuid(payload.campaignId);
+  const client = await db.getClient();
+  try {
+    await client.query('BEGIN');
+    if (organizationId) {
+      const company = await client.query(`SELECT id FROM organizations WHERE id=$1::uuid AND archived_at IS NULL`, [organizationId]);
+      if (!company.rows.length) throw Object.assign(new Error('Company not found.'), { status: 404 });
+    }
+    if (email || linkedin) {
+      const duplicate = await client.query(
+        `SELECT DISTINCT person_id FROM person_contact_methods
+         WHERE (type='email' AND normalized_value=$1) OR (type='linkedin' AND LOWER(RTRIM(normalized_value,'/'))=$2)`,
+        [email || '__none__', linkedin || '__none__'],
+      );
+      if (duplicate.rows.length) throw Object.assign(new Error('A contact with that email or LinkedIn already exists. Open the existing contact and confirm the match manually.'), { status: 409, existingPersonId: duplicate.rows[0].person_id });
+    }
+    const created = await client.query(
+      `INSERT INTO people(display_name,identity_notes) VALUES($1,'Created manually in CRM') RETURNING id`, [name],
     );
+    const personId = created.rows[0].id;
+    for (const [type, original, normalized] of [['email', email, email], ['linkedin', linkedin, linkedin], ['phone', phone, phone]]) {
+      if (normalized) await client.query(
+        `INSERT INTO person_contact_methods(person_id,type,original_value,normalized_value,preferred,source) VALUES($1::uuid,$2,$3,$4,TRUE,'Manual')`,
+        [personId, type, original, normalized],
+      );
+    }
+    let roleId = null;
+    if (organizationId) {
+      const role = await client.query(
+        `INSERT INTO person_organization_roles(person_id,organization_id,title,effective_from) VALUES($1::uuid,$2::uuid,$3,CURRENT_DATE) RETURNING id`,
+        [personId, organizationId, cleanText(payload.designation) || null],
+      );
+      roleId = role.rows[0].id;
+    }
+    if (campaignId && organizationId && roleId) {
+      const account = await client.query(
+        `INSERT INTO campaign_accounts(campaign_id,organization_id,pursuit_state) VALUES($1::uuid,$2::uuid,'identified') ON CONFLICT(campaign_id,organization_id) DO UPDATE SET pursuit_state=campaign_accounts.pursuit_state RETURNING id`,
+        [campaignId, organizationId],
+      );
+      await client.query(
+        `INSERT INTO campaign_contacts(campaign_account_id,role_id,lead_state,outreach_focus_state) VALUES($1::uuid,$2::uuid,'new','pending')`,
+        [account.rows[0].id, roleId],
+      );
+    }
+    await client.query('COMMIT');
+    return await getLeadById(personId);
+  } catch (error) {
+    await client.query('ROLLBACK').catch(() => {});
+    throw error;
+  } finally {
+    client.release();
   }
-
-  return {
-    ...lead,
-    email: payload.email || '',
-  };
 }
 
 export async function addLeadToCompany(companyId, payload) {
   return createStandaloneLead({ ...payload, companyId });
+}
+
+export async function setKeyRelationshipConfirmation(personId, confirmed, actor = {}) {
+  const client = await db.getClient();
+  try {
+    await client.query('BEGIN');
+    const context = await client.query(
+      `SELECT por.id AS role_id,
+              (SELECT assessment FROM poc_suitabilities WHERE role_id=por.id ORDER BY assessed_at DESC NULLS LAST,id DESC LIMIT 1) AS assessment
+       FROM people p JOIN person_organization_roles por ON por.person_id=p.id
+       WHERE p.id=$1::uuid AND p.archived_at IS NULL AND por.effective_to IS NULL
+       ORDER BY por.created_at DESC LIMIT 1`, [personId],
+    );
+    if (!context.rows.length) throw Object.assign(new Error('Contact must have an active company role.'), { status: 400 });
+    if (confirmed && context.rows[0].assessment !== 'suitable') {
+      throw Object.assign(new Error('Only a verified Right POC can be confirmed as a Key Relationship.'), { status: 409 });
+    }
+    const profile = await client.query(
+      `SELECT id FROM key_relationship_profiles WHERE role_id=$1::uuid ORDER BY created_at LIMIT 1`, [context.rows[0].role_id],
+    );
+    if (profile.rows.length) {
+      await client.query(
+        `UPDATE key_relationship_profiles SET manually_confirmed=$2,confirmed_at=CASE WHEN $2 THEN NOW() ELSE NULL END WHERE id=$1::uuid`,
+        [profile.rows[0].id, Boolean(confirmed)],
+      );
+    } else {
+      await client.query(
+        `INSERT INTO key_relationship_profiles(role_id,standing,manually_confirmed,confirmed_at,legacy_status,owner_name,service_categories)
+         VALUES($1::uuid,'New',$2,CASE WHEN $2 THEN NOW() ELSE NULL END,'New',$3,'{}')`,
+        [context.rows[0].role_id, Boolean(confirmed), cleanText(actor.displayName || 'admin')],
+      );
+    }
+    await client.query('COMMIT');
+    await writeAuditLog({
+      userId: cleanUuid(actor.userId), userDisplayName: actor.displayName || 'admin',
+      action: confirmed ? 'contact.key_relationship_confirmed' : 'contact.key_relationship_removed',
+      resource: 'contact', resourceId: personId,
+      summary: confirmed ? 'Contact manually confirmed as a Key Relationship' : 'Key Relationship confirmation removed',
+    });
+    return await getLeadById(personId);
+  } catch (error) {
+    await client.query('ROLLBACK').catch(() => {});
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 export async function assignLeadToCampaign(leadId, campaignId) {

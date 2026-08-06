@@ -8,6 +8,7 @@ import { useRowSelection } from '../../hooks/useRowSelection.js';
 import { Alert, Badge, Card, EmptyState, LoadingState } from '../ui/primitives.jsx';
 import { BulkSelectionBar } from '../ui/BulkSelectTable.jsx';
 import TaskTable from './TaskTable.jsx';
+import TaskWorkspaceModal from './TaskWorkspaceModal.jsx';
 import { buildOwnerOptions, isDemoTask, loadOwnerOptions } from './taskUtils.js';
 
 const DEMO_ONGOING_JOB_TASKS = [
@@ -37,6 +38,7 @@ export default function OngoingJobTasksPanel({
   const [statusFilter, setStatusFilter] = useState('Open');
   const [bulkDeleting, setBulkDeleting] = useState(false);
   const [ownerOptions, setOwnerOptions] = useState([]);
+  const [selectedTask, setSelectedTask] = useState(null);
 
   const load = useCallback(async () => {
     if (!targetId || preview) {
@@ -107,17 +109,20 @@ export default function OngoingJobTasksPanel({
     setCreating(true);
     setError('');
     try {
+      const matchedOwner = ownerOptions.find((option) => option.label === targetOwner && option.userId);
       const created = await crmApiFetch('/api/admin/sales/tasks', {
         method: 'POST',
         body: JSON.stringify({
           title: 'New task',
           priority: 'Normal',
           owner: targetOwner || 'admin',
+          ownerUserId: matchedOwner?.userId || null,
           ongoingJobId: targetId,
           companyId: companyId || null,
         }),
       });
       setFocusTaskId(created._id);
+      setSelectedTask(created);
       setEditingTaskIds((ids) => [created._id, ...ids]);
       if (statusFilter === 'Open') {
         setTasks((items) => [created, ...items]);
@@ -138,7 +143,7 @@ export default function OngoingJobTasksPanel({
   }
 
   function editTask(task) {
-    setEditingTaskIds((ids) => (ids.includes(task._id) ? ids : [task._id, ...ids]));
+    setSelectedTask(task);
   }
 
   const confirmDeleteTask = useConfirmDelete({
@@ -276,6 +281,7 @@ export default function OngoingJobTasksPanel({
           />
         </Card>
       )}
+      {selectedTask && <TaskWorkspaceModal task={selectedTask} tasks={tasks} opportunities={[{ _id: targetId, name: selectedTask.jobTitle || 'Current Ongoing Job' }]} ownerOptions={ownerOptions} onClose={() => setSelectedTask(null)} onSaved={(updated) => setTasks((items) => items.map((item) => item._id === updated._id ? updated : item))} />}
     </div>
   );
 }

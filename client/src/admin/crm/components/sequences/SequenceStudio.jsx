@@ -599,11 +599,11 @@ export default function SequenceStudio({
         showToast(launchMessage, result.enrolled > 0 ? 'success' : 'warning');
         fetchMailboxUsage().then(setMailboxUsage).catch(() => {});
         if (result.enrolled > 0 && result.launchBatchId) {
-          navigate(`/admin/crm/email?batch=${result.launchBatchId}`);
+          navigate(`/admin/crm/communications?tab=outbox&batch=${result.launchBatchId}`);
           return;
         }
         if ((result.skippedInQueue || 0) > 0) {
-          navigate('/admin/crm/email');
+          navigate('/admin/crm/communications?tab=outbox');
           return;
         }
       } else if (!launch) {

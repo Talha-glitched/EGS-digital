@@ -1,5 +1,6 @@
 import db from '../db/index.js';
 import { ensureReplyReviewTask } from './replyReviewTaskService.js';
+import { coordinateReplyFocus } from './campaignContactCoordinationService.js';
 
 let cronInterval = null;
 
@@ -209,6 +210,7 @@ export async function syncAllResendReplies() {
               campaignContactId,
             }
           );
+          await coordinateReplyFocus({ campaignContactId, sourceMessageId: insertedMessage.rows[0].id });
         }
       }
     }

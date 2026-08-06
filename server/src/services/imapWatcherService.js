@@ -1,7 +1,8 @@
 import db from '../db/index.js';
 import { classifyInboundEmail } from './resendAutoSyncService.js';
-import { freezeLeadSequence, purgeLeadFromQueue } from './sequenceService.js';
+import { purgeLeadFromQueue } from './sequenceService.js';
 import { ensureReplyReviewTask } from './replyReviewTaskService.js';
+import { coordinateReplyFocus } from './campaignContactCoordinationService.js';
 import {
   createImapClient,
   resolveImapSyncDays,
@@ -277,8 +278,8 @@ async function handleHumanReply(lead, message, text, systemInbox = '') {
     lead
   );
 
-  await freezeLeadSequence(lead.id, 'reply');
-  console.log(`[IMAP Reply] Human reply registered for review and sequence frozen for Lead ID: ${lead.id}`);
+  await coordinateReplyFocus({ campaignContactId: lead.campaignContactId, sourceMessageId: insertedMessage.rows[0].id });
+  console.log(`[IMAP Reply] Human reply registered; campaign-account follow-up focused on Lead ID: ${lead.id}`);
 
   return { stored: true, intent: replyIntent };
 }
@@ -488,7 +489,7 @@ export async function listInboxThreads({ limit = 100, campaignId } = {}) {
 
 export async function getInboxThread(threadId) {
   const res = await db.query(
-    `SELECT c.id AS thread_id, c.subject, m.body, m.direction, m.occurred_at,
+    `SELECT c.id AS thread_id, c.subject, m.id AS message_id, m.body, m.direction, m.occurred_at,
             p.id AS person_id, p.display_name AS poc_name, o.canonical_name AS company_name,
             COALESCE(c.campaign_id, ca.campaign_id) AS campaign_id,
             cmp.name AS campaign_name,
@@ -554,6 +555,7 @@ export async function getInboxThread(threadId) {
     unknown: 'Unverified',
   }[first.poc_assessment] || 'Unverified';
   const history = res.rows.map((r) => ({
+    messageId: r.message_id,
     type: r.direction,
     subject: r.subject,
     body: r.body,

@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Inbox, FolderKanban, LogOut, Users, Building2, BarChart3, X, BriefcaseBusiness, ListTodo, PanelLeftClose, PanelLeft, Wallet, ChevronLeft, HeartHandshake, Mail, Shield, Activity, History, SendHorizontal, MailCheck, ClipboardList } from 'lucide-react';
+import { LayoutDashboard, MessageSquareText, FolderKanban, LogOut, Users, Building2, BarChart3, X, BriefcaseBusiness, ListTodo, PanelLeftClose, PanelLeft, Wallet, ChevronLeft, HeartHandshake, Mail, Shield, Activity, History, ClipboardList, CalendarDays, PackageSearch, HardHat, Boxes, UserRoundCheck, CalendarCheck2 } from 'lucide-react';
 import { cn } from '../ui/primitives.jsx';
 import { usePermissions } from '../../hooks/usePermissions.js';
-import { crmApiFetch } from '../../crmApi.js';
 import egsLogo from '../../../../assets/logo/New_Logo/Logo-01.png';
 
 const BASE_NAV_GROUPS = [
   {
     items: [
       { to: '/admin/crm', label: 'Dashboard', icon: LayoutDashboard, end: true },
+      { to: '/admin/crm/today', label: 'Today', icon: CalendarCheck2 },
     ],
   },
   {
@@ -27,16 +27,21 @@ const BASE_NAV_GROUPS = [
     items: [
       { to: '/admin/crm/ongoing-jobs', label: 'Ongoing Jobs', icon: BriefcaseBusiness },
       { to: '/admin/crm/completed-jobs', label: 'Jobs Done', icon: ClipboardList },
+      { to: '/admin/crm/plan-calendar', label: 'Plan Calendar', icon: CalendarDays },
+      { to: '/admin/crm/suppliers', label: 'Suppliers', icon: PackageSearch },
+      { to: '/admin/crm/resources', label: 'Resources & Time', icon: HardHat },
+      { to: '/admin/crm/employees', label: 'Employees', icon: UserRoundCheck },
+      { to: '/admin/crm/inventory', label: 'Inventory', icon: Boxes },
       { to: '/admin/crm/tasks', label: 'Tasks', icon: ListTodo },
     ],
   },
   {
     heading: 'Tracking',
     items: [
-      { to: '/admin/crm/inbox', label: 'Inbox', icon: Inbox },
-      { to: '/admin/crm/email', label: 'Email', icon: SendHorizontal },
+      { to: '/admin/crm/communications', label: 'Communications', icon: MessageSquareText },
       { to: '/admin/crm/finance', label: 'Finances', icon: Wallet },
-      { to: '/admin/crm/analytics', label: 'Reports', icon: BarChart3 },
+      { to: '/admin/crm/analytics', label: 'Commercial Reports', icon: BarChart3 },
+      { to: '/admin/crm/operations-reports', label: 'Operations Reports', icon: ClipboardList },
     ],
   },
 ];
@@ -65,21 +70,6 @@ function NavItem({ to, label, icon: Icon, end, collapsed, onClose }) {
 export default function Sidebar({ activeProject, onLogout, mobileOpen = false, onClose, collapsed = false, onToggleCollapse, status, designerMode = false }) {
   const { can } = usePermissions(status);
   const onProjectDetail = Boolean(activeProject);
-  const [useResend, setUseResend] = useState(false);
-
-  useEffect(() => {
-    if (designerMode) return; // Don't need resend setting for designer
-    function loadResendSetting() {
-      crmApiFetch('/api/admin/system-settings')
-        .then((data) => setUseResend(Boolean(data?.useResend)))
-        .catch(() => setUseResend(false));
-    }
-
-    loadResendSetting();
-    window.addEventListener('crm:settings-changed', loadResendSetting);
-    return () => window.removeEventListener('crm:settings-changed', loadResendSetting);
-  }, [designerMode]);
-
   const navGroups = useMemo(() => {
     if (designerMode) {
       return [
@@ -87,7 +77,11 @@ export default function Sidebar({ activeProject, onLogout, mobileOpen = false, o
           heading: 'My Workspace',
           items: [
             { to: '/admin/crm', label: 'Dashboard', icon: LayoutDashboard, end: true },
+            { to: '/admin/crm/today', label: 'Today', icon: CalendarCheck2 },
             { to: '/admin/crm/ongoing-jobs', label: 'Ongoing Jobs', icon: BriefcaseBusiness },
+            { to: '/admin/crm/plan-calendar', label: 'Plan Calendar', icon: CalendarDays },
+            { to: '/admin/crm/resources', label: 'Resources & Time', icon: HardHat },
+            { to: '/admin/crm/inventory', label: 'Inventory', icon: Boxes },
             { to: '/admin/crm/tasks', label: 'Tasks', icon: ListTodo },
           ],
         },
@@ -95,11 +89,10 @@ export default function Sidebar({ activeProject, onLogout, mobileOpen = false, o
     }
 
     const trackingItems = [
-      { to: '/admin/crm/inbox', label: 'Inbox', icon: Inbox },
-      { to: '/admin/crm/email', label: 'Email', icon: SendHorizontal },
-      ...(useResend ? [{ to: '/admin/crm/resend-emails', label: 'Resend emails', icon: MailCheck }] : []),
+      { to: '/admin/crm/communications', label: 'Communications', icon: MessageSquareText },
       { to: '/admin/crm/finance', label: 'Finances', icon: Wallet },
-      { to: '/admin/crm/analytics', label: 'Reports', icon: BarChart3 },
+      { to: '/admin/crm/analytics', label: 'Commercial Reports', icon: BarChart3 },
+      { to: '/admin/crm/operations-reports', label: 'Operations Reports', icon: ClipboardList },
     ];
 
     const groups = BASE_NAV_GROUPS.map((group) => {
@@ -108,7 +101,7 @@ export default function Sidebar({ activeProject, onLogout, mobileOpen = false, o
     });
 
     return groups;
-  }, [useResend, designerMode]);
+  }, [designerMode]);
 
   const settingsItems = designerMode ? [] : [
     can('users:manage') && { to: '/admin/crm/settings/team', label: 'Team', icon: Shield },

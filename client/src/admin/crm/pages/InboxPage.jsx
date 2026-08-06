@@ -3,14 +3,16 @@ import { crmApiFetch } from '../crmApi.js';
 import UnifiedInboxWorkspace from '../components/inbox/UnifiedInboxWorkspace.jsx';
 import { Modal } from '../components/ui/Modal.jsx';
 import { PageShell, PageSection, LoadingState, Field, Alert } from '../components/ui/primitives.jsx';
+import CommunicationJobModal from '../components/communications/CommunicationJobModal.jsx';
 
-export default function InboxPage() {
+export function InboxWorkspaceContent({ embedded = false }) {
   const [replies, setReplies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [wonThread, setWonThread] = useState(null);
   const [wonAmount, setWonAmount] = useState('');
   const [actionError, setActionError] = useState('');
   const [actionBusy, setActionBusy] = useState(false);
+  const [jobThread, setJobThread] = useState(null);
 
   const load = useCallback(async () => {
     const data = await crmApiFetch('/api/admin/inbox?limit=100');
@@ -24,6 +26,10 @@ export default function InboxPage() {
   }, [load]);
 
   async function handleAction(action, thread) {
+    if (action === 'job') {
+      setJobThread(thread);
+      return;
+    }
     if (action === 'blacklist') {
       await crmApiFetch(`/api/admin/inbox/${thread._id}/blacklist`, { method: 'POST' });
       load();
@@ -59,6 +65,7 @@ export default function InboxPage() {
   }
 
   if (loading) {
+    if (embedded) return <LoadingState label="Syncing inbox…" />;
     return (
       <PageShell>
         <LoadingState label="Syncing inbox…" />
@@ -66,11 +73,11 @@ export default function InboxPage() {
     );
   }
 
-  return (
-    <PageShell>
-      <PageSection>
+  const content = (
+    <>
+      <div className={embedded ? '' : undefined}>
         <UnifiedInboxWorkspace initialReplies={replies} onAction={handleAction} replyCount={replies.length} />
-      </PageSection>
+      </div>
       <Modal
         open={Boolean(wonThread)}
         onClose={() => !actionBusy && setWonThread(null)}
@@ -98,6 +105,14 @@ export default function InboxPage() {
           </div>
         </form>
       </Modal>
-    </PageShell>
+      <CommunicationJobModal open={Boolean(jobThread)} onClose={() => setJobThread(null)} conversationId={jobThread?._id} defaultMessageId={jobThread?.history?.at(-1)?.messageId} onCreated={load} />
+    </>
   );
+
+  if (embedded) return content;
+  return <PageShell><PageSection>{content}</PageSection></PageShell>;
+}
+
+export default function InboxPage() {
+  return <InboxWorkspaceContent />;
 }

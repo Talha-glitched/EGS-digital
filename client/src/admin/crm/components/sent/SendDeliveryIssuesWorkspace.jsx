@@ -318,7 +318,7 @@ export function SequenceDeliveryAlert({ summary, compact = false }) {
           {topError?.action ? (
             <p className="mt-1 text-[11px] leading-relaxed text-red-800/80">{topError.action}</p>
           ) : null}
-          <Link to="/admin/crm/email?tab=failed" className="mt-3 inline-flex text-[11px] font-semibold text-red-900 underline underline-offset-2">
+          <Link to="/admin/crm/communications?tab=failed" className="mt-3 inline-flex text-[11px] font-semibold text-red-900 underline underline-offset-2">
             Review all delivery issues
           </Link>
         </div>

@@ -5,6 +5,7 @@ import { useBulkDelete } from '../hooks/useBulkDelete.js';
 import { useSpotlightDeepLink } from '../hooks/useSpotlightDeepLink.js';
 import { useRowSelection } from '../hooks/useRowSelection.js';
 import TaskTable from '../components/tasks/TaskTable.jsx';
+import TaskWorkspaceModal from '../components/tasks/TaskWorkspaceModal.jsx';
 import OutreachDrawer from '../components/leads/OutreachDrawer.jsx';
 import SearchableSelect from '../components/ui/SearchableSelect.jsx';
 import DateTimePicker from '../components/ui/DateTimePicker.jsx';
@@ -12,7 +13,7 @@ import { BulkSelectionBar } from '../components/ui/BulkSelectTable.jsx';
 import { buildOwnerOptions, campaignIdFromOpportunity, companyFromOpportunity, companyIdFromOpportunity, isDemoTask, loadOwnerOptions } from '../components/tasks/taskUtils.js';
 import { Alert, Card, EmptyState, LoadingState, PageHeader, PageSection, PageShell, PageToolbar, ToolbarCount, cn } from '../components/ui/primitives.jsx';
 import { Modal } from '../components/ui/Modal.jsx';
-import { CalendarCheck2, Plus, UserCheck, BriefcaseBusiness, Users, StickyNote } from 'lucide-react';
+import { AlertTriangle, CalendarCheck2, Clock3, Plus, UserCheck, BriefcaseBusiness, Users, StickyNote, UserRoundCheck } from 'lucide-react';
 import {
   AdvancedFilterPopover,
   AdvancedFilterChips,
@@ -37,6 +38,8 @@ export default function TasksPage() {
   const [opportunities, setOpportunities] = useState([]);
   const [leads, setLeads] = useState([]);
   const [status, setStatus] = useState('Open');
+  const [scope, setScope] = useState('mine');
+  const [taskSummary, setTaskSummary] = useState({ overdue: 0, today: 0, upcoming: 0, later: 0, blocked: 0, waiting: 0 });
   const [categoryTab, setCategoryTab] = useState('all'); // 'all' | 'lead' | 'relationship' | 'ongoing_job'
   const [loading, setLoading] = useState(true);
   const [focusTaskId, setFocusTaskId] = useState('');
@@ -46,6 +49,8 @@ export default function TasksPage() {
   const [bulkDeleting, setBulkDeleting] = useState(false);
   const [ownerOptions, setOwnerOptions] = useState([]);
   const [selectedLead, setSelectedLead] = useState(null);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
 
   // Category Task Creation Modal State
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -57,6 +62,7 @@ export default function TasksPage() {
     dueAt: '',
     priority: 'Normal',
     owner: 'admin',
+    ownerUserId: '',
     notes: '',
   });
 
@@ -146,27 +152,34 @@ export default function TasksPage() {
   }
 
   async function load() {
-    const [taskData, opportunityData, campaignData] = await Promise.all([
-      crmApiFetch(`/api/admin/sales/tasks?status=${encodeURIComponent(status)}`),
+    const [taskData, opportunityData, campaignData, leadData, statusData] = await Promise.all([
+      crmApiFetch(`/api/admin/sales/tasks?status=${encodeURIComponent(status)}${scope === 'mine' ? '&mine=1' : ''}`),
       crmApiFetch('/api/admin/sales/opportunities').catch(() => ({ items: [] })),
       crmApiFetch('/api/admin/projects').catch(() => []),
+      crmApiFetch('/api/admin/leads?limit=5000').catch(() => ({ items: [] })),
+      crmApiFetch('/api/admin/status').catch(() => ({ user: null })),
     ]);
     setTasks(taskData.items || []);
+    setTaskSummary(taskData.summary || { overdue: 0, today: 0, upcoming: 0, later: 0, blocked: 0, waiting: 0 });
     setOpportunities(opportunityData.items || []);
     setCampaigns(campaignData || []);
+    setLeads(leadData.items || leadData || []);
+    setCurrentUser(statusData.user || null);
   }
 
 
   useEffect(() => {
     setLoading(true);
     load().catch((err) => setError(err.message)).finally(() => setLoading(false));
-  }, [status]);
+  }, [status, scope]);
 
   useSpotlightDeepLink({
     recordType: 'task',
     onOpen: useCallback((task) => {
-      if (task?.status && task.status !== status) setStatus(task.status);
+      const targetStatus = task?.status === 'Done' ? 'Done' : 'Open';
+      if (targetStatus !== status) setStatus(targetStatus);
       setFocusTaskId(task._id);
+      setSelectedTask(task);
     }, [status]),
     findRecord: useCallback((id) => tasks.find((task) => String(task._id) === String(id)), [tasks]),
     resolveRecord: useCallback((id) => crmApiFetch(`/api/admin/sales/tasks/${encodeURIComponent(id)}`), []),
@@ -251,7 +264,8 @@ export default function TasksPage() {
       opportunityId: '',
       dueAt: new Date(Date.now() + 86400000 * 2).toISOString(),
       priority: 'Normal',
-      owner: 'admin',
+      owner: currentUser?.displayName || 'admin',
+      ownerUserId: currentUser?.id || '',
       notes: '',
     });
     setCreateModalOpen(true);
@@ -283,6 +297,7 @@ export default function TasksPage() {
           dueAt: createTaskForm.dueAt || null,
           priority: createTaskForm.priority,
           owner: createTaskForm.owner,
+          ownerUserId: createTaskForm.ownerUserId || null,
           notes: createTaskForm.notes,
         }),
       });
@@ -320,13 +335,7 @@ export default function TasksPage() {
   }
 
   async function editTask(task) {
-    const rawLead = task.leadId;
-    const targetLeadId = typeof rawLead === 'object' ? rawLead?._id : rawLead;
-    if (targetLeadId) {
-      await handleOpenContact(targetLeadId);
-      return;
-    }
-    setEditingTaskIds((ids) => (ids.includes(task._id) ? ids : [task._id, ...ids]));
+    setSelectedTask(task);
   }
 
   const leadOptions = useMemo(() => leads.map((l) => ({
@@ -347,6 +356,23 @@ export default function TasksPage() {
       {error && <Alert>{error}</Alert>}
 
       <PageSection>
+        {status === 'Open' && <div className="mb-4 grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
+          {[
+            { label: 'Overdue', value: taskSummary.overdue, icon: AlertTriangle, tone: 'border-red-200 bg-red-50 text-red-700' },
+            { label: 'Today', value: taskSummary.today, icon: Clock3, tone: 'border-amber-200 bg-amber-50 text-amber-700' },
+            { label: 'Next 7 days', value: taskSummary.upcoming, icon: CalendarCheck2, tone: 'border-sky-200 bg-sky-50 text-sky-700' },
+            { label: 'Blocked', value: taskSummary.blocked, icon: AlertTriangle, tone: 'border-orange-200 bg-orange-50 text-orange-700' },
+            { label: 'Waiting', value: taskSummary.waiting, icon: Clock3, tone: 'border-violet-200 bg-violet-50 text-violet-700' },
+            { label: 'Later / unscheduled', value: taskSummary.later, icon: CalendarCheck2, tone: 'border-neutral-200 bg-white text-neutral-700' },
+          ].map((item) => <div key={item.label} className={`rounded-xl border p-3 ${item.tone}`}><div className="flex items-center justify-between"><span className="text-[10px] font-semibold uppercase tracking-wide">{item.label}</span><item.icon className="h-3.5 w-3.5" /></div><p className="mt-2 text-2xl font-bold">{item.value}</p></div>)}
+        </div>}
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-white p-3">
+          <div><p className="text-sm font-semibold text-neutral-800">My Work</p><p className="text-xs text-neutral-500">Your assigned CRM and ERP actions in one place.</p></div>
+          <div className="inline-flex rounded-lg bg-neutral-100 p-0.5">
+            <button type="button" className={scope === 'mine' ? 'crm-tab-active rounded-md px-3 py-1.5 text-xs font-semibold' : 'crm-tab-idle rounded-md px-3 py-1.5 text-xs font-semibold'} onClick={() => setScope('mine')}><UserRoundCheck className="mr-1 inline h-3.5 w-3.5" />My work</button>
+            <button type="button" className={scope === 'all' ? 'crm-tab-active rounded-md px-3 py-1.5 text-xs font-semibold' : 'crm-tab-idle rounded-md px-3 py-1.5 text-xs font-semibold'} onClick={() => setScope('all')}><Users className="mr-1 inline h-3.5 w-3.5" />Team work</button>
+          </div>
+        </div>
         {/* Category Pill Selector Tabs */}
         <div className="flex flex-wrap items-center gap-2 border-b border-neutral-200 pb-3 mb-3">
           {[
@@ -421,7 +447,7 @@ export default function TasksPage() {
             <EmptyState
               icon={CalendarCheck2}
               title={status === 'Done' ? 'No completed tasks' : 'Your task list is clear'}
-              description="Create tasks tailored to Leads, Relationships, or Ongoing Jobs."
+              description={scope === 'mine' ? 'No tasks are assigned to your ERP/CRM user. Switch to Team work to review unassigned and legacy tasks.' : 'Create tasks for sales, relationships, Ongoing Jobs, or general work.'}
             />
           </Card>
         ) : visibleTasks.length === 0 ? (
@@ -564,12 +590,10 @@ export default function TasksPage() {
             </div>
 
             <FormField label="Owner">
-              <input
-                className="crm-input text-xs"
-                value={createTaskForm.owner}
-                onChange={(e) => setCreateTaskForm((prev) => ({ ...prev, owner: e.target.value }))}
-                placeholder="Assign owner"
-              />
+              <select className="crm-select text-xs" value={createTaskForm.ownerUserId} onChange={(e) => { const option = ownerOptions.find((item) => item.userId === e.target.value); setCreateTaskForm((prev) => ({ ...prev, ownerUserId: e.target.value, owner: option?.label || prev.owner })); }}>
+                <option value="">Unassigned</option>
+                {ownerOptions.filter((item) => item.userId).map((item) => <option key={item.userId} value={item.userId}>{item.label}{item.hint ? ` · ${item.hint}` : ''}</option>)}
+              </select>
             </FormField>
 
             <FormField label="Notes">
@@ -600,6 +624,7 @@ export default function TasksPage() {
         onClose={() => setSelectedLead(null)}
         onLeadUpdated={() => load().catch(() => {})}
       />
+      {selectedTask && <TaskWorkspaceModal task={selectedTask} tasks={tasks} opportunities={opportunities} ownerOptions={ownerOptions} onClose={() => setSelectedTask(null)} onSaved={(updated) => { setTasks((items) => items.map((item) => item._id === updated._id ? updated : item)); }} />}
     </PageShell>
   );
 }
