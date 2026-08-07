@@ -26,15 +26,48 @@ import { campaignRoiSortAccessors } from '../hooks/tableSortAccessors.js';
 import VendorPerformanceGrid from '../components/analytics/VendorPerformanceGrid.jsx';
 import CampaignVendorPerformanceGrid from '../components/analytics/CampaignVendorPerformanceGrid.jsx';
 
-function formatDate(value) {
-  if (!value) return '—';
-  const date = new Date(value);
-  if (isNaN(date.getTime())) return '—';
-  return date.toLocaleDateString('en-AE', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
+function formatDateRange(startDate, endDate, fallbackDate) {
+  const start = startDate ? new Date(startDate) : null;
+  const end = endDate ? new Date(endDate) : null;
+  const isValidStart = start && !isNaN(start.getTime());
+  const isValidEnd = end && !isNaN(end.getTime());
+
+  if (isValidStart && isValidEnd) {
+    const startYear = start.getFullYear();
+    const endYear = end.getFullYear();
+    const startMonth = start.toLocaleDateString('en-AE', { month: 'short' });
+    const endMonth = end.toLocaleDateString('en-AE', { month: 'short' });
+    const startDay = start.getDate();
+    const endDay = end.getDate();
+
+    if (startYear === endYear && startMonth === endMonth && startDay === endDay) {
+      return `${startDay} ${startMonth} ${startYear}`;
+    }
+    if (startYear === endYear && startMonth === endMonth) {
+      return `${startDay}–${endDay} ${startMonth} ${startYear}`;
+    }
+    if (startYear === endYear) {
+      return `${startDay} ${startMonth} – ${endDay} ${endMonth} ${startYear}`;
+    }
+    return `${startDay} ${startMonth} ${startYear} – ${endDay} ${endMonth} ${endYear}`;
+  }
+
+  if (isValidStart) {
+    return start.toLocaleDateString('en-AE', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
+  if (isValidEnd) {
+    return `Until ${end.toLocaleDateString('en-AE', { day: 'numeric', month: 'short', year: 'numeric' })}`;
+  }
+
+  if (fallbackDate) {
+    const fb = new Date(fallbackDate);
+    if (!isNaN(fb.getTime())) {
+      return fb.toLocaleDateString('en-AE', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+  }
+
+  return '—';
 }
 
 export default function AdvancedAnalyticsPage() {
@@ -467,7 +500,7 @@ function CampaignRoiTable({ campaignMetrics = [], navigate }) {
             <tr className="crm-table-head">
               <SortableTableHeader label="Campaign Project" sortKey="projectName" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
               <SortableTableHeader label="UAE Milestone" sortKey="milestone" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
-              <SortableTableHeader label="Date" sortKey="createdAt" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+              <SortableTableHeader label="Dates" sortKey="date" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
               <SortableTableHeader label="Total Cost" sortKey="totalCost" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
               <SortableTableHeader label="Revenue Won" sortKey="revenueWon" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
               <SortableTableHeader label="Yield ROI" sortKey="roi" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
@@ -482,7 +515,7 @@ function CampaignRoiTable({ campaignMetrics = [], navigate }) {
               >
                 <td className="font-semibold text-ink">{c.projectName}</td>
                 <td className="text-neutral-500 font-medium">{c.milestone || 'General Exhibition'}</td>
-                <td className="whitespace-nowrap text-xs text-neutral-600">{formatDate(c.createdAt)}</td>
+                <td className="whitespace-nowrap text-xs text-neutral-600">{formatDateRange(c.startDate, c.endDate, c.createdAt)}</td>
                 <td className="font-mono text-neutral-600">{formatCurrency(c.totalCost)}</td>
                 <td className="font-mono text-emerald-700 font-semibold">{formatCurrency(c.revenueWon)}</td>
                 <td className={`font-bold ${c.roi >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>

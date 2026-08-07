@@ -16,6 +16,8 @@ const projectCampaignSchema = new mongoose.Schema(
   {
     projectName: { type: String, required: true, trim: true },
     milestone: { type: String, default: '', trim: true },
+    startDate: { type: Date, default: null },
+    endDate: { type: Date, default: null },
     targetCompaniesCount: { type: Number, default: 0 },
     companiesWithPocsFound: { type: Number, default: 0 },
     companiesRespondedCount: { type: Number, default: 0 },

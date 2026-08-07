@@ -42,15 +42,48 @@ function formatCount(value) {
   return Number(value || 0).toLocaleString('en-AE');
 }
 
-function formatDate(value) {
-  if (!value) return '—';
-  const date = new Date(value);
-  if (isNaN(date.getTime())) return '—';
-  return date.toLocaleDateString('en-AE', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
+function formatDateRange(startDate, endDate, fallbackDate) {
+  const start = startDate ? new Date(startDate) : null;
+  const end = endDate ? new Date(endDate) : null;
+  const isValidStart = start && !isNaN(start.getTime());
+  const isValidEnd = end && !isNaN(end.getTime());
+
+  if (isValidStart && isValidEnd) {
+    const startYear = start.getFullYear();
+    const endYear = end.getFullYear();
+    const startMonth = start.toLocaleDateString('en-AE', { month: 'short' });
+    const endMonth = end.toLocaleDateString('en-AE', { month: 'short' });
+    const startDay = start.getDate();
+    const endDay = end.getDate();
+
+    if (startYear === endYear && startMonth === endMonth && startDay === endDay) {
+      return `${startDay} ${startMonth} ${startYear}`;
+    }
+    if (startYear === endYear && startMonth === endMonth) {
+      return `${startDay}–${endDay} ${startMonth} ${startYear}`;
+    }
+    if (startYear === endYear) {
+      return `${startDay} ${startMonth} – ${endDay} ${endMonth} ${startYear}`;
+    }
+    return `${startDay} ${startMonth} ${startYear} – ${endDay} ${endMonth} ${endYear}`;
+  }
+
+  if (isValidStart) {
+    return start.toLocaleDateString('en-AE', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
+  if (isValidEnd) {
+    return `Until ${end.toLocaleDateString('en-AE', { day: 'numeric', month: 'short', year: 'numeric' })}`;
+  }
+
+  if (fallbackDate) {
+    const fb = new Date(fallbackDate);
+    if (!isNaN(fb.getTime())) {
+      return fb.toLocaleDateString('en-AE', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+  }
+
+  return '—';
 }
 
 export default function ProjectsPage({ initialProjects }) {
@@ -248,7 +281,7 @@ export default function ProjectsPage({ initialProjects }) {
                     <BulkSelectHeaderCell selection={selection} ariaLabel="Select all campaigns" />
                     <SortableTableHeader label="Campaign" sortKey="projectName" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
                     <SortableTableHeader label="Stage" sortKey="status" activeKey={sortKey} direction={sortDir} onSort={toggleSort} hint={CAMPAIGN_AUTOMATION.stage} className="crm-table-stage-col" />
-                    <SortableTableHeader label="Date" sortKey="createdAt" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                    <SortableTableHeader label="Dates" sortKey="date" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
                     <SortableTableHeader label="Companies found" sortKey="targetCompaniesCount" activeKey={sortKey} direction={sortDir} onSort={toggleSort} hint={CAMPAIGN_AUTOMATION.companiesFound} align="right" />
                     <SortableTableHeader label="Companies reached" sortKey="companiesReached" activeKey={sortKey} direction={sortDir} onSort={toggleSort} hint={CAMPAIGN_AUTOMATION.companiesReached} align="right" />
                     <SortableTableHeader label="POCs found" sortKey="pocsFound" activeKey={sortKey} direction={sortDir} onSort={toggleSort} hint={CAMPAIGN_AUTOMATION.pocsFound} align="right" />
@@ -285,7 +318,7 @@ export default function ProjectsPage({ initialProjects }) {
                         />
                       </td>
                       <td className="whitespace-nowrap text-xs text-neutral-600">
-                        {formatDate(campaign.createdAt)}
+                        {formatDateRange(campaign.startDate, campaign.endDate, campaign.createdAt)}
                       </td>
                       <td className="text-right tabular-nums font-medium text-neutral-800">
                         {formatCount(campaign.targetCompaniesCount)}

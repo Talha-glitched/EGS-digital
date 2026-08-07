@@ -65,6 +65,8 @@ export default function CampaignInitWizard({ open, onClose, onComplete }) {
   const [form, setForm] = useState({
     projectName: '',
     milestone: '',
+    startDate: '',
+    endDate: '',
   });
   const [file, setFile] = useState(null);
   const [headers, setHeaders] = useState([]);
@@ -83,7 +85,7 @@ export default function CampaignInitWizard({ open, onClose, onComplete }) {
     setProjectId(null);
     setUploadResult(null);
     setSkippedUpload(false);
-    setForm({ projectName: '', milestone: '' });
+    setForm({ projectName: '', milestone: '', startDate: '', endDate: '' });
     setFile(null);
     setHeaders([]);
     setSampleRows([]);
@@ -101,6 +103,8 @@ export default function CampaignInitWizard({ open, onClose, onComplete }) {
         body: JSON.stringify({
           projectName: form.projectName.trim(),
           milestone: form.milestone.trim(),
+          startDate: form.startDate || null,
+          endDate: form.endDate || null,
         }),
       });
       setProjectId(project._id);
@@ -266,6 +270,25 @@ export default function CampaignInitWizard({ open, onClose, onComplete }) {
                     ))}
                   </div>
                 </Field>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <Field label="Start date" hint="Outreach / event start date.">
+                    <input
+                      type="date"
+                      className="crm-input"
+                      value={form.startDate}
+                      onChange={(e) => setForm({ ...form, startDate: e.target.value })}
+                    />
+                  </Field>
+                  <Field label="End date" hint="Outreach / event end date.">
+                    <input
+                      type="date"
+                      className="crm-input"
+                      value={form.endDate}
+                      onChange={(e) => setForm({ ...form, endDate: e.target.value })}
+                    />
+                  </Field>
+                </div>
               </div>
             </ModalSection>
           </ModalStack>

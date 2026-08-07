@@ -236,6 +236,7 @@ export async function listProjects({ summary = false } = {}) {
        )
        SELECT campaign.id AS "_id", campaign.id, campaign.mongo_campaign_id,
               campaign.name AS "projectName", campaign.lifecycle AS "milestone",
+              campaign.starts_on AS "startsOn", campaign.ends_on AS "endsOn",
               campaign.created_at AS "createdAt", campaign.payload,
               coverage.target_companies AS "targetCompaniesCount",
               coverage.pocs_found AS "pocsFound",
@@ -257,6 +258,8 @@ export async function listProjects({ summary = false } = {}) {
         projectName: row.projectName || p.projectName || p.name || 'Unnamed Project',
         milestone: row.milestone || p.status || p.milestone || 'Active Planning',
         status: row.milestone || p.status || 'Active Planning',
+        startDate: row.startsOn || p.startDate || p.startsOn || null,
+        endDate: row.endsOn || p.endDate || p.endsOn || null,
         createdAt: row.createdAt,
         targetCompaniesCount: Number(row.targetCompaniesCount) || 0,
         companiesWithPocsFound: Number(row.pocsFound) || 0,
@@ -285,7 +288,8 @@ export async function getProject(id) {
   try {
     await syncAutoCampaignStatus(id);
     const res = await db.query(
-      `SELECT id AS "_id", id, name AS "projectName", lifecycle AS "milestone", created_at AS "createdAt", payload
+      `SELECT id AS "_id", id, name AS "projectName", lifecycle AS "milestone",
+              starts_on AS "startsOn", ends_on AS "endsOn", created_at AS "createdAt", payload
        FROM campaigns
        WHERE (id::text = $1::text OR mongo_campaign_id = $1) AND deleted_at IS NULL LIMIT 1`,
       [String(id)]
@@ -302,6 +306,8 @@ export async function getProject(id) {
         projectName: row.projectName || p.projectName || p.name || 'Unnamed Project',
         milestone: row.milestone || p.status || 'Active Planning',
         status: row.milestone || p.status || 'Active Planning',
+        startDate: row.startsOn || p.startDate || p.startsOn || null,
+        endDate: row.endsOn || p.endDate || p.endsOn || null,
         createdAt: row.createdAt,
         targetCompaniesCount: Number(metrics?.targetCompaniesCount) || 0,
         companiesWithPocsFound: Number(metrics?.pocsFound) || 0,
@@ -380,7 +386,7 @@ export async function recalculateAllCampaignCoverageStats() {
 }
 
 export async function createProject(payload) {
-  const { projectName, milestone } = payload;
+  const { projectName, milestone, startDate, endDate, startsOn, endsOn } = payload;
   if (!projectName?.trim()) {
     const error = new Error('Project name is required.');
     error.status = 400;
@@ -389,12 +395,15 @@ export async function createProject(payload) {
 
   const name = projectName.trim();
   const status = milestone || 'Active Planning';
+  const start = startDate || startsOn || null;
+  const end = endDate || endsOn || null;
 
   const res = await db.query(
-    `INSERT INTO campaigns (name, lifecycle, payload)
-     VALUES ($1, $2, $3::jsonb)
-     RETURNING id AS "_id", id, name AS "projectName", lifecycle AS "milestone", created_at AS "createdAt"`,
-    [name, status, JSON.stringify({ projectName: name, milestone: status, ...payload })]
+    `INSERT INTO campaigns (name, lifecycle, starts_on, ends_on, payload)
+     VALUES ($1, $2, $3, $4, $5::jsonb)
+     RETURNING id AS "_id", id, name AS "projectName", lifecycle AS "milestone",
+               starts_on AS "startDate", ends_on AS "endDate", created_at AS "createdAt"`,
+    [name, status, start, end, JSON.stringify({ projectName: name, milestone: status, startDate: start, endDate: end, ...payload })]
   );
 
   const row = res.rows[0];
@@ -408,16 +417,21 @@ export async function updateProject(id, payload) {
   const existing = await getProject(id);
   const projectName = payload.projectName ? payload.projectName.trim() : existing.projectName;
   const milestone = payload.milestone ? payload.milestone.trim() : existing.milestone;
+  const startDate = payload.startDate !== undefined ? payload.startDate : (payload.startsOn !== undefined ? payload.startsOn : existing.startDate);
+  const endDate = payload.endDate !== undefined ? payload.endDate : (payload.endsOn !== undefined ? payload.endsOn : existing.endDate);
 
   const res = await db.query(
     `UPDATE campaigns SET
        name = $2,
        lifecycle = $3,
-       payload = $4::jsonb,
+       starts_on = $4,
+       ends_on = $5,
+       payload = $6::jsonb,
        updated_at = NOW()
      WHERE (id::text = $1::text OR mongo_campaign_id = $1)
-     RETURNING id AS "_id", id, name AS "projectName", lifecycle AS "milestone", created_at AS "createdAt"`,
-    [String(id), projectName, milestone, JSON.stringify({ ...existing, ...payload, projectName, milestone })]
+     RETURNING id AS "_id", id, name AS "projectName", lifecycle AS "milestone",
+               starts_on AS "startDate", ends_on AS "endDate", created_at AS "createdAt"`,
+    [String(id), projectName, milestone, startDate || null, endDate || null, JSON.stringify({ ...existing, ...payload, projectName, milestone, startDate, endDate })]
   );
 
   if (!res.rows[0]) {
