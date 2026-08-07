@@ -435,8 +435,18 @@ export async function getSentEmail(id) {
     `SELECT m.id AS "_id", m.id, m.external_message_id AS "messageId",
             m.subject AS "renderedSubject", m.body AS "renderedBody",
             m.occurred_at AS "sentAt", m.delivery_state AS status,
-            cp.endpoint_value_snapshot AS "recipientEmail"
+            cp.endpoint_value_snapshot AS "recipientEmail",
+            CASE WHEN p.id IS NULL THEN NULL ELSE jsonb_build_object('_id', p.id, 'name', p.display_name) END AS lead,
+            CASE WHEN o.id IS NULL THEN NULL ELSE jsonb_build_object('_id', o.id, 'companyName', o.canonical_name) END AS company,
+            CASE WHEN campaign.id IS NULL THEN NULL ELSE jsonb_build_object('_id', campaign.id, 'projectName', campaign.name) END AS campaign
      FROM messages m
+     JOIN conversations conv ON conv.id = m.conversation_id
+     LEFT JOIN campaign_contacts cc ON cc.id = conv.campaign_contact_id
+     LEFT JOIN campaign_accounts ca ON ca.id = cc.campaign_account_id
+     LEFT JOIN campaigns campaign ON campaign.id = COALESCE(conv.campaign_id, ca.campaign_id)
+     LEFT JOIN person_organization_roles por ON por.id = cc.role_id
+     LEFT JOIN people p ON p.id = por.person_id
+     LEFT JOIN organizations o ON o.id = ca.organization_id
      LEFT JOIN LATERAL (
        SELECT endpoint_value_snapshot FROM conversation_participants
        WHERE conversation_id = m.conversation_id AND participant_role = 'recipient'
@@ -641,13 +651,39 @@ export async function sendLaunchBatchJobs(batchId, options = {}) {
 }
 
 export async function getLaunchBatchSendProgress(batchId) {
+  const { getHourlySendCount, getMsUntilHourlyLimitResumes } = await import('./sendWorker.js');
+  const hourlySent = await getHourlySendCount();
+  const hourlyCap = Number(process.env.MAILBOX_HOURLY_CAP) || 199;
+  const rateLimited = hourlySent >= hourlyCap;
+  const resumesInMs = rateLimited ? await getMsUntilHourlyLimitResumes() : 0;
+
   const result = await db.query(`SELECT COUNT(*)::int AS total,COUNT(*) FILTER(WHERE sj.status='sent')::int AS sent,
     COUNT(*) FILTER(WHERE sj.status IN('pending','processing'))::int AS pending,COUNT(*) FILTER(WHERE sj.status='failed')::int AS failed,
     COUNT(*) FILTER(WHERE sj.status='processing')::int AS processing,
     COUNT(*) FILTER(WHERE sj.status='pending' AND COALESCE(sj.manual_send,FALSE)=FALSE AND COALESCE(sj.scheduled_for,NOW())<=NOW())::int AS due
     FROM send_jobs sj JOIN sequence_enrollments se ON se.id=sj.enrollment_id WHERE se.launch_batch_id=$1::uuid`, [batchId]);
   const row = result.rows[0];
-  return { ...row, running: Number(row.processing) > 0 || Number(row.due) > 0, lastError: null };
+
+  const infoRes = await db.query(
+    `SELECT sl.id, sl.launched_at AS "launchedAt", s.name AS "sequenceName", COALESCE(c.name, 'Mixed Audience') AS "campaignName", c.id AS "campaignId"
+     FROM sequence_launches sl
+     JOIN sequences s ON s.id = sl.sequence_id
+     LEFT JOIN campaigns c ON c.id = sl.campaign_id
+     WHERE sl.id::text = $1::text LIMIT 1`,
+    [batchId]
+  );
+  const info = infoRes.rows[0] || null;
+
+  return {
+    ...row,
+    running: Number(row.processing) > 0 || Number(row.due) > 0,
+    hourlySent,
+    hourlyCap,
+    rateLimited,
+    resumesInMs,
+    info,
+    lastError: null,
+  };
 }
 
 export async function sendCampaignQueueJobs(campaignId, options = {}) {

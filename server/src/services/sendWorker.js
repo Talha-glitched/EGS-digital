@@ -76,6 +76,27 @@ async function getDailySendCount() {
   return Number(res.rows[0]?.count) || 0;
 }
 
+export async function getHourlySendCount() {
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+  const res = await db.query(
+    `SELECT COUNT(*) FROM messages WHERE direction = 'outbound' AND occurred_at >= $1`,
+    [oneHourAgo]
+  );
+  return Number(res.rows[0]?.count) || 0;
+}
+
+export async function getMsUntilHourlyLimitResumes() {
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+  const res = await db.query(
+    `SELECT MIN(occurred_at) as oldest FROM messages WHERE direction = 'outbound' AND occurred_at >= $1`,
+    [oneHourAgo]
+  );
+  if (!res.rows[0]?.oldest) return 60 * 60 * 1000;
+  const oldestTime = new Date(res.rows[0].oldest).getTime();
+  const resumeTime = oldestTime + 60 * 60 * 1000 + 1000;
+  return Math.max(2000, resumeTime - Date.now());
+}
+
 function renderTemplate(value, context) {
   return String(value || '').replace(/{{\s*([^}]+)\s*}}/g, (_match, rawKey) => {
     const key = String(rawKey).trim().toLowerCase();
@@ -140,6 +161,7 @@ async function processSendJob(jobId, { force = false } = {}) {
     const sent = await sendAuthenticatedMail({
       fromName,fromEmail,to:context.recipient_email,subject,text:body,
       html:renderEmailHtml({ body, leadId: context.person_id, stepIndex: context.step_index }),campaignId:context.campaign_id,
+      forceSmtp: true,
     });
     const providerMessageId = String(sent?.messageId || '').trim();
     const finish = await db.getClient();
@@ -150,10 +172,17 @@ async function processSendJob(jobId, { force = false } = {}) {
          VALUES('email',$1,$2,$3::uuid,$4::uuid) RETURNING id`,
         [providerMessageId || null, subject, context.campaign_contact_id, context.campaign_id],
       );
-      if (context.contact_method_id) await finish.query(
-        `INSERT INTO conversation_participants(conversation_id,person_contact_method_id,participant_role,endpoint_type_snapshot,endpoint_value_snapshot)
-         VALUES($1::uuid,$2::uuid,'recipient','email',$3)`, [conversation.rows[0].id, context.contact_method_id, context.recipient_email],
-      );
+      if (context.contact_method_id) {
+        await finish.query(
+          `INSERT INTO conversation_participants(conversation_id,person_contact_method_id,participant_role,endpoint_type_snapshot,endpoint_value_snapshot)
+           VALUES($1::uuid,$2::uuid,'recipient','email',$3)`, [conversation.rows[0].id, context.contact_method_id, context.recipient_email],
+        );
+      } else {
+        await finish.query(
+          `INSERT INTO conversation_participants(conversation_id,participant_role,endpoint_type_snapshot,endpoint_value_snapshot)
+           VALUES($1::uuid,'recipient','email',$2)`, [conversation.rows[0].id, context.recipient_email],
+        );
+      }
       await finish.query(
         `INSERT INTO messages(conversation_id,direction,channel,external_message_id,subject,body,delivery_state,occurred_at)
          VALUES($1::uuid,'outbound','email',$2,$3,$4,'sent',NOW())`, [conversation.rows[0].id, providerMessageId || null, subject, body],
@@ -225,6 +254,7 @@ async function deliverSequenceEmail({
       stepIndex: enrollment.current_step_index || 0,
     }),
     campaignId: campaign?.id,
+    forceSmtp: true,
   });
   const messageId = String(result?.messageId || '').trim();
 
@@ -280,6 +310,15 @@ async function pollSendQueue() {
 
   isProcessing = true;
   try {
+    const hourlyCap = Number(process.env.MAILBOX_HOURLY_CAP) || 199;
+    const currentHourlyCount = await getHourlySendCount();
+    if (currentHourlyCount >= hourlyCap) {
+      const waitMs = await getMsUntilHourlyLimitResumes();
+      console.warn(`[SendWorker] Hourly SMTP rate limit reached (${currentHourlyCount}/${hourlyCap}). Pausing worker for ${Math.ceil(waitMs / 60000)} minute(s)...`);
+      nextAllowedSendAt = Date.now() + waitMs;
+      return;
+    }
+
     const dailyCap = Number(process.env.MAILBOX_DAILY_CAP) || 150;
     const currentDailyCount = await getDailySendCount();
     if (currentDailyCount >= dailyCap) {

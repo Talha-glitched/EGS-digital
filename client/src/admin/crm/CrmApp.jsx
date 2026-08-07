@@ -27,6 +27,7 @@ import EmployeesPage from './pages/EmployeesPage.jsx';
 import InventoryPage from './pages/InventoryPage.jsx';
 import OperationsReportsPage from './pages/OperationsReportsPage.jsx';
 import SequencesPage from './pages/SequencesPage.jsx';
+import LiveSendMonitorPage from './pages/LiveSendMonitorPage.jsx';
 import EmailHubPage from './pages/EmailHubPage.jsx';
 import ResendEmailsPage from './pages/ResendEmailsPage.jsx';
 import RelationshipsPage from './pages/RelationshipsPage.jsx';
@@ -339,6 +340,7 @@ function CrmShell({ projects, onLogout, status }) {
               <Route path="projects" element={<ProjectsPage initialProjects={projects} />} />
               <Route path="projects/:id" element={<ProjectDetailWorkspace />} />
               <Route path="sequences" element={<SequencesPage />} />
+              <Route path="sequence-live/:batchId" element={<LiveSendMonitorPage />} />
               <Route path="people" element={<PeoplePage />} />
               <Route path="companies" element={<CompaniesPage />} />
               <Route path="communications" element={<EmailHubPage />} />

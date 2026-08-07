@@ -142,6 +142,7 @@ export async function sendAuthenticatedMail({
   inReplyTo,
   references,
   campaignId,
+  forceSmtp = false,
 }) {
   const { getSystemSettings } = await import('./systemSettingsService.js');
   const settings = await getSystemSettings().catch(() => ({ useResend: false, resendDomain: 'masuood.exhibitgraphicsign.com' }));
@@ -152,7 +153,7 @@ export async function sendAuthenticatedMail({
     throw new Error('At least one recipient is required.');
   }
 
-  if (settings.useResend) {
+  if (settings.useResend && !forceSmtp) {
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) {
       console.error('[Email] ERROR: Resend is enabled, but RESEND_API_KEY is not configured.');

@@ -34,6 +34,7 @@ import { Building2, Users, Mail, Search, Send, Play, Trash2 } from 'lucide-react
 
 const SEND_JOB_STATUS_CONFIG = {
   pending: { className: 'bg-amber-50 text-amber-800 ring-amber-200/70', label: 'Pending' },
+  rate_limited: { className: 'bg-amber-100 text-amber-900 ring-amber-300', label: 'Rate-Limited (199/hr)' },
   processing: { className: 'bg-blue-50 text-blue-800 ring-blue-200/70', label: 'Sending...' },
   sent: { className: 'bg-emerald-50 text-emerald-800 ring-emerald-200/70', label: 'Sent' },
   failed: { className: 'bg-red-50 text-red-800 ring-red-200/70', label: 'Failed' },
