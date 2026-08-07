@@ -63,9 +63,9 @@ export function StatBandItem({ label, value, detail, icon: Icon, tone = 'neutral
   const tones = {
     neutral: 'bg-neutral-100 text-neutral-600',
     brand: 'bg-brand-soft text-brand',
-    success: 'bg-emerald-50 text-emerald-600',
-    info: 'bg-sky-50 text-sky-600',
-    warning: 'bg-amber-50 text-amber-700',
+    success: 'bg-emerald-50 text-emerald-700',
+    info: 'bg-sky-50 text-sky-700',
+    warning: 'bg-amber-50 text-amber-800',
   };
   return (
     <Tag className={cn('crm-stat-band-item hover:bg-neutral-50/60', className)} {...props}>
@@ -75,9 +75,9 @@ export function StatBandItem({ label, value, detail, icon: Icon, tone = 'neutral
         </div>
       )}
       <div className="min-w-0 flex-1">
-        <p className="text-[10px] font-semibold uppercase tracking-wide text-neutral-500">{label}</p>
+        <p className="text-2xs font-semibold uppercase tracking-wide text-neutral-500">{label}</p>
         <p className="mt-0.5 text-sm font-bold leading-none tracking-tight tabular-nums text-[var(--color-ink)]">{value}</p>
-        {detail && <p className="mt-1 text-[11px] leading-snug text-neutral-400">{detail}</p>}
+        {detail && <p className="mt-1 text-xs leading-snug text-neutral-500">{detail}</p>}
       </div>
     </Tag>
   );
@@ -91,7 +91,7 @@ export function PageHeader({ title, subtitle, action }) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
       <div className="max-w-2xl">
-        <h1 className="text-base font-bold tracking-tight text-[var(--color-ink)]">{title}</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-[var(--color-ink)]">{title}</h1>
         {subtitle && <p className="mt-0.5 text-xs leading-relaxed text-[var(--color-ink-muted)]">{subtitle}</p>}
       </div>
       {action && <div className="flex shrink-0 flex-wrap gap-2">{action}</div>}
@@ -107,7 +107,7 @@ export function CardHeader({ title, subtitle, action, className = '' }) {
   return (
     <div className={cn('flex items-center justify-between gap-3 border-b border-[var(--color-line)] px-4 py-2.5', className)}>
       <div className="min-w-0">
-        <h3 className="text-xs font-semibold text-[var(--color-ink)]">{title}</h3>
+        <h3 className="text-base font-semibold text-[var(--color-ink)]">{title}</h3>
         {subtitle && <p className="mt-0.5 text-xs leading-relaxed text-neutral-500">{subtitle}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
@@ -119,9 +119,9 @@ export function StatCard({ label, value, icon: Icon, tone = 'neutral', helpText,
   const tones = {
     neutral: { icon: 'bg-neutral-100 text-neutral-600', value: 'text-[var(--color-ink)]' },
     brand: { icon: 'bg-brand-soft text-brand', value: 'text-[var(--color-ink)]' },
-    success: { icon: 'bg-emerald-50 text-emerald-600', value: 'text-[var(--color-ink)]' },
-    info: { icon: 'bg-sky-50 text-sky-600', value: 'text-[var(--color-ink)]' },
-    warning: { icon: 'bg-amber-50 text-amber-700', value: 'text-[var(--color-ink)]' },
+    success: { icon: 'bg-emerald-50 text-emerald-700', value: 'text-[var(--color-ink)]' },
+    info: { icon: 'bg-sky-50 text-sky-700', value: 'text-[var(--color-ink)]' },
+    warning: { icon: 'bg-amber-50 text-amber-800', value: 'text-[var(--color-ink)]' },
   };
   const t = tones[tone] || tones.neutral;
 
@@ -134,9 +134,9 @@ export function StatCard({ label, value, icon: Icon, tone = 'neutral', helpText,
           </div>
         )}
         <div className="min-w-0 flex-1">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-neutral-500">{label}</p>
+          <p className="text-2xs font-semibold uppercase tracking-wide text-neutral-500">{label}</p>
           <p className={cn('mt-0.5 text-sm font-bold leading-none tracking-tight tabular-nums', t.value)}>{value}</p>
-          {helpText && <p className="mt-1 line-clamp-2 text-[11px] leading-snug text-neutral-400">{helpText}</p>}
+          {helpText && <p className="mt-1 line-clamp-2 text-xs leading-snug text-neutral-500">{helpText}</p>}
         </div>
       </div>
     );
@@ -146,9 +146,9 @@ export function StatCard({ label, value, icon: Icon, tone = 'neutral', helpText,
     <div className="crm-card crm-card-hover p-4 lg:p-5">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">{label}</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">{label}</p>
           <p className={cn('mt-1.5 text-xl font-bold leading-none tracking-tight tabular-nums', t.value)}>{value}</p>
-          {helpText && <p className="mt-2 text-xs leading-relaxed text-neutral-400">{helpText}</p>}
+          {helpText && <p className="mt-2 text-xs leading-relaxed text-neutral-500">{helpText}</p>}
         </div>
         {Icon && (
           <div className={cn('crm-stat-icon shrink-0', t.icon)}>
@@ -164,11 +164,15 @@ export function Tabs({ items, active, onChange }) {
   const activeItem = items.find((t) => t.id === active);
   return (
     <div className="space-y-3">
-      <div className="inline-flex flex-wrap gap-1 rounded-xl bg-neutral-100 p-1">
+      <div role="tablist" className="inline-flex flex-wrap gap-1 rounded-xl bg-neutral-100 p-1">
         {items.map((item) => (
           <button
             key={item.id}
             type="button"
+            role="tab"
+            id={`crm-tab-${item.id}`}
+            aria-selected={active === item.id}
+            aria-controls={`crm-tabpanel-${item.id}`}
             onClick={() => onChange(item.id)}
             className={cn(
               'rounded-lg px-3 py-1.5 text-xs font-medium transition',
@@ -180,7 +184,7 @@ export function Tabs({ items, active, onChange }) {
         ))}
       </div>
       {activeItem?.description && (
-        <p className="max-w-3xl text-xs leading-relaxed text-neutral-500">{activeItem.description}</p>
+        <p id={`crm-tabpanel-${activeItem.id}`} role="tabpanel" aria-labelledby={`crm-tab-${activeItem.id}`} className="max-w-3xl text-xs leading-relaxed text-neutral-500">{activeItem.description}</p>
       )}
     </div>
   );
@@ -210,14 +214,33 @@ export function LoadingState({ label = 'Loading…' }) {
   );
 }
 
-export function Alert({ tone = 'error', children }) {
+export function Alert({ tone = 'error', children, onRetry, retryLabel = 'Retry', action, className = '' }) {
   const styles = {
     error: 'border-red-200 bg-red-50 text-red-800',
-    warning: 'border-amber-200 bg-amber-50 text-amber-900',
-    success: 'border-emerald-200 bg-emerald-50 text-emerald-900',
-    info: 'border-sky-200 bg-sky-50 text-sky-900',
+    warning: 'border-amber-200 bg-amber-50 text-amber-800',
+    success: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+    info: 'border-sky-200 bg-sky-50 text-sky-700',
   };
-  return <div className={cn('rounded-lg border px-3 py-2 text-xs leading-relaxed', styles[tone] || styles.error)}>{children}</div>;
+  const retryStyles = {
+    error: 'text-red-800 hover:bg-red-100',
+    warning: 'text-amber-800 hover:bg-amber-100',
+    success: 'text-emerald-700 hover:bg-emerald-100',
+    info: 'text-sky-700 hover:bg-sky-100',
+  };
+  return (
+    <div className={cn('flex flex-wrap items-center justify-between gap-2 rounded-lg border px-3 py-2 text-xs leading-relaxed', styles[tone] || styles.error, className)}>
+      <span>{children}</span>
+      {onRetry ? (
+        <button
+          type="button"
+          onClick={onRetry}
+          className={cn('shrink-0 rounded-md px-2 py-1 text-xs font-semibold underline underline-offset-2', retryStyles[tone] || retryStyles.error)}
+        >
+          {retryLabel}
+        </button>
+      ) : action || null}
+    </div>
+  );
 }
 
 export function Toast({ message, onDismiss }) {
@@ -298,7 +321,7 @@ export function WorkflowGuide({ steps }) {
 export function Field({ label, hint, required, children }) {
   return (
     <label className="block space-y-2">
-      <span className="block text-sm font-semibold text-[var(--color-ink)]">
+      <span className="block text-sm font-medium text-[var(--color-ink)]">
         {label}
         {required && <span className="ml-0.5 text-brand">*</span>}
       </span>
@@ -327,7 +350,7 @@ export function Badge({ children, tone = 'neutral', className = '' }) {
     danger: 'bg-red-50 text-red-700 ring-red-200/70',
   };
   return (
-    <span className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ring-1 ring-inset whitespace-nowrap', tones[tone] || tones.neutral, className)}>
+    <span className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ring-1 ring-inset whitespace-nowrap', tones[tone] || tones.neutral, className)}>
       {children}
     </span>
   );

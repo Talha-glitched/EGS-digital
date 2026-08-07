@@ -1,16 +1,20 @@
 import mongoose from 'mongoose';
 
+// Ordered by each stage's own `probability` (the pipeline's real progression signal,
+// already authoritative for forecasting) so the default board reads as one continuous
+// sequence instead of the array order someone happened to type. `Job Lost` is pinned
+// last as the terminal exit branch rather than sorting to the front at probability 0.
 export const DEFAULT_PIPELINE_STAGES = [
   { name: 'Inquiry', probability: 10 },
+  { name: 'Design', probability: 25 },
+  { name: 'Quotation Sent', probability: 40 },
   { name: 'Waiting Adv/ PO', probability: 50 },
   { name: 'In Production', probability: 70 },
   { name: 'Installation', probability: 80 },
+  { name: 'Ready', probability: 85 },
   { name: 'Waiting Balance Payment', probability: 90 },
   { name: 'Job Done', probability: 100 },
-  { name: 'Quotation Sent', probability: 40 },
   { name: 'Job Lost', probability: 0 },
-  { name: 'Design', probability: 25 },
-  { name: 'Ready', probability: 85 },
 ];
 
 const stageSchema = new mongoose.Schema(

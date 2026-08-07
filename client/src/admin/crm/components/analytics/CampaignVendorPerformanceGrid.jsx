@@ -101,7 +101,7 @@ export default function CampaignVendorPerformanceGrid({ campaignVendorPerformanc
                   <div>
                     <h4 className="text-sm font-bold text-[var(--color-ink)]">{camp.projectName}</h4>
                     {camp.milestone && (
-                      <p className="text-[11px] font-medium text-neutral-500">{camp.milestone}</p>
+                      <p className="text-xs font-medium text-neutral-500">{camp.milestone}</p>
                     )}
                   </div>
                 </div>
@@ -114,7 +114,12 @@ export default function CampaignVendorPerformanceGrid({ campaignVendorPerformanc
                     <span className="text-neutral-300">•</span>
                     <span className="font-semibold text-emerald-600">{totalReplies} Replies ({overallReplyRate})</span>
                   </div>
-                  <button type="button" className="text-neutral-400 hover:text-neutral-600">
+                  <button
+                    type="button"
+                    className="text-neutral-400 hover:text-neutral-600"
+                    aria-label={isCollapsed ? 'Expand campaign details' : 'Collapse campaign details'}
+                    aria-expanded={!isCollapsed}
+                  >
                     {isCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
                   </button>
                 </div>
@@ -125,7 +130,7 @@ export default function CampaignVendorPerformanceGrid({ campaignVendorPerformanc
                 <div className="crm-scroll overflow-x-auto border-t border-neutral-100">
                   <table className="w-full min-w-[600px] text-xs">
                     <thead>
-                      <tr className="bg-neutral-50/50 text-[11px] font-semibold text-neutral-500 uppercase tracking-wider border-b border-neutral-200/60">
+                      <tr className="bg-neutral-50/50 text-xs font-semibold text-neutral-500 uppercase tracking-wider border-b border-neutral-200/60">
                         <th className="px-4 py-2.5 text-left">Source</th>
                         <th className="px-4 py-2.5 text-right">Leads</th>
                         <th className="px-4 py-2.5 text-right">Opens</th>
@@ -156,7 +161,7 @@ export default function CampaignVendorPerformanceGrid({ campaignVendorPerformanc
                       ))}
                     </tbody>
                     <tfoot>
-                      <tr className="bg-neutral-50/80 font-bold border-t border-neutral-200/80 text-[11px] text-[var(--color-ink)]">
+                      <tr className="bg-neutral-50/80 font-bold border-t border-neutral-200/80 text-xs text-[var(--color-ink)]">
                         <td className="px-4 py-2.5">Total</td>
                         <td className="px-4 py-2.5 text-right tabular-nums">{totalLeads}</td>
                         <td className="px-4 py-2.5 text-right tabular-nums">0</td>

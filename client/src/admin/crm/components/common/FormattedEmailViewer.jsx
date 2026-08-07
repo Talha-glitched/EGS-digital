@@ -167,7 +167,7 @@ export default function FormattedEmailViewer({ html = '', text = '', className =
   return (
     <div className={`rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden ${className}`}>
       <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/90 px-3 py-1.5 text-xs text-slate-500">
-        <span className="font-bold text-slate-700 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
+        <span className="font-bold text-slate-700 flex items-center gap-1.5 text-xs uppercase tracking-wider">
           <Code className="h-3.5 w-3.5 text-sky-600" />
           {viewMode === 'html' ? 'HTML' : 'Plain Text'}
         </span>
@@ -175,7 +175,7 @@ export default function FormattedEmailViewer({ html = '', text = '', className =
           <button
             type="button"
             onClick={() => setViewMode('html')}
-            className={`inline-flex items-center gap-1 px-3 py-0.5 rounded-md text-[11px] font-bold transition ${
+            className={`inline-flex items-center gap-1 px-3 py-0.5 rounded-md text-xs font-bold transition ${
               viewMode === 'html' ? 'bg-sky-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
             }`}
           >
@@ -185,7 +185,7 @@ export default function FormattedEmailViewer({ html = '', text = '', className =
           <button
             type="button"
             onClick={() => setViewMode('text')}
-            className={`inline-flex items-center gap-1 px-3 py-0.5 rounded-md text-[11px] font-bold transition ${
+            className={`inline-flex items-center gap-1 px-3 py-0.5 rounded-md text-xs font-bold transition ${
               viewMode === 'text' ? 'bg-sky-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
             }`}
           >

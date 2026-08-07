@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useConfirmDeleteDialog } from '../context/ConfirmDeleteContext.jsx';
 import { useUndoToast } from '../context/UndoToastContext.jsx';
+import { pluralize } from '../constants/pluralForms.js';
 
 /**
  * Bulk delete with confirm modal and per-item undo toasts (same safety as single delete).
@@ -21,16 +22,7 @@ export function useBulkDelete({
 
     const count = ids.length;
     const noun = options.noun || resourceType;
-    const pluralForms = {
-      company: 'companies',
-      contact: 'contacts',
-      opportunity: 'opportunities',
-      campaign: 'campaigns',
-      task: 'tasks',
-      project: 'campaigns',
-    };
-    const plural = pluralForms[noun] || `${noun}s`;
-    const label = count === 1 ? `1 ${noun}` : `${count} ${plural}`;
+    const label = pluralize(noun, count);
 
     const ok = await confirmDelete({
       title: options.title || `Delete ${label}?`,

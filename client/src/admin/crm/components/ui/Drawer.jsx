@@ -1,9 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { cn } from './primitives.jsx';
 import { useBodyScrollLock } from './useBodyScrollLock.js';
 import { useOverlayTransition } from './useOverlayTransition.js';
+import { useFocusTrap } from './useFocusTrap.js';
 
 const WIDTHS = {
   sm: 'max-w-[440px]',
@@ -27,23 +28,10 @@ export default function Drawer({
 }) {
   const effectiveOpen = open !== undefined ? open : isOpen;
   const panelRef = useRef(null);
-  const onCloseRef = useRef(onClose);
+  const titleId = useId();
   const { mounted, visible, exiting } = useOverlayTransition(effectiveOpen);
   useBodyScrollLock(mounted);
-
-  onCloseRef.current = onClose;
-
-  useEffect(() => {
-    if (!mounted || exiting) return undefined;
-    function handleKeyDown(event) {
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        onCloseRef.current?.();
-      }
-    }
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [mounted, exiting]);
+  useFocusTrap(panelRef, { active: mounted && !exiting, onClose });
 
   if (!mounted) return null;
 
@@ -67,9 +55,10 @@ export default function Drawer({
       />
       <aside
         ref={panelRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
-        aria-labelledby={title ? 'crm-drawer-title' : undefined}
+        aria-labelledby={title ? titleId : undefined}
         className={cn(
           'crm-drawer-panel crm-scroll',
           WIDTHS[size] || WIDTHS.md,
@@ -84,7 +73,7 @@ export default function Drawer({
           <div className="crm-drawer-header">
             <div className="min-w-0 flex-1 pr-2">
               {title && (
-                <h2 id="crm-drawer-title" className="crm-drawer-title">
+                <h2 id={titleId} className="crm-drawer-title">
                   {title}
                 </h2>
               )}

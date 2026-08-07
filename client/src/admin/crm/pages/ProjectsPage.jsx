@@ -260,7 +260,7 @@ export default function ProjectsPage({ initialProjects }) {
                       <td>
                         <p className="font-semibold text-ink">{campaign.projectName}</p>
                         {campaign.milestone ? (
-                          <p className="mt-0.5 text-[11px] text-neutral-500">{campaign.milestone}</p>
+                          <p className="mt-0.5 text-xs text-neutral-500">{campaign.milestone}</p>
                         ) : null}
                       </td>
                       <td className="crm-table-stage-col">
@@ -327,7 +327,7 @@ function InsightChip({ icon: Icon, label, value }) {
         <Icon className="h-4 w-4" />
       </div>
       <div>
-        <p className="text-[10px] font-semibold uppercase tracking-wide text-neutral-500">{label}</p>
+        <p className="text-2xs font-semibold uppercase tracking-wide text-neutral-500">{label}</p>
         <p className="text-sm font-bold tabular-nums text-ink">{value}</p>
       </div>
     </div>

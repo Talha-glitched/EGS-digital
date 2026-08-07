@@ -34,6 +34,7 @@ export default function GlobalDashboard() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [projectsLoading, setProjectsLoading] = useState(true);
+  const [projectsError, setProjectsError] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
@@ -69,8 +70,10 @@ export default function GlobalDashboard() {
     try {
       const projectList = await crmApiFetch('/api/admin/projects?summary=true');
       setProjects(projectList || []);
+      setProjectsError('');
     } catch (err) {
       console.error('Projects load failed:', err.message);
+      setProjectsError(err.message || 'Failed to load campaigns.');
     } finally {
       setProjectsLoading(false);
     }
@@ -230,7 +233,7 @@ export default function GlobalDashboard() {
               <Link
                 to="/admin/crm/projects"
                 onClick={(e) => e.stopPropagation()}
-                className="text-[11px] font-semibold text-brand hover:underline"
+                className="text-xs font-semibold text-brand hover:underline"
               >
                 View all
               </Link>
@@ -244,15 +247,20 @@ export default function GlobalDashboard() {
               )}
             >
               <div className="overflow-hidden">
+                {projectsError && !projectsLoading && (
+                  <div className="p-3">
+                    <Alert tone="error" onRetry={loadProjects}>{projectsError}</Alert>
+                  </div>
+                )}
                 <ListBody className="divide-y divide-neutral-100 bg-white">
                   {projects.slice(0, 5).map((project) => (
                     <ListRow key={project._id} as={Link} to={`/admin/crm/projects/${project._id}`} className="group hover:bg-sky-50/50 py-2 px-3">
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-1.5">
                           <p className="truncate text-xs font-bold text-ink group-hover:text-brand">{project.projectName}</p>
-                          <Badge tone={STATUS_TONE[project.status] || 'neutral'} className="py-0 px-1.5 text-[9px]">{project.status}</Badge>
+                          <Badge tone={STATUS_TONE[project.status] || 'neutral'} className="py-0 px-1.5 text-2xs">{project.status}</Badge>
                         </div>
-                        <p className="mt-0.5 truncate text-[10px] text-neutral-500">
+                        <p className="mt-0.5 truncate text-2xs text-neutral-500">
                           {project.milestone ? `${project.milestone} · ` : ''}
                           {project.targetCompaniesCount || 0} targets · {project.companiesWithPocsFound || 0} with POC
                         </p>

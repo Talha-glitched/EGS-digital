@@ -227,9 +227,9 @@ function FilterCategoryNav({ groups, activeId, onSelect, groupCounts }) {
             onClick={() => onSelect(group.id)}
           >
             <span className="min-w-0 flex-1 text-left">
-              <span className="block truncate text-[13px] font-semibold">{group.label}</span>
+              <span className="block truncate text-sm font-semibold">{group.label}</span>
               {group.description ? (
-                <span className="block truncate text-[10px] font-medium text-neutral-400">{group.description}</span>
+                <span className="block truncate text-2xs font-medium text-neutral-400">{group.description}</span>
               ) : null}
             </span>
             {count > 0 ? <span className="crm-filter-nav-badge">{count}</span> : null}
@@ -247,7 +247,7 @@ function FilterPanelBody({ schema, draft, setDraft, matchMode, setMatchMode, act
   return (
     <div className="crm-filter-body">
       <div className="crm-filter-match-bar">
-        <span className="text-[11px] font-semibold text-neutral-500">Match records where</span>
+        <span className="text-xs font-semibold text-neutral-500">Match records where</span>
         <SearchableSelect
           className="crm-filter-select crm-filter-match-select"
           value={matchMode}
@@ -265,7 +265,7 @@ function FilterPanelBody({ schema, draft, setDraft, matchMode, setMatchMode, act
         <header className="crm-filter-fields-head">
           <h3 className="text-sm font-bold text-[var(--color-ink)]">{activeGroup.label}</h3>
           {activeGroup.description ? (
-            <p className="text-[11px] text-neutral-500">{activeGroup.description}</p>
+            <p className="text-xs text-neutral-500">{activeGroup.description}</p>
           ) : null}
         </header>
         <div className="crm-filter-fields-list">
@@ -412,7 +412,7 @@ export function AdvancedFilterPopover({
                 Clear all
               </button>
               <div className="flex items-center gap-3">
-                <span className="text-[11px] font-medium text-neutral-400">
+                <span className="text-xs font-medium text-[var(--color-ink-muted)]">
                   {draftCount ? `${draftCount} filter${draftCount === 1 ? '' : 's'} ready` : 'No filters set'}
                 </span>
                 <button type="button" className="crm-btn-secondary text-xs" onClick={() => setOpen(false)}>

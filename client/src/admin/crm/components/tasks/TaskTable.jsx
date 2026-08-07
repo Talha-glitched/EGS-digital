@@ -32,9 +32,9 @@ function DeadlineBadge({ dueAt, status }) {
   const label = formatDeadlineLabel(dueAt, status);
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="text-[12px] text-neutral-600">{formatTaskDue(dueAt)}</span>
+      <span className="text-xs text-neutral-600">{formatTaskDue(dueAt)}</span>
       {tone && label && (
-        <span className={`inline-flex w-fit items-center rounded-full px-1.5 py-0.5 text-[10px] font-semibold leading-none ${DEADLINE_TONE_STYLES[tone]} ${tone === 'overdue' ? 'animate-pulse' : ''}`}>
+        <span className={`inline-flex w-fit items-center rounded-full px-1.5 py-0.5 text-2xs font-semibold leading-none ${DEADLINE_TONE_STYLES[tone]} ${tone === 'overdue' ? 'animate-pulse' : ''}`}>
           {label}
         </span>
       )}
@@ -80,18 +80,18 @@ function TaskTitleCell({ task, onPatch, focus, editing }) {
           <p className={`font-semibold ${task.status === 'Done' ? 'text-neutral-400 line-through' : 'text-[var(--color-ink)]'}`}>
             {task.title}
           </p>
-          <span className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-medium ${badge.color}`}>
+          <span className={`inline-flex rounded-full border px-2 py-0.5 text-2xs font-medium ${badge.color}`}>
             {badge.label}
           </span>
-          {stateTone && <span className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-semibold ${stateTone}`}>{task.isBlockedByDependency && task.status !== 'Blocked' ? 'Dependency blocked' : task.status}</span>}
+          {stateTone && <span className={`inline-flex rounded-full border px-2 py-0.5 text-2xs font-semibold ${stateTone}`}>{task.isBlockedByDependency && task.status !== 'Blocked' ? 'Dependency blocked' : task.status}</span>}
         </div>
         {(task.jobTitle || task.workPackageTitle || task.phaseName || task.locationName || task.activityTitle) && (
-          <p className="mt-1 line-clamp-1 text-[10px] text-neutral-500">
+          <p className="mt-1 line-clamp-1 text-2xs text-neutral-500">
             {[task.jobNumber && task.jobTitle ? `${task.jobNumber} · ${task.jobTitle}` : task.jobTitle, task.workPackageTitle, task.phaseName, task.locationName, task.activityTitle].filter(Boolean).join(' › ')}
           </p>
         )}
-        {task.status === 'Blocked' && task.blockedReason && <p className="mt-1 line-clamp-1 text-[10px] font-medium text-red-600">Blocked: {task.blockedReason}</p>}
-        {task.status === 'Waiting' && task.waitingOn && <p className="mt-1 line-clamp-1 text-[10px] font-medium text-violet-600">Waiting on: {task.waitingOn}</p>}
+        {task.status === 'Blocked' && task.blockedReason && <p className="mt-1 line-clamp-1 text-2xs font-medium text-red-600">Blocked: {task.blockedReason}</p>}
+        {task.status === 'Waiting' && task.waitingOn && <p className="mt-1 line-clamp-1 text-2xs font-medium text-violet-600">Waiting on: {task.waitingOn}</p>}
       </div>
     );
   }
@@ -320,7 +320,7 @@ export default function TaskTable({
                       <div>
                         <span className="text-neutral-700">{task.ongoingJobId?.name || task.opportunityId?.name || '—'}</span>
                         {!showAccountColumn && task.companyId?.companyName && (
-                          <p className="mt-0.5 text-[11px] text-neutral-500">{task.companyId.companyName}</p>
+                          <p className="mt-0.5 text-xs text-neutral-500">{task.companyId.companyName}</p>
                         )}
                       </div>
                     ) : (

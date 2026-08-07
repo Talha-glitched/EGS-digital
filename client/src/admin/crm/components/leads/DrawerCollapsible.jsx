@@ -20,7 +20,7 @@ export default function DrawerCollapsible({
         aria-expanded={open}
       >
         <span className="min-w-0 flex-1 text-left">
-          <span className="block text-[13px] font-semibold text-[var(--color-ink)]">{title}</span>
+          <span className="block text-sm font-semibold text-[var(--color-ink)]">{title}</span>
           {subtitle && <span className="mt-0.5 block text-xs text-neutral-500">{subtitle}</span>}
         </span>
         <ChevronDown className={cn('crm-drawer-accordion-chevron h-4 w-4 shrink-0 text-neutral-400', open && 'is-open')} />

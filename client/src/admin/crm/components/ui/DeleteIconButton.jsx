@@ -8,7 +8,10 @@ export default function DeleteIconButton({
   className = '',
   size = 'sm',
 }) {
-  const sizeClass = size === 'sm' ? 'h-7 w-7' : 'h-8 w-8';
+  // Visible box grows toward the 44px touch-target floor without the icon glyph
+  // itself getting bigger — 'sm' is used in tight kanban cards where a full 44px
+  // button would overwhelm the layout, so it gets the largest bump that still fits.
+  const sizeClass = size === 'sm' ? 'h-9 w-9' : 'h-11 w-11';
   const iconClass = size === 'sm' ? 'h-3.5 w-3.5' : 'h-4 w-4';
 
   return (

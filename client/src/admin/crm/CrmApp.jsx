@@ -83,14 +83,14 @@ function LoginPanel({ onLogin, status }) {
           <div className="relative z-10 max-w-xl crm-login-copy">
             <span className="crm-login-eyebrow">Commercial workspace</span>
             <h1 className="mt-5 max-w-lg text-[clamp(2.75rem,4vw,4.75rem)] font-bold leading-[0.98] tracking-[-0.055em]">Turn conversations into contracts.</h1>
-            <p className="mt-6 max-w-lg text-[15px] leading-7 text-white/60">One place for target companies, sales opportunities, follow-ups, controlled outreach, and commercial performance.</p>
+            <p className="mt-6 max-w-lg text-base leading-7 text-white/60">One place for target companies, sales opportunities, follow-ups, controlled outreach, and commercial performance.</p>
             <div className="mt-10 grid max-w-lg grid-cols-3 gap-3">
               <LoginProof value="Companies" label="Relationship history" />
               <LoginProof value="Pipeline" label="Deal progression" />
               <LoginProof value="Actions" label="Nothing forgotten" />
             </div>
           </div>
-          <div className="relative z-10 flex items-center justify-between text-[11px] text-white/35"><span>Internal operations console</span><span>Authorized staff only</span></div>
+          <div className="relative z-10 flex items-center justify-between text-xs text-white/35"><span>Internal operations console</span><span>Authorized staff only</span></div>
         </section>
 
         <section className="crm-login-form-panel flex items-center justify-center p-6 sm:p-10 lg:p-14">
@@ -141,7 +141,7 @@ function LoginPanel({ onLogin, status }) {
 }
 
 function LoginProof({ value, label }) {
-  return <div className="rounded-xl border border-white/10 bg-white/4.5 px-3.5 py-3 backdrop-blur-sm"><p className="text-sm font-semibold text-white">{value}</p><p className="mt-1 text-[10px] leading-4 text-white/35">{label}</p></div>;
+  return <div className="rounded-xl border border-white/10 bg-white/4.5 px-3.5 py-3 backdrop-blur-sm"><p className="text-sm font-semibold text-white">{value}</p><p className="mt-1 text-2xs leading-4 text-white/35">{label}</p></div>;
 }
 
 function DesignerShell({ onLogout, status }) {
@@ -290,6 +290,12 @@ function CrmShell({ projects, onLogout, status }) {
       .catch(() => {});
   }, []);
 
+  // Without this, every CRM tab carries the public marketing site's title —
+  // indistinguishable from the website in a staff member's tab strip.
+  useEffect(() => {
+    document.title = `${match[0]} · EGS Commercial CRM`;
+  }, [match[0]]);
+
   return (
     <ConfirmDeleteProvider>
       <UndoToastProvider>
@@ -378,6 +384,10 @@ export default function CrmApp() {
   useEffect(() => {
     checkAuth().catch(() => setStatus({ adminConfigured: false }));
   }, [checkAuth]);
+
+  useEffect(() => {
+    document.title = 'EGS Commercial CRM';
+  }, []);
 
   useEffect(() => {
     const handleUnauthorized = () => {

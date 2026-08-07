@@ -106,7 +106,7 @@ export default function DailyReviewConsistency() {
         </div>
 
         {/* Month Selector Pill */}
-        <div className="flex items-center gap-1 rounded-full border border-neutral-200/90 bg-neutral-50/80 px-2.5 py-1 text-[11px] font-semibold text-neutral-700 shadow-2xs">
+        <div className="flex items-center gap-1 rounded-full border border-neutral-200/90 bg-neutral-50/80 px-2.5 py-1 text-xs font-semibold text-neutral-700 shadow-2xs">
           <button
             type="button"
             onClick={handlePrevMonth}
@@ -150,12 +150,12 @@ export default function DailyReviewConsistency() {
                 {/* Line 1: Header (Title Left, Percentage Right) */}
                 <div className="flex items-center justify-between text-xs">
                   <div className="flex items-center gap-1.5">
-                    <span className={cn('font-semibold text-neutral-800 text-[12px]', row.isSummary && 'font-bold text-neutral-900')}>
+                    <span className={cn('font-semibold text-neutral-800 text-xs', row.isSummary && 'font-bold text-neutral-900')}>
                       {row.label}
                     </span>
                     <Info className="h-3 w-3 text-neutral-300 hover:text-neutral-500 transition" title={row.subtitle} />
                   </div>
-                  <span className="font-mono text-[11px] font-semibold tabular-nums text-neutral-500">
+                  <span className="font-mono text-xs font-semibold tabular-nums text-neutral-500">
                     {pct}% completion
                   </span>
                 </div>
@@ -210,7 +210,7 @@ export default function DailyReviewConsistency() {
         >
           {/* Header */}
           <div className="flex items-center justify-between border-b border-neutral-700/80 pb-1.5 mb-2">
-            <span className="text-[11px] font-semibold text-neutral-300">
+            <span className="text-xs font-semibold text-neutral-300">
               {new Date(hoveredDay.dayObj.date).toLocaleDateString('en-AE', {
                 weekday: 'short',
                 month: 'short',
@@ -222,21 +222,21 @@ export default function DailyReviewConsistency() {
             {/* Individual Row vs All Three Status Badge */}
             {hoveredDay.rowKey === 'all_three' ? (
               hoveredDay.dayObj.isFuture ? (
-                <span className="rounded-full bg-neutral-800 px-2 py-0.5 text-[9px] font-medium text-neutral-400">Future</span>
+                <span className="rounded-full bg-neutral-800 px-2 py-0.5 text-2xs font-medium text-neutral-400">Future</span>
               ) : hoveredDay.dayObj.all_three.count === 3 ? (
-                <span className="rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 text-[9px] font-bold">All 3 Done</span>
+                <span className="rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 text-2xs font-bold">All 3 Done</span>
               ) : hoveredDay.dayObj.all_three.count > 0 ? (
-                <span className="rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 text-[9px] font-bold">Partial ({hoveredDay.dayObj.all_three.count}/3)</span>
+                <span className="rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 text-2xs font-bold">Partial ({hoveredDay.dayObj.all_three.count}/3)</span>
               ) : (
-                <span className="rounded-full bg-neutral-800 text-neutral-400 border border-neutral-700 px-2 py-0.5 text-[9px] font-medium">Not Reviewed</span>
+                <span className="rounded-full bg-neutral-800 text-neutral-400 border border-neutral-700 px-2 py-0.5 text-2xs font-medium">Not Reviewed</span>
               )
             ) : (
               hoveredDay.dayObj.isFuture ? (
-                <span className="rounded-full bg-neutral-800 px-2 py-0.5 text-[9px] font-medium text-neutral-400">Future</span>
+                <span className="rounded-full bg-neutral-800 px-2 py-0.5 text-2xs font-medium text-neutral-400">Future</span>
               ) : hoveredDay.dayObj[hoveredDay.rowKey]?.completed ? (
-                <span className="rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 text-[9px] font-bold">Reviewed</span>
+                <span className="rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 text-2xs font-bold">Reviewed</span>
               ) : (
-                <span className="rounded-full bg-neutral-800 text-neutral-400 border border-neutral-700 px-2 py-0.5 text-[9px] font-medium">Not Reviewed</span>
+                <span className="rounded-full bg-neutral-800 text-neutral-400 border border-neutral-700 px-2 py-0.5 text-2xs font-medium">Not Reviewed</span>
               )
             )}
           </div>
@@ -244,7 +244,7 @@ export default function DailyReviewConsistency() {
           {/* Body Content */}
           {hoveredDay.rowKey === 'all_three' ? (
             /* Summary row: Show breakdown of all 3 */
-            <div className="space-y-1 text-[11px]">
+            <div className="space-y-1 text-xs">
               <div className="flex items-center justify-between">
                 <span className="text-neutral-400 font-medium">Ongoing Jobs:</span>
                 <span className={cn('font-medium truncate max-w-[150px]', hoveredDay.dayObj.ongoing_jobs?.completed ? 'text-emerald-400' : 'text-neutral-400')}>
@@ -266,7 +266,7 @@ export default function DailyReviewConsistency() {
             </div>
           ) : (
             /* Individual row: Show ONLY this row's details (Who, What time, Status) */
-            <div className="text-[11px] space-y-1">
+            <div className="text-xs space-y-1">
               <p className="font-semibold text-neutral-200">{hoveredDay.rowLabel}</p>
               {hoveredDay.dayObj.isFuture ? (
                 <p className="text-neutral-400 italic">Future date</p>

@@ -76,7 +76,7 @@ export default function ProjectPerformanceModal({ open, onClose, project, analyt
 function ProgressBlock({ label, hint, value, fraction, tone }) {
   return (
     <div className="crm-modal-progress-card">
-      <div className="mb-2.5 flex items-center justify-between gap-2 text-[10px] font-bold uppercase tracking-wide text-neutral-400">
+      <div className="mb-2.5 flex items-center justify-between gap-2 text-2xs font-bold uppercase tracking-wide text-neutral-400">
         <span className="inline-flex items-center gap-1">
           {label}
           {hint ? <InfoTip text={hint} label={`About ${label}`} /> : null}

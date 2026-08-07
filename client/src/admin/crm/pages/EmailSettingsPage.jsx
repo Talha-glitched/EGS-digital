@@ -40,7 +40,7 @@ function DeliveryModeBanner({ useResend }) {
         </div>
         <div>
           <p className="text-xs font-bold text-[var(--color-ink)]">Resend API active</p>
-          <p className="text-[11px] text-neutral-500">Campaign outreach is routed through Resend for delivery tracking.</p>
+          <p className="text-xs text-neutral-500">Campaign outreach is routed through Resend for delivery tracking.</p>
         </div>
       </div>
     );
@@ -53,7 +53,7 @@ function DeliveryModeBanner({ useResend }) {
       </div>
       <div>
         <p className="text-xs font-bold text-[var(--color-ink)]">SMTP delivery</p>
-        <p className="text-[11px] text-neutral-500">Outbound email uses your configured SMTP mailboxes.</p>
+        <p className="text-xs text-neutral-500">Outbound email uses your configured SMTP mailboxes.</p>
       </div>
     </div>
   );
@@ -71,18 +71,18 @@ function SmtpConnectionCards({ emailStatus }) {
             </div>
             <div>
               <h3 className="text-xs font-semibold text-[var(--color-ink)]">User 1 (Primary System Sender)</h3>
-              <p className="text-[11px] text-neutral-400">talha@exhibitgraphicsign.com</p>
+              <p className="text-xs text-neutral-400">talha@exhibitgraphicsign.com</p>
             </div>
           </div>
           <div className="mt-4 space-y-2 border-t border-[var(--color-line)] pt-3">
             <div className="flex items-center justify-between text-xs">
               <span className="text-neutral-500">Outbound SMTP Transport</span>
               {emailStatus?.smtpReady ? (
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600">
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600">
                   <CheckCircle2 className="h-3.5 w-3.5" /> Ready
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-red-500">
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-500">
                   <XCircle className="h-3.5 w-3.5" /> Missing Config
                 </span>
               )}
@@ -90,11 +90,11 @@ function SmtpConnectionCards({ emailStatus }) {
             <div className="flex items-center justify-between text-xs">
               <span className="text-neutral-500">Inbound IMAP Sync</span>
               {emailStatus?.imapReady ? (
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600">
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600">
                   <CheckCircle2 className="h-3.5 w-3.5" /> Ready
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-red-500">
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-500">
                   <XCircle className="h-3.5 w-3.5" /> Missing Config
                 </span>
               )}
@@ -109,18 +109,18 @@ function SmtpConnectionCards({ emailStatus }) {
             </div>
             <div>
               <h3 className="text-xs font-semibold text-[var(--color-ink)]">User 2 (Secondary Outreach)</h3>
-              <p className="text-[11px] text-neutral-400">masuood@exhibitgraphicsign.com</p>
+              <p className="text-xs text-neutral-400">masuood@exhibitgraphicsign.com</p>
             </div>
           </div>
           <div className="mt-4 space-y-2 border-t border-[var(--color-line)] pt-3">
             <div className="flex items-center justify-between text-xs">
               <span className="text-neutral-500">Outbound SMTP Transport</span>
               {emailStatus?.smtp2Ready ? (
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600">
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600">
                   <CheckCircle2 className="h-3.5 w-3.5" /> Ready
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-red-500">
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-500">
                   <XCircle className="h-3.5 w-3.5" /> Missing Config
                 </span>
               )}
@@ -128,11 +128,11 @@ function SmtpConnectionCards({ emailStatus }) {
             <div className="flex items-center justify-between text-xs">
               <span className="text-neutral-500">Inbound IMAP Sync</span>
               {emailStatus?.imap2Ready ? (
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600">
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600">
                   <CheckCircle2 className="h-3.5 w-3.5" /> Ready
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-red-500">
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-500">
                   <XCircle className="h-3.5 w-3.5" /> Missing Config
                 </span>
               )}
@@ -288,15 +288,15 @@ export default function EmailSettingsPage() {
                     <div className="flex items-center justify-between rounded-lg border border-[var(--color-line)] bg-neutral-50/50 px-4 py-3">
                       <span className="text-xs text-neutral-500">API key status</span>
                       {apiKeyStatus?.error ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-600">
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-600">
                           <XCircle className="h-3.5 w-3.5" /> Connection error
                         </span>
                       ) : apiKeyStatus?.configured ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600">
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600">
                           <CheckCircle2 className="h-3.5 w-3.5" /> Connected
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-red-500">
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-500">
                           <XCircle className="h-3.5 w-3.5" /> RESEND_API_KEY missing
                         </span>
                       )}
@@ -305,7 +305,7 @@ export default function EmailSettingsPage() {
                     <form onSubmit={handleSaveDomain}>
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
                         <div className="max-w-md flex-1">
-                          <label htmlFor="resend-domain" className="block text-[10px] font-bold uppercase tracking-wider text-neutral-500">
+                          <label htmlFor="resend-domain" className="block text-2xs font-bold uppercase tracking-wider text-neutral-500">
                             Verified Resend domain
                           </label>
                           <input
@@ -334,7 +334,7 @@ export default function EmailSettingsPage() {
                     >
                       <div>
                         <p className="text-xs font-semibold text-[var(--color-ink)]">View Resend emails</p>
-                        <p className="mt-0.5 text-[11px] text-neutral-500">Delivery status, opens, and click tracking for API-sent outreach.</p>
+                        <p className="mt-0.5 text-xs text-neutral-500">Delivery status, opens, and click tracking for API-sent outreach.</p>
                       </div>
                       <ArrowRight className="h-4 w-4 shrink-0 text-brand transition group-hover:translate-x-0.5" />
                     </Link>

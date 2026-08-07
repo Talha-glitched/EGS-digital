@@ -16,7 +16,7 @@ const ROLE_LABELS = {
 
 export default function RoleBadge({ role }) {
   return (
-    <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${ROLE_STYLES[role] || ROLE_STYLES.viewer}`}>
+    <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${ROLE_STYLES[role] || ROLE_STYLES.viewer}`}>
       {ROLE_LABELS[role] || role}
     </span>
   );

@@ -129,6 +129,7 @@ export default function SequenceSidebar({
                 type="button"
                 onClick={handleBulkDelete}
                 disabled={deleting}
+                aria-label={`Delete ${selectionCount} selected sequence${selectionCount === 1 ? '' : 's'}`}
                 className="crm-seq-sidebar-bulk-delete"
               >
                 <Trash2 className="h-3 w-3" />
@@ -148,7 +149,7 @@ export default function SequenceSidebar({
         }}
       >
         {!sequences.length && (
-          <p className="px-3 py-6 text-center text-[10px] text-neutral-400">No sequences yet.</p>
+          <p className="px-3 py-6 text-center text-2xs text-neutral-400">No sequences yet.</p>
         )}
         {sequences.map((seq) => {
           const active = activeId === seq._id;

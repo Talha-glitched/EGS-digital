@@ -90,14 +90,14 @@ export default function ReplyReviewModal({ item, owners = [], currentUserId = ''
       <form onSubmit={submit} className="space-y-5">
         {error && <Alert>{error}</Alert>}
         <section className="rounded-xl border border-sky-200 bg-sky-50/50 p-4">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-sky-700">Original reply</p>
+          <p className="text-2xs font-semibold uppercase tracking-wide text-sky-700">Original reply</p>
           <p className="mt-1 text-xs font-semibold text-neutral-900">{item?.subject || 'Email reply'}</p>
           <p className="mt-2 line-clamp-4 whitespace-pre-line text-xs leading-relaxed text-neutral-600">{item?.preview || 'Open the source email to read the complete conversation.'}</p>
         </section>
 
         <section>
           <h3 className="text-xs font-semibold">What did the person actually communicate?</h3>
-          <p className="mt-1 text-[10px] text-neutral-500">This is a human decision. It does not automatically classify someone as the right POC or a Key Relationship.</p>
+          <p className="mt-1 text-2xs text-neutral-500">This is a human decision. It does not automatically classify someone as the right POC or a Key Relationship.</p>
           <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {OUTCOMES.map((option) => (
               <button key={option.value} type="button" onClick={() => chooseOutcome(option.value)} className={cn('rounded-xl border px-3 py-2.5 text-left text-xs font-semibold transition', option.tone, outcome === option.value ? 'ring-2 ring-brand ring-offset-1' : 'opacity-80 hover:opacity-100')}>
@@ -121,7 +121,7 @@ export default function ReplyReviewModal({ item, owners = [], currentUserId = ''
 
         {outcome && shouldCreateFollowUp && (
           <section className="rounded-xl border border-neutral-200 bg-neutral-50 p-4">
-            <div className="flex items-start gap-2"><ListTodo className="mt-0.5 h-4 w-4 text-brand" /><div><h3 className="text-xs font-semibold">Next accountable action</h3><p className="mt-0.5 text-[10px] text-neutral-500">Active replies cannot disappear from the queue without an owner and due date.</p></div></div>
+            <div className="flex items-start gap-2"><ListTodo className="mt-0.5 h-4 w-4 text-brand" /><div><h3 className="text-xs font-semibold">Next accountable action</h3><p className="mt-0.5 text-2xs text-neutral-500">Active replies cannot disappear from the queue without an owner and due date.</p></div></div>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
               <label className="text-xs font-medium text-neutral-600 sm:col-span-2">Task title *<input className="crm-input mt-1.5" value={followUp.title} onChange={(event) => setFollowUp((current) => ({ ...current, title: event.target.value }))} required /></label>
               <label className="text-xs font-medium text-neutral-600">Owner *<select className="crm-select mt-1.5" value={followUp.ownerUserId} onChange={(event) => setFollowUp((current) => ({ ...current, ownerUserId: event.target.value }))} required><option value="">Choose owner…</option>{ownerOptions.map((owner) => <option key={owner.id} value={owner.id}>{owner.name}</option>)}</select></label>

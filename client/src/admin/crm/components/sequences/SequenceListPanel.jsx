@@ -89,7 +89,7 @@ export default function SequenceListPanel({ sequences = [], onCreate, onEdit, lo
                       </span>
                       <div className="min-w-0">
                         <p className="truncate crm-cell-primary">{seq.name}</p>
-                        <p className="text-[11px] text-neutral-400">
+                        <p className="text-xs text-neutral-400">
                           {seq.isActive ? 'Live outreach' : 'Draft — not launched'}
                         </p>
                       </div>
@@ -122,7 +122,7 @@ export default function SequenceListPanel({ sequences = [], onCreate, onEdit, lo
                       <Users className="h-3.5 w-3.5 text-neutral-400" />
                       <span className="font-medium">{stats.enrolled || 0}</span>
                       {stats.active > 0 && (
-                        <span className="text-[11px] text-emerald-600">({stats.active} active)</span>
+                        <span className="text-xs text-emerald-600">({stats.active} active)</span>
                       )}
                     </div>
                   </td>

@@ -120,16 +120,25 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
   const [error, setError] = useState('');
   const [detectingOutreach, setDetectingOutreach] = useState(false);
   const [campaigns, setCampaigns] = useState([]);
+  const [campaignsError, setCampaignsError] = useState('');
   const [form, setForm] = useState(() => (lead ? populateFromLead(lead) : {}));
   const leadRef = useRef(lead);
 
   leadRef.current = lead;
 
-  useEffect(() => {
-    crmApiFetch('/api/admin/projects')
+  const loadCampaigns = useCallback(() => {
+    setCampaignsError('');
+    return crmApiFetch('/api/admin/projects')
       .then((items) => setCampaigns(items || []))
-      .catch(() => setCampaigns([]));
+      .catch((err) => {
+        setCampaigns([]);
+        setCampaignsError(err.message || 'Failed to load campaigns.');
+      });
   }, []);
+
+  useEffect(() => {
+    loadCampaigns();
+  }, [loadCampaigns]);
 
   const campaignOptions = useMemo(
     () => campaigns.map((campaign) => ({
@@ -390,12 +399,12 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
               {!!form.relationshipProfile?.serviceCategories?.length && (
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {form.relationshipProfile.serviceCategories.slice(0, 3).map((category) => (
-                    <span key={category} className="inline-flex rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-medium text-neutral-600">
+                    <span key={category} className="inline-flex rounded-full bg-neutral-100 px-2 py-0.5 text-2xs font-medium text-neutral-600">
                       {category}
                     </span>
                   ))}
                   {form.relationshipProfile.serviceCategories.length > 3 && (
-                    <span className="inline-flex rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-medium text-neutral-600">
+                    <span className="inline-flex rounded-full bg-neutral-100 px-2 py-0.5 text-2xs font-medium text-neutral-600">
                       +{form.relationshipProfile.serviceCategories.length - 3} more
                     </span>
                   )}
@@ -517,10 +526,10 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
                       ].join(' ')}
                     >
                       <div className="flex items-start justify-between gap-3">
-                        <span className="text-[13px] font-semibold text-[var(--color-ink)]">{option.label}</span>
+                        <span className="text-sm font-semibold text-[var(--color-ink)]">{option.label}</span>
                         {active && <RelationshipStatusPill status={option.value} compact />}
                       </div>
-                      <p className="mt-1 text-[11px] leading-snug text-neutral-500">{option.description}</p>
+                      <p className="mt-1 text-xs leading-snug text-neutral-500">{option.description}</p>
                     </button>
                   );
                 })}
@@ -633,14 +642,14 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
                   <div className="text-xs font-semibold uppercase tracking-wide text-emerald-800">Confirmed outreach email</div>
                   <button
                     type="button"
-                    className="crm-btn-secondary !py-1 text-[11px]"
+                    className="crm-btn-secondary !py-1 text-xs"
                     onClick={handleAutoDetectOutreach}
                     disabled={detectingOutreach}
                   >
                     {detectingOutreach ? 'Detecting…' : 'Auto-detect'}
                   </button>
                 </div>
-                <p className="mt-1 text-[11px] leading-relaxed text-emerald-800/80">
+                <p className="mt-1 text-xs leading-relaxed text-emerald-800/80">
                   Set manually below, or auto-detect from the last sequence send / sole vendor email / inbox reply.
                 </p>
                 <label className="mt-3 block space-y-1.5">
@@ -717,14 +726,18 @@ export default function OutreachDrawer({ lead, onClose, onLeadUpdated, onDelete,
             <div className="space-y-4 pt-4">
               <label className="block space-y-1.5">
                 <span className="text-xs font-medium text-neutral-600">Campaign</span>
-                <SearchableSelect
-                  value={form.formCampaignId}
-                  onChange={(value) => set('formCampaignId', value)}
-                  options={campaignOptions}
-                  placeholder="No campaign — standalone contact"
-                  searchPlaceholder="Search campaigns…"
-                  emptyLabel="No campaigns match."
-                />
+                {campaignsError ? (
+                  <Alert tone="error" onRetry={loadCampaigns}>{campaignsError}</Alert>
+                ) : (
+                  <SearchableSelect
+                    value={form.formCampaignId}
+                    onChange={(value) => set('formCampaignId', value)}
+                    options={campaignOptions}
+                    placeholder="No campaign — standalone contact"
+                    searchPlaceholder="Search campaigns…"
+                    emptyLabel="No campaigns match."
+                  />
+                )}
               </label>
               <p className="text-xs leading-relaxed text-neutral-500">
                 Assign a campaign so this contact appears in sequence audiences and campaign reporting. Leave blank for standalone contacts.
@@ -823,7 +836,7 @@ function RelationshipStatusPill({ status = 'New', compact = false }) {
     <span
       className={[
         'inline-flex items-center rounded-full font-semibold ring-1 ring-inset',
-        compact ? 'px-2 py-0.5 text-[10px]' : 'px-2.5 py-1 text-[11px]',
+        compact ? 'px-2 py-0.5 text-2xs' : 'px-2.5 py-1 text-xs',
         toneClasses[option.tone] || toneClasses.neutral,
       ].join(' ')}
     >

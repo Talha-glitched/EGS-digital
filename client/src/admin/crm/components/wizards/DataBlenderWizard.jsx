@@ -218,8 +218,8 @@ function PreviewStat({ label, value, tone, help }) {
   return (
     <div className={cn('rounded-xl border p-4 text-center', tones[tone])}>
       <p className="text-2xl font-bold tabular-nums">{value}</p>
-      <p className="mt-0.5 text-[13px] font-semibold">{label}</p>
-      {help && <p className="mt-0.5 text-[11px] opacity-80">{help}</p>}
+      <p className="mt-0.5 text-sm font-semibold">{label}</p>
+      {help && <p className="mt-0.5 text-xs opacity-80">{help}</p>}
     </div>
   );
 }

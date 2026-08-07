@@ -31,13 +31,13 @@ export default function TopNavbar({ title, subtitle, pageInfo, onMenu, status, o
           <button
             type="button"
             onClick={onMenu}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--color-line)] bg-white text-neutral-600 lg:hidden"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-[var(--color-line)] bg-white text-neutral-600 lg:hidden"
             aria-label="Open navigation"
           >
             <Menu className="h-[18px] w-[18px]" />
           </button>
           <div className="flex min-w-0 items-center gap-1.5">
-            <h2 className="truncate text-[13px] font-semibold tracking-tight text-[var(--color-ink)]">{title}</h2>
+            <h2 className="truncate text-sm font-semibold tracking-tight text-[var(--color-ink)]">{title}</h2>
             {infoText && <InfoTip text={infoText} label={`About ${title}`} placement="bottom-start" />}
           </div>
         </div>
@@ -58,7 +58,7 @@ export default function TopNavbar({ title, subtitle, pageInfo, onMenu, status, o
           <button
             type="button"
             onClick={onOpenSearch}
-            className="crm-spotlight-trigger-mobile flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--color-line)] bg-white text-neutral-500 sm:hidden"
+            className="crm-spotlight-trigger-mobile flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-[var(--color-line)] bg-white text-neutral-500 sm:hidden"
             aria-label="Search workspace"
           >
             <Search className="h-[18px] w-[18px]" strokeWidth={2} />

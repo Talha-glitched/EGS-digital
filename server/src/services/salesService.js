@@ -174,6 +174,7 @@ export async function listOngoingJobs({ stage, owner, search, campaignId, compan
              oj.summary_stage AS "stage", oj.owner, oj.value_aed AS "valueAed",
              oj.target_date AS "targetDate", oj.expected_close_date AS "expectedCloseDate",
              oj.closed_at AS "closedAt", oj.lost_reason AS "lostReason",
+             oj.event_name AS "eventName",
              oj.created_at AS "createdAt", oj.updated_at AS "updatedAt",
              o.id AS "companyId", o.canonical_name AS "companyName",
              task_summary.total_tasks AS "totalTasks", task_summary.open_tasks AS "openTasks",

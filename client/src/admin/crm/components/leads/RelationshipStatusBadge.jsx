@@ -15,7 +15,7 @@ export default function RelationshipStatusBadge({ status = 'New', compact = fals
     <span
       className={cn(
         'inline-flex items-center rounded-full font-semibold ring-1 ring-inset',
-        compact ? 'px-2 py-0.5 text-[10px]' : 'px-2.5 py-1 text-[11px]',
+        compact ? 'px-2 py-0.5 text-2xs' : 'px-2.5 py-1 text-xs',
         TONE_CLASSES[option.tone] || TONE_CLASSES.neutral,
       )}
       title={option.description}

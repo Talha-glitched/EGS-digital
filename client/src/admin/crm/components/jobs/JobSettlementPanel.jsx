@@ -75,7 +75,7 @@ export default function JobSettlementPanel({ ongoingJobId, active = true }) {
     </div>
 
     {!synced && (
-      <p className="rounded-xl border border-neutral-200 bg-neutral-50 p-3 text-[11px] text-neutral-600">
+      <p className="rounded-xl border border-neutral-200 bg-neutral-50 p-3 text-xs text-neutral-600">
         Zoho Books integration is not connected yet, so amounts and due dates are not available and overdue cannot be
         calculated. Record the operational position below. When Zoho is connected, its figures take over automatically
         and these milestones remain as history — nothing needs re-entering.
@@ -88,7 +88,7 @@ export default function JobSettlementPanel({ ongoingJobId, active = true }) {
           <PackageCheck className="mt-0.5 h-4 w-4 text-brand" />
           <div>
             <h3 className="text-sm font-semibold">Physical delivery</h3>
-            <p className="mt-1 text-[11px] text-neutral-500">
+            <p className="mt-1 text-xs text-neutral-500">
               Independent of payment. A Job can be delivered while money is still outstanding.
             </p>
           </div>
@@ -102,12 +102,12 @@ export default function JobSettlementPanel({ ongoingJobId, active = true }) {
           {delivered ? 'Mark not delivered' : 'Mark physically delivered'}
         </button>
       </div>
-      {delivered && <p className="mt-3 text-[10px] text-emerald-700">Handed over on {when(s.physicallyDeliveredAt)}.</p>}
+      {delivered && <p className="mt-3 text-2xs text-emerald-700">Handed over on {when(s.physicallyDeliveredAt)}.</p>}
     </section>
 
     <section className="rounded-xl border border-neutral-200 bg-white p-4">
       <div className="flex items-center gap-2"><Wallet className="h-4 w-4 text-brand" /><h3 className="text-sm font-semibold">Operational payment position</h3></div>
-      <p className="mt-1 text-[11px] text-neutral-500">
+      <p className="mt-1 text-xs text-neutral-500">
         The coarse position EGS tracks. Detailed invoices, credit notes and payments stay in Zoho Books — record the
         Zoho reference here rather than re-entering the numbers.
       </p>
@@ -134,13 +134,13 @@ export default function JobSettlementPanel({ ongoingJobId, active = true }) {
           <div key={item.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-neutral-50 p-2.5">
             <div className="min-w-0">
               <p className="text-xs font-medium">{item.milestone}</p>
-              <p className="text-[10px] text-neutral-400">
+              <p className="text-2xs text-neutral-400">
                 {data.milestoneStates.find((state) => state.value === item.milestoneState)?.label || 'No state'}
                 {item.amount ? ` · ${money(item.amount)}` : ''}
                 {item.dueOn ? ` · due ${when(item.dueOn)}` : ''}
                 {item.zohoReference ? ` · Zoho ${item.zohoReference}` : ''}
               </p>
-              <p className="text-[10px] text-neutral-400">
+              <p className="text-2xs text-neutral-400">
                 {item.confirmedFrom === 'zoho_sync' ? 'Confirmed from Zoho' : `Set by ${item.confirmedBy}`} on {when(item.confirmedAt)}
               </p>
             </div>
@@ -159,7 +159,7 @@ export default function JobSettlementPanel({ ongoingJobId, active = true }) {
         <CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-700" />
         <div className="text-xs text-amber-900">
           <p className="font-semibold">Delivered, but settlement is not complete</p>
-          <p className="mt-1 text-[11px]">
+          <p className="mt-1 text-xs">
             Job Done means physically delivered <em>and</em> fully paid. This is a warning, not a block — you can still
             move the Job, but the outstanding position will remain visible in Reports.
           </p>

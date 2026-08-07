@@ -41,9 +41,9 @@ const CONDITION_TYPES = [
 function CompactField({ label, hint, children }) {
   return (
     <label className="block space-y-1.5">
-      <span className="block text-[10px] font-semibold uppercase tracking-wide text-neutral-400">{label}</span>
+      <span className="block text-2xs font-semibold uppercase tracking-wide text-neutral-400">{label}</span>
       {children}
-      {hint && <span className="block text-[10px] leading-snug text-neutral-400">{hint}</span>}
+      {hint && <span className="block text-2xs leading-snug text-neutral-400">{hint}</span>}
     </label>
   );
 }
@@ -106,13 +106,13 @@ export default function SequenceInspector({
         <div className="crm-seq-panel-head">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-neutral-400">
+              <p className="text-2xs font-semibold uppercase tracking-[0.16em] text-neutral-400">
                 {isGlobal ? 'Sequence settings' : 'Element'}
               </p>
               <p
                 key={inspectorMode}
                 className={cn(
-                  'mt-0.5 text-[11px] font-semibold text-[var(--color-ink)] crm-seq-inspector-headline',
+                  'mt-0.5 text-xs font-semibold text-[var(--color-ink)] crm-seq-inspector-headline',
                   !isGlobal && 'capitalize',
                 )}
               >
@@ -121,7 +121,7 @@ export default function SequenceInspector({
             </div>
             {isGlobal && autosaveStatus !== 'idle' && (
               <span className={cn(
-                'shrink-0 text-[10px] font-medium',
+                'shrink-0 text-2xs font-medium',
                 autosaveStatus === 'saving' && 'text-neutral-400',
                 autosaveStatus === 'saved' && 'text-emerald-600',
                 autosaveStatus === 'error' && 'text-red-600',
@@ -174,20 +174,30 @@ export default function SequenceInspector({
         {isGlobal && (
           <div className="crm-seq-panel-foot">
             {launchMode === 'draft' ? (
-              <button type="button" onClick={onSaveDraft} disabled={busy} className="crm-btn-primary w-full !py-2.5 text-[11px]">
+              <button type="button" onClick={onSaveDraft} disabled={busy} className="crm-btn-primary w-full !py-2.5 text-xs">
                 <FileText className="h-3.5 w-3.5" />
                 {busy ? 'Saving…' : 'Save draft'}
               </button>
             ) : (
-              <button
-                type="button"
-                onClick={onLaunch}
-                disabled={busy || !(audiencePreview?.netNew || 0)}
-                className={cn('crm-btn-primary w-full !py-2.5 text-[11px]', launchArmed && 'ring-2 ring-orange-200')}
-              >
-                <Send className="h-3.5 w-3.5" />
-                {busy ? 'Launching…' : launchArmed ? 'Confirm launch' : 'Launch sequence'}
-              </button>
+              <>
+                {launchArmed && (
+                  <p className="mb-2 rounded-lg border border-orange-200 bg-orange-50 px-2.5 py-2 text-xs leading-relaxed text-orange-800">
+                    This sends real email to <span className="font-semibold">{audiencePreview?.netNew || 0} new contact{(audiencePreview?.netNew || 0) === 1 ? '' : 's'}</span> right now
+                    {mailboxUsage ? (
+                      <>, using <span className="font-semibold">{Math.min(audiencePreview?.netNew || 0, mailboxUsage.remaining ?? mailboxUsage.dailyCap ?? 150)}</span> of the {mailboxUsage.remaining ?? Math.max(0, (mailboxUsage.dailyCap || 150) - (mailboxUsage.sentToday || 0))} sends left on this mailbox today</>
+                    ) : null}. Click again to confirm.
+                  </p>
+                )}
+                <button
+                  type="button"
+                  onClick={onLaunch}
+                  disabled={busy || !(audiencePreview?.netNew || 0)}
+                  className={cn('crm-btn-primary w-full !py-2.5 text-xs', launchArmed && 'ring-2 ring-orange-200')}
+                >
+                  <Send className="h-3.5 w-3.5" />
+                  {busy ? 'Launching…' : launchArmed ? 'Confirm launch' : 'Launch sequence'}
+                </button>
+              </>
             )}
           </div>
         )}
@@ -312,18 +322,18 @@ function GlobalInspector({
       <InspectorSection title="Basics">
         <CompactField label="Name">
           <input
-            className="crm-input crm-seq-input py-2 text-[11px]"
+            className="crm-input crm-seq-input py-2 text-xs"
             value={sequenceName}
             onChange={(e) => onSequenceNameChange(e.target.value)}
           />
         </CompactField>
         {campaignId ? (
-          <p className="mt-2 text-[10px] leading-relaxed text-neutral-500">
+          <p className="mt-2 text-2xs leading-relaxed text-neutral-500">
             Imported lists choose who receives this sequence. Launch batches appear in{' '}
             <span className="font-semibold text-[var(--color-ink)]">Email → Outbox</span>.
           </p>
         ) : (
-          <p className="mt-2 text-[10px] leading-relaxed text-neutral-500">
+          <p className="mt-2 text-2xs leading-relaxed text-neutral-500">
             Import a campaign list below, then launch. Batches appear in{' '}
             <span className="font-semibold text-[var(--color-ink)]">Email → Outbox</span>.
           </p>
@@ -332,7 +342,7 @@ function GlobalInspector({
 
       <InspectorSection title="Send to" icon={Users}>
         <div className="crm-seq-send-import">
-          <p className="text-[10px] leading-relaxed text-neutral-500">
+          <p className="text-2xs leading-relaxed text-neutral-500">
             Choose a campaign list, click <span className="font-semibold text-[var(--color-ink)]">Import</span> to open filters and customize who receives emails.
           </p>
           <div className="flex gap-2">
@@ -402,11 +412,11 @@ function GlobalInspector({
         {importedLists.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {importedLists.map((item) => (
-              <span key={item.id} className="crm-seq-import-chip inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-neutral-100 border border-neutral-200 text-[11px] font-medium text-neutral-800">
+              <span key={item.id} className="crm-seq-import-chip inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-neutral-100 border border-neutral-200 text-xs font-medium text-neutral-800">
                 <Building2 className="h-3 w-3 shrink-0 text-brand" />
                 <span className="truncate max-w-[120px] font-semibold">{item.label}</span>
                 {item.selectedCount != null && (
-                  <span className="text-[9px] bg-brand-soft text-brand px-1 py-0.2 rounded font-bold">
+                  <span className="text-2xs bg-brand-soft text-brand px-1 py-0.2 rounded font-bold">
                     {item.selectedCount} sel
                   </span>
                 )}
@@ -433,9 +443,9 @@ function GlobalInspector({
         )}
 
         <div className="crm-seq-audience-summary">
-          <p className="text-[10px] leading-relaxed text-neutral-600">{summary}</p>
+          <p className="text-2xs leading-relaxed text-neutral-600">{summary}</p>
           {(audiencePreview?.willRestart || 0) > 0 && (audiencePreview?.netNew || 0) > 0 && (
-            <p className="mt-2 text-[10px] leading-relaxed text-neutral-600">
+            <p className="mt-2 text-2xs leading-relaxed text-neutral-600">
               {(audiencePreview.blockingContacts || []).map((c) => c.name || c.email).filter(Boolean).join(', ')}
               {' '}already in this sequence — relaunch will restart from step 1.
             </p>
@@ -450,7 +460,7 @@ function GlobalInspector({
               <button
                 type="button"
                 onClick={onOpenPreview}
-                className="mt-2 inline-flex items-center gap-1 text-[10px] font-semibold text-brand hover:underline"
+                className="mt-2 inline-flex items-center gap-1 text-2xs font-semibold text-brand hover:underline"
               >
                 <Eye className="h-3 w-3" />
                 Preview full list ({count})
@@ -484,7 +494,7 @@ function GlobalInspector({
           <div className="crm-seq-enroll-panel crm-seq-expand-in">
             <MailboxUsagePopover usage={mailboxUsage} />
             {!mailStatus?.emailDeliveryReady && (
-              <Alert tone="warning" className="mt-2 !py-1.5 !text-[10px]">Email delivery is not configured.</Alert>
+              <Alert tone="warning" className="mt-2 !py-1.5 !text-2xs">Email delivery is not configured.</Alert>
             )}
           </div>
         )}
@@ -539,7 +549,7 @@ function NodeInspector({ node, onUpdate, onDelete, canDelete }) {
   if (node.type === 'email') {
     return (
       <>
-        <label className="flex items-center gap-1.5 rounded-md border border-[var(--color-line)] p-2 text-[10px]">
+        <label className="flex items-center gap-1.5 rounded-md border border-[var(--color-line)] p-2 text-2xs">
           <input
             type="checkbox"
             checked={node.data?.useAiPersonalization !== false}
@@ -551,7 +561,7 @@ function NodeInspector({ node, onUpdate, onDelete, canDelete }) {
         {node.data?.useAiPersonalization !== false && (
           <CompactField label="AI prompt">
             <input
-              className="crm-input crm-seq-input py-1.5 text-[10px]"
+              className="crm-input crm-seq-input py-1.5 text-2xs"
               value={node.data?.aiPrompt || ''}
               onChange={(e) => update('aiPrompt', e.target.value)}
             />
@@ -559,7 +569,7 @@ function NodeInspector({ node, onUpdate, onDelete, canDelete }) {
         )}
         <CompactField label="Subject">
           <input
-            className="crm-input crm-seq-input py-1.5 font-mono text-[10px]"
+            className="crm-input crm-seq-input py-1.5 font-mono text-2xs"
             value={node.data?.subjectTemplate || ''}
             onChange={(e) => update('subjectTemplate', e.target.value)}
           />
@@ -567,13 +577,13 @@ function NodeInspector({ node, onUpdate, onDelete, canDelete }) {
         <CompactField label="Body">
           <textarea
             rows={8}
-            className="crm-input crm-seq-input resize-y font-mono text-[10px] leading-relaxed"
+            className="crm-input crm-seq-input resize-y font-mono text-2xs leading-relaxed"
             value={node.data?.bodyTemplate || ''}
             onChange={(e) => update('bodyTemplate', e.target.value)}
           />
         </CompactField>
         {canDelete && (
-          <button type="button" onClick={() => onDelete(node.id)} className="crm-btn-ghost w-full !py-1.5 text-[10px] text-rose-600">
+          <button type="button" onClick={() => onDelete(node.id)} className="crm-btn-ghost w-full !py-1.5 text-2xs text-rose-600">
             <Trash2 className="h-3 w-3" />
             Remove
           </button>
@@ -594,12 +604,12 @@ function NodeInspector({ node, onUpdate, onDelete, canDelete }) {
             <input
               type="number"
               min="1"
-              className="crm-input crm-seq-input min-w-0 flex-1 py-1.5 text-[11px]"
+              className="crm-input crm-seq-input min-w-0 flex-1 py-1.5 text-xs"
               value={amount}
               onChange={(e) => setWait({ amount: Number(e.target.value), days: undefined })}
             />
             <select
-              className="crm-input crm-seq-input w-24 shrink-0 py-1.5 text-[11px]"
+              className="crm-input crm-seq-input w-24 shrink-0 py-1.5 text-xs"
               value={unit}
               onChange={(e) => setWait({ unit: e.target.value })}
             >
@@ -614,18 +624,18 @@ function NodeInspector({ node, onUpdate, onDelete, canDelete }) {
             <button
               key={preset.label}
               type="button"
-              className="rounded-md border border-[var(--color-line)] px-2 py-1 text-[10px] font-medium text-neutral-600 hover:border-brand hover:text-brand"
+              className="rounded-md border border-[var(--color-line)] px-2 py-1 text-2xs font-medium text-neutral-600 hover:border-brand hover:text-brand"
               onClick={() => setWait({ amount: preset.amount, unit: preset.unit, days: undefined })}
             >
               {preset.label}
             </button>
           ))}
         </div>
-        <p className="text-[10px] text-neutral-400">
+        <p className="text-2xs text-neutral-400">
           Current wait: {formatDelayLabel(amount, unit)}
         </p>
         {canDelete && (
-          <button type="button" onClick={() => onDelete(node.id)} className="crm-btn-ghost w-full !py-1.5 text-[10px] text-rose-600">
+          <button type="button" onClick={() => onDelete(node.id)} className="crm-btn-ghost w-full !py-1.5 text-2xs text-rose-600">
             <Trash2 className="h-3 w-3" />
             Remove
           </button>
@@ -639,7 +649,7 @@ function NodeInspector({ node, onUpdate, onDelete, canDelete }) {
       <>
         <CompactField label="Type">
           <select
-            className="crm-input crm-seq-input py-1.5 text-[11px]"
+            className="crm-input crm-seq-input py-1.5 text-xs"
             value={node.data?.conditionType || 'replied'}
             onChange={(e) => {
               const option = CONDITION_TYPES.find((c) => c.value === e.target.value);
@@ -656,13 +666,13 @@ function NodeInspector({ node, onUpdate, onDelete, canDelete }) {
           </select>
         </CompactField>
         <CompactField label="If true">
-          <input className="crm-input crm-seq-input py-1.5 text-[11px]" value={node.data?.trueBranch || ''} onChange={(e) => update('trueBranch', e.target.value)} />
+          <input className="crm-input crm-seq-input py-1.5 text-xs" value={node.data?.trueBranch || ''} onChange={(e) => update('trueBranch', e.target.value)} />
         </CompactField>
         <CompactField label="If false">
-          <input className="crm-input crm-seq-input py-1.5 text-[11px]" value={node.data?.falseBranch || ''} onChange={(e) => update('falseBranch', e.target.value)} />
+          <input className="crm-input crm-seq-input py-1.5 text-xs" value={node.data?.falseBranch || ''} onChange={(e) => update('falseBranch', e.target.value)} />
         </CompactField>
         {canDelete && (
-          <button type="button" onClick={() => onDelete(node.id)} className="crm-btn-ghost w-full !py-1.5 text-[10px] text-rose-600">
+          <button type="button" onClick={() => onDelete(node.id)} className="crm-btn-ghost w-full !py-1.5 text-2xs text-rose-600">
             <Trash2 className="h-3 w-3" />
             Remove
           </button>

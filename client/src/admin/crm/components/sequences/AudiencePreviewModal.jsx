@@ -74,7 +74,7 @@ export default function AudiencePreviewModal({
             </span>
             <div>
               <h3 className="text-sm font-bold text-[var(--color-ink)]">Audience preview</h3>
-              <p className="text-[11px] text-neutral-500">
+              <p className="text-xs text-neutral-500">
                 {total} selected contact{total === 1 ? '' : 's'}
                 {(previewMeta?.alreadySent ?? 0) > 0 ? ` (${previewMeta.alreadySent} already emailed previously)` : ''}
                 {(previewMeta?.netNew ?? 0) > 0 ? ` · ${previewMeta.netNew} new to enroll` : ''}
@@ -130,7 +130,7 @@ export default function AudiencePreviewModal({
         </div>
 
         {!loading && rows.length < total && (
-          <p className="border-t border-[var(--color-line)] px-4 py-2 text-center text-[10px] text-neutral-400">
+          <p className="border-t border-[var(--color-line)] px-4 py-2 text-center text-2xs text-neutral-400">
             Showing {rows.length} of {total} contacts
           </p>
         )}

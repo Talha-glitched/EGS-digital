@@ -172,7 +172,7 @@ export default function SearchableMultiSelect({
 
           {values.length > 0 && (
             <div className="crm-multi-select-toolbar">
-              <span className="text-[11px] font-medium text-neutral-500">{values.length} selected</span>
+              <span className="text-xs font-medium text-neutral-500">{values.length} selected</span>
               <button type="button" className="crm-multi-select-clear" onClick={clearAll}>
                 Clear
               </button>
@@ -193,7 +193,7 @@ export default function SearchableMultiSelect({
                   <Search className="h-3.5 w-3.5 shrink-0" />
                   <span>Search database for <strong>"{query.trim()}"</strong></span>
                 </span>
-                <span className="text-[10px] text-neutral-400 font-mono shrink-0 ml-2">Press Enter ↵</span>
+                <span className="text-2xs text-neutral-400 font-mono shrink-0 ml-2">Press Enter ↵</span>
               </button>
             )}
             {filtered.length ? filtered.map((option) => {
@@ -216,7 +216,7 @@ export default function SearchableMultiSelect({
                   </span>
                   <span className="min-w-0 flex-1 text-left">
                     <span className="block truncate text-sm font-medium text-[var(--color-ink)]">{option.label}</span>
-                    {option.hint && <span className="block truncate text-[11px] text-neutral-500">{option.hint}</span>}
+                    {option.hint && <span className="block truncate text-xs text-neutral-500">{option.hint}</span>}
                   </span>
                 </button>
               );

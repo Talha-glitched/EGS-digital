@@ -312,7 +312,7 @@ export default function ProjectDetailWorkspace() {
                     </div>
                     <div className="shrink-0 text-right">
                       <p className="text-sm font-bold tabular-nums text-ink">{(opportunity.valueAed || 0).toLocaleString('en-AE')} AED</p>
-                      <p className="text-[11px] text-neutral-400">{opportunity.owner || 'Unassigned'}</p>
+                      <p className="text-xs text-neutral-400">{opportunity.owner || 'Unassigned'}</p>
                     </div>
                   </Link>
                 ))}
@@ -413,7 +413,7 @@ function CompactStat({ icon: Icon, label, value, accent, hint }) {
 function ProgressBlock({ label, hint, value, fraction, tone }) {
   return (
     <div>
-      <div className="mb-1 flex items-center justify-between gap-2 text-[10px] font-bold uppercase tracking-wide text-neutral-400">
+      <div className="mb-1 flex items-center justify-between gap-2 text-2xs font-bold uppercase tracking-wide text-neutral-400">
         <span className="inline-flex items-center gap-1">
           {label}
           {hint ? <InfoTip text={hint} label={`About ${label}`} /> : null}

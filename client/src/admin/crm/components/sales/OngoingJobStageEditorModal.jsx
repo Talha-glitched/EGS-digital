@@ -223,13 +223,13 @@ export default function OngoingJobStageEditorModal({ open, onClose, stages = [],
                     />
                   </Field>
                   <div className="flex shrink-0 items-end gap-1 pb-0.5">
-                    <button type="button" className="crm-icon-btn h-8 w-8" onClick={() => moveItem(index, -1)} disabled={index === 0} aria-label="Move stage up">
+                    <button type="button" className="crm-icon-btn h-10 w-10" onClick={() => moveItem(index, -1)} disabled={index === 0} aria-label="Move stage up">
                       <ArrowUp className="h-3.5 w-3.5" />
                     </button>
-                    <button type="button" className="crm-icon-btn h-8 w-8" onClick={() => moveItem(index, 1)} disabled={index === items.length - 1} aria-label="Move stage down">
+                    <button type="button" className="crm-icon-btn h-10 w-10" onClick={() => moveItem(index, 1)} disabled={index === items.length - 1} aria-label="Move stage down">
                       <ArrowDown className="h-3.5 w-3.5" />
                     </button>
-                    <button type="button" className="crm-icon-btn h-8 w-8 text-red-500" onClick={() => removeItem(index)} disabled={items.length <= 1} aria-label="Remove stage">
+                    <button type="button" className="crm-icon-btn h-10 w-10 text-red-500" onClick={() => removeItem(index)} disabled={items.length <= 1} aria-label="Remove stage">
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>

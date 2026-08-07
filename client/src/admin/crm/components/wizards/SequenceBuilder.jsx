@@ -230,7 +230,7 @@ export default function SequenceBuilder({ projectId, project, leadCount = 0, onE
               <Field label="Email body" hint="Base template — AI refines this when personalization is on.">
                 <textarea
                   rows={6}
-                  className="crm-input resize-y font-mono text-[13px] leading-relaxed"
+                  className="crm-input resize-y font-mono text-sm leading-relaxed"
                   value={step.bodyTemplate}
                   onChange={(e) => updateStep(index, 'bodyTemplate', e.target.value)}
                 />

@@ -34,7 +34,7 @@ export default function MailboxUsagePopover({ usage, className = '' }) {
 
       {open && (
         <div className="crm-seq-usage-popover absolute right-0 top-full z-50 mt-2 w-64 rounded-xl border border-[var(--color-line)] bg-white p-3 shadow-xl">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-neutral-400">Today&apos;s mailbox</p>
+          <p className="text-2xs font-semibold uppercase tracking-wide text-neutral-400">Today&apos;s mailbox</p>
           <div className="mt-2 flex items-end justify-between gap-2">
             <p className="text-lg font-bold tabular-nums text-[var(--color-ink)]">
               {sentToday}
@@ -50,16 +50,16 @@ export default function MailboxUsagePopover({ usage, className = '' }) {
             />
           </div>
 
-          <p className="mt-2 text-[11px] text-neutral-500">
+          <p className="mt-2 text-xs text-neutral-500">
             {usage?.remaining ?? Math.max(0, dailyCap - sentToday)} sends remaining today (GST)
           </p>
 
           {breakdown.length > 0 && (
             <div className="mt-3 space-y-1.5 border-t border-[var(--color-line)] pt-3">
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-neutral-400">By campaign</p>
+              <p className="text-2xs font-semibold uppercase tracking-wide text-neutral-400">By campaign</p>
               {breakdown.map((row) => (
                 <div key={String(row.campaignId)} className="space-y-1">
-                  <div className="flex items-center justify-between gap-2 text-[11px]">
+                  <div className="flex items-center justify-between gap-2 text-xs">
                     <span className="truncate text-neutral-600">{row.campaignName}</span>
                     <span className="shrink-0 font-semibold tabular-nums text-neutral-800">{row.percent}%</span>
                   </div>

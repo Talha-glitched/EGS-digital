@@ -12,14 +12,15 @@ import { leadSortAccessors } from '../hooks/tableSortAccessors.js';
 import { SortableTableHeader, TableSortIndicator } from '../components/ui/SortableTableHeader.jsx';
 import { useConfirmDelete } from '../hooks/useConfirmDelete.js';
 import { useSpotlightDeepLink } from '../hooks/useSpotlightDeepLink.js';
-import { 
-  PageShell, 
+import {
+  PageShell,
   PageSection,
   PageToolbar,
   ToolbarCount,
-  Card, 
-  LoadingState, 
-  EmptyState 
+  Card,
+  LoadingState,
+  EmptyState,
+  Alert,
 } from '../components/ui/primitives.jsx';
 import { 
   Users, 
@@ -75,6 +76,7 @@ export default function PeoplePage() {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [allTruncated, setAllTruncated] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const limit = 50;
 
@@ -165,6 +167,7 @@ export default function PeoplePage() {
       dispatch(setLeadsData({ items: data.items || [], total: data.total || 0 }));
       setLeads(data.items || []);
       setTotal(data.total || 0);
+      setError('');
     } catch (err) {
       console.error(err);
       setError('Failed to fetch contacts.');
@@ -223,21 +226,33 @@ export default function PeoplePage() {
     }
   }, [loading, leads.length, total, limit, sortKey, sortDir, filterParams]);
 
+  // Rendering every matching row into the DOM at once stops being safe well before
+  // 50,000, so this asks for a much smaller ceiling instead. The API itself also
+  // enforces its own hard cap independent of what we ask for — if fewer rows come
+  // back than requested, that cap has been hit, and asking again would just repeat
+  // the same result, so we stop offering "Show all" and say plainly how many loaded.
+  const SHOW_ALL_CAP = 2000;
+
   const loadAllData = useCallback(async () => {
     if (isFetchingRef.current || loading) return;
 
     isFetchingRef.current = true;
     setLoadingMore(true);
     try {
+      const requestLimit = Math.min(Math.max(total, limit), SHOW_ALL_CAP);
       const data = await fetchGlobalLeads({
         page: 1,
-        limit: Math.max(total, 50000),
+        limit: requestLimit,
         sortKey,
         sortDir,
         ...filterParams,
       });
-      setLeads(data.items || []);
+      const items = data.items || [];
+      setLeads(items);
       setTotal(data.total || 0);
+      if (items.length < requestLimit && items.length < (data.total || 0)) {
+        setAllTruncated(true);
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -246,7 +261,7 @@ export default function PeoplePage() {
         isFetchingRef.current = false;
       }, 150);
     }
-  }, [loading, total, sortKey, sortDir, filterParams]);
+  }, [loading, total, limit, sortKey, sortDir, filterParams]);
 
 
 
@@ -349,11 +364,14 @@ export default function PeoplePage() {
 
   const launchWhatsapp = (lead) => {
     const phoneNum = lead.whatsappNumber || lead.phone || lead.phoneLusha1 || '';
-    const cleanPhone = phoneNum.replace(/\D/g, ''); 
-    if (!cleanPhone) return alert('No phone number configured for WhatsApp.');
+    const cleanPhone = phoneNum.replace(/\D/g, '');
+    if (!cleanPhone) {
+      setError('No phone number configured for WhatsApp on this contact.');
+      return;
+    }
 
     const name = lead.name || 'there';
-    const message = encodeURIComponent(`Hi ${name}, thanks for replying to our email regarding your custom footprint layout at the upcoming exhibition. Let's align execution vectors here!`);
+    const message = encodeURIComponent(`Hi ${name}, this is the team at Exhibit Graphic Sign. Following up on your exhibition stand — happy to help with any questions.`);
     window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
   };
 
@@ -394,6 +412,7 @@ export default function PeoplePage() {
                   <button
                     type="button"
                     onClick={() => setSearchTerm('')}
+                    aria-label="Clear search"
                     className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
                   >
                     <X className="h-3.5 w-3.5" />
@@ -420,6 +439,16 @@ export default function PeoplePage() {
           onChange={setAdvancedFilters}
           className="mb-3"
         />
+
+        {error && (
+          <Alert
+            tone="error"
+            onRetry={error === 'Failed to fetch contacts.' ? loadInitialData : undefined}
+            className="mb-3"
+          >
+            {error}
+          </Alert>
+        )}
 
         <Card className="overflow-hidden">
         {loading ? (
@@ -484,7 +513,7 @@ export default function PeoplePage() {
                       />
                       <td>
                         <div className="flex items-center gap-3">
-                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-[11px] font-bold text-neutral-600">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-xs font-bold text-neutral-600">
                             {initials(lead.name)}
                           </div>
                           <div className="min-w-0">
@@ -502,7 +531,7 @@ export default function PeoplePage() {
                         {lead.email || '—'}
                       </td>
                       <td>
-                        <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 ring-inset ${lead.hasResponded ? 'bg-sky-50 text-sky-800 ring-sky-200/70' : 'bg-neutral-100 text-neutral-600 ring-neutral-200/70'}`}>
+                        <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${lead.hasResponded ? 'bg-sky-50 text-sky-800 ring-sky-200/70' : 'bg-neutral-100 text-neutral-600 ring-neutral-200/70'}`}>
                           {lead.hasResponded ? 'Lead' : 'Contact'}
                         </span>
                       </td>
@@ -588,6 +617,10 @@ export default function PeoplePage() {
                   <Loader2 className="h-4 w-4 animate-spin text-brand" />
                   <span>Loading contacts…</span>
                 </div>
+              ) : hasMore && allTruncated ? (
+                <div className="max-w-sm text-center text-xs text-[var(--color-ink-muted)]">
+                  Showing the first {leads.length.toLocaleString()} of {total.toLocaleString()} contacts. Narrow your search or filters to see the rest.
+                </div>
               ) : hasMore ? (
                 <div className="flex items-center gap-3">
                   <button
@@ -602,11 +635,11 @@ export default function PeoplePage() {
                     onClick={loadAllData}
                     className="crm-btn-secondary text-xs px-4 py-2 bg-brand/10 text-brand border-brand/30 hover:bg-brand/20 transition font-semibold"
                   >
-                    Show all ({total} total)
+                    Show all ({total.toLocaleString()} total)
                   </button>
                 </div>
               ) : (
-                <div className="text-xs text-neutral-400 font-mono">
+                <div className="text-xs text-[var(--color-ink-muted)] font-mono">
                   All {total} contacts loaded
                 </div>
               )}

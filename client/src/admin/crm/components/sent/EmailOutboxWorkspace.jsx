@@ -12,6 +12,7 @@ import { useRowSelection } from '../../hooks/useRowSelection.js';
 import { BulkSelectHeaderCell, BulkSelectRowCell, BulkSelectionBar } from '../ui/BulkSelectTable.jsx';
 import DeleteIconButton from '../ui/DeleteIconButton.jsx';
 import DataTableShell from '../ui/DataTableShell.jsx';
+import { Modal } from '../ui/Modal.jsx';
 import TablePagination from '../ui/TablePagination.jsx';
 import { EmptyState, cn } from '../ui/primitives.jsx';
 import { ChevronDown, ChevronRight, Play, Send, Trash2 } from 'lucide-react';
@@ -30,7 +31,7 @@ function StatusBadge({ status }) {
     label: status,
   };
   return (
-    <span className={cn('inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold ring-1 ring-inset', config.className)}>
+    <span className={cn('inline-flex items-center rounded-full px-2.5 py-0.5 text-2xs font-semibold ring-1 ring-inset', config.className)}>
       {config.label}
     </span>
   );
@@ -51,13 +52,14 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function BatchJobTable({ batchId, onJobsChanged }) {
+function BatchJobTable({ batchId, batchLabel, onJobsChanged }) {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [sendNotice, setSendNotice] = useState('');
   const [sendProgress, setSendProgress] = useState({ sent: 0, total: 0 });
   const [deleting, setDeleting] = useState(false);
+  const [sendConfirmOpen, setSendConfirmOpen] = useState(false);
   const selection = useRowSelection(jobs);
   const { confirmDelete } = useConfirmDeleteDialog();
 
@@ -140,6 +142,7 @@ function BatchJobTable({ batchId, onJobsChanged }) {
   async function sendBatch() {
     const pending = pendingOnly;
     if (!pending.length || sending) return;
+    setSendConfirmOpen(false);
     setSending(true);
     setSendNotice('Starting send on server… already-sent contacts are skipped.');
     setSendProgress({ sent: sentCount, total: pending.length + sentCount });
@@ -213,15 +216,15 @@ function BatchJobTable({ batchId, onJobsChanged }) {
 
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="min-w-0">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">
+          <p className="text-2xs font-semibold uppercase tracking-wider text-neutral-500">
             {queueCount} remaining · {sentCount} already sent
           </p>
-          <p className="mt-0.5 text-[10px] text-neutral-400">
+          <p className="mt-0.5 text-2xs text-neutral-400">
             Only remaining queue items are sent. Contacts already emailed for this sequence are skipped automatically.
           </p>
           {sending ? (
             <div className="mt-2 space-y-1 rounded-lg border border-brand/20 bg-brand-soft/30 px-3 py-2">
-              <div className="flex justify-between text-[10px] font-semibold text-brand">
+              <div className="flex justify-between text-2xs font-semibold text-brand">
                 <span className="flex items-center gap-1.5">
                   <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-brand" />
                   Sending in progress
@@ -241,7 +244,7 @@ function BatchJobTable({ batchId, onJobsChanged }) {
             </div>
           ) : null}
           {sendNotice ? (
-            <p className="mt-1 text-[10px] font-medium text-brand">{sendNotice}</p>
+            <p className="mt-1 text-2xs font-medium text-brand">{sendNotice}</p>
           ) : null}
         </div>
         <div className="flex flex-wrap gap-2">
@@ -249,22 +252,62 @@ function BatchJobTable({ batchId, onJobsChanged }) {
             type="button"
             onClick={() => deleteJobs([], { all: true })}
             disabled={deleting || sending || queueCount === 0}
-            className="crm-btn-secondary py-1.5 px-3 text-[10px] font-semibold text-rose-600 border-rose-200 hover:bg-rose-50"
+            className="crm-btn-secondary py-1.5 px-3 text-2xs font-semibold text-rose-600 border-rose-200 hover:bg-rose-50"
           >
             <Trash2 className="inline h-3 w-3 mr-1" />
             Delete all
           </button>
           <button
             type="button"
-            onClick={sendBatch}
+            onClick={() => setSendConfirmOpen(true)}
             disabled={sending || queueCount === 0}
-            className="crm-btn-primary py-1.5 px-3 text-[10px] font-bold"
+            className="crm-btn-primary py-1.5 px-3 text-2xs font-bold"
           >
             <Play className="inline h-3 w-3 mr-1 fill-current" />
             {sending ? 'Sending…' : sentCount > 0 ? `Send remaining (${queueCount})` : 'Send batch'}
           </button>
         </div>
       </div>
+
+      <Modal
+        open={sendConfirmOpen}
+        onClose={() => setSendConfirmOpen(false)}
+        title="Send this batch?"
+        subtitle="This queues real outreach emails to external recipients right now. It cannot be undone or recalled once sent."
+        size="md"
+        icon={Send}
+        accent="brand"
+        footer={(
+          <div className="flex justify-end gap-3">
+            <button type="button" className="crm-btn-secondary" onClick={() => setSendConfirmOpen(false)}>
+              Cancel
+            </button>
+            <button type="button" className="crm-btn-primary" onClick={sendBatch}>
+              Send {pendingOnly.length} email{pendingOnly.length === 1 ? '' : 's'}
+            </button>
+          </div>
+        )}
+      >
+        <div className="space-y-3 text-sm">
+          <p className="text-neutral-600">
+            {batchLabel ? <><span className="font-semibold text-[var(--color-ink)]">{batchLabel}</span> — </> : null}
+            <span className="font-semibold text-[var(--color-ink)]">{pendingOnly.length}</span> email{pendingOnly.length === 1 ? '' : 's'} will send now. Contacts already emailed for this sequence are skipped automatically.
+          </p>
+          {pendingOnly.length > 0 && (
+            <ul className="rounded-lg border border-[var(--color-line)] divide-y divide-[var(--color-line)] bg-neutral-50/60">
+              {pendingOnly.slice(0, 3).map((job) => (
+                <li key={job._id} className="px-3 py-2 text-xs">
+                  <span className="font-medium text-[var(--color-ink)]">{job.leadId?.name || 'Contact'}</span>
+                  <span className="text-neutral-500"> — {job.recipientEmail || job.leadId?.email || 'no email on file'}</span>
+                </li>
+              ))}
+              {pendingOnly.length > 3 && (
+                <li className="px-3 py-2 text-xs text-neutral-500">+ {pendingOnly.length - 3} more</li>
+              )}
+            </ul>
+          )}
+        </div>
+      </Modal>
 
       <DataTableShell minWidth={760}>
         <table className="w-full text-left text-xs">
@@ -286,7 +329,7 @@ function BatchJobTable({ batchId, onJobsChanged }) {
                   <BulkSelectRowCell id={job._id} selection={selection} ariaLabel={`Select ${name}`} />
                   <td className="px-3 py-2">
                     <div className="font-semibold text-[var(--color-ink)]">{name}</div>
-                    <div className="text-[10px] text-neutral-500 font-mono">{job.recipientEmail || job.leadId?.email}</div>
+                    <div className="text-2xs text-neutral-500 font-mono">{job.recipientEmail || job.leadId?.email}</div>
                   </td>
                   <td className="px-3 py-2 text-neutral-600 truncate max-w-[240px]" title={job.renderedSubject}>
                     {job.renderedSubject || '(No subject)'}
@@ -380,8 +423,8 @@ export default function EmailOutboxWorkspace({ focusBatchId = '', onFocusBatchHa
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-sm font-semibold text-[var(--color-ink)]">{batch.sequenceName}</span>
-                  <span className="text-[10px] text-neutral-400">·</span>
-                  <span className="text-[10px] font-medium text-neutral-500">{formatLaunchDate(batch.launchedAt)}</span>
+                  <span className="text-2xs text-neutral-400">·</span>
+                  <span className="text-2xs font-medium text-neutral-500">{formatLaunchDate(batch.launchedAt)}</span>
                 </div>
                 <p className="mt-1 text-xs text-neutral-600">
                   Audience: <span className="font-medium">{audienceLabel}</span>
@@ -390,14 +433,14 @@ export default function EmailOutboxWorkspace({ focusBatchId = '', onFocusBatchHa
                   {batch.restartedCount > 0 ? ` (${batch.restartedCount} restarted)` : ''}
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-800 ring-1 ring-amber-200/70">
+                  <span className="rounded-full bg-amber-50 px-2 py-0.5 text-2xs font-semibold text-amber-800 ring-1 ring-amber-200/70">
                     {batch.stats?.queued || 0} queued
                   </span>
-                  <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-800 ring-1 ring-emerald-200/70">
+                  <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-2xs font-semibold text-emerald-800 ring-1 ring-emerald-200/70">
                     {batch.stats?.sent || 0} sent
                   </span>
                   {(batch.stats?.failed || 0) > 0 && (
-                    <span className="rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-semibold text-red-800 ring-1 ring-red-200/70">
+                    <span className="rounded-full bg-red-50 px-2 py-0.5 text-2xs font-semibold text-red-800 ring-1 ring-red-200/70">
                       {batch.stats.failed} failed
                     </span>
                   )}
@@ -406,13 +449,13 @@ export default function EmailOutboxWorkspace({ focusBatchId = '', onFocusBatchHa
               <Link
                 to={`/admin/crm/sequences?edit=${batch.sequenceId}`}
                 onClick={(e) => e.stopPropagation()}
-                className="shrink-0 text-[10px] font-semibold text-brand hover:underline"
+                className="shrink-0 text-2xs font-semibold text-brand hover:underline"
               >
                 Open sequence
               </Link>
             </button>
             {isOpen ? (
-              <BatchJobTable batchId={batch._id} onJobsChanged={loadBatches} />
+              <BatchJobTable batchId={batch._id} batchLabel={batch.sequenceName} onJobsChanged={loadBatches} />
             ) : null}
           </div>
         );

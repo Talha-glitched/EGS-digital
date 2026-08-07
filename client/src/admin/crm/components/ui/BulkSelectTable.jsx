@@ -1,5 +1,6 @@
 import { Trash2, X } from 'lucide-react';
 import { cn } from './primitives.jsx';
+import { pluralize } from '../../constants/pluralForms.js';
 
 export function BulkSelectCheckbox({
   checked,
@@ -57,18 +58,10 @@ export function BulkSelectionBar({
   className,
 }) {
   if (!count) return null;
-  const pluralForms = {
-    company: 'companies',
-    contact: 'contacts',
-    opportunity: 'opportunities',
-    campaign: 'campaigns',
-    task: 'tasks',
-  };
-  const plural = pluralForms[noun] || `${noun}s`;
-  const label = count === 1 ? `1 ${noun}` : `${count} ${plural}`;
+  const label = pluralize(noun, count);
 
   return (
-    <div className={cn('crm-bulk-selection-bar', className)}>
+    <div className={cn('crm-bulk-selection-bar', className)} role="status">
       <span className="crm-bulk-selection-count">{label} selected</span>
       <div className="crm-bulk-selection-actions">
         <button

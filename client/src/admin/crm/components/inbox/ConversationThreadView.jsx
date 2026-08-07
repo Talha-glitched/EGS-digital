@@ -17,8 +17,8 @@ export default function ConversationThreadView({ activeThread, onAction }) {
     <div className="flex h-full flex-col">
       <header className="flex items-start justify-between gap-4 border-b border-[var(--color-line)] px-5 py-3.5">
         <div className="min-w-0">
-          <h3 className="truncate text-[15px] font-semibold text-[var(--color-ink)]">{activeThread.pocName}</h3>
-          <p className="mt-0.5 truncate text-[13px] text-neutral-500">
+          <h3 className="truncate text-base font-semibold text-[var(--color-ink)]">{activeThread.pocName}</h3>
+          <p className="mt-0.5 truncate text-sm text-neutral-500">
             {activeThread.designation}
             {activeThread.designation && activeThread.companyName ? ' · ' : ''}
             <span className="font-medium text-neutral-700">{activeThread.companyName}</span>
@@ -46,7 +46,7 @@ export default function ConversationThreadView({ activeThread, onAction }) {
               >
                 <div
                   className={cn(
-                    'mb-2 flex items-center justify-between gap-4 border-b pb-1.5 text-[10px] font-semibold uppercase tracking-wider',
+                    'mb-2 flex items-center justify-between gap-4 border-b pb-1.5 text-2xs font-semibold uppercase tracking-wider',
                     outbound ? 'border-[var(--color-line)] text-neutral-400' : 'border-white/15 text-white/60'
                   )}
                 >

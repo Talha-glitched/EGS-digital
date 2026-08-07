@@ -84,7 +84,7 @@ export default function UnifiedInboxWorkspace({ initialReplies = [], onAction, r
                   )}
                 >
                   <div className="mb-1 flex items-center justify-between gap-2">
-                    <span className="truncate text-[10px] font-semibold uppercase tracking-wide text-neutral-400">
+                    <span className="truncate text-2xs font-semibold uppercase tracking-wide text-neutral-400">
                       {reply.campaignName}
                     </span>
                     <IntentPill intent={reply.intent} />
@@ -92,7 +92,7 @@ export default function UnifiedInboxWorkspace({ initialReplies = [], onAction, r
                   <p className="truncate text-sm font-semibold text-[var(--color-ink)]">{reply.pocName}</p>
                   <p className="truncate text-xs text-neutral-500">{reply.companyName}</p>
                   <div className="mt-2 flex items-center gap-1.5">
-                    <span className="inline-flex rounded-full bg-sky-50 px-2 py-0.5 text-[10px] font-semibold text-sky-800 ring-1 ring-inset ring-sky-200/70">Lead</span>
+                    <span className="inline-flex rounded-full bg-sky-50 px-2 py-0.5 text-2xs font-semibold text-sky-800 ring-1 ring-inset ring-sky-200/70">Lead</span>
                     <PocQualificationBadge status={reply.pocQualification?.status} compact />
                   </div>
                   <p className="mt-1 line-clamp-2 text-xs italic text-neutral-400">&ldquo;{reply.latestMessageBody}&rdquo;</p>
@@ -121,7 +121,7 @@ export default function UnifiedInboxWorkspace({ initialReplies = [], onAction, r
 function IntentPill({ intent }) {
   const tone = intent === 'Interested' ? 'bg-emerald-50 text-emerald-700' : intent === 'Opt Out' ? 'bg-red-50 text-red-700' : 'bg-neutral-100 text-neutral-600';
   return (
-    <span className={cn('shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold', tone)}>
+    <span className={cn('shrink-0 rounded-full px-2 py-0.5 text-2xs font-bold', tone)}>
       {intent || 'Neutral'}
     </span>
   );

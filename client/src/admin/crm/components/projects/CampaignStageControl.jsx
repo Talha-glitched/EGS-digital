@@ -64,7 +64,7 @@ export default function CampaignStageControl({
   return (
     <div className="crm-stage-control">
       <div className="flex items-center gap-2">
-        <span className="text-[10px] font-bold uppercase tracking-wide text-neutral-400">
+        <span className="text-2xs font-bold uppercase tracking-wide text-neutral-400">
           Stage
           {showHint ? <InfoTip text={CAMPAIGN_AUTOMATION.stage} /> : null}
         </span>
@@ -107,7 +107,7 @@ export default function CampaignStageControl({
             Use automatic stage
           </button>
         ) : (
-          <p className="text-[11px] text-neutral-500">
+          <p className="text-xs text-neutral-500">
             Moves to Campaigning when outreach starts; Planning until then.
           </p>
         )}

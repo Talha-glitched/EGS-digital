@@ -186,7 +186,7 @@ export default function ProjectSequenceMindMap({ projectId, projectName = '', mi
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_340px]">
         <div className="crm-card relative flex max-h-[min(58vh,520px)] flex-col items-center overflow-y-auto border border-[var(--color-line)] bg-slate-50/20 p-6">
           <div className="flex flex-col items-center w-full">
-            <div className="flex h-9 items-center rounded-full border border-neutral-300 bg-white px-4 text-[11px] font-bold text-neutral-600 shadow-sm">
+            <div className="flex h-9 items-center rounded-full border border-neutral-300 bg-white px-4 text-xs font-bold text-neutral-600 shadow-sm">
               START CAMPAIGN
             </div>
             <svg className="h-6 w-1" viewBox="0 0 4 24">
@@ -214,12 +214,12 @@ export default function ProjectSequenceMindMap({ projectId, projectName = '', mi
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
-                        <span className={`flex h-5 w-5 items-center justify-center rounded-full text-[9px] font-bold text-white ${isActive ? 'bg-brand' : 'bg-neutral-500'}`}>
+                        <span className={`flex h-5 w-5 items-center justify-center rounded-full text-2xs font-bold text-white ${isActive ? 'bg-brand' : 'bg-neutral-500'}`}>
                           {idx + 1}
                         </span>
                         <div>
-                          <p className="text-[11px] font-bold text-neutral-800">Email step {idx + 1}</p>
-                          <p className="text-[9px] text-neutral-500">{idx === 0 ? 'Instant' : `Wait ${step.dayDelay}d`}</p>
+                          <p className="text-xs font-bold text-neutral-800">Email step {idx + 1}</p>
+                          <p className="text-2xs text-neutral-500">{idx === 0 ? 'Instant' : `Wait ${step.dayDelay}d`}</p>
                         </div>
                       </div>
                       {steps.length > 1 && (
@@ -228,7 +228,7 @@ export default function ProjectSequenceMindMap({ projectId, projectName = '', mi
                         </button>
                       )}
                     </div>
-                    <p className="mt-2 truncate rounded border border-neutral-100 bg-neutral-50 p-1 font-mono text-[9px] text-neutral-500">
+                    <p className="mt-2 truncate rounded border border-neutral-100 bg-neutral-50 p-1 font-mono text-2xs text-neutral-500">
                       {step.subjectTemplate || 'No subject'}
                     </p>
                   </div>
@@ -242,7 +242,7 @@ export default function ProjectSequenceMindMap({ projectId, projectName = '', mi
                       <svg className="h-6 w-1" viewBox="0 0 4 24">
                         <line x1="2" y1="0" x2="2" y2="20" stroke="#cbd5e1" strokeWidth="2" strokeDasharray="3 3" />
                       </svg>
-                      <button type="button" onClick={addStepNode} className="crm-btn-secondary py-1 text-[10px]">
+                      <button type="button" onClick={addStepNode} className="crm-btn-secondary py-1 text-2xs">
                         <Plus className="h-3 w-3" />
                         Add step
                       </button>

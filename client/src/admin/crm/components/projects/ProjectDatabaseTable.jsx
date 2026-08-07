@@ -3,6 +3,7 @@ import { DeliveryStatusBadge, ResponseStatusBadge } from '../leads/LeadTableComp
 import { VendorEmailColumns, VendorEmailHeaders } from '../leads/VendorEmailCells.jsx';
 import PocQualificationBadge from '../leads/PocQualificationBadge.jsx';
 import { EmptyState, cn } from '../ui/primitives.jsx';
+import { Modal } from '../ui/Modal.jsx';
 import TablePagination from '../ui/TablePagination.jsx';
 import DataTableShell from '../ui/DataTableShell.jsx';
 import { CAMPAIGN_AUTOMATION } from '../../constants/automationHints.js';
@@ -45,7 +46,7 @@ function SendJobStatusBadge({ status }) {
     label: status,
   };
   return (
-    <span className={cn('inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold ring-1 ring-inset', config.className)}>
+    <span className={cn('inline-flex items-center rounded-full px-2.5 py-0.5 text-2xs font-semibold ring-1 ring-inset', config.className)}>
       {config.label}
     </span>
   );
@@ -94,9 +95,17 @@ export default function ProjectDatabaseTable({
   const [sendingProgress, setSendingProgress] = useState({ current: 0, total: 0 });
   const [queueDeleting, setQueueDeleting] = useState(false);
   const [queueSendNotice, setQueueSendNotice] = useState('');
+  const [sendConfirmOpen, setSendConfirmOpen] = useState(false);
 
   const queueSelection = useRowSelection(queueJobs);
   const { confirmDelete: confirmQueueDelete } = useConfirmDeleteDialog();
+
+  const queuePendingJobs = useMemo(
+    () => queueJobs.filter((job) => ['pending', 'failed'].includes(job.status)),
+    [queueJobs],
+  );
+  const queuePendingCount = queuePendingJobs.length;
+  const queuePendingPreview = useMemo(() => queuePendingJobs.slice(0, 3), [queuePendingJobs]);
 
   const fetchQueueJobs = useCallback(async () => {
     if (!projectId) return;
@@ -121,6 +130,7 @@ export default function ProjectDatabaseTable({
 
   async function triggerQueueSend() {
     if (queueJobs.length === 0 || sendingAll || !projectId) return;
+    setSendConfirmOpen(false);
     setSendingAll(true);
     setQueueSendNotice('');
     const pendingCount = queueJobs.filter((job) => ['pending', 'failed'].includes(job.status)).length;
@@ -701,7 +711,7 @@ export default function ProjectDatabaseTable({
                         </td>
                         <td className="px-4 py-2.5">
                           <div className="font-semibold text-[var(--color-ink)]">{recipientName}</div>
-                          <div className="text-neutral-500 text-[10px] font-mono mt-0.5">{email.recipientEmail}</div>
+                          <div className="text-neutral-500 text-2xs font-mono mt-0.5">{email.recipientEmail}</div>
                         </td>
                         <td className="px-4 py-2.5 text-neutral-600 truncate max-w-[180px]" title={companyName}>{companyName}</td>
                         <td className="px-4 py-2.5 text-neutral-500 font-medium">{dateText}</td>
@@ -710,7 +720,7 @@ export default function ProjectDatabaseTable({
                         </td>
                         <td className="px-4 py-2.5 text-center">
                           <span className={cn(
-                            'inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1 ring-inset',
+                            'inline-flex items-center rounded-full px-2 py-0.5 text-2xs font-semibold ring-1 ring-inset',
                             replied ? 'bg-emerald-50 text-emerald-800 ring-emerald-200/50' : 'bg-neutral-100 text-neutral-500 ring-neutral-200/50'
                           )}>
                             {replied ? 'Yes' : 'No'}
@@ -780,7 +790,7 @@ export default function ProjectDatabaseTable({
                   </button>
                   <button
                     type="button"
-                    onClick={triggerQueueSend}
+                    onClick={() => setSendConfirmOpen(true)}
                     disabled={sendingAll || queueJobs.length === 0 || queueDeleting}
                     className="crm-btn-primary py-2 px-4 text-xs font-bold flex items-center gap-1.5"
                   >
@@ -789,6 +799,47 @@ export default function ProjectDatabaseTable({
                   </button>
                 </div>
               </div>
+
+              <Modal
+                open={sendConfirmOpen}
+                onClose={() => setSendConfirmOpen(false)}
+                title="Send this campaign?"
+                subtitle="This queues real outreach emails to external recipients right now. It cannot be undone or recalled once sent."
+                size="md"
+                icon={Send}
+                accent="brand"
+                footer={(
+                  <div className="flex justify-end gap-3">
+                    <button type="button" className="crm-btn-secondary" onClick={() => setSendConfirmOpen(false)}>
+                      Cancel
+                    </button>
+                    <button type="button" className="crm-btn-primary" onClick={triggerQueueSend}>
+                      Send {queuePendingCount} email{queuePendingCount === 1 ? '' : 's'}
+                    </button>
+                  </div>
+                )}
+              >
+                <div className="space-y-3 text-sm">
+                  <p className="text-neutral-600">
+                    <span className="font-semibold text-[var(--color-ink)]">{queuePendingCount}</span> email{queuePendingCount === 1 ? '' : 's'} will send now. Contacts already emailed for this sequence are skipped automatically.
+                  </p>
+                  {queuePendingPreview.length > 0 && (
+                    <ul className="rounded-lg border border-[var(--color-line)] divide-y divide-[var(--color-line)] bg-neutral-50/60">
+                      {queuePendingPreview.map((job) => (
+                        <li key={job._id} className="px-3 py-2 text-xs">
+                          <span className="font-medium text-[var(--color-ink)]">{job.leadId?.name || 'Contact'}</span>
+                          <span className="text-neutral-500"> — {job.recipientEmail || job.leadId?.email || 'no email on file'}</span>
+                        </li>
+                      ))}
+                      {queuePendingCount > queuePendingPreview.length && (
+                        <li className="px-3 py-2 text-xs text-neutral-500">
+                          + {queuePendingCount - queuePendingPreview.length} more
+                        </li>
+                      )}
+                    </ul>
+                  )}
+                </div>
+              </Modal>
 
               {sendingAll && (
                 <div className="bg-neutral-50 border border-[var(--color-line)] rounded-xl p-4 space-y-2">
@@ -830,7 +881,7 @@ export default function ProjectDatabaseTable({
                           />
                           <td className="px-4 py-2.5">
                             <div className="font-semibold text-[var(--color-ink)]">{recipientName}</div>
-                            <div className="text-neutral-500 text-[10px] font-mono mt-0.5">{job.recipientEmail}</div>
+                            <div className="text-neutral-500 text-2xs font-mono mt-0.5">{job.recipientEmail}</div>
                           </td>
                           <td className="px-4 py-2.5 text-neutral-600 truncate max-w-[280px]" title={job.renderedSubject}>
                             {job.renderedSubject || '(No subject)'}
@@ -841,7 +892,7 @@ export default function ProjectDatabaseTable({
                           <td className="px-4 py-2.5 text-center">
                             <SendJobStatusBadge status={job.status} />
                             {job.status === 'failed' && job.errorMessage && (
-                              <p className="mt-1 text-[10px] font-semibold text-red-500 max-w-[220px] mx-auto truncate" title={job.errorMessage}>
+                              <p className="mt-1 text-2xs font-semibold text-red-500 max-w-[220px] mx-auto truncate" title={job.errorMessage}>
                                 {job.errorMessage}
                               </p>
                             )}

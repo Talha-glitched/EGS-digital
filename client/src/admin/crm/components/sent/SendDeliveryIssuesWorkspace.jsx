@@ -33,7 +33,7 @@ function IssueBadge({ issue }) {
   const tone = severityTone(issue?.error?.severity);
   return (
     <span className={cn(
-      'inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide',
+      'inline-flex items-center rounded-full px-2 py-0.5 text-2xs font-semibold uppercase tracking-wide',
       tone === 'danger' && 'bg-red-50 text-red-700',
       tone === 'warning' && 'bg-amber-50 text-amber-800',
       tone === 'info' && 'bg-sky-50 text-sky-700',
@@ -62,7 +62,7 @@ function DeliveryIssueDetail({ issue }) {
       <div className="border-b border-[var(--color-line)] bg-white px-6 py-5 shrink-0">
         <div className="flex flex-wrap items-center gap-2">
           <IssueBadge issue={issue} />
-          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-neutral-400">
+          <span className="text-2xs font-semibold uppercase tracking-[0.14em] text-neutral-400">
             {issue.statusLabel} · Step {issue.stepNumber}
           </span>
         </div>
@@ -81,38 +81,38 @@ function DeliveryIssueDetail({ issue }) {
 
         <dl className="mt-4 grid gap-3 text-xs sm:grid-cols-2">
           <div>
-            <dt className="text-[10px] font-semibold uppercase tracking-wide text-neutral-400">Contact</dt>
+            <dt className="text-2xs font-semibold uppercase tracking-wide text-neutral-400">Contact</dt>
             <dd className="mt-0.5 font-medium text-[var(--color-ink)]">{contactName}</dd>
             <dd className="text-neutral-500">{issue.recipientEmail || issue.lead?.email || '—'}</dd>
           </div>
           <div>
-            <dt className="text-[10px] font-semibold uppercase tracking-wide text-neutral-400">Updated</dt>
+            <dt className="text-2xs font-semibold uppercase tracking-wide text-neutral-400">Updated</dt>
             <dd className="mt-0.5 font-medium text-[var(--color-ink)]">{formatWhen(issue.updatedAt || issue.scheduledFor)}</dd>
           </div>
           <div>
-            <dt className="text-[10px] font-semibold uppercase tracking-wide text-neutral-400">Company</dt>
+            <dt className="text-2xs font-semibold uppercase tracking-wide text-neutral-400">Company</dt>
             <dd className="mt-0.5 text-[var(--color-ink)]">{issue.company?.companyName || '—'}</dd>
           </div>
           <div>
-            <dt className="text-[10px] font-semibold uppercase tracking-wide text-neutral-400">Sequence</dt>
+            <dt className="text-2xs font-semibold uppercase tracking-wide text-neutral-400">Sequence</dt>
             <dd className="mt-0.5 text-[var(--color-ink)]">{issue.sequence?.name || '—'}</dd>
           </div>
         </dl>
 
         {issue.errorMessage && issue.errorMessage !== error.description ? (
-          <p className="mt-4 rounded-lg border border-[var(--color-line)] bg-neutral-50 px-3 py-2 text-[11px] font-mono text-neutral-600">
+          <p className="mt-4 rounded-lg border border-[var(--color-line)] bg-neutral-50 px-3 py-2 text-xs font-mono text-neutral-600">
             {issue.errorMessage}
           </p>
         ) : null}
 
         <div className="mt-4 flex flex-wrap gap-2">
           {issue.campaign?._id ? (
-            <Link to={`/admin/crm/projects/${issue.campaign._id}`} className="crm-btn-secondary !py-1.5 text-[11px]">
+            <Link to={`/admin/crm/projects/${issue.campaign._id}`} className="crm-btn-secondary !py-1.5 text-xs">
               Open campaign
             </Link>
           ) : null}
           {issue.sequence?._id ? (
-            <Link to={`/admin/crm/sequences?edit=${issue.sequence._id}`} className="crm-btn-secondary !py-1.5 text-[11px]">
+            <Link to={`/admin/crm/sequences?edit=${issue.sequence._id}`} className="crm-btn-secondary !py-1.5 text-xs">
               Open sequence
             </Link>
           ) : null}
@@ -166,7 +166,7 @@ export default function SendDeliveryIssuesWorkspace({
             {title}
             <span className="text-xs font-medium text-neutral-400">({total})</span>
           </h2>
-          <p className="mt-1 text-[11px] text-neutral-500">
+          <p className="mt-1 text-xs text-neutral-500">
             {view === 'queued'
               ? `${summary.queued || 0} queued · ${summary.processing || 0} sending now`
               : `${summary.failed || 0} failed · ${summary.cancelled || 0} cancelled`}
@@ -224,7 +224,7 @@ export default function SendDeliveryIssuesWorkspace({
                 >
                   <div className="mb-1 flex items-center justify-between gap-2">
                     <IssueBadge issue={issue} />
-                    <span className="shrink-0 text-[10px] text-neutral-400">Step {issue.stepNumber}</span>
+                    <span className="shrink-0 text-2xs text-neutral-400">Step {issue.stepNumber}</span>
                   </div>
                   <p className="truncate text-sm font-semibold text-[var(--color-ink)]">
                     {issue.lead?.name || issue.recipientEmail || 'Contact'}
@@ -232,7 +232,7 @@ export default function SendDeliveryIssuesWorkspace({
                   <p className="truncate text-xs text-neutral-500">
                     {issue.company?.companyName || issue.sequence?.name || 'Sequence send'}
                   </p>
-                  <p className="mt-1 text-[10px] text-neutral-400">{formatWhen(issue.updatedAt || issue.scheduledFor)}</p>
+                  <p className="mt-1 text-2xs text-neutral-400">{formatWhen(issue.updatedAt || issue.scheduledFor)}</p>
                 </button>
               );
             })
@@ -245,16 +245,16 @@ export default function SendDeliveryIssuesWorkspace({
               type="button"
               disabled={page <= 1 || loading}
               onClick={() => onPageChange(page - 1)}
-              className="crm-btn-ghost !py-1.5 text-[11px] disabled:opacity-40"
+              className="crm-btn-ghost !py-1.5 text-xs disabled:opacity-40"
             >
               Previous
             </button>
-            <span className="text-[11px] text-neutral-500">Page {page} of {pages}</span>
+            <span className="text-xs text-neutral-500">Page {page} of {pages}</span>
             <button
               type="button"
               disabled={page >= pages || loading}
               onClick={() => onPageChange(page + 1)}
-              className="crm-btn-ghost !py-1.5 text-[11px] disabled:opacity-40"
+              className="crm-btn-ghost !py-1.5 text-xs disabled:opacity-40"
             >
               Next
             </button>
@@ -281,14 +281,14 @@ export function SequenceDeliveryAlert({ summary, compact = false }) {
   if (compact) {
     return (
       <div className="rounded-lg border border-red-200/80 bg-red-50/60 px-3 py-2.5">
-        <p className="flex items-center gap-1.5 text-[11px] font-semibold text-red-800">
+        <p className="flex items-center gap-1.5 text-xs font-semibold text-red-800">
           <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
           {failed ? `${failed} send${failed === 1 ? '' : 's'} failed` : null}
           {failed && queued ? ' · ' : null}
           {queued ? `${queued} queued` : null}
         </p>
         {topError?.title ? (
-          <p className="mt-1 text-[10px] leading-relaxed text-red-700/90">
+          <p className="mt-1 text-2xs leading-relaxed text-red-700/90">
             Latest: {topError.title}
             {topError.action ? ` — ${topError.action}` : ''}
           </p>
@@ -316,9 +316,9 @@ export function SequenceDeliveryAlert({ summary, compact = false }) {
             </p>
           ) : null}
           {topError?.action ? (
-            <p className="mt-1 text-[11px] leading-relaxed text-red-800/80">{topError.action}</p>
+            <p className="mt-1 text-xs leading-relaxed text-red-800/80">{topError.action}</p>
           ) : null}
-          <Link to="/admin/crm/communications?tab=failed" className="mt-3 inline-flex text-[11px] font-semibold text-red-900 underline underline-offset-2">
+          <Link to="/admin/crm/communications?tab=failed" className="mt-3 inline-flex text-xs font-semibold text-red-900 underline underline-offset-2">
             Review all delivery issues
           </Link>
         </div>

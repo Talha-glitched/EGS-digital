@@ -343,18 +343,18 @@ export default function ContactLeadTasksSection({
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1">
                   <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-sky-100 text-sky-800 px-2 py-0.5 text-[10px] font-semibold">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-sky-100 text-sky-800 px-2 py-0.5 text-2xs font-semibold">
                       <Clock className="h-3 w-3" />
                       Review Required
                     </span>
                     {task.campaignId?.projectName && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 px-2 py-0.5 text-[10px] font-semibold">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 px-2 py-0.5 text-2xs font-semibold">
                         {task.campaignId.projectName}
                       </span>
                     )}
                   </div>
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block mt-1">Subject Heading</span>
+                    <span className="text-2xs font-bold uppercase tracking-wider text-neutral-400 block mt-1">Subject Heading</span>
                     <p className="text-xs font-bold text-neutral-900">{task.title || '(No Subject)'}</p>
                   </div>
                 </div>
@@ -368,7 +368,7 @@ export default function ContactLeadTasksSection({
                 </button>
               </div>
               <div className="space-y-1 pt-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block">Email Content</span>
+                <span className="text-2xs font-bold uppercase tracking-wider text-neutral-400 block">Email Content</span>
                 <FormattedEmailViewer
                   html={task.replyId?.html}
                   text={task.notes}
@@ -390,7 +390,7 @@ export default function ContactLeadTasksSection({
         {openFollowUpTasks.length === 0 && completedFollowUpTasks.length === 0 ? (
           <div className="rounded-xl border border-dashed border-neutral-200 p-4 text-center">
             <p className="text-xs font-semibold text-neutral-600">No lead follow-up tasks</p>
-            <p className="mt-1 text-[11px] text-neutral-500">Add tasks to schedule next actions for this lead.</p>
+            <p className="mt-1 text-xs text-neutral-500">Add tasks to schedule next actions for this lead.</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -406,22 +406,22 @@ export default function ContactLeadTasksSection({
                           <button
                             type="button"
                             onClick={() => handleToggleLeadTaskComplete(task)}
-                            className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 text-[10px] font-semibold hover:bg-emerald-100 transition"
+                            className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 text-2xs font-semibold hover:bg-emerald-100 transition"
                           >
                             <Circle className="h-3 w-3" />
                             Mark Complete
                           </button>
-                          <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 text-slate-700 px-2 py-0.5 text-[10px] font-semibold">
+                          <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 text-slate-700 px-2 py-0.5 text-2xs font-semibold">
                             {task.taskType === 'relationship_follow_up' ? 'Relationship Follow-up' : 'Follow-up Task'}
                           </span>
                           {task.campaignId?.projectName && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 px-2 py-0.5 text-[10px] font-semibold">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 px-2 py-0.5 text-2xs font-semibold">
                               {task.campaignId.projectName}
                             </span>
                           )}
                         </div>
                         <div>
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block mt-1">Subject Heading</span>
+                          <span className="text-2xs font-bold uppercase tracking-wider text-neutral-400 block mt-1">Subject Heading</span>
                           <p className="text-xs font-bold text-neutral-900">{task.title || '(No Subject)'}</p>
                         </div>
                       </div>
@@ -449,7 +449,7 @@ export default function ContactLeadTasksSection({
                       </div>
                     </div>
                     <div className="space-y-1 pt-1">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block">Email Content</span>
+                      <span className="text-2xs font-bold uppercase tracking-wider text-neutral-400 block">Email Content</span>
                       <FormattedEmailViewer
                         html={task.replyId?.html}
                         text={task.replyId?.text || task.notes}
@@ -472,8 +472,8 @@ export default function ContactLeadTasksSection({
                   </button>
                   <div className="min-w-0 flex-1">
                     <p className="text-xs font-semibold text-neutral-900 leading-snug">{task.title}</p>
-                    {task.notes && <p className="mt-1 text-[11px] text-neutral-600 leading-relaxed">{task.notes}</p>}
-                    <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] text-neutral-500">
+                    {task.notes && <p className="mt-1 text-xs text-neutral-600 leading-relaxed">{task.notes}</p>}
+                    <div className="mt-2 flex flex-wrap items-center gap-2 text-2xs text-neutral-500">
                       {task.dueAt && (
                         <span className="rounded-full bg-neutral-100 px-2 py-0.5 font-medium text-neutral-700">
                           Due: {new Date(task.dueAt).toLocaleDateString('en-AE')}
@@ -542,11 +542,11 @@ export default function ContactLeadTasksSection({
           <form onSubmit={handleCompleteReview} className="space-y-4 pt-2">
             <div className="rounded-xl border border-sky-200 bg-sky-50/60 p-3 space-y-1.5">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block">Subject Heading</span>
+                <span className="text-2xs font-bold uppercase tracking-wider text-neutral-400 block">Subject Heading</span>
                 <p className="text-xs font-bold text-neutral-900">{activeModalTask.title || '(No Subject)'}</p>
               </div>
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block mt-1 mb-1">Email Content</span>
+                <span className="text-2xs font-bold uppercase tracking-wider text-neutral-400 block mt-1 mb-1">Email Content</span>
                 <FormattedEmailViewer
                   html={activeModalTask.replyId?.html}
                   text={activeModalTask.notes}
@@ -575,7 +575,7 @@ export default function ContactLeadTasksSection({
                   >
                     <span>{out.label}</span>
                     {out.activeBadge && (
-                      <span className="rounded bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.5">
+                      <span className="rounded bg-emerald-100 text-emerald-800 text-2xs px-1.5 py-0.5">
                         {out.activeBadge}
                       </span>
                     )}

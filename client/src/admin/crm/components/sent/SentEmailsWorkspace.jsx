@@ -80,7 +80,7 @@ function SentEmailDetail({ email }) {
   return (
     <div className="crm-scroll flex min-h-0 flex-1 flex-col overflow-y-auto">
       <div className="border-b border-[var(--color-line)] px-6 py-5 shrink-0 bg-white">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-neutral-400">
+        <p className="text-2xs font-semibold uppercase tracking-[0.14em] text-neutral-400">
           {email.campaign?.projectName || 'Campaign'} · Step {email.stepNumber}
         </p>
         <h2 className="mt-1 text-lg font-semibold leading-snug text-[var(--color-ink)]">
@@ -88,20 +88,20 @@ function SentEmailDetail({ email }) {
         </h2>
         <dl className="mt-4 grid gap-3 text-xs sm:grid-cols-2">
           <div>
-            <dt className="text-[10px] font-semibold uppercase tracking-wide text-neutral-400">To</dt>
+            <dt className="text-2xs font-semibold uppercase tracking-wide text-neutral-400">To</dt>
             <dd className="mt-0.5 font-medium text-[var(--color-ink)]">{email.recipientEmail || '—'}</dd>
             <dd className="text-neutral-500">{contactName}</dd>
           </div>
           <div>
-            <dt className="text-[10px] font-semibold uppercase tracking-wide text-neutral-400">Sent</dt>
+            <dt className="text-2xs font-semibold uppercase tracking-wide text-neutral-400">Sent</dt>
             <dd className="mt-0.5 font-medium text-[var(--color-ink)]">{formatSentAt(email.sentAt)}</dd>
           </div>
           <div>
-            <dt className="text-[10px] font-semibold uppercase tracking-wide text-neutral-400">Company</dt>
+            <dt className="text-2xs font-semibold uppercase tracking-wide text-neutral-400">Company</dt>
             <dd className="mt-0.5 text-[var(--color-ink)]">{email.company?.companyName || '—'}</dd>
           </div>
           <div>
-            <dt className="text-[10px] font-semibold uppercase tracking-wide text-neutral-400">Sequence</dt>
+            <dt className="text-2xs font-semibold uppercase tracking-wide text-neutral-400">Sequence</dt>
             <dd className="mt-0.5 text-[var(--color-ink)]">{email.sequence?.name || '—'}</dd>
           </div>
         </dl>
@@ -109,13 +109,13 @@ function SentEmailDetail({ email }) {
           <div className="mt-4 flex flex-wrap gap-2">
             <Link
               to={`/admin/crm/projects/${email.campaign._id}`}
-              className="crm-btn-secondary !py-1.5 text-[11px]"
+              className="crm-btn-secondary !py-1.5 text-xs"
             >
               Open campaign
             </Link>
             <Link
               to={`/admin/crm/sequences?edit=${email.sequence?._id || ''}`}
-              className="crm-btn-secondary !py-1.5 text-[11px]"
+              className="crm-btn-secondary !py-1.5 text-xs"
             >
               Open sequence
             </Link>
@@ -125,7 +125,7 @@ function SentEmailDetail({ email }) {
       </div>
 
       <div className="flex-1 bg-neutral-50/50 p-6">
-        <p className="mb-3 text-[10px] font-semibold uppercase tracking-wide text-neutral-400">Conversation History</p>
+        <p className="mb-3 text-2xs font-semibold uppercase tracking-wide text-neutral-400">Conversation History</p>
         
         {loadingThread && !thread ? (
           <div className="py-8 text-center text-xs text-neutral-400 font-medium">Loading conversation thread…</div>
@@ -150,7 +150,7 @@ function SentEmailDetail({ email }) {
                     >
                       <div
                         className={cn(
-                          'mb-2 flex items-center justify-between gap-4 border-b pb-1.5 text-[10px] font-semibold uppercase tracking-wider',
+                          'mb-2 flex items-center justify-between gap-4 border-b pb-1.5 text-2xs font-semibold uppercase tracking-wider',
                           outbound ? 'border-[var(--color-line)] text-neutral-400' : 'border-white/15 text-white/60'
                         )}
                       >
@@ -167,7 +167,7 @@ function SentEmailDetail({ email }) {
         )}
 
         <div className="mt-8 border-t border-[var(--color-line)] pt-6">
-          <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-neutral-400">Quick Reply</p>
+          <p className="mb-2 text-2xs font-semibold uppercase tracking-wide text-neutral-400">Quick Reply</p>
           <form onSubmit={handleSendReply} className="space-y-3">
             <textarea
               value={replyText}
@@ -241,7 +241,7 @@ export default function SentEmailsWorkspace({
             Sent emails
             <span className="text-xs font-medium text-neutral-400">({total})</span>
           </h2>
-          <p className="mt-1 text-[11px] text-neutral-500">
+          <p className="mt-1 text-xs text-neutral-500">
             {sentToday} sent today · copies saved to your mailbox Sent folder when IMAP is configured
           </p>
 
@@ -334,10 +334,10 @@ export default function SentEmailsWorkspace({
                   )}
                 >
                   <div className="mb-1 flex items-center justify-between gap-2">
-                    <span className="truncate text-[10px] font-semibold uppercase tracking-wide text-neutral-400">
+                    <span className="truncate text-2xs font-semibold uppercase tracking-wide text-neutral-400">
                       {email.campaign?.projectName || 'Campaign'}
                     </span>
-                    <span className="shrink-0 text-[10px] text-neutral-400">Step {email.stepNumber}</span>
+                    <span className="shrink-0 text-2xs text-neutral-400">Step {email.stepNumber}</span>
                   </div>
                   <p className="truncate text-sm font-semibold text-[var(--color-ink)]">
                     {email.renderedSubject || '(No subject)'}
@@ -346,7 +346,7 @@ export default function SentEmailsWorkspace({
                     {email.lead?.name || email.recipientEmail}
                     {email.company?.companyName ? ` · ${email.company.companyName}` : ''}
                   </p>
-                  <p className="mt-1 text-[10px] text-neutral-400">{formatSentAt(email.sentAt)}</p>
+                  <p className="mt-1 text-2xs text-neutral-400">{formatSentAt(email.sentAt)}</p>
                 </button>
               );
             })
@@ -359,18 +359,18 @@ export default function SentEmailsWorkspace({
               type="button"
               disabled={page <= 1 || loading}
               onClick={() => onPageChange(page - 1)}
-              className="crm-btn-ghost !py-1.5 text-[11px] disabled:opacity-40"
+              className="crm-btn-ghost !py-1.5 text-xs disabled:opacity-40"
             >
               Previous
             </button>
-            <span className="text-[11px] text-neutral-500">
+            <span className="text-xs text-neutral-500">
               Page {page} of {pages}
             </span>
             <button
               type="button"
               disabled={page >= pages || loading}
               onClick={() => onPageChange(page + 1)}
-              className="crm-btn-ghost !py-1.5 text-[11px] disabled:opacity-40"
+              className="crm-btn-ghost !py-1.5 text-xs disabled:opacity-40"
             >
               Next
             </button>

@@ -14,7 +14,7 @@ export default function ResendStatusBadge({ status }) {
   const config = STATUS_CONFIGS[key] || { bg: 'bg-neutral-100 text-neutral-700', label: status || 'Unknown' };
 
   return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${config.bg}`}>
+    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-2xs font-semibold ${config.bg}`}>
       {config.label}
     </span>
   );

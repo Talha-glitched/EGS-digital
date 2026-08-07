@@ -169,7 +169,7 @@ export default function TeamSettingsPage() {
                               <div className="min-w-0">
                                 <p className="truncate font-semibold text-[var(--color-ink)]">{user.displayName}</p>
                                 {user.mustChangePassword ? (
-                                  <p className="text-[11px] font-medium text-amber-700">Must change password</p>
+                                  <p className="text-xs font-medium text-amber-700">Must change password</p>
                                 ) : null}
                               </div>
                             </div>

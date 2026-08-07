@@ -275,7 +275,7 @@ export default function ContactFollowUpTasksSection({
         {openTasks.length === 0 ? (
           <div className="rounded-xl border border-dashed border-neutral-300 p-4 text-center">
             <p className="text-xs font-semibold text-neutral-600">No follow-up scheduled</p>
-            <p className="mt-1 text-[11px] text-neutral-500">Keep the relationship warm by scheduling your next interaction.</p>
+            <p className="mt-1 text-xs text-neutral-500">Keep the relationship warm by scheduling your next interaction.</p>
             <button
               type="button"
               onClick={openCreateModal}
@@ -299,22 +299,22 @@ export default function ContactFollowUpTasksSection({
                           <button
                             type="button"
                             onClick={() => handleToggleComplete(task)}
-                            className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 text-[10px] font-semibold hover:bg-emerald-100 transition"
+                            className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 text-2xs font-semibold hover:bg-emerald-100 transition"
                           >
                             <Circle className="h-3 w-3" />
                             Mark Complete
                           </button>
-                          <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 text-slate-700 px-2 py-0.5 text-[10px] font-semibold">
+                          <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 text-slate-700 px-2 py-0.5 text-2xs font-semibold">
                             {task.taskType === 'relationship_follow_up' ? 'Relationship Follow-up' : 'Follow-up Task'}
                           </span>
                           {task.campaignId?.projectName && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 px-2 py-0.5 text-[10px] font-semibold">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 px-2 py-0.5 text-2xs font-semibold">
                               {task.campaignId.projectName}
                             </span>
                           )}
                         </div>
                         <div>
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block mt-1">Subject Heading</span>
+                          <span className="text-2xs font-bold uppercase tracking-wider text-neutral-400 block mt-1">Subject Heading</span>
                           <p className="text-xs font-bold text-neutral-900">{task.title || '(No Subject)'}</p>
                         </div>
                       </div>
@@ -336,7 +336,7 @@ export default function ContactFollowUpTasksSection({
                       </div>
                     </div>
                     <div className="space-y-1 pt-1">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block">Email Content</span>
+                      <span className="text-2xs font-bold uppercase tracking-wider text-neutral-400 block">Email Content</span>
                       <FormattedEmailViewer
                         html={task.replyId?.html}
                         text={task.replyId?.text || task.notes}
@@ -364,9 +364,9 @@ export default function ContactFollowUpTasksSection({
                   <div className="min-w-0 flex-1">
                     <p className="text-xs font-semibold text-neutral-900 leading-snug">{task.title}</p>
                     {task.notes && (
-                      <p className="mt-1 text-[11px] text-neutral-600 line-clamp-2 leading-relaxed">{task.notes}</p>
+                      <p className="mt-1 text-xs text-neutral-600 line-clamp-2 leading-relaxed">{task.notes}</p>
                     )}
-                    <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] text-neutral-500">
+                    <div className="mt-2 flex flex-wrap items-center gap-2 text-2xs text-neutral-500">
                       {task.dueAt ? (
                         <span className={cn(
                           'inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium',

@@ -11,8 +11,13 @@ yarn-error.log*
 
 server/.env.example
 server/.env.example
-.agents\skills
-.agents
+# Agent Skills
+.agents/
+.impeccable/
+.graphify/
+PRODUCT.md
+DESIGN.md
+GRAPHIFY.md
 
 client/src/assets/temporary/Mongo Back up
 server/backups/sql-repair/

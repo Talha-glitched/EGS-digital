@@ -312,7 +312,7 @@ export default function ProjectResourcesModal({ open, onClose, projectName }) {
                   <h4 className="text-sm font-bold text-ink">3. Lusha Role Filters</h4>
                   <p className="mt-0.5 text-xs text-neutral-500">Target job roles for Lusha search — separate filters for Included and Excluded titles.</p>
                 </div>
-                <span className="rounded-md bg-amber-50 px-2 py-1 text-[11px] font-semibold text-amber-700 ring-1 ring-amber-200">
+                <span className="rounded-md bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-700 ring-1 ring-amber-200">
                   Lusha
                 </span>
               </div>
@@ -376,7 +376,7 @@ function ResourceCard({
           <div className="flex items-center gap-2">
             <h4 className={cn('font-bold text-ink', compact ? 'text-xs' : 'text-sm')}>{title}</h4>
             {badge && (
-              <span className="rounded-md bg-neutral-200/60 px-2 py-0.5 text-[10px] font-semibold text-neutral-700">
+              <span className="rounded-md bg-neutral-200/60 px-2 py-0.5 text-2xs font-semibold text-neutral-700">
                 {badge}
               </span>
             )}
@@ -414,7 +414,7 @@ function ResourceCard({
           value={text}
           rows={rows}
           spellCheck={false}
-          className="w-full resize-y rounded-md bg-transparent font-mono text-[12px] leading-relaxed text-neutral-100 placeholder-neutral-500 focus:outline-none scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent selection:bg-brand selection:text-white"
+          className="w-full resize-y rounded-md bg-transparent font-mono text-xs leading-relaxed text-neutral-100 placeholder-neutral-500 focus:outline-none scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent selection:bg-brand selection:text-white"
           onClick={(e) => e.target.select()}
         />
       </div>

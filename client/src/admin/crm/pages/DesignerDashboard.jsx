@@ -40,7 +40,7 @@ function DeadlinePill({ dueAt, status }) {
   if (!tone || !label) return null;
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold leading-none ${DEADLINE_TONE_STYLES[tone]} ${tone === 'overdue' ? 'animate-pulse' : ''}`}
+      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold leading-none ${DEADLINE_TONE_STYLES[tone]} ${tone === 'overdue' ? 'animate-pulse' : ''}`}
     >
       {label}
     </span>
@@ -169,12 +169,12 @@ export default function DesignerDashboard() {
                     </button>
                     <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${PRIORITY_COLOURS[task.priority] || PRIORITY_COLOURS.Normal}`} />
                     <div className="min-w-0 flex-1">
-                      <p className="text-[13px] font-semibold text-[var(--color-ink)]">{task.title}</p>
+                      <p className="text-sm font-semibold text-[var(--color-ink)]">{task.title}</p>
                       {task.notes && (
                         <p className="mt-0.5 truncate text-xs text-neutral-400">{task.notes}</p>
                       )}
                       {task.dueAt && (
-                        <p className="mt-0.5 text-[11px] text-neutral-400">{formatTaskDue(task.dueAt)}</p>
+                        <p className="mt-0.5 text-xs text-neutral-400">{formatTaskDue(task.dueAt)}</p>
                       )}
                     </div>
                     <div className="shrink-0 flex items-center gap-2">
@@ -182,7 +182,7 @@ export default function DesignerDashboard() {
                       <button
                         type="button"
                         onClick={() => completeTask(task._id)}
-                        className="crm-btn-secondary px-2 py-1 text-[11px]"
+                        className="crm-btn-secondary px-2 py-1 text-xs"
                       >
                         Mark Done
                       </button>
@@ -209,7 +209,7 @@ export default function DesignerDashboard() {
                       <BriefcaseBusiness className="h-4 w-4" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[13px] font-semibold text-[var(--color-ink)] group-hover:text-brand">{item.name}</p>
+                      <p className="truncate text-sm font-semibold text-[var(--color-ink)] group-hover:text-brand">{item.name}</p>
                       <p className="mt-0.5 truncate text-xs text-neutral-500">{item.companyId?.companyName || 'Unknown company'}</p>
                     </div>
                     <Badge tone={STAGE_TONE[item.stage] || 'neutral'}>{item.stage}</Badge>

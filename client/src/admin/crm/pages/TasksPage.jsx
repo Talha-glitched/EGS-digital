@@ -364,7 +364,7 @@ export default function TasksPage() {
             { label: 'Blocked', value: taskSummary.blocked, icon: AlertTriangle, tone: 'border-orange-200 bg-orange-50 text-orange-700' },
             { label: 'Waiting', value: taskSummary.waiting, icon: Clock3, tone: 'border-violet-200 bg-violet-50 text-violet-700' },
             { label: 'Later / unscheduled', value: taskSummary.later, icon: CalendarCheck2, tone: 'border-neutral-200 bg-white text-neutral-700' },
-          ].map((item) => <div key={item.label} className={`rounded-xl border p-3 ${item.tone}`}><div className="flex items-center justify-between"><span className="text-[10px] font-semibold uppercase tracking-wide">{item.label}</span><item.icon className="h-3.5 w-3.5" /></div><p className="mt-2 text-2xl font-bold">{item.value}</p></div>)}
+          ].map((item) => <div key={item.label} className={`rounded-xl border p-3 ${item.tone}`}><div className="flex items-center justify-between"><span className="text-2xs font-semibold uppercase tracking-wide">{item.label}</span><item.icon className="h-3.5 w-3.5" /></div><p className="mt-2 text-2xl font-bold">{item.value}</p></div>)}
         </div>}
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-white p-3">
           <div><p className="text-sm font-semibold text-neutral-800">My Work</p><p className="text-xs text-neutral-500">Your assigned CRM and ERP actions in one place.</p></div>
@@ -399,7 +399,7 @@ export default function TasksPage() {
                 <span>{pill.label}</span>
                 {pill.count > 0 && (
                   <span className={cn(
-                    'rounded-full px-1.5 py-0.2 text-[10px] font-bold',
+                    'rounded-full px-1.5 py-0.2 text-2xs font-bold',
                     active ? 'bg-white/20 text-white' : 'bg-neutral-100 text-neutral-700'
                   )}>
                     {pill.count}

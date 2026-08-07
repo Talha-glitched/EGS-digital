@@ -3,7 +3,7 @@ import LeadFilterToolbar from './LeadFilterToolbar.jsx';
 import OutreachDrawer from './OutreachDrawer.jsx';
 import { DeliveryStatusBadge, SourceAttributionChips } from './LeadTableComponents.jsx';
 import { VendorEmailColumns, VendorEmailHeaders } from './VendorEmailCells.jsx';
-import { EmptyState } from '../ui/primitives.jsx';
+import { EmptyState, Alert } from '../ui/primitives.jsx';
 import TablePagination from '../ui/TablePagination.jsx';
 import DataTableShell from '../ui/DataTableShell.jsx';
 import ClickableTableRow, { stopRowClick } from '../ui/ClickableTableRow.jsx';
@@ -203,11 +203,14 @@ export default function LeadTableView({ leadsData = [], campaignsList = [], proj
 
   const launchWhatsapp = (lead) => {
     const phoneNum = lead.whatsappNumber || lead.phone || lead.phoneLusha1 || '';
-    const cleanPhone = phoneNum.replace(/\D/g, ''); 
-    if (!cleanPhone) return alert('No phone number configured for WhatsApp.');
+    const cleanPhone = phoneNum.replace(/\D/g, '');
+    if (!cleanPhone) {
+      setError('No phone number configured for WhatsApp on this contact.');
+      return;
+    }
 
     const name = lead.name || 'there';
-    const message = encodeURIComponent(`Hi ${name}, thanks for replying to our email regarding your custom footprint layout at the upcoming exhibition. Let's align execution vectors here!`);
+    const message = encodeURIComponent(`Hi ${name}, this is the team at Exhibit Graphic Sign. Following up on your exhibition stand — happy to help with any questions.`);
     window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
   };
 
@@ -241,6 +244,12 @@ export default function LeadTableView({ leadsData = [], campaignsList = [], proj
         onChange={setAdvancedFilters}
         className="px-4 pb-3"
       />
+
+      {error && (
+        <div className="px-4 pb-3">
+          <Alert tone="error">{error}</Alert>
+        </div>
+      )}
 
       {filteredLeads.length === 0 ? (
         <EmptyState
@@ -305,7 +314,7 @@ export default function LeadTableView({ leadsData = [], campaignsList = [], proj
                     />
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-[11px] font-bold text-neutral-600">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-xs font-bold text-neutral-600">
                           {initials(lead.name)}
                         </div>
                         <div className="min-w-0">

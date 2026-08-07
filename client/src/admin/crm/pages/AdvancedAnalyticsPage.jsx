@@ -193,7 +193,7 @@ export default function AdvancedAnalyticsPage() {
                 return (
                   <div key={c._id || i} className="flex-1 flex flex-col items-center group relative h-full justify-end">
                     {/* Tooltip */}
-                    <div className="absolute bottom-full mb-1 opacity-0 group-hover:opacity-100 bg-neutral-800 text-white text-[10px] font-bold py-1 px-2 rounded pointer-events-none transition z-10 whitespace-nowrap">
+                    <div className="absolute bottom-full mb-1 opacity-0 group-hover:opacity-100 bg-neutral-800 text-white text-2xs font-bold py-1 px-2 rounded pointer-events-none transition z-10 whitespace-nowrap">
                       {formatCurrency(c.revenueWon)}
                     </div>
                     {/* Bar */}
@@ -202,7 +202,7 @@ export default function AdvancedAnalyticsPage() {
                       style={{ height: `${heightPercent}%` }}
                     />
                     {/* Label */}
-                    <p className="text-[10px] font-bold text-neutral-600 mt-2 truncate w-full text-center" title={c.projectName}>
+                    <p className="text-2xs font-bold text-neutral-600 mt-2 truncate w-full text-center" title={c.projectName}>
                       {c.projectName.replace('Exhibition', '').replace('Campaign', '').trim()}
                     </p>
                   </div>
@@ -257,7 +257,7 @@ export default function AdvancedAnalyticsPage() {
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                     <span className="text-xl font-extrabold text-neutral-800 tabular-nums">{totalLeads}</span>
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-neutral-400">POCs</span>
+                    <span className="text-2xs uppercase font-bold tracking-wider text-neutral-400">POCs</span>
                   </div>
                 </div>
 
@@ -299,15 +299,15 @@ export default function AdvancedAnalyticsPage() {
               const heightPercent = Math.max((step.rate / maxReplyRate) * 100, 4);
               return (
                 <div key={i} className="flex-1 flex flex-col items-center group relative h-full justify-end">
-                  <div className="absolute bottom-full mb-1 opacity-0 group-hover:opacity-100 bg-neutral-800 text-white text-[10px] font-bold py-1 px-2 rounded pointer-events-none transition whitespace-nowrap">
+                  <div className="absolute bottom-full mb-1 opacity-0 group-hover:opacity-100 bg-neutral-800 text-white text-2xs font-bold py-1 px-2 rounded pointer-events-none transition whitespace-nowrap">
                     {step.rate.toFixed(1)}% ({step.replies} replies)
                   </div>
                   <div 
                     className="w-10 bg-linear-to-t from-blue-700 to-sky-400 hover:from-blue-600 hover:to-sky-300 rounded-t-md transition-all duration-500 ease-out cursor-pointer"
                     style={{ height: `${heightPercent}%` }}
                   />
-                  <p className="text-[10px] font-bold text-neutral-500 mt-2">Step {step.step}</p>
-                  <p className="text-[9px] text-neutral-400 font-mono">Sent: {step.sent}</p>
+                  <p className="text-2xs font-bold text-neutral-500 mt-2">Step {step.step}</p>
+                  <p className="text-2xs text-neutral-400 font-mono">Sent: {step.sent}</p>
                 </div>
               );
             })}
@@ -358,7 +358,7 @@ export default function AdvancedAnalyticsPage() {
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                     <span className="text-xl font-extrabold text-neutral-800 tabular-nums">{totalVendorLeads}</span>
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-neutral-400">Sources</span>
+                    <span className="text-2xs uppercase font-bold tracking-wider text-neutral-400">Sources</span>
                   </div>
                 </div>
 

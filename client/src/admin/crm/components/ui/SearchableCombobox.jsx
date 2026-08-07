@@ -162,7 +162,7 @@ export default function SearchableCombobox({
                   <Search className="h-3.5 w-3.5 shrink-0" />
                   <span>Search database for <strong>"{customTerm}"</strong></span>
                 </span>
-                <span className="text-[10px] text-neutral-400 font-mono shrink-0 ml-2">Press Enter ↵</span>
+                <span className="text-2xs text-neutral-400 font-mono shrink-0 ml-2">Press Enter ↵</span>
               </button>
             )}
 
@@ -179,7 +179,7 @@ export default function SearchableCombobox({
                 >
                   <span className="min-w-0 flex-1 text-left">
                     <span className="block truncate text-sm font-medium text-[var(--color-ink)]">{option.label}</span>
-                    {option.hint && <span className="block truncate text-[11px] text-neutral-500">{option.hint}</span>}
+                    {option.hint && <span className="block truncate text-xs text-neutral-500">{option.hint}</span>}
                   </span>
                   {active && <Check className="h-3.5 w-3.5 shrink-0 text-brand" />}
                 </button>

@@ -11,7 +11,7 @@ export function VendorEmailCell({ value, isConfirmed = false }) {
   const extra = emails.length - 1;
   return (
     <span
-      className={`block max-w-[140px] truncate font-mono text-[11px] ${
+      className={`block max-w-[140px] truncate font-mono text-xs ${
         isConfirmed ? 'font-semibold text-emerald-700' : 'text-neutral-500'
       }`}
       title={emails.join('\n')}

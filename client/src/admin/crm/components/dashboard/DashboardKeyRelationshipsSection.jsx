@@ -33,7 +33,7 @@ export default function DashboardKeyRelationshipsSection({
                 )}
               />
             </div>
-            <p className="mt-0.5 text-[10px] text-neutral-500">Confirmed Right POCs requiring relationship care</p>
+            <p className="mt-0.5 text-2xs text-neutral-500">Confirmed Right POCs requiring relationship care</p>
           </div>
         </div>
 
@@ -41,7 +41,7 @@ export default function DashboardKeyRelationshipsSection({
         <label
           onClick={(e) => e.stopPropagation()}
           className={cn(
-            'flex items-center gap-2 rounded-lg border px-2.5 py-1 text-[11px] font-semibold transition cursor-pointer',
+            'flex items-center gap-2 rounded-lg border px-2.5 py-1 text-xs font-semibold transition cursor-pointer',
             isReviewedToday
               ? 'bg-emerald-50 text-emerald-800 border-emerald-300 shadow-2xs'
               : 'bg-white text-neutral-700 border-neutral-300 hover:border-neutral-400'
@@ -74,7 +74,7 @@ export default function DashboardKeyRelationshipsSection({
       >
         <div className="overflow-hidden">
           {relationships.length === 0 ? (
-            <div className="p-6 text-center text-[11px] text-neutral-400">No confirmed key relationships found.</div>
+            <div className="p-6 text-center text-xs text-neutral-400">No confirmed key relationships found.</div>
           ) : (
             <div className="max-h-[460px] overflow-y-auto divide-y divide-neutral-100 bg-white scrollbar-thin">
               {relationships.map((person) => {
@@ -86,39 +86,39 @@ export default function DashboardKeyRelationshipsSection({
                   <div
                     key={person._id}
                     onClick={() => onOpenPerson?.(person._id, 'follow_ups')}
-                    className="group flex items-center justify-between py-2 px-3 hover:bg-sky-50/50 transition cursor-pointer text-[11px]"
+                    className="group flex items-center justify-between py-2 px-3 hover:bg-sky-50/50 transition cursor-pointer text-xs"
                   >
                     <div className="min-w-0 flex-1 space-y-0.5">
                       <div className="flex items-center gap-1.5">
-                        <span className="rounded bg-amber-50 px-1.5 py-0.5 text-[9px] font-bold text-amber-800 border border-amber-200 shrink-0">
+                        <span className="rounded bg-amber-50 px-1.5 py-0.5 text-2xs font-bold text-amber-800 border border-amber-200 shrink-0">
                           Right POC
                         </span>
-                        <span className={`rounded px-1.5 py-0.5 text-[9px] font-semibold border shrink-0 ${person.hasResponded ? 'bg-sky-50 text-sky-800 border-sky-200' : 'bg-neutral-50 text-neutral-500 border-neutral-200'}`}>
+                        <span className={`rounded px-1.5 py-0.5 text-2xs font-semibold border shrink-0 ${person.hasResponded ? 'bg-sky-50 text-sky-800 border-sky-200' : 'bg-neutral-50 text-neutral-500 border-neutral-200'}`}>
                           {person.hasResponded ? 'Lead' : 'No reply yet'}
                         </span>
                         {isOverdue && (
-                          <span className="rounded bg-red-100 px-1.5 py-0.5 text-[9px] font-bold text-red-700 border border-red-200 shrink-0">
+                          <span className="rounded bg-red-100 px-1.5 py-0.5 text-2xs font-bold text-red-700 border border-red-200 shrink-0">
                             Overdue
                           </span>
                         )}
                         {isDueToday && (
-                          <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold text-amber-800 border border-amber-200 shrink-0">
+                          <span className="rounded bg-amber-100 px-1.5 py-0.5 text-2xs font-bold text-amber-800 border border-amber-200 shrink-0">
                             Due Today
                           </span>
                         )}
                         {isNoFollowUp && (
-                          <span className="rounded bg-neutral-100 px-1.5 py-0.5 text-[9px] font-medium text-neutral-500 shrink-0">
+                          <span className="rounded bg-neutral-100 px-1.5 py-0.5 text-2xs font-medium text-neutral-500 shrink-0">
                             No Follow-up
                           </span>
                         )}
                         <p className="font-bold text-neutral-900 group-hover:text-brand transition truncate">{person.name}</p>
                       </div>
 
-                      <p className="text-[10px] text-neutral-500 truncate">
+                      <p className="text-2xs text-neutral-500 truncate">
                         {person.companyName} · Owner: <span className="font-medium text-neutral-700">{person.owner}</span>
                       </p>
 
-                      <div className="flex flex-wrap items-center gap-2 text-[9px] text-neutral-500">
+                      <div className="flex flex-wrap items-center gap-2 text-2xs text-neutral-500">
                         <span>
                           Last interaction: {person.lastInteractionAt ? new Date(person.lastInteractionAt).toLocaleDateString('en-AE') : 'None logged'}
                         </span>

@@ -51,10 +51,10 @@ export default function PocQualificationEditor({ value, onChange }) {
               )}
             >
               <div className="flex items-start justify-between gap-2">
-                <span className="text-[13px] font-semibold text-[var(--color-ink)]">{option.label}</span>
+                <span className="text-sm font-semibold text-[var(--color-ink)]">{option.label}</span>
                 {active && <PocQualificationBadge status={option.value} compact />}
               </div>
-              <p className="mt-1 text-[11px] leading-snug text-neutral-500">{option.description}</p>
+              <p className="mt-1 text-xs leading-snug text-neutral-500">{option.description}</p>
             </button>
           );
         })}
@@ -72,7 +72,7 @@ export default function PocQualificationEditor({ value, onChange }) {
               <Field label="LinkedIn URL" value={referral.linkedinUrl || ''} onChange={(v) => setReferral('linkedinUrl', v)} placeholder="https://linkedin.com/in/..." />
             </div>
           </div>
-          <p className="text-[11px] text-sky-800/80">
+          <p className="text-xs text-sky-800/80">
             Saving will create a new contact at this company when an email is provided, so you can continue outreach with the right person.
           </p>
         </div>

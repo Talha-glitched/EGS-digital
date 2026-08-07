@@ -392,6 +392,7 @@ export default function RelationshipsPage() {
                   <button
                     type="button"
                     onClick={() => setSearchTerm('')}
+                    aria-label="Clear search"
                     className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
                   >
                     <X className="h-3.5 w-3.5" />
@@ -483,7 +484,7 @@ export default function RelationshipsPage() {
                           />
                           <td>
                             <div className="flex items-center gap-3">
-                              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-soft text-[11px] font-bold text-brand">
+                              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-soft text-xs font-bold text-brand">
                                 {initials(lead.name)}
                               </div>
                               <div className="min-w-0">

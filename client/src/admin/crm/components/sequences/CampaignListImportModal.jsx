@@ -220,6 +220,7 @@ export default function CampaignListImportModal({
                   <button
                     type="button"
                     onClick={() => setSearchTerm('')}
+                    aria-label="Clear search"
                     className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
                   >
                     <X className="h-3 w-3" />
@@ -247,7 +248,7 @@ export default function CampaignListImportModal({
 
             {/* Status Filter Pills */}
             <div className="flex flex-wrap items-center gap-1.5 pt-1">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mr-1 flex items-center gap-1">
+              <span className="text-xs font-semibold uppercase tracking-wider text-neutral-400 mr-1 flex items-center gap-1">
                 <Filter className="h-3 w-3" /> Filter:
               </span>
               {STATUS_FILTERS.map((f) => {
@@ -260,7 +261,7 @@ export default function CampaignListImportModal({
                     type="button"
                     onClick={() => setStatusFilter(f.id)}
                     className={cn(
-                      'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium transition-all cursor-pointer',
+                      'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium transition-all cursor-pointer',
                       active
                         ? 'bg-brand text-white shadow-xs font-semibold'
                         : f.isHighlight && count > 0
@@ -272,7 +273,7 @@ export default function CampaignListImportModal({
                     <span>{f.label}</span>
                     <span
                       className={cn(
-                        'rounded-full px-1.5 py-0.2 text-[10px] font-bold',
+                        'rounded-full px-1.5 py-0.2 text-2xs font-bold',
                         active
                           ? 'bg-white/20 text-white'
                           : 'bg-neutral-100 text-neutral-500',
@@ -360,7 +361,7 @@ export default function CampaignListImportModal({
                             <div className="flex flex-col">
                               <span className="font-semibold text-neutral-800">{lead.name || '—'}</span>
                               {lead.designation && (
-                                <span className="text-[11px] text-neutral-500">{lead.designation}</span>
+                                <span className="text-xs text-neutral-500">{lead.designation}</span>
                               )}
                             </div>
                           </td>

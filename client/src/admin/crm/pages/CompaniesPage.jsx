@@ -333,6 +333,7 @@ export default function CompaniesPage() {
                   <button
                     type="button"
                     onClick={() => setSearchTerm('')}
+                    aria-label="Clear search"
                     className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
                   >
                     <X className="h-3.5 w-3.5" />
@@ -419,7 +420,7 @@ export default function CompaniesPage() {
                         {comp.companyName}
                       </div>
                       {comp.boothNumber && (
-                        <div className="text-[10px] text-neutral-400 font-mono">Stand: {comp.boothNumber}</div>
+                        <div className="text-2xs text-neutral-400 font-mono">Stand: {comp.boothNumber}</div>
                       )}
                     </td>
                     <td>

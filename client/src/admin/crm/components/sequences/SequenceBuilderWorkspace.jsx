@@ -278,7 +278,7 @@ export default function SequenceBuilderWorkspace({
         <div className="border-b border-[var(--color-line)] bg-gradient-to-r from-slate-50 to-white px-5 py-4">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="min-w-0 flex-1">
-              <label className="text-[10px] font-semibold uppercase tracking-wide text-neutral-400">Sequence name</label>
+              <label className="text-2xs font-semibold uppercase tracking-wide text-neutral-400">Sequence name</label>
               <input
                 className="crm-input mt-1 w-full max-w-md py-2 text-sm font-semibold"
                 value={sequenceName}
@@ -353,12 +353,12 @@ export default function SequenceBuilderWorkspace({
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2">
-                          <span className={`flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold text-white ${selected ? 'bg-brand' : 'bg-neutral-400'}`}>
+                          <span className={`flex h-6 w-6 items-center justify-center rounded-full text-2xs font-bold text-white ${selected ? 'bg-brand' : 'bg-neutral-400'}`}>
                             {idx + 1}
                           </span>
                           <div>
                             <p className="text-xs font-semibold text-[var(--color-ink)]">Step {idx + 1}</p>
-                            <p className="text-[10px] text-neutral-500">
+                            <p className="text-2xs text-neutral-500">
                               {idx === 0 ? 'On enroll' : `+${step.dayDelay || 0} days`}
                             </p>
                           </div>
@@ -374,7 +374,7 @@ export default function SequenceBuilderWorkspace({
                           </button>
                         )}
                       </div>
-                      <p className="mt-2 truncate rounded bg-neutral-50 px-2 py-1 font-mono text-[10px] text-neutral-500">
+                      <p className="mt-2 truncate rounded bg-neutral-50 px-2 py-1 font-mono text-2xs text-neutral-500">
                         {step.subjectTemplate || 'No subject'}
                       </p>
                     </button>
@@ -486,7 +486,7 @@ export default function SequenceBuilderWorkspace({
                     />
                     <div>
                       <p className="text-sm font-semibold text-[var(--color-ink)]">{mode.label}</p>
-                      <p className="text-[11px] text-neutral-500">{mode.desc}</p>
+                      <p className="text-xs text-neutral-500">{mode.desc}</p>
                     </div>
                   </label>
                 ))}
@@ -556,7 +556,7 @@ export default function SequenceBuilderWorkspace({
 function AudienceStat({ label, value, accent }) {
   return (
     <div className={`rounded-lg border px-2.5 py-2 text-center ${accent ? 'border-brand/30 bg-brand-soft/30' : 'border-[var(--color-line)] bg-white'}`}>
-      <p className="text-[10px] font-semibold uppercase tracking-wide text-neutral-400">{label}</p>
+      <p className="text-2xs font-semibold uppercase tracking-wide text-neutral-400">{label}</p>
       <p className={`mt-0.5 text-lg font-bold tabular-nums ${accent ? 'text-brand' : 'text-[var(--color-ink)]'}`}>{value}</p>
     </div>
   );

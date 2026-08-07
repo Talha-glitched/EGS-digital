@@ -99,6 +99,10 @@ export default function DataRecoveryPage() {
       title: 'Rollback to this version?',
       message: 'This will restore the record to the state captured in this revision.',
       confirmLabel: 'Rollback',
+      icon: RotateCcw,
+      accent: 'emerald',
+      confirmClass: 'crm-btn-primary',
+      footerNote: 'This creates a new revision. Nothing is deleted, and the current state stays recoverable.',
     });
     if (!ok) return;
 
@@ -180,7 +184,7 @@ export default function DataRecoveryPage() {
                         <div className="flex flex-wrap items-center gap-2">
                           <ChangeTypeBadge changeType={item.changeType} />
                           <span className="crm-settings-badge is-neutral">v{item.revisionNumber}</span>
-                          <span className="text-[11px] text-neutral-400">{formatSettingsWhen(item.createdAt)}</span>
+                          <span className="text-xs text-neutral-400">{formatSettingsWhen(item.createdAt)}</span>
                         </div>
                         <p className="mt-1.5 text-sm font-semibold text-[var(--color-ink)]">
                           {snapshotTitle(item.resourceType, snapshot)}

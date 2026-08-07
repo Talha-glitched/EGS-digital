@@ -131,7 +131,7 @@ export default function UserActivityPage() {
                     <div className="min-w-0 flex-1 text-left">
                       <div className="flex flex-wrap items-center gap-2">
                         <ActionBadge action={item.action} />
-                        <span className="text-[11px] text-neutral-400">{formatSettingsWhen(item.createdAt)}</span>
+                        <span className="text-xs text-neutral-400">{formatSettingsWhen(item.createdAt)}</span>
                       </div>
                       <p className="mt-1.5 text-sm font-semibold text-[var(--color-ink)]">
                         {item.summary || `${ACTION_LABELS[item.action] || item.action}${item.resource ? ` · ${item.resource}` : ''}`}

@@ -216,7 +216,7 @@ export default function FinancePage() {
                     </div>
                     <div className="hidden shrink-0 text-right sm:block">
                       <p className="text-sm font-bold tabular-nums text-[var(--color-ink)]">{formatPercent(project.roiPercent)}</p>
-                      <p className="text-[10px] uppercase tracking-wide text-neutral-400">ROI</p>
+                      <p className="text-2xs uppercase tracking-wide text-neutral-400">ROI</p>
                     </div>
                     <ChevronRight className={`h-4 w-4 shrink-0 ${active ? 'text-brand' : 'text-neutral-300'}`} />
                   </button>

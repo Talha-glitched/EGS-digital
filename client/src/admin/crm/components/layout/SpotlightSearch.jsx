@@ -317,7 +317,7 @@ export default function SpotlightSearch({ open, onClose, projects = [] }) {
                         <span className="min-w-0 flex-1 text-left">
                           <span className="block truncate text-[13.5px] font-medium text-[var(--color-ink)]">{item.title}</span>
                           {item.subtitle && (
-                            <span className="mt-0.5 block truncate text-[12px] text-[var(--color-ink-muted)]">{item.subtitle}</span>
+                            <span className="mt-0.5 block truncate text-xs text-[var(--color-ink-muted)]">{item.subtitle}</span>
                           )}
                         </span>
                         {item.meta && (

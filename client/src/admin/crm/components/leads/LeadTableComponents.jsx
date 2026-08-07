@@ -21,7 +21,7 @@ export function DeliveryStatusBadge({ status }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 ring-inset',
+        'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset',
         config.className
       )}
     >
@@ -42,7 +42,7 @@ const CHANNEL_LABELS = {
 export function ResponseStatusBadge({ hasResponded, respondedAt, responseChannels = [], compact = false }) {
   if (!hasResponded) {
     return (
-      <span className="inline-flex items-center rounded-full bg-neutral-100 px-2.5 py-1 text-[11px] font-semibold text-neutral-500 ring-1 ring-inset ring-neutral-200/70">
+      <span className="inline-flex items-center rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-semibold text-neutral-500 ring-1 ring-inset ring-neutral-200/70">
         No response
       </span>
     );
@@ -59,7 +59,7 @@ export function ResponseStatusBadge({ hasResponded, respondedAt, responseChannel
   return (
     <span
       title={title}
-      className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-800 ring-1 ring-inset ring-emerald-200/70"
+      className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-800 ring-1 ring-inset ring-emerald-200/70"
     >
       <MessageCircle className="h-3 w-3" strokeWidth={2} />
       {compact ? 'Yes' : 'Responded'}
@@ -87,7 +87,7 @@ export function SourceAttributionChips({ sources = [], primarySource }) {
           <span
             key={source}
             className={cn(
-              'inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-semibold ring-1 ring-inset',
+              'inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-2xs font-semibold ring-1 ring-inset',
               SOURCE_STYLES[source] || SOURCE_STYLES.Manual,
               isPrimary && 'ring-2 ring-current/30'
             )}

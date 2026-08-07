@@ -29,6 +29,7 @@ import {
   cn,
 } from '../components/ui/primitives.jsx';
 import {
+  AlertTriangle,
   BriefcaseBusiness,
   CalendarDays,
   CheckSquare,
@@ -55,17 +56,19 @@ import {
   buildOngoingJobFilterSchema,
 } from '../components/ui/advancedFilter/index.js';
 
+// Mirrors the server's DEFAULT_PIPELINE_STAGES order (server/src/models/PipelineConfig.js)
+// — used only for the instant before the API responds, or if it fails entirely.
 const DEFAULT_STAGES = [
   'Inquiry',
+  'Design',
+  'Quotation Sent',
   'Waiting Adv/ PO',
   'In Production',
   'Installation',
+  'Ready',
   'Waiting Balance Payment',
   'Job Done',
-  'Quotation Sent',
   'Job Lost',
-  'Design',
-  'Ready',
 ];
 const STAGE_TONES = {
   'Job Done': 'success',
@@ -79,7 +82,15 @@ const STAGE_TONES = {
   Installation: 'info',
   'Quotation Sent': 'info',
 };
-const STAGE_ACCENTS = ['#0284c7', '#ca8a04', '#ea580c', '#0d9488', '#d97706', '#059669', '#2563eb', '#64748b', '#7c3aed', '#0891b2'];
+// Column accent follows the same tone a stage already carries via STAGE_TONES
+// (the little count badge in the column header), instead of its position in
+// the array — so a stage's color means the same thing everywhere it appears.
+const TONE_ACCENTS = {
+  success: 'var(--color-success)',
+  warning: 'var(--color-warning)',
+  info: 'var(--color-info)',
+  neutral: '#64748b',
+};
 const LATE_STAGES = new Set(['Installation', 'Waiting Balance Payment', 'Ready']);
 
 function formatShortDate(value) {
@@ -133,6 +144,12 @@ export default function OngoingJobsPage({ completedOnly = false }) {
       setCampaigns(projectData || []);
       setContacts(leadsData.items || []);
     }
+  }
+
+  function retryLoad() {
+    setError('');
+    setLoading(true);
+    load().catch((err) => setError(err.message)).finally(() => setLoading(false));
   }
 
   useEffect(() => {
@@ -267,7 +284,7 @@ export default function OngoingJobsPage({ completedOnly = false }) {
     <PageShell className="max-w-none">
       <PageHeader />
 
-      {error && <Alert>{error}</Alert>}
+      {error && <Alert onRetry={retryLoad}>{error}</Alert>}
 
       {/* Reduced Compact Metrics */}
       <PageSection>
@@ -277,7 +294,7 @@ export default function OngoingJobsPage({ completedOnly = false }) {
               <BriefcaseBusiness className="h-4 w-4" />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">{completedOnly ? 'Jobs done' : 'Active Ongoing Jobs'}</p>
+              <p className="text-2xs font-semibold uppercase tracking-wider text-neutral-500">{completedOnly ? 'Jobs done' : 'Active Ongoing Jobs'}</p>
               <p className="text-sm font-bold tabular-nums text-neutral-900">{active.length}</p>
             </div>
           </div>
@@ -288,7 +305,7 @@ export default function OngoingJobsPage({ completedOnly = false }) {
                 <Target className="h-4 w-4" />
               </div>
               <div className="min-w-0">
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">{completedOnly ? 'Delivered value' : 'Open pipeline'}</p>
+                <p className="text-2xs font-semibold uppercase tracking-wider text-neutral-500">{completedOnly ? 'Delivered value' : 'Open pipeline'}</p>
                 <p className="text-sm font-bold tabular-nums text-neutral-900">{formatCurrency(pipelineValue)}</p>
               </div>
             </div>
@@ -299,7 +316,7 @@ export default function OngoingJobsPage({ completedOnly = false }) {
               <UserRound className="h-4 w-4" />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">{completedOnly ? 'Open execution tasks' : 'Late-stage jobs'}</p>
+              <p className="text-2xs font-semibold uppercase tracking-wider text-neutral-500">{completedOnly ? 'Open execution tasks' : 'Late-stage jobs'}</p>
               <p className="text-sm font-bold tabular-nums text-neutral-900">{completedOnly ? openExecutionTasks : lateStageCount}</p>
             </div>
           </div>
@@ -447,14 +464,15 @@ function OngoingJobsBoard({ stages, items, dragOverStage, setDragOverStage, onMo
   return (
     <div className="crm-scroll crm-pipeline-scroll overflow-x-auto">
       <div className="flex min-w-max gap-2.5 sm:gap-3">
-        {stages.map((stage, stageIndex) => {
+        {stages.map((stage) => {
           const stageItems = items.filter((item) => item.stage === stage);
           const stageValue = stageItems.reduce((sum, item) => sum + (Number(item.valueAed) || 0), 0);
+          const stageTone = STAGE_TONES[stage] || 'neutral';
           return (
             <section
               key={stage}
               className={`crm-pipeline-column ${dragOverStage === stage ? 'is-drag-over' : ''}`}
-              style={{ '--stage-accent': STAGE_ACCENTS[stageIndex % STAGE_ACCENTS.length] }}
+              style={{ '--stage-accent': TONE_ACCENTS[stageTone] }}
               onDragOver={(e) => { e.preventDefault(); setDragOverStage(stage); }}
               onDragLeave={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setDragOverStage(''); }}
               onDrop={(e) => {
@@ -466,10 +484,10 @@ function OngoingJobsBoard({ stages, items, dragOverStage, setDragOverStage, onMo
             >
               <header className="crm-pipeline-column-head">
                 <div className="flex items-center justify-between gap-2">
-                  <h2 className="text-[11px] font-bold text-[var(--color-ink)] uppercase tracking-wide">{stage}</h2>
-                  <Badge tone={STAGE_TONES[stage] || 'neutral'} className="py-0 px-1.5 text-[9px]">{stageItems.length}</Badge>
+                  <h2 className="text-xs font-bold text-[var(--color-ink)] uppercase tracking-wide">{stage}</h2>
+                  <Badge tone={STAGE_TONES[stage] || 'neutral'} className="py-0 px-1.5 text-2xs">{stageItems.length}</Badge>
                 </div>
-                {!isDesigner && <p className="mt-0.5 text-[10px] font-semibold tabular-nums text-neutral-500">{formatCurrency(stageValue)}</p>}
+                {!isDesigner && <p className="mt-0.5 text-2xs font-semibold tabular-nums text-neutral-500">{formatCurrency(stageValue)}</p>}
               </header>
               <div className="space-y-4">
                 {stageItems.map((item, index) => (
@@ -485,7 +503,7 @@ function OngoingJobsBoard({ stages, items, dragOverStage, setDragOverStage, onMo
                   />
                 ))}
                 {!stageItems.length && (
-                  <div className="rounded-lg border border-dashed border-neutral-300 px-2 py-6 text-center text-[10px] text-neutral-400">No Ongoing Jobs</div>
+                  <div className="rounded-lg border border-dashed border-neutral-300 px-2 py-6 text-center text-2xs text-neutral-400">No Ongoing Jobs</div>
                 )}
               </div>
             </section>
@@ -501,7 +519,7 @@ function OngoingJobsTable({ items, stages, onMove, onOpen, onDelete, selection, 
     <DataTableShell minWidth={isDesigner ? 850 : 1380}>
       <table className="crm-table crm-table-excel text-xs">
         <thead>
-          <tr className="crm-table-head text-[10px] uppercase tracking-wider bg-neutral-100/80">
+          <tr className="crm-table-head text-2xs uppercase tracking-wider bg-neutral-100/80">
             {selection ? <BulkSelectHeaderCell selection={selection} ariaLabel="Select all Ongoing Jobs" /> : null}
             <SortableTableHeader label="Ongoing Job" sortKey="name" activeKey={sortKey} direction={sortDir} onSort={onSort} />
             <SortableTableHeader label="Company" sortKey="company" activeKey={sortKey} direction={sortDir} onSort={onSort} />
@@ -510,14 +528,14 @@ function OngoingJobsTable({ items, stages, onMove, onOpen, onDelete, selection, 
             {!isDesigner && <th>Campaign</th>}
             {!isDesigner && <SortableTableHeader label="Value" sortKey="valueAed" activeKey={sortKey} direction={sortDir} onSort={onSort} align="right" />}
             <SortableTableHeader label="Owner" sortKey="owner" activeKey={sortKey} direction={sortDir} onSort={onSort} />
-            {!isDesigner && <SortableTableHeader label="Opened" sortKey="createdAt" activeKey={sortKey} direction={sortDir} onSort={onSort} />}
+            {!isDesigner && <SortableTableHeader label="Show date" sortKey="targetDate" activeKey={sortKey} direction={sortDir} onSort={onSort} hint="When the exhibition or event opens — the delivery deadline for this job." />}
             <SortableTableHeader label="Last updated" sortKey="updatedAt" activeKey={sortKey} direction={sortDir} onSort={onSort} />
             {!isDesigner && <th className="text-center">Action</th>}
           </tr>
         </thead>
         <tbody className="divide-y divide-neutral-200/80">
           {items.map((item) => (
-            <ClickableTableRow key={item._id} onClick={() => onOpen(item._id)} className="hover:bg-sky-50/50 text-[11px] h-8">
+            <ClickableTableRow key={item._id} onClick={() => onOpen(item._id)} className="hover:bg-sky-50/50 text-xs h-8">
               {selection ? (
                 <BulkSelectRowCell
                   id={item._id}
@@ -527,13 +545,13 @@ function OngoingJobsTable({ items, stages, onMove, onOpen, onDelete, selection, 
               ) : null}
               <td className="py-1 px-2.5">
                 <p className="font-bold text-[var(--color-ink)] truncate max-w-[220px]">{item.name}</p>
-                {item.eventName && <p className="text-[10px] text-neutral-500 truncate max-w-[220px]">{item.eventName}</p>}
+                {item.eventName && <p className="text-2xs text-neutral-600 truncate max-w-[220px]">{item.eventName}</p>}
               </td>
               <td className="py-1 px-2.5 text-neutral-700 truncate max-w-[150px]">{item.companyId?.companyName || '—'}</td>
               <td className="py-1 px-2.5 crm-pipeline-stage-cell" onClick={stopRowClick}>
                 <select
                   aria-label={`Move ${item.name} to stage`}
-                  className="crm-select h-6 py-0 px-1.5 text-[10px] font-semibold"
+                  className="crm-select h-6 py-0 px-1.5 text-2xs font-semibold"
                   value={item.stage}
                   onChange={(e) => onMove(item._id, e.target.value)}
                 >
@@ -546,19 +564,23 @@ function OngoingJobsTable({ items, stages, onMove, onOpen, onDelete, selection, 
               {!isDesigner && (
                 <td className="py-1 px-2.5 text-neutral-700">
                   {item.campaignId?.projectName ? (
-                    <div className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-700">
+                    <div className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-2xs font-medium text-blue-700">
                       <FolderKanban className="h-2.5 w-2.5" />
                       <span className="truncate max-w-[120px]">{item.campaignId.projectName}</span>
                     </div>
                   ) : (
-                    <span className="text-[10px] text-neutral-400">No campaign</span>
+                    <span className="text-2xs text-neutral-400">No campaign</span>
                   )}
                 </td>
               )}
               {!isDesigner && <td className="py-1 px-2.5 text-right tabular-nums font-bold text-neutral-900">{formatCurrency(item.valueAed)}</td>}
               <td className="py-1 px-2.5 text-neutral-700">{item.owner || '—'}</td>
-              {!isDesigner && <td className="py-1 px-2.5 text-neutral-500 text-[10px]">{formatShortDate(item.createdAt || item.expectedCloseDate)}</td>}
-              <td className="py-1 px-2.5 text-neutral-500 text-[10px]">
+              {!isDesigner && (
+                <td className={cn('py-1 px-2.5 text-2xs font-semibold', LATE_STAGES.has(item.stage) ? 'text-amber-700' : 'text-neutral-600')}>
+                  {formatShortDate(item.targetDate || item.expectedCloseDate)}
+                </td>
+              )}
+              <td className="py-1 px-2.5 text-neutral-500 text-2xs">
                 <span className="block font-medium">{formatShortDate(item.updatedAt)}</span>
               </td>
               {!isDesigner && (
@@ -580,9 +602,10 @@ function OngoingJobsTable({ items, stages, onMove, onOpen, onDelete, selection, 
 
 function OngoingJobCard({ item, stages, onMove, onOpen, onDelete, index, isDesigner = false }) {
   const summary = getExecutionSummary(item);
+  const isRiskStage = LATE_STAGES.has(item.stage);
   return (
     <article
-      className="crm-deal-card is-clickable !p-3"
+      className={cn('crm-deal-card is-clickable !p-3', isRiskStage && 'is-risk-stage')}
       draggable
       onDragStart={(e) => { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', item._id); }}
       onClick={() => onOpen(item._id)}
@@ -595,7 +618,14 @@ function OngoingJobCard({ item, stages, onMove, onOpen, onDelete, index, isDesig
         <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-brand-soft text-brand">
           <Target className="h-3 w-3" />
         </div>
-        <p className="min-w-0 flex-1 text-[11px] font-bold leading-snug text-[var(--color-ink)] truncate">{item.name}</p>
+        <p className="min-w-0 flex-1 text-xs font-bold leading-snug text-[var(--color-ink)] truncate">{item.name}</p>
+        {isRiskStage && (
+          <AlertTriangle
+            className="mt-0.5 h-3 w-3 shrink-0 text-amber-600"
+            aria-label="This stage tends to run late — worth a check-in"
+            title="This stage tends to run late — worth a check-in"
+          />
+        )}
         {!isDesigner && onDelete ? (
           <span onClick={stopRowClick}>
             <DeleteIconButton
@@ -606,29 +636,29 @@ function OngoingJobCard({ item, stages, onMove, onOpen, onDelete, index, isDesig
           </span>
         ) : null}
       </div>
-      <p className="mt-1 truncate text-[10px] font-medium text-neutral-600">{item.companyId?.companyName || 'Unknown company'}</p>
-      {item.eventName && <p className="mt-0.5 truncate text-[9px] text-neutral-400">{item.eventName}</p>}
+      <p className="mt-1 truncate text-2xs font-medium text-neutral-600">{item.companyId?.companyName || 'Unknown company'}</p>
+      {item.eventName && <p className="mt-0.5 truncate text-2xs text-neutral-600">{item.eventName}</p>}
       <div className="mt-2">
         <OngoingJobWorkspaceSummary item={item} />
       </div>
       {!!item.tags?.length && (
-        <div className="mt-1.5 flex flex-wrap gap-1">{(item.tags || []).map((tag) => <span key={tag} className="crm-deal-tag text-[9px] py-0 px-1.5">{tag}</span>)}</div>
+        <div className="mt-1.5 flex flex-wrap gap-1">{(item.tags || []).map((tag) => <span key={tag} className="crm-deal-tag text-2xs py-0 px-1.5">{tag}</span>)}</div>
       )}
       <div className="mt-2 flex items-center justify-between gap-2">
         {!isDesigner && <p className="text-xs font-bold tabular-nums text-[var(--color-ink)]">{formatCurrency(item.valueAed)}</p>}
-        <span className="flex items-center gap-1 text-[9px] text-neutral-400">
+        <span className={cn('flex items-center gap-1 text-2xs font-semibold', isRiskStage ? 'text-amber-700' : 'text-neutral-500')}>
           <CalendarDays className="h-2.5 w-2.5" />
-          {formatShortDate(item.createdAt || item.expectedCloseDate)}
+          {item.targetDate ? formatShortDate(item.targetDate) : 'No show date'}
         </span>
       </div>
       {summary.openTasks > 0 && (
-        <p className="mt-1.5 rounded bg-amber-50 px-2 py-1 text-[9px] leading-snug text-amber-900 border border-amber-200/60">
+        <p className="mt-1.5 rounded bg-amber-50 px-2 py-1 text-2xs leading-snug text-amber-900 border border-amber-200/60">
           <strong>Execution:</strong> {summary.openTasks} open task{summary.openTasks === 1 ? '' : 's'}
         </p>
       )}
-      <div className="mt-2 flex items-center justify-between border-t border-neutral-200/60 pt-2 text-[9px]">
+      <div className="mt-2 flex items-center justify-between border-t border-neutral-200/60 pt-2 text-2xs">
         <span className="flex items-center gap-1 font-medium text-neutral-500">
-          <span className="flex h-4 w-4 items-center justify-center rounded-full bg-neutral-800 text-[7px] font-bold text-white">
+          <span className="flex h-4 w-4 items-center justify-center rounded-full bg-neutral-800 text-2xs font-bold text-white">
             {String(item.owner || 'A').slice(0, 1).toUpperCase()}
           </span>
           {item.owner || 'admin'}
@@ -640,7 +670,7 @@ function OngoingJobCard({ item, stages, onMove, onOpen, onDelete, index, isDesig
       <div className="relative mt-1.5" onClick={stopRowClick}>
         <select
           aria-label={`Move ${item.name} to stage`}
-          className="crm-select py-0 px-1.5 text-[10px] font-semibold h-6"
+          className="crm-select py-0 px-1.5 text-2xs font-semibold h-6"
           value={item.stage}
           onChange={(e) => onMove(item._id, e.target.value)}
         >
@@ -664,7 +694,7 @@ function OngoingJobWorkspaceSummary({ item, compact = false }) {
         <span
           key={key}
           className={[
-            'inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[9px] font-semibold',
+            'inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-2xs font-semibold',
             tone === 'amber' ? 'bg-amber-50 text-amber-800' : '',
             tone === 'sky' ? 'bg-sky-50 text-sky-800' : '',
             tone === 'emerald' ? 'bg-emerald-50 text-emerald-800' : '',

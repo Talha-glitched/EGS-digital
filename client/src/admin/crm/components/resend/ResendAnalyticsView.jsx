@@ -185,7 +185,7 @@ export default function ResendAnalyticsView({ metrics }) {
               </div>
               <ProgressBar value={deliverabilityRate} tone="success" />
               {total > 0 && (
-                <p className="text-[10px] text-neutral-400 text-right">
+                <p className="text-2xs text-neutral-400 text-right">
                   Drop-off: {(100 - deliverabilityRate).toFixed(1)}% ({total - delivered} failed/bounced)
                 </p>
               )}
@@ -199,7 +199,7 @@ export default function ResendAnalyticsView({ metrics }) {
               </div>
               <ProgressBar value={openRate} tone="info" />
               {delivered > 0 && (
-                <p className="text-[10px] text-neutral-400 text-right">
+                <p className="text-2xs text-neutral-400 text-right">
                   Drop-off: {(100 - openRate).toFixed(1)}% ({delivered - opened} ignored)
                 </p>
               )}
@@ -213,7 +213,7 @@ export default function ResendAnalyticsView({ metrics }) {
               </div>
               <ProgressBar value={clickRate} tone="success" />
               {opened > 0 && (
-                <p className="text-[10px] text-neutral-400 text-right">
+                <p className="text-2xs text-neutral-400 text-right">
                   Drop-off: {(100 - clickRate).toFixed(1)}% ({opened - clicked} read without action)
                 </p>
               )}
@@ -227,7 +227,7 @@ export default function ResendAnalyticsView({ metrics }) {
               </div>
               <ProgressBar value={parseFloat(metrics?.rates?.received || 0)} tone="success" />
               {total > 0 && (
-                <p className="text-[10px] text-neutral-400 text-right">
+                <p className="text-2xs text-neutral-400 text-right">
                   Unreplied: {(100 - parseFloat(metrics?.rates?.received || 0)).toFixed(1)}% ({total - received} emails)
                 </p>
               )}
@@ -243,31 +243,31 @@ export default function ResendAnalyticsView({ metrics }) {
           />
           <div className="p-4 space-y-4">
             <div className="space-y-2">
-              <h4 className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">Metrics Breakdown</h4>
+              <h4 className="text-xs font-bold text-neutral-400 uppercase tracking-wider">Metrics Breakdown</h4>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div className="bg-neutral-50 p-2.5 rounded-xl border border-[var(--color-line)]">
-                  <span className="block text-[10px] text-neutral-500 font-semibold uppercase tracking-wider">Bounced</span>
+                  <span className="block text-2xs text-neutral-500 font-semibold uppercase tracking-wider">Bounced</span>
                   <span className="text-base font-bold tabular-nums text-red-500">{bounced}</span>
                 </div>
                 <div className="bg-neutral-50 p-2.5 rounded-xl border border-[var(--color-line)]">
-                  <span className="block text-[10px] text-neutral-500 font-semibold uppercase tracking-wider">Complaints</span>
+                  <span className="block text-2xs text-neutral-500 font-semibold uppercase tracking-wider">Complaints</span>
                   <span className="text-base font-bold tabular-nums text-orange-500">{complained}</span>
                 </div>
                 <div className="bg-neutral-50 p-2.5 rounded-xl border border-[var(--color-line)]">
-                  <span className="block text-[10px] text-neutral-500 font-semibold uppercase tracking-wider">Failed</span>
+                  <span className="block text-2xs text-neutral-500 font-semibold uppercase tracking-wider">Failed</span>
                   <span className="text-base font-bold tabular-nums text-neutral-600">{failed}</span>
                 </div>
                 <div className="bg-neutral-50 p-2.5 rounded-xl border border-[var(--color-line)]">
-                  <span className="block text-[10px] text-neutral-500 font-semibold uppercase tracking-wider">Total</span>
+                  <span className="block text-2xs text-neutral-500 font-semibold uppercase tracking-wider">Total</span>
                   <span className="text-base font-bold tabular-nums text-[var(--color-ink)]">{total}</span>
                 </div>
               </div>
             </div>
 
             <div className="border-t border-[var(--color-line)] pt-3 space-y-2">
-              <h4 className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">Health Status</h4>
+              <h4 className="text-xs font-bold text-neutral-400 uppercase tracking-wider">Health Status</h4>
               {bounceRate > 5 ? (
-                <div className="flex gap-2 p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-800 text-[11px] leading-relaxed">
+                <div className="flex gap-2 p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs leading-relaxed">
                   <AlertTriangle className="h-4 w-4 shrink-0 text-red-500" />
                   <div>
                     <span className="font-bold block">Action required: High Bounce Rate</span>
@@ -275,7 +275,7 @@ export default function ResendAnalyticsView({ metrics }) {
                   </div>
                 </div>
               ) : bounceRate > 2 ? (
-                <div className="flex gap-2 p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-[11px] leading-relaxed">
+                <div className="flex gap-2 p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs leading-relaxed">
                   <AlertTriangle className="h-4 w-4 shrink-0 text-amber-500" />
                   <div>
                     <span className="font-bold block">Warning: Elevated Bounces</span>
@@ -283,7 +283,7 @@ export default function ResendAnalyticsView({ metrics }) {
                   </div>
                 </div>
               ) : (
-                <div className="flex gap-2 p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] leading-relaxed">
+                <div className="flex gap-2 p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs leading-relaxed">
                   <ThumbsUp className="h-4 w-4 shrink-0 text-emerald-500" />
                   <div>
                     <span className="font-bold block">Excellent Health</span>
@@ -323,7 +323,7 @@ export default function ResendAnalyticsView({ metrics }) {
                   >
                     {/* Floating Tooltip */}
                     {hoveredBar === index && item.total > 0 && (
-                      <div className="absolute bottom-52 bg-neutral-900 text-white rounded-lg p-2.5 shadow-xl text-[10px] z-10 w-36 pointer-events-none transition duration-200 leading-relaxed border border-neutral-800">
+                      <div className="absolute bottom-52 bg-neutral-900 text-white rounded-lg p-2.5 shadow-xl text-2xs z-10 w-36 pointer-events-none transition duration-200 leading-relaxed border border-neutral-800">
                         <p className="font-bold border-b border-neutral-700 pb-1 mb-1 text-center">{item.day} Sends: {item.total}</p>
                         <div className="space-y-0.5">
                           <p className="flex justify-between"><span className="text-indigo-400 font-semibold">Clicked:</span> <span className="font-bold tabular-nums">{item.clicked}</span></p>
@@ -356,7 +356,7 @@ export default function ResendAnalyticsView({ metrics }) {
               })}
             </div>
             {/* Chart Legend */}
-            <div className="flex flex-wrap justify-center gap-4 mt-4 text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">
+            <div className="flex flex-wrap justify-center gap-4 mt-4 text-2xs font-semibold text-neutral-500 uppercase tracking-wider">
               <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded bg-indigo-500" /> Clicked</span>
               <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded bg-sky-400" /> Opened</span>
               <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded bg-emerald-400" /> Delivered</span>
@@ -381,11 +381,11 @@ export default function ResendAnalyticsView({ metrics }) {
                       <span className="text-xs font-bold text-[var(--color-ink)]">{bucket.label}</span>
                       {bestTime && <Badge tone="info">Best Time</Badge>}
                     </div>
-                    <span className="text-[10px] text-neutral-400 font-medium block mt-0.5">{bucket.hours}</span>
-                    <span className="text-[10px] text-neutral-500 font-semibold block mt-1.5">{bucket.count} emails sent</span>
+                    <span className="text-2xs text-neutral-400 font-medium block mt-0.5">{bucket.hours}</span>
+                    <span className="text-2xs text-neutral-500 font-semibold block mt-1.5">{bucket.count} emails sent</span>
                   </div>
                   <div className="text-right">
-                    <span className="block text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Open Rate</span>
+                    <span className="block text-2xs font-bold text-neutral-400 uppercase tracking-wider">Open Rate</span>
                     <span className="text-lg font-black text-[var(--color-ink)] tabular-nums">{bucket.rate}%</span>
                   </div>
                 </div>

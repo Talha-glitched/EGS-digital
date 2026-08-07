@@ -19,10 +19,14 @@ export function ConfirmDeleteProvider({ children }) {
       title = 'Delete this item?',
       message = 'This cannot be undone immediately, but you can restore it within 30 seconds.',
       confirmLabel = 'Delete',
+      icon = Trash2,
+      accent = 'danger',
+      confirmClass = 'crm-btn-danger',
+      footerNote = 'After deleting, an undo notification will appear at the bottom of the screen for 30 seconds.',
     } = {}) =>
       new Promise((resolve) => {
         resolverRef.current = resolve;
-        setDialog({ title, message, confirmLabel });
+        setDialog({ title, message, confirmLabel, icon, accent, confirmClass, footerNote });
       }),
     [],
   );
@@ -38,21 +42,21 @@ export function ConfirmDeleteProvider({ children }) {
         title={dialog?.title || 'Delete this item?'}
         subtitle={dialog?.message}
         size="md"
-        icon={Trash2}
-        accent="danger"
+        icon={dialog?.icon || Trash2}
+        accent={dialog?.accent || 'danger'}
         footer={(
           <div className="flex justify-end gap-3">
             <button type="button" className="crm-btn-secondary" onClick={() => closeDialog(false)}>
               Cancel
             </button>
-            <button type="button" className="crm-btn-danger" onClick={() => closeDialog(true)}>
+            <button type="button" className={dialog?.confirmClass || 'crm-btn-danger'} onClick={() => closeDialog(true)}>
               {dialog?.confirmLabel || 'Delete'}
             </button>
           </div>
         )}
       >
         <p className="text-sm leading-relaxed text-neutral-600">
-          After deleting, an undo notification will appear at the bottom of the screen for 30 seconds.
+          {dialog?.footerNote || 'After deleting, an undo notification will appear at the bottom of the screen for 30 seconds.'}
         </p>
       </Modal>
     </ConfirmDeleteContext.Provider>

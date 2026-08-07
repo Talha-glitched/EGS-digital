@@ -23,6 +23,7 @@ export default function SensitiveDataDisplay({
       className={`crm-sensitive-inline ${className}`}
       onClick={requestUnlock}
       title="Unlock to view"
+      aria-label="Unlock to view"
     >
       <span>{text ? maskSensitiveValue(text, kind) : emptyLabel}</span>
       <Lock className="h-3 w-3 shrink-0 opacity-60" />

@@ -50,7 +50,7 @@ export default function CommunicationSourceDrawer({ source, onClose, stackLevel 
     >
       {loading ? <LoadingState label="Loading source conversation…" /> : error ? <Alert>{error}</Alert> : thread ? (
         <div className="space-y-4">
-          <div className="flex items-start gap-2 rounded-xl border border-sky-200 bg-sky-50 p-3 text-[11px] text-sky-800">
+          <div className="flex items-start gap-2 rounded-xl border border-sky-200 bg-sky-50 p-3 text-xs text-sky-800">
             <Link2 className="mt-0.5 h-4 w-4 shrink-0" />
             <p>{sourceMessageId ? 'The highlighted email is the exact evidence used for this Job record.' : 'This whole conversation is linked as the source evidence for this Job.'}</p>
           </div>
@@ -66,7 +66,7 @@ export default function CommunicationSourceDrawer({ source, onClose, stackLevel 
                     <Badge tone={inbound ? 'success' : 'info'}>{inbound ? 'Received' : 'Sent'}</Badge>
                     {selected && <Badge tone="warning">Exact source</Badge>}
                   </div>
-                  <span className="text-[10px] text-neutral-500">{when(message.timestamp)}</span>
+                  <span className="text-2xs text-neutral-500">{when(message.timestamp)}</span>
                 </div>
                 {message.subject && <p className="mb-2 text-xs font-semibold text-neutral-800">Subject: {message.subject}</p>}
                 <FormattedEmailViewer text={message.body || ''} maxHeight={520} />

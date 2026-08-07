@@ -1,67 +1,18 @@
-import { useEffect, useRef } from 'react';
+import { useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { cn } from './primitives.jsx';
 import { useBodyScrollLock } from './useBodyScrollLock.js';
 import { useOverlayTransition } from './useOverlayTransition.js';
+import { useFocusTrap } from './useFocusTrap.js';
 
 export function Modal({ open, isOpen, onClose, title, subtitle, children, footer, size = 'lg', icon: Icon, accent = 'brand' }) {
   const panelRef = useRef(null);
-  const onCloseRef = useRef(onClose);
+  const titleId = useId();
   const effectiveOpen = open !== undefined ? Boolean(open) : Boolean(isOpen);
   const { mounted, visible, exiting } = useOverlayTransition(effectiveOpen);
   useBodyScrollLock(mounted);
-
-  onCloseRef.current = onClose;
-
-  useEffect(() => {
-    if (!mounted || exiting) return undefined;
-
-    const previousFocus = document.activeElement;
-    const panel = panelRef.current;
-    const focusableSelector = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [href], [tabindex]:not([tabindex="-1"])';
-    const firstInput = panel?.querySelector('input:not([disabled]), textarea:not([disabled]), select:not([disabled])');
-    const firstFocusable = panel?.querySelector(focusableSelector);
-    (firstInput || firstFocusable || panel)?.focus();
-
-    return () => {
-      previousFocus?.focus?.();
-    };
-  }, [mounted, exiting]);
-
-  useEffect(() => {
-    if (!mounted || exiting) return undefined;
-
-    const panel = panelRef.current;
-    const focusableSelector = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [href], [tabindex]:not([tabindex="-1"])';
-
-    function handleKeyDown(event) {
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        onCloseRef.current?.();
-        return;
-      }
-      if (event.key !== 'Tab' || !panel) return;
-      const focusable = [...panel.querySelectorAll(focusableSelector)];
-      if (!focusable.length) {
-        event.preventDefault();
-        panel.focus();
-        return;
-      }
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [mounted, exiting]);
+  useFocusTrap(panelRef, { active: mounted && !exiting, onClose });
 
   if (!mounted) return null;
 
@@ -78,7 +29,7 @@ export function Modal({ open, isOpen, onClose, title, subtitle, children, footer
       className={cn('crm-modal-overlay crm-root', show && 'is-visible', exiting && 'is-exiting')}
       role="dialog"
       aria-modal="true"
-      aria-labelledby="crm-modal-title"
+      aria-labelledby={titleId}
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose?.();
       }}
@@ -96,7 +47,7 @@ export function Modal({ open, isOpen, onClose, title, subtitle, children, footer
               </div>
             ) : null}
             <div className="min-w-0 flex-1">
-              <h2 id="crm-modal-title" className="crm-drawer-title">
+              <h2 id={titleId} className="crm-drawer-title">
                 {title}
               </h2>
               {subtitle && <p className="crm-drawer-subtitle">{subtitle}</p>}

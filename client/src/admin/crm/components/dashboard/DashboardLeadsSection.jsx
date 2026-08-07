@@ -33,7 +33,7 @@ export default function DashboardLeadsSection({
                 )}
               />
             </div>
-            <p className="mt-0.5 text-[10px] text-neutral-500">Responders not yet classified as Key Relationships</p>
+            <p className="mt-0.5 text-2xs text-neutral-500">Responders not yet classified as Key Relationships</p>
           </div>
         </div>
 
@@ -41,7 +41,7 @@ export default function DashboardLeadsSection({
         <label
           onClick={(e) => e.stopPropagation()}
           className={cn(
-            'flex items-center gap-2 rounded-lg border px-2.5 py-1 text-[11px] font-semibold transition cursor-pointer',
+            'flex items-center gap-2 rounded-lg border px-2.5 py-1 text-xs font-semibold transition cursor-pointer',
             isReviewedToday
               ? 'bg-emerald-50 text-emerald-800 border-emerald-300 shadow-2xs'
               : 'bg-white text-neutral-700 border-neutral-300 hover:border-neutral-400'
@@ -74,7 +74,7 @@ export default function DashboardLeadsSection({
       >
         <div className="overflow-hidden">
           {leads.length === 0 ? (
-            <div className="p-6 text-center text-[11px] text-neutral-400">No open lead tasks or pending reviews.</div>
+            <div className="p-6 text-center text-xs text-neutral-400">No open lead tasks or pending reviews.</div>
           ) : (
             <div className="max-h-[460px] overflow-y-auto divide-y divide-neutral-100 bg-white scrollbar-thin">
               {leads.map((person) => {
@@ -82,34 +82,34 @@ export default function DashboardLeadsSection({
                   <div
                     key={person._id}
                     onClick={() => onOpenPerson?.(person._id, 'follow_ups')}
-                    className="group flex items-center justify-between py-2 px-3 hover:bg-sky-50/50 transition cursor-pointer text-[11px]"
+                    className="group flex items-center justify-between py-2 px-3 hover:bg-sky-50/50 transition cursor-pointer text-xs"
                   >
                     <div className="min-w-0 flex-1 space-y-0.5">
                       <div className="flex items-center gap-1.5">
                         {person.hasUnreviewedReply && (
-                          <span className="rounded bg-sky-100 px-1.5 py-0.5 text-[9px] font-bold text-sky-800 border border-sky-200 shrink-0">
+                          <span className="rounded bg-sky-100 px-1.5 py-0.5 text-2xs font-bold text-sky-800 border border-sky-200 shrink-0">
                             Unreviewed Reply
                           </span>
                         )}
                         {person.isOverdue && !person.hasUnreviewedReply && (
-                          <span className="rounded bg-red-100 px-1.5 py-0.5 text-[9px] font-bold text-red-700 border border-red-200 shrink-0">
+                          <span className="rounded bg-red-100 px-1.5 py-0.5 text-2xs font-bold text-red-700 border border-red-200 shrink-0">
                             Overdue Task
                           </span>
                         )}
                         <span className={cn(
-                          'rounded px-1.5 py-0.5 text-[9px] font-semibold border shrink-0 bg-blue-50 text-blue-700 border-blue-200'
+                          'rounded px-1.5 py-0.5 text-2xs font-semibold border shrink-0 bg-blue-50 text-blue-700 border-blue-200'
                         )}>
                           Lead
                         </span>
                         <p className="font-bold text-neutral-900 group-hover:text-brand transition truncate">{person.name}</p>
                       </div>
 
-                      <p className="text-[10px] text-neutral-500 truncate">
+                      <p className="text-2xs text-neutral-500 truncate">
                         {person.companyName} · Campaign: <span className="font-medium text-neutral-700">{person.campaignName}</span>
                       </p>
 
                       {person.latestReply && (
-                        <div className="text-[10px] text-neutral-600 truncate bg-neutral-50 p-1 rounded border border-neutral-100">
+                        <div className="text-2xs text-neutral-600 truncate bg-neutral-50 p-1 rounded border border-neutral-100">
                           <span className="font-semibold not-italic">
                             Replied {person.latestReply.receivedAt ? new Date(person.latestReply.receivedAt).toLocaleDateString('en-AE') : ''}
                             {person.latestReply.intent ? ` · ${person.latestReply.intent}` : ''}:
@@ -119,7 +119,7 @@ export default function DashboardLeadsSection({
                       )}
 
                       {person.currentTask && (
-                        <div className="flex flex-wrap items-center gap-2 text-[9px] text-neutral-500">
+                        <div className="flex flex-wrap items-center gap-2 text-2xs text-neutral-500">
                           <span className="font-semibold text-neutral-800 truncate max-w-[180px]">
                             Task: {person.currentTask.title}
                           </span>

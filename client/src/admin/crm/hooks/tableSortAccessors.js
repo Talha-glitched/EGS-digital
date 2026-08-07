@@ -99,8 +99,8 @@ export const ongoingJobSortAccessors = {
   valueAedLabel: 'Value',
   owner: (r) => r.owner,
   ownerLabel: 'Owner',
-  createdAt: (r) => r.createdAt || r.expectedCloseDate,
-  createdAtLabel: 'Opened',
+  targetDate: (r) => r.targetDate || r.expectedCloseDate,
+  targetDateLabel: 'Show date',
   updatedAt: (r) => r.updatedAt,
   updatedAtLabel: 'Updated',
 };

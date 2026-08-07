@@ -547,7 +547,7 @@ export default function SequenceWhiteboard({
         </div>
 
         <div className="crm-seq-palette">
-          <span className="text-[9px] font-semibold uppercase tracking-wide text-neutral-400">Add</span>
+          <span className="text-2xs font-semibold uppercase tracking-wide text-neutral-400">Add</span>
           <button type="button" onClick={onAddEmail} className="crm-seq-palette-btn">
             <Mail className="h-3.5 w-3.5" />
             Email

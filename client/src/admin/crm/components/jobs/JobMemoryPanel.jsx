@@ -74,7 +74,7 @@ function AttachmentList({ attachments = [] }) {
           href={file.url}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex max-w-full items-center gap-2 rounded-lg border border-neutral-200 bg-white px-2.5 py-2 text-[11px] font-medium text-neutral-700 hover:border-brand/40 hover:text-brand"
+          className="inline-flex max-w-full items-center gap-2 rounded-lg border border-neutral-200 bg-white px-2.5 py-2 text-xs font-medium text-neutral-700 hover:border-brand/40 hover:text-brand"
           title={file.checksumSha256 ? `SHA-256: ${file.checksumSha256}` : file.fileName}
         >
           <Paperclip className="h-3.5 w-3.5 shrink-0" />
@@ -219,9 +219,9 @@ export default function JobMemoryPanel({ ongoingJobId, active = true, onChanged 
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <div>
             <p className="text-sm font-semibold text-neutral-900">Add to Job Memory</p>
-            <p className="mt-0.5 text-[11px] text-neutral-500">Record the requirement, change, issue, evidence, or lesson where the work lives.</p>
+            <p className="mt-0.5 text-xs text-neutral-500">Record the requirement, change, issue, evidence, or lesson where the work lives.</p>
           </div>
-          <label className="inline-flex items-center gap-2 text-[11px] font-medium text-neutral-600">
+          <label className="inline-flex items-center gap-2 text-xs font-medium text-neutral-600">
             <input
               type="checkbox"
               checked={form.pinned}
@@ -261,7 +261,7 @@ export default function JobMemoryPanel({ ongoingJobId, active = true, onChanged 
             />
           </label>
           <div className="flex min-w-0 items-center gap-3">
-            {files.length > 0 && <span className="truncate text-[11px] text-neutral-500">{files.length} file{files.length === 1 ? '' : 's'} selected</span>}
+            {files.length > 0 && <span className="truncate text-xs text-neutral-500">{files.length} file{files.length === 1 ? '' : 's'} selected</span>}
             <button type="submit" disabled={saving || (!form.content.trim() && !files.length)} className="crm-btn-primary text-xs">
               {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />}
               Add entry
@@ -324,7 +324,7 @@ export default function JobMemoryPanel({ ongoingJobId, active = true, onChanged 
                     />
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex flex-wrap items-center gap-3">
-                        <label className="inline-flex items-center gap-2 text-[11px] font-medium text-neutral-600">
+                        <label className="inline-flex items-center gap-2 text-xs font-medium text-neutral-600">
                           <input
                             type="checkbox"
                             checked={editForm.pinned}
@@ -332,11 +332,11 @@ export default function JobMemoryPanel({ ongoingJobId, active = true, onChanged 
                           />
                           Pinned
                         </label>
-                        <label className="cursor-pointer text-[11px] font-semibold text-brand hover:text-brand-dark">
+                        <label className="cursor-pointer text-xs font-semibold text-brand hover:text-brand-dark">
                           Add files
                           <input type="file" multiple className="sr-only" onChange={(event) => setEditFiles(Array.from(event.target.files || []))} />
                         </label>
-                        {editFiles.length > 0 && <span className="text-[11px] text-neutral-500">{editFiles.length} new file{editFiles.length === 1 ? '' : 's'}</span>}
+                        {editFiles.length > 0 && <span className="text-xs text-neutral-500">{editFiles.length} new file{editFiles.length === 1 ? '' : 's'}</span>}
                       </div>
                       <div className="flex gap-2">
                         <button type="button" className="crm-btn-secondary text-xs" onClick={() => setEditingId('')}>Cancel</button>
@@ -353,8 +353,8 @@ export default function JobMemoryPanel({ ongoingJobId, active = true, onChanged 
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
                           <Badge tone={TYPE_TONES[item.type] || 'neutral'}>{TYPE_LABELS[item.type] || item.type}</Badge>
-                          {item.pinned && <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700"><Pin className="h-3 w-3" />Pinned</span>}
-                          <span className="text-[10px] font-medium text-neutral-400">Version {item.currentVersion}</span>
+                          {item.pinned && <span className="inline-flex items-center gap-1 text-2xs font-semibold text-amber-700"><Pin className="h-3 w-3" />Pinned</span>}
+                          <span className="text-2xs font-medium text-neutral-400">Version {item.currentVersion}</span>
                         </div>
                         <p className="mt-3 whitespace-pre-wrap text-xs leading-5 text-neutral-700">{item.content || 'File-only entry'}</p>
                       </div>
@@ -363,7 +363,7 @@ export default function JobMemoryPanel({ ongoingJobId, active = true, onChanged 
                       </button>
                     </div>
                     <AttachmentList attachments={item.attachments} />
-                    <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-neutral-100 pt-3 text-[10px] text-neutral-500">
+                    <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-neutral-100 pt-3 text-2xs text-neutral-500">
                       <span className="inline-flex items-center gap-1.5"><Clock3 className="h-3 w-3" />{formatWhen(item.updatedAt)} · {item.author}</span>
                       <div className="flex flex-wrap items-center gap-3">
                         {item.communicationSource?.conversationId && (
@@ -382,17 +382,17 @@ export default function JobMemoryPanel({ ongoingJobId, active = true, onChanged 
                     {versionsOpen && (
                       <div className="mt-3 rounded-lg border border-neutral-200 bg-neutral-50 p-3">
                         {!versions ? (
-                          <div className="flex items-center gap-2 text-[11px] text-neutral-500"><Loader2 className="h-3.5 w-3.5 animate-spin" />Loading history…</div>
+                          <div className="flex items-center gap-2 text-xs text-neutral-500"><Loader2 className="h-3.5 w-3.5 animate-spin" />Loading history…</div>
                         ) : (
                           <div className="space-y-3">
                             {versions.map((version) => (
                               <div key={version.id} className="border-b border-neutral-200 pb-3 last:border-0 last:pb-0">
-                                <div className="flex flex-wrap items-center justify-between gap-2 text-[10px] text-neutral-500">
+                                <div className="flex flex-wrap items-center justify-between gap-2 text-2xs text-neutral-500">
                                   <span className="font-semibold text-neutral-700">Version {version.version}</span>
                                   <span>{formatWhen(version.createdAt)} · {version.author}</span>
                                 </div>
-                                {version.changeReason && <p className="mt-1 text-[10px] font-medium text-neutral-500">Reason: {version.changeReason}</p>}
-                                <p className="mt-2 whitespace-pre-wrap text-[11px] leading-5 text-neutral-700">{version.content || 'File-only entry'}</p>
+                                {version.changeReason && <p className="mt-1 text-2xs font-medium text-neutral-500">Reason: {version.changeReason}</p>}
+                                <p className="mt-2 whitespace-pre-wrap text-xs leading-5 text-neutral-700">{version.content || 'File-only entry'}</p>
                                 <AttachmentList attachments={version.attachments} />
                               </div>
                             ))}
@@ -408,7 +408,7 @@ export default function JobMemoryPanel({ ongoingJobId, active = true, onChanged 
         </div>
       )}
 
-      <div className="flex gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-[10px] leading-4 text-neutral-500">
+      <div className="flex gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-2xs leading-4 text-neutral-500">
         <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
         <span>Edit an entry to correct or clarify the same information. Add a new entry when a new client instruction, decision, problem, site event, or delivery update occurs.</span>
       </div>

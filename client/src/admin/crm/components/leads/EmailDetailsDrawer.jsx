@@ -111,7 +111,7 @@ export default function EmailDetailsDrawer({
         <div className="rounded-xl border border-[var(--color-line)] bg-neutral-50/50 p-4">
           <div className="grid gap-4 sm:grid-cols-2 text-xs">
             <div>
-              <span className="block font-semibold text-neutral-400 uppercase tracking-wider text-[10px]">Recipient</span>
+              <span className="block font-semibold text-neutral-400 uppercase tracking-wider text-2xs">Recipient</span>
               {email.lead?._id ? (
                 <button
                   type="button"
@@ -127,7 +127,7 @@ export default function EmailDetailsDrawer({
             </div>
 
             <div>
-              <span className="block font-semibold text-neutral-400 uppercase tracking-wider text-[10px]">Company</span>
+              <span className="block font-semibold text-neutral-400 uppercase tracking-wider text-2xs">Company</span>
               {email.company?._id ? (
                 <button
                   type="button"
@@ -142,7 +142,7 @@ export default function EmailDetailsDrawer({
             </div>
 
             <div>
-              <span className="block font-semibold text-neutral-400 uppercase tracking-wider text-[10px]">Status</span>
+              <span className="block font-semibold text-neutral-400 uppercase tracking-wider text-2xs">Status</span>
               <div className="mt-1 flex items-center gap-2">
                 <StatusBadge status={email.status} />
                 {email.lead?.hasResponded && (
@@ -154,7 +154,7 @@ export default function EmailDetailsDrawer({
             </div>
 
             <div>
-              <span className="block font-semibold text-neutral-400 uppercase tracking-wider text-[10px]">
+              <span className="block font-semibold text-neutral-400 uppercase tracking-wider text-2xs">
                 {email.status === 'pending' ? 'Scheduled For' : 'Sent At'}
               </span>
               <span className="mt-1 block text-[var(--color-ink)] text-xs">
@@ -164,7 +164,7 @@ export default function EmailDetailsDrawer({
 
             {email.sequence?.name && (
               <div className="sm:col-span-2">
-                <span className="block font-semibold text-neutral-400 uppercase tracking-wider text-[10px]">Sequence</span>
+                <span className="block font-semibold text-neutral-400 uppercase tracking-wider text-2xs">Sequence</span>
                 <span className="mt-1 block text-[var(--color-ink)] text-xs">{email.sequence?.name}</span>
               </div>
             )}
@@ -175,7 +175,7 @@ export default function EmailDetailsDrawer({
               <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-red-600" />
               <div>
                 <p className="font-semibold">Delivery Failed</p>
-                <p className="mt-1 text-red-700/90 font-mono text-[11px] leading-relaxed break-words">{email.errorMessage}</p>
+                <p className="mt-1 text-red-700/90 font-mono text-xs leading-relaxed break-words">{email.errorMessage}</p>
               </div>
             </div>
           )}
@@ -209,7 +209,7 @@ export default function EmailDetailsDrawer({
                       >
                         <div
                           className={cn(
-                            'mb-2 flex items-center justify-between gap-4 border-b pb-1.5 text-[10px] font-semibold uppercase tracking-wider',
+                            'mb-2 flex items-center justify-between gap-4 border-b pb-1.5 text-2xs font-semibold uppercase tracking-wider',
                             outbound ? 'border-[var(--color-line)] text-neutral-400' : 'border-white/15 text-white/60'
                           )}
                         >

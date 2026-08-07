@@ -111,7 +111,7 @@ export default function ResendEmailsPage() {
           <Tabs items={tabItems} active={activeTab} onChange={setActiveTab} />
           
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider whitespace-nowrap">Campaign:</span>
+            <span className="text-2xs font-bold text-neutral-500 uppercase tracking-wider whitespace-nowrap">Campaign:</span>
             <select
               value={selectedCampaignId}
               onChange={(e) => setSelectedCampaignId(e.target.value)}

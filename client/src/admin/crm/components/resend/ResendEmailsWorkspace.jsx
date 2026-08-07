@@ -163,7 +163,7 @@ export default function ResendEmailsWorkspace({
               type="button"
               onClick={onRefresh}
               disabled={refreshing}
-              className="crm-btn-secondary flex items-center gap-1.5 !py-1.5 text-[11px]"
+              className="crm-btn-secondary flex items-center gap-1.5 !py-1.5 text-xs"
             >
               <RefreshCw className={cn('h-3.5 w-3.5', refreshing && 'animate-spin')} />
               {refreshing ? 'Refreshing…' : 'Refresh'}
@@ -218,7 +218,7 @@ export default function ResendEmailsWorkspace({
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-left text-xs">
               <thead>
-                <tr className="border-b border-[var(--color-line)] bg-neutral-50/50 text-[10px] font-semibold uppercase tracking-wider text-neutral-500">
+                <tr className="border-b border-[var(--color-line)] bg-neutral-50/50 text-2xs font-semibold uppercase tracking-wider text-neutral-500">
                   <th className="px-4 py-2.5">To</th>
                   <th className="px-4 py-2.5">Subject</th>
                   <th className="px-4 py-2.5">From</th>
@@ -252,7 +252,7 @@ export default function ResendEmailsWorkspace({
                         <div className="flex items-center gap-1.5">
                           <ResendStatusBadge status={email.status} />
                           {isReceived && (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
+                            <span className="inline-flex items-center gap-1 text-2xs font-semibold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
                               <MessageSquare className="h-3 w-3" />
                               Replied
                             </span>
@@ -270,7 +270,7 @@ export default function ResendEmailsWorkspace({
                             setSelectedEmail(email);
                           }}
                           className={cn(
-                            'text-[11px] font-semibold transition',
+                            'text-xs font-semibold transition',
                             isReceived
                               ? 'text-emerald-700 hover:text-emerald-900 underline'
                               : 'text-neutral-500 hover:text-neutral-800'
@@ -288,7 +288,7 @@ export default function ResendEmailsWorkspace({
         )}
 
         {!loading && filteredEmails.length > 0 && (
-          <div className="border-t border-[var(--color-line)] px-4 py-2.5 text-[11px] text-neutral-400">
+          <div className="border-t border-[var(--color-line)] px-4 py-2.5 text-xs text-neutral-400">
             Showing {filteredEmails.length} of {metrics.emails?.length || 0} emails
           </div>
         )}
@@ -307,30 +307,30 @@ export default function ResendEmailsWorkspace({
             {/* Outbound Email Metadata Card */}
             <div className="bg-neutral-50 border border-[var(--color-line)] rounded-xl p-4 space-y-3 text-xs">
               <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
-                <span className="font-bold text-[var(--color-ink)] uppercase tracking-wider text-[11px]">Outbound Outreach</span>
+                <span className="font-bold text-[var(--color-ink)] uppercase tracking-wider text-xs">Outbound Outreach</span>
                 <ResendStatusBadge status={selectedEmail.status} />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-neutral-600">
                 <div>
-                  <span className="block text-[10px] text-neutral-400 font-semibold uppercase">To</span>
+                  <span className="block text-2xs text-neutral-400 font-semibold uppercase">To</span>
                   <span className="font-medium text-[var(--color-ink)]">{recipientDisplay(selectedEmail.to)}</span>
                 </div>
                 <div>
-                  <span className="block text-[10px] text-neutral-400 font-semibold uppercase">From</span>
+                  <span className="block text-2xs text-neutral-400 font-semibold uppercase">From</span>
                   <span className="font-medium text-[var(--color-ink)]">{selectedEmail.from}</span>
                 </div>
                 <div className="sm:col-span-2">
-                  <span className="block text-[10px] text-neutral-400 font-semibold uppercase">Subject</span>
+                  <span className="block text-2xs text-neutral-400 font-semibold uppercase">Subject</span>
                   <span className="font-medium text-[var(--color-ink)]">{selectedEmail.subject || '(No subject)'}</span>
                 </div>
                 <div>
-                  <span className="block text-[10px] text-neutral-400 font-semibold uppercase">Sent At</span>
+                  <span className="block text-2xs text-neutral-400 font-semibold uppercase">Sent At</span>
                   <span className="font-medium text-[var(--color-ink)]">{formatSentAt(selectedEmail.createdAt)}</span>
                 </div>
               </div>
               {selectedEmail.body && (
                 <div className="pt-2 border-t border-neutral-200">
-                  <span className="block text-[10px] text-neutral-400 font-semibold uppercase mb-1.5">Outbound Message Body</span>
+                  <span className="block text-2xs text-neutral-400 font-semibold uppercase mb-1.5">Outbound Message Body</span>
                   <div className="bg-white border border-neutral-200 rounded-lg p-3 text-xs text-neutral-800 whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto font-mono">
                     {selectedEmail.body}
                   </div>
@@ -353,23 +353,23 @@ export default function ResendEmailsWorkspace({
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-neutral-600">
                   <div>
-                    <span className="block text-[10px] text-neutral-400 font-semibold uppercase">Replied From</span>
+                    <span className="block text-2xs text-neutral-400 font-semibold uppercase">Replied From</span>
                     <span className="font-medium text-[var(--color-ink)]">{selectedEmail.reply.from || recipientDisplay(selectedEmail.to)}</span>
                   </div>
                   <div>
-                    <span className="block text-[10px] text-neutral-400 font-semibold uppercase">Received Date</span>
+                    <span className="block text-2xs text-neutral-400 font-semibold uppercase">Received Date</span>
                     <span className="font-medium text-[var(--color-ink)]">{formatSentAt(selectedEmail.reply.receivedAt)}</span>
                   </div>
                   {selectedEmail.reply.subject && (
                     <div className="sm:col-span-2">
-                      <span className="block text-[10px] text-neutral-400 font-semibold uppercase">Reply Subject</span>
+                      <span className="block text-2xs text-neutral-400 font-semibold uppercase">Reply Subject</span>
                       <span className="font-medium text-[var(--color-ink)]">{selectedEmail.reply.subject}</span>
                     </div>
                   )}
                 </div>
 
                 <div className="pt-2 border-t border-emerald-200/60">
-                  <span className="block text-[10px] text-neutral-400 font-semibold uppercase mb-1.5">Reply Body</span>
+                  <span className="block text-2xs text-neutral-400 font-semibold uppercase mb-1.5">Reply Body</span>
                   <div className="bg-white border border-emerald-200 rounded-lg p-3 text-xs text-neutral-800 whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto font-mono">
                     {(selectedEmail.reply.text && selectedEmail.reply.text.trim() !== '')
                       ? selectedEmail.reply.text
