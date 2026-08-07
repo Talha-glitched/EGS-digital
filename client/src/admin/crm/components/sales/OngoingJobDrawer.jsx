@@ -17,7 +17,7 @@ import DrawerCollapsible from '../leads/DrawerCollapsible.jsx';
 import InteractionTimeline from '../leads/InteractionTimeline.jsx';
 import SearchableMultiSelect from '../ui/SearchableMultiSelect.jsx';
 import SearchableSelect from '../ui/SearchableSelect.jsx';
-import { Alert, Badge, Field, LoadingState } from '../ui/primitives.jsx';
+import { Alert, Badge, Field, LoadingState, cn } from '../ui/primitives.jsx';
 import PocQualificationBadge from '../leads/PocQualificationBadge.jsx';
 import OngoingJobTasksPanel from '../tasks/OngoingJobTasksPanel.jsx';
 import JobMemoryPanel from '../jobs/JobMemoryPanel.jsx';
@@ -38,22 +38,35 @@ import {
   formatCurrency,
 } from '../../crmApi.js';
 
-const TABS = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'delivery', label: 'Scope & Plan' },
-  { id: 'artifacts', label: 'Designs & Quotes' },
-  { id: 'production', label: 'Production' },
-  { id: 'procurement', label: 'Suppliers' },
-  // Financial tabs are gated on finance permissions server-side. They are
-  // hidden here too so a designer is not shown a tab that will 403.
-  { id: 'costing', label: 'Costing', requires: 'finance:read' },
-  { id: 'settlement', label: 'Settlement', requires: 'finance:read' },
-  { id: 'closeout', label: 'Closeout' },
-  { id: 'memory', label: 'Job Memory' },
-  { id: 'tasks', label: 'Tasks' },
-  { id: 'poc', label: 'POC' },
-  { id: 'timeline', label: 'Timeline' },
+const LIFECYCLE_TABS = [
+  { id: 'plan', label: 'Plan' },
+  { id: 'do', label: 'Do' },
+  { id: 'money', label: 'Money', requires: 'finance:read' },
+  { id: 'record', label: 'Record' },
 ];
+
+const SUB_TABS = {
+  plan: [
+    { id: 'overview', label: 'Overview' },
+    { id: 'delivery', label: 'Scope & Plan' },
+    { id: 'poc', label: 'POC' },
+  ],
+  do: [
+    { id: 'artifacts', label: 'Designs & Quotes' },
+    { id: 'production', label: 'Production' },
+    { id: 'procurement', label: 'Suppliers' },
+    { id: 'tasks', label: 'Tasks' },
+  ],
+  money: [
+    { id: 'costing', label: 'Costing', requires: 'finance:read' },
+    { id: 'settlement', label: 'Settlement', requires: 'finance:read' },
+  ],
+  record: [
+    { id: 'timeline', label: 'Timeline' },
+    { id: 'memory', label: 'Job Memory' },
+    { id: 'closeout', label: 'Closeout' },
+  ],
+};
 
 export default function OngoingJobDrawer({
   ongoingJobId,
@@ -65,7 +78,18 @@ export default function OngoingJobDrawer({
   stackLevel = 0,
 }) {
   const targetId = ongoingJobId || opportunityId;
-  const [tab, setTab] = useState('overview');
+  const [tab, setTab] = useState('plan');
+  const [subTab, setSubTab] = useState('overview');
+  const [counts, setCounts] = useState({
+    workPackages: 0,
+    artifacts: 0,
+    production: 0,
+    procurement: 0,
+    tasks: 0,
+    memory: 0,
+    timeline: 0,
+  });
+
   const [grantedPermissions, setGrantedPermissions] = useState(null);
   useEffect(() => {
     let cancelled = false;
@@ -76,15 +100,7 @@ export default function OngoingJobDrawer({
       .catch(() => { if (!cancelled) setGrantedPermissions([]); });
     return () => { cancelled = true; };
   }, []);
-  const visibleTabs = useMemo(
-    () => TABS.filter((item) => !item.requires || (grantedPermissions || []).includes(item.requires)),
-    [grantedPermissions],
-  );
-  // If the active tab becomes hidden, fall back to Overview instead of
-  // rendering an empty panel.
-  useEffect(() => {
-    if (grantedPermissions && !visibleTabs.some((item) => item.id === tab)) setTab('overview');
-  }, [grantedPermissions, visibleTabs, tab]);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [detail, setDetail] = useState(null);
@@ -109,7 +125,26 @@ export default function OngoingJobDrawer({
     setLoading(true);
     setError('');
     try {
-      const data = await fetchOngoingJob(targetId);
+      const [
+        data,
+        deliveryData,
+        artifactsData,
+        productionData,
+        procurementData,
+        tasksData,
+        memoryData,
+        timelineData,
+      ] = await Promise.all([
+        fetchOngoingJob(targetId),
+        crmApiFetch(`/api/admin/sales/ongoing-jobs/${targetId}/delivery`).catch(() => null),
+        crmApiFetch(`/api/admin/sales/ongoing-jobs/${targetId}/artifacts`).catch(() => null),
+        crmApiFetch(`/api/admin/sales/ongoing-jobs/${targetId}/production`).catch(() => null),
+        crmApiFetch(`/api/admin/sales/ongoing-jobs/${targetId}/procurement`).catch(() => null),
+        crmApiFetch(`/api/admin/sales/tasks?status=Open&ongoingJobId=${targetId}`).catch(() => null),
+        crmApiFetch(`/api/admin/sales/ongoing-jobs/${targetId}/memory`).catch(() => null),
+        crmApiFetch(`/api/admin/sales/ongoing-jobs/${targetId}/timeline`).catch(() => null),
+      ]);
+
       setDetail(data);
       const job = data.ongoingJob || data.opportunity;
       setForm({
@@ -123,6 +158,28 @@ export default function OngoingJobDrawer({
         owner: job.owner || '',
         collaborators: Array.isArray(job.collaborators) ? job.collaborators : [],
       });
+
+      // Calculate counts
+      const workPackagesCount = deliveryData?.workPackages?.length || 0;
+      const designsCount = artifactsData?.designSets?.length || 0;
+      const quotesCount = artifactsData?.quotes?.length || 0;
+      const productionCount = productionData?.activities?.length || 0;
+      const rfqsCount = procurementData?.rfqs?.length || 0;
+      const commitmentsCount = procurementData?.commitments?.length || 0;
+      const openTasksCount = tasksData?.items?.length || 0;
+      const memoryCount = memoryData?.length || 0;
+      const timelineCount = timelineData?.length || 0;
+
+      setCounts({
+        workPackages: workPackagesCount,
+        artifacts: designsCount + quotesCount,
+        production: productionCount,
+        procurement: rfqsCount + commitmentsCount,
+        tasks: openTasksCount,
+        memory: memoryCount,
+        timeline: timelineCount,
+      });
+
     } catch (err) {
       setError(err.message || 'Failed to load Ongoing Job.');
     } finally {
@@ -157,6 +214,80 @@ export default function OngoingJobDrawer({
       ...base,
     ];
   }, [detail?.contacts, ongoingJob?.primaryLeadId]);
+
+  // Sum dynamic counts for parent lifecycle tabs
+  const lifecycleTabsWithCounts = useMemo(() => {
+    const planCount = (counts.workPackages || 0) + (contacts?.length || 0);
+    const doCount = (counts.artifacts || 0) + (counts.production || 0) + (counts.procurement || 0) + (counts.tasks || 0);
+    const recordCount = (counts.timeline || 0) + (counts.memory || 0);
+
+    return LIFECYCLE_TABS.map((tabItem) => {
+      let count = undefined;
+      if (tabItem.id === 'plan') count = planCount;
+      if (tabItem.id === 'do') count = doCount;
+      if (tabItem.id === 'record') count = recordCount;
+      return { ...tabItem, count };
+    });
+  }, [counts, contacts]);
+
+  const visibleTabs = useMemo(
+    () => lifecycleTabsWithCounts.filter((item) => !item.requires || (grantedPermissions || []).includes(item.requires)),
+    [lifecycleTabsWithCounts, grantedPermissions]
+  );
+
+  const subTabs = useMemo(() => {
+    const list = SUB_TABS[tab] || [];
+    return list
+      .filter((item) => !item.requires || (grantedPermissions || []).includes(item.requires))
+      .map((subItem) => {
+        let count = undefined;
+        if (subItem.id === 'delivery') count = counts.workPackages;
+        if (subItem.id === 'poc') count = contacts.length;
+        if (subItem.id === 'artifacts') count = counts.artifacts;
+        if (subItem.id === 'production') count = counts.production;
+        if (subItem.id === 'procurement') count = counts.procurement;
+        if (subItem.id === 'tasks') count = counts.tasks;
+        if (subItem.id === 'memory') count = counts.memory;
+        if (subItem.id === 'timeline') count = counts.timeline;
+        return { ...subItem, count };
+      });
+  }, [tab, grantedPermissions, counts, contacts]);
+
+  const handleTabChange = useCallback((newTabId) => {
+    setTab(newTabId);
+    const subList = SUB_TABS[newTabId] || [];
+    const visibleSubList = subList.filter((item) => !item.requires || (grantedPermissions || []).includes(item.requires));
+    if (visibleSubList.length > 0) {
+      setSubTab(visibleSubList[0].id);
+    }
+  }, [grantedPermissions]);
+
+  useEffect(() => {
+    if (grantedPermissions && !visibleTabs.some((item) => item.id === tab)) {
+      setTab('plan');
+      setSubTab('overview');
+    }
+  }, [grantedPermissions, visibleTabs, tab]);
+
+  useEffect(() => {
+    function handleGlobalKeys(event) {
+      if (!targetId) return;
+      if (event.altKey && ['1', '2', '3', '4'].includes(event.key)) {
+        event.preventDefault();
+        const tabMap = ['plan', 'do', 'money', 'record'];
+        const selectedTab = tabMap[parseInt(event.key, 10) - 1];
+        if (selectedTab) {
+          const tabObj = LIFECYCLE_TABS.find(t => t.id === selectedTab);
+          const hasAccess = !tabObj?.requires || (grantedPermissions || []).includes(tabObj.requires);
+          if (hasAccess) {
+            handleTabChange(selectedTab);
+          }
+        }
+      }
+    }
+    window.addEventListener('keydown', handleGlobalKeys);
+    return () => window.removeEventListener('keydown', handleGlobalKeys);
+  }, [targetId, grantedPermissions, handleTabChange]);
 
   const contactOptions = useMemo(
     () => contacts.map((contact) => ({
@@ -275,7 +406,7 @@ export default function OngoingJobDrawer({
           ) : null}
           <div className="flex-1" />
           <button type="button" className="crm-btn-secondary shrink-0" onClick={onClose}>Close</button>
-          {tab === 'overview' && (
+          {tab === 'plan' && subTab === 'overview' && (
             <button
               type="button"
               onClick={handleSave}
@@ -335,9 +466,36 @@ export default function OngoingJobDrawer({
             <span className="crm-opp-meta-item"><Clock3 className="h-3.5 w-3.5" />Updated {formatWhen(ongoingJob?.updatedAt)} by {ongoingJob?.lastModifiedBy || ongoingJob?.owner || '—'}</span>
           </div>
 
-          <DrawerTabs tabs={visibleTabs} active={tab} onChange={setTab} />
+          <DrawerTabs tabs={visibleTabs} active={tab} onChange={handleTabChange} />
 
-          {tab === 'overview' && (
+          {/* Sub-tab Navigation */}
+          <div className="flex flex-wrap gap-1.5 mb-5 border-b border-neutral-200 pb-2">
+            {subTabs.map((subItem) => (
+              <button
+                key={subItem.id}
+                type="button"
+                className={cn(
+                  "px-3 py-1.5 rounded-lg text-2xs font-bold flex items-center gap-1.5 transition-all",
+                  subTab === subItem.id
+                    ? "bg-neutral-800 text-white shadow-2xs"
+                    : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200/70"
+                )}
+                onClick={() => setSubTab(subItem.id)}
+              >
+                {subItem.label}
+                {typeof subItem.count === 'number' && (
+                  <span className={cn(
+                    "inline-flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[9px] font-bold",
+                    subTab === subItem.id ? "bg-white/20 text-white" : "bg-neutral-200 text-neutral-500"
+                  )}>
+                    {subItem.count}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+
+          {tab === 'plan' && subTab === 'overview' && (
             <div className="crm-drawer-tab-panel">
               <div className="crm-drawer-section space-y-5">
                 <div className="crm-opp-form-grid">
@@ -384,67 +542,67 @@ export default function OngoingJobDrawer({
             </div>
           )}
 
-          {tab === 'delivery' && (
+          {tab === 'plan' && subTab === 'delivery' && (
             <div className="crm-drawer-tab-panel">
-              <JobDeliveryPanel ongoingJobId={targetId} active={tab === 'delivery'} />
+              <JobDeliveryPanel ongoingJobId={targetId} active={tab === 'plan' && subTab === 'delivery'} />
             </div>
           )}
 
-          {tab === 'artifacts' && (
+          {tab === 'do' && subTab === 'artifacts' && (
             <div className="crm-drawer-tab-panel">
-              <JobArtifactsPanel ongoingJobId={targetId} contacts={contacts} active={tab === 'artifacts'} />
+              <JobArtifactsPanel ongoingJobId={targetId} contacts={contacts} active={tab === 'do' && subTab === 'artifacts'} />
             </div>
           )}
 
-          {tab === 'production' && (
+          {tab === 'do' && subTab === 'production' && (
             <div className="crm-drawer-tab-panel">
-              <JobProductionPanel ongoingJobId={targetId} active={tab === 'production'} />
+              <JobProductionPanel ongoingJobId={targetId} active={tab === 'do' && subTab === 'production'} />
             </div>
           )}
-          {tab === 'procurement' && (
+          {tab === 'do' && subTab === 'procurement' && (
             <div className="crm-opp-section">
-              <JobProcurementPanel ongoingJobId={targetId} active={tab === 'procurement'} />
+              <JobProcurementPanel ongoingJobId={targetId} active={tab === 'do' && subTab === 'procurement'} />
             </div>
           )}
-          {tab === 'costing' && (
+          {tab === 'money' && subTab === 'costing' && (
             <div className="crm-drawer-tab-panel">
-              <JobCostingPanel ongoingJobId={targetId} active={tab === 'costing'} />
+              <JobCostingPanel ongoingJobId={targetId} active={tab === 'money' && subTab === 'costing'} />
             </div>
           )}
-          {tab === 'settlement' && (
+          {tab === 'money' && subTab === 'settlement' && (
             <div className="crm-drawer-tab-panel">
-              <JobSettlementPanel ongoingJobId={targetId} active={tab === 'settlement'} />
+              <JobSettlementPanel ongoingJobId={targetId} active={tab === 'money' && subTab === 'settlement'} />
             </div>
           )}
-          {tab === 'closeout' && (
+          {tab === 'record' && subTab === 'closeout' && (
             <div className="crm-drawer-tab-panel">
-              <JobCloseoutPanel ongoingJobId={targetId} contacts={contacts} active={tab === 'closeout'} onChanged={() => setTimelineRefresh((value) => value + 1)} />
+              <JobCloseoutPanel ongoingJobId={targetId} contacts={contacts} active={tab === 'record' && subTab === 'closeout'} onChanged={() => setTimelineRefresh((value) => value + 1)} />
             </div>
           )}
 
-          {tab === 'memory' && (
+          {tab === 'record' && subTab === 'memory' && (
             <div className="crm-drawer-tab-panel">
               <JobMemoryPanel
                 ongoingJobId={targetId}
-                active={tab === 'memory'}
+                active={tab === 'record' && subTab === 'memory'}
                 onChanged={() => setTimelineRefresh((value) => value + 1)}
               />
             </div>
           )}
 
-          {tab === 'tasks' && (
+          {tab === 'do' && subTab === 'tasks' && (
             <div className="crm-drawer-tab-panel">
               <OngoingJobTasksPanel
                 ongoingJobId={targetId}
                 companyId={normalizeId(ongoingJob?.companyId)}
                 ongoingJobOwner={ongoingJob?.owner}
                 preview={String(targetId).startsWith('demo-')}
-                active={tab === 'tasks'}
+                active={tab === 'do' && subTab === 'tasks'}
               />
             </div>
           )}
 
-          {tab === 'poc' && (
+          {tab === 'plan' && subTab === 'poc' && (
             <div className="crm-drawer-tab-panel space-y-5">
               <DrawerCollapsible title="Primary point of contact" defaultOpen>
                 <div className="space-y-4">
@@ -521,7 +679,7 @@ export default function OngoingJobDrawer({
             </div>
           )}
 
-          {tab === 'timeline' && (
+          {tab === 'record' && subTab === 'timeline' && (
             <div className="crm-drawer-tab-panel">
               <InteractionTimeline
                 ongoingJobId={targetId}
