@@ -42,6 +42,17 @@ function formatCount(value) {
   return Number(value || 0).toLocaleString('en-AE');
 }
 
+function formatDate(value) {
+  if (!value) return '—';
+  const date = new Date(value);
+  if (isNaN(date.getTime())) return '—';
+  return date.toLocaleDateString('en-AE', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
 export default function ProjectsPage({ initialProjects }) {
   const navigate = useNavigate();
   const [campaigns, setCampaigns] = useState(initialProjects || []);
@@ -237,6 +248,7 @@ export default function ProjectsPage({ initialProjects }) {
                     <BulkSelectHeaderCell selection={selection} ariaLabel="Select all campaigns" />
                     <SortableTableHeader label="Campaign" sortKey="projectName" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
                     <SortableTableHeader label="Stage" sortKey="status" activeKey={sortKey} direction={sortDir} onSort={toggleSort} hint={CAMPAIGN_AUTOMATION.stage} className="crm-table-stage-col" />
+                    <SortableTableHeader label="Date" sortKey="createdAt" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
                     <SortableTableHeader label="Companies found" sortKey="targetCompaniesCount" activeKey={sortKey} direction={sortDir} onSort={toggleSort} hint={CAMPAIGN_AUTOMATION.companiesFound} align="right" />
                     <SortableTableHeader label="Companies reached" sortKey="companiesReached" activeKey={sortKey} direction={sortDir} onSort={toggleSort} hint={CAMPAIGN_AUTOMATION.companiesReached} align="right" />
                     <SortableTableHeader label="POCs found" sortKey="pocsFound" activeKey={sortKey} direction={sortDir} onSort={toggleSort} hint={CAMPAIGN_AUTOMATION.pocsFound} align="right" />
@@ -271,6 +283,9 @@ export default function ProjectsPage({ initialProjects }) {
                           saving={savingStageId === campaign._id}
                           onChange={(payload) => handleStageChange(campaign._id, payload)}
                         />
+                      </td>
+                      <td className="whitespace-nowrap text-xs text-neutral-600">
+                        {formatDate(campaign.createdAt)}
                       </td>
                       <td className="text-right tabular-nums font-medium text-neutral-800">
                         {formatCount(campaign.targetCompaniesCount)}

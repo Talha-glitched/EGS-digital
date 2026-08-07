@@ -26,6 +26,17 @@ import { campaignRoiSortAccessors } from '../hooks/tableSortAccessors.js';
 import VendorPerformanceGrid from '../components/analytics/VendorPerformanceGrid.jsx';
 import CampaignVendorPerformanceGrid from '../components/analytics/CampaignVendorPerformanceGrid.jsx';
 
+function formatDate(value) {
+  if (!value) return '—';
+  const date = new Date(value);
+  if (isNaN(date.getTime())) return '—';
+  return date.toLocaleDateString('en-AE', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
 export default function AdvancedAnalyticsPage() {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
@@ -456,6 +467,7 @@ function CampaignRoiTable({ campaignMetrics = [], navigate }) {
             <tr className="crm-table-head">
               <SortableTableHeader label="Campaign Project" sortKey="projectName" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
               <SortableTableHeader label="UAE Milestone" sortKey="milestone" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+              <SortableTableHeader label="Date" sortKey="createdAt" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
               <SortableTableHeader label="Total Cost" sortKey="totalCost" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
               <SortableTableHeader label="Revenue Won" sortKey="revenueWon" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
               <SortableTableHeader label="Yield ROI" sortKey="roi" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
@@ -470,6 +482,7 @@ function CampaignRoiTable({ campaignMetrics = [], navigate }) {
               >
                 <td className="font-semibold text-ink">{c.projectName}</td>
                 <td className="text-neutral-500 font-medium">{c.milestone || 'General Exhibition'}</td>
+                <td className="whitespace-nowrap text-xs text-neutral-600">{formatDate(c.createdAt)}</td>
                 <td className="font-mono text-neutral-600">{formatCurrency(c.totalCost)}</td>
                 <td className="font-mono text-emerald-700 font-semibold">{formatCurrency(c.revenueWon)}</td>
                 <td className={`font-bold ${c.roi >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
