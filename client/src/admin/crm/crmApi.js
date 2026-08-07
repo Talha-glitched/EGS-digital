@@ -404,6 +404,8 @@ export async function sendLaunchBatch(batchId, { maxCount, background = true } =
   });
 }
 
+export const sendLaunchBatchJobs = sendLaunchBatch;
+
 export async function fetchLaunchBatchSendStatus(batchId) {
   return crmApiFetch(`/api/admin/email/launch-batches/${batchId}/send-status`);
 }
