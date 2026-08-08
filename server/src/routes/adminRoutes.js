@@ -1229,36 +1229,8 @@ const handleGetOngoingJobTimeline = asyncRoute(async (req, res) => {
 router.get('/sales/ongoing-jobs/:id/timeline', handleGetOngoingJobTimeline);
 router.get('/sales/opportunities/:id/timeline', handleGetOngoingJobTimeline);
 
-router.get('/sales/ongoing-jobs/:id/memory', asyncRoute(async (req, res) => {
-  res.json(await listJobMemory(req.params.id, req.query));
-}));
-
-router.get('/sales/ongoing-jobs/:id/memory/:noteId/versions', asyncRoute(async (req, res) => {
-  res.json(await listJobMemoryVersions(req.params.id, req.params.noteId));
-}));
-
-router.post(
-  '/sales/ongoing-jobs/:id/memory',
-  jobMemoryUpload.array('files', 10),
-  asyncRoute(async (req, res) => {
-    res.status(201).json(await createJobMemoryEntry(req.params.id, req.body || {}, req.files || [], getActor(req)));
-  }),
-);
-
-router.patch(
-  '/sales/ongoing-jobs/:id/memory/:noteId',
-  jobMemoryUpload.array('files', 10),
-  asyncRoute(async (req, res) => {
-    res.json(await reviseJobMemoryEntry(req.params.id, req.params.noteId, req.body || {}, req.files || [], getActor(req)));
-  }),
-);
-
 const handleCreateOngoingJob = asyncRoute(async (req, res) => {
   const job = await createOngoingJob(req.body || {}, req.admin?.username);
-  const initialBrief = String(req.body?.initialBrief || '').trim();
-  if (initialBrief) {
-    await createJobMemoryEntry(job._id, { type: 'brief', content: initialBrief, pinned: true }, [], getActor(req));
-  }
   res.status(201).json(job);
 });
 router.post('/sales/ongoing-jobs', handleCreateOngoingJob);
@@ -1292,43 +1264,6 @@ const handleBulkDeleteOngoingJobs = asyncRoute(async (req, res) => {
 router.post('/sales/ongoing-jobs/bulk-delete', handleBulkDeleteOngoingJobs);
 router.post('/sales/opportunities/bulk-delete', handleBulkDeleteOngoingJobs);
 
-router.get('/sales/ongoing-jobs/:id/delivery', asyncRoute(async (req, res) => {
-  res.json(await getJobDeliveryWorkspace(req.params.id));
-}));
-router.post('/sales/ongoing-jobs/:id/delivery/phases', asyncRoute(async (req, res) => {
-  res.status(201).json(await createJobPhase(req.params.id, req.body || {}, getActor(req)));
-}));
-router.patch('/sales/ongoing-jobs/:id/delivery/phases/:phaseId', asyncRoute(async (req, res) => {
-  res.json(await updateJobPhase(req.params.id, req.params.phaseId, req.body || {}, getActor(req)));
-}));
-router.delete('/sales/ongoing-jobs/:id/delivery/phases/:phaseId', asyncRoute(async (req, res) => {
-  res.json(await archiveJobPhase(req.params.id, req.params.phaseId, getActor(req)));
-}));
-router.post('/sales/ongoing-jobs/:id/delivery/locations', asyncRoute(async (req, res) => {
-  res.status(201).json(await createJobLocation(req.params.id, req.body || {}, getActor(req)));
-}));
-router.patch('/sales/ongoing-jobs/:id/delivery/locations/:locationId', asyncRoute(async (req, res) => {
-  res.json(await updateJobLocation(req.params.id, req.params.locationId, req.body || {}, getActor(req)));
-}));
-router.delete('/sales/ongoing-jobs/:id/delivery/locations/:locationId', asyncRoute(async (req, res) => {
-  res.json(await archiveJobLocation(req.params.id, req.params.locationId, getActor(req)));
-}));
-router.post('/sales/ongoing-jobs/:id/delivery/work-packages', asyncRoute(async (req, res) => {
-  res.status(201).json(await createWorkPackage(req.params.id, req.body || {}, getActor(req)));
-}));
-router.patch('/sales/ongoing-jobs/:id/delivery/work-packages/:workPackageId', asyncRoute(async (req, res) => {
-  res.json(await updateWorkPackage(req.params.id, req.params.workPackageId, req.body || {}, getActor(req)));
-}));
-router.delete('/sales/ongoing-jobs/:id/delivery/work-packages/:workPackageId', asyncRoute(async (req, res) => {
-  res.json(await archiveWorkPackage(req.params.id, req.params.workPackageId, getActor(req)));
-}));
-router.get('/sales/ongoing-jobs/:id/delivery/activation', asyncRoute(async (req, res) => {
-  res.json(await getJobActivationWorkspace(req.params.id));
-}));
-router.post('/sales/ongoing-jobs/:id/delivery/activation', asyncRoute(async (req, res) => {
-  res.status(201).json(await activateJobDelivery(req.params.id, req.body || {}, getActor(req)));
-}));
-
 router.get('/sales/ongoing-jobs/:id/artifacts', asyncRoute(async (req, res) => {
   res.json(await getJobCommercialArtifacts(req.params.id));
 }));
@@ -1346,147 +1281,6 @@ router.post('/sales/ongoing-jobs/:id/artifacts/quotations/:quoteId/versions', jo
 }));
 router.post('/sales/ongoing-jobs/:id/artifacts/decisions', asyncRoute(async (req, res) => {
   res.status(201).json(await recordArtifactDecision(req.params.id, req.body || {}, getActor(req)));
-}));
-
-router.get('/sales/ongoing-jobs/:id/production', asyncRoute(async (req, res) => {
-  res.json(await getProductionWorkspace(req.params.id));
-}));
-router.post('/sales/ongoing-jobs/:id/production/releases', asyncRoute(async (req, res) => {
-  res.status(201).json(await createProductionRelease(req.params.id, req.body || {}, getActor(req)));
-}));
-router.post('/sales/ongoing-jobs/:id/production/releases/:releaseId/revoke', asyncRoute(async (req, res) => {
-  res.json(await revokeProductionRelease(req.params.id, req.params.releaseId, req.body?.reason, getActor(req)));
-}));
-router.post('/sales/ongoing-jobs/:id/production/activities', asyncRoute(async (req, res) => {
-  res.status(201).json(await createJobActivity(req.params.id, req.body || {}, getActor(req)));
-}));
-router.patch('/sales/ongoing-jobs/:id/production/activities/:activityId', asyncRoute(async (req, res) => {
-  res.json(await updateJobActivity(req.params.id, req.params.activityId, req.body || {}, getActor(req)));
-}));
-router.delete('/sales/ongoing-jobs/:id/production/activities/:activityId', asyncRoute(async (req, res) => {
-  res.json(await archiveJobActivity(req.params.id, req.params.activityId, getActor(req)));
-}));
-router.post('/sales/ongoing-jobs/:id/production/activities/:activityId/updates', activityEvidenceUpload.single('file'), asyncRoute(async (req, res) => {
-  res.status(201).json(await addActivityUpdate(req.params.id, req.params.activityId, req.body || {}, req.file, getActor(req)));
-}));
-router.get('/sales/plan-calendar', asyncRoute(async (req, res) => {
-  res.json(await getPlanCalendar(req.query || {}));
-}));
-
-router.get('/field/today', asyncRoute(async (req, res) => {
-  res.json(await getTodayWorkspace(getActor(req), req.query || {}));
-}));
-router.post('/field/activities/:activityId/actions', fieldPhotoUpload.array('photos', 10), asyncRoute(async (req, res) => {
-  res.status(201).json(await submitFieldAction(req.params.activityId, req.body || {}, req.files || [], getActor(req)));
-}));
-
-router.get('/sales/ongoing-jobs/:id/procurement', asyncRoute(async (req, res) => {
-  res.json(await getProcurementWorkspace(req.params.id));
-}));
-router.get('/sales/suppliers', asyncRoute(async (req, res) => {
-  res.json(await getSupplierDirectory());
-}));
-router.post('/sales/suppliers', asyncRoute(async (req, res) => {
-  res.status(201).json(await createSupplier(null, req.body || {}, getActor(req)));
-}));
-router.patch('/sales/suppliers/:supplierId', asyncRoute(async (req, res) => {
-  res.json(await updateSupplierProfile(req.params.supplierId, req.body || {}, getActor(req)));
-}));
-router.post('/sales/ongoing-jobs/:id/procurement/suppliers', asyncRoute(async (req, res) => {
-  res.status(201).json(await createSupplier(req.params.id, req.body || {}, getActor(req)));
-}));
-router.post('/sales/ongoing-jobs/:id/procurement/rfqs', asyncRoute(async (req, res) => {
-  res.status(201).json(await createSupplierRfq(req.params.id, req.body || {}, getActor(req)));
-}));
-router.patch('/sales/ongoing-jobs/:id/procurement/rfqs/:rfqId', asyncRoute(async (req, res) => {
-  res.json(await updateSupplierRfq(req.params.id, req.params.rfqId, req.body || {}, getActor(req)));
-}));
-router.post('/sales/ongoing-jobs/:id/procurement/rfqs/:rfqId/quotes', asyncRoute(async (req, res) => {
-  res.status(201).json(await createSupplierQuote(req.params.id, req.params.rfqId, req.body || {}, getActor(req)));
-}));
-router.post('/sales/ongoing-jobs/:id/procurement/commitments', asyncRoute(async (req, res) => {
-  res.status(201).json(await createSupplierCommitment(req.params.id, req.body || {}, getActor(req)));
-}));
-router.patch('/sales/ongoing-jobs/:id/procurement/commitments/:commitmentId', asyncRoute(async (req, res) => {
-  res.json(await updateSupplierCommitment(req.params.id, req.params.commitmentId, req.body || {}, getActor(req)));
-}));
-router.post('/sales/ongoing-jobs/:id/procurement/commitments/:commitmentId/updates', asyncRoute(async (req, res) => {
-  res.status(201).json(await addSupplierCommitmentUpdate(req.params.id, req.params.commitmentId, req.body || {}, getActor(req)));
-}));
-
-router.get('/sales/resources', asyncRoute(async (req, res) => {
-  res.json(await getResourceWorkspace(req.query || {}, getActor(req)));
-}));
-router.post('/sales/resources', asyncRoute(async (req, res) => {
-  if (req.body?.userId && !userHasPermission(req.user, 'users:manage')) return res.status(403).json({ message: 'Only user administrators can link ERP/CRM logins.' });
-  res.status(201).json(await createResource(req.body || {}, getActor(req)));
-}));
-router.patch('/sales/resources/:resourceId', asyncRoute(async (req, res) => {
-  if (Object.hasOwn(req.body || {}, 'userId') && !userHasPermission(req.user, 'users:manage')) return res.status(403).json({ message: 'Only user administrators can change ERP/CRM login links.' });
-  res.json(await updateResource(req.params.resourceId, req.body || {}, getActor(req)));
-}));
-router.post('/sales/resources/:resourceId/availability', asyncRoute(async (req, res) => {
-  res.status(201).json(await addAvailabilityBlock(req.params.resourceId, req.body || {}, getActor(req)));
-}));
-router.post('/sales/ongoing-jobs/:id/production/activities/:activityId/resources', asyncRoute(async (req, res) => {
-  res.status(201).json(await assignResource(req.params.id, req.params.activityId, req.body || {}, getActor(req)));
-}));
-router.delete('/sales/ongoing-jobs/:id/production/activities/:activityId/resources/:assignmentId', asyncRoute(async (req, res) => {
-  res.json(await removeResourceAssignment(req.params.id, req.params.activityId, req.params.assignmentId, getActor(req)));
-}));
-router.post('/sales/project-time/start', asyncRoute(async (req, res) => {
-  res.status(201).json(await startProjectTimer(req.body || {}, getActor(req)));
-}));
-router.post('/sales/project-time/:entryId/stop', asyncRoute(async (req, res) => {
-  res.json(await stopProjectTimer(req.params.entryId, getActor(req)));
-}));
-router.post('/sales/project-time/manual', asyncRoute(async (req, res) => {
-  res.status(201).json(await createManualTimeEntry(req.body || {}, getActor(req)));
-}));
-router.patch('/sales/project-time/:entryId/correct', asyncRoute(async (req, res) => {
-  res.json(await correctTimeEntry(req.params.entryId, req.body || {}, getActor(req)));
-}));
-
-router.get('/employee-operations', asyncRoute(async (req, res) => {
-  const workspace = await getEmployeeOperationsWorkspace();
-  const canManageUsers = userHasPermission(req.user, 'users:manage');
-  let emailReady = false;
-  if (canManageUsers) emailReady = Boolean((await getEmailDeliveryStatus().catch(() => ({ smtpReady: false })))?.smtpReady);
-  res.json({ ...workspace, canManageUsers, roleOptions: canManageUsers ? getRoleOptions() : [], emailReady });
-}));
-router.post('/employee-operations/employees', asyncRoute(async (req, res) => {
-  if ((req.body?.loginMode === 'create' || req.body?.userId) && !userHasPermission(req.user, 'users:manage')) return res.status(403).json({ message: 'Only user administrators can create or link ERP/CRM logins.' });
-  const result = await createEmployee(req.body || {}, getActor(req));
-  let emailed = false; let emailError = null;
-  if (result.user && req.body?.sendWelcomeEmail && req.body?.loginPassword) {
-    try { await sendUserCredentialsEmail({ user: result.user, password: req.body.loginPassword, welcome: true }); emailed = true; }
-    catch (error) { emailError = error.message || 'The login was created, but the welcome email could not be sent.'; }
-  }
-  res.status(201).json({ ...result, emailed, emailError });
-}));
-router.patch('/employee-operations/employees/:resourceId', asyncRoute(async (req, res) => {
-  if (Object.hasOwn(req.body || {}, 'userId') && !userHasPermission(req.user, 'users:manage')) return res.status(403).json({ message: 'Only user administrators can change ERP/CRM login links.' });
-  res.json(await updateEmployee(req.params.resourceId, req.body || {}, getActor(req)));
-}));
-router.post('/employee-operations/sync/link', asyncRoute(async (req, res) => {
-  if (!userHasPermission(req.user, 'users:manage')) return res.status(403).json({ message: 'Only user administrators can link ERP/CRM identities.' });
-  res.json(await linkUserToEmployee(req.body?.resourceId, req.body?.userId, getActor(req)));
-}));
-router.post('/employee-operations/sync/users/:userId/create-employee', asyncRoute(async (req, res) => {
-  if (!userHasPermission(req.user, 'users:manage')) return res.status(403).json({ message: 'Only user administrators can synchronize ERP/CRM identities.' });
-  res.status(201).json(await createEmployeeFromUser(req.params.userId, req.body || {}, getActor(req)));
-}));
-router.post('/employee-operations/employees/:resourceId/certifications', asyncRoute(async (req, res) => {
-  res.status(201).json(await createCertification(req.params.resourceId, req.body || {}, getActor(req)));
-}));
-router.delete('/employee-operations/employees/:resourceId/certifications/:certificationId', asyncRoute(async (req, res) => {
-  res.json(await archiveCertification(req.params.resourceId, req.params.certificationId, getActor(req)));
-}));
-router.post('/employee-operations/employees/:resourceId/team-memberships', asyncRoute(async (req, res) => {
-  res.status(201).json(await createTeamMembership(req.params.resourceId, req.body || {}, getActor(req)));
-}));
-router.patch('/employee-operations/employees/:resourceId/team-memberships/:membershipId/end', asyncRoute(async (req, res) => {
-  res.json(await endTeamMembership(req.params.resourceId, req.params.membershipId, req.body || {}, getActor(req)));
 }));
 
 router.get('/inventory', asyncRoute(async (req, res) => {
@@ -1517,46 +1311,6 @@ router.patch('/inventory/packing-lists/:packingListId/status', asyncRoute(async 
   res.json(await updatePackingListStatus(req.params.packingListId, req.body?.status, getActor(req)));
 }));
 
-router.get('/sales/ongoing-jobs/:id/costing', asyncRoute(async (req, res) => {
-  res.json(await getJobCosting(req.params.id));
-}));
-router.get('/sales/settlement-queues', asyncRoute(async (req, res) => {
-  res.json(await getSettlementQueues(req.query || {}));
-}));
-router.get('/sales/ongoing-jobs/:id/settlement', asyncRoute(async (req, res) => {
-  res.json(await getJobSettlement(req.params.id));
-}));
-router.post('/sales/ongoing-jobs/:id/settlement/delivery', asyncRoute(async (req, res) => {
-  res.json(await setPhysicalDelivery(req.params.id, req.body || {}, getActor(req)));
-}));
-router.post('/sales/ongoing-jobs/:id/settlement/milestones', asyncRoute(async (req, res) => {
-  res.json(await saveMilestone(req.params.id, req.body || {}, getActor(req)));
-}));
-router.delete('/sales/ongoing-jobs/:id/settlement/milestones/:milestoneId', asyncRoute(async (req, res) => {
-  res.json(await deleteMilestone(req.params.id, req.params.milestoneId, getActor(req)));
-}));
-router.post('/sales/ongoing-jobs/:id/costing/estimates', asyncRoute(async (req, res) => {
-  res.status(201).json(await createCostEstimate(req.params.id, req.body || {}, getActor(req)));
-}));
-router.patch('/sales/ongoing-jobs/:id/costing/estimates/:estimateId', asyncRoute(async (req, res) => {
-  res.json(await updateCostEstimate(req.params.id, req.params.estimateId, req.body || {}, getActor(req)));
-}));
-router.delete('/sales/ongoing-jobs/:id/costing/estimates/:estimateId', asyncRoute(async (req, res) => {
-  res.json(await archiveCostEstimate(req.params.id, req.params.estimateId, getActor(req)));
-}));
-router.post('/sales/ongoing-jobs/:id/costing/actuals', asyncRoute(async (req, res) => {
-  res.status(201).json(await createOtherActualCost(req.params.id, req.body || {}, getActor(req)));
-}));
-router.post('/sales/ongoing-jobs/:id/costing/actuals/:costId/void', asyncRoute(async (req, res) => {
-  res.json(await voidOtherActualCost(req.params.id, req.params.costId, req.body || {}, getActor(req)));
-}));
-router.post('/sales/ongoing-jobs/:id/costing/confirm', asyncRoute(async (req, res) => {
-  res.json(await confirmJobCosts(req.params.id, req.body || {}, getActor(req)));
-}));
-router.post('/sales/ongoing-jobs/:id/costing/reopen', asyncRoute(async (req, res) => {
-  res.json(await reopenJobCosts(req.params.id, req.body || {}, getActor(req)));
-}));
-
 router.get('/sales/ongoing-jobs/:id/closeout', asyncRoute(async (req, res) => {
   res.json(await getJobCloseout(req.params.id));
 }));
@@ -1565,15 +1319,6 @@ router.patch('/sales/ongoing-jobs/:id/closeout/handover', asyncRoute(async (req,
 }));
 router.post('/sales/ongoing-jobs/:id/closeout/evidence', jobMemoryUpload.array('files', 20), asyncRoute(async (req, res) => {
   res.status(201).json(await uploadCloseoutEvidence(req.params.id, req.body || {}, req.files || [], getActor(req)));
-}));
-router.post('/sales/ongoing-jobs/:id/closeout/snags', asyncRoute(async (req, res) => {
-  res.status(201).json(await createJobSnag(req.params.id, req.body || {}, getActor(req)));
-}));
-router.patch('/sales/ongoing-jobs/:id/closeout/snags/:snagId', asyncRoute(async (req, res) => {
-  res.json(await updateJobSnag(req.params.id, req.params.snagId, req.body || {}, getActor(req)));
-}));
-router.get('/reports/operations', asyncRoute(async (req, res) => {
-  res.json(await getOperationalReport(req.query || {}));
 }));
 
 router.get('/sales/tasks', asyncRoute(async (req, res) => {

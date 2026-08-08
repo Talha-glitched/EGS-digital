@@ -9,7 +9,6 @@ const BASE_NAV_GROUPS = [
   {
     items: [
       { to: '/admin/crm', label: 'Dashboard', icon: LayoutDashboard, end: true },
-      { to: '/admin/crm/today', label: 'Today', icon: CalendarCheck2 },
     ],
   },
   {
@@ -27,10 +26,6 @@ const BASE_NAV_GROUPS = [
     items: [
       { to: '/admin/crm/ongoing-jobs', label: 'Ongoing Jobs', icon: BriefcaseBusiness },
       { to: '/admin/crm/completed-jobs', label: 'Jobs Done', icon: ClipboardList },
-      { to: '/admin/crm/plan-calendar', label: 'Plan Calendar', icon: CalendarDays },
-      { to: '/admin/crm/suppliers', label: 'Suppliers', icon: PackageSearch },
-      { to: '/admin/crm/resources', label: 'Resources & Time', icon: HardHat },
-      { to: '/admin/crm/employees', label: 'Employees', icon: UserRoundCheck },
       { to: '/admin/crm/inventory', label: 'Inventory', icon: Boxes },
       { to: '/admin/crm/tasks', label: 'Tasks', icon: ListTodo },
     ],
@@ -39,9 +34,6 @@ const BASE_NAV_GROUPS = [
     heading: 'Tracking',
     items: [
       { to: '/admin/crm/communications', label: 'Communications', icon: MessageSquareText },
-      { to: '/admin/crm/finance', label: 'Finances', icon: Wallet },
-      { to: '/admin/crm/analytics', label: 'Commercial Reports', icon: BarChart3 },
-      { to: '/admin/crm/operations-reports', label: 'Operations Reports', icon: ClipboardList },
     ],
   },
 ];
@@ -78,10 +70,7 @@ export default function Sidebar({ activeProject, onLogout, mobileOpen = false, o
           heading: 'My Workspace',
           items: [
             { to: '/admin/crm', label: 'Dashboard', icon: LayoutDashboard, end: true },
-            { to: '/admin/crm/today', label: 'Today', icon: CalendarCheck2 },
             { to: '/admin/crm/ongoing-jobs', label: 'Ongoing Jobs', icon: BriefcaseBusiness },
-            { to: '/admin/crm/plan-calendar', label: 'Plan Calendar', icon: CalendarDays },
-            { to: '/admin/crm/resources', label: 'Resources & Time', icon: HardHat },
             { to: '/admin/crm/inventory', label: 'Inventory', icon: Boxes },
             { to: '/admin/crm/tasks', label: 'Tasks', icon: ListTodo },
           ],
@@ -89,19 +78,7 @@ export default function Sidebar({ activeProject, onLogout, mobileOpen = false, o
       ];
     }
 
-    const trackingItems = [
-      { to: '/admin/crm/communications', label: 'Communications', icon: MessageSquareText },
-      { to: '/admin/crm/finance', label: 'Finances', icon: Wallet },
-      { to: '/admin/crm/analytics', label: 'Commercial Reports', icon: BarChart3 },
-      { to: '/admin/crm/operations-reports', label: 'Operations Reports', icon: ClipboardList },
-    ];
-
-    const groups = BASE_NAV_GROUPS.map((group) => {
-      if (group.heading !== 'Tracking') return group;
-      return { ...group, items: trackingItems };
-    });
-
-    return groups;
+    return BASE_NAV_GROUPS;
   }, [designerMode]);
 
   const settingsItems = designerMode ? [] : [

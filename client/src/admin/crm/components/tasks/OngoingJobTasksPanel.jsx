@@ -36,9 +36,17 @@ export default function OngoingJobTasksPanel({
   const [focusTaskId, setFocusTaskId] = useState('');
   const [editingTaskIds, setEditingTaskIds] = useState([]);
   const [statusFilter, setStatusFilter] = useState('Open');
+  const [scopeFilter, setScopeFilter] = useState('all');
   const [bulkDeleting, setBulkDeleting] = useState(false);
   const [ownerOptions, setOwnerOptions] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    crmApiFetch('/api/admin/status')
+      .then((res) => { if (res?.user) setCurrentUser(res.user); })
+      .catch(() => {});
+  }, []);
 
   const load = useCallback(async () => {
     if (!targetId || preview) {
@@ -65,7 +73,24 @@ export default function OngoingJobTasksPanel({
     load();
   }, [load, active]);
 
-  const visibleTasks = preview ? DEMO_ONGOING_JOB_TASKS : tasks;
+  const baseTasks = preview ? DEMO_ONGOING_JOB_TASKS : tasks;
+  const visibleTasks = useMemo(() => {
+    if (scopeFilter === 'mine' && currentUser) {
+      const myName = (currentUser.displayName || currentUser.username || '').toLowerCase();
+      const myId = String(currentUser.id || currentUser._id || '');
+      return baseTasks.filter((t) => {
+        const tOwnerId = String(t.ownerUserId || '');
+        const tOwnerName = String(t.owner || '').toLowerCase();
+        return (
+          (myId && tOwnerId === myId) ||
+          (myName && tOwnerName === myName) ||
+          (targetOwner && tOwnerName === String(targetOwner).toLowerCase())
+        );
+      });
+    }
+    return baseTasks;
+  }, [baseTasks, scopeFilter, currentUser, targetOwner]);
+
   const deletableTasks = useMemo(
     () => visibleTasks.filter((task) => !isDemoTask(task._id)),
     [visibleTasks],
@@ -203,22 +228,41 @@ export default function OngoingJobTasksPanel({
     <div className="crm-opp-tasks-panel">
       {error && <Alert>{error}</Alert>}
 
-      <div className="crm-opp-tasks-toolbar">
-        <div className="inline-flex rounded-lg bg-neutral-100 p-0.5">
-          <button
-            type="button"
-            className={statusFilter === 'Open' ? 'crm-tab-active rounded-md px-3 py-1.5 text-xs font-semibold' : 'crm-tab-idle rounded-md px-3 py-1.5 text-xs font-semibold'}
-            onClick={() => setStatusFilter('Open')}
-          >
-            Open
-          </button>
-          <button
-            type="button"
-            className={statusFilter === 'Done' ? 'crm-tab-active rounded-md px-3 py-1.5 text-xs font-semibold' : 'crm-tab-idle rounded-md px-3 py-1.5 text-xs font-semibold'}
-            onClick={() => setStatusFilter('Done')}
-          >
-            Completed
-          </button>
+      <div className="crm-opp-tasks-toolbar flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="inline-flex rounded-lg bg-neutral-100 p-0.5">
+            <button
+              type="button"
+              className={statusFilter === 'Open' ? 'crm-tab-active rounded-md px-3 py-1.5 text-xs font-semibold' : 'crm-tab-idle rounded-md px-3 py-1.5 text-xs font-semibold'}
+              onClick={() => setStatusFilter('Open')}
+            >
+              Open
+            </button>
+            <button
+              type="button"
+              className={statusFilter === 'Done' ? 'crm-tab-active rounded-md px-3 py-1.5 text-xs font-semibold' : 'crm-tab-idle rounded-md px-3 py-1.5 text-xs font-semibold'}
+              onClick={() => setStatusFilter('Done')}
+            >
+              Completed
+            </button>
+          </div>
+
+          <div className="inline-flex rounded-lg bg-neutral-100 p-0.5">
+            <button
+              type="button"
+              className={scopeFilter === 'mine' ? 'crm-tab-active rounded-md px-3 py-1.5 text-xs font-semibold' : 'crm-tab-idle rounded-md px-3 py-1.5 text-xs font-semibold'}
+              onClick={() => setScopeFilter('mine')}
+            >
+              My Tasks
+            </button>
+            <button
+              type="button"
+              className={scopeFilter === 'all' ? 'crm-tab-active rounded-md px-3 py-1.5 text-xs font-semibold' : 'crm-tab-idle rounded-md px-3 py-1.5 text-xs font-semibold'}
+              onClick={() => setScopeFilter('all')}
+            >
+              Team Tasks
+            </button>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <Badge tone="neutral">{tasks.length} task{tasks.length === 1 ? '' : 's'}</Badge>

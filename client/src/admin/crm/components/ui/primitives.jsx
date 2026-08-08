@@ -83,10 +83,11 @@ export function StatBandItem({ label, value, detail, icon: Icon, tone = 'neutral
   );
 }
 
-export function PageHeader({ title, subtitle, action }) {
+export function PageHeader({ title, subtitle, action, actions }) {
+  const headerAction = action || actions;
   if (!title && !subtitle) {
-    if (!action) return null;
-    return <div className="flex flex-wrap justify-end gap-2">{action}</div>;
+    if (!headerAction) return null;
+    return <div className="flex flex-wrap justify-end gap-2">{headerAction}</div>;
   }
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -94,7 +95,7 @@ export function PageHeader({ title, subtitle, action }) {
         <h1 className="text-2xl font-bold tracking-tight text-[var(--color-ink)]">{title}</h1>
         {subtitle && <p className="mt-0.5 text-xs leading-relaxed text-[var(--color-ink-muted)]">{subtitle}</p>}
       </div>
-      {action && <div className="flex shrink-0 flex-wrap gap-2">{action}</div>}
+      {headerAction && <div className="flex shrink-0 flex-wrap gap-2">{headerAction}</div>}
     </div>
   );
 }

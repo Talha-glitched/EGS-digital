@@ -5,6 +5,12 @@ export const campaignSortAccessors = {
   statusLabel: 'Stage',
   date: (r) => (r.startDate ? new Date(r.startDate).getTime() : r.createdAt ? new Date(r.createdAt).getTime() : 0),
   dateLabel: 'Dates',
+  timeRemaining: (r) => {
+    if (!r.startDate) return Number.MAX_SAFE_INTEGER;
+    const start = new Date(r.startDate).getTime();
+    return isNaN(start) ? Number.MAX_SAFE_INTEGER : start;
+  },
+  timeRemainingLabel: 'Time Remaining',
   createdAt: (r) => (r.createdAt ? new Date(r.createdAt).getTime() : 0),
   createdAtLabel: 'Created',
   targetCompaniesCount: (r) => r.targetCompaniesCount || 0,

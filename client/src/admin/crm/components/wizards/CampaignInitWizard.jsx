@@ -55,7 +55,7 @@ function downloadSampleCsv() {
   URL.revokeObjectURL(url);
 }
 
-export default function CampaignInitWizard({ open, onClose, onComplete }) {
+export default function CampaignInitWizard({ open, onClose, onCreated, onComplete }) {
   const [step, setStep] = useState(0);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -108,6 +108,7 @@ export default function CampaignInitWizard({ open, onClose, onComplete }) {
         }),
       });
       setProjectId(project._id);
+      onCreated?.(project);
       setStep(1);
     } catch (err) {
       setError(err.message);
@@ -247,28 +248,8 @@ export default function CampaignInitWizard({ open, onClose, onComplete }) {
                     className="crm-input"
                     value={form.projectName}
                     onChange={(e) => setForm({ ...form, projectName: e.target.value })}
-                    placeholder="e.g. Gitex 2026 — Enterprise Stand Outreach"
+                    placeholder="e.g. ADIPEC 2026"
                   />
-                </Field>
-                <Field label="Commercial milestone" hint="The trade show, season, or business moment this supports.">
-                  <input
-                    className="crm-input"
-                    value={form.milestone}
-                    onChange={(e) => setForm({ ...form, milestone: e.target.value })}
-                    placeholder="e.g. Arab Health 2026"
-                  />
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {MILESTONE_PRESETS.map((preset) => (
-                      <button
-                        key={preset}
-                        type="button"
-                        onClick={() => setForm({ ...form, milestone: preset })}
-                        className="rounded-full border border-[var(--color-line-strong)] bg-white px-3 py-1.5 text-xs font-medium text-neutral-700 transition hover:border-brand/30 hover:bg-brand-soft"
-                      >
-                        {preset}
-                      </button>
-                    ))}
-                  </div>
                 </Field>
 
                 <div className="grid grid-cols-2 gap-4">
