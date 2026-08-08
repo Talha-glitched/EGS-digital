@@ -31,6 +31,7 @@ const TYPE_FILTERS = [
   { value: 'task', label: 'Tasks' },
   { value: 'sequence', label: 'Sequences' },
   { value: 'interaction', label: 'Interactions' },
+  { value: 'inventory_item', label: 'Warehouse items' },
 ];
 
 const CHANGE_FILTERS = [

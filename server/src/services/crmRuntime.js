@@ -4,6 +4,7 @@ import { startAnalyticsCron } from './analyticsCronService.js';
 import { getMailConfigStatus } from './mailTransport.js';
 import { recalculateAllCampaignCoverageStats } from './projectService.js';
 import { startResendAutoSyncCron } from './resendAutoSyncService.js';
+import { startInventoryPhotoRetentionCron } from './inventoryPhotoRetentionService.js';
 
 export function initializeCrmRuntime() {
   const { imapReady, imap2Ready } = getMailConfigStatus();
@@ -21,6 +22,9 @@ export function initializeCrmRuntime() {
 
   startResendAutoSyncCron();
   console.info('Resend automatic reply sync started.');
+
+  startInventoryPhotoRetentionCron();
+  console.info('Inventory photo retention cron started.');
 
   // Keep exhibitor / POC coverage accurate for every campaign (existing + future imports).
   recalculateAllCampaignCoverageStats()

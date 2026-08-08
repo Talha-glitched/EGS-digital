@@ -245,10 +245,13 @@ import {
 } from '../services/employeeOperationsService.js';
 import {
   listWarehouseItems,
+  listRecentlyRemovedItems,
   createWarehouseItem,
+  markItemsPrinted,
   sendItemToJob,
   returnItemToWarehouse,
-  archiveWarehouseItem,
+  deleteWarehouseItem,
+  restoreWarehouseItem,
   getItemQrSvg,
   findItemBySlug,
 } from '../services/inventoryService.js';
@@ -1293,8 +1296,14 @@ router.post('/sales/ongoing-jobs/:id/artifacts/decisions', asyncRoute(async (req
 router.get('/inventory', asyncRoute(async (req, res) => {
   res.json(await listWarehouseItems());
 }));
+router.get('/inventory/removed', asyncRoute(async (req, res) => {
+  res.json(await listRecentlyRemovedItems());
+}));
 router.post('/inventory/items', warehouseItemUpload.single('photo'), asyncRoute(async (req, res) => {
   res.status(201).json(await createWarehouseItem(req.body || {}, req.file, getActor(req)));
+}));
+router.post('/inventory/items/mark-printed', asyncRoute(async (req, res) => {
+  res.json(await markItemsPrinted(req.body?.itemIds, getActor(req)));
 }));
 router.post('/inventory/items/:id/send-to-job', asyncRoute(async (req, res) => {
   res.json(await sendItemToJob(req.params.id, req.body?.jobId, getActor(req)));
@@ -1303,7 +1312,10 @@ router.post('/inventory/items/:id/return', asyncRoute(async (req, res) => {
   res.json(await returnItemToWarehouse(req.params.id, getActor(req)));
 }));
 router.delete('/inventory/items/:id', asyncRoute(async (req, res) => {
-  res.json(await archiveWarehouseItem(req.params.id, getActor(req)));
+  res.json(await deleteWarehouseItem(req.params.id, getActor(req)));
+}));
+router.post('/inventory/items/:id/restore', asyncRoute(async (req, res) => {
+  res.json(await restoreWarehouseItem(req.params.id, getActor(req)));
 }));
 router.get('/inventory/items/:slug/qr.svg', asyncRoute(async (req, res) => {
   res.type('image/svg+xml').send(await getItemQrSvg(req.params.slug));
@@ -1575,6 +1587,9 @@ router.post('/:resourceType/:id/restore', asyncRoute(async (req, res) => {
   const actor = getActor(req);
   if (resourceType === 'task') {
     return res.json(await restoreTask(id, actor));
+  }
+  if (resourceType === 'inventory_item') {
+    return res.json(await restoreWarehouseItem(id, actor));
   }
   if (resourceType === 'interaction' || resourceType === 'interactions') {
     return res.json(await restoreInteraction(id, actor));
