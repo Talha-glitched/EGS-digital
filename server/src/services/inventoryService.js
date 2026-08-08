@@ -1,10 +1,10 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import QRCode from 'qrcode';
 import db from '../db/index.js';
 import { writeAuditLog } from './auditService.js';
+import { captureRevision } from './revisionService.js';
 import { getUploadSubdir } from '../utils/uploadPath.js';
 
 const uploadRoot = getUploadSubdir('inventory');
@@ -13,6 +13,9 @@ const PHOTO_EXTENSIONS = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/web
 
 function text(value) { return String(value ?? '').trim() || null; }
 function uuid(value) { const result = text(value); return result && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(result) ? result : null; }
+function escapeXml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' }[ch]));
+}
 
 async function audit(actor, action, resourceId, summary, jobId = null) {
   await writeAuditLog({ userId: actor?.userId, userDisplayName: actor?.displayName || 'EGS Team', action, resource: 'inventory_item', resourceId, summary, metadata: jobId ? { ongoingJobId: jobId } : {} });
@@ -29,7 +32,7 @@ async function generateUniqueSlug(client) {
 
 async function nextDisplayName(client, baseName) {
   const pattern = `^${baseName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}( \\([0-9]+\\))?$`;
-  const existing = await client.query(`SELECT name FROM inventory_items WHERE status = 'active' AND name ~* $1`, [pattern]);
+  const existing = await client.query(`SELECT name FROM inventory_items WHERE status = 'active' AND deleted_at IS NULL AND name ~* $1`, [pattern]);
   if (!existing.rows.length) return baseName;
   let highest = 1;
   for (const row of existing.rows) {
@@ -41,14 +44,22 @@ async function nextDisplayName(client, baseName) {
 
 export async function listWarehouseItems() {
   const [items, jobs] = await Promise.all([
-    db.query(`SELECT i.id, i.slug, i.name, i.photo_url AS "photoUrl", i.current_status AS "status", i.current_job_id AS "jobId", oj.job_number AS "jobNumber", oj.title AS "jobTitle", i.created_at AS "createdAt"
+    db.query(`SELECT i.id, i.slug, i.name, i.photo_url AS "photoUrl", i.current_status AS "status", i.current_job_id AS "jobId", oj.job_number AS "jobNumber", oj.title AS "jobTitle", i.label_printed_at AS "labelPrintedAt", i.created_at AS "createdAt"
       FROM inventory_items i LEFT JOIN ongoing_jobs oj ON oj.id = i.current_job_id
-      WHERE i.status = 'active' AND i.slug IS NOT NULL ORDER BY i.created_at DESC`),
+      WHERE i.status = 'active' AND i.deleted_at IS NULL AND i.slug IS NOT NULL ORDER BY i.created_at DESC`),
     db.query(`SELECT oj.id, oj.job_number AS "jobNumber", oj.title AS name FROM ongoing_jobs oj
       WHERE oj.deleted_at IS NULL AND COALESCE(oj.summary_stage, '') NOT IN ('Job Done','Job Lost','Closed Won','Closed Lost')
       ORDER BY oj.updated_at DESC NULLS LAST`),
   ]);
   return { items: items.rows, jobs: jobs.rows };
+}
+
+export async function listRecentlyRemovedItems() {
+  const result = await db.query(
+    `SELECT id, slug, name, photo_url AS "photoUrl", deleted_at AS "deletedAt"
+     FROM inventory_items WHERE deleted_at IS NOT NULL ORDER BY deleted_at DESC LIMIT 100`,
+  );
+  return result.rows;
 }
 
 export async function createWarehouseItem(payload = {}, photo, actor = {}) {
@@ -85,6 +96,17 @@ export async function createWarehouseItem(payload = {}, photo, actor = {}) {
   }
 }
 
+export async function markItemsPrinted(itemIds = [], actor = {}) {
+  const ids = [...new Set((Array.isArray(itemIds) ? itemIds : []).map(uuid).filter(Boolean))];
+  if (!ids.length) throw Object.assign(new Error('No items were selected.'), { status: 400 });
+  const result = await db.query(
+    `UPDATE inventory_items SET label_printed_at = NOW(), updated_at = NOW() WHERE id = ANY($1::uuid[]) AND status = 'active' AND deleted_at IS NULL RETURNING id`,
+    [ids],
+  );
+  await audit(actor, 'update', null, `Marked ${result.rows.length} warehouse item label(s) as printed`);
+  return { ok: true, updated: result.rows.length };
+}
+
 export async function sendItemToJob(itemId, jobId, actor = {}) {
   const id = uuid(itemId);
   const job = uuid(jobId);
@@ -92,7 +114,7 @@ export async function sendItemToJob(itemId, jobId, actor = {}) {
   const jobRow = await db.query(`SELECT title FROM ongoing_jobs WHERE id = $1::uuid AND deleted_at IS NULL`, [job]);
   if (!jobRow.rows.length) throw Object.assign(new Error('Job not found.'), { status: 404 });
   const result = await db.query(
-    `UPDATE inventory_items SET current_status = 'job', current_job_id = $2::uuid, updated_at = NOW() WHERE id = $1::uuid AND status = 'active' RETURNING id, name`,
+    `UPDATE inventory_items SET current_status = 'job', current_job_id = $2::uuid, updated_at = NOW() WHERE id = $1::uuid AND status = 'active' AND deleted_at IS NULL RETURNING id, name`,
     [id, job],
   );
   if (!result.rows.length) throw Object.assign(new Error('Item not found.'), { status: 404 });
@@ -104,7 +126,7 @@ export async function returnItemToWarehouse(itemId, actor = {}) {
   const id = uuid(itemId);
   if (!id) throw Object.assign(new Error('Item is required.'), { status: 400 });
   const result = await db.query(
-    `UPDATE inventory_items SET current_status = 'warehouse', current_job_id = NULL, updated_at = NOW() WHERE id = $1::uuid AND status = 'active' RETURNING id, name`,
+    `UPDATE inventory_items SET current_status = 'warehouse', current_job_id = NULL, updated_at = NOW() WHERE id = $1::uuid AND status = 'active' AND deleted_at IS NULL RETURNING id, name`,
     [id],
   );
   if (!result.rows.length) throw Object.assign(new Error('Item not found.'), { status: 404 });
@@ -112,22 +134,57 @@ export async function returnItemToWarehouse(itemId, actor = {}) {
   return { ok: true };
 }
 
-export async function archiveWarehouseItem(itemId, actor = {}) {
+export async function deleteWarehouseItem(itemId, actor = {}) {
   const id = uuid(itemId);
   if (!id) throw Object.assign(new Error('Item is required.'), { status: 400 });
-  const result = await db.query(`UPDATE inventory_items SET status = 'inactive', updated_at = NOW() WHERE id = $1::uuid RETURNING id, name`, [id]);
-  if (!result.rows.length) throw Object.assign(new Error('Item not found.'), { status: 404 });
-  await audit(actor, 'delete', id, `Removed ${result.rows[0].name} from the warehouse tracker`);
+  const existing = await db.query(`SELECT * FROM inventory_items WHERE id = $1::uuid AND deleted_at IS NULL`, [id]);
+  if (!existing.rows.length) throw Object.assign(new Error('Item not found.'), { status: 404 });
+  const result = await db.query(
+    `UPDATE inventory_items SET deleted_at = NOW(), deleted_by = $2::uuid, updated_at = NOW() WHERE id = $1::uuid AND deleted_at IS NULL RETURNING id, name`,
+    [id, actor?.userId || null],
+  );
+  await captureRevision({ resourceType: 'inventory_item', resourceId: id, before: existing.rows[0], after: null, changeType: 'soft_delete', actor });
+  await audit(actor, 'delete', id, `Removed ${result.rows[0].name} from the warehouse tracker (photo kept for 60 days)`);
+  return { ok: true };
+}
+
+export async function restoreWarehouseItem(itemId, actor = {}) {
+  const id = uuid(itemId);
+  if (!id) throw Object.assign(new Error('Item is required.'), { status: 400 });
+  const result = await db.query(
+    `UPDATE inventory_items SET deleted_at = NULL, deleted_by = NULL, updated_at = NOW() WHERE id = $1::uuid AND deleted_at IS NOT NULL RETURNING *`,
+    [id],
+  );
+  if (!result.rows.length) throw Object.assign(new Error('Removed item not found (or its photo has already been purged).'), { status: 404 });
+  if (!result.rows[0].photo_url) throw Object.assign(new Error('This item’s photo was purged after 60 days and can no longer be restored automatically — re-add it with a new photo.'), { status: 410 });
+  await captureRevision({ resourceType: 'inventory_item', resourceId: id, before: null, after: result.rows[0], changeType: 'restore', actor });
+  await audit(actor, 'update', id, `Restored ${result.rows[0].name} to the warehouse tracker`);
   return { ok: true };
 }
 
 export async function getItemQrSvg(slug) {
   const clean = text(slug);
   if (!clean) throw Object.assign(new Error('Item code is required.'), { status: 400 });
-  const item = await db.query(`SELECT id FROM inventory_items WHERE slug = $1 AND status = 'active'`, [clean]);
+  const item = await db.query(`SELECT id, name FROM inventory_items WHERE slug = $1 AND status = 'active' AND deleted_at IS NULL`, [clean]);
   if (!item.rows.length) throw Object.assign(new Error('Item not found.'), { status: 404 });
+  const name = item.rows[0].name;
   const targetUrl = `${CLIENT_URL}/admin/crm/inventory/i/${clean}`;
-  return QRCode.toString(targetUrl, { type: 'svg', errorCorrectionLevel: 'H', margin: 1 });
+  const qrSvg = (await QRCode.toString(targetUrl, { type: 'svg', errorCorrectionLevel: 'H', margin: 0 })).trim();
+  const bodyMatch = qrSvg.match(/^<svg[^>]*viewBox="([^"]+)"[^>]*>([\s\S]*)<\/svg>$/);
+  const qrViewBox = bodyMatch ? bodyMatch[1] : '0 0 33 33';
+  const qrBody = bodyMatch ? bodyMatch[2] : qrSvg;
+
+  const width = 200;
+  const height = 240;
+  const displayName = name.length > 26 ? `${name.slice(0, 25)}…` : name;
+  const nameFontSize = name.length > 18 ? 12 : 15;
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+  <rect width="${width}" height="${height}" fill="#ffffff"/>
+  <svg x="20" y="14" width="160" height="160" viewBox="${qrViewBox}" shape-rendering="crispEdges">${qrBody}</svg>
+  <text x="${width / 2}" y="196" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="${nameFontSize}" font-weight="700" fill="#111111">${escapeXml(displayName)}</text>
+  <text x="${width / 2}" y="220" text-anchor="middle" font-family="'Courier New', monospace" font-size="12" fill="#666666">${escapeXml(clean)}</text>
+</svg>`;
 }
 
 export async function findItemBySlug(slug) {
@@ -135,7 +192,7 @@ export async function findItemBySlug(slug) {
   if (!clean) return null;
   const result = await db.query(
     `SELECT i.id, i.slug, i.name, i.photo_url AS "photoUrl", i.current_status AS "status", i.current_job_id AS "jobId", oj.title AS "jobTitle"
-     FROM inventory_items i LEFT JOIN ongoing_jobs oj ON oj.id = i.current_job_id WHERE i.slug = $1 AND i.status = 'active'`,
+     FROM inventory_items i LEFT JOIN ongoing_jobs oj ON oj.id = i.current_job_id WHERE i.slug = $1 AND i.status = 'active' AND i.deleted_at IS NULL`,
     [clean],
   );
   return result.rows[0] || null;

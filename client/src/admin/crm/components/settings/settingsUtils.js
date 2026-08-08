@@ -63,6 +63,7 @@ export function resourceLabel(resourceType) {
     sequence: 'Sequence',
     interaction: 'Interaction',
     user: 'User',
+    inventory_item: 'Warehouse item',
   };
   return labels[resourceType] || resourceType || 'Record';
 }
@@ -75,5 +76,6 @@ export function snapshotTitle(resourceType, snapshot = {}) {
   if (resourceType === 'task') return snapshot.title || 'Task';
   if (resourceType === 'sequence') return snapshot.name || 'Sequence';
   if (resourceType === 'interaction') return snapshot.subject || snapshot.type || 'Interaction';
+  if (resourceType === 'inventory_item') return snapshot.name || 'Warehouse item';
   return 'Record snapshot';
 }
