@@ -40,14 +40,14 @@
     "semantic_hash": "9c754f712002fcebbe3d53ae2fd0d03d"
   },
   "client/src/admin/crm/CrmApp.jsx": {
-    "mtime": 1786100504.220322,
-    "ast_hash": "6a9f64a3fc6ae158e79eceab33c8c971",
-    "semantic_hash": "6a9f64a3fc6ae158e79eceab33c8c971"
+    "mtime": 1786190812.2801805,
+    "ast_hash": "7b66194783711a22a7bb52e0697736d4",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/analytics/CampaignVendorPerformanceGrid.jsx": {
-    "mtime": 1785001359.5267756,
-    "ast_hash": "707869a194d20c64df01f5a7e83c0663",
-    "semantic_hash": "707869a194d20c64df01f5a7e83c0663"
+    "mtime": 1786113074.3910563,
+    "ast_hash": "de825e56d96374704a0b76109bb025ef",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/analytics/CoverageMetricsBanner.jsx": {
     "mtime": 1782495838.4118748,
@@ -60,129 +60,99 @@
     "semantic_hash": "ac011bed13425d86b0be514c6736ae19"
   },
   "client/src/admin/crm/components/common/FormattedEmailViewer.jsx": {
-    "mtime": 1785659206.9970596,
-    "ast_hash": "e7a3f8783569605823d9ab4d1cb88eef",
-    "semantic_hash": "e7a3f8783569605823d9ab4d1cb88eef"
+    "mtime": 1786113074.3918378,
+    "ast_hash": "144f07487f3d3ed3260ad78c04f43613",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/communications/CommunicationJobModal.jsx": {
-    "mtime": 1786100504.2213187,
-    "ast_hash": "ec4bb0fc10401dcb0d8e5d5a5b0a06aa",
-    "semantic_hash": "ec4bb0fc10401dcb0d8e5d5a5b0a06aa"
+    "mtime": 1786113074.3918378,
+    "ast_hash": "9814c7fcc8d8e7a240867d00f5623aee",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/communications/CommunicationSourceDrawer.jsx": {
-    "mtime": 1786100504.2223186,
-    "ast_hash": "4bb0ec7b6480c518c69138b04dda72ee",
-    "semantic_hash": "4bb0ec7b6480c518c69138b04dda72ee"
+    "mtime": 1786113074.392845,
+    "ast_hash": "985374bb90f2880d9a9617ab23fdd2d2",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/communications/CommunicationsOverview.jsx": {
-    "mtime": 1786100504.2223186,
-    "ast_hash": "999e4ff2940af98afbb553f13328cf72",
-    "semantic_hash": "999e4ff2940af98afbb553f13328cf72"
+    "mtime": 1786113074.3938441,
+    "ast_hash": "2f38443f6b3e53b46c9a173e97ec1161",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/communications/ReplyReviewModal.jsx": {
-    "mtime": 1786100504.2233193,
-    "ast_hash": "8f5ae666c19e286e9de8749f390d25d9",
-    "semantic_hash": "8f5ae666c19e286e9de8749f390d25d9"
+    "mtime": 1786113074.3948514,
+    "ast_hash": "caf8b9e6f1ffa60ce92c87699a4a8400",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/dashboard/DailyReviewConsistency.jsx": {
-    "mtime": 1785481230.6838968,
-    "ast_hash": "42c5f3af7186804e90ddb6ebb6779123",
-    "semantic_hash": "42c5f3af7186804e90ddb6ebb6779123"
+    "mtime": 1786113074.3958552,
+    "ast_hash": "bfe34e8f2a060f952a02d60f1daf3550",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/dashboard/DashboardKeyRelationshipsSection.jsx": {
-    "mtime": 1786100504.2233193,
-    "ast_hash": "48f274af80cb51719d3baa13c6807611",
-    "semantic_hash": "48f274af80cb51719d3baa13c6807611"
+    "mtime": 1786113074.3968563,
+    "ast_hash": "fd7ed7c8565d5810a8890f552971aafa",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/dashboard/DashboardLeadsSection.jsx": {
-    "mtime": 1786100504.2247543,
-    "ast_hash": "ff94bfc877e42dcac5fe5c1a631d5e45",
-    "semantic_hash": "ff94bfc877e42dcac5fe5c1a631d5e45"
+    "mtime": 1786113074.3968563,
+    "ast_hash": "bf0f1edf23824d2cb7201de0650c1e1d",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/dashboard/DashboardOngoingJobsSection.jsx": {
-    "mtime": 1785481230.686,
-    "ast_hash": "752126d450c7d08521955d103ffd0c38",
-    "semantic_hash": "752126d450c7d08521955d103ffd0c38"
+    "mtime": 1786113074.3978567,
+    "ast_hash": "04f520cc63aa159aea5776e7135add3d",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/employees/EmployeeCreateModal.jsx": {
-    "mtime": 1786100504.2247543,
-    "ast_hash": "90795fcf6fc6f67ec774b885a608731c",
-    "semantic_hash": "90795fcf6fc6f67ec774b885a608731c"
+    "mtime": 1786113074.3988428,
+    "ast_hash": "02bb2ca3d498a278b0259d63f7018003",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/employees/EmployeeUserSyncModal.jsx": {
-    "mtime": 1786100504.2257404,
-    "ast_hash": "0d0fb30dac2964dfef2a811f3176e030",
-    "semantic_hash": "0d0fb30dac2964dfef2a811f3176e030"
+    "mtime": 1786113074.3998435,
+    "ast_hash": "f19f5e005e7aae7da0ea8d20695e0e08",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/inbox/ConversationThreadView.jsx": {
-    "mtime": 1786100504.2267418,
-    "ast_hash": "f5ad70515e04ceb596056c42205dcaab",
-    "semantic_hash": "f5ad70515e04ceb596056c42205dcaab"
+    "mtime": 1786113074.4008467,
+    "ast_hash": "af02ebcd3d618532cd3cadd6c3fa01b2",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/inbox/UnifiedInboxWorkspace.jsx": {
-    "mtime": 1786100504.2267418,
-    "ast_hash": "b9e7c482f6a0a0f75a6084ed5cbf087b",
-    "semantic_hash": "b9e7c482f6a0a0f75a6084ed5cbf087b"
+    "mtime": 1786113074.401844,
+    "ast_hash": "ecb781109e511109cd543c2f36d0ecf4",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/jobs/JobActivationModal.jsx": {
-    "mtime": 1786100504.2287424,
-    "ast_hash": "a044f7426fa3dbde2f1ed42bf91bba9c",
-    "semantic_hash": "a044f7426fa3dbde2f1ed42bf91bba9c"
+    "mtime": 1786113074.4028478,
+    "ast_hash": "5586389c3892e74541f285a67c5efdf6",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/jobs/JobArtifactsPanel.jsx": {
-    "mtime": 1786100504.2287424,
-    "ast_hash": "9b2dde4fa593272258ed5359ba2e9e2b",
-    "semantic_hash": "9b2dde4fa593272258ed5359ba2e9e2b"
+    "mtime": 1786113074.4038577,
+    "ast_hash": "cb031f808b9976effb5c4c621b87669f",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/jobs/JobCloseoutPanel.jsx": {
-    "mtime": 1786100504.2297423,
-    "ast_hash": "3a4bc21cef854b6f5cba50ba4dd25a76",
-    "semantic_hash": "3a4bc21cef854b6f5cba50ba4dd25a76"
-  },
-  "client/src/admin/crm/components/jobs/JobCostingPanel.jsx": {
-    "mtime": 1786100504.2307417,
-    "ast_hash": "bedad98bd4a4ac02a47984e409b966f0",
-    "semantic_hash": "bedad98bd4a4ac02a47984e409b966f0"
-  },
-  "client/src/admin/crm/components/jobs/JobDeliveryPanel.jsx": {
-    "mtime": 1786100504.2307417,
-    "ast_hash": "c223c88ecd15b72fdc1cef2822b0abe7",
-    "semantic_hash": "c223c88ecd15b72fdc1cef2822b0abe7"
-  },
-  "client/src/admin/crm/components/jobs/JobMemoryPanel.jsx": {
-    "mtime": 1786100504.2317438,
-    "ast_hash": "78f40619389cab9469c6eacc0f6cc012",
-    "semantic_hash": "78f40619389cab9469c6eacc0f6cc012"
-  },
-  "client/src/admin/crm/components/jobs/JobProcurementPanel.jsx": {
-    "mtime": 1786100504.2317438,
-    "ast_hash": "1f3c3a3d48f306ab20485ed427a03a23",
-    "semantic_hash": "1f3c3a3d48f306ab20485ed427a03a23"
-  },
-  "client/src/admin/crm/components/jobs/JobProductionPanel.jsx": {
-    "mtime": 1786100504.2327485,
-    "ast_hash": "c7e86ab6444162d95a485ffa7865f242",
-    "semantic_hash": "c7e86ab6444162d95a485ffa7865f242"
-  },
-  "client/src/admin/crm/components/jobs/JobSettlementPanel.jsx": {
-    "mtime": 1786100504.2337413,
-    "ast_hash": "fad99a25532db3c42e167cd4a303b954",
-    "semantic_hash": "fad99a25532db3c42e167cd4a303b954"
+    "mtime": 1786190812.281161,
+    "ast_hash": "c4d99b0fafc066c048365556d37c7d0c",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/layout/Sidebar.jsx": {
-    "mtime": 1786100504.2337413,
-    "ast_hash": "12b68d41113d4cc67ee01e206985ca0d",
-    "semantic_hash": "12b68d41113d4cc67ee01e206985ca0d"
+    "mtime": 1786190812.2821586,
+    "ast_hash": "23cf5c23b93bb9ea101a0cb858d57156",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/layout/SpotlightSearch.jsx": {
-    "mtime": 1786100504.2347405,
-    "ast_hash": "4619dc9a62f6f1d955cd2eb60bf1a50a",
-    "semantic_hash": "4619dc9a62f6f1d955cd2eb60bf1a50a"
+    "mtime": 1786190812.2821586,
+    "ast_hash": "cbf6526a3532e44e3946ae2739dd7d98",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/layout/TopNavbar.jsx": {
-    "mtime": 1782495838.4168649,
-    "ast_hash": "ba89db0208dacd9bb0d260f6f8ae9a99",
-    "semantic_hash": "ba89db0208dacd9bb0d260f6f8ae9a99"
+    "mtime": 1786113074.4108527,
+    "ast_hash": "7cf4fc9215ede14b0fd99cab65a812b8",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/leads/AddCompanyModal.jsx": {
     "mtime": 1785481230.688931,
@@ -195,19 +165,19 @@
     "semantic_hash": "eb6be8e1a827aea8875c9068a533918a"
   },
   "client/src/admin/crm/components/leads/CompanyDetailsDrawer.jsx": {
-    "mtime": 1786100504.2362494,
-    "ast_hash": "b69cfce60cb2eb006123e2ad6fd85cfa",
-    "semantic_hash": "b69cfce60cb2eb006123e2ad6fd85cfa"
+    "mtime": 1786113074.4118586,
+    "ast_hash": "7890fef70f3bfa9bdb41efe0069491e8",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/leads/ContactFollowUpTasksSection.jsx": {
-    "mtime": 1785659206.99806,
-    "ast_hash": "5ab9f28633b81bd6f4a7e7deb80046c5",
-    "semantic_hash": "5ab9f28633b81bd6f4a7e7deb80046c5"
+    "mtime": 1786113074.413853,
+    "ast_hash": "f76d22e9f7d7655a305d218bb0c29186",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/leads/ContactLeadTasksSection.jsx": {
-    "mtime": 1786100504.236865,
-    "ast_hash": "6a4e6c396dc9bc31ca3e9ef64bae16c8",
-    "semantic_hash": "6a4e6c396dc9bc31ca3e9ef64bae16c8"
+    "mtime": 1786113074.4148574,
+    "ast_hash": "c7b3bba2b2923b50ec4189bb5bc6f6fa",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/leads/ContactUnifiedFollowUpsSection.jsx": {
     "mtime": 1785481230.6928983,
@@ -215,9 +185,9 @@
     "semantic_hash": "7c556885f86799ca906a8653b3ede74e"
   },
   "client/src/admin/crm/components/leads/DrawerCollapsible.jsx": {
-    "mtime": 1782495838.4188628,
-    "ast_hash": "d66daee65224404bd3a42f5ee56e60d9",
-    "semantic_hash": "d66daee65224404bd3a42f5ee56e60d9"
+    "mtime": 1786113074.4158635,
+    "ast_hash": "02890a06c0af5c8a893f865f5a6643b9",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/leads/DrawerTabs.jsx": {
     "mtime": 1782495838.4198635,
@@ -225,14 +195,14 @@
     "semantic_hash": "d41ab5f597a3a6adb3ae6d1faaa887c0"
   },
   "client/src/admin/crm/components/leads/EmailDetailsDrawer.jsx": {
-    "mtime": 1786100504.237878,
-    "ast_hash": "93c89f03d16daee2b7917f1e5377b9cd",
-    "semantic_hash": "93c89f03d16daee2b7917f1e5377b9cd"
+    "mtime": 1786113074.4168532,
+    "ast_hash": "ef158a1a824e41974599dc5f589aad2d",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/leads/InteractionTimeline.jsx": {
-    "mtime": 1786100504.2388718,
-    "ast_hash": "fb28404fcfaf55b6777f0a8c0fa3ce40",
-    "semantic_hash": "fb28404fcfaf55b6777f0a8c0fa3ce40"
+    "mtime": 1786113074.4178584,
+    "ast_hash": "0c30e6c21fec15d3d9a10d56b475146d",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/leads/LeadFilterToolbar.jsx": {
     "mtime": 1782495838.420863,
@@ -240,44 +210,44 @@
     "semantic_hash": "3152d9d65ecddcb1e99aa1cc6a9b889b"
   },
   "client/src/admin/crm/components/leads/LeadTableComponents.jsx": {
-    "mtime": 1785481230.693897,
-    "ast_hash": "1afdd480dfbd0a2e579a98255a0251ce",
-    "semantic_hash": "1afdd480dfbd0a2e579a98255a0251ce"
+    "mtime": 1786113074.418856,
+    "ast_hash": "8a5404f0ee962c923b86c8ad4e7febaf",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/leads/LeadTableView.jsx": {
-    "mtime": 1785481230.6948981,
-    "ast_hash": "66a397b536c6981dace280a456786cef",
-    "semantic_hash": "66a397b536c6981dace280a456786cef"
+    "mtime": 1786113074.418856,
+    "ast_hash": "cdb00246a5a5d23c164c7906566f8f6d",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/leads/LogInteractionModal.jsx": {
-    "mtime": 1783535422.537638,
-    "ast_hash": "5665524579c427c80bd456a75929a270",
-    "semantic_hash": "5665524579c427c80bd456a75929a270"
+    "mtime": 1786113074.4203606,
+    "ast_hash": "7a61e481a0087e78ccab67e4bdefec8e",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/leads/OutreachDrawer.jsx": {
-    "mtime": 1786100504.2408953,
-    "ast_hash": "72762f33ddc8cf030f21a12b094e9375",
-    "semantic_hash": "72762f33ddc8cf030f21a12b094e9375"
+    "mtime": 1786113074.4213815,
+    "ast_hash": "78ee0e7cf3f82001d2aea2b235dc31ef",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/leads/PocQualificationBadge.jsx": {
-    "mtime": 1782495838.4243345,
-    "ast_hash": "89dbf6eb46d0757350d8980e0063b063",
-    "semantic_hash": "89dbf6eb46d0757350d8980e0063b063"
+    "mtime": 1786113074.4219549,
+    "ast_hash": "79c22acf76f8757017a27a55138ce83c",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/leads/PocQualificationEditor.jsx": {
-    "mtime": 1783535422.5396347,
-    "ast_hash": "ecd03c8cbbd28645fc70939ad71c149a",
-    "semantic_hash": "ecd03c8cbbd28645fc70939ad71c149a"
+    "mtime": 1786113074.4229617,
+    "ast_hash": "5777dd34b74fbb8e3c0fa264af4fa86b",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/leads/RelationshipStatusBadge.jsx": {
-    "mtime": 1782495838.4253347,
-    "ast_hash": "77e32e8353c9c2b7c07101e5f0122965",
-    "semantic_hash": "77e32e8353c9c2b7c07101e5f0122965"
+    "mtime": 1786113074.4239614,
+    "ast_hash": "5668b15917afb02ff570f73978d75623",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/leads/VendorEmailCells.jsx": {
-    "mtime": 1786100504.241872,
-    "ast_hash": "1edd617b52a904cac23849751dcb9cb9",
-    "semantic_hash": "1edd617b52a904cac23849751dcb9cb9"
+    "mtime": 1786113074.425961,
+    "ast_hash": "3081d25abeb073e649f7ab706578bedf",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/leads/interactionTimelineUtils.js": {
     "mtime": 1786100504.242872,
@@ -285,9 +255,9 @@
     "semantic_hash": "f2da1c7f3fc6dcab37893293e66caad9"
   },
   "client/src/admin/crm/components/projects/CampaignStageControl.jsx": {
-    "mtime": 1782495838.4263341,
-    "ast_hash": "c497b67cbe41f36fdc58689a74b818e3",
-    "semantic_hash": "c497b67cbe41f36fdc58689a74b818e3"
+    "mtime": 1786113074.4269583,
+    "ast_hash": "67022adc1b6eb507e18eaf354ad12c23",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/projects/ContactBlenderModal.jsx": {
     "mtime": 1784182879.2609403,
@@ -300,44 +270,44 @@
     "semantic_hash": "25baf358608e61bf315c8889d0fc40dd"
   },
   "client/src/admin/crm/components/projects/ProjectDatabaseTable.jsx": {
-    "mtime": 1784182879.264469,
-    "ast_hash": "13e24df684314c7b75e77d6d9d0416c0",
-    "semantic_hash": "13e24df684314c7b75e77d6d9d0416c0"
+    "mtime": 1786121018.010328,
+    "ast_hash": "0deabadb6ad1427be00b5f5e5dd4d460",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/projects/ProjectPerformanceModal.jsx": {
-    "mtime": 1782495838.429349,
-    "ast_hash": "f291fad11042aee8bcd6477b738fba18",
-    "semantic_hash": "f291fad11042aee8bcd6477b738fba18"
+    "mtime": 1786113074.428964,
+    "ast_hash": "e85a1a5b66288f357c87926b05b55aa1",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/projects/ProjectResourcesModal.jsx": {
-    "mtime": 1785483203.744184,
-    "ast_hash": "2cd9ae79dcd1199eb8cccac965636c8a",
-    "semantic_hash": "2cd9ae79dcd1199eb8cccac965636c8a"
+    "mtime": 1786113074.42996,
+    "ast_hash": "24e143084a46ae6dfd572ca23882a93b",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/projects/ProjectSequenceMindMap.jsx": {
-    "mtime": 1782495838.429349,
-    "ast_hash": "753028527c56620e1a9a754db7036523",
-    "semantic_hash": "753028527c56620e1a9a754db7036523"
+    "mtime": 1786113074.4309585,
+    "ast_hash": "29f20bd0c4541fc27ad96e4b1892ef38",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/resend/ResendAnalyticsView.jsx": {
-    "mtime": 1784988108.4903274,
-    "ast_hash": "fe3bfec8c87db42a279c994fe49565f6",
-    "semantic_hash": "fe3bfec8c87db42a279c994fe49565f6"
+    "mtime": 1786113074.4319584,
+    "ast_hash": "7f4020cd6fdd5127c5f2f816a157bf94",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/resend/ResendEmailsWorkspace.jsx": {
-    "mtime": 1784990961.8850288,
-    "ast_hash": "312136da4f60b40861c298b0a1d66ebf",
-    "semantic_hash": "312136da4f60b40861c298b0a1d66ebf"
+    "mtime": 1786113074.4319584,
+    "ast_hash": "706671f5e527efbe27f3d84b57d5746e",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/resend/ResendStatusBadge.jsx": {
-    "mtime": 1784189681.0891848,
-    "ast_hash": "52f7fdffa30238f8494ab169d12e1c1f",
-    "semantic_hash": "52f7fdffa30238f8494ab169d12e1c1f"
+    "mtime": 1786113074.4329581,
+    "ast_hash": "5158e4d505b25a6c8b0b2d379cdcbc52",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/resources/ActivityResourcePlanningModal.jsx": {
-    "mtime": 1786100504.242872,
-    "ast_hash": "0f58f313f2008aed35689e08d824f62a",
-    "semantic_hash": "0f58f313f2008aed35689e08d824f62a"
+    "mtime": 1786113074.4339585,
+    "ast_hash": "5a2a21a3eb0c6931b69fc07ec15b9b2a",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/sales/CreateOngoingJobModal.jsx": {
     "mtime": 1786100504.2448735,
@@ -345,59 +315,59 @@
     "semantic_hash": "62c843d8b27cce47515eb205566eccb8"
   },
   "client/src/admin/crm/components/sales/OngoingJobDrawer.jsx": {
-    "mtime": 1786100504.2458732,
-    "ast_hash": "0d981e02d7a8d1c44346d5360e523b97",
-    "semantic_hash": "0d981e02d7a8d1c44346d5360e523b97"
+    "mtime": 1786190812.283663,
+    "ast_hash": "bf7ab29d1ce7690d96b4094b2bb37950",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/sales/OngoingJobStageEditorModal.jsx": {
-    "mtime": 1785481230.698897,
-    "ast_hash": "af1c5ea1a034077347ea6eca66d7206c",
-    "semantic_hash": "af1c5ea1a034077347ea6eca66d7206c"
+    "mtime": 1786113074.4339585,
+    "ast_hash": "08678b708af561c723072caf420c5e08",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/sent/EmailOutboxWorkspace.jsx": {
-    "mtime": 1784182879.266665,
-    "ast_hash": "0f533e8bbee1d3b347205f2823907082",
-    "semantic_hash": "0f533e8bbee1d3b347205f2823907082"
+    "mtime": 1786113074.4349594,
+    "ast_hash": "79e0a9030aafaccc8e1777a9971c3fd5",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/sent/SendDeliveryIssuesWorkspace.jsx": {
-    "mtime": 1786100504.2478795,
-    "ast_hash": "df3bbf587e4c75841c291708eb37ad0a",
-    "semantic_hash": "df3bbf587e4c75841c291708eb37ad0a"
+    "mtime": 1786113074.4359584,
+    "ast_hash": "bd3364bafcf54684deff388033a51ce9",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/sent/SentEmailsWorkspace.jsx": {
-    "mtime": 1786100504.2488718,
-    "ast_hash": "46883ec0c8acaf61f9e330991c0d9e2b",
-    "semantic_hash": "46883ec0c8acaf61f9e330991c0d9e2b"
+    "mtime": 1786113074.4369726,
+    "ast_hash": "b67f71d5b34d2b2da1d6e721f8776511",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/sequences/AudiencePreviewModal.jsx": {
-    "mtime": 1785481230.700898,
-    "ast_hash": "6985c3199d215f6c2b3cd8d355f90627",
-    "semantic_hash": "6985c3199d215f6c2b3cd8d355f90627"
+    "mtime": 1786113074.4369726,
+    "ast_hash": "dc7f5d00cad0f99d4e03b34d67378d6f",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/sequences/CampaignListImportModal.jsx": {
-    "mtime": 1785481230.700898,
-    "ast_hash": "f417a76dfdc1fc677b3633f63c66f6fa",
-    "semantic_hash": "f417a76dfdc1fc677b3633f63c66f6fa"
+    "mtime": 1786113074.437968,
+    "ast_hash": "d2b9422b9f17df8d6d53436891e9864b",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/sequences/MailboxUsagePopover.jsx": {
-    "mtime": 1782495838.4333344,
-    "ast_hash": "517d7e6ed138b8f80e773d1d2029cd92",
-    "semantic_hash": "517d7e6ed138b8f80e773d1d2029cd92"
+    "mtime": 1786113074.4389613,
+    "ast_hash": "aa09bd5b30c3928ed3943b816ef8ad78",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/sequences/SequenceBuilderWorkspace.jsx": {
-    "mtime": 1786100504.2498727,
-    "ast_hash": "649857d9d003e7b967e1f647d39bb27c",
-    "semantic_hash": "649857d9d003e7b967e1f647d39bb27c"
+    "mtime": 1786113074.4399748,
+    "ast_hash": "46a8e725457e06a81d79038e05090380",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/sequences/SequenceInspector.jsx": {
-    "mtime": 1785481230.7018974,
-    "ast_hash": "78d86392aec6f59db23040419451cb79",
-    "semantic_hash": "78d86392aec6f59db23040419451cb79"
+    "mtime": 1786113074.4399748,
+    "ast_hash": "8f4ec1c126964b204d73eaa28b82709b",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/sequences/SequenceListPanel.jsx": {
-    "mtime": 1784182879.2740512,
-    "ast_hash": "21b0e66a1508a31a48cebeb3c573398e",
-    "semantic_hash": "21b0e66a1508a31a48cebeb3c573398e"
+    "mtime": 1786113074.4409606,
+    "ast_hash": "e7e631a3591fb2832ab03f5c722fe0c4",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/sequences/SequenceNodeEditorModal.jsx": {
     "mtime": 1783179152.9548118,
@@ -405,14 +375,14 @@
     "semantic_hash": "252bda7d4f5ea1e2185dc637d933b2e8"
   },
   "client/src/admin/crm/components/sequences/SequenceSidebar.jsx": {
-    "mtime": 1785481230.7028978,
-    "ast_hash": "b8deb7018e5f61b7862d6de199dd77c3",
-    "semantic_hash": "b8deb7018e5f61b7862d6de199dd77c3"
+    "mtime": 1786113074.4419634,
+    "ast_hash": "aa722737eb694979bc83c05098be5a57",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/sequences/SequenceStudio.jsx": {
-    "mtime": 1786100504.251889,
-    "ast_hash": "d9204e829dbeaddec128fefb84364b08",
-    "semantic_hash": "d9204e829dbeaddec128fefb84364b08"
+    "mtime": 1786121009.2147684,
+    "ast_hash": "dcfefbf3a2ef1981307453a9ec4cb439",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/sequences/SequenceStudioToast.jsx": {
     "mtime": 1782495838.437336,
@@ -420,9 +390,9 @@
     "semantic_hash": "d8748b33cbee7ddbcd02742c9a5d226f"
   },
   "client/src/admin/crm/components/sequences/SequenceWhiteboard.jsx": {
-    "mtime": 1783179152.9568117,
-    "ast_hash": "30d7a36f4926c6da2aebbb834bfe28a5",
-    "semantic_hash": "30d7a36f4926c6da2aebbb834bfe28a5"
+    "mtime": 1786113074.4429631,
+    "ast_hash": "f98eaefa4925567a6b6455d7f88910bc",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/sequences/audienceBuilder.js": {
     "mtime": 1785481230.7048972,
@@ -475,9 +445,9 @@
     "semantic_hash": "50177630b9ba6e73c088c2177e657311"
   },
   "client/src/admin/crm/components/settings/RoleBadge.jsx": {
-    "mtime": 1784819212.4840038,
-    "ast_hash": "cfb9bbe63889da2404947e363e603717",
-    "semantic_hash": "cfb9bbe63889da2404947e363e603717"
+    "mtime": 1786113074.4429631,
+    "ast_hash": "2b7a92422b0f1983f8084fb54bbe27c7",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/settings/SettingsFilterSelect.jsx": {
     "mtime": 1782495838.4466312,
@@ -505,9 +475,9 @@
     "semantic_hash": "25c04490252d55bfd89d86e80c382b69"
   },
   "client/src/admin/crm/components/tasks/OngoingJobTasksPanel.jsx": {
-    "mtime": 1786100504.2528808,
-    "ast_hash": "7562a4c95de304a8008b728985d29618",
-    "semantic_hash": "7562a4c95de304a8008b728985d29618"
+    "mtime": 1786190812.284689,
+    "ast_hash": "778b99b66fdc87add0a1a00d8a8dbe0e",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/tasks/OpportunityTasksPanel.jsx": {
     "mtime": 1785481230.7058966,
@@ -520,14 +490,14 @@
     "semantic_hash": "1efb7775faf0bbcd6518c454e469df0d"
   },
   "client/src/admin/crm/components/tasks/TaskTable.jsx": {
-    "mtime": 1786100504.2538714,
-    "ast_hash": "780ef5261b64888a7ae8abed286de75c",
-    "semantic_hash": "780ef5261b64888a7ae8abed286de75c"
+    "mtime": 1786113074.4439633,
+    "ast_hash": "da8573d476d14a144e93c65333fcd61f",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/tasks/TaskWorkspaceModal.jsx": {
-    "mtime": 1786100504.2548726,
-    "ast_hash": "91dade6f065e5ab1dc30207530d3cd54",
-    "semantic_hash": "91dade6f065e5ab1dc30207530d3cd54"
+    "mtime": 1786113074.4449587,
+    "ast_hash": "b1f9027a4371e79cbafa7f66f0bbc2fd",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/tasks/taskUtils.js": {
     "mtime": 1786100504.2558725,
@@ -535,9 +505,9 @@
     "semantic_hash": "d5251b9fd9e3a0649bfaac3e56d968d5"
   },
   "client/src/admin/crm/components/ui/BulkSelectTable.jsx": {
-    "mtime": 1783535422.5496573,
-    "ast_hash": "d04ae03265d96edac98375eea55404d6",
-    "semantic_hash": "d04ae03265d96edac98375eea55404d6"
+    "mtime": 1786113074.4449587,
+    "ast_hash": "68fce8974faa52788c29735379c1151b",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/ui/ClickableTableRow.jsx": {
     "mtime": 1782495838.4526346,
@@ -555,9 +525,9 @@
     "semantic_hash": "c1b073bd57b12e345418b2272b444e3f"
   },
   "client/src/admin/crm/components/ui/DeleteIconButton.jsx": {
-    "mtime": 1782495838.4536307,
-    "ast_hash": "49862a8b864aa2db6d333099a62e5f39",
-    "semantic_hash": "49862a8b864aa2db6d333099a62e5f39"
+    "mtime": 1786113074.4459634,
+    "ast_hash": "f1316255e82b62fd76d94edd3c739429",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/ui/DeleteUndoToastStack.jsx": {
     "mtime": 1782495838.4546318,
@@ -565,9 +535,9 @@
     "semantic_hash": "299c4373e2de00154812258f7ee27e96"
   },
   "client/src/admin/crm/components/ui/Drawer.jsx": {
-    "mtime": 1785481230.7078962,
-    "ast_hash": "ad8ae51174cff64df3e57e4a12dba82d",
-    "semantic_hash": "ad8ae51174cff64df3e57e4a12dba82d"
+    "mtime": 1786113074.4469678,
+    "ast_hash": "8957963d77854a38e51687c027612799",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/ui/DrawerLoadingSkeleton.jsx": {
     "mtime": 1782495838.4556296,
@@ -580,9 +550,9 @@
     "semantic_hash": "d1de471fdaf7f4fdc664df5f18c1f129"
   },
   "client/src/admin/crm/components/ui/Modal.jsx": {
-    "mtime": 1785871760.0053802,
-    "ast_hash": "d2c0269fd4ebd8afe56fc7850dea77a1",
-    "semantic_hash": "d2c0269fd4ebd8afe56fc7850dea77a1"
+    "mtime": 1786113074.4479787,
+    "ast_hash": "9e0813990d807177d79da62a8abadff3",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/ui/PreviewWorkspaceModal.jsx": {
     "mtime": 1782495838.45763,
@@ -595,24 +565,24 @@
     "semantic_hash": "40ab8c8f758f6f44ee085ef06581c95c"
   },
   "client/src/admin/crm/components/ui/SearchableCombobox.jsx": {
-    "mtime": 1785481230.7088966,
-    "ast_hash": "648254a60b2f0ac9334ec885cbb67b20",
-    "semantic_hash": "648254a60b2f0ac9334ec885cbb67b20"
+    "mtime": 1786113074.4489782,
+    "ast_hash": "0fe4cb6fd4decfd8f00e542ee4cbe1fa",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/ui/SearchableMultiSelect.jsx": {
-    "mtime": 1785481230.7088966,
-    "ast_hash": "764bd2ce0e4318839f5299c173118419",
-    "semantic_hash": "764bd2ce0e4318839f5299c173118419"
+    "mtime": 1786113074.44997,
+    "ast_hash": "a188bdd379a2576b5a6fead5c749ac45",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/ui/SearchableSelect.jsx": {
-    "mtime": 1785481230.7098958,
-    "ast_hash": "eb76b919ebd8d31baa5542d6ffb92190",
-    "semantic_hash": "eb76b919ebd8d31baa5542d6ffb92190"
+    "mtime": 1786113074.4509666,
+    "ast_hash": "5686f6d2d6a9ed4f4770b11f5a6f2e79",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/ui/SensitiveDataDisplay.jsx": {
-    "mtime": 1783535422.552167,
-    "ast_hash": "3020d5d1ee64e4aab500b4af51ce3371",
-    "semantic_hash": "3020d5d1ee64e4aab500b4af51ce3371"
+    "mtime": 1786113074.4509666,
+    "ast_hash": "d9ac9c220c4e0e536e4d42ce23eb7c6b",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/ui/SensitiveDataField.jsx": {
     "mtime": 1783535422.552167,
@@ -635,9 +605,9 @@
     "semantic_hash": "1a1fd5ed0b0101fcbc86c4c74e34c964"
   },
   "client/src/admin/crm/components/ui/advancedFilter/AdvancedFilterPopover.jsx": {
-    "mtime": 1785481230.7108967,
-    "ast_hash": "07f96a66378550ad57cacee8c54a72a9",
-    "semantic_hash": "07f96a66378550ad57cacee8c54a72a9"
+    "mtime": 1786113074.4529722,
+    "ast_hash": "9923c796f7b38f3e981c2bc28bab4a10",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/ui/advancedFilter/filterEngine.js": {
     "mtime": 1785481230.7108967,
@@ -665,9 +635,9 @@
     "semantic_hash": "9ad06564d9150acfa77cc2bf2a05f04a"
   },
   "client/src/admin/crm/components/ui/primitives.jsx": {
-    "mtime": 1786100504.2568724,
-    "ast_hash": "8e1cb3d846093890f1bfced19b91a318",
-    "semantic_hash": "8e1cb3d846093890f1bfced19b91a318"
+    "mtime": 1786190812.2856722,
+    "ast_hash": "11b6afbbef4e9f356acdd9af1e381d4c",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/ui/useBodyScrollLock.js": {
     "mtime": 1782495838.4660592,
@@ -685,19 +655,19 @@
     "semantic_hash": "d0d2a397764e22353bdafcbfe68af558"
   },
   "client/src/admin/crm/components/wizards/CampaignInitWizard.jsx": {
-    "mtime": 1784182879.2780528,
-    "ast_hash": "bec5177d021604f4019574fdd7d489c9",
-    "semantic_hash": "bec5177d021604f4019574fdd7d489c9"
+    "mtime": 1786190812.2866764,
+    "ast_hash": "31767f2406232828c46b179d6d692caf",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/wizards/DataBlenderWizard.jsx": {
-    "mtime": 1781798003.0157883,
-    "ast_hash": "4c5ed9b8b7866890b2d87215dd35ac83",
-    "semantic_hash": "4c5ed9b8b7866890b2d87215dd35ac83"
+    "mtime": 1786113074.4550605,
+    "ast_hash": "ae04824d86bbd28e3b3e846b105e045e",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/components/wizards/SequenceBuilder.jsx": {
-    "mtime": 1785481230.7128966,
-    "ast_hash": "00bb53ccdb10bb69fec426198527c760",
-    "semantic_hash": "00bb53ccdb10bb69fec426198527c760"
+    "mtime": 1786113074.456987,
+    "ast_hash": "85baa0afff4bb01ca43e0263b3b4f90b",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/constants/automationHints.js": {
     "mtime": 1784182879.2790513,
@@ -740,9 +710,9 @@
     "semantic_hash": "982252f81bd4c95f0c827041e820f7e0"
   },
   "client/src/admin/crm/context/ConfirmDeleteContext.jsx": {
-    "mtime": 1782495838.4733343,
-    "ast_hash": "857a7aecb2328943a1124bd9d8d152d3",
-    "semantic_hash": "857a7aecb2328943a1124bd9d8d152d3"
+    "mtime": 1786113074.458959,
+    "ast_hash": "c4929d18a62b526e133333a1f7d99846",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/context/SensitiveDataContext.jsx": {
     "mtime": 1783535422.5561678,
@@ -755,9 +725,9 @@
     "semantic_hash": "f9f09740463d055049bd6ff05d2e7a50"
   },
   "client/src/admin/crm/crmApi.js": {
-    "mtime": 1786100504.2578712,
-    "ast_hash": "9081b5730795bb8df03bd71d03868158",
-    "semantic_hash": "9081b5730795bb8df03bd71d03868158"
+    "mtime": 1786121523.3575668,
+    "ast_hash": "7f685f0000448ed17860a2cfef7284cf",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/hooks/sortUtils.js": {
     "mtime": 1783535422.5601685,
@@ -765,14 +735,14 @@
     "semantic_hash": "de133c8c5b7fd9dbb5e1e97ab1f872a3"
   },
   "client/src/admin/crm/hooks/tableSortAccessors.js": {
-    "mtime": 1786100504.258872,
-    "ast_hash": "02a60016085dcddfaf560bed9f93815c",
-    "semantic_hash": "02a60016085dcddfaf560bed9f93815c"
+    "mtime": 1786190812.2876878,
+    "ast_hash": "255017fb5256cde374910e1dd86be85c",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/hooks/useBulkDelete.js": {
-    "mtime": 1783535422.561167,
-    "ast_hash": "523b046a739f770012745e830ced360a",
-    "semantic_hash": "523b046a739f770012745e830ced360a"
+    "mtime": 1786113074.4619584,
+    "ast_hash": "e3fbf8fb564de063311c214e6f93416c",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/hooks/useConfirmDelete.js": {
     "mtime": 1782495838.4763463,
@@ -809,15 +779,10 @@
     "ast_hash": "3065c0946bc99c138fee1de827190958",
     "semantic_hash": "3065c0946bc99c138fee1de827190958"
   },
-  "client/src/admin/crm/pages/AdvancedAnalyticsPage.jsx": {
-    "mtime": 1785481230.7168963,
-    "ast_hash": "aa4fe3296fd75e06332db9644d841428",
-    "semantic_hash": "aa4fe3296fd75e06332db9644d841428"
-  },
   "client/src/admin/crm/pages/CompaniesPage.jsx": {
-    "mtime": 1785484738.915569,
-    "ast_hash": "d774bac23c9908eec05275c6e81d7349",
-    "semantic_hash": "d774bac23c9908eec05275c6e81d7349"
+    "mtime": 1786113074.463958,
+    "ast_hash": "aeebb856a4c1b05a04960e356dc1e484",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/pages/CompletedJobsPage.jsx": {
     "mtime": 1786100504.259872,
@@ -825,14 +790,14 @@
     "semantic_hash": "8f1733d82d71239a40a2bd622639e115"
   },
   "client/src/admin/crm/pages/DataRecoveryPage.jsx": {
-    "mtime": 1782495838.480806,
-    "ast_hash": "099fd33731c3ea8bea634c3112bc05d7",
-    "semantic_hash": "099fd33731c3ea8bea634c3112bc05d7"
+    "mtime": 1786113074.46496,
+    "ast_hash": "429c622242e9ba51f49fe465d9fca58f",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/pages/DesignerDashboard.jsx": {
-    "mtime": 1785481230.7188966,
-    "ast_hash": "743b1b95ff1b977cbe42d4dd2cd32b83",
-    "semantic_hash": "743b1b95ff1b977cbe42d4dd2cd32b83"
+    "mtime": 1786113074.46496,
+    "ast_hash": "d9ddd0dae552f4d1be55d3221191057b",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/pages/EmailHubPage.jsx": {
     "mtime": 1786100504.259872,
@@ -840,24 +805,14 @@
     "semantic_hash": "aa9cf7a2b10580a38b862787ad3c1958"
   },
   "client/src/admin/crm/pages/EmailSettingsPage.jsx": {
-    "mtime": 1784182879.2863483,
-    "ast_hash": "aa5a617e571979441bffdd14f28eb3af",
-    "semantic_hash": "aa5a617e571979441bffdd14f28eb3af"
-  },
-  "client/src/admin/crm/pages/EmployeesPage.jsx": {
-    "mtime": 1786100504.2608726,
-    "ast_hash": "9537350921b328a51703fe5693748410",
-    "semantic_hash": "9537350921b328a51703fe5693748410"
-  },
-  "client/src/admin/crm/pages/FinancePage.jsx": {
-    "mtime": 1785484647.766742,
-    "ast_hash": "d09f167c0017c8e8bb1601110354b4fc",
-    "semantic_hash": "d09f167c0017c8e8bb1601110354b4fc"
+    "mtime": 1786113074.465958,
+    "ast_hash": "15647d73094a8a91e6c909da46a14520",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/pages/GlobalDashboard.jsx": {
-    "mtime": 1785510608.3950825,
-    "ast_hash": "d3b2ff494c37fd74f393717009034e88",
-    "semantic_hash": "d3b2ff494c37fd74f393717009034e88"
+    "mtime": 1786113074.4679697,
+    "ast_hash": "dbd3013ab33eb5d02c23540492901625",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/pages/InboxPage.jsx": {
     "mtime": 1786100504.261872,
@@ -865,84 +820,59 @@
     "semantic_hash": "3466322bb2a5fba44e38ebeb6bd8988e"
   },
   "client/src/admin/crm/pages/InventoryPage.jsx": {
-    "mtime": 1786100504.261872,
-    "ast_hash": "fbfb9b3d7c03907feeedc97732e6cbb2",
-    "semantic_hash": "fbfb9b3d7c03907feeedc97732e6cbb2"
+    "mtime": 1786190812.2886872,
+    "ast_hash": "966b75775250ef04ed337dfdc9434fb2",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/pages/OngoingJobsPage.jsx": {
-    "mtime": 1786100504.2628725,
-    "ast_hash": "20fd1cbec539c1ffb2128cf24e840d79",
-    "semantic_hash": "20fd1cbec539c1ffb2128cf24e840d79"
-  },
-  "client/src/admin/crm/pages/OperationsReportsPage.jsx": {
-    "mtime": 1786100504.2638724,
-    "ast_hash": "25312da30efc3dba20b1ecf77b19e651",
-    "semantic_hash": "25312da30efc3dba20b1ecf77b19e651"
+    "mtime": 1786113074.469849,
+    "ast_hash": "e109cd376c893788434b925b5a970cbb",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/pages/PeoplePage.jsx": {
-    "mtime": 1786100504.2648723,
-    "ast_hash": "636dca6889db16579ec3d371822e5a04",
-    "semantic_hash": "636dca6889db16579ec3d371822e5a04"
-  },
-  "client/src/admin/crm/pages/PlanCalendarPage.jsx": {
-    "mtime": 1786100504.2648723,
-    "ast_hash": "2af573139d01d56d8f577c2b7233d552",
-    "semantic_hash": "2af573139d01d56d8f577c2b7233d552"
+    "mtime": 1786113074.4718535,
+    "ast_hash": "0b88a800b42f42e51dba80105f687888",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/pages/ProjectDetailWorkspace.jsx": {
-    "mtime": 1785484748.0166352,
-    "ast_hash": "991769fc2ac0dc94f2c7825165b18e27",
-    "semantic_hash": "991769fc2ac0dc94f2c7825165b18e27"
+    "mtime": 1786113074.4729552,
+    "ast_hash": "dbcb50e74ecfdb8f65511e9c050507e0",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/pages/ProjectsPage.jsx": {
-    "mtime": 1785506584.4197476,
-    "ast_hash": "d5f357861163ba5d39a323a285322e4a",
-    "semantic_hash": "d5f357861163ba5d39a323a285322e4a"
+    "mtime": 1786190812.2896893,
+    "ast_hash": "4453cced98cdc97e1cf1c48f0be80217",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/pages/RelationshipsPage.jsx": {
-    "mtime": 1786100504.2658722,
-    "ast_hash": "014ac8a6ef0465542087a7f96511a317",
-    "semantic_hash": "014ac8a6ef0465542087a7f96511a317"
+    "mtime": 1786113074.4749384,
+    "ast_hash": "d4dca8e734bf9724dd7a89b2bc6fd8f6",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/pages/ResendEmailsPage.jsx": {
-    "mtime": 1784986952.5904648,
-    "ast_hash": "0147c394ae29cdbace9b60c05a3a8af6",
-    "semantic_hash": "0147c394ae29cdbace9b60c05a3a8af6"
-  },
-  "client/src/admin/crm/pages/ResourcesPage.jsx": {
-    "mtime": 1786100504.2668757,
-    "ast_hash": "67cdf696b73b2199134e90ea414beff5",
-    "semantic_hash": "67cdf696b73b2199134e90ea414beff5"
+    "mtime": 1786113074.4758618,
+    "ast_hash": "5c9b0beec02169e1acfbdd3c3379c8ba",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/pages/SequencesPage.jsx": {
     "mtime": 1782495838.4976828,
     "ast_hash": "f6869b68547d00884d1722ff8f43e986",
     "semantic_hash": "f6869b68547d00884d1722ff8f43e986"
   },
-  "client/src/admin/crm/pages/SuppliersPage.jsx": {
-    "mtime": 1786100504.2678766,
-    "ast_hash": "439507e468685ea376641abea27eac02",
-    "semantic_hash": "439507e468685ea376641abea27eac02"
-  },
   "client/src/admin/crm/pages/TasksPage.jsx": {
-    "mtime": 1786100504.2688773,
-    "ast_hash": "2a7993978ef849854d1a4886801f0178",
-    "semantic_hash": "2a7993978ef849854d1a4886801f0178"
+    "mtime": 1786113074.47786,
+    "ast_hash": "22c5022bb0c09236cf82fb479d1504f3",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/pages/TeamSettingsPage.jsx": {
-    "mtime": 1783535422.5729096,
-    "ast_hash": "a29e2781bb9560ed923cbd5765299f10",
-    "semantic_hash": "a29e2781bb9560ed923cbd5765299f10"
-  },
-  "client/src/admin/crm/pages/TodayPage.jsx": {
-    "mtime": 1786100504.2688773,
-    "ast_hash": "9770ae3c43da27bced3c2d016d1cde53",
-    "semantic_hash": "9770ae3c43da27bced3c2d016d1cde53"
+    "mtime": 1786113074.4788575,
+    "ast_hash": "da7be4381e03d008bfbf58ca91f97a1d",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/pages/UserActivityPage.jsx": {
-    "mtime": 1782495838.5006828,
-    "ast_hash": "bae102197e9c6fe96285ddc73ada3997",
-    "semantic_hash": "bae102197e9c6fe96285ddc73ada3997"
+    "mtime": 1786113074.4798605,
+    "ast_hash": "fbc86e5615b24fe415c40843aab09b4a",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/store/slices/companiesSlice.js": {
     "mtime": 1785484514.3153222,
@@ -1425,9 +1355,9 @@
     "semantic_hash": "a25ec7d8e3f3df8d015ccfcc6a508527"
   },
   "server/package.json": {
-    "mtime": 1785875123.5750794,
-    "ast_hash": "6cf8083e2ebcb0a42f1d24a6ee2a0330",
-    "semantic_hash": "6cf8083e2ebcb0a42f1d24a6ee2a0330"
+    "mtime": 1786190812.291687,
+    "ast_hash": "7a6bc7eda0ab862bd4f2f13149276914",
+    "semantic_hash": ""
   },
   "server/scripts/01_init_postgresql_schema.sql": {
     "mtime": 1786100504.270896,
@@ -2140,9 +2070,9 @@
     "semantic_hash": "715a60f3ba633035f09aa03ed7502bab"
   },
   "server/src/app.js": {
-    "mtime": 1784189064.5267286,
-    "ast_hash": "dfeb0bad6458f90a850970c87d5e063d",
-    "semantic_hash": "dfeb0bad6458f90a850970c87d5e063d"
+    "mtime": 1786191398.8280861,
+    "ast_hash": "b8734517194f87d775fd890f82f54ae2",
+    "semantic_hash": ""
   },
   "server/src/constants/interactionTypes.js": {
     "mtime": 1782495838.5126827,
@@ -2245,14 +2175,14 @@
     "semantic_hash": "da442f9ef237d33a16d31bade03e8d0f"
   },
   "server/src/models/PipelineConfig.js": {
-    "mtime": 1784881759.6041224,
-    "ast_hash": "6f7126d021e0a9a95079d7f19212178b",
-    "semantic_hash": "6f7126d021e0a9a95079d7f19212178b"
+    "mtime": 1786113074.4808595,
+    "ast_hash": "c0e9bb5b42ecc074628bebf9b826b748",
+    "semantic_hash": ""
   },
   "server/src/models/ProjectCampaign.js": {
-    "mtime": 1783535422.6171813,
-    "ast_hash": "1d70b05d646d0a0ce74e8ad3f161e0bd",
-    "semantic_hash": "1d70b05d646d0a0ce74e8ad3f161e0bd"
+    "mtime": 1786113824.6445234,
+    "ast_hash": "fe89cf84bb37da5f69e6543e274517b7",
+    "semantic_hash": ""
   },
   "server/src/models/RecordRevision.js": {
     "mtime": 1782495838.5217247,
@@ -2310,9 +2240,9 @@
     "semantic_hash": "45df44bac4a6f87abfb54a27d9e1c96a"
   },
   "server/src/routes/adminRoutes.js": {
-    "mtime": 1786100504.3168788,
-    "ast_hash": "4c9a2701a74960e5f11dac0a86015ad2",
-    "semantic_hash": "4c9a2701a74960e5f11dac0a86015ad2"
+    "mtime": 1786190812.2926872,
+    "ast_hash": "c64a980e9ca1602460fdbff3cbeb93ee",
+    "semantic_hash": ""
   },
   "server/src/routes/pageRoutes.js": {
     "mtime": 1781095696.4617622,
@@ -2425,9 +2355,9 @@
     "semantic_hash": "b9c765a5e7052c72010cede6251194f5"
   },
   "server/src/services/inventoryService.js": {
-    "mtime": 1786100504.324397,
-    "ast_hash": "59118bf8c533fba4241a05494676896b",
-    "semantic_hash": "59118bf8c533fba4241a05494676896b"
+    "mtime": 1786190812.2942185,
+    "ast_hash": "cecea44a36cf668401726c0240fba570",
+    "semantic_hash": ""
   },
   "server/src/services/jobActivationService.js": {
     "mtime": 1786100504.3254006,
@@ -2470,9 +2400,9 @@
     "semantic_hash": "0656ceaf0addb6a23dd86c84cd61771f"
   },
   "server/src/services/mailTransport.js": {
-    "mtime": 1784193952.8964207,
-    "ast_hash": "6993015fcf00f86d7c4b978da302c4d1",
-    "semantic_hash": "6993015fcf00f86d7c4b978da302c4d1"
+    "mtime": 1786120911.8666687,
+    "ast_hash": "5b2d2e5c95b65fd7738fa6e47b2087ac",
+    "semantic_hash": ""
   },
   "server/src/services/openaiService.js": {
     "mtime": 1782495838.5370784,
@@ -2495,9 +2425,9 @@
     "semantic_hash": "ba0a0a4c035405b1bf32abb21a9d64e6"
   },
   "server/src/services/projectService.js": {
-    "mtime": 1786100504.3313963,
-    "ast_hash": "2f655d85d5073211b1bc2c470d8fbe86",
-    "semantic_hash": "2f655d85d5073211b1bc2c470d8fbe86"
+    "mtime": 1786113838.0882196,
+    "ast_hash": "89bb6974f8ec89edede22d9389f5a6ab",
+    "semantic_hash": ""
   },
   "server/src/services/replyReviewTaskService.js": {
     "mtime": 1786100504.332397,
@@ -2530,9 +2460,9 @@
     "semantic_hash": "6beac52bd6c349d2937ec24b4561f10a"
   },
   "server/src/services/salesService.js": {
-    "mtime": 1786100504.3343956,
-    "ast_hash": "db0e96cfcf6853f273b8da9d17beb5d6",
-    "semantic_hash": "db0e96cfcf6853f273b8da9d17beb5d6"
+    "mtime": 1786113074.4818583,
+    "ast_hash": "783dea48f4d01284e283eb2fee34ccc9",
+    "semantic_hash": ""
   },
   "server/src/services/searchService.js": {
     "mtime": 1786100504.335396,
@@ -2540,14 +2470,14 @@
     "semantic_hash": "1e0b12caedbf8745fb8aef6a298aa6ac"
   },
   "server/src/services/sendWorker.js": {
-    "mtime": 1786100504.336396,
-    "ast_hash": "3e8145e3f172fede439c4c09589f9035",
-    "semantic_hash": "3e8145e3f172fede439c4c09589f9035"
+    "mtime": 1786120956.1907015,
+    "ast_hash": "c8ed2f2691090d70675d2ed4eeb8d2bd",
+    "semantic_hash": ""
   },
   "server/src/services/sequenceService.js": {
-    "mtime": 1786100504.337401,
-    "ast_hash": "f81c5b67664374b8151133b1abc04620",
-    "semantic_hash": "f81c5b67664374b8151133b1abc04620"
+    "mtime": 1786121030.80582,
+    "ast_hash": "42892e3d30a15dfdfcbe06f96b11a645",
+    "semantic_hash": ""
   },
   "server/src/services/supplierProcurementService.js": {
     "mtime": 1786100504.337401,
@@ -2680,9 +2610,9 @@
     "semantic_hash": "da63654b72f6dbd07b9fe3dfd1c3e9e8"
   },
   "server/tests/dataBlender.test.js": {
-    "mtime": 1785505953.146484,
-    "ast_hash": "3635491bba7737d7a8ec495e3e0d6586",
-    "semantic_hash": "3635491bba7737d7a8ec495e3e0d6586"
+    "mtime": 1786113074.4828613,
+    "ast_hash": "61c75ad49c2e2997815fc216c9a71aa4",
+    "semantic_hash": ""
   },
   "server/tests/jobMemory.test.js": {
     "mtime": 1786100504.3383956,
@@ -2725,9 +2655,9 @@
     "semantic_hash": "19f89ee2d8f22d5b32137a3fce5a22ef"
   },
   "server/tests/salesWorkspace.test.js": {
-    "mtime": 1784881794.0153642,
-    "ast_hash": "a565462348cd03330e579f42dcaaba01",
-    "semantic_hash": "a565462348cd03330e579f42dcaaba01"
+    "mtime": 1786113366.3406317,
+    "ast_hash": "8e30da7afd4bb137ed46f7609fe375c2",
+    "semantic_hash": ""
   },
   "server/tests/sequenceFlowExecutor.test.js": {
     "mtime": 1783179152.973852,
@@ -2888,5 +2818,2775 @@
     "mtime": 1781095696.380679,
     "ast_hash": "6a5fb2ee1be3d910dc5a47000082f791",
     "semantic_hash": "6a5fb2ee1be3d910dc5a47000082f791"
+  },
+  ".claude/launch.json": {
+    "mtime": 1786113074.3831105,
+    "ast_hash": "cedf5ff0e590c9dfd1b5ba08e6208985",
+    "semantic_hash": ""
+  },
+  ".codex/hooks.json": {
+    "mtime": 1786101488.5155103,
+    "ast_hash": "7cabf4b282a22bb73c81fdfd1fc3637e",
+    "semantic_hash": ""
+  },
+  ".cursor/hooks.json": {
+    "mtime": 1786101488.5155103,
+    "ast_hash": "a9224b9a6f82c2cf1f7de6cc07b75927",
+    "semantic_hash": ""
+  },
+  "client/src/admin/crm/components/ui/InlineActionPanel.jsx": {
+    "mtime": 1786113074.4469678,
+    "ast_hash": "8fe448ddd077317e19adbc3ddca59e15",
+    "semantic_hash": ""
+  },
+  "client/src/admin/crm/components/ui/SplitPaneLayout.jsx": {
+    "mtime": 1786113074.451966,
+    "ast_hash": "d0fd12a8bcab05fbba643bfd1bb5f83c",
+    "semantic_hash": ""
+  },
+  "client/src/admin/crm/components/ui/useFocusTrap.js": {
+    "mtime": 1786113074.4550605,
+    "ast_hash": "fa835649c43d358f178b5699281d04b8",
+    "semantic_hash": ""
+  },
+  "client/src/admin/crm/constants/pluralForms.js": {
+    "mtime": 1786113074.4579618,
+    "ast_hash": "7f4c2de27bc4443ef344cf59fcee848b",
+    "semantic_hash": ""
+  },
+  "client/src/admin/crm/context/ActiveSelectionContext.jsx": {
+    "mtime": 1786113074.4579618,
+    "ast_hash": "2c9a20038cc130a42c14a10240f89460",
+    "semantic_hash": ""
+  },
+  "client/src/admin/crm/pages/LiveSendMonitorPage.jsx": {
+    "mtime": 1786120983.2674062,
+    "ast_hash": "659af00d17e52e13ef63222deca337e7",
+    "semantic_hash": ""
+  },
+  "server/scripts/19_inventory_warehouse_tracker.sql": {
+    "mtime": 1786190812.291687,
+    "ast_hash": "c2c57232bde9652e359d6be72c668e6f",
+    "semantic_hash": ""
+  },
+  "server/tests/e2e_tier1_feature_coverage.test.js": {
+    "mtime": 1786113074.4838562,
+    "ast_hash": "ded82d0cfed4d29dff65612661d8bffe",
+    "semantic_hash": ""
+  },
+  "server/tests/e2e_tier2_boundaries.test.js": {
+    "mtime": 1786113074.4838562,
+    "ast_hash": "c9cee6d47c62253afda2dfb05f07499d",
+    "semantic_hash": ""
+  },
+  "server/tests/e2e_tier3_cross_feature.test.js": {
+    "mtime": 1786113074.4848585,
+    "ast_hash": "7362f82f48567e561704f2a1630a1061",
+    "semantic_hash": ""
+  },
+  "server/tests/e2e_tier4_workloads.test.js": {
+    "mtime": 1786113074.485855,
+    "ast_hash": "33ca03c75fe96bf8c10b7f7dc65d461b",
+    "semantic_hash": ""
+  },
+  ".cursor/skills/ui-ux-pro-max/SKILL.md": {
+    "mtime": 1782495838.3863094,
+    "ast_hash": "ea1de55331d584bad5a22cd34ee2cd46",
+    "semantic_hash": ""
+  },
+  "CRM_FOUNDATION_SPEC.md": {
+    "mtime": 1785869965.2275548,
+    "ast_hash": "6f7ae48226115a527c7a43c0361ffab1",
+    "semantic_hash": ""
+  },
+  "CRM_LIVE_MONGO_DATA_AUDIT.md": {
+    "mtime": 1785869969.636576,
+    "ast_hash": "1d0072f30782dd34da54c83cf20eea24",
+    "semantic_hash": ""
+  },
+  "CRM_LOGICAL_ERD.md": {
+    "mtime": 1785869971.0855415,
+    "ast_hash": "2a3bf41d4406408656d88b27edd78fea",
+    "semantic_hash": ""
+  },
+  "CRM_REPAIR_COMPLETION_REPORT.md": {
+    "mtime": 1786100504.2173207,
+    "ast_hash": "1fd1e1166f64e11616076e831bd88072",
+    "semantic_hash": ""
+  },
+  "CRM_UX_RESTRUCTURE_PLAN.md": {
+    "mtime": 1786113074.386215,
+    "ast_hash": "8f3c8f6b8b4c6307876a89f52355af95",
+    "semantic_hash": ""
+  },
+  "DESIGN_PHILOSOPHY.md": {
+    "mtime": 1777838226.129954,
+    "ast_hash": "4a0512cdad9964b808a7fa37975e9edc",
+    "semantic_hash": ""
+  },
+  "EGS_WEBSITE_CONTENT_BIBLE.md": {
+    "mtime": 1777827045.6661942,
+    "ast_hash": "4a9fba259b5e5821a99f4d642ba85f9b",
+    "semantic_hash": ""
+  },
+  "ERP_PRODUCT_AUDIT_AND_IMPLEMENTATION_ROADMAP.md": {
+    "mtime": 1786100504.2183182,
+    "ast_hash": "b79cb5d72c42a47ffb77f5378fe40ef1",
+    "semantic_hash": ""
+  },
+  "MONGO_TO_SQL_AI_AGENT_GUIDE.md": {
+    "mtime": 1785869975.2817125,
+    "ast_hash": "2dce77ad442ff10cf0ca686b1f40739f",
+    "semantic_hash": ""
+  },
+  "ORIGINAL_REQUEST.md": {
+    "mtime": 1786113074.3870864,
+    "ast_hash": "dc74fe8ccfd92089e3309b16ef39cf9a",
+    "semantic_hash": ""
+  },
+  "POST_SQL_MIGRATION_AND_ERP_AUDIT.md": {
+    "mtime": 1786100504.2193174,
+    "ast_hash": "d050a4d9233f45f8f41ded0796370a46",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1777838226.1309547,
+    "ast_hash": "27b08c8b2adb542aef0f63045c0724fb",
+    "semantic_hash": ""
+  },
+  "SQL_MIGRATION_REPAIR_REPORT.md": {
+    "mtime": 1786100504.2193174,
+    "ast_hash": "e599981b08f5b86dbf6f69d1c552f31c",
+    "semantic_hash": ""
+  },
+  "TEST_INFRA.md": {
+    "mtime": 1786113074.3870864,
+    "ast_hash": "2f3e1e750879f35dd6e1411e36f95054",
+    "semantic_hash": ""
+  },
+  "TEST_READY.md": {
+    "mtime": 1786113074.388079,
+    "ast_hash": "7ec76934fc2ee8f770962a61c54b087a",
+    "semantic_hash": ""
+  },
+  "VIDEO_AND_NAVBAR_IMPLEMENTATION_GUIDE.md": {
+    "mtime": 1777921812.957311,
+    "ast_hash": "ca55ef03e1885c43b05ef2ba1b2f247c",
+    "semantic_hash": ""
+  },
+  "client/index.html": {
+    "mtime": 1785481230.678897,
+    "ast_hash": "b95394e76a339a1076b8e2a8173e430e",
+    "semantic_hash": ""
+  },
+  "client/public/googleb9378e737f302227.html": {
+    "mtime": 1781098131.5828264,
+    "ast_hash": "710a868e23e8d659645dbdaca6be1aae",
+    "semantic_hash": ""
+  },
+  "client/public/legacy/events.html": {
+    "mtime": 1781095694.7930205,
+    "ast_hash": "40c45be63e9ab51fc67916a798828066",
+    "semantic_hash": ""
+  },
+  "client/public/legacy/exhibitions.html": {
+    "mtime": 1781095694.7940152,
+    "ast_hash": "9bea49fbfa754c6d374cd9580962c5aa",
+    "semantic_hash": ""
+  },
+  "client/public/legacy/fitouts.html": {
+    "mtime": 1781095694.7940152,
+    "ast_hash": "dfea0056df5080be551bb0fd752993a6",
+    "semantic_hash": ""
+  },
+  "client/public/legacy/index.html": {
+    "mtime": 1785481230.6808977,
+    "ast_hash": "c327919548e2740cfe0ad1e0a67c35fd",
+    "semantic_hash": ""
+  },
+  "client/public/llms.txt": {
+    "mtime": 1785481230.6808977,
+    "ast_hash": "f2d8d71d6530f68e6ca49a2a97b5cddd",
+    "semantic_hash": ""
+  },
+  "client/public/robots.txt": {
+    "mtime": 1781627921.1679115,
+    "ast_hash": "f0de12f6c6e600f35af8277bdac7642b",
+    "semantic_hash": ""
+  },
+  "content/page-specs/00-global-page-rules.md": {
+    "mtime": 1781095696.4477682,
+    "ast_hash": "da6e9c56243997cb804c8329b02f3fdf",
+    "semantic_hash": ""
+  },
+  "content/page-specs/01-home-page.md": {
+    "mtime": 1781095696.4477682,
+    "ast_hash": "82186298e44778dadb095507cd06ef53",
+    "semantic_hash": ""
+  },
+  "content/page-specs/02-exhibitions-page.md": {
+    "mtime": 1781095696.4487567,
+    "ast_hash": "7830f637b2e7fe212e67a0b659120a8d",
+    "semantic_hash": ""
+  },
+  "content/page-specs/03-events-page.md": {
+    "mtime": 1781095696.4497669,
+    "ast_hash": "f19dec957882474048e74131a0d605fd",
+    "semantic_hash": ""
+  },
+  "content/page-specs/04-fitouts-page.md": {
+    "mtime": 1781095696.4497669,
+    "ast_hash": "5839377fb32636d84e81824ffbfb8ef9",
+    "semantic_hash": ""
+  },
+  "content/page-specs/05-retail-page.md": {
+    "mtime": 1781095696.450767,
+    "ast_hash": "1bcee1ffe8a0d3612be3be686fb720f3",
+    "semantic_hash": ""
+  },
+  "content/page-specs/06-case-studies-page.md": {
+    "mtime": 1781095696.4517822,
+    "ast_hash": "fa13d55ef9d89ab92d24e421f5e4d3f0",
+    "semantic_hash": ""
+  },
+  "content/page-specs/07-contact-page.md": {
+    "mtime": 1785481230.7330024,
+    "ast_hash": "7cb001ac41b3ad750f0250a744f92cf6",
+    "semantic_hash": ""
+  },
+  "content/page-specs/09-visual-audit-and-page-system.md": {
+    "mtime": 1781095696.452766,
+    "ast_hash": "1cf820a3cfb28176bf4054f6bd24e41f",
+    "semantic_hash": ""
+  },
+  "events.html": {
+    "mtime": 1776622897.1674774,
+    "ast_hash": "7de04a9619ac5ddba4f00ab84575ed78",
+    "semantic_hash": ""
+  },
+  "exhibitions.html": {
+    "mtime": 1776622897.1752982,
+    "ast_hash": "526f42e072363d515cd258325d8cc937",
+    "semantic_hash": ""
+  },
+  "fitouts.html": {
+    "mtime": 1776636576.934027,
+    "ast_hash": "dd690d5a3ca3c0d5e0bb740a1f6d04b6",
+    "semantic_hash": ""
+  },
+  "index.html": {
+    "mtime": 1785481230.7339177,
+    "ast_hash": "1fe5a5c9d02a5b892b66062f763825f2",
+    "semantic_hash": ""
+  },
+  "lead.md": {
+    "mtime": 1781793939.3078692,
+    "ast_hash": "87a68849fefe72905e8d6b8fdb116b6c",
+    "semantic_hash": ""
+  },
+  "client/public/uploads/EGS Profile-25 Low.pdf": {
+    "mtime": 1781095694.8717196,
+    "ast_hash": "5d7992335b3ac5161dee3efd31360b3e",
+    "semantic_hash": ""
+  },
+  "uploads/EGS Profile-25 Low.pdf": {
+    "mtime": 1781095696.5605795,
+    "ast_hash": "5d7992335b3ac5161dee3efd31360b3e",
+    "semantic_hash": ""
+  },
+  "client/public/assets/egs-profile/corporate-events-branding.jpg": {
+    "mtime": 1781095694.7829318,
+    "ast_hash": "cc2dd24b3cc2df61801279edb4387a59",
+    "semantic_hash": ""
+  },
+  "client/public/assets/egs-profile/event-management-01.jpg": {
+    "mtime": 1781095694.78467,
+    "ast_hash": "77952f658c253da07ad83543188ea229",
+    "semantic_hash": ""
+  },
+  "client/public/assets/egs-profile/event-management-02.jpg": {
+    "mtime": 1781095694.7869139,
+    "ast_hash": "6026313d5b066fccb15cbe3747f1e3d4",
+    "semantic_hash": ""
+  },
+  "client/public/assets/egs-profile/event-management-03.jpg": {
+    "mtime": 1781095694.7880065,
+    "ast_hash": "66859fad81a222a622cb605f55944af8",
+    "semantic_hash": ""
+  },
+  "client/public/assets/egs-profile/event-management-04.jpg": {
+    "mtime": 1781095694.7890205,
+    "ast_hash": "94fc491f0a348645c91a02b4d9fe8af3",
+    "semantic_hash": ""
+  },
+  "client/public/assets/egs-profile/graduation-ceremonies-overview.jpg": {
+    "mtime": 1781095694.7900147,
+    "ast_hash": "89c0ef1e6206234d76f8e643f76a33df",
+    "semantic_hash": ""
+  },
+  "client/public/assets/egs-profile/hct-graduation-stats.jpg": {
+    "mtime": 1781095694.7920299,
+    "ast_hash": "f5d4da6fd34946a30bfb35f95e54de1b",
+    "semantic_hash": ""
+  },
+  "client/public/favicon.svg": {
+    "mtime": 1781101400.516161,
+    "ast_hash": "71445c3cc6d253b8a149782ab1de7651",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/AUS-CAA.jpeg": {
+    "mtime": 1781095694.879406,
+    "ast_hash": "acd1ff95afa454e51415d5cf5b82f839",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/HCT1.jpeg": {
+    "mtime": 1781095694.8814096,
+    "ast_hash": "85abe27a2a3de1faedbf2cdf7320619a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/Kazakhstan_Pavillion.jpeg": {
+    "mtime": 1781095694.8833983,
+    "ast_hash": "f1409e7db922664569cea5fb49b9e23b",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/Microlink1.jpeg": {
+    "mtime": 1781095694.8864064,
+    "ast_hash": "98df9c6dd78d3eb818b4af3125d7b83e",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/Philips_MRI.jpg": {
+    "mtime": 1781626016.9850228,
+    "ast_hash": "a8e8ec1119ee2ec18214fab6f4c3afff",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/Phillips_2-clean.png": {
+    "mtime": 1781626017.006956,
+    "ast_hash": "9bcc8d281d01b56bebba5b4a7fe4d6db",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/Phillips_2.jpeg": {
+    "mtime": 1781626017.0098407,
+    "ast_hash": "0fbf619f1728b358b3b4ba081c9a29b9",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/drawing.png": {
+    "mtime": 1781626017.0204406,
+    "ast_hash": "9930a11e22311fe0a2eff9ccc7d8bfec",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/drawing2.png": {
+    "mtime": 1781626017.0286999,
+    "ast_hash": "4b4367a7daee6c903bad9eb17a8cf291",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/healthtech.jpg": {
+    "mtime": 1781095695.0518408,
+    "ast_hash": "13b738098a1b121a82c728a8b66a6d6e",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/hp1.jpeg": {
+    "mtime": 1781095695.0538404,
+    "ast_hash": "271c90a7727b5df5093ba61f700756d9",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/hp2.jpeg": {
+    "mtime": 1781095695.0558398,
+    "ast_hash": "e747015acf3f28c7368ceb6cfd71b72f",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/2015-05-17 15.40.12.jpg": {
+    "mtime": 1781626017.0286999,
+    "ast_hash": "7609dda825014b8077f88c0fdab30925",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/2015-05-17 15.40.37.jpg": {
+    "mtime": 1781626017.034019,
+    "ast_hash": "97b348a00fd24bce7bf6fd7c715d4940",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/2015-09-02 03.26.06.jpg": {
+    "mtime": 1781626017.034019,
+    "ast_hash": "1b38631add3c6c054daf8115fbeb0370",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/2015-09-02 03.26.19.jpg": {
+    "mtime": 1781626017.0412242,
+    "ast_hash": "6a93815fbbf015331b9324bd1612a356",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/2015-12-20 16.38.53.jpg": {
+    "mtime": 1781626017.0481288,
+    "ast_hash": "02055bcc968d563dd22fc9388a38f720",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/20160324_022553.jpg": {
+    "mtime": 1781626017.0507681,
+    "ast_hash": "a76e68b05cb732c4dc656e25a3a59270",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/20160524_022207.jpg": {
+    "mtime": 1781626017.0507681,
+    "ast_hash": "6002cdb9154e5114e3f43ceb827a482a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/20160526_022056.jpg": {
+    "mtime": 1781626017.0570848,
+    "ast_hash": "6b7a886f9628ebaad8008e4aecc3b841",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/20160810_080238.jpg": {
+    "mtime": 1781626017.0596826,
+    "ast_hash": "f610a9f0d34195286d8eabdecf62a08a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/20160810_080409.jpg": {
+    "mtime": 1781626017.062137,
+    "ast_hash": "0c8bc3106daa8009c76f0081c5d7103d",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/20160824_004408.jpg": {
+    "mtime": 1781626017.0641327,
+    "ast_hash": "84250551c3f871e9040bb61d5860fe66",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/20160915_021559.jpg": {
+    "mtime": 1781626017.0660193,
+    "ast_hash": "f55c9bcebe365eeab97a51ed619ce8b6",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/20190406_021450.jpg": {
+    "mtime": 1781626017.071081,
+    "ast_hash": "3aa4e103a6e25abffda83f115177ffb4",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/20201105_083512.jpg": {
+    "mtime": 1781626017.0762105,
+    "ast_hash": "b17b298bfdf9cdbe0f7510cc4e62ed9e",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/20201105_083527.jpg": {
+    "mtime": 1781626017.080218,
+    "ast_hash": "bbbdd2eeefee46efc9132052f346e75f",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/Coop AUD2.jpg": {
+    "mtime": 1781626017.0832212,
+    "ast_hash": "3f51b4ed07a1d24c56d89f47f018a8a2",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/Geant-Ibne4.jpg": {
+    "mtime": 1781626017.0862176,
+    "ast_hash": "b0d59f22e8af7d988a5c6b4970a4a7da",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/IMG-20150403-WA004.jpg": {
+    "mtime": 1781626017.0894084,
+    "ast_hash": "ae92b83bfb6d33827cc1da1ff482578a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/IMG-20150403-WA009.jpg": {
+    "mtime": 1781626017.0919826,
+    "ast_hash": "81ef15797ef1ed296192dd63f94cc5cf",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/IMG-20160324-WA003.jpg": {
+    "mtime": 1781626017.0949924,
+    "ast_hash": "cff6f9e9a042c259e458439224eadf1c",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/IMG-20160324-WA006.jpg": {
+    "mtime": 1781626017.0979896,
+    "ast_hash": "b91b4ae1db5d4497580b43bf818dac74",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/IMG-20170209-WA0034.jpg": {
+    "mtime": 1781626017.0999882,
+    "ast_hash": "bb57234374a67428c3df44d977703824",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/10BTL Supermarket Hypermarket/IMG-20170209-WA0075.jpg": {
+    "mtime": 1781626017.1030042,
+    "ast_hash": "0879f749acb4908fd4e895fcdd99fb37",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/12Mall Kiosk/20230713_173055.jpg": {
+    "mtime": 1781626017.1069899,
+    "ast_hash": "4fa2af40c435362a6ab196b5faf2fbee",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/12Mall Kiosk/20230713_173126.jpg": {
+    "mtime": 1781626017.1099896,
+    "ast_hash": "7c4a33195567d42472a03311f9eb2d0e",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/12Mall Kiosk/Bubble Tea 1.jpeg": {
+    "mtime": 1781626017.11199,
+    "ast_hash": "61982cd308cccbb04a37c56ff2152704",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/12Mall Kiosk/Bubble Tea 3.jpeg": {
+    "mtime": 1781626017.1139898,
+    "ast_hash": "2466c062ba5b6d173379cb1bfa6ec54c",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/12Mall Kiosk/Crepe & G2.jpg": {
+    "mtime": 1781626017.115988,
+    "ast_hash": "c5f76955a5423575ed63afec5a787b10",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/12Mall Kiosk/Crepe & Go 3.jpeg": {
+    "mtime": 1781626017.1169913,
+    "ast_hash": "eccc61f802f7c5a16de0896534ad1961",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/12Mall Kiosk/Crepe & Go1.jpg": {
+    "mtime": 1781626017.1190715,
+    "ast_hash": "14d25cff1017dd0891682fc3b7dd8a76",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/12Mall Kiosk/Dunkin  FRONT VIEW.jpg": {
+    "mtime": 1781626017.1218102,
+    "ast_hash": "17967b62bcfd2ee2cc4b3fe2860e9722",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/12Mall Kiosk/Dunkin BACK.jpg": {
+    "mtime": 1781626017.1255586,
+    "ast_hash": "e6587b1066aca0c102581a9b0fd65347",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/12Mall Kiosk/Dunkin Donut 1.jpeg": {
+    "mtime": 1781626017.1267946,
+    "ast_hash": "9caceef07a07dd443d2db0634515549c",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/12Mall Kiosk/Dunkin Donut 2.jpeg": {
+    "mtime": 1781626017.1287928,
+    "ast_hash": "0871a9f5d353294934eab1df6bbe5adb",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/12Mall Kiosk/Dunkin Donut 4.jpeg": {
+    "mtime": 1781626017.131624,
+    "ast_hash": "ab5b2ca66a11cb6df4efabab8ac20933",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/12Mall Kiosk/Jewellery 1.jpg": {
+    "mtime": 1781626017.1336315,
+    "ast_hash": "782891c6be956dab765d05e4a185a09d",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/12Mall Kiosk/Jewellery 3.jpg": {
+    "mtime": 1781626017.1336315,
+    "ast_hash": "b4849da8e6fa71751d2e58b0877f2c5a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/12Mall Kiosk/Jewellery 4.jpg": {
+    "mtime": 1781626017.1375794,
+    "ast_hash": "b7a9180efb5a1b93f20df5e635239018",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/12Mall Kiosk/Nuts 1.jpg": {
+    "mtime": 1781626017.1384876,
+    "ast_hash": "67279023af76a272e720513ccd5cb69b",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/12Mall Kiosk/Pod 1.jpeg": {
+    "mtime": 1781626017.1384876,
+    "ast_hash": "206bdce814cfac063904fe1f068ec2af",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/12Mall Kiosk/Pod 2.jpeg": {
+    "mtime": 1781626017.1384876,
+    "ast_hash": "f3a28b619e0ff11c3687b6f09154fc67",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/12Mall Kiosk/Pod 3.jpeg": {
+    "mtime": 1781626017.1452134,
+    "ast_hash": "f57b00d5e2d02ee7bb846a5737c7aba4",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/12Mall Kiosk/Popcorn 1.jpg": {
+    "mtime": 1781626017.1476555,
+    "ast_hash": "6e4be2cf4480e21128e24c9aeb96bd2d",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/12Mall Kiosk/Popcorn 2.jpg": {
+    "mtime": 1781626017.149694,
+    "ast_hash": "6f8644897ef31100b46f4ca883046127",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/1Exhibition Stand/2B Stand 2.jpeg": {
+    "mtime": 1781626017.1526582,
+    "ast_hash": "b64eb5c82f3325152c52601234bb5b52",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/1Exhibition Stand/Buser.jpg": {
+    "mtime": 1781626017.1526582,
+    "ast_hash": "872e899bef5aeefcc04a5bbabd179805",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/1Exhibition Stand/Cares.jpg": {
+    "mtime": 1781626017.1526582,
+    "ast_hash": "6b97d4601a84fe7db3c92a86eb8910d2",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/1Exhibition Stand/Fosroc Real Image 3.jpeg": {
+    "mtime": 1781626017.1590097,
+    "ast_hash": "541b7c10a9096845e68814a51ca771bb",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/1Exhibition Stand/Freshy Exhi Stand 2.jpg": {
+    "mtime": 1781626017.1590097,
+    "ast_hash": "0785a03caeca918cda43c147779906b4",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/1Exhibition Stand/HCT Adnec Sep 19 (1).jpeg": {
+    "mtime": 1781626017.1638827,
+    "ast_hash": "33fa222d445d82cbac775b19941435b2",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/1Exhibition Stand/HCT Adnec Sep 19 (2).jpeg": {
+    "mtime": 1781626017.166285,
+    "ast_hash": "9f71fa083fdce8454ea2ed13b5a271cd",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/1Exhibition Stand/HCT Air.jpg": {
+    "mtime": 1781626017.166285,
+    "ast_hash": "e546febda77077b7bb29cda283efad71",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/1Exhibition Stand/HCT Skills.jpg": {
+    "mtime": 1781626017.166285,
+    "ast_hash": "98bfdf4caa54df9f64dcc834153b7801",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/1Exhibition Stand/HCT round 2.jpg": {
+    "mtime": 1781626017.1722393,
+    "ast_hash": "ceff4d738e441c04296cea31bcea610e",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/1Exhibition Stand/HCT round 3.jpg": {
+    "mtime": 1781626017.1729705,
+    "ast_hash": "589f98fb85b413f0a13b146e1e82f20e",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/1Exhibition Stand/HCT round.jpg": {
+    "mtime": 1781626017.1729705,
+    "ast_hash": "4908373e49465e3bb492c1bd71658024",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/1Exhibition Stand/Microlink 3.jpeg": {
+    "mtime": 1781626017.1799552,
+    "ast_hash": "7fab6c924736abbe7821a848c1aacd09",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/1Exhibition Stand/Philips Arab Health.jpg": {
+    "mtime": 1781626017.2212143,
+    "ast_hash": "da4b1c1da04d7950c2490525ab765140",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/1Exhibition Stand/Philips Pairs.jpg": {
+    "mtime": 1781626017.2242157,
+    "ast_hash": "ca38aa95312172fa3f5cea5178f61781",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/1Exhibition Stand/Philips Radiology.jpg": {
+    "mtime": 1781626017.2262132,
+    "ast_hash": "c4451ac255f6cae232f548eee6b92d6d",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/2Corporate Events Branding/2016-04-10 20.56.18.jpg": {
+    "mtime": 1781626017.2304046,
+    "ast_hash": "d50bede7e1a7ac0e45c38165ce8a8e38",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/2Corporate Events Branding/20170103_231923.jpg": {
+    "mtime": 1781626017.2304046,
+    "ast_hash": "0410f23c1ebeb541eb30593c097cc93a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/2Corporate Events Branding/20170129_022057.jpg": {
+    "mtime": 1781626017.2360866,
+    "ast_hash": "1eeb0e2752431075d8b7b52447739394",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/2Corporate Events Branding/20170131_072258.jpg": {
+    "mtime": 1781626017.2380936,
+    "ast_hash": "969bb654c4ccbd5e5ebc9a5c63ea212c",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/2Corporate Events Branding/20171005_022118.jpg": {
+    "mtime": 1781626017.2401013,
+    "ast_hash": "e5a66c1d5030087b53e023612b828104",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/2Corporate Events Branding/20171005_033230.jpg": {
+    "mtime": 1781626017.2420094,
+    "ast_hash": "50dda9f8770f2859e39b0afbf05ee12b",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/2Corporate Events Branding/20180131_084228.jpg": {
+    "mtime": 1781626017.2462757,
+    "ast_hash": "c22249d2b14804fe9103f8930e138ff0",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/2Corporate Events Branding/20180422_030925.jpg": {
+    "mtime": 1781626017.2482815,
+    "ast_hash": "ada599bcd12e9557143fe9d18bd6880b",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/2Corporate Events Branding/20180508_130641.jpg": {
+    "mtime": 1781626017.2489996,
+    "ast_hash": "44f12029d3eb6ef3b62ee32ab704ab73",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/2Corporate Events Branding/20200128_033520.jpg": {
+    "mtime": 1781626017.2489996,
+    "ast_hash": "f0fbcb99a62b652d835471620ad70a43",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/2Corporate Events Branding/20200129_161955.jpg": {
+    "mtime": 1781626017.2555654,
+    "ast_hash": "6e4ecbb887d98fd0cb6965387a7f57b3",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/2Corporate Events Branding/20230130_000758.jpg": {
+    "mtime": 1781626017.2559578,
+    "ast_hash": "36324fb8d3574f11563789d6dc393f11",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/2Corporate Events Branding/20230130_002807.jpg": {
+    "mtime": 1781626017.2559578,
+    "ast_hash": "6ae00ff1daff4a4e1f0df985a86182f7",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/2Corporate Events Branding/20230130_002845.jpg": {
+    "mtime": 1781626017.261506,
+    "ast_hash": "3ab4b04d28e7df483ab10a62ef903bf4",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/2Corporate Events Branding/20240128_081000.jpg": {
+    "mtime": 1781626017.2628114,
+    "ast_hash": "9ab823a9be62843c8da5849669e90a86",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/2Corporate Events Branding/HCT 2 (1).jpg": {
+    "mtime": 1781626017.2657068,
+    "ast_hash": "f04028f11fc829405d7bfd145e3589cc",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/2Corporate Events Branding/IMG-20180129-WA0107.jpg": {
+    "mtime": 1781626017.2699933,
+    "ast_hash": "6f8eeeb03d2acf61e79c7336e2b4be7c",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/2Corporate Events Branding/Philips (1).jpg": {
+    "mtime": 1781626017.2699933,
+    "ast_hash": "7c33976b60134bd94fdcc0c87c3e69b7",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/2Corporate Events Branding/Philips (5).jpg": {
+    "mtime": 1781626017.2771044,
+    "ast_hash": "d359326c475e0b3efa8bd461126961c5",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/2Corporate Events Branding/Philips Meydan13.jpg": {
+    "mtime": 1781626017.2771044,
+    "ast_hash": "0cb97c9918afba48353f7622f90f2a05",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/2Corporate Events Branding/Philips Meydan6.jpg": {
+    "mtime": 1781626017.2771044,
+    "ast_hash": "fb9614be2f36b68c7648122287e6d1a2",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/2Corporate Events Branding/WhatsApp Image 2020-11-12 at 09.14.30.jpeg": {
+    "mtime": 1781626017.2771044,
+    "ast_hash": "da10d763e1f3b62268e5f13196ef993f",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/2016-05-26 06.29.13.jpg": {
+    "mtime": 1781626017.2837958,
+    "ast_hash": "d41976ac9b8c332b3a2b927537d880de",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/20160324_022553.jpg": {
+    "mtime": 1781626017.2837958,
+    "ast_hash": "a76e68b05cb732c4dc656e25a3a59270",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/20160524_022207.jpg": {
+    "mtime": 1781626017.2907314,
+    "ast_hash": "76f6e098f96a72f5754f4bfcbcb3b6fb",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/20160526_021633.jpg": {
+    "mtime": 1781626017.2928448,
+    "ast_hash": "15429338545915614d60585bdc27b7f4",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/20160810_080238.jpg": {
+    "mtime": 1781626017.2958443,
+    "ast_hash": "f610a9f0d34195286d8eabdecf62a08a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/20160810_080425.jpg": {
+    "mtime": 1781626017.2988467,
+    "ast_hash": "02182930879a6be04a7dc390d16c36c9",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/20160810_080531.jpg": {
+    "mtime": 1781626017.3008451,
+    "ast_hash": "c4c0e683fda6b0e02e28d81ed6594649",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/20160818_020555.jpg": {
+    "mtime": 1781626017.3028464,
+    "ast_hash": "30a513501bc2791960583f8f4b7d3bcd",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/20160821_001751.jpg": {
+    "mtime": 1781626017.3048465,
+    "ast_hash": "a38c673299a7c0e4c620a42cf9d92758",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/20160821_001845.jpg": {
+    "mtime": 1781626017.3048465,
+    "ast_hash": "442660696f1cd66be6d2b67631928cb1",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/20161106_021153.jpg": {
+    "mtime": 1781626017.3119261,
+    "ast_hash": "b71cfb8625774ce70838e770c21f63ae",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/20161217_025003.jpg": {
+    "mtime": 1781626017.3122292,
+    "ast_hash": "a057a3005361942e23bafc968306a810",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/20170301_071537.jpg": {
+    "mtime": 1781626017.3122292,
+    "ast_hash": "ae5088d9c6a2c6801e8b9a5373c7069f",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/20170413_023916.jpg": {
+    "mtime": 1781626017.320867,
+    "ast_hash": "ff7d2fcd2c02bffc7afccefb15204056",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/20190406_021450.jpg": {
+    "mtime": 1781626017.3252187,
+    "ast_hash": "c3fbf727ec8174fd9f2f25be8eec151c",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/Crown 1.jpg": {
+    "mtime": 1781626017.3291411,
+    "ast_hash": "67bd6de697a85216150ef53c31d241f9",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/Crown 2.jpg": {
+    "mtime": 1781626017.3331509,
+    "ast_hash": "cbf6bb730c3a5ecb1d2002a3b84a4312",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/IMG-20150403-WA004.jpg": {
+    "mtime": 1781626017.3351483,
+    "ast_hash": "ae92b83bfb6d33827cc1da1ff482578a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/IMG-20151026-WA0004.jpg": {
+    "mtime": 1781626017.3389235,
+    "ast_hash": "a52f38c2a844d6cf8e243ba284cc8a27",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/IMG-20161106-WA0091.jpg": {
+    "mtime": 1781626017.3395472,
+    "ast_hash": "3af5ca7c3bf8e1ea3a1be4d665fe211d",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/IMG-20161221-WA0001.jpg": {
+    "mtime": 1781626017.3415146,
+    "ast_hash": "87538ac232c179733d34be1f4a9e1cd7",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/IMG-20170116-WA0001.jpg": {
+    "mtime": 1781626017.3415146,
+    "ast_hash": "861e93777973b38ff486f378dbe6060c",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/IMG-20170116-WA0002.jpg": {
+    "mtime": 1781626017.3462808,
+    "ast_hash": "c75cfd3546ec0944f5bf3f68bd14ff1c",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/IMG-20170116-WA0003.jpg": {
+    "mtime": 1781626017.3462808,
+    "ast_hash": "7e5621e10c9b0eb972301247d4e459b4",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/IMG-20170822-WA0048.jpg": {
+    "mtime": 1781626017.3462808,
+    "ast_hash": "bd3a7f986642afd4ac3e58fbc97db603",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/3Retail Branding & Displays/ORS2.jpeg": {
+    "mtime": 1781626017.3528142,
+    "ast_hash": "cd03e88396df72dc5c92f8b82452d170",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Indoor/20140807_103538.jpg": {
+    "mtime": 1781626017.3545864,
+    "ast_hash": "495ab76ea42fedc706327d34b420c763",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Indoor/20170216_221907.jpg": {
+    "mtime": 1781626017.3545864,
+    "ast_hash": "6780c60fa03840b80a1ad640981df661",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Indoor/20170819_113616.jpg": {
+    "mtime": 1781626017.3545864,
+    "ast_hash": "83c276f6673af105b66fb943212c0e8b",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Indoor/Asiantec 2.jpg": {
+    "mtime": 1781626017.3602712,
+    "ast_hash": "b002840896bc4e39e41ee8905696b8fc",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Indoor/FAK-Properties1.jpg": {
+    "mtime": 1781626017.3602712,
+    "ast_hash": "20bfde3cb875d7b6c1fa0a851f15aa8e",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Indoor/Fakhruddin3.jpg": {
+    "mtime": 1781626017.3602712,
+    "ast_hash": "8d3708a1025d471b29f8eac981b4bf29",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Indoor/Hum Yum Dubai Mall2.jpg": {
+    "mtime": 1781626017.3602712,
+    "ast_hash": "36c9e82ae5143f9139e7617cd00d8514",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Indoor/IMG-20180512-WA0008.jpg": {
+    "mtime": 1781626017.3670204,
+    "ast_hash": "f00517ca1e7c3a48638fbe3fe010e489",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Indoor/IMG-20180517-WA0025.jpg": {
+    "mtime": 1781626017.3670204,
+    "ast_hash": "2598409ad5be39739c46565f052ab66d",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Indoor/IMG-20180927-WA0029.jpg": {
+    "mtime": 1781626017.3670204,
+    "ast_hash": "a5954f16082241fddfe8d6dea735f100",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Indoor/MONEY KICK 20MM ACRYLIC WITH GOLD FINISH.jpg": {
+    "mtime": 1781626017.3670204,
+    "ast_hash": "b9abaf984d9cb781622b1ca2279d7cce",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Indoor/Money Kicks 2.jpeg": {
+    "mtime": 1781626017.3748217,
+    "ast_hash": "e18ac9bef8f3e257806f43f09bc73add",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Indoor/UNISTATE INDOOR SS 2.jpg": {
+    "mtime": 1781626017.3778315,
+    "ast_hash": "970ae6942d3e8e8d8dbeb8ae4667d371",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Indoor/WhatsApp Image 2020-11-12 at 09.14.27-2.jpeg": {
+    "mtime": 1781626017.37983,
+    "ast_hash": "39d4a659891a71e7b34ed292b0c89616",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Indoor/WhatsApp Image 2024-01-06 at 21.53.12.jpeg": {
+    "mtime": 1781626017.382828,
+    "ast_hash": "f24cbebc63d85062c4849fb7fb0ecaee",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Indoor/WhatsApp Image 2024-02-13 at 21.36.13 (1).jpeg": {
+    "mtime": 1781626017.382828,
+    "ast_hash": "7835ee5cf560ec23a8431f7c655b27f9",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Indoor/WhatsApp Image 2024-03-09 at 12.40.59 (2).jpeg": {
+    "mtime": 1781626017.382828,
+    "ast_hash": "a544cf854e64df0492d0fef3090ea4c1",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Indoor/WhatsApp Image 2024-03-09 at 12.41.15.jpeg": {
+    "mtime": 1781626017.3875203,
+    "ast_hash": "95331da73e4492dcad496e4b9377cde1",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Indoor/WhatsApp Image 2024-03-09 at 12.41.18.jpeg": {
+    "mtime": 1781626017.387946,
+    "ast_hash": "5fb53ef118ea512c60506af42d324842",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Mall Sign/Cuple.jpg": {
+    "mtime": 1781626017.387946,
+    "ast_hash": "1d4e08283f685eb909bdd82e4ec0906b",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Mall Sign/Danskin Slydes.jpg": {
+    "mtime": 1781626017.387946,
+    "ast_hash": "f194d085cf325ea6e153b2d7c85b5466",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Mall Sign/HAPPY LEMON.jpg": {
+    "mtime": 1781626017.3948357,
+    "ast_hash": "045b6ce1fe5b8aa8458411e0a7abc94b",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Mall Sign/Hareer Asfahan1.jpg": {
+    "mtime": 1781626017.3948357,
+    "ast_hash": "ee7bebb5ee712e2721da78e5dbcf57c8",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Mall Sign/PNG1.jpg": {
+    "mtime": 1781626017.3948357,
+    "ast_hash": "a0aa5b7dafec0b25685d9150e87c7857",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Mall Sign/Yoyoso.jpg": {
+    "mtime": 1781626017.4025383,
+    "ast_hash": "d9d61080c2abae1fbe3f6b721f85d1f4",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Outdoor/1 Chacha Chai.jpeg": {
+    "mtime": 1781626017.404539,
+    "ast_hash": "25db85133de2dfbdd3e21c651108cffa",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Outdoor/2 HCT AL AIN.jpg": {
+    "mtime": 1781626017.4065382,
+    "ast_hash": "6b05baec700e9cd5b884f2c5b1227a35",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Outdoor/3 HCT Fujeirah1.jpg": {
+    "mtime": 1781626017.408544,
+    "ast_hash": "0d5a81df3ba80b6a500d6e23ce8dcf80",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Outdoor/800 Pizza.jpg": {
+    "mtime": 1781626017.4105418,
+    "ast_hash": "4cc47b35aeb4757a5d43090b03d2ed0e",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Outdoor/Anaya Spa.jpeg": {
+    "mtime": 1781626017.4125366,
+    "ast_hash": "935dc470164ac99b3542a5953c87a6ec",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Outdoor/CREATORS.jpg": {
+    "mtime": 1781626017.413541,
+    "ast_hash": "046e2bde0d0c123641326579f676f18d",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Outdoor/Hindware EcoEvergreen.jpg": {
+    "mtime": 1781626017.4166136,
+    "ast_hash": "6f6f0a35e319eb569e3641c6b35c4f31",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Outdoor/MUD.jpg": {
+    "mtime": 1781626017.4186132,
+    "ast_hash": "a38c4da25a500cc51d1ab4cac288f9d5",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Outdoor/NCH 1.jpeg": {
+    "mtime": 1781626017.4206104,
+    "ast_hash": "c15b3030085e6df150981bf32f98d6f5",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Outdoor/PNG.jpg": {
+    "mtime": 1781626017.424612,
+    "ast_hash": "906e9b101869b55b753247a3bb8a51c8",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Outdoor/PNG2.jpg": {
+    "mtime": 1781626017.4276087,
+    "ast_hash": "3db2bc66373b68b8ee2c29c1d171b4d3",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Outdoor/Sacilia Cafe.jpg": {
+    "mtime": 1781626017.4306111,
+    "ast_hash": "5abb18739054d30b83355c07c0de3034",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Outdoor/Special one.jpg": {
+    "mtime": 1781626017.4316118,
+    "ast_hash": "479dec58de5eec715ece7c8f5af42550",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Outdoor/Steer Well.jpg": {
+    "mtime": 1781626017.4336169,
+    "ast_hash": "ab1ddfd464314ca1dc7209d9b87661ef",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Outdoor/The Rustic Table.jpg": {
+    "mtime": 1781626017.435616,
+    "ast_hash": "8246a16ca828958eb01f5e587c5f39d1",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Outdoor/UNI Estate (3).jpg": {
+    "mtime": 1781626017.4376104,
+    "ast_hash": "3ae74216aa62303c2a76da85bca7a6f2",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Outdoor/UNI Estate (9).jpg": {
+    "mtime": 1781626017.43961,
+    "ast_hash": "a81a8e403690af4564286fe1de369e43",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Outdoor/Velocity.jpg": {
+    "mtime": 1781626017.4416108,
+    "ast_hash": "0e67184cffea22b8224cdb36a59d1455",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Outdoor/install.jpg": {
+    "mtime": 1781626017.4446106,
+    "ast_hash": "b182d83a1f9a1043850df2c6384986ad",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Structure/20170606_184630.jpg": {
+    "mtime": 1781626017.4466102,
+    "ast_hash": "85c49fd11820d75fff892221edce1649",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Structure/BP (1).jpg": {
+    "mtime": 1781626017.4499674,
+    "ast_hash": "0e75eff5a80a7b6135990bdd9e6808c3",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Structure/BP Canopy1.jpg": {
+    "mtime": 1781626017.452751,
+    "ast_hash": "3b6b2462a94def5e70a813b0e4ea3f0b",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Structure/Construction Sign (2).jpg": {
+    "mtime": 1781626017.454789,
+    "ast_hash": "7b01834907088a851272725efa34a053",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Structure/Construction Sign (3).jpg": {
+    "mtime": 1781626017.4570494,
+    "ast_hash": "4b83b2e54c46d985bf5050aff07d7b56",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Structure/Construction Sign (4).jpg": {
+    "mtime": 1781626017.457772,
+    "ast_hash": "3ca12ee95f6c1d1478b5dc5867ea4b8a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Structure/Project Sign2.jpg": {
+    "mtime": 1781626017.457772,
+    "ast_hash": "a34c9fda68c60bcfaf446f08a6ee24d9",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Structure/Site Structure 2 With Banner and Outdoor LED Light1.jpg": {
+    "mtime": 1781626017.457772,
+    "ast_hash": "8d605542568bc3dc79a8b2eea6d830b5",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Structure/Site Structure 2 With Banner and Outdoor LED Light2.jpg": {
+    "mtime": 1781626017.457772,
+    "ast_hash": "4c03739fad303127573b9e44b2358d3d",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Structure/Site Structure 2 With Banner and Outdoor LED Light3.jpg": {
+    "mtime": 1781626017.4645278,
+    "ast_hash": "47cabafcaa459e39d2a7bd94c8dea7e8",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/4Signage Indoor & Outdoor/ Structure/Unistate Structure Sign.jpg": {
+    "mtime": 1781626017.4665353,
+    "ast_hash": "f87fed4ec613451a0b80e7e4fbca1abb",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/5Showroom & Office Branding/BAK (1).jpg": {
+    "mtime": 1781626017.4665353,
+    "ast_hash": "17694d86dd21a15f43f4cbc8b1bd358b",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/5Showroom & Office Branding/BAK (4).jpg": {
+    "mtime": 1781626017.4717648,
+    "ast_hash": "852ef342a6f3a7f219e17c6625799fdb",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/5Showroom & Office Branding/BAK (5).jpg": {
+    "mtime": 1781626017.473963,
+    "ast_hash": "11f9f30743852163e6416e58a4d5c60a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/5Showroom & Office Branding/BIG FM Printing (14).jpg": {
+    "mtime": 1781626017.473963,
+    "ast_hash": "51909dac3368025b7d40870848890134",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/5Showroom & Office Branding/BIG FM Printing (25).jpg": {
+    "mtime": 1781626017.473963,
+    "ast_hash": "05eed42e7d0a191c177612a0f4fe0eb8",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/5Showroom & Office Branding/BIG FM Printing (7).jpg": {
+    "mtime": 1781626017.4790683,
+    "ast_hash": "fa3323866239290fa89f0ff6d963dd92",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/5Showroom & Office Branding/Big FM9.jpg": {
+    "mtime": 1781626017.4810646,
+    "ast_hash": "a52ceae779e35bfdd75b94ec17fee722",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/5Showroom & Office Branding/EMI COOL (2).jpg": {
+    "mtime": 1781626017.482064,
+    "ast_hash": "d26d76b95b5c374b986498b02625319a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/5Showroom & Office Branding/IMG-20151104-WA0009.jpg": {
+    "mtime": 1781626017.4840639,
+    "ast_hash": "3bcc06e6c2ae6f6e7c6b57405b9b7b33",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/5Showroom & Office Branding/IMG-20151104-WA0015.jpg": {
+    "mtime": 1781626017.4870622,
+    "ast_hash": "578d35f7fff97936b6e875a3991e3380",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/5Showroom & Office Branding/IMG-20151112-WA0040.jpg": {
+    "mtime": 1781626017.4890645,
+    "ast_hash": "0cb9ca73f87a93845a9c463e0e2e5db6",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/5Showroom & Office Branding/Prism (1).jpg": {
+    "mtime": 1781626017.4910634,
+    "ast_hash": "1a1cd7dfc8743f2cb96f56d1d0076568",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/5Showroom & Office Branding/Prism (4).jpg": {
+    "mtime": 1781626017.493062,
+    "ast_hash": "b8cc657d61be6ac522f3c315f9c67c27",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/5Showroom & Office Branding/Serco (2).jpg": {
+    "mtime": 1781626017.493062,
+    "ast_hash": "7a458743ae22326274fa33448ba1e7be",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/5Showroom & Office Branding/Serco2.jpg": {
+    "mtime": 1781626017.4959395,
+    "ast_hash": "ff5d8c785d53b384c7da99023fff8bd6",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/5Showroom & Office Branding/Serco3.jpg": {
+    "mtime": 1781626017.4993565,
+    "ast_hash": "aad2fd69c4f42823332182e0b25f936a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/5Showroom & Office Branding/Velocity (10).jpg": {
+    "mtime": 1781626017.4993565,
+    "ast_hash": "091b61161ed4d981423131e5d9602a7e",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/5Showroom & Office Branding/Velocity (12).jpg": {
+    "mtime": 1781626017.5040977,
+    "ast_hash": "de682f9386918ccb11236bfc4e4aadb6",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/5Showroom & Office Branding/Velocity (3).jpg": {
+    "mtime": 1781626017.505832,
+    "ast_hash": "ac3d786891e5ad159496ed3000029a3b",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/5Showroom & Office Branding/Velocity (4).jpg": {
+    "mtime": 1781626017.505832,
+    "ast_hash": "5aa1188df583cb08561d315c3a1bef13",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/5Showroom & Office Branding/Velocity (6).jpg": {
+    "mtime": 1781626017.505832,
+    "ast_hash": "314cd3bbd5e92864c84c088f0fd2a805",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/6Large Format Printing/20160422_151332.jpg": {
+    "mtime": 1781626017.505832,
+    "ast_hash": "f1c935fe402e416d4cd1b449d269b870",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/6Large Format Printing/20160424_005357.jpg": {
+    "mtime": 1781626017.5137725,
+    "ast_hash": "abaf98c2a340bb4d153a0a5a2508bccf",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/6Large Format Printing/20171029_115129.jpg": {
+    "mtime": 1781626017.5157726,
+    "ast_hash": "dcf1e89cc0be41f166d32594784748ec",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/6Large Format Printing/20180422_032057.jpg": {
+    "mtime": 1781626017.5167742,
+    "ast_hash": "9970ccb6546db860e03efdb5750c235c",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/6Large Format Printing/20180429_180116.jpg": {
+    "mtime": 1781626017.5197737,
+    "ast_hash": "6d1f1ee42402a46d1d126ba64d0cf955",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/6Large Format Printing/20180508_130641.jpg": {
+    "mtime": 1781626017.5218394,
+    "ast_hash": "44f12029d3eb6ef3b62ee32ab704ab73",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/6Large Format Printing/HCT 2 (1).jpg": {
+    "mtime": 1781626017.5238519,
+    "ast_hash": "f04028f11fc829405d7bfd145e3589cc",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/6Large Format Printing/HCT 2 (2).jpg": {
+    "mtime": 1781626017.525848,
+    "ast_hash": "3ac59646d391a369ae123096a94e8871",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/6Large Format Printing/HCT 2 (4).jpg": {
+    "mtime": 1781626017.5278509,
+    "ast_hash": "2c8043fe9e4356928234f3909883352c",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/6Large Format Printing/HCT.jpeg": {
+    "mtime": 1781626017.5298467,
+    "ast_hash": "a802bf3fd52b0de6fc9c57a0ae1e75dc",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/6Large Format Printing/IMG-20150318-WA0004.jpg": {
+    "mtime": 1781626017.5318508,
+    "ast_hash": "0a928dd3316df2adcb54900f6865e3b8",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/6Large Format Printing/IMG-20160205-WA0005.jpg": {
+    "mtime": 1781626017.534846,
+    "ast_hash": "c63237370ce5dfee20acde644966e26b",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/6Large Format Printing/IMG-20160422-WA0023.jpeg": {
+    "mtime": 1781626017.5368445,
+    "ast_hash": "1ff84745307e5843392d39191e05015a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/6Large Format Printing/IMG-20160423-WA0037.jpg": {
+    "mtime": 1781626017.5378478,
+    "ast_hash": "d81fb37683de6e5f4c1d8496dd0b4da9",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/6Large Format Printing/IMG-20190526-WA0058.jpg": {
+    "mtime": 1781626017.539959,
+    "ast_hash": "008176cde8438290b49cf862af85da50",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/6Large Format Printing/Vitro.jpeg": {
+    "mtime": 1781626017.542959,
+    "ast_hash": "ea89110d74c991b215bcd03b8b7e5e9b",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/6Large Format Printing/WhatsApp Image 2024-02-21 at 18.04.38.jpeg": {
+    "mtime": 1781626017.5459595,
+    "ast_hash": "45079bfccad5cd60baa1ea0c7a5605d1",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/6Large Format Printing/WhatsApp Image 2024-03-09 at 12.35.18 (2).jpeg": {
+    "mtime": 1781626017.54796,
+    "ast_hash": "ab32a1c58639d164d9647979af600a7f",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/6Large Format Printing/WhatsApp Image 2024-03-09 at 12.35.18.jpeg": {
+    "mtime": 1781626017.5489614,
+    "ast_hash": "dcd36f5785446f86a1db574f37e6c362",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/6Large Format Printing/WhatsApp Image 2024-03-09 at 12.40.55 (1).jpeg": {
+    "mtime": 1781626017.55096,
+    "ast_hash": "455fdf01c072c2ba301ecb103d2cf644",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/6Large Format Printing/WhatsApp Image 2024-03-09 at 12.41.22.jpeg": {
+    "mtime": 1781626017.5529635,
+    "ast_hash": "cf7aa673255df3624159e271c4e25b5c",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/7Vehicle Branding/1.png": {
+    "mtime": 1781626017.5549605,
+    "ast_hash": "fba9085f48df62baf394ad5113539649",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/7Vehicle Branding/20180902_153958.jpg": {
+    "mtime": 1781626017.5549605,
+    "ast_hash": "5ffa16fe5c000f892ec4445f1edaca9e",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/7Vehicle Branding/4.png": {
+    "mtime": 1781626017.56164,
+    "ast_hash": "67792f7fab58e7071004e1b52e62c4f6",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/7Vehicle Branding/5.png": {
+    "mtime": 1781626017.56164,
+    "ast_hash": "2457a3d4a2ab306505a7786fbd6fc0ca",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/7Vehicle Branding/6.png": {
+    "mtime": 1781626017.56164,
+    "ast_hash": "b84303d71114d45aae0ad7fa2cc9c2b1",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/7Vehicle Branding/7.png": {
+    "mtime": 1781626017.5683975,
+    "ast_hash": "42fdf19ac1cd80fcd1dbd59c83288b00",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/7Vehicle Branding/8.png": {
+    "mtime": 1781626017.5704055,
+    "ast_hash": "e6d6d94fdd2de4aaa4c64721633f67ac",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/7Vehicle Branding/9.png": {
+    "mtime": 1781626017.5704055,
+    "ast_hash": "8a66ebe87e84bfe1e03868bd6b769ad0",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/7Vehicle Branding/Car 2.jpg": {
+    "mtime": 1781626017.576019,
+    "ast_hash": "5b78f9cdb3d71e8311bddda2c8423ada",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/7Vehicle Branding/IMG-20151228-WA0007.jpg": {
+    "mtime": 1781626017.577909,
+    "ast_hash": "169954b02313c341df674d280abe0047",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/7Vehicle Branding/IMG-20151228-WA0013.jpg": {
+    "mtime": 1781626017.5799062,
+    "ast_hash": "9f85f96e13eff2a4066025d3c85e1296",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/7Vehicle Branding/IMG-20151228-WA0015.jpg": {
+    "mtime": 1781626017.5824015,
+    "ast_hash": "39112329361eccaf354d91723abc6cfa",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/7Vehicle Branding/IMG-20180719-WA0017.jpg": {
+    "mtime": 1781626017.5844102,
+    "ast_hash": "00df594780a3502d30ab1cd3c9c57e50",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/7Vehicle Branding/Van Spark.jpeg": {
+    "mtime": 1781626017.5859168,
+    "ast_hash": "37228cbf243392031f058321f2e569ca",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/7Vehicle Branding/WhatsApp Image 2024-03-09 at 12.41.07 (2).jpeg": {
+    "mtime": 1781626017.5895238,
+    "ast_hash": "529751d235f4eb60f270eb457c3e927f",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/7Vehicle Branding/WhatsApp Image 2024-03-09 at 12.41.07.jpeg": {
+    "mtime": 1781626017.5895238,
+    "ast_hash": "7fde6cd23f0da6bba4cdce192ac0387c",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/7Vehicle Branding/WhatsApp Image 2024-03-09 at 12.41.10 (1).jpeg": {
+    "mtime": 1781626017.5968308,
+    "ast_hash": "1f25f18f6534ebb9d40b4d04c3e2f674",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/7Vehicle Branding/WhatsApp Image 2024-03-09 at 12.41.10.jpeg": {
+    "mtime": 1781626017.5968308,
+    "ast_hash": "bcd23a10a29f85bdc6d1f5c940eb4b89",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/20180503_042020.jpg": {
+    "mtime": 1781626017.6024847,
+    "ast_hash": "12c4f8ffc60a45f48bb0394a4894e09f",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/20180503_042031.jpg": {
+    "mtime": 1781626017.6051118,
+    "ast_hash": "3b2842b7d282a5698aa9846ee7939916",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/20180902_202307.jpg": {
+    "mtime": 1781626017.6071098,
+    "ast_hash": "5feb79fea1bb0dafb94cbb01f524b7ee",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/20190312_113707.jpg": {
+    "mtime": 1781626017.6091096,
+    "ast_hash": "4a4c4817714b192a8111a02309934c2a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/20190725_155217.jpg": {
+    "mtime": 1781626017.6121106,
+    "ast_hash": "42d587e89ea603f5bc51891a02c1cbe9",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/20191001_194539.jpg": {
+    "mtime": 1781626017.61611,
+    "ast_hash": "8ce0d726c7b0115e485b332bdb804d71",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/20191001_205741.jpg": {
+    "mtime": 1781626017.6191123,
+    "ast_hash": "2fdfb21ea683c4e08f8aa0f876bfc72a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/20191003_162653.jpg": {
+    "mtime": 1781626017.6221097,
+    "ast_hash": "4d78ec2423dc9bcfbf5c3766f3e7974b",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/20191003_163039.jpg": {
+    "mtime": 1781626017.6261096,
+    "ast_hash": "4dc1fd9647770c885b51c207e9ce9b44",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/20200129_162227.jpg": {
+    "mtime": 1781626017.6291103,
+    "ast_hash": "c9411db259aa8a8922f08eda56a368e3",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/20210629_092218.jpg": {
+    "mtime": 1781626017.63311,
+    "ast_hash": "57cfbbf7c6805ee94d7947f4b279c561",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/20210629_092222.jpg": {
+    "mtime": 1781626017.634114,
+    "ast_hash": "301ad2d3fa4491ad7b11c2ef47fd0249",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/20210629_092234.jpg": {
+    "mtime": 1781626017.637562,
+    "ast_hash": "9ddb150c9f91300caee218b49619fdbf",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/20210629_092237.jpg": {
+    "mtime": 1781626017.6394446,
+    "ast_hash": "c07260f0c3e59f7bdb1710d98696b089",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/20210629_092251.jpg": {
+    "mtime": 1781626017.6394446,
+    "ast_hash": "96939972321d76231d69e7c444f68a7f",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/20210629_092254.jpg": {
+    "mtime": 1781626017.6447988,
+    "ast_hash": "1f6c18be83cfac2d9e128ca8f8f73055",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/Cat-Stand1.jpg": {
+    "mtime": 1781626017.6447988,
+    "ast_hash": "cb2d9be73fed63532c85a4e4b199c573",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/Cat-Stand2.jpg": {
+    "mtime": 1781626017.6447988,
+    "ast_hash": "59d422cae599f47d60ee56ffa75db598",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/Cat-Stand3.jpg": {
+    "mtime": 1781626017.6512167,
+    "ast_hash": "e1092d63ab6cf87061522a6be3b06ddc",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/IMG-20190313-WA0026.jpg": {
+    "mtime": 1781626017.6539395,
+    "ast_hash": "06ececf8924dd6ca2b4d19ec97f2759c",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/IMG-20190313-WA0027.jpg": {
+    "mtime": 1781626017.6570034,
+    "ast_hash": "8e766213159e06bcd661a8a4b5df4643",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/IMG-20190905-WA0024.jpg": {
+    "mtime": 1781626017.659006,
+    "ast_hash": "e77aa9a5ebb7a282c367796c42bf4109",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/IMG-20190905-WA0028.jpg": {
+    "mtime": 1781626017.6610065,
+    "ast_hash": "2075bef02bf8c0c398f7157948ce5acf",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/IMG-20200227-WA0005.jpg": {
+    "mtime": 1781626017.664004,
+    "ast_hash": "9d6fb35d21604f495d0c52f62e1311a4",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/IMG-20200227-WA0006.jpg": {
+    "mtime": 1781626017.6660838,
+    "ast_hash": "8b590168e2830ff55495334e6a052b75",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/ORS.jpeg": {
+    "mtime": 1781626017.6680796,
+    "ast_hash": "6f8e518ef06dd43f2256070ddb85af63",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/ORS1.jpeg": {
+    "mtime": 1781626017.6700807,
+    "ast_hash": "d983038f6823713016ef192a45678577",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/Phillips Retail_2_1.jpeg": {
+    "mtime": 1781626017.6730793,
+    "ast_hash": "dca7527fd625385b61011c7025723c45",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/WhatsApp Image 2020-11-12 at 09.14.28-3.jpeg": {
+    "mtime": 1781626017.6750784,
+    "ast_hash": "56d4b9c59a90f7d165ce3e2b382de2fb",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/WhatsApp Image 2023-12-18 at 08.33.53.jpeg": {
+    "mtime": 1781626017.6770804,
+    "ast_hash": "a9f249c04b4e7b51450624549d897959",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/WhatsApp Image 2023-12-18 at 08.34.07.jpeg": {
+    "mtime": 1781626017.6780787,
+    "ast_hash": "00f1161e5828e6f42feca9aa42930242",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/8Product Display Stands/WhatsApp Image 2023-12-18 at 08.35.42.jpeg": {
+    "mtime": 1781626017.680078,
+    "ast_hash": "96e66dc6f36ddafc8ed806de9c668c6c",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/9BTL Mall Installation/20210104_105546.jpg": {
+    "mtime": 1781626017.68419,
+    "ast_hash": "a2c47932f8bae68ee892740620a6366b",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/9BTL Mall Installation/20210104_112615.jpg": {
+    "mtime": 1781626017.6901898,
+    "ast_hash": "a585be634d3ff2574e782b853a999592",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/9BTL Mall Installation/20210104_112624.jpg": {
+    "mtime": 1781626017.6932073,
+    "ast_hash": "7b6277f0c720465570b33a64ab11d51a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/9BTL Mall Installation/20210104_112633.jpg": {
+    "mtime": 1781626017.6951902,
+    "ast_hash": "7a30f4be502993fd0fdd9c308b19d641",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/9BTL Mall Installation/20210104_112644.jpg": {
+    "mtime": 1781626017.7004323,
+    "ast_hash": "c7cd16c67b32ee2ac1de0f46e6d8e6a5",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/9BTL Mall Installation/20210104_112707.jpg": {
+    "mtime": 1781626017.7004323,
+    "ast_hash": "4d49c08dea9a8fa3e65fd56408cc1ea6",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/9BTL Mall Installation/20210104_112713 copy.jpg": {
+    "mtime": 1781626017.7004323,
+    "ast_hash": "66e6da8dc122046035d2fd07547f17a3",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/9BTL Mall Installation/IMG-20150620-WA0000.jpg": {
+    "mtime": 1781626017.7072914,
+    "ast_hash": "0b3a85788ba4909198b2cee793f8c7c7",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/9BTL Mall Installation/IMG-20150620-WA0001.jpg": {
+    "mtime": 1781626017.7097657,
+    "ast_hash": "f817931623fb22b2a71fa74eca39fd06",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/9BTL Mall Installation/IMG-20150620-WA0002.jpg": {
+    "mtime": 1781626017.7097657,
+    "ast_hash": "5d9d1dee780dd5dce24139b461451105",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/9BTL Mall Installation/IMG-20150620-WA0003.jpg": {
+    "mtime": 1781626017.7097657,
+    "ast_hash": "d3c757eec0b2139977fc91182851d1e0",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/FU-Graduation/03.jpg.jpeg": {
+    "mtime": 1781626017.7172592,
+    "ast_hash": "c1bb10105ada1b420ac11b708349bef4",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/FU-Graduation/DSC08234.jpg.jpeg": {
+    "mtime": 1781626017.7192593,
+    "ast_hash": "338d87c2fab442db1c3ad79f0db6228c",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/FU-Graduation/DSC08744.jpg.jpeg": {
+    "mtime": 1781626017.7232573,
+    "ast_hash": "e729d2c18da46e5ced6ae38b03f1b1cc",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/FU-Graduation/MAC08505.jpg.jpeg": {
+    "mtime": 1781626017.726258,
+    "ast_hash": "612a16363b5a84f08366a15b27c1740b",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/FU-Graduation/MAC08595.jpg.jpeg": {
+    "mtime": 1781626017.7302575,
+    "ast_hash": "ed3c4c180408348e5f66b9bef84dfaab",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/FU-Graduation/MAC08600.jpg.jpeg": {
+    "mtime": 1781626017.7332582,
+    "ast_hash": "02057101106e367cf873e174028d63fd",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/FU-Graduation/MAC08963 -.jpg.jpeg": {
+    "mtime": 1781626017.7362607,
+    "ast_hash": "476cfa707848f8dbc406c6c126ccf675",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/FU-Graduation/MAC08963 02.jpg.jpeg": {
+    "mtime": 1781626017.7392585,
+    "ast_hash": "dfb1f20b18427878961bdcfe9f15187b",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/FU-Graduation/MAC08984.jpg.jpeg": {
+    "mtime": 1781626017.742259,
+    "ast_hash": "5c098b2b2f266ff00e0942451659e770",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/FU-Graduation/MAC09012.jpg.jpeg": {
+    "mtime": 1781626017.7455752,
+    "ast_hash": "e1eb96c0e79b22a10554b394ecc52bc1",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/FU-Graduation/MAC09065.JPG.jpeg": {
+    "mtime": 1781626017.7475753,
+    "ast_hash": "37ad74c99479e31dfc4eab9931d0a392",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/FU-Graduation/MAC09092.JPG.jpeg": {
+    "mtime": 1781626017.750578,
+    "ast_hash": "1c63d8a07313385f2a37591217c38e62",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Existing Website Shortlist/FU-Graduation/MAC09158.jpg.jpeg": {
+    "mtime": 1781626017.7525764,
+    "ast_hash": "262661f124b19a810e2505d3858e32a8",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Galadari Motor Driving Centre Mall_1_2 (1).jpeg": {
+    "mtime": 1781095696.1513462,
+    "ast_hash": "2c5f8aa0278a68ae2c8a5230cd8ce41a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Galadari Motor Driving Centre Mall_1_2.jpeg": {
+    "mtime": 1781095696.1543512,
+    "ast_hash": "d15abcbfb42dd0de444b9777a2aafc32",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/2021-hero.jpg": {
+    "mtime": 1781095650.8488314,
+    "ast_hash": "a6e1f05debd69dd3f278b791186430c8",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/ADGRAD1.jpg": {
+    "mtime": 1781098331.6373043,
+    "ast_hash": "9318826cd730ca026f829b433c35801c",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/ADGRAD2.jpg": {
+    "mtime": 1781098331.6401246,
+    "ast_hash": "a56a49bf877a82a70929bcc045b69c3a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/SHJ1.jpg": {
+    "mtime": 1781098331.6417542,
+    "ast_hash": "0ee9ec61455543f8a8265f987e01f300",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/SHJ2.jpg": {
+    "mtime": 1781098331.64337,
+    "ast_hash": "1a58ea6f738968ba04328d66d195de9b",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/SHJ3.jpg": {
+    "mtime": 1781098331.6451108,
+    "ast_hash": "c9e3afac054f37c49187f10f366f15a8",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Abu Dhabi Photos + Video/P1460377.jpg": {
+    "mtime": 1781097707.9722972,
+    "ast_hash": "5cfd79b3ca79b2ce400dfc924a0b561e",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Abu Dhabi Photos + Video/P1460379.jpg": {
+    "mtime": 1781097708.148593,
+    "ast_hash": "be524f9c1c231b90f805d14933dbc935",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Abu Dhabi Photos + Video/P1460757.jpg": {
+    "mtime": 1781097708.1556056,
+    "ast_hash": "d1a96002bc666b33e0437077b4915d5e",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Abu Dhabi Photos + Video/P1460885.jpg": {
+    "mtime": 1781097707.983104,
+    "ast_hash": "c75d92de2bc19f744a956ed2c9ba0e24",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Abu Dhabi Photos + Video/P1460900.jpg": {
+    "mtime": 1781097707.9889712,
+    "ast_hash": "b542e8c2a4f97c18c489877acacc40d8",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Dubai-CocaCola Arena/IZM09146.jpg": {
+    "mtime": 1781097709.160757,
+    "ast_hash": "27c118406544bcd99037a5fbd36d7936",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Dubai-CocaCola Arena/IZM09221.jpg": {
+    "mtime": 1781097709.151757,
+    "ast_hash": "09b2649b38ae19f2d91ad847ca8c8eae",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Dubai-CocaCola Arena/IZM09287.jpg": {
+    "mtime": 1781097709.4641213,
+    "ast_hash": "1dbc8e8bf5ceb7a9c596f097d4cede85",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Dubai-CocaCola Arena/IZM09294.jpg": {
+    "mtime": 1781097709.1713157,
+    "ast_hash": "5115045eee8e54e7234b9c46a8d9fc56",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Dubai-CocaCola Arena/IZM09305.jpg": {
+    "mtime": 1781097709.4807825,
+    "ast_hash": "09ce2e1f69be951ac9a1319b60a91830",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Dubai-CocaCola Arena/SLM02626.jpg": {
+    "mtime": 1781097709.4707873,
+    "ast_hash": "b5de0409b88cf19501efc1d36aeab405",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Dubai-CocaCola Arena/SLM03479.jpg": {
+    "mtime": 1781097709.1810446,
+    "ast_hash": "981e2b14e466920274da9b5191173b0b",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Fujairah Vid/DSC01356.jpg": {
+    "mtime": 1781097708.1728556,
+    "ast_hash": "fcaabf5fb2506af4a230710a2e3a6605",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Fujairah Vid/DSC01388.jpg": {
+    "mtime": 1781097709.089091,
+    "ast_hash": "2c31e7709ff36637b219bba323ecc9f4",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Fujairah Vid/DSC01417.jpg": {
+    "mtime": 1781097709.0990899,
+    "ast_hash": "06bdc3e506ebabf285c3a73a27ab005a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Fujairah Vid/DSC02558.jpg": {
+    "mtime": 1781097708.4770825,
+    "ast_hash": "650a3d585e6ee2c7b5bf22c44810fb55",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Fujairah Vid/DSC02606.jpg": {
+    "mtime": 1781097709.0684848,
+    "ast_hash": "8c7a79ed9d4109a1f0ada1ad56866f48",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Fujairah Vid/IZM08585.jpg": {
+    "mtime": 1781097709.079059,
+    "ast_hash": "37c38c1601a3f5c8ba6bf9a509965553",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Fujairah Vid/IZM08588.jpg": {
+    "mtime": 1781097708.469068,
+    "ast_hash": "b61558b0071f41a2b71998b1b54b9def",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Fujairah Vid/IZM08599.jpg": {
+    "mtime": 1781097708.462471,
+    "ast_hash": "8e57714877e5d3ee3830544833007808",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Fujairah Vid/IZM08662.jpg": {
+    "mtime": 1781097708.4554698,
+    "ast_hash": "3ff028d36d2c8cf87b833b215651e5b9",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Fujairah Vid/IZM08665.jpg": {
+    "mtime": 1781097708.1668556,
+    "ast_hash": "14bc47791dd83e96d45fd66525a3daa3",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Ras Al-Khaimah/DSC01304.jpg": {
+    "mtime": 1781097707.9398146,
+    "ast_hash": "cf53ee23a19bfec8f1e7fb099439e68c",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Ras Al-Khaimah/DSC03969.jpg": {
+    "mtime": 1781097707.9607737,
+    "ast_hash": "7fddf9e5947cb6455d117a9ff10fffab",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Ras Al-Khaimah/IZM08198.jpg": {
+    "mtime": 1781097707.661558,
+    "ast_hash": "1195c8b62cb68d5aaf0ccc29b218bb4e",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Ras Al-Khaimah/IZM08205.jpg": {
+    "mtime": 1781097707.655559,
+    "ast_hash": "2d9a833dae7381d8bca3685cdd6ca658",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Ras Al-Khaimah/IZM08226.jpg": {
+    "mtime": 1781097707.9537773,
+    "ast_hash": "e898106465569cbd34399057fbde0c97",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Ras Al-Khaimah/IZM08346.jpg": {
+    "mtime": 1781097707.9478352,
+    "ast_hash": "e6419e38759c13915329eee157f72c89",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Ras Al-Khaimah/IZM08358.jpg": {
+    "mtime": 1781097707.6701229,
+    "ast_hash": "93484ddfb231350e480b2e2b3ad76056",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Ras Al-Khaimah/P1424767.jpg": {
+    "mtime": 1781097707.932252,
+    "ast_hash": "5c2247c40cb7a5e969c5866b546b2242",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Sharjah/DSC03148.jpg": {
+    "mtime": 1781097709.793015,
+    "ast_hash": "9aa29e9a238abe1093420de1b6209438",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Sharjah/DSC03196.jpg": {
+    "mtime": 1781097709.5081165,
+    "ast_hash": "00c0048912ffb7717b34783ec8438dcb",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Sharjah/DSC04876.jpg": {
+    "mtime": 1781097709.7488828,
+    "ast_hash": "b33b51f4ee119fa5ccdaa7bac216d758",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Sharjah/DSC04900.jpg": {
+    "mtime": 1781097709.7568998,
+    "ast_hash": "275e55148ec3a15335f70527a0fd1145",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Sharjah/DSC04942.jpg": {
+    "mtime": 1781097709.724952,
+    "ast_hash": "23c08fbb3339de33a1d085c130ad568a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Sharjah/IZM08900.jpg": {
+    "mtime": 1781097709.7840152,
+    "ast_hash": "e2c4ee4dcef30221cfc374916c07850a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Sharjah/IZM08923.jpg": {
+    "mtime": 1781097709.494773,
+    "ast_hash": "fc4a885d0da333bbeb6ba691c1ad9077",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Sharjah/IZM08924.jpg": {
+    "mtime": 1781097709.5008166,
+    "ast_hash": "8a030727bcaab76f6ad930c0a9d3933b",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Sharjah/IZM08926.jpg": {
+    "mtime": 1781097709.5147336,
+    "ast_hash": "1e1b29ee011516c7e1368354cc0f5079",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Sharjah/IZM08927.jpg": {
+    "mtime": 1781097709.7318647,
+    "ast_hash": "94dc29bc659730baf5ca229de721d16e",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Sharjah/P1446939.jpg": {
+    "mtime": 1781097709.7398705,
+    "ast_hash": "7d6518e303e65461ea02780f71627a1c",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Sharjah/P1446964.jpg": {
+    "mtime": 1781097709.7720163,
+    "ast_hash": "938ea198130b20bc91d703295c2c9fed",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Sharjah/P1446967.jpg": {
+    "mtime": 1781097709.7780156,
+    "ast_hash": "59bf115dbd783d3f9844039f06d44284",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2024/Sharjah/P1446970.jpg": {
+    "mtime": 1781097709.7644143,
+    "ast_hash": "6d8c4163a5b92e2d273bc9a34122f921",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/AUD/DSC02388.JPG": {
+    "mtime": 1781097705.7338455,
+    "ast_hash": "ab3a192b677fd5a558db220bf355944a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/AUD/DSC02389.JPG": {
+    "mtime": 1781626315.9774847,
+    "ast_hash": "d7433fa461f86ac2ced83a26f69ef73c",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/DXB/DSC_7311.JPG": {
+    "mtime": 1781097704.7930799,
+    "ast_hash": "363b5fb74f4e3d49c925a628e0113927",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/DXB/DSC_7312.JPG": {
+    "mtime": 1781097704.799359,
+    "ast_hash": "3e9cae2b8547c4303757bd8a61c442b3",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/DXB/MAC05282.JPG": {
+    "mtime": 1781097704.9309568,
+    "ast_hash": "6820d60330d116e1d3f6be2bf664643c",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/DXB/MAC05298.JPG": {
+    "mtime": 1781097704.6569495,
+    "ast_hash": "255b9f837528e9c2018c565037291538",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/DXB/MAC05299.JPG": {
+    "mtime": 1781097704.7870789,
+    "ast_hash": "ce8c22236b63df37bedf6afdf21672db",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Fujairah/MAC03098.jpg": {
+    "mtime": 1781097706.557152,
+    "ast_hash": "9957b9eee124fa06fb3420443f73f45e",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Fujairah/MAC03108.jpg": {
+    "mtime": 1781097706.569236,
+    "ast_hash": "61d3ff9e7507bc5b838c71fc7bf51acf",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Fujairah/MAC03109.jpg": {
+    "mtime": 1781097706.5822277,
+    "ast_hash": "dddf1e565b865ac4dfbd5c14efbb1000",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Fujairah/MAC03115.jpg": {
+    "mtime": 1781097706.5371501,
+    "ast_hash": "60826162ca33cc6dab992e4859d24516",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Fujairah/MAC03116.jpg": {
+    "mtime": 1781097706.531151,
+    "ast_hash": "9031e8d07c2bc37283a450d47fbda3d9",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Fujairah/MAC03121.jpg": {
+    "mtime": 1781097706.5762274,
+    "ast_hash": "0104e3c2741da370e0a049879410d4a8",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Fujairah/MAC03141.jpg": {
+    "mtime": 1781097706.6057806,
+    "ast_hash": "45e4197b208d50dae5b3614403402ac4",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Fujairah/MAC03158.jpg": {
+    "mtime": 1781097706.5261354,
+    "ast_hash": "02918a5327fd45969f2027e48292f724",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Fujairah/MAC03427.jpg": {
+    "mtime": 1781097706.6193187,
+    "ast_hash": "36017dfe16705fa3b715a86c27d71eb4",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Fujairah/MAC03497.jpg": {
+    "mtime": 1781097706.593752,
+    "ast_hash": "ea63c52df4489eb3c96b7810eaf07b5e",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Fujairah/MAC03794.jpg": {
+    "mtime": 1781097706.9349842,
+    "ast_hash": "ff5bfb51b8d3eade63746ad353cb752a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Fujairah/MAC03800.jpg": {
+    "mtime": 1781097706.6127808,
+    "ast_hash": "77dce3ec9d7d2bd21cf3d9326999a146",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Fujairah/MAC03823.jpg": {
+    "mtime": 1781097706.515598,
+    "ast_hash": "79381693138c6951c3cd2e535c81e994",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Fujairah/MAC03829.jpg": {
+    "mtime": 1781097706.6007843,
+    "ast_hash": "fd941f9732ccda4aecf91c731d93fe05",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Fujairah/MAC03848.jpg": {
+    "mtime": 1781097706.5887437,
+    "ast_hash": "24b8fa1a2d3ae0ab5c46d7f2a4aecb02",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Fujairah/MAC03851.jpg": {
+    "mtime": 1781097706.543147,
+    "ast_hash": "bc686251c20579bb6f449c3a16b7edae",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Fujairah/MAC03853.jpg": {
+    "mtime": 1781097706.5636785,
+    "ast_hash": "f8cdc445baa4c628eb95fc15202fa439",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Fujairah/MAC03892.jpg": {
+    "mtime": 1781097706.5502336,
+    "ast_hash": "ac7afd02d50324d00f0e3e385fe60a98",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/RAK/DSC08542.jpg": {
+    "mtime": 1781097707.2964838,
+    "ast_hash": "eac88b4ec8bceaa7525bf8cf66a17b61",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/RAK/DSC08546.jpg": {
+    "mtime": 1781097707.304551,
+    "ast_hash": "8d2d846378530c327739fbc8399e67e7",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Sharjah/DSC_2964.JPG": {
+    "mtime": 1781097707.3162978,
+    "ast_hash": "f710f87327390982354cce69421006db",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Sharjah/DSC_3018.jpg": {
+    "mtime": 1781097707.4147067,
+    "ast_hash": "4bfd72be18d75ce6d6e1313aa8707caa",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Sharjah/DSC_3850.JPG": {
+    "mtime": 1781097707.3232014,
+    "ast_hash": "37fef20bb48abfb09a9a540569d156f0",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Sharjah/HMJ_2308.JPG": {
+    "mtime": 1781097707.3809278,
+    "ast_hash": "244fa137b4bb3c619247c2aa80527b81",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Sharjah/HMJ_2311.JPG": {
+    "mtime": 1781097707.4081993,
+    "ast_hash": "c8d51f36cd7cda2d77266299090b98e6",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Sharjah/HMJ_2318.JPG": {
+    "mtime": 1781097707.3648202,
+    "ast_hash": "534800d91fbb278ba725fe7b039ccb9f",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Sharjah/HMJ_2324.JPG": {
+    "mtime": 1781097707.3728263,
+    "ast_hash": "54dcbb9f5cdabd95615d3b63a5bee635",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Sharjah/HMJ_2327.JPG": {
+    "mtime": 1781097707.3427348,
+    "ast_hash": "99bb7687c52379af078893d9c15a38d9",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Sharjah/HMJ_2331.JPG": {
+    "mtime": 1781097707.349756,
+    "ast_hash": "7f8a17c7ec39f331b138a8e2aeb7e770",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Sharjah/HMJ_2332.JPG": {
+    "mtime": 1781097707.329202,
+    "ast_hash": "b06a16c133ac2c7bc1893b80c5bdbdcc",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Sharjah/MAC00559.JPG": {
+    "mtime": 1781097707.4207072,
+    "ast_hash": "841fe934fe8c6a8e1c2401277dd43a25",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Sharjah/MAC00582.JPG": {
+    "mtime": 1781097707.356756,
+    "ast_hash": "5d9e6f3d02ffeceac62ffa3797331669",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Sharjah/MAC00599.JPG": {
+    "mtime": 1781097707.4267068,
+    "ast_hash": "5aee81e7566bf5b35ae2ab52df78ef83",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Sharjah/MAC00601.JPG": {
+    "mtime": 1781097707.4022052,
+    "ast_hash": "e0fd113c735980004b4023719a24e5ad",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Sharjah/MAC00614.JPG": {
+    "mtime": 1781097707.3951952,
+    "ast_hash": "7010855a781d4744c597350a2068b2c8",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Sharjah/MAC01066.JPG": {
+    "mtime": 1781097707.3362005,
+    "ast_hash": "9b9b50f3f67610738ff199b6793e1637",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/2025/Sharjah/MAC01328.JPG": {
+    "mtime": 1781097707.3876078,
+    "ast_hash": "2027269c8ae125b376e324b18dfdcbb9",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/RAK AA -Pics Vids/(11).jpg": {
+    "mtime": 1781097704.3046803,
+    "ast_hash": "69f16e78a4e8a7bbbb8fa3ed93c2a69f",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/RAK AA -Pics Vids/(16).jpg": {
+    "mtime": 1781097704.221447,
+    "ast_hash": "6da065ae36ac1b01bc51f3d7fcb05f85",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/RAK AA -Pics Vids/(160).jpg": {
+    "mtime": 1781097704.2157826,
+    "ast_hash": "974734546edfd31837a51173959347ff",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/RAK AA -Pics Vids/(162).jpg": {
+    "mtime": 1781097704.203252,
+    "ast_hash": "b2f731cba244d23d84d71cb40368f60f",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/RAK AA -Pics Vids/(30).jpg": {
+    "mtime": 1781097704.6376832,
+    "ast_hash": "792844981007a82510680aff635152d6",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/RAK AA -Pics Vids/(37).jpg": {
+    "mtime": 1781097704.209252,
+    "ast_hash": "957f9b79ac72943647576ef059f35d44",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/Websites Gallery Graduations/RAK AA -Pics Vids/(51).jpg": {
+    "mtime": 1781097704.6429226,
+    "ast_hash": "e2c66ea653d1303d10ef19afab727dfa",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Graduation/operation.jpeg": {
+    "mtime": 1781098331.6482358,
+    "ast_hash": "3fa5529737483219996a5b6cf8ab4604",
+    "semantic_hash": ""
+  },
+  "client/src/assets/HCT.jpeg": {
+    "mtime": 1781095696.1574118,
+    "ast_hash": "85abe27a2a3de1faedbf2cdf7320619a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Icons/lightbulb.gif": {
+    "mtime": 1781552428.169434,
+    "ast_hash": "e8e61050f506254ea9aa0c6e2b52615d",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Uniestate/Uniestate Retail_1_4.jpeg": {
+    "mtime": 1781095696.2287836,
+    "ast_hash": "5885754949f90a927d4ff84f0d874685",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Uniestate/Uniestate Retail_1_5.jpeg": {
+    "mtime": 1781095696.2298033,
+    "ast_hash": "da0d70a30cd43fd862f93150602eff82",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Uniestate/Uniestate Retail_1_6.jpeg": {
+    "mtime": 1781095696.2317913,
+    "ast_hash": "ad05788535d51cd2d050edc5ec5af102",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Uniestate/Uniestate Retail_1_7.jpeg": {
+    "mtime": 1781095696.233814,
+    "ast_hash": "1514bc9b1f67ff1628ba32b5a1897c5d",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Uniestate/Uniestate Retail_1_8.jpeg": {
+    "mtime": 1781095696.2348068,
+    "ast_hash": "0d24b9653f958c6f21bab499118e0461",
+    "semantic_hash": ""
+  },
+  "client/src/assets/case study.png": {
+    "mtime": 1781095696.2357917,
+    "ast_hash": "e1eb2bcda68e8dfc173e9250690fd495",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/800_pizza.svg": {
+    "mtime": 1781095696.2368042,
+    "ast_hash": "8a803c6e579af73e4f8444789b49b941",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/Dubai-police.png": {
+    "mtime": 1781095696.2388046,
+    "ast_hash": "5fd805d36146cd0333367599477dc76a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/Heriot-Watt_University_logo.svg.png": {
+    "mtime": 1781095696.2407925,
+    "ast_hash": "b45b8a8d4ff418c2397df9358a3fd2db",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/UOS.png": {
+    "mtime": 1781095696.2417903,
+    "ast_hash": "f20e524fd3009c1ad60e8047cf5de7b4",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/al_ghurair_foods.svg": {
+    "mtime": 1781095696.2427917,
+    "ast_hash": "978e5dea406fceaab332ec0fc2385296",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/alghurair.png": {
+    "mtime": 1781626017.7555964,
+    "ast_hash": "e54e3eee1b33ee8952131d96d30eada7",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/alghurair.webp": {
+    "mtime": 1781095696.2453933,
+    "ast_hash": "9855e534b676aebd40f30fe2c91c34f5",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/american_university_of_sharjah.svg": {
+    "mtime": 1781095696.2464788,
+    "ast_hash": "6e41f3a4ff492337d5229e06a5e530ae",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/aus.png": {
+    "mtime": 1781095696.2470453,
+    "ast_hash": "09f3c861d6a23c56c84bcf94c8576867",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/dubai_police.svg": {
+    "mtime": 1781095696.2475977,
+    "ast_hash": "89a85db10e7d7330f5e2e24a95fef160",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/egslogo3.png": {
+    "mtime": 1781626017.7595737,
+    "ast_hash": "523c2e08754c2aeebe67bbefc5a334f7",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/enh.png": {
+    "mtime": 1781095696.2530432,
+    "ast_hash": "e84f22912471cff18735cef896a0f2a1",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/enh_media.svg": {
+    "mtime": 1781095696.2535634,
+    "ast_hash": "c585890ee7cf350eb90c7ef38dcb2c24",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/fakhruddin_properties.png": {
+    "mtime": 1781095696.2541313,
+    "ast_hash": "02fab6453f8c78f4c2669ed8fdbeb8fd",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/fakhruddin_properties.svg": {
+    "mtime": 1781095696.255185,
+    "ast_hash": "b3b5f9365ac1500a42951b2746cb7a17",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/hct.png": {
+    "mtime": 1781095696.2562842,
+    "ast_hash": "d3105496bf5a5f6ec0d28482d9103640",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/hct.webp": {
+    "mtime": 1781095696.256879,
+    "ast_hash": "6b22480a64cf925df9583e7979ed39e3",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/higher_colleges_of_technology.svg": {
+    "mtime": 1781095696.2574553,
+    "ast_hash": "88d8329d5d5e76d6c430e12677460324",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/landmark.png": {
+    "mtime": 1781626017.7631867,
+    "ast_hash": "2c41f085f4e946a034b10031aad5228a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/landmark_group.svg": {
+    "mtime": 1781095696.2602587,
+    "ast_hash": "141875e393a7337f270bebe4dc36c5ef",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/marriott_international_mea.svg": {
+    "mtime": 1781095696.2607844,
+    "ast_hash": "413e6baf79c5f468649afba1a01b9f85",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/payoneer.svg": {
+    "mtime": 1781095696.2618582,
+    "ast_hash": "52311a5f1cb8282e1c0fdcb19adce6eb",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/philips.png": {
+    "mtime": 1781095696.2629032,
+    "ast_hash": "ff49ef4afb2715004c08360b018d6c6d",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/philips.svg": {
+    "mtime": 1781095696.2634299,
+    "ast_hash": "27859147bbcb5baa8a4ae4ee8a5a0504",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/schindler.png": {
+    "mtime": 1781095696.2645483,
+    "ast_hash": "cd8be314dc44c83700b30df5aaaea8b7",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/schindler.svg": {
+    "mtime": 1781095696.2650633,
+    "ast_hash": "448a07158a3ec8252a3a990fb1b447fc",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/serco.svg": {
+    "mtime": 1781095696.2661037,
+    "ast_hash": "ee5c00159da615a690d7d1ee6696b7ec",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/shabab_al_ahli_dubai_club.svg": {
+    "mtime": 1781095696.26663,
+    "ast_hash": "6311d4ee55f42c6c3c31509612890597",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/univeristy_of_sharjah.png": {
+    "mtime": 1781095696.2677314,
+    "ast_hash": "eb70dd0f3a1227bb0caaeff6cd465b7b",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos/university_of_sharjah.svg": {
+    "mtime": 1781095696.2682617,
+    "ast_hash": "edb3a421fba2a3eef9534a012a9d5a75",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/800pizza.svg": {
+    "mtime": 1781095696.2693868,
+    "ast_hash": "8a803c6e579af73e4f8444789b49b941",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/Dubai-police.png": {
+    "mtime": 1781095696.2710028,
+    "ast_hash": "5fd805d36146cd0333367599477dc76a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/EGS-Logo.png": {
+    "mtime": 1781626017.7652981,
+    "ast_hash": "f159edc4164102fbcdcf468d0f8e9ff6",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/HWU.png": {
+    "mtime": 1781095696.274918,
+    "ast_hash": "b45b8a8d4ff418c2397df9358a3fd2db",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/Marriot.svg": {
+    "mtime": 1781095696.275436,
+    "ast_hash": "413e6baf79c5f468649afba1a01b9f85",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/alghurair.png": {
+    "mtime": 1781626017.7673903,
+    "ast_hash": "e54e3eee1b33ee8952131d96d30eada7",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/aus.png": {
+    "mtime": 1781095696.2779937,
+    "ast_hash": "09f3c861d6a23c56c84bcf94c8576867",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/club.svg": {
+    "mtime": 1781095696.2789886,
+    "ast_hash": "6311d4ee55f42c6c3c31509612890597",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/done/1.png": {
+    "mtime": 1781095696.2799833,
+    "ast_hash": "6e0537a5e3afdc4d191df1a97455d121",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/done/10.png": {
+    "mtime": 1781095696.281119,
+    "ast_hash": "a61daf5e7ffce5c44c98815a989efb4e",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/done/11.png": {
+    "mtime": 1781095696.2831173,
+    "ast_hash": "bb7e5d10c25acada37cc308ca2484589",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/done/12.png": {
+    "mtime": 1781095696.28512,
+    "ast_hash": "4dc2b76787a64b288125d2d4a60fa88d",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/done/13.png": {
+    "mtime": 1781095696.2856293,
+    "ast_hash": "1a7d985773118c4586f83878f66404ab",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/done/14.png": {
+    "mtime": 1781095696.2866292,
+    "ast_hash": "8fc9a890797fc4a81c46dfcef5d279af",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/done/15.png": {
+    "mtime": 1781095696.2876318,
+    "ast_hash": "e8b2390daf9032cc958ba931e68c2e16",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/done/16-removebg-preview.png": {
+    "mtime": 1781095696.2886305,
+    "ast_hash": "004a81a06998d03c19d2198fa8e05955",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/done/16.png": {
+    "mtime": 1781095696.289632,
+    "ast_hash": "c7c25e5d5aee94061dc39ccd64338063",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/done/17.png": {
+    "mtime": 1781095696.2906315,
+    "ast_hash": "0f87c96cada1391a51b2b3dee8c25250",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/done/18.png": {
+    "mtime": 1781095696.2906315,
+    "ast_hash": "346ef79939c28bb023cb1f936edd50e5",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/done/19.png": {
+    "mtime": 1781095696.292633,
+    "ast_hash": "dc98649f406bd4eb44247e94f7f493b9",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/done/2.png": {
+    "mtime": 1781095696.2936327,
+    "ast_hash": "d532c1f6fb76c1de77e79359b928e969",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/done/3.png": {
+    "mtime": 1781095696.2946496,
+    "ast_hash": "210c9c2888ade70d768e5934c6af2cb0",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/done/4-removebg-preview.png": {
+    "mtime": 1781095696.2956355,
+    "ast_hash": "e5c9ce36dca802f8943c84a2a91f3742",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/done/4.png": {
+    "mtime": 1781095696.2961502,
+    "ast_hash": "fa549fa53f212ad5970ec8ad34fe6970",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/done/5.png": {
+    "mtime": 1781095696.2971575,
+    "ast_hash": "407221cf698bb9903a5c44acf1cfd52a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/done/6.png": {
+    "mtime": 1781095696.2981634,
+    "ast_hash": "d548c352acd30551c61e4bf9b9632959",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/done/7.png": {
+    "mtime": 1781095696.299175,
+    "ast_hash": "11e2a2c5c34ec15dfe75c6eea62aea54",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/done/8.png": {
+    "mtime": 1781095696.30017,
+    "ast_hash": "fbe910c7c8c917b4f4e4df1a0b5a736d",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/done/9-removebg-preview.png": {
+    "mtime": 1781095696.3011725,
+    "ast_hash": "9a8b2065160d050c0a35affd7f5b7607",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/done/9.png": {
+    "mtime": 1781095696.302172,
+    "ast_hash": "e1ef2d5708db0b0f2c6a00da6c0820f2",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/enh.png": {
+    "mtime": 1781095696.3031826,
+    "ast_hash": "e84f22912471cff18735cef896a0f2a1",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/fakhruddin_properties.png": {
+    "mtime": 1781095696.3031826,
+    "ast_hash": "02fab6453f8c78f4c2669ed8fdbeb8fd",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/hct.png": {
+    "mtime": 1781095696.3041725,
+    "ast_hash": "d3105496bf5a5f6ec0d28482d9103640",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/image-removebg-preview.png": {
+    "mtime": 1781095696.3061888,
+    "ast_hash": "911e62e426da91cd9924dcae05df6fe5",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/landmark.png": {
+    "mtime": 1781626017.7689705,
+    "ast_hash": "2c41f085f4e946a034b10031aad5228a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/payoneer.svg": {
+    "mtime": 1781095696.30819,
+    "ast_hash": "52311a5f1cb8282e1c0fdcb19adce6eb",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/philips.png": {
+    "mtime": 1781095696.3091686,
+    "ast_hash": "ff49ef4afb2715004c08360b018d6c6d",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/schindler.png": {
+    "mtime": 1781095696.310182,
+    "ast_hash": "cd8be314dc44c83700b30df5aaaea8b7",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/serco.svg": {
+    "mtime": 1781095696.310182,
+    "ast_hash": "ee5c00159da615a690d7d1ee6696b7ec",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/univeristy_of_sharjah-removebg-preview.png": {
+    "mtime": 1781095696.311174,
+    "ast_hash": "fa07769b32426cdf8f240604fbb07f3a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/client_logos_gray/univeristy_of_sharjah.png": {
+    "mtime": 1781095696.311174,
+    "ast_hash": "eb70dd0f3a1227bb0caaeff6cd465b7b",
+    "semantic_hash": ""
+  },
+  "client/src/assets/event.png": {
+    "mtime": 1781095696.3121777,
+    "ast_hash": "f82afa4591fc497c28b7819a48fef6ea",
+    "semantic_hash": ""
+  },
+  "client/src/assets/exhibition.png": {
+    "mtime": 1781095696.3136837,
+    "ast_hash": "f4b6fee8a8cbbc811fea39a1d2525a21",
+    "semantic_hash": ""
+  },
+  "client/src/assets/hct-fitout.jpeg": {
+    "mtime": 1781095696.3157074,
+    "ast_hash": "8706f4d4791b7c8ed619648057c59f4c",
+    "semantic_hash": ""
+  },
+  "client/src/assets/hero.png": {
+    "mtime": 1781095696.3856854,
+    "ast_hash": "0ebaa7a40df79cbd1b95e98df746b1aa",
+    "semantic_hash": ""
+  },
+  "client/src/assets/interior.png": {
+    "mtime": 1781095696.3866897,
+    "ast_hash": "06166c37d32e3969a6b32eba76289078",
+    "semantic_hash": ""
+  },
+  "client/src/assets/logo/EGS Logo 2.svg": {
+    "mtime": 1781095696.3886735,
+    "ast_hash": "383d95867ddcfa6ac3984271b099e736",
+    "semantic_hash": ""
+  },
+  "client/src/assets/logo/EGS Logo 3.svg": {
+    "mtime": 1781095696.3896751,
+    "ast_hash": "9ba8237e501cf32c7449acac32ed1dfa",
+    "semantic_hash": ""
+  },
+  "client/src/assets/logo/EGS Logo.svg": {
+    "mtime": 1781095696.3906894,
+    "ast_hash": "0947a0877923114e509517c100c48cbe",
+    "semantic_hash": ""
+  },
+  "client/src/assets/logo/EGS-Logo.png": {
+    "mtime": 1781626017.7712255,
+    "ast_hash": "f159edc4164102fbcdcf468d0f8e9ff6",
+    "semantic_hash": ""
+  },
+  "client/src/assets/logo/New_Logo/Logo-01.png": {
+    "mtime": 1781626017.772973,
+    "ast_hash": "5b3cdf269c651b352c16525ebba8aa8a",
+    "semantic_hash": ""
+  },
+  "client/src/assets/logo/New_Logo/Logo-02.png": {
+    "mtime": 1781626017.7740562,
+    "ast_hash": "cc584163c90c1f990cc39218df84b231",
+    "semantic_hash": ""
+  },
+  "client/src/assets/logo/New_Logo/Logo-03.png": {
+    "mtime": 1781626017.7751198,
+    "ast_hash": "b4fd723b126e9203d9c5340867c306d3",
+    "semantic_hash": ""
+  },
+  "client/src/assets/mail.png": {
+    "mtime": 1781095696.3966894,
+    "ast_hash": "406f2ffcfb5478556df1eae81601e0c5",
+    "semantic_hash": ""
+  },
+  "client/src/assets/retail.png": {
+    "mtime": 1781095696.3966894,
+    "ast_hash": "bea1e091321e347f9670071825aa88b1",
+    "semantic_hash": ""
+  },
+  "client/src/assets/roast-retail.jpeg": {
+    "mtime": 1781095696.3986776,
+    "ast_hash": "f73482b81844cf521f081da6fc8e0405",
+    "semantic_hash": ""
+  },
+  "client/src/assets/tell us about ur project.png": {
+    "mtime": 1781095696.3997006,
+    "ast_hash": "e5746e6163957c3a900efbb64e1d1e5f",
+    "semantic_hash": ""
+  },
+  "client/src/assets/whatsapp.png": {
+    "mtime": 1781095696.3997006,
+    "ast_hash": "9923e31dce4d4d9f2c7553899cee6a24",
+    "semantic_hash": ""
   }
 }

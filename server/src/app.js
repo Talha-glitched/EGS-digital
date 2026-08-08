@@ -1,5 +1,5 @@
 import path from 'path';
-import { existsSync } from 'fs';
+import { existsSync, mkdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
@@ -13,6 +13,9 @@ const __dirname = path.dirname(__filename);
 const serverRoot = path.resolve(__dirname, '..');
 const projectRoot = path.resolve(serverRoot, '..');
 const uploadsDir = path.join(projectRoot, 'uploads');
+if (!existsSync(uploadsDir)) {
+  mkdirSync(uploadsDir, { recursive: true });
+}
 const clientDistDir = path.join(projectRoot, 'client', 'dist');
 const clientIndexPath = path.join(clientDistDir, 'index.html');
 
