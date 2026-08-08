@@ -4,9 +4,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import db from '../db/index.js';
 import { writeAuditLog } from './auditService.js';
+import { getUploadSubdir } from '../utils/uploadPath.js';
 
-const serviceDir = path.dirname(fileURLToPath(import.meta.url));
-const uploadRoot = path.resolve(serviceDir, '../../../uploads/activity-evidence');
+const uploadRoot = getUploadSubdir('activity-evidence');
 export const ACTIVITY_TYPES = Object.freeze(['site_survey', 'design', 'client_approval', 'procurement', 'printing', 'fabrication', 'packing', 'transport', 'installation', 'event_support', 'dismantling', 'return', 'other']);
 export const ACTIVITY_STATUSES = Object.freeze(['not_started', 'in_progress', 'blocked', 'ready', 'completed', 'cancelled']);
 const UPDATE_TYPES = new Set(['progress', 'blocker', 'resolution', 'completion', 'evidence']);

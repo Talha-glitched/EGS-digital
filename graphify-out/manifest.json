@@ -2070,8 +2070,8 @@
     "semantic_hash": "715a60f3ba633035f09aa03ed7502bab"
   },
   "server/src/app.js": {
-    "mtime": 1786191398.8280861,
-    "ast_hash": "b8734517194f87d775fd890f82f54ae2",
+    "mtime": 1786191777.9585176,
+    "ast_hash": "444da78e8a2baa098d8cdfbb26c06252",
     "semantic_hash": ""
   },
   "server/src/constants/interactionTypes.js": {
@@ -2335,9 +2335,9 @@
     "semantic_hash": "fa8bad4d357931291d51510693644a81"
   },
   "server/src/services/fieldExecutionService.js": {
-    "mtime": 1786100504.32188,
-    "ast_hash": "4ea295e692d6fd383ca3fcb2a2ac468e",
-    "semantic_hash": "4ea295e692d6fd383ca3fcb2a2ac468e"
+    "mtime": 1786191837.3881419,
+    "ast_hash": "6df019e70b9ce957e106ffa7ad379a4e",
+    "semantic_hash": ""
   },
   "server/src/services/imapWatcherService.js": {
     "mtime": 1786100504.3233902,
@@ -2355,8 +2355,8 @@
     "semantic_hash": "b9c765a5e7052c72010cede6251194f5"
   },
   "server/src/services/inventoryService.js": {
-    "mtime": 1786190812.2942185,
-    "ast_hash": "cecea44a36cf668401726c0240fba570",
+    "mtime": 1786191785.905583,
+    "ast_hash": "5936de22f4c234734a7969ebdf971d08",
     "semantic_hash": ""
   },
   "server/src/services/jobActivationService.js": {
@@ -2365,14 +2365,14 @@
     "semantic_hash": "b4cd915e28fae64c5ae36108db2498a3"
   },
   "server/src/services/jobCloseoutService.js": {
-    "mtime": 1786100504.3254006,
-    "ast_hash": "b60e316577352ac97696c1b488877e76",
-    "semantic_hash": "b60e316577352ac97696c1b488877e76"
+    "mtime": 1786191810.7950802,
+    "ast_hash": "f06da062b4382e1fc865b8cfd452bfb5",
+    "semantic_hash": ""
   },
   "server/src/services/jobCommercialArtifactService.js": {
-    "mtime": 1786100504.3263972,
-    "ast_hash": "24f6eb850a0d546b029ef966b11c465f",
-    "semantic_hash": "24f6eb850a0d546b029ef966b11c465f"
+    "mtime": 1786191802.550131,
+    "ast_hash": "a6f1a165f994212914adb6d7373f99b2",
+    "semantic_hash": ""
   },
   "server/src/services/jobCostingService.js": {
     "mtime": 1786100504.3273966,
@@ -2385,9 +2385,9 @@
     "semantic_hash": "595a203de8590131a585e114754d7bb2"
   },
   "server/src/services/jobMemoryService.js": {
-    "mtime": 1786100504.3283968,
-    "ast_hash": "0766402785aee30c4b0d70e4a6585c45",
-    "semantic_hash": "0766402785aee30c4b0d70e4a6585c45"
+    "mtime": 1786191794.2209024,
+    "ast_hash": "a60a540149611e125872eebe196187b9",
+    "semantic_hash": ""
   },
   "server/src/services/jobService.js": {
     "mtime": 1785481230.7569368,
@@ -2420,9 +2420,9 @@
     "semantic_hash": "bd29616ab268a72846511c3450acaf00"
   },
   "server/src/services/productionExecutionService.js": {
-    "mtime": 1786100504.3303962,
-    "ast_hash": "ba0a0a4c035405b1bf32abb21a9d64e6",
-    "semantic_hash": "ba0a0a4c035405b1bf32abb21a9d64e6"
+    "mtime": 1786191819.1506689,
+    "ast_hash": "42cac7da0abe7c0492262f220c8a3214",
+    "semantic_hash": ""
   },
   "server/src/services/projectService.js": {
     "mtime": 1786113838.0882196,
@@ -2495,9 +2495,9 @@
     "semantic_hash": "8e72999a703007cec476fbffd06bd7cf"
   },
   "server/src/services/unifiedTaskService.js": {
-    "mtime": 1786100504.3383956,
-    "ast_hash": "ec4dd7bec7131ed3a424fb6a93da1c18",
-    "semantic_hash": "ec4dd7bec7131ed3a424fb6a93da1c18"
+    "mtime": 1786191828.574653,
+    "ast_hash": "0ff2d9ab0e25a63a0649984b8530d460",
+    "semantic_hash": ""
   },
   "server/src/services/userEmailService.js": {
     "mtime": 1784182879.3109107,
@@ -5587,6 +5587,11 @@
   "client/src/assets/whatsapp.png": {
     "mtime": 1781095696.3997006,
     "ast_hash": "9923e31dce4d4d9f2c7553899cee6a24",
+    "semantic_hash": ""
+  },
+  "server/src/utils/uploadPath.js": {
+    "mtime": 1786191772.4105191,
+    "ast_hash": "032a7f47dcea689fc255a877b292dfa4",
     "semantic_hash": ""
   }
 }

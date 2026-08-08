@@ -4,10 +4,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import db from '../db/index.js';
 import { writeAuditLog } from './auditService.js';
+import { getUploadSubdir } from '../utils/uploadPath.js';
 
-const serviceDir = path.dirname(fileURLToPath(import.meta.url));
-const projectRoot = path.resolve(serviceDir, '../../..');
-const uploadRoot = path.join(projectRoot, 'uploads', 'job-memory');
+const uploadRoot = getUploadSubdir('job-memory');
 
 export const JOB_MEMORY_TYPES = Object.freeze([
   'brief',

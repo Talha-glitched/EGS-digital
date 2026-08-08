@@ -4,9 +4,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import db from '../db/index.js';
 import { writeAuditLog } from './auditService.js';
+import { getUploadSubdir } from '../utils/uploadPath.js';
 
-const serviceDir = path.dirname(fileURLToPath(import.meta.url));
-const uploadRoot = path.resolve(serviceDir, '../../../uploads/task-evidence');
+const uploadRoot = getUploadSubdir('task-evidence');
 const OPEN_STATUSES = new Set(['pending', 'blocked', 'waiting']);
 const VALID_STATUSES = new Set([...OPEN_STATUSES, 'completed', 'cancelled']);
 const VALID_PRIORITIES = new Set(['low', 'normal', 'medium', 'high', 'urgent']);

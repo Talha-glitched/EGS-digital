@@ -4,9 +4,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import db from '../db/index.js';
 import { writeAuditLog } from './auditService.js';
+import { getUploadSubdir } from '../utils/uploadPath.js';
 
-const serviceDir = path.dirname(fileURLToPath(import.meta.url));
-const uploadRoot = path.resolve(serviceDir, '../../../uploads/field-execution');
+const uploadRoot = getUploadSubdir('field-execution');
 const ACTIONS = new Set(['start', 'pause', 'progress', 'problem', 'complete']);
 const PHOTO_TYPES = new Set(['progress_photo', 'installation_photo', 'final_photo', 'problem_photo']);
 function text(value) { return String(value ?? '').trim() || null; }

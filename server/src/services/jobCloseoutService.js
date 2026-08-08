@@ -4,9 +4,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import db from '../db/index.js';
 import { writeAuditLog } from './auditService.js';
+import { getUploadSubdir } from '../utils/uploadPath.js';
 
-const serviceDir = path.dirname(fileURLToPath(import.meta.url));
-const uploadRoot = path.resolve(serviceDir, '../../../uploads/job-closeout');
+const uploadRoot = getUploadSubdir('job-closeout');
 export const EVIDENCE_TYPES = Object.freeze(['final_photo', 'before_photo', 'installation_photo', 'handover_document', 'snag_photo', 'other']);
 const IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif']);
 function text(value) { return String(value ?? '').trim() || null; }

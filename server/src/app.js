@@ -8,14 +8,12 @@ import pageRoutes from './routes/pageRoutes.js';
 import trackRoutes from './routes/trackRoutes.js';
 import webhookRoutes from './routes/webhookRoutes.js';
 
+import { UPLOADS_DIR } from './utils/uploadPath.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const serverRoot = path.resolve(__dirname, '..');
 const projectRoot = path.resolve(serverRoot, '..');
-const uploadsDir = path.join(projectRoot, 'uploads');
-if (!existsSync(uploadsDir)) {
-  mkdirSync(uploadsDir, { recursive: true });
-}
 const clientDistDir = path.join(projectRoot, 'client', 'dist');
 const clientIndexPath = path.join(clientDistDir, 'index.html');
 
@@ -35,7 +33,7 @@ app.use(
     },
   })
 );
-app.use('/uploads', express.static(uploadsDir));
+app.use('/uploads', express.static(UPLOADS_DIR));
 
 app.get('/api/health', (_req, res) => {
   res.json({

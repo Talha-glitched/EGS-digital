@@ -5,9 +5,9 @@ import { fileURLToPath } from 'node:url';
 import QRCode from 'qrcode';
 import db from '../db/index.js';
 import { writeAuditLog } from './auditService.js';
+import { getUploadSubdir } from '../utils/uploadPath.js';
 
-const serviceDir = path.dirname(fileURLToPath(import.meta.url));
-const uploadRoot = path.resolve(serviceDir, '../../../uploads/inventory');
+const uploadRoot = getUploadSubdir('inventory');
 const CLIENT_URL = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/$/, '');
 const PHOTO_EXTENSIONS = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp', 'image/heic': '.heic', 'image/heif': '.heif' };
 
