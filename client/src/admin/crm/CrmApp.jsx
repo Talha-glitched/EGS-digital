@@ -189,6 +189,7 @@ function DesignerShell({ onLogout, status }) {
                   <Route path="jobs" element={<Navigate to="/admin/crm/completed-jobs" replace />} />
                   <Route path="tasks" element={<TasksPage />} />
                   <Route path="inventory" element={<InventoryPage />} />
+                  <Route path="inventory/i/:slug" element={<InventoryPage />} />
                   <Route path="*" element={<Navigate to="/admin/crm" replace />} />
                 </Routes>
               </main>
@@ -235,7 +236,7 @@ function CrmShell({ projects, onLogout, status }) {
     '/admin/crm/pipeline': ['Ongoing Jobs', 'Work in progress from inquiry through execution'],
     '/admin/crm/jobs': ['Jobs Done', 'Completed and past production jobs directory'],
     '/admin/crm/tasks': ['Tasks', 'Calls, meetings, proposals, and overdue next actions'],
-    '/admin/crm/inventory': ['Inventory', 'Items, assets, stock locations, reservations, packing, and barcode movements'],
+    '/admin/crm/inventory': ['Inventory', 'Photograph, QR-tag, and track warehouse items across jobs'],
     '/admin/crm/relationships': ['Key Relationships', 'Confirmed right POCs, last touchpoints, and follow-up timing'],
     '/admin/crm/people': ['Contacts', 'Search and manage every point of contact'],
     '/admin/crm/companies': ['Companies', 'Target companies, clients, and relationship history'],
@@ -309,6 +310,7 @@ function CrmShell({ projects, onLogout, status }) {
               <Route path="jobs" element={<Navigate to="/admin/crm/completed-jobs" replace />} />
               <Route path="tasks" element={<TasksPage />} />
               <Route path="inventory" element={<InventoryPage />} />
+              <Route path="inventory/i/:slug" element={<InventoryPage />} />
               <Route path="relationships" element={<RelationshipsPage />} />
               <Route path="projects" element={<ProjectsPage initialProjects={projects} />} />
               <Route path="projects/:id" element={<ProjectDetailWorkspace />} />

@@ -244,15 +244,13 @@ import {
   endTeamMembership,
 } from '../services/employeeOperationsService.js';
 import {
-  getInventoryWorkspace,
-  createInventoryItem,
-  createInventoryLocation,
-  createInventoryAsset,
-  recordInventoryMovement,
-  createInventoryReservation,
-  createPackingList,
-  addPackingLine,
-  updatePackingListStatus,
+  listWarehouseItems,
+  createWarehouseItem,
+  sendItemToJob,
+  returnItemToWarehouse,
+  archiveWarehouseItem,
+  getItemQrSvg,
+  findItemBySlug,
 } from '../services/inventoryService.js';
 import {
   getJobCloseout,
@@ -354,6 +352,15 @@ const fieldPhotoUpload = multer({
   fileFilter: (_req, file, callback) => {
     const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
     if (!allowed.includes(String(file.mimetype || '').toLowerCase())) return callback(Object.assign(new Error('Field evidence must be a JPG, PNG, WebP, HEIC, or HEIF image.'), { status: 400 }));
+    return callback(null, true);
+  },
+});
+const warehouseItemUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 15 * 1024 * 1024, files: 1 },
+  fileFilter: (_req, file, callback) => {
+    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
+    if (!allowed.includes(String(file.mimetype || '').toLowerCase())) return callback(Object.assign(new Error('Item photo must be a JPG, PNG, WebP, HEIC, or HEIF image.'), { status: 400 }));
     return callback(null, true);
   },
 });
@@ -1284,31 +1291,27 @@ router.post('/sales/ongoing-jobs/:id/artifacts/decisions', asyncRoute(async (req
 }));
 
 router.get('/inventory', asyncRoute(async (req, res) => {
-  res.json(await getInventoryWorkspace());
+  res.json(await listWarehouseItems());
 }));
-router.post('/inventory/items', asyncRoute(async (req, res) => {
-  res.status(201).json(await createInventoryItem(req.body || {}, getActor(req)));
+router.post('/inventory/items', warehouseItemUpload.single('photo'), asyncRoute(async (req, res) => {
+  res.status(201).json(await createWarehouseItem(req.body || {}, req.file, getActor(req)));
 }));
-router.post('/inventory/locations', asyncRoute(async (req, res) => {
-  res.status(201).json(await createInventoryLocation(req.body || {}, getActor(req)));
+router.post('/inventory/items/:id/send-to-job', asyncRoute(async (req, res) => {
+  res.json(await sendItemToJob(req.params.id, req.body?.jobId, getActor(req)));
 }));
-router.post('/inventory/assets', asyncRoute(async (req, res) => {
-  res.status(201).json(await createInventoryAsset(req.body || {}, getActor(req)));
+router.post('/inventory/items/:id/return', asyncRoute(async (req, res) => {
+  res.json(await returnItemToWarehouse(req.params.id, getActor(req)));
 }));
-router.post('/inventory/movements', asyncRoute(async (req, res) => {
-  res.status(201).json(await recordInventoryMovement(req.body || {}, getActor(req)));
+router.delete('/inventory/items/:id', asyncRoute(async (req, res) => {
+  res.json(await archiveWarehouseItem(req.params.id, getActor(req)));
 }));
-router.post('/inventory/reservations', asyncRoute(async (req, res) => {
-  res.status(201).json(await createInventoryReservation(req.body || {}, getActor(req)));
+router.get('/inventory/items/:slug/qr.svg', asyncRoute(async (req, res) => {
+  res.type('image/svg+xml').send(await getItemQrSvg(req.params.slug));
 }));
-router.post('/inventory/packing-lists', asyncRoute(async (req, res) => {
-  res.status(201).json(await createPackingList(req.body || {}, getActor(req)));
-}));
-router.post('/inventory/packing-lists/:packingListId/lines', asyncRoute(async (req, res) => {
-  res.status(201).json(await addPackingLine(req.params.packingListId, req.body || {}, getActor(req)));
-}));
-router.patch('/inventory/packing-lists/:packingListId/status', asyncRoute(async (req, res) => {
-  res.json(await updatePackingListStatus(req.params.packingListId, req.body?.status, getActor(req)));
+router.get('/inventory/by-slug/:slug', asyncRoute(async (req, res) => {
+  const item = await findItemBySlug(req.params.slug);
+  if (!item) return res.status(404).json({ error: 'Item not found.' });
+  res.json(item);
 }));
 
 router.get('/sales/ongoing-jobs/:id/closeout', asyncRoute(async (req, res) => {

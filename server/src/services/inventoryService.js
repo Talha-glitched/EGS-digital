@@ -1,112 +1,142 @@
 import crypto from 'node:crypto';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import QRCode from 'qrcode';
 import db from '../db/index.js';
 import { writeAuditLog } from './auditService.js';
 
-export const TRACKING_MODES = Object.freeze(['serialized', 'quantity_reusable', 'consumable']);
-export const MOVEMENT_TYPES = Object.freeze(['receipt', 'transfer', 'checkout', 'consumption', 'return', 'damage', 'loss', 'adjustment']);
+const serviceDir = path.dirname(fileURLToPath(import.meta.url));
+const uploadRoot = path.resolve(serviceDir, '../../../uploads/inventory');
+const CLIENT_URL = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/$/, '');
+const PHOTO_EXTENSIONS = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp', 'image/heic': '.heic', 'image/heif': '.heif' };
+
 function text(value) { return String(value ?? '').trim() || null; }
-function uuid(value) { const result = text(value); return result && /^[0-9a-f-]{36}$/i.test(result) ? result : null; }
-function number(value, field = 'Quantity') { const result = Number(value); if (!Number.isFinite(result) || result <= 0) throw Object.assign(new Error(`${field} must be greater than zero.`), { status: 400 }); return result; }
-function timestamp(value) { if (!value) return null; const result = new Date(value); return Number.isNaN(result.getTime()) ? null : result; }
-async function audit(actor, action, resource, resourceId, summary, jobId = null) { await writeAuditLog({ userId: actor?.userId, userDisplayName: actor?.displayName || 'EGS Team', action, resource, resourceId, summary, metadata: jobId ? { ongoingJobId: jobId } : {} }); }
+function uuid(value) { const result = text(value); return result && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(result) ? result : null; }
 
-export async function getInventoryWorkspace() {
-  const [items, assets, locations, balances, reservations, packingLists, packingLines, movements, jobs, workPackages, uoms] = await Promise.all([
-    db.query(`SELECT i.id, i.sku, i.barcode, i.name, i.tracking_mode AS "trackingMode", i.uom_id AS "uomId", u.stable_code AS "uomCode", i.reorder_level AS "reorderLevel", i.default_unit_cost_aed AS "defaultUnitCostAed", i.notes, i.status FROM inventory_items i LEFT JOIN uoms u ON u.id = i.uom_id ORDER BY i.status, i.name`),
-    db.query(`SELECT a.id, a.inventory_item_id AS "itemId", i.name AS "itemName", a.asset_tag AS "assetTag", a.barcode, a.serial_number AS "serialNumber", a.status,
-      latest.movement_type AS "lastMovementType", latest.occurred_at AS "lastMovedAt", latest.location_id AS "locationId", l.name AS "locationName", latest.ongoing_job_id AS "jobId", oj.title AS "jobTitle"
-      FROM inventory_assets a JOIN inventory_items i ON i.id = a.inventory_item_id
-      LEFT JOIN LATERAL (SELECT m.movement_type, m.occurred_at, COALESCE(m.to_location_id, CASE WHEN m.movement_type IN ('checkout','consumption','damage','loss') THEN NULL ELSE m.from_location_id END) AS location_id, m.ongoing_job_id FROM inventory_movements m WHERE m.inventory_asset_id = a.id ORDER BY m.occurred_at DESC, m.created_at DESC LIMIT 1) latest ON TRUE
-      LEFT JOIN inventory_locations l ON l.id = latest.location_id LEFT JOIN ongoing_jobs oj ON oj.id = latest.ongoing_job_id ORDER BY i.name, a.asset_tag`),
-    db.query(`SELECT id, parent_location_id AS "parentLocationId", code, barcode, name, location_type AS "locationType", status FROM inventory_locations ORDER BY location_type, name`),
-    db.query(`WITH signed AS (
-      SELECT inventory_item_id, to_location_id AS location_id, quantity FROM inventory_movements WHERE to_location_id IS NOT NULL
-      UNION ALL SELECT inventory_item_id, from_location_id, -quantity FROM inventory_movements WHERE from_location_id IS NOT NULL
-    ) SELECT s.inventory_item_id AS "itemId", s.location_id AS "locationId", l.name AS "locationName", SUM(s.quantity) AS quantity
-      FROM signed s JOIN inventory_locations l ON l.id = s.location_id GROUP BY s.inventory_item_id, s.location_id, l.name HAVING SUM(s.quantity) <> 0 ORDER BY l.name`),
-    db.query(`SELECT r.id, r.inventory_item_id AS "itemId", i.name AS "itemName", r.inventory_asset_id AS "assetId", a.asset_tag AS "assetTag", r.ongoing_job_id AS "jobId", oj.title AS "jobTitle", r.quantity, r.starts_at AS "startsAt", r.ends_at AS "endsAt", r.status, r.note FROM inventory_reservations r JOIN inventory_items i ON i.id = r.inventory_item_id LEFT JOIN inventory_assets a ON a.id = r.inventory_asset_id JOIN ongoing_jobs oj ON oj.id = r.ongoing_job_id ORDER BY r.created_at DESC`),
-    db.query(`SELECT p.id, p.ongoing_job_id AS "jobId", oj.title AS "jobTitle", p.reference, p.origin_location_id AS "originLocationId", origin.name AS "originName", p.destination_location_id AS "destinationLocationId", destination.name AS "destinationName", p.status, p.note, p.created_at AS "createdAt" FROM inventory_packing_lists p JOIN ongoing_jobs oj ON oj.id = p.ongoing_job_id LEFT JOIN inventory_locations origin ON origin.id = p.origin_location_id LEFT JOIN inventory_locations destination ON destination.id = p.destination_location_id ORDER BY p.created_at DESC`),
-    db.query(`SELECT pl.id, pl.packing_list_id AS "packingListId", pl.inventory_item_id AS "itemId", i.name AS "itemName", pl.inventory_asset_id AS "assetId", a.asset_tag AS "assetTag", pl.quantity, pl.note FROM inventory_packing_lines pl JOIN inventory_items i ON i.id = pl.inventory_item_id LEFT JOIN inventory_assets a ON a.id = pl.inventory_asset_id ORDER BY pl.created_at`),
-    db.query(`SELECT m.id, m.inventory_item_id AS "itemId", i.name AS "itemName", m.inventory_asset_id AS "assetId", a.asset_tag AS "assetTag", m.movement_type AS "movementType", m.quantity, m.unit_cost_aed AS "unitCostAed", m.cost_source AS "costSource", m.from_location_id AS "fromLocationId", origin.name AS "fromLocationName", m.to_location_id AS "toLocationId", destination.name AS "toLocationName", m.ongoing_job_id AS "jobId", oj.title AS "jobTitle", m.work_package_id AS "workPackageId", COALESCE(w.title,w.description) AS "workPackageTitle", m.note, m.occurred_at AS "occurredAt", COALESCE(u.name, 'EGS Team') AS "recordedBy" FROM inventory_movements m JOIN inventory_items i ON i.id = m.inventory_item_id LEFT JOIN inventory_assets a ON a.id = m.inventory_asset_id LEFT JOIN inventory_locations origin ON origin.id = m.from_location_id LEFT JOIN inventory_locations destination ON destination.id = m.to_location_id LEFT JOIN ongoing_jobs oj ON oj.id = m.ongoing_job_id LEFT JOIN job_scope_lines w ON w.id=m.work_package_id LEFT JOIN users u ON u.id = m.recorded_by_user_id ORDER BY m.occurred_at DESC LIMIT 250`),
-    db.query(`SELECT oj.id, oj.job_number AS "jobNumber", oj.title AS name FROM ongoing_jobs oj WHERE oj.deleted_at IS NULL AND COALESCE(oj.summary_stage, '') NOT IN ('Job Done','Job Lost','Closed Won','Closed Lost') AND NOT EXISTS (SELECT 1 FROM migration_entity_map mem WHERE mem.target_table = 'ongoing_jobs' AND mem.target_entity_id = oj.id AND mem.source_collection = 'jobs') ORDER BY oj.updated_at DESC NULLS LAST`),
-    db.query(`SELECT w.id,w.ongoing_job_id AS "jobId",COALESCE(w.title,w.description,'Untitled work package') AS title FROM job_scope_lines w JOIN ongoing_jobs oj ON oj.id=w.ongoing_job_id WHERE w.archived_at IS NULL AND oj.deleted_at IS NULL ORDER BY w.display_order,w.created_at`),
-    db.query(`SELECT id, stable_code AS code, label AS name FROM uoms ORDER BY label`),
+async function audit(actor, action, resourceId, summary, jobId = null) {
+  await writeAuditLog({ userId: actor?.userId, userDisplayName: actor?.displayName || 'EGS Team', action, resource: 'inventory_item', resourceId, summary, metadata: jobId ? { ongoingJobId: jobId } : {} });
+}
+
+async function generateUniqueSlug(client) {
+  for (let attempt = 0; attempt < 10; attempt += 1) {
+    const slug = crypto.randomBytes(4).toString('hex');
+    const existing = await client.query(`SELECT 1 FROM inventory_items WHERE slug = $1`, [slug]);
+    if (!existing.rows.length) return slug;
+  }
+  throw Object.assign(new Error('Could not generate a unique item code, please try again.'), { status: 500 });
+}
+
+async function nextDisplayName(client, baseName) {
+  const pattern = `^${baseName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}( \\([0-9]+\\))?$`;
+  const existing = await client.query(`SELECT name FROM inventory_items WHERE status = 'active' AND name ~* $1`, [pattern]);
+  if (!existing.rows.length) return baseName;
+  let highest = 1;
+  for (const row of existing.rows) {
+    const match = row.name.match(/\((\d+)\)$/);
+    if (match) highest = Math.max(highest, Number(match[1]));
+  }
+  return `${baseName} (${highest + 1})`;
+}
+
+export async function listWarehouseItems() {
+  const [items, jobs] = await Promise.all([
+    db.query(`SELECT i.id, i.slug, i.name, i.photo_url AS "photoUrl", i.current_status AS "status", i.current_job_id AS "jobId", oj.job_number AS "jobNumber", oj.title AS "jobTitle", i.created_at AS "createdAt"
+      FROM inventory_items i LEFT JOIN ongoing_jobs oj ON oj.id = i.current_job_id
+      WHERE i.status = 'active' AND i.slug IS NOT NULL ORDER BY i.created_at DESC`),
+    db.query(`SELECT oj.id, oj.job_number AS "jobNumber", oj.title AS name FROM ongoing_jobs oj
+      WHERE oj.deleted_at IS NULL AND COALESCE(oj.summary_stage, '') NOT IN ('Job Done','Job Lost','Closed Won','Closed Lost')
+      ORDER BY oj.updated_at DESC NULLS LAST`),
   ]);
-  const balanceRows = balances.rows.map((row) => ({ ...row, quantity: Number(row.quantity) }));
-  const itemRows = items.rows.map((row) => ({ ...row, reorderLevel: row.reorderLevel == null ? null : Number(row.reorderLevel), defaultUnitCostAed: row.defaultUnitCostAed == null ? null : Number(row.defaultUnitCostAed), balances: balanceRows.filter((balance) => balance.itemId === row.id), totalQuantity: balanceRows.filter((balance) => balance.itemId === row.id).reduce((sum, balance) => sum + balance.quantity, 0), assets: assets.rows.filter((asset) => asset.itemId === row.id) }));
-  return { items: itemRows, assets: assets.rows, locations: locations.rows, reservations: reservations.rows.map((row) => ({ ...row, quantity: Number(row.quantity) })), packingLists: packingLists.rows.map((row) => ({ ...row, lines: packingLines.rows.filter((line) => line.packingListId === row.id).map((line) => ({ ...line, quantity: Number(line.quantity) })) })), movements: movements.rows.map((row) => ({ ...row, quantity: Number(row.quantity), unitCostAed: row.unitCostAed == null ? null : Number(row.unitCostAed) })), jobs: jobs.rows, workPackages: workPackages.rows, uoms: uoms.rows, trackingModes: TRACKING_MODES, movementTypes: MOVEMENT_TYPES };
+  return { items: items.rows, jobs: jobs.rows };
 }
 
-export async function createInventoryItem(payload = {}, actor = {}) {
-  const sku = text(payload.sku)?.toUpperCase(); const name = text(payload.name); const mode = TRACKING_MODES.includes(payload.trackingMode) ? payload.trackingMode : null;
-  if (!sku || !name || !mode) throw Object.assign(new Error('SKU, item name and tracking mode are required.'), { status: 400 });
-  const unitCost = payload.defaultUnitCostAed === '' || payload.defaultUnitCostAed == null ? null : Number(payload.defaultUnitCostAed); if (unitCost != null && (!Number.isFinite(unitCost) || unitCost < 0)) throw Object.assign(new Error('Default unit cost must be zero or more.'), { status: 400 });
-  const result = await db.query(`INSERT INTO inventory_items (sku, barcode, name, tracking_mode, uom_id, reorder_level, default_unit_cost_aed, notes, created_by_user_id) VALUES ($1,$2,$3,$4,$5::uuid,$6,$7,$8,$9::uuid) RETURNING id`, [sku, text(payload.barcode), name, mode, uuid(payload.uomId), payload.reorderLevel === '' || payload.reorderLevel == null ? null : Number(payload.reorderLevel), unitCost, text(payload.notes), actor?.userId || null]);
-  await audit(actor, 'create', 'inventory_item', result.rows[0].id, `Created inventory item: ${name}`); return result.rows[0];
+export async function createWarehouseItem(payload = {}, photo, actor = {}) {
+  const baseName = text(payload.name);
+  if (!baseName) throw Object.assign(new Error('Item name is required.'), { status: 400 });
+  if (!photo) throw Object.assign(new Error('A photo is required.'), { status: 400 });
+  const extension = PHOTO_EXTENSIONS[String(photo.mimetype || '').toLowerCase()];
+  if (!extension) throw Object.assign(new Error('Photo must be a JPG, PNG, WebP, HEIC, or HEIF image.'), { status: 400 });
+
+  const client = await db.getClient();
+  try {
+    await client.query('BEGIN');
+    const slug = await generateUniqueSlug(client);
+    const name = await nextDisplayName(client, baseName);
+    const directory = path.join(uploadRoot, slug);
+    await fs.mkdir(directory, { recursive: true });
+    const fileName = `photo${extension}`;
+    await fs.writeFile(path.join(directory, fileName), photo.buffer, { flag: 'wx' });
+    const photoUrl = `/uploads/inventory/${slug}/${fileName}`;
+    const result = await client.query(
+      `INSERT INTO inventory_items (sku, barcode, name, tracking_mode, status, slug, photo_url, current_status, created_by_user_id)
+       VALUES ($1, $1, $2, 'quantity_reusable', 'active', $1, $3, 'warehouse', $4::uuid)
+       RETURNING id, slug, name, photo_url AS "photoUrl", current_status AS "status"`,
+      [slug, name, photoUrl, actor?.userId || null],
+    );
+    await client.query('COMMIT');
+    await audit(actor, 'create', result.rows[0].id, `Registered warehouse item: ${name}`);
+    return result.rows[0];
+  } catch (error) {
+    await client.query('ROLLBACK').catch(() => {});
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
-export async function createInventoryLocation(payload = {}, actor = {}) {
-  const code = text(payload.code)?.toUpperCase(); const name = text(payload.name); const types = ['warehouse','bin','vehicle','site','temporary']; const type = types.includes(payload.locationType) ? payload.locationType : null;
-  if (!code || !name || !type) throw Object.assign(new Error('Location code, name and type are required.'), { status: 400 });
-  const result = await db.query(`INSERT INTO inventory_locations (parent_location_id, code, barcode, name, location_type) VALUES ($1::uuid,$2,$3,$4,$5) RETURNING id`, [uuid(payload.parentLocationId), code, text(payload.barcode), name, type]); await audit(actor, 'create', 'inventory_location', result.rows[0].id, `Created inventory location: ${name}`); return result.rows[0];
+export async function sendItemToJob(itemId, jobId, actor = {}) {
+  const id = uuid(itemId);
+  const job = uuid(jobId);
+  if (!id || !job) throw Object.assign(new Error('Item and Job are required.'), { status: 400 });
+  const jobRow = await db.query(`SELECT title FROM ongoing_jobs WHERE id = $1::uuid AND deleted_at IS NULL`, [job]);
+  if (!jobRow.rows.length) throw Object.assign(new Error('Job not found.'), { status: 404 });
+  const result = await db.query(
+    `UPDATE inventory_items SET current_status = 'job', current_job_id = $2::uuid, updated_at = NOW() WHERE id = $1::uuid AND status = 'active' RETURNING id, name`,
+    [id, job],
+  );
+  if (!result.rows.length) throw Object.assign(new Error('Item not found.'), { status: 404 });
+  await audit(actor, 'update', id, `Sent ${result.rows[0].name} to ${jobRow.rows[0].title}`, job);
+  return { ok: true };
 }
 
-export async function createInventoryAsset(payload = {}, actor = {}) {
-  const itemId = uuid(payload.itemId); const assetTag = text(payload.assetTag)?.toUpperCase(); const barcode = text(payload.barcode);
-  if (!itemId || !assetTag || !barcode) throw Object.assign(new Error('Serialized item, asset tag and barcode are required.'), { status: 400 });
-  const item = await db.query(`SELECT id FROM inventory_items WHERE id = $1::uuid AND tracking_mode = 'serialized' AND status = 'active'`, [itemId]); if (!item.rows.length) throw Object.assign(new Error('Active serialized item not found.'), { status: 400 });
-  const result = await db.query(`INSERT INTO inventory_assets (inventory_item_id, asset_tag, barcode, serial_number, purchase_date, notes, created_by_user_id) VALUES ($1::uuid,$2,$3,$4,$5,$6,$7::uuid) RETURNING id`, [itemId, assetTag, barcode, text(payload.serialNumber), payload.purchaseDate || null, text(payload.notes), actor?.userId || null]); await audit(actor, 'create', 'inventory_asset', result.rows[0].id, `Created serialized asset: ${assetTag}`); return result.rows[0];
+export async function returnItemToWarehouse(itemId, actor = {}) {
+  const id = uuid(itemId);
+  if (!id) throw Object.assign(new Error('Item is required.'), { status: 400 });
+  const result = await db.query(
+    `UPDATE inventory_items SET current_status = 'warehouse', current_job_id = NULL, updated_at = NOW() WHERE id = $1::uuid AND status = 'active' RETURNING id, name`,
+    [id],
+  );
+  if (!result.rows.length) throw Object.assign(new Error('Item not found.'), { status: 404 });
+  await audit(actor, 'update', id, `Returned ${result.rows[0].name} to the warehouse`);
+  return { ok: true };
 }
 
-function validateMovementLocations(type, fromId, toId) {
-  if (type === 'receipt' && !toId) throw Object.assign(new Error('Receipt requires a destination location.'), { status: 400 });
-  if (type === 'transfer' && (!fromId || !toId || fromId === toId)) throw Object.assign(new Error('Transfer requires different origin and destination locations.'), { status: 400 });
-  if (['checkout','consumption','damage','loss'].includes(type) && !fromId) throw Object.assign(new Error(`${type} requires an origin location.`), { status: 400 });
-  if (type === 'return' && !toId) throw Object.assign(new Error('Return requires a destination location.'), { status: 400 });
+export async function archiveWarehouseItem(itemId, actor = {}) {
+  const id = uuid(itemId);
+  if (!id) throw Object.assign(new Error('Item is required.'), { status: 400 });
+  const result = await db.query(`UPDATE inventory_items SET status = 'inactive', updated_at = NOW() WHERE id = $1::uuid RETURNING id, name`, [id]);
+  if (!result.rows.length) throw Object.assign(new Error('Item not found.'), { status: 404 });
+  await audit(actor, 'delete', id, `Removed ${result.rows[0].name} from the warehouse tracker`);
+  return { ok: true };
 }
 
-export async function recordInventoryMovement(payload = {}, actor = {}) {
-  const type = MOVEMENT_TYPES.includes(payload.movementType) ? payload.movementType : null; const fromId = uuid(payload.fromLocationId); const toId = uuid(payload.toLocationId); if (!type) throw Object.assign(new Error('Valid movement type is required.'), { status: 400 }); validateMovementLocations(type, fromId, toId);
-  const client = await db.getClient(); try { await client.query('BEGIN'); let itemId = uuid(payload.itemId); let assetId = uuid(payload.assetId); const barcode = text(payload.barcode);
-    const idempotencyKey = text(payload.idempotencyKey) || crypto.randomUUID(); const existing = await client.query(`SELECT id FROM inventory_movements WHERE idempotency_key = $1`, [idempotencyKey]); if (existing.rows.length) { await client.query('ROLLBACK'); return { duplicate: true, id: existing.rows[0].id }; }
-    if (barcode && !assetId && !itemId) { const asset = await client.query(`SELECT id, inventory_item_id FROM inventory_assets WHERE barcode = $1 AND status = 'active'`, [barcode]); if (asset.rows.length) { assetId = asset.rows[0].id; itemId = asset.rows[0].inventory_item_id; } else { const item = await client.query(`SELECT id FROM inventory_items WHERE (barcode = $1 OR sku = $1) AND status = 'active'`, [barcode]); if (item.rows.length) itemId = item.rows[0].id; } }
-    if (assetId) { const asset = await client.query(`SELECT inventory_item_id FROM inventory_assets WHERE id = $1::uuid AND status = 'active'`, [assetId]); if (!asset.rows.length) throw Object.assign(new Error('Active serialized asset not found.'), { status: 404 }); if (itemId && itemId !== asset.rows[0].inventory_item_id) throw Object.assign(new Error('Serialized asset does not belong to the selected item.'), { status: 400 }); itemId = asset.rows[0].inventory_item_id; }
-    if (!itemId) throw Object.assign(new Error('Inventory item or barcode was not found.'), { status: 404 }); const item = await client.query(`SELECT tracking_mode, default_unit_cost_aed FROM inventory_items WHERE id = $1::uuid AND status = 'active'`, [itemId]); if (!item.rows.length) throw Object.assign(new Error('Active inventory item not found.'), { status: 404 });
-    if (item.rows[0].tracking_mode === 'serialized' && !assetId) throw Object.assign(new Error('Scan or select a specific serialized asset.'), { status: 400 }); const quantity = assetId ? 1 : number(payload.quantity);
-    await client.query(`SELECT pg_advisory_xact_lock(hashtext($1))`, [String(assetId || itemId)]);
-    if (fromId && type !== 'receipt') {
-      if (assetId) { const latest = await client.query(`SELECT to_location_id, movement_type FROM inventory_movements WHERE inventory_asset_id = $1::uuid ORDER BY occurred_at DESC, created_at DESC LIMIT 1`, [assetId]); if (!latest.rows.length || latest.rows[0].to_location_id !== fromId) throw Object.assign(new Error('This asset is not currently recorded at the selected origin.'), { status: 409 }); }
-      else { const balance = await client.query(`SELECT COALESCE(SUM(delta),0) AS quantity FROM (SELECT quantity AS delta FROM inventory_movements WHERE inventory_item_id = $1::uuid AND to_location_id = $2::uuid UNION ALL SELECT -quantity FROM inventory_movements WHERE inventory_item_id = $1::uuid AND from_location_id = $2::uuid) signed`, [itemId, fromId]); if (Number(balance.rows[0].quantity) < quantity) throw Object.assign(new Error('This movement would make the origin balance negative.'), { status: 409 }); }
-    }
-    const jobId = uuid(payload.jobId); const workPackageId = uuid(payload.workPackageId); const activityId = uuid(payload.activityId);
-    if (workPackageId && (!jobId || !(await client.query(`SELECT id FROM job_scope_lines WHERE id = $1::uuid AND ongoing_job_id = $2::uuid AND archived_at IS NULL`, [workPackageId, jobId])).rows.length)) throw Object.assign(new Error('Work package does not belong to the selected Job.'), { status: 400 });
-    if (activityId && (!jobId || !(await client.query(`SELECT id FROM job_activities WHERE id = $1::uuid AND ongoing_job_id = $2::uuid AND archived_at IS NULL`, [activityId, jobId])).rows.length)) throw Object.assign(new Error('Activity does not belong to the selected Job.'), { status: 400 });
-    const suppliedUnitCost = payload.unitCostAed === '' || payload.unitCostAed == null ? null : Number(payload.unitCostAed); if (suppliedUnitCost != null && (!Number.isFinite(suppliedUnitCost) || suppliedUnitCost < 0)) throw Object.assign(new Error('Unit cost must be zero or more.'), { status: 400 });
-    const effectiveUnitCost = suppliedUnitCost ?? (item.rows[0].default_unit_cost_aed == null ? null : Number(item.rows[0].default_unit_cost_aed)); const costSource = suppliedUnitCost != null ? 'manual' : effectiveUnitCost != null ? 'item_default' : 'unpriced';
-    const result = await client.query(`INSERT INTO inventory_movements (inventory_item_id, inventory_asset_id, movement_type, quantity, unit_cost_aed, cost_source, from_location_id, to_location_id, ongoing_job_id, work_package_id, job_activity_id, packing_list_id, idempotency_key, note, occurred_at, recorded_by_user_id) VALUES ($1::uuid,$2::uuid,$3,$4,$5,$6,$7::uuid,$8::uuid,$9::uuid,$10::uuid,$11::uuid,$12::uuid,$13,$14,COALESCE($15,NOW()),$16::uuid) RETURNING id`, [itemId, assetId, type, quantity, effectiveUnitCost, costSource, fromId, toId, jobId, workPackageId, activityId, uuid(payload.packingListId), idempotencyKey, text(payload.note), timestamp(payload.occurredAt), actor?.userId || null]);
-    if (type === 'receipt' && suppliedUnitCost != null) await client.query(`UPDATE inventory_items SET default_unit_cost_aed=$2,updated_at=NOW() WHERE id=$1::uuid`, [itemId,suppliedUnitCost]);
-    await client.query('COMMIT'); if (!result.rows.length) return { duplicate: true }; await audit(actor, 'create', 'inventory_movement', result.rows[0].id, `Recorded inventory ${type}`, uuid(payload.jobId)); return result.rows[0];
-  } catch (error) { await client.query('ROLLBACK').catch(() => {}); throw error; } finally { client.release(); }
+export async function getItemQrSvg(slug) {
+  const clean = text(slug);
+  if (!clean) throw Object.assign(new Error('Item code is required.'), { status: 400 });
+  const item = await db.query(`SELECT id FROM inventory_items WHERE slug = $1 AND status = 'active'`, [clean]);
+  if (!item.rows.length) throw Object.assign(new Error('Item not found.'), { status: 404 });
+  const targetUrl = `${CLIENT_URL}/admin/crm/inventory/i/${clean}`;
+  return QRCode.toString(targetUrl, { type: 'svg', errorCorrectionLevel: 'H', margin: 1 });
 }
 
-export async function createInventoryReservation(payload = {}, actor = {}) {
-  const itemId = uuid(payload.itemId); const assetId = uuid(payload.assetId); const jobId = uuid(payload.jobId); const start = timestamp(payload.startsAt); const end = timestamp(payload.endsAt); if (!itemId || !jobId || !start || !end || end < start) throw Object.assign(new Error('Item, Job and valid reservation dates are required.'), { status: 400 }); const quantity = assetId ? 1 : number(payload.quantity);
-  const valid = await db.query(`SELECT i.id FROM inventory_items i JOIN ongoing_jobs oj ON oj.id = $2::uuid AND oj.deleted_at IS NULL LEFT JOIN inventory_assets a ON a.id = $3::uuid WHERE i.id = $1::uuid AND i.status = 'active' AND ($3::uuid IS NULL OR a.inventory_item_id = i.id)`, [itemId, jobId, assetId]); if (!valid.rows.length) throw Object.assign(new Error('Item, serialized asset or Job relationship is invalid.'), { status: 400 });
-  if (assetId) { const overlap = await db.query(`SELECT id FROM inventory_reservations WHERE inventory_asset_id = $1::uuid AND status = 'active' AND starts_at <= $3 AND ends_at >= $2 LIMIT 1`, [assetId, start, end]); if (overlap.rows.length) throw Object.assign(new Error('This serialized asset is already reserved during those dates.'), { status: 409 }); }
-  const workPackageId = uuid(payload.workPackageId); if (workPackageId && !(await db.query(`SELECT id FROM job_scope_lines WHERE id = $1::uuid AND ongoing_job_id = $2::uuid AND archived_at IS NULL`, [workPackageId, jobId])).rows.length) throw Object.assign(new Error('Work package does not belong to the selected Job.'), { status: 400 });
-  const result = await db.query(`INSERT INTO inventory_reservations (inventory_item_id, inventory_asset_id, ongoing_job_id, work_package_id, quantity, starts_at, ends_at, note, created_by_user_id) VALUES ($1::uuid,$2::uuid,$3::uuid,$4::uuid,$5,$6,$7,$8,$9::uuid) RETURNING id`, [itemId, assetId, jobId, uuid(payload.workPackageId), quantity, start, end, text(payload.note), actor?.userId || null]); await audit(actor, 'create', 'inventory_reservation', result.rows[0].id, 'Reserved inventory for Job', jobId); return result.rows[0];
-}
-
-export async function createPackingList(payload = {}, actor = {}) {
-  const jobId = uuid(payload.jobId); const reference = text(payload.reference); if (!jobId || !reference) throw Object.assign(new Error('Job and packing-list reference are required.'), { status: 400 }); const result = await db.query(`INSERT INTO inventory_packing_lists (ongoing_job_id, reference, origin_location_id, destination_location_id, note, created_by_user_id) VALUES ($1::uuid,$2,$3::uuid,$4::uuid,$5,$6::uuid) RETURNING id`, [jobId, reference, uuid(payload.originLocationId), uuid(payload.destinationLocationId), text(payload.note), actor?.userId || null]); await audit(actor, 'create', 'inventory_packing_list', result.rows[0].id, `Created packing list ${reference}`, jobId); return result.rows[0];
-}
-
-export async function addPackingLine(packingListId, payload = {}, actor = {}) {
-  const itemId = uuid(payload.itemId); const assetId = uuid(payload.assetId); if (!itemId) throw Object.assign(new Error('Packing item is required.'), { status: 400 }); const quantity = assetId ? 1 : number(payload.quantity); const valid = await db.query(`SELECT ongoing_job_id FROM inventory_packing_lists WHERE id = $1::uuid AND status = 'draft'`, [packingListId]); if (!valid.rows.length) throw Object.assign(new Error('Draft packing list not found.'), { status: 404 });
-  if (assetId && !(await db.query(`SELECT id FROM inventory_assets WHERE id = $1::uuid AND inventory_item_id = $2::uuid AND status = 'active'`, [assetId, itemId])).rows.length) throw Object.assign(new Error('Serialized asset does not belong to the selected packing item.'), { status: 400 });
-  const result = await db.query(`INSERT INTO inventory_packing_lines (packing_list_id, inventory_item_id, inventory_asset_id, quantity, note) VALUES ($1::uuid,$2::uuid,$3::uuid,$4,$5) RETURNING id`, [packingListId, itemId, assetId, quantity, text(payload.note)]); await audit(actor, 'create', 'inventory_packing_line', result.rows[0].id, 'Added packing-list item', valid.rows[0].ongoing_job_id); return result.rows[0];
-}
-
-export async function updatePackingListStatus(packingListId, status, actor = {}) {
-  const allowed = ['packed','cancelled']; if (!allowed.includes(status)) throw Object.assign(new Error('Packing list can be marked packed or cancelled here.'), { status: 400 }); const result = await db.query(`UPDATE inventory_packing_lists SET status = $2, updated_at = NOW() WHERE id = $1::uuid AND status = 'draft' RETURNING id, ongoing_job_id`, [packingListId, status]); if (!result.rows.length) throw Object.assign(new Error('Draft packing list not found.'), { status: 404 }); await audit(actor, 'update', 'inventory_packing_list', packingListId, `Packing list marked ${status}`, result.rows[0].ongoing_job_id); return { ok: true };
+export async function findItemBySlug(slug) {
+  const clean = text(slug);
+  if (!clean) return null;
+  const result = await db.query(
+    `SELECT i.id, i.slug, i.name, i.photo_url AS "photoUrl", i.current_status AS "status", i.current_job_id AS "jobId", oj.title AS "jobTitle"
+     FROM inventory_items i LEFT JOIN ongoing_jobs oj ON oj.id = i.current_job_id WHERE i.slug = $1 AND i.status = 'active'`,
+    [clean],
+  );
+  return result.rows[0] || null;
 }

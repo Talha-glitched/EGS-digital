@@ -1,57 +1,343 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AlertTriangle, Barcode, Boxes, Camera, ClipboardList, History, MapPin, PackageCheck, Plus, ScanLine, Warehouse, X } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Boxes, Camera, MapPin, Plus, Printer, ScanLine, Trash2, Warehouse, X } from 'lucide-react';
 import { crmApiFetch } from '../crmApi.js';
 import { Alert, Badge, EmptyState, LoadingState, PageHeader, PageSection, PageShell, StatCard, cn } from '../components/ui/primitives.jsx';
 import { Modal } from '../components/ui/Modal.jsx';
 
-const TRACKING_LABELS = { serialized: 'Serialized asset', quantity_reusable: 'Reusable quantity', consumable: 'Consumable' };
-const MOVEMENT_LABELS = { receipt: 'Receive', transfer: 'Transfer', checkout: 'Check out', consumption: 'Consume', return: 'Return', damage: 'Damage', loss: 'Loss', adjustment: 'Adjustment' };
-const emptyItem = { sku: '', barcode: '', name: '', trackingMode: 'serialized', uomId: '', reorderLevel: '', defaultUnitCostAed: '', notes: '' };
-const emptyLocation = { code: '', barcode: '', name: '', locationType: 'warehouse', parentLocationId: '' };
-function when(value) { return value ? new Date(value).toLocaleString('en-AE', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' }) : '—'; }
-
 function CameraScanner({ onDetected, onClose }) {
-  const videoRef = useRef(null); const [message, setMessage] = useState('Starting camera…');
+  const videoRef = useRef(null);
+  const [message, setMessage] = useState('Starting camera…');
   useEffect(() => {
-    let stream; let timer; let cancelled = false;
+    let stream;
+    let timer;
+    let cancelled = false;
     async function start() {
-      if (!('BarcodeDetector' in window) || !navigator.mediaDevices?.getUserMedia) { setMessage('Camera barcode detection is not supported here. Use a Bluetooth/USB scanner or type the barcode.'); return; }
-      try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }); if (cancelled) return; videoRef.current.srcObject = stream; await videoRef.current.play(); const detector = new window.BarcodeDetector({ formats: ['code_128', 'code_39', 'ean_13', 'ean_8', 'qr_code'] }); setMessage('Point the camera at the barcode.'); timer = setInterval(async () => { try { const codes = await detector.detect(videoRef.current); if (codes[0]?.rawValue) { onDetected(codes[0].rawValue); onClose(); } } catch { /* keep scanning */ } }, 450); } catch { setMessage('Camera permission was unavailable. Use the barcode input instead.'); }
+      if (!('BarcodeDetector' in window) || !navigator.mediaDevices?.getUserMedia) {
+        setMessage('Camera QR detection is not supported on this device.');
+        return;
+      }
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        if (cancelled) return;
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+        const detector = new window.BarcodeDetector({ formats: ['qr_code'] });
+        setMessage('Point the camera at the QR code.');
+        timer = setInterval(async () => {
+          try {
+            const codes = await detector.detect(videoRef.current);
+            if (codes[0]?.rawValue) {
+              onDetected(codes[0].rawValue);
+              onClose();
+            }
+          } catch {
+            /* keep scanning */
+          }
+        }, 450);
+      } catch {
+        setMessage('Camera permission was unavailable.');
+      }
     }
-    start(); return () => { cancelled = true; if (timer) clearInterval(timer); stream?.getTracks().forEach((track) => track.stop()); };
+    start();
+    return () => {
+      cancelled = true;
+      if (timer) clearInterval(timer);
+      stream?.getTracks().forEach((track) => track.stop());
+    };
   }, [onDetected, onClose]);
-  return <div className="relative overflow-hidden rounded-xl bg-neutral-950"><video ref={videoRef} muted playsInline className="aspect-video w-full object-cover" /><div className="absolute inset-x-0 bottom-0 bg-neutral-950/75 p-3 text-center text-xs text-white">{message}</div><button className="absolute right-2 top-2 rounded-full bg-white/90 p-2" onClick={onClose} aria-label="Close scanner"><X className="h-4 w-4" /></button></div>;
+  return (
+    <div className="relative overflow-hidden rounded-xl bg-neutral-950">
+      <video ref={videoRef} muted playsInline className="aspect-video w-full object-cover" />
+      <div className="absolute inset-x-0 bottom-0 bg-neutral-950/75 p-3 text-center text-xs text-white">{message}</div>
+      <button className="absolute right-2 top-2 rounded-full bg-white/90 p-2" onClick={onClose} aria-label="Close scanner"><X className="h-4 w-4" /></button>
+    </div>
+  );
+}
+
+function extractSlug(rawValue) {
+  const trimmed = String(rawValue || '').trim();
+  if (!trimmed) return '';
+  const match = trimmed.match(/\/inventory\/i\/([a-z0-9]+)/i);
+  if (match) return match[1];
+  return trimmed.replace(/^https?:\/\//, '').replace(/\/$/, '');
+}
+
+function ItemCard({ item, onOpen }) {
+  return (
+    <button onClick={() => onOpen(item)} className="flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white text-left transition hover:border-brand hover:shadow-sm">
+      <div className="aspect-square w-full overflow-hidden bg-neutral-100">
+        {item.photoUrl ? <img src={item.photoUrl} alt={item.name} className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center text-neutral-300"><Boxes className="h-8 w-8" /></div>}
+      </div>
+      <div className="p-3">
+        <p className="text-sm font-semibold text-neutral-900">{item.name}</p>
+        <div className="mt-1.5">
+          {item.status === 'job'
+            ? <Badge tone="info">At: {item.jobTitle || 'Job'}</Badge>
+            : <Badge tone="success">Warehouse</Badge>}
+        </div>
+      </div>
+    </button>
+  );
+}
+
+function ItemDetail({ item, jobs, busy, onClose, onSendToJob, onReturn, onArchive }) {
+  const [jobId, setJobId] = useState('');
+  const [qrOpen, setQrOpen] = useState(false);
+  const qrUrl = `/api/admin/inventory/items/${encodeURIComponent(item.slug)}/qr.svg`;
+
+  return (
+    <Modal open onClose={onClose} title={item.name} subtitle={item.slug} icon={Boxes} size="md" footer={<button className="crm-btn-secondary" onClick={onClose}>Close</button>}>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100">
+          {item.photoUrl ? <img src={item.photoUrl} alt={item.name} className="aspect-square w-full object-cover" /> : <div className="flex aspect-square items-center justify-center text-neutral-300"><Boxes className="h-10 w-10" /></div>}
+        </div>
+        <div className="flex flex-col gap-3">
+          <div>
+            {item.status === 'job'
+              ? <Badge tone="info">Currently at: {item.jobTitle || 'a Job'}</Badge>
+              : <Badge tone="success">Currently in Warehouse</Badge>}
+          </div>
+
+          {item.status === 'warehouse' ? (
+            <div className="rounded-lg border border-neutral-200 p-3">
+              <label className="text-xs font-medium text-neutral-600">Send to Job
+                <select className="crm-select mt-1.5 w-full" value={jobId} onChange={(e) => setJobId(e.target.value)}>
+                  <option value="">Choose a Job</option>
+                  {jobs.map((entry) => <option key={entry.id} value={entry.id}>{entry.jobNumber ? `${entry.jobNumber} · ` : ''}{entry.name}</option>)}
+                </select>
+              </label>
+              <button className="crm-btn-primary mt-2 w-full justify-center" disabled={busy || !jobId} onClick={() => onSendToJob(item.id, jobId)}><Warehouse className="h-4 w-4" />Send to Job</button>
+            </div>
+          ) : (
+            <button className="crm-btn-primary justify-center" disabled={busy} onClick={() => onReturn(item.id)}><Warehouse className="h-4 w-4" />Return to Warehouse</button>
+          )}
+
+          <button className="crm-btn-secondary justify-center" onClick={() => setQrOpen((v) => !v)}><ScanLine className="h-4 w-4" />{qrOpen ? 'Hide' : 'Show'} QR code</button>
+          {qrOpen && (
+            <div className="rounded-lg border border-neutral-200 p-3 text-center">
+              <img src={qrUrl} alt={`QR code for ${item.name}`} className="mx-auto h-40 w-40" />
+              <p className="mt-2 text-2xs text-neutral-400">{item.slug}</p>
+              <a href={qrUrl} download={`${item.slug}.svg`} className="crm-btn-secondary mt-2 w-full justify-center text-xs">Download QR (SVG)</a>
+            </div>
+          )}
+
+          <button className="crm-btn-secondary justify-center text-red-600" disabled={busy} onClick={() => onArchive(item.id)}><Trash2 className="h-4 w-4" />Remove item</button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+function PrintLabels({ items, onClose }) {
+  useEffect(() => {
+    const timer = setTimeout(() => window.print(), 300);
+    return () => clearTimeout(timer);
+  }, []);
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-white p-6 print:p-0">
+      <div className="mb-4 flex items-center justify-between print:hidden">
+        <p className="text-sm font-semibold">Print preview — {items.length} label{items.length === 1 ? '' : 's'}</p>
+        <div className="flex gap-2">
+          <button className="crm-btn-primary" onClick={() => window.print()}><Printer className="h-4 w-4" />Print</button>
+          <button className="crm-btn-secondary" onClick={onClose}><X className="h-4 w-4" />Close</button>
+        </div>
+      </div>
+      <div className="grid grid-cols-3 gap-4 print:grid-cols-3">
+        {items.map((item) => (
+          <div key={item.id} className="flex flex-col items-center gap-1 rounded-lg border border-neutral-300 p-3 text-center break-inside-avoid">
+            <img src={`/api/admin/inventory/items/${encodeURIComponent(item.slug)}/qr.svg`} alt={item.name} className="h-28 w-28" />
+            <p className="text-xs font-semibold leading-tight">{item.name}</p>
+            <p className="text-2xs text-neutral-500">{item.slug}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export default function InventoryPage() {
-  const [data, setData] = useState({ items: [], assets: [], locations: [], reservations: [], packingLists: [], movements: [], jobs: [], workPackages: [], uoms: [], trackingModes: [], movementTypes: [] }); const [loading, setLoading] = useState(true); const [busy, setBusy] = useState(false); const [error, setError] = useState(''); const [view, setView] = useState('stock');
-  const [itemOpen, setItemOpen] = useState(false); const [item, setItem] = useState(emptyItem); const [locationOpen, setLocationOpen] = useState(false); const [location, setLocation] = useState(emptyLocation);
-  const [assetOpen, setAssetOpen] = useState(false); const [asset, setAsset] = useState({ itemId: '', assetTag: '', barcode: '', serialNumber: '', purchaseDate: '', notes: '' });
-  const [cameraOpen, setCameraOpen] = useState(false); const [move, setMove] = useState({ barcode: '', itemId: '', assetId: '', movementType: 'receipt', quantity: '1', unitCostAed: '', fromLocationId: '', toLocationId: '', jobId: '', workPackageId: '', note: '' });
-  const [reservation, setReservation] = useState({ itemId: '', assetId: '', jobId: '', quantity: '1', startsAt: '', endsAt: '', note: '' });
-  const [packing, setPacking] = useState({ jobId: '', reference: '', originLocationId: '', destinationLocationId: '', note: '' }); const [lineForms, setLineForms] = useState({});
-  const load = useCallback(async () => { try { setError(''); setData(await crmApiFetch('/api/admin/inventory')); } catch (err) { setError(err.message || 'Failed to load inventory.'); } finally { setLoading(false); } }, []); useEffect(() => { load(); }, [load]);
-  async function request(path, method, payload, reset) { setBusy(true); setError(''); try { const result = await crmApiFetch(path, { method, body: JSON.stringify(payload) }); reset?.(result); await load(); } catch (err) { setError(err.message || 'Could not save inventory record.'); } finally { setBusy(false); } }
-  const serializedItems = data.items.filter((entry) => entry.trackingMode === 'serialized' && entry.status === 'active'); const activeItems = data.items.filter((entry) => entry.status === 'active'); const activeLocations = data.locations.filter((entry) => entry.status === 'active');
-  const lowStock = useMemo(() => data.items.filter((entry) => entry.reorderLevel != null && entry.totalQuantity <= entry.reorderLevel), [data.items]); const checkedOut = data.assets.filter((entry) => entry.lastMovementType === 'checkout').length; const damaged = data.assets.filter((entry) => ['damage', 'loss'].includes(entry.lastMovementType)).length;
-  function selectedItemAssets(itemId) { return data.assets.filter((entry) => entry.itemId === itemId && entry.status === 'active'); }
-  if (loading) return <PageShell><LoadingState label="Loading inventory ledger…" /></PageShell>;
-  return <PageShell className="max-w-none"><PageHeader actions={<div className="flex gap-2"><button className="crm-btn-secondary" onClick={() => setLocationOpen(true)}><MapPin className="h-4 w-4" />Add location</button><button className="crm-btn-primary" onClick={() => setItemOpen(true)}><Plus className="h-4 w-4" />Add item</button></div>} /><PageSection>{error && <Alert>{error}</Alert>}
-    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><StatCard compact label="Active catalogue items" value={activeItems.length} icon={Boxes} /><StatCard compact label="Serialized assets checked out" value={checkedOut} icon={PackageCheck} /><StatCard compact label="Low-stock items" value={lowStock.length} icon={AlertTriangle} tone={lowStock.length ? 'warning' : 'neutral'} /><StatCard compact label="Damaged or lost assets" value={damaged} icon={AlertTriangle} tone={damaged ? 'warning' : 'neutral'} /></div>
-    <div className="mt-5 flex flex-wrap gap-2">{[['stock', Warehouse, 'Stock'], ['scan', ScanLine, 'Scan & Move'], ['reservations', ClipboardList, 'Reservations'], ['packing', PackageCheck, 'Packing'], ['history', History, 'History']].map(([value, Icon, label]) => <button key={value} className={cn('crm-btn-secondary', view === value && 'border-brand! bg-brand-soft! text-brand!')} onClick={() => setView(value)}><Icon className="h-4 w-4" />{label}</button>)}</div>
+  const navigate = useNavigate();
+  const { slug } = useParams();
+  const [items, setItems] = useState([]);
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [addOpen, setAddOpen] = useState(false);
+  const [name, setName] = useState('');
+  const [photoFile, setPhotoFile] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState('');
+  const [scanOpen, setScanOpen] = useState(false);
+  const [printOpen, setPrintOpen] = useState(false);
+  const [activeItem, setActiveItem] = useState(null);
 
-    {view === 'stock' && <div className="mt-4 grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]"><section className="overflow-hidden rounded-xl border border-neutral-200 bg-white"><div className="flex items-center justify-between p-4"><div><h3 className="text-sm font-semibold">Item catalogue and balances</h3><p className="mt-1 text-xs text-neutral-500">Every balance below is reconstructed from movements.</p></div><button className="crm-btn-secondary" onClick={() => setAssetOpen(true)}><Barcode className="h-4 w-4" />Register asset</button></div>{!data.items.length ? <EmptyState title="No inventory items" description="Begin the pilot with valuable reusable equipment, furniture, tools or stand components." /> : <div className="overflow-x-auto"><table className="crm-table w-full text-xs"><thead><tr className="crm-table-head"><th>Item</th><th>Tracking</th><th>Total</th><th>Default cost</th><th>By location</th><th>Serialized assets</th></tr></thead><tbody>{data.items.map((entry) => <tr key={entry.id}><td><strong>{entry.name}</strong><p className="text-2xs text-neutral-400">{entry.sku}{entry.barcode ? ` · ${entry.barcode}` : ''}</p></td><td><Badge tone="info">{TRACKING_LABELS[entry.trackingMode]}</Badge></td><td className={entry.reorderLevel != null && entry.totalQuantity <= entry.reorderLevel ? 'font-semibold text-amber-700' : ''}>{entry.trackingMode === 'serialized' ? entry.assets.length : `${entry.totalQuantity} ${entry.uomCode || ''}`}</td><td>{entry.defaultUnitCostAed == null ? <span className="text-neutral-400">Unpriced</span> : `AED ${entry.defaultUnitCostAed.toLocaleString()}`}</td><td>{entry.balances.length ? entry.balances.map((balance) => <p key={balance.locationId} className="text-2xs">{balance.locationName}: {balance.quantity}</p>) : '—'}</td><td>{entry.trackingMode === 'serialized' ? entry.assets.map((assetRow) => <p key={assetRow.id} className="text-2xs">{assetRow.assetTag} · {assetRow.locationName || assetRow.jobTitle || assetRow.lastMovementType || 'No movement'}</p>) : '—'}</td></tr>)}</tbody></table></div>}</section><section className="rounded-xl border border-neutral-200 bg-white p-4"><h3 className="text-sm font-semibold">Locations</h3><div className="mt-3 space-y-2">{data.locations.map((entry) => <div key={entry.id} className="rounded-lg border border-neutral-100 p-3"><div className="flex items-center justify-between"><strong className="text-xs">{entry.name}</strong><Badge tone="neutral">{entry.locationType}</Badge></div><p className="mt-1 text-2xs text-neutral-400">{entry.code}{entry.barcode ? ` · ${entry.barcode}` : ''}</p></div>)}{!data.locations.length && <p className="text-xs text-neutral-400">Create a warehouse or bin before receiving stock.</p>}</div></section></div>}
+  const load = useCallback(async () => {
+    try {
+      setError('');
+      const data = await crmApiFetch('/api/admin/inventory');
+      setItems(data.items || []);
+      setJobs(data.jobs || []);
+    } catch (err) {
+      setError(err.message || 'Failed to load inventory.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  useEffect(() => { load(); }, [load]);
 
-    {view === 'scan' && <section className="mt-4 rounded-xl border border-neutral-200 bg-white p-4"><div className="flex flex-wrap items-start justify-between gap-3"><div><h3 className="text-sm font-semibold">Barcode movement</h3><p className="mt-1 text-xs text-neutral-500">Scan one asset/item, confirm the movement, then scan the next. A supplied receipt cost becomes the item’s new default; every historical movement keeps its own snapshot.</p></div><button className="crm-btn-secondary" onClick={() => setCameraOpen(true)}><Camera className="h-4 w-4" />Use camera</button></div>{cameraOpen && <div className="mt-4 max-w-xl"><CameraScanner onDetected={(barcode) => setMove((current) => ({ ...current, barcode }))} onClose={() => setCameraOpen(false)} /></div>}<form className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" onSubmit={(e) => { e.preventDefault(); request('/api/admin/inventory/movements', 'POST', { ...move, idempotencyKey: crypto.randomUUID() }, () => setMove((current) => ({ ...current, barcode: '', assetId: '', itemId: '', unitCostAed: '', note: '' }))); }}><label className="text-xs font-medium text-neutral-600 lg:col-span-2">Barcode / asset tag input<input autoFocus className="crm-input mt-1.5 w-full text-base" value={move.barcode} onChange={(e) => setMove((v) => ({ ...v, barcode: e.target.value, itemId: '', assetId: '' }))} placeholder="Scan or type barcode" /></label><label className="text-xs font-medium text-neutral-600">Movement<select className="crm-select mt-1.5 w-full" value={move.movementType} onChange={(e) => setMove((v) => ({ ...v, movementType: e.target.value }))}>{data.movementTypes.map((entry) => <option key={entry} value={entry}>{MOVEMENT_LABELS[entry]}</option>)}</select></label><label className="text-xs font-medium text-neutral-600">Quantity<input type="number" min="0.0001" step="0.0001" className="crm-input mt-1.5 w-full" value={move.quantity} onChange={(e) => setMove((v) => ({ ...v, quantity: e.target.value }))} /></label><label className="text-xs font-medium text-neutral-600">Unit cost AED<input type="number" min="0" step="0.0001" className="crm-input mt-1.5 w-full" value={move.unitCostAed} onChange={(e) => setMove((v) => ({ ...v, unitCostAed: e.target.value }))} placeholder="Use item default" /></label><label className="text-xs font-medium text-neutral-600">Origin<select className="crm-select mt-1.5 w-full" value={move.fromLocationId} onChange={(e) => setMove((v) => ({ ...v, fromLocationId: e.target.value }))}><option value="">No origin</option>{activeLocations.map((entry) => <option key={entry.id} value={entry.id}>{entry.name}</option>)}</select></label><label className="text-xs font-medium text-neutral-600">Destination<select className="crm-select mt-1.5 w-full" value={move.toLocationId} onChange={(e) => setMove((v) => ({ ...v, toLocationId: e.target.value }))}><option value="">No destination</option>{activeLocations.map((entry) => <option key={entry.id} value={entry.id}>{entry.name}</option>)}</select></label><label className="text-xs font-medium text-neutral-600">Ongoing Job<select className="crm-select mt-1.5 w-full" value={move.jobId} onChange={(e) => setMove((v) => ({ ...v, jobId: e.target.value, workPackageId: '' }))}><option value="">No Job</option>{data.jobs.map((entry) => <option key={entry.id} value={entry.id}>{entry.jobNumber ? `${entry.jobNumber} · ` : ''}{entry.name}</option>)}</select></label><label className="text-xs font-medium text-neutral-600">Work package<select className="crm-select mt-1.5 w-full" value={move.workPackageId} onChange={(e) => setMove((v) => ({ ...v, workPackageId: e.target.value }))} disabled={!move.jobId}><option value="">Whole Job</option>{data.workPackages.filter((entry) => entry.jobId === move.jobId).map((entry) => <option key={entry.id} value={entry.id}>{entry.title}</option>)}</select></label><label className="text-xs font-medium text-neutral-600">Note<input className="crm-input mt-1.5 w-full" value={move.note} onChange={(e) => setMove((v) => ({ ...v, note: e.target.value }))} placeholder="Damage detail, recipient…" /></label><button className="crm-btn-primary lg:col-start-4" disabled={busy || !move.barcode.trim()}><ScanLine className="h-4 w-4" />Record movement</button></form></section>}
+  useEffect(() => {
+    if (!slug) { setActiveItem(null); return; }
+    (async () => {
+      try {
+        const item = await crmApiFetch(`/api/admin/inventory/by-slug/${encodeURIComponent(slug)}`);
+        setActiveItem(item);
+      } catch (err) {
+        setError(err.message || 'Item not found.');
+        navigate('/admin/crm/inventory');
+      }
+    })();
+  }, [slug, navigate]);
 
-    {view === 'reservations' && <section className="mt-4 rounded-xl border border-neutral-200 bg-white p-4"><h3 className="text-sm font-semibold">Reserve stock for a Job</h3><form className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4" onSubmit={(e) => { e.preventDefault(); request('/api/admin/inventory/reservations', 'POST', reservation, () => setReservation({ itemId: '', assetId: '', jobId: '', quantity: '1', startsAt: '', endsAt: '', note: '' })); }}><select className="crm-select text-xs" value={reservation.itemId} onChange={(e) => setReservation((v) => ({ ...v, itemId: e.target.value, assetId: '' }))} required><option value="">Inventory item</option>{activeItems.map((entry) => <option key={entry.id} value={entry.id}>{entry.name}</option>)}</select><select className="crm-select text-xs" value={reservation.assetId} onChange={(e) => setReservation((v) => ({ ...v, assetId: e.target.value, quantity: '1' }))}><option value="">Quantity / any asset</option>{selectedItemAssets(reservation.itemId).map((entry) => <option key={entry.id} value={entry.id}>{entry.assetTag}</option>)}</select><select className="crm-select text-xs" value={reservation.jobId} onChange={(e) => setReservation((v) => ({ ...v, jobId: e.target.value }))} required><option value="">Ongoing Job</option>{data.jobs.map((entry) => <option key={entry.id} value={entry.id}>{entry.name}</option>)}</select><input type="number" min="0.0001" step="0.0001" className="crm-input text-xs" value={reservation.quantity} onChange={(e) => setReservation((v) => ({ ...v, quantity: e.target.value }))} placeholder="Quantity" required /><label className="text-2xs text-neutral-500">From<input type="datetime-local" className="crm-input mt-1 text-xs" value={reservation.startsAt} onChange={(e) => setReservation((v) => ({ ...v, startsAt: e.target.value }))} required /></label><label className="text-2xs text-neutral-500">Until<input type="datetime-local" className="crm-input mt-1 text-xs" value={reservation.endsAt} onChange={(e) => setReservation((v) => ({ ...v, endsAt: e.target.value }))} required /></label><input className="crm-input self-end text-xs" value={reservation.note} onChange={(e) => setReservation((v) => ({ ...v, note: e.target.value }))} placeholder="Reservation note" /><button className="crm-btn-primary self-end" disabled={busy}><Plus className="h-4 w-4" />Reserve</button></form><div className="mt-5 overflow-x-auto"><table className="crm-table w-full text-xs"><thead><tr className="crm-table-head"><th>Item</th><th>Job</th><th>Quantity</th><th>Dates</th><th>Status</th></tr></thead><tbody>{data.reservations.map((entry) => <tr key={entry.id}><td><strong>{entry.itemName}</strong>{entry.assetTag && <p className="text-2xs text-neutral-400">{entry.assetTag}</p>}</td><td>{entry.jobTitle}</td><td>{entry.quantity}</td><td>{when(entry.startsAt)} → {when(entry.endsAt)}</td><td><Badge tone={entry.status === 'active' ? 'info' : 'neutral'}>{entry.status}</Badge></td></tr>)}</tbody></table>{!data.reservations.length && <EmptyState title="No reservations" description="Reserve reusable stock when a Job needs it on known dates." />}</div></section>}
+  const warehouseCount = useMemo(() => items.filter((entry) => entry.status === 'warehouse').length, [items]);
+  const jobCount = items.length - warehouseCount;
 
-    {view === 'packing' && <section className="mt-4 rounded-xl border border-neutral-200 bg-white p-4"><h3 className="text-sm font-semibold">Job packing lists</h3><form className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-5" onSubmit={(e) => { e.preventDefault(); request('/api/admin/inventory/packing-lists', 'POST', packing, () => setPacking({ jobId: '', reference: '', originLocationId: '', destinationLocationId: '', note: '' })); }}><select className="crm-select text-xs" value={packing.jobId} onChange={(e) => setPacking((v) => ({ ...v, jobId: e.target.value }))} required><option value="">Ongoing Job</option>{data.jobs.map((entry) => <option key={entry.id} value={entry.id}>{entry.name}</option>)}</select><input className="crm-input text-xs" value={packing.reference} onChange={(e) => setPacking((v) => ({ ...v, reference: e.target.value }))} placeholder="Packing reference" required /><select className="crm-select text-xs" value={packing.originLocationId} onChange={(e) => setPacking((v) => ({ ...v, originLocationId: e.target.value }))}><option value="">Origin</option>{activeLocations.map((entry) => <option key={entry.id} value={entry.id}>{entry.name}</option>)}</select><select className="crm-select text-xs" value={packing.destinationLocationId} onChange={(e) => setPacking((v) => ({ ...v, destinationLocationId: e.target.value }))}><option value="">Destination/site</option>{activeLocations.map((entry) => <option key={entry.id} value={entry.id}>{entry.name}</option>)}</select><button className="crm-btn-primary" disabled={busy}><Plus className="h-4 w-4" />Create list</button></form><div className="mt-5 space-y-3">{data.packingLists.map((entry) => { const form = lineForms[entry.id] || { itemId: '', assetId: '', quantity: '1', note: '' }; return <div key={entry.id} className="rounded-xl border border-neutral-200 p-3"><div className="flex flex-wrap items-start justify-between gap-2"><div><p className="text-xs font-semibold">{entry.reference} · {entry.jobTitle}</p><p className="mt-1 text-2xs text-neutral-400">{entry.originName || 'Origin not set'} → {entry.destinationName || 'Destination not set'}</p></div><div className="flex gap-2"><Badge tone={entry.status === 'packed' ? 'success' : 'info'}>{entry.status}</Badge>{entry.status === 'draft' && <button className="crm-btn-secondary" onClick={() => request(`/api/admin/inventory/packing-lists/${entry.id}/status`, 'PATCH', { status: 'packed' })}>Mark packed</button>}</div></div>{entry.lines.length > 0 && <div className="mt-3 flex flex-wrap gap-2">{entry.lines.map((line) => <span key={line.id} className="rounded-full bg-neutral-100 px-2.5 py-1 text-2xs">{line.itemName}{line.assetTag ? ` · ${line.assetTag}` : ` × ${line.quantity}`}</span>)}</div>}{entry.status === 'draft' && <form className="mt-3 grid gap-2 sm:grid-cols-4" onSubmit={(e) => { e.preventDefault(); request(`/api/admin/inventory/packing-lists/${entry.id}/lines`, 'POST', form, () => setLineForms((current) => ({ ...current, [entry.id]: { itemId: '', assetId: '', quantity: '1', note: '' } }))); }}><select className="crm-select text-xs" value={form.itemId} onChange={(e) => setLineForms((current) => ({ ...current, [entry.id]: { ...form, itemId: e.target.value, assetId: '' } }))} required><option value="">Add item</option>{activeItems.map((itemRow) => <option key={itemRow.id} value={itemRow.id}>{itemRow.name}</option>)}</select><select className="crm-select text-xs" value={form.assetId} onChange={(e) => setLineForms((current) => ({ ...current, [entry.id]: { ...form, assetId: e.target.value, quantity: '1' } }))}><option value="">Quantity / any asset</option>{selectedItemAssets(form.itemId).map((assetRow) => <option key={assetRow.id} value={assetRow.id}>{assetRow.assetTag}</option>)}</select><input type="number" min="0.0001" step="0.0001" className="crm-input text-xs" value={form.quantity} onChange={(e) => setLineForms((current) => ({ ...current, [entry.id]: { ...form, quantity: e.target.value } }))} /><button className="crm-btn-secondary" disabled={busy}>Add line</button></form>}</div>; })}{!data.packingLists.length && <EmptyState title="No packing lists" description="Create one for the items and assets that must leave for a Job." />}</div></section>}
+  function pickPhoto(file) {
+    setPhotoFile(file);
+    setPhotoPreview(file ? URL.createObjectURL(file) : '');
+  }
 
-    {view === 'history' && <section className="mt-4 overflow-hidden rounded-xl border border-neutral-200 bg-white"><div className="p-4"><h3 className="text-sm font-semibold">Immutable movement history</h3><p className="mt-1 text-xs text-neutral-500">Corrections are recorded as new adjustment movements; existing rows are never edited.</p></div><div className="overflow-x-auto"><table className="crm-table w-full text-xs"><thead><tr className="crm-table-head"><th>When</th><th>Movement</th><th>Item / asset</th><th>Quantity</th><th>Cost snapshot</th><th>From → To</th><th>Job / work package</th><th>Recorded by</th></tr></thead><tbody>{data.movements.map((entry) => <tr key={entry.id}><td>{when(entry.occurredAt)}</td><td><Badge tone={['damage','loss'].includes(entry.movementType) ? 'warning' : 'info'}>{MOVEMENT_LABELS[entry.movementType]}</Badge></td><td><strong>{entry.itemName}</strong>{entry.assetTag && <p className="text-2xs text-neutral-400">{entry.assetTag}</p>}</td><td>{entry.quantity}</td><td>{entry.unitCostAed == null ? <span className="text-amber-700">Unpriced</span> : `AED ${entry.unitCostAed.toLocaleString()} / unit`}</td><td>{entry.fromLocationName || '—'} → {entry.toLocationName || '—'}</td><td>{entry.jobTitle || '—'}{entry.workPackageTitle && <p className="text-2xs text-neutral-400">{entry.workPackageTitle}</p>}</td><td>{entry.recordedBy}</td></tr>)}</tbody></table>{!data.movements.length && <EmptyState title="No stock movements" description="Receive initial pilot stock through Scan & Move rather than entering a balance." />}</div></section>}
+  async function submitNewItem(e) {
+    e.preventDefault();
+    if (!name.trim() || !photoFile) return;
+    setBusy(true);
+    setError('');
+    try {
+      const form = new FormData();
+      form.append('name', name.trim());
+      form.append('photo', photoFile);
+      await crmApiFetch('/api/admin/inventory/items', { method: 'POST', body: form });
+      setName('');
+      pickPhoto(null);
+      setAddOpen(false);
+      await load();
+    } catch (err) {
+      setError(err.message || 'Could not register item.');
+    } finally {
+      setBusy(false);
+    }
+  }
 
-    <Modal open={itemOpen} onClose={() => setItemOpen(false)} title="Add inventory item" subtitle="Choose tracking based on how EGS physically controls the item." icon={Boxes} size="md" footer={<><button className="crm-btn-secondary" onClick={() => setItemOpen(false)}>Cancel</button><button form="item-form" className="crm-btn-primary" disabled={busy || !item.name.trim() || !item.sku.trim()}>Add item</button></>}><form id="item-form" className="grid gap-4 sm:grid-cols-2" onSubmit={(e) => { e.preventDefault(); request('/api/admin/inventory/items', 'POST', item, () => { setItem(emptyItem); setItemOpen(false); }); }}><label className="text-xs font-medium text-neutral-600">SKU<input className="crm-input mt-1.5 w-full" value={item.sku} onChange={(e) => setItem((v) => ({ ...v, sku: e.target.value }))} required /></label><label className="text-xs font-medium text-neutral-600">Name<input className="crm-input mt-1.5 w-full" value={item.name} onChange={(e) => setItem((v) => ({ ...v, name: e.target.value }))} required /></label><label className="text-xs font-medium text-neutral-600">Tracking<select className="crm-select mt-1.5 w-full" value={item.trackingMode} onChange={(e) => setItem((v) => ({ ...v, trackingMode: e.target.value }))}>{data.trackingModes.map((entry) => <option key={entry} value={entry}>{TRACKING_LABELS[entry]}</option>)}</select></label><label className="text-xs font-medium text-neutral-600">Item barcode<input className="crm-input mt-1.5 w-full" value={item.barcode} onChange={(e) => setItem((v) => ({ ...v, barcode: e.target.value }))} /></label><label className="text-xs font-medium text-neutral-600">UOM<select className="crm-select mt-1.5 w-full" value={item.uomId} onChange={(e) => setItem((v) => ({ ...v, uomId: e.target.value }))}><option value="">No UOM</option>{data.uoms.map((entry) => <option key={entry.id} value={entry.id}>{entry.name} ({entry.code})</option>)}</select></label><label className="text-xs font-medium text-neutral-600">Reorder warning<input type="number" min="0" step="0.0001" className="crm-input mt-1.5 w-full" value={item.reorderLevel} onChange={(e) => setItem((v) => ({ ...v, reorderLevel: e.target.value }))} /></label><label className="text-xs font-medium text-neutral-600 sm:col-span-2">Default unit cost AED<input type="number" min="0" step="0.0001" className="crm-input mt-1.5 w-full" value={item.defaultUnitCostAed} onChange={(e) => setItem((v) => ({ ...v, defaultUnitCostAed: e.target.value }))} placeholder="Optional; can be set from the first receipt" /></label></form></Modal>
-    <Modal open={locationOpen} onClose={() => setLocationOpen(false)} title="Add stock location" subtitle="Use barcodes for warehouses, bins, vehicles and temporary Job sites." icon={MapPin} size="md" footer={<><button className="crm-btn-secondary" onClick={() => setLocationOpen(false)}>Cancel</button><button form="location-form" className="crm-btn-primary" disabled={busy || !location.code.trim() || !location.name.trim()}>Add location</button></>}><form id="location-form" className="grid gap-4 sm:grid-cols-2" onSubmit={(e) => { e.preventDefault(); request('/api/admin/inventory/locations', 'POST', location, () => { setLocation(emptyLocation); setLocationOpen(false); }); }}><label className="text-xs font-medium text-neutral-600">Code<input className="crm-input mt-1.5 w-full" value={location.code} onChange={(e) => setLocation((v) => ({ ...v, code: e.target.value }))} required /></label><label className="text-xs font-medium text-neutral-600">Name<input className="crm-input mt-1.5 w-full" value={location.name} onChange={(e) => setLocation((v) => ({ ...v, name: e.target.value }))} required /></label><label className="text-xs font-medium text-neutral-600">Type<select className="crm-select mt-1.5 w-full" value={location.locationType} onChange={(e) => setLocation((v) => ({ ...v, locationType: e.target.value }))}>{['warehouse','bin','vehicle','site','temporary'].map((entry) => <option key={entry}>{entry}</option>)}</select></label><label className="text-xs font-medium text-neutral-600">Location barcode<input className="crm-input mt-1.5 w-full" value={location.barcode} onChange={(e) => setLocation((v) => ({ ...v, barcode: e.target.value }))} /></label></form></Modal>
-    <Modal open={assetOpen} onClose={() => setAssetOpen(false)} title="Register serialized asset" subtitle="Each physical unit gets its own asset tag and unique barcode." icon={Barcode} size="md" footer={<><button className="crm-btn-secondary" onClick={() => setAssetOpen(false)}>Cancel</button><button form="asset-form" className="crm-btn-primary" disabled={busy || !asset.itemId || !asset.assetTag.trim() || !asset.barcode.trim()}>Register asset</button></>}><form id="asset-form" className="grid gap-4 sm:grid-cols-2" onSubmit={(e) => { e.preventDefault(); request('/api/admin/inventory/assets', 'POST', asset, () => { setAsset({ itemId: '', assetTag: '', barcode: '', serialNumber: '', purchaseDate: '', notes: '' }); setAssetOpen(false); }); }}><label className="text-xs font-medium text-neutral-600 sm:col-span-2">Serialized item<select className="crm-select mt-1.5 w-full" value={asset.itemId} onChange={(e) => setAsset((v) => ({ ...v, itemId: e.target.value }))} required><option value="">Select item</option>{serializedItems.map((entry) => <option key={entry.id} value={entry.id}>{entry.name}</option>)}</select></label><label className="text-xs font-medium text-neutral-600">Asset tag<input className="crm-input mt-1.5 w-full" value={asset.assetTag} onChange={(e) => setAsset((v) => ({ ...v, assetTag: e.target.value }))} required /></label><label className="text-xs font-medium text-neutral-600">Barcode<input className="crm-input mt-1.5 w-full" value={asset.barcode} onChange={(e) => setAsset((v) => ({ ...v, barcode: e.target.value }))} required /></label><label className="text-xs font-medium text-neutral-600">Serial number<input className="crm-input mt-1.5 w-full" value={asset.serialNumber} onChange={(e) => setAsset((v) => ({ ...v, serialNumber: e.target.value }))} /></label><label className="text-xs font-medium text-neutral-600">Purchase date<input type="date" className="crm-input mt-1.5 w-full" value={asset.purchaseDate} onChange={(e) => setAsset((v) => ({ ...v, purchaseDate: e.target.value }))} /></label></form></Modal>
-  </PageSection></PageShell>;
+  async function handleSendToJob(itemId, jobId) {
+    setBusy(true);
+    setError('');
+    try {
+      await crmApiFetch(`/api/admin/inventory/items/${itemId}/send-to-job`, { method: 'POST', body: JSON.stringify({ jobId }) });
+      setActiveItem(null);
+      navigate('/admin/crm/inventory');
+      await load();
+    } catch (err) {
+      setError(err.message || 'Could not send item to Job.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleReturn(itemId) {
+    setBusy(true);
+    setError('');
+    try {
+      await crmApiFetch(`/api/admin/inventory/items/${itemId}/return`, { method: 'POST' });
+      setActiveItem(null);
+      navigate('/admin/crm/inventory');
+      await load();
+    } catch (err) {
+      setError(err.message || 'Could not return item.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleArchive(itemId) {
+    setBusy(true);
+    setError('');
+    try {
+      await crmApiFetch(`/api/admin/inventory/items/${itemId}`, { method: 'DELETE' });
+      setActiveItem(null);
+      navigate('/admin/crm/inventory');
+      await load();
+    } catch (err) {
+      setError(err.message || 'Could not remove item.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function handleScanned(rawValue) {
+    const foundSlug = extractSlug(rawValue);
+    if (foundSlug) navigate(`/admin/crm/inventory/i/${foundSlug}`);
+  }
+
+  if (loading) return <PageShell><LoadingState label="Loading warehouse items…" /></PageShell>;
+
+  return (
+    <PageShell className="max-w-none">
+      <PageHeader actions={
+        <div className="flex flex-wrap gap-2">
+          <button className="crm-btn-secondary" onClick={() => setScanOpen(true)}><ScanLine className="h-4 w-4" />Scan QR</button>
+          <button className="crm-btn-secondary" onClick={() => setPrintOpen(true)} disabled={!items.length}><Printer className="h-4 w-4" />Print labels</button>
+          <button className="crm-btn-primary" onClick={() => setAddOpen(true)}><Plus className="h-4 w-4" />Add item</button>
+        </div>
+      } />
+      <PageSection>
+        {error && <Alert>{error}</Alert>}
+        <div className="grid gap-3 sm:grid-cols-2">
+          <StatCard compact label="In warehouse" value={warehouseCount} icon={Warehouse} />
+          <StatCard compact label="Out at Jobs" value={jobCount} icon={MapPin} />
+        </div>
+
+        {!items.length ? (
+          <EmptyState title="No items yet" description="Photograph and add the furniture and equipment you want to track." />
+        ) : (
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+            {items.map((item) => <ItemCard key={item.id} item={item} onOpen={(entry) => navigate(`/admin/crm/inventory/i/${entry.slug}`)} />)}
+          </div>
+        )}
+      </PageSection>
+
+      <Modal open={addOpen} onClose={() => { setAddOpen(false); pickPhoto(null); setName(''); }} title="Add warehouse item" subtitle="A photo and a name — that's all it takes." icon={Camera} size="md" footer={<><button className="crm-btn-secondary" onClick={() => setAddOpen(false)}>Cancel</button><button form="add-item-form" className="crm-btn-primary" disabled={busy || !name.trim() || !photoFile}>Add item</button></>}>
+        <form id="add-item-form" className="grid gap-4" onSubmit={submitNewItem}>
+          <label className="text-xs font-medium text-neutral-600">Photo
+            <div className="mt-1.5 flex items-center gap-3">
+              {photoPreview
+                ? <img src={photoPreview} alt="Preview" className="h-20 w-20 rounded-lg object-cover" />
+                : <div className="flex h-20 w-20 items-center justify-center rounded-lg bg-neutral-100 text-neutral-300"><Camera className="h-6 w-6" /></div>}
+              <input type="file" accept="image/*" capture="environment" onChange={(e) => pickPhoto(e.target.files?.[0] || null)} className="text-xs" />
+            </div>
+          </label>
+          <label className="text-xs font-medium text-neutral-600">Name
+            <input className="crm-input mt-1.5 w-full" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Grey ottoman" required />
+          </label>
+        </form>
+      </Modal>
+
+      <Modal open={scanOpen} onClose={() => setScanOpen(false)} title="Scan a QR code" subtitle="Opens the matching item so you can confirm before sticking a label on." icon={ScanLine} size="md">
+        {scanOpen && <CameraScanner onDetected={handleScanned} onClose={() => setScanOpen(false)} />}
+      </Modal>
+
+      {activeItem && (
+        <ItemDetail
+          item={activeItem}
+          jobs={jobs}
+          busy={busy}
+          onClose={() => navigate('/admin/crm/inventory')}
+          onSendToJob={handleSendToJob}
+          onReturn={handleReturn}
+          onArchive={handleArchive}
+        />
+      )}
+
+      {printOpen && <PrintLabels items={items} onClose={() => setPrintOpen(false)} />}
+    </PageShell>
+  );
 }
