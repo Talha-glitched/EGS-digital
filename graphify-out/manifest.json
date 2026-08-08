@@ -820,8 +820,8 @@
     "semantic_hash": "3466322bb2a5fba44e38ebeb6bd8988e"
   },
   "client/src/admin/crm/pages/InventoryPage.jsx": {
-    "mtime": 1786190812.2886872,
-    "ast_hash": "966b75775250ef04ed337dfdc9434fb2",
+    "mtime": 1786192189.8115063,
+    "ast_hash": "3bc3873c0b6794d29764de7a654bb043",
     "semantic_hash": ""
   },
   "client/src/admin/crm/pages/OngoingJobsPage.jsx": {
@@ -1210,9 +1210,9 @@
     "semantic_hash": "c3fce8a336a61d10e77ee67626a0192b"
   },
   "client/vite.config.js": {
-    "mtime": 1785878921.439463,
-    "ast_hash": "2dfc2d9a0654a205b394f94d2233fe58",
-    "semantic_hash": "2dfc2d9a0654a205b394f94d2233fe58"
+    "mtime": 1786192165.4688964,
+    "ast_hash": "28af21c8236e68ede3832a64198838bc",
+    "semantic_hash": ""
   },
   "package.json": {
     "mtime": 1782495838.5071943,
@@ -5590,8 +5590,13 @@
     "semantic_hash": ""
   },
   "server/src/utils/uploadPath.js": {
-    "mtime": 1786191772.4105191,
-    "ast_hash": "032a7f47dcea689fc255a877b292dfa4",
+    "mtime": 1786192152.3647957,
+    "ast_hash": "d8b79cd5b242c18d151863c67858f3a7",
+    "semantic_hash": ""
+  },
+  "client/src/admin/crm/utils/mediaUrl.js": {
+    "mtime": 1786192159.1026845,
+    "ast_hash": "88c568ae32aee30b63dd0f2aaa2fb193",
     "semantic_hash": ""
   }
 }

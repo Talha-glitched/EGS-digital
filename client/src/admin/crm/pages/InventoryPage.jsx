@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Boxes, Camera, MapPin, Plus, Printer, ScanLine, Trash2, Warehouse, X } from 'lucide-react';
 import { crmApiFetch } from '../crmApi.js';
+import { getMediaUrl } from '../utils/mediaUrl.js';
 import { Alert, Badge, EmptyState, LoadingState, PageHeader, PageSection, PageShell, StatCard, cn } from '../components/ui/primitives.jsx';
 import { Modal } from '../components/ui/Modal.jsx';
 
@@ -67,7 +68,7 @@ function ItemCard({ item, onOpen }) {
   return (
     <button onClick={() => onOpen(item)} className="flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white text-left transition hover:border-brand hover:shadow-sm">
       <div className="aspect-square w-full overflow-hidden bg-neutral-100">
-        {item.photoUrl ? <img src={item.photoUrl} alt={item.name} className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center text-neutral-300"><Boxes className="h-8 w-8" /></div>}
+        {item.photoUrl ? <img src={getMediaUrl(item.photoUrl)} alt={item.name} className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center text-neutral-300"><Boxes className="h-8 w-8" /></div>}
       </div>
       <div className="p-3">
         <p className="text-sm font-semibold text-neutral-900">{item.name}</p>
@@ -90,7 +91,7 @@ function ItemDetail({ item, jobs, busy, onClose, onSendToJob, onReturn, onArchiv
     <Modal open onClose={onClose} title={item.name} subtitle={item.slug} icon={Boxes} size="md" footer={<button className="crm-btn-secondary" onClick={onClose}>Close</button>}>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100">
-          {item.photoUrl ? <img src={item.photoUrl} alt={item.name} className="aspect-square w-full object-cover" /> : <div className="flex aspect-square items-center justify-center text-neutral-300"><Boxes className="h-10 w-10" /></div>}
+          {item.photoUrl ? <img src={getMediaUrl(item.photoUrl)} alt={item.name} className="aspect-square w-full object-cover" /> : <div className="flex aspect-square items-center justify-center text-neutral-300"><Boxes className="h-10 w-10" /></div>}
         </div>
         <div className="flex flex-col gap-3">
           <div>
