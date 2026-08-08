@@ -15,10 +15,14 @@ function getUploadsDir() {
     return '/app/uploads';
   }
 
+  // Project root uploads path (server/src/utils -> ../../../uploads)
+  const projectRoot = path.resolve(__dirname, '../../..');
+  const projectUploads = path.join(projectRoot, 'uploads');
+
   const candidates = [
+    projectUploads,
     path.resolve(process.cwd(), 'uploads'),
     path.resolve(process.cwd(), '../uploads'),
-    path.resolve(__dirname, '../../../uploads'),
     path.resolve(__dirname, '../../uploads'),
   ];
 
@@ -41,11 +45,14 @@ function getUploadsDir() {
     return appUploads;
   }
 
-  const defaultDir = path.resolve(process.cwd(), 'uploads');
-  if (!existsSync(defaultDir)) {
-    mkdirSync(defaultDir, { recursive: true });
+  if (!existsSync(projectUploads)) {
+    try {
+      mkdirSync(projectUploads, { recursive: true });
+    } catch {
+      // fallback to cwd/uploads if permission issue
+    }
   }
-  return defaultDir;
+  return existsSync(projectUploads) ? projectUploads : path.resolve(process.cwd(), 'uploads');
 }
 
 export const UPLOADS_DIR = getUploadsDir();
