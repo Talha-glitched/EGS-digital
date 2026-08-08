@@ -17,3 +17,4 @@ export function getMediaUrl(url) {
 
   return cleanPath;
 }
+
