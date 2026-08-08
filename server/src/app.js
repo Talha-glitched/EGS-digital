@@ -1,5 +1,5 @@
 import path from 'path';
-import { existsSync, mkdirSync } from 'fs';
+import { existsSync, mkdirSync, readdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
@@ -40,6 +40,30 @@ app.get('/api/health', (_req, res) => {
     ok: true,
     mode: process.env.MONGODB_URI ? 'mongodb-enabled' : 'filesystem-fallback',
   });
+});
+
+app.get('/api/health/uploads-debug', (_req, res) => {
+  try {
+    const contents = existsSync(UPLOADS_DIR) ? readdirSync(UPLOADS_DIR) : [];
+    const inventoryDir = path.join(UPLOADS_DIR, 'inventory');
+    const inventoryContents = existsSync(inventoryDir) ? readdirSync(inventoryDir) : [];
+    res.json({
+      ok: true,
+      cwd: process.cwd(),
+      uploadsDir: UPLOADS_DIR,
+      uploadsDirExists: existsSync(UPLOADS_DIR),
+      uploadsContents: contents,
+      inventoryDir,
+      inventoryContents,
+      env: {
+        CLIENT_URL: process.env.CLIENT_URL || null,
+        VITE_API_URL: process.env.VITE_API_URL || null,
+        UPLOADS_DIR: process.env.UPLOADS_DIR || null,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
 });
 
 app.use('/api/admin', adminRoutes);

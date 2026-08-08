@@ -4623,7 +4623,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequencelistpanel",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "sequencelistpanel.jsx"
     },
     {
@@ -4635,7 +4635,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequencelistpanel_formatdate",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "formatdate()"
     },
     {
@@ -4647,7 +4647,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequencelistpanel_sequencelistpanel",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "sequencelistpanel()"
     },
     {
@@ -6361,7 +6361,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_clickabletablerow",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "clickabletablerow.jsx"
     },
     {
@@ -6373,7 +6373,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_clickabletablerow_stoprowclick",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "stoprowclick()"
     },
     {
@@ -6385,7 +6385,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_clickabletablerow_clickabletablerow",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "clickabletablerow()"
     },
     {
@@ -6963,7 +6963,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_sortabletableheader",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "sortabletableheader.jsx"
     },
     {
@@ -6975,7 +6975,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_sortabletableheader_sorticon",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "sorticon()"
     },
     {
@@ -6987,7 +6987,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_sortabletableheader_sortabletableheader",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "sortabletableheader()"
     },
     {
@@ -6999,7 +6999,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_sortabletableheader_tablesortindicator",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "tablesortindicator()"
     },
     {
@@ -7710,7 +7710,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_advancedfilter_filterschemas_buildongoingjobfilterschema",
-      "community": 61,
+      "community": 28,
       "community_name": "OngoingJobsPage.jsx",
       "norm_label": "buildongoingjobfilterschema()"
     },
@@ -8132,8 +8132,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_primitives_infopanel",
-      "community": 95,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 6,
+      "community_name": "CreateOngoingJobModal.jsx",
       "norm_label": "infopanel()"
     },
     {
@@ -8458,7 +8458,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_campaigninitwizard_campaigninitwizard",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "campaigninitwizard()"
     },
     {
@@ -8468,8 +8468,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_datablenderwizard",
-      "community": 95,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 6,
+      "community_name": "CreateOngoingJobModal.jsx",
       "norm_label": "datablenderwizard.jsx"
     },
     {
@@ -8479,8 +8479,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_datablenderwizard_internal_fields",
-      "community": 95,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 6,
+      "community_name": "CreateOngoingJobModal.jsx",
       "norm_label": "internal_fields"
     },
     {
@@ -8490,8 +8490,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_datablenderwizard_vendors",
-      "community": 95,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 6,
+      "community_name": "CreateOngoingJobModal.jsx",
       "norm_label": "vendors"
     },
     {
@@ -8501,8 +8501,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_datablenderwizard_steps",
-      "community": 95,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 6,
+      "community_name": "CreateOngoingJobModal.jsx",
       "norm_label": "steps"
     },
     {
@@ -8512,8 +8512,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_datablenderwizard_step_meta",
-      "community": 95,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 6,
+      "community_name": "CreateOngoingJobModal.jsx",
       "norm_label": "step_meta"
     },
     {
@@ -8524,8 +8524,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_datablenderwizard_datablenderwizard",
-      "community": 95,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 6,
+      "community_name": "CreateOngoingJobModal.jsx",
       "norm_label": "datablenderwizard()"
     },
     {
@@ -8536,8 +8536,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_datablenderwizard_previewstat",
-      "community": 95,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 6,
+      "community_name": "CreateOngoingJobModal.jsx",
       "norm_label": "previewstat()"
     },
     {
@@ -8547,8 +8547,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_sequencebuilder",
-      "community": 95,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 6,
+      "community_name": "CreateOngoingJobModal.jsx",
       "norm_label": "sequencebuilder.jsx"
     },
     {
@@ -8559,8 +8559,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_sequencebuilder_emptystep",
-      "community": 95,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 6,
+      "community_name": "CreateOngoingJobModal.jsx",
       "norm_label": "emptystep()"
     },
     {
@@ -8570,8 +8570,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_sequencebuilder_graduation_steps",
-      "community": 95,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 6,
+      "community_name": "CreateOngoingJobModal.jsx",
       "norm_label": "graduation_steps"
     },
     {
@@ -8582,8 +8582,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_sequencebuilder_sequencebuilder",
-      "community": 95,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 6,
+      "community_name": "CreateOngoingJobModal.jsx",
       "norm_label": "sequencebuilder()"
     },
     {
@@ -9345,8 +9345,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_uploadingestfile",
-      "community": 95,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 6,
+      "community_name": "CreateOngoingJobModal.jsx",
       "norm_label": "uploadingestfile()"
     },
     {
@@ -9357,8 +9357,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_previewingestfile",
-      "community": 95,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 6,
+      "community_name": "CreateOngoingJobModal.jsx",
       "norm_label": "previewingestfile()"
     },
     {
@@ -10688,7 +10688,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_hooks_tablesortaccessors",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "tablesortaccessors.js"
     },
     {
@@ -10699,7 +10699,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_hooks_tablesortaccessors_campaignsortaccessors",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "campaignsortaccessors"
     },
     {
@@ -10710,7 +10710,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_hooks_tablesortaccessors_companysortaccessors",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "companysortaccessors"
     },
     {
@@ -10721,7 +10721,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_hooks_tablesortaccessors_leadsortaccessors",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "leadsortaccessors"
     },
     {
@@ -10732,7 +10732,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_hooks_tablesortaccessors_relationshipsortaccessors",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "relationshipsortaccessors"
     },
     {
@@ -10743,7 +10743,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_hooks_tablesortaccessors_ongoingjobsortaccessors",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "ongoingjobsortaccessors"
     },
     {
@@ -10754,7 +10754,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_hooks_tablesortaccessors_opportunitysortaccessors",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "opportunitysortaccessors"
     },
     {
@@ -10765,7 +10765,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_hooks_tablesortaccessors_tasksortaccessors",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "tasksortaccessors"
     },
     {
@@ -10776,7 +10776,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_hooks_tablesortaccessors_campaigncompanysortaccessors",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "campaigncompanysortaccessors"
     },
     {
@@ -10787,7 +10787,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_hooks_tablesortaccessors_sequencesortaccessors",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "sequencesortaccessors"
     },
     {
@@ -10798,7 +10798,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_hooks_tablesortaccessors_revenuesortaccessors",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "revenuesortaccessors"
     },
     {
@@ -10809,7 +10809,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_hooks_tablesortaccessors_campaignroisortaccessors",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "campaignroisortaccessors"
     },
     {
@@ -10820,7 +10820,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_hooks_tablesortaccessors_usersortaccessors",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "usersortaccessors"
     },
     {
@@ -11335,8 +11335,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_inventorypage",
-      "community": 4,
-      "community_name": "cn",
+      "community": 11,
+      "community_name": "CrmApp.jsx",
       "norm_label": "inventorypage.jsx"
     },
     {
@@ -11347,8 +11347,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_inventorypage_camerascanner",
-      "community": 4,
-      "community_name": "cn",
+      "community": 11,
+      "community_name": "CrmApp.jsx",
       "norm_label": "camerascanner()"
     },
     {
@@ -11359,8 +11359,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_inventorypage_extractslug",
-      "community": 4,
-      "community_name": "cn",
+      "community": 11,
+      "community_name": "CrmApp.jsx",
       "norm_label": "extractslug()"
     },
     {
@@ -11371,8 +11371,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_inventorypage_itemcard",
-      "community": 4,
-      "community_name": "cn",
+      "community": 11,
+      "community_name": "CrmApp.jsx",
       "norm_label": "itemcard()"
     },
     {
@@ -11383,8 +11383,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_inventorypage_itemdetail",
-      "community": 4,
-      "community_name": "cn",
+      "community": 11,
+      "community_name": "CrmApp.jsx",
       "norm_label": "itemdetail()"
     },
     {
@@ -11395,8 +11395,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_inventorypage_printlabels",
-      "community": 4,
-      "community_name": "cn",
+      "community": 11,
+      "community_name": "CrmApp.jsx",
       "norm_label": "printlabels()"
     },
     {
@@ -11407,8 +11407,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_inventorypage_inventorypage",
-      "community": 4,
-      "community_name": "cn",
+      "community": 11,
+      "community_name": "CrmApp.jsx",
       "norm_label": "inventorypage()"
     },
     {
@@ -11453,7 +11453,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage",
-      "community": 61,
+      "community": 28,
       "community_name": "OngoingJobsPage.jsx",
       "norm_label": "ongoingjobspage.jsx"
     },
@@ -11464,7 +11464,7 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_default_stages",
-      "community": 61,
+      "community": 28,
       "community_name": "OngoingJobsPage.jsx",
       "norm_label": "default_stages"
     },
@@ -11475,7 +11475,7 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_stage_tones",
-      "community": 61,
+      "community": 28,
       "community_name": "OngoingJobsPage.jsx",
       "norm_label": "stage_tones"
     },
@@ -11486,7 +11486,7 @@
       "source_location": "L88",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_tone_accents",
-      "community": 61,
+      "community": 28,
       "community_name": "OngoingJobsPage.jsx",
       "norm_label": "tone_accents"
     },
@@ -11497,7 +11497,7 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_late_stages",
-      "community": 61,
+      "community": 28,
       "community_name": "OngoingJobsPage.jsx",
       "norm_label": "late_stages"
     },
@@ -11509,7 +11509,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_formatshortdate",
-      "community": 61,
+      "community": 28,
       "community_name": "OngoingJobsPage.jsx",
       "norm_label": "formatshortdate()"
     },
@@ -11521,7 +11521,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_getexecutionsummary",
-      "community": 61,
+      "community": 28,
       "community_name": "OngoingJobsPage.jsx",
       "norm_label": "getexecutionsummary()"
     },
@@ -11545,7 +11545,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobsboard",
-      "community": 61,
+      "community": 28,
       "community_name": "OngoingJobsPage.jsx",
       "norm_label": "ongoingjobsboard()"
     },
@@ -11557,7 +11557,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobstable",
-      "community": 61,
+      "community": 28,
       "community_name": "OngoingJobsPage.jsx",
       "norm_label": "ongoingjobstable()"
     },
@@ -11569,7 +11569,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobcard",
-      "community": 61,
+      "community": 28,
       "community_name": "OngoingJobsPage.jsx",
       "norm_label": "ongoingjobcard()"
     },
@@ -11581,7 +11581,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobworkspacesummary",
-      "community": 61,
+      "community": 28,
       "community_name": "OngoingJobsPage.jsx",
       "norm_label": "ongoingjobworkspacesummary()"
     },
@@ -11710,7 +11710,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_projectspage",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "projectspage.jsx"
     },
     {
@@ -11722,7 +11722,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_projectspage_formatcount",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "formatcount()"
     },
     {
@@ -11734,7 +11734,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_projectspage_parselocaldate",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "parselocaldate()"
     },
     {
@@ -11746,7 +11746,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_projectspage_formatdaterange",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "formatdaterange()"
     },
     {
@@ -11758,7 +11758,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_projectspage_calculateeventcountdown",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "calculateeventcountdown()"
     },
     {
@@ -11770,7 +11770,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_projectspage_dateeditormodal",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "dateeditormodal()"
     },
     {
@@ -11782,7 +11782,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_projectspage_projectspage",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "projectspage()"
     },
     {
@@ -11794,7 +11794,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_projectspage_insightchip",
       "community": 28,
-      "community_name": "ProjectsPage.jsx",
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "insightchip()"
     },
     {
@@ -12235,8 +12235,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_utils_mediaurl",
-      "community": 4,
-      "community_name": "cn",
+      "community": 11,
+      "community_name": "CrmApp.jsx",
       "norm_label": "mediaurl.js"
     },
     {
@@ -12247,8 +12247,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_utils_mediaurl_getmediaurl",
-      "community": 4,
-      "community_name": "cn",
+      "community": 11,
+      "community_name": "CrmApp.jsx",
       "norm_label": "getmediaurl()"
     },
     {
@@ -83573,6 +83573,18 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/admin/crm/pages/InventoryPage.jsx",
+      "source_location": "L150",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_admin_crm_pages_inventorypage_printlabels",
+      "target": "client_src_admin_crm_utils_mediaurl_getmediaurl",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/LiveSendMonitorPage.jsx",
@@ -146055,5 +146067,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "a31cefe96ccbd012a466fe3c42ca7142b9954370"
+  "built_at_commit": "669fb7710c0183b3c1dcf43b42d83d3163166642"
 }

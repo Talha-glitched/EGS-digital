@@ -147,7 +147,7 @@ function PrintLabels({ items, onClose }) {
       <div className="grid grid-cols-3 gap-4 print:grid-cols-3">
         {items.map((item) => (
           <div key={item.id} className="flex flex-col items-center gap-1 rounded-lg border border-neutral-300 p-3 text-center break-inside-avoid">
-            <img src={`/api/admin/inventory/items/${encodeURIComponent(item.slug)}/qr.svg`} alt={item.name} className="h-28 w-28" />
+            <img src={getMediaUrl(`/api/admin/inventory/items/${encodeURIComponent(item.slug)}/qr.svg`)} alt={item.name} className="h-28 w-28" />
             <p className="text-xs font-semibold leading-tight">{item.name}</p>
             <p className="text-2xs text-neutral-500">{item.slug}</p>
           </div>

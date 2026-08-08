@@ -1,16 +1,16 @@
 # Graph Report - EGS-web  (2026-08-08)
 
 ## Corpus Check
-- 581 files · ~3,837,670 words
+- 581 files · ~3,837,770 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3786 nodes · 8865 edges · 244 communities (202 shown, 42 thin omitted)
+- 3786 nodes · 8866 edges · 242 communities (200 shown, 42 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 50 edges (avg confidence: 0.66)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a31cefe9`
+- Built from commit: `669fb771`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -43,7 +43,7 @@
 - sendWorker.js
 - 01_init_postgresql_schema.sql
 - TasksPage.jsx
-- ProjectsPage.jsx
+- OngoingJobsPage.jsx
 - usePageLifecycle
 - ProjectDetailWorkspace.jsx
 - AdvancedFilterPopover.jsx
@@ -76,7 +76,6 @@
 - inventoryService.js
 - jobMemoryService.js
 - leadResponse.js
-- OngoingJobsPage.jsx
 - ProjectCampaign
 - sequenceFlowExecutor.js
 - CommunicationJobModal.jsx
@@ -110,7 +109,6 @@
 - openaiService.js
 - 2. Complete Functional Requirements (FR)
 - auditPostgresMigrationReadOnly.js
-- DataBlenderWizard.jsx
 - resendService.js
 - EGS Mongo-to-SQL AI Agent Migration Guide
 - seedDemoOperationalJob.js
@@ -257,7 +255,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (244 total, 42 thin omitted)
+## Communities (242 total, 42 thin omitted)
 
 ### Community 0 - "crmApi.js"
 Cohesion: 0.05
@@ -276,16 +274,16 @@ Cohesion: 0.14
 Nodes (22): ActionBadge(), TONES, ACTION_SUMMARY(), ActivityDetailDrawer(), ChangeTypeBadge(), TONES, FieldDiffList(), RevisionDetailDrawer() (+14 more)
 
 ### Community 4 - "cn"
-Cohesion: 0.05
-Nodes (61): CampaignVendorPerformanceGrid(), SOURCE_DOT, SOURCE_DOT, VendorPerformanceGrid(), DailyReviewConsistency(), DashboardKeyRelationshipsSection(), DashboardLeadsSection(), DashboardOngoingJobsSection() (+53 more)
+Cohesion: 0.06
+Nodes (57): CampaignVendorPerformanceGrid(), SOURCE_DOT, SOURCE_DOT, VendorPerformanceGrid(), DailyReviewConsistency(), DashboardKeyRelationshipsSection(), DashboardLeadsSection(), DashboardOngoingJobsSection() (+49 more)
 
 ### Community 5 - "sequenceService.js"
 Cohesion: 0.08
 Nodes (36): assertEnrollmentConfirmed(), assertLaunchAudience(), buildEnrollmentLeadQuery(), createSequence(), delayMs(), deleteSequence(), deleteSequences(), enrollableDeliveryFilter() (+28 more)
 
 ### Community 6 - "CreateOngoingJobModal.jsx"
-Cohesion: 0.08
-Nodes (35): AddCompanyModal(), EMPTY, AddContactModal(), EMPTY, ContactBlenderModal(), EMAIL_FIELDS, FALLBACK_SOURCES, FIELD_LABELS (+27 more)
+Cohesion: 0.06
+Nodes (46): AddCompanyModal(), EMPTY, AddContactModal(), EMPTY, ContactBlenderModal(), EMAIL_FIELDS, FALLBACK_SOURCES, FIELD_LABELS (+38 more)
 
 ### Community 7 - "PocQualificationEditor.jsx"
 Cohesion: 0.13
@@ -304,8 +302,8 @@ Cohesion: 0.12
 Nodes (26): run(), __dirname, main(), XLSX_PATH, run(), run(), run(), SendJob (+18 more)
 
 ### Community 11 - "CrmApp.jsx"
-Cohesion: 0.11
-Nodes (21): filterNav(), filterProjects(), matchesQuery(), mergeGroups(), normalize(), QUICK_NAV, SpotlightSearch(), TYPE_ICONS (+13 more)
+Cohesion: 0.09
+Nodes (26): filterNav(), filterProjects(), matchesQuery(), mergeGroups(), normalize(), QUICK_NAV, SpotlightSearch(), TYPE_ICONS (+18 more)
 
 ### Community 12 - "buildIndex.js"
 Cohesion: 0.10
@@ -371,9 +369,9 @@ Nodes (52): predecessors, prevent_task_dependency_cycle, campaign_accounts, camp
 Cohesion: 0.13
 Nodes (28): DEMO_ONGOING_JOB_TASKS, OngoingJobTasksPanel(), DEADLINE_TONE_STYLES, DeadlineBadge(), NONE_OPTION, TaskTable(), buildOwnerOptions(), campaignIdFromOpportunity() (+20 more)
 
-### Community 28 - "ProjectsPage.jsx"
-Cohesion: 0.10
-Nodes (25): formatDate(), SequenceListPanel(), ClickableTableRow(), stopRowClick(), SortableTableHeader(), TableSortIndicator(), CampaignInitWizard(), campaignCompanySortAccessors (+17 more)
+### Community 28 - "OngoingJobsPage.jsx"
+Cohesion: 0.08
+Nodes (36): formatDate(), SequenceListPanel(), buildOngoingJobFilterSchema(), ClickableTableRow(), stopRowClick(), SortableTableHeader(), TableSortIndicator(), CampaignInitWizard() (+28 more)
 
 ### Community 29 - "usePageLifecycle"
 Cohesion: 0.13
@@ -502,10 +500,6 @@ Nodes (14): assertJob(), createJobMemoryEntry(), JOB_MEMORY_TYPES, listJobMemory
 ### Community 60 - "leadResponse.js"
 Cohesion: 0.23
 Nodes (13): buildEarliestInboundByLead(), buildLatestInteractionByLead(), earliestDate(), enrichCompaniesWithResponse(), enrichLeadsWithResponse(), enrichLeadWithResponse(), getCompanyResponseMeta(), getLeadLastInteractionAt() (+5 more)
-
-### Community 61 - "OngoingJobsPage.jsx"
-Cohesion: 0.26
-Nodes (11): buildOngoingJobFilterSchema(), DEFAULT_STAGES, formatShortDate(), getExecutionSummary(), LATE_STAGES, OngoingJobCard(), OngoingJobsBoard(), OngoingJobsTable() (+3 more)
 
 ### Community 62 - "ProjectCampaign"
 Cohesion: 0.10
@@ -638,10 +632,6 @@ Nodes (21): 1. Directory Tree & Frontend Application Architecture, 2.1 Project I
 ### Community 94 - "auditPostgresMigrationReadOnly.js"
 Cohesion: 0.33
 Nodes (5): pool, report, rows(), scalar(), scriptDir
-
-### Community 95 - "DataBlenderWizard.jsx"
-Cohesion: 0.15
-Nodes (11): InfoPanel(), INTERNAL_FIELDS, PreviewStat(), STEP_META, STEPS, VENDORS, emptyStep(), GRADUATION_STEPS (+3 more)
 
 ### Community 96 - "resendService.js"
 Cohesion: 0.36
@@ -959,7 +949,7 @@ _Questions this graph is uniquely positioned to answer:_
   _High betweenness centrality (0.218) - this node is a cross-community bridge._
 - **Why does `runJobSeeding()` connect `seedJobsFromSheet.mjs` to `adminRoutes.js`, `contactInquiry.js`, `migratePipelineStages.js`?**
   _High betweenness centrality (0.218) - this node is a cross-community bridge._
-- **Why does `crmApiFetch()` connect `crmApi.js` to `DataRecoveryPage.jsx`, `cn`, `CreateOngoingJobModal.jsx`, `CrmApp.jsx`, `DateTimePicker.jsx`, `SequenceStudio.jsx`, `TasksPage.jsx`, `ProjectsPage.jsx`, `usePageLifecycle`, `ProjectDetailWorkspace.jsx`, `InteractionTimeline.jsx`, `CommunicationsOverview.jsx`, `Modal.jsx`, `OngoingJobsPage.jsx`, `CommunicationJobModal.jsx`, `ProjectDatabaseTable.jsx`, `RelationshipsPage.jsx`, `TeamSettingsPage.jsx`, `DataBlenderWizard.jsx`, `CompanyDetailsDrawer.jsx`?**
+- **Why does `crmApiFetch()` connect `crmApi.js` to `CommunicationJobModal.jsx`, `InteractionTimeline.jsx`, `ProjectDatabaseTable.jsx`, `cn`, `DataRecoveryPage.jsx`, `CreateOngoingJobModal.jsx`, `CrmApp.jsx`, `CompanyDetailsDrawer.jsx`, `DateTimePicker.jsx`, `CommunicationsOverview.jsx`, `Modal.jsx`, `RelationshipsPage.jsx`, `SequenceStudio.jsx`, `TeamSettingsPage.jsx`, `TasksPage.jsx`, `OngoingJobsPage.jsx`, `usePageLifecycle`, `ProjectDetailWorkspace.jsx`?**
   _High betweenness centrality (0.044) - this node is a cross-community bridge._
 - **What connects `name`, `private`, `type` to the rest of the system?**
   _1147 weakly-connected nodes found - possible documentation gaps or missing edges._
