@@ -10,5 +10,8 @@
     "dev:server": "npm run dev --prefix server",
     "build": "npm run build --workspace client",
     "start": "npm run preview --workspace client"
+  },
+  "dependencies": {
+    "@microsoft/clarity": "^1.0.2"
   }
 }
