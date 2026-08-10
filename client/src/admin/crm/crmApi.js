@@ -347,23 +347,23 @@ function isUsableCampaignId(value) {
 }
 
 export async function previewSequenceAudience(campaignId, options = {}) {
-  const params = new URLSearchParams();
-  if (options.sequenceId) params.set('sequenceId', options.sequenceId);
-  if (options.importCampaign) params.set('importCampaign', 'true');
-  if (options.importedCampaignIds?.length) params.set('importedCampaignIds', options.importedCampaignIds.join(','));
-  if (options.includeCompanyIds?.length) params.set('includeCompanyIds', options.includeCompanyIds.join(','));
-  if (options.includeLeadIds?.length) params.set('includeLeadIds', options.includeLeadIds.join(','));
-  if (options.excludeCompanyIds?.length) params.set('excludeCompanyIds', options.excludeCompanyIds.join(','));
-  if (options.excludeLeadIds?.length) params.set('excludeLeadIds', options.excludeLeadIds.join(','));
-  if (options.leadIds?.length) params.set('leadIds', options.leadIds.join(','));
-  if (options.companyIds?.length) params.set('companyIds', options.companyIds.join(','));
-  if (options.full) params.set('full', 'true');
-  const query = params.toString();
+  const body = {};
+  if (options.sequenceId) body.sequenceId = options.sequenceId;
+  if (options.importCampaign) body.importCampaign = true;
+  if (options.importedCampaignIds?.length) body.importedCampaignIds = options.importedCampaignIds;
+  if (options.campaignSelections && Object.keys(options.campaignSelections).length) body.campaignSelections = options.campaignSelections;
+  if (options.includeCompanyIds?.length) body.includeCompanyIds = options.includeCompanyIds;
+  if (options.includeLeadIds?.length) body.includeLeadIds = options.includeLeadIds;
+  if (options.excludeCompanyIds?.length) body.excludeCompanyIds = options.excludeCompanyIds;
+  if (options.excludeLeadIds?.length) body.excludeLeadIds = options.excludeLeadIds;
+  if (options.leadIds?.length) body.leadIds = options.leadIds;
+  if (options.companyIds?.length) body.companyIds = options.companyIds;
+  if (options.full) body.full = true;
   const safeCampaignId = isUsableCampaignId(campaignId) ? String(campaignId).trim() : null;
   const path = safeCampaignId
     ? `/api/admin/projects/${safeCampaignId}/audience-preview`
     : '/api/admin/audience-preview';
-  return crmApiFetch(`${path}${query ? `?${query}` : ''}`);
+  return crmApiFetch(path, { method: 'POST', body: JSON.stringify(body) });
 }
 
 export async function launchSequence(sequenceId, body = {}) {

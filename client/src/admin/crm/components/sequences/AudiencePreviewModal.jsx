@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Users, Loader2 } from 'lucide-react';
 import { previewSequenceAudience } from '../../crmApi.js';
@@ -7,10 +7,36 @@ import { useOverlayTransition } from '../ui/useOverlayTransition.js';
 import { useBodyScrollLock } from '../ui/useBodyScrollLock.js';
 import { cn } from '../ui/primitives.jsx';
 
-function trimEmail(value) {
-  const text = String(value || '').split(';')[0].trim();
-  return text || '—';
+const BLOCKED_REASON_LABELS = {
+  missing_email: 'No email on file',
+  suppressed: 'Suppressed (bounced/unsubscribed elsewhere)',
+  delivery_blocked: 'Marked Bounced / Invalid or Opted Out',
+  campaign_focus_hold: 'On hold in campaign (replied / paused / manual)',
+};
+
+function rowStatus(row, excludedSet) {
+  if (row.blockedReason) {
+    return { label: BLOCKED_REASON_LABELS[row.blockedReason] || row.blockedReason, tone: 'blocked', toggleable: false };
+  }
+  if (row.holdOverridden && !excludedSet.has(String(row.leadId))) {
+    return { label: 'Will send — mid-conversation, you selected it', tone: 'override', toggleable: true };
+  }
+  if (row.alreadySent) return { label: 'Already sent this sequence', tone: 'sent', toggleable: false };
+  if (row.alreadyInQueue) return { label: 'Already queued to send', tone: 'queued', toggleable: false };
+  if (row.alreadyEnrolled) return { label: 'Already enrolled', tone: 'enrolled', toggleable: false };
+  if (row.manuallyExcluded || excludedSet.has(String(row.leadId))) return { label: 'Manually excluded', tone: 'excluded', toggleable: true };
+  return { label: 'Will send', tone: 'send', toggleable: true };
 }
+
+const TONE_CLASSES = {
+  send: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  override: 'bg-orange-50 text-orange-700 border-orange-200',
+  excluded: 'bg-neutral-100 text-neutral-500 border-neutral-200',
+  blocked: 'bg-rose-50 text-rose-700 border-rose-200',
+  sent: 'bg-neutral-100 text-neutral-500 border-neutral-200',
+  queued: 'bg-amber-50 text-amber-700 border-amber-200',
+  enrolled: 'bg-amber-50 text-amber-700 border-amber-200',
+};
 
 export default function AudiencePreviewModal({
   open,
@@ -18,12 +44,11 @@ export default function AudiencePreviewModal({
   campaignId,
   sequenceId,
   audience,
-  previewMeta,
+  onPatchAudience,
 }) {
   const { mounted, visible, exiting } = useOverlayTransition(open);
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
-  const [total, setTotal] = useState(0);
 
   useBodyScrollLock(mounted);
 
@@ -42,15 +67,31 @@ export default function AudiencePreviewModal({
       ...audienceToApiParams(audience),
     })
       .then((data) => {
-        setRows(data.items || data.sample || []);
-        setTotal(data.totalItems ?? data.eligible ?? 0);
+        setRows(data.contacts || data.sample || []);
       })
       .catch(() => {
         setRows([]);
-        setTotal(0);
       })
       .finally(() => setLoading(false));
   }, [open, campaignId, sequenceId, audience.importedCampaignIds, audience.includeCompanyIds, audience.includeContactIds, audience.excludeCompanyIds, audience.excludeContactIds]);
+
+  const excludedSet = useMemo(
+    () => new Set((audience.excludeContactIds || []).map(String)),
+    [audience.excludeContactIds],
+  );
+
+  const sendTones = rows.map((row) => rowStatus(row, excludedSet).tone);
+  const willSendCount = sendTones.filter((tone) => tone === 'send' || tone === 'override').length;
+  const overrideCount = sendTones.filter((tone) => tone === 'override').length;
+
+  function toggleExclude(row) {
+    const id = String(row.leadId);
+    const current = (audience.excludeContactIds || []).map(String);
+    const next = excludedSet.has(id)
+      ? current.filter((existing) => existing !== id)
+      : [...current, id];
+    onPatchAudience?.({ excludeContactIds: next });
+  }
 
   if (!mounted) return null;
 
@@ -73,11 +114,11 @@ export default function AudiencePreviewModal({
               <Users className="h-4 w-4" />
             </span>
             <div>
-              <h3 className="text-sm font-bold text-[var(--color-ink)]">Audience preview</h3>
+              <h3 className="text-sm font-bold text-[var(--color-ink)]">Who gets emailed</h3>
               <p className="text-xs text-neutral-500">
-                {total} selected contact{total === 1 ? '' : 's'}
-                {(previewMeta?.alreadySent ?? 0) > 0 ? ` (${previewMeta.alreadySent} already emailed previously)` : ''}
-                {(previewMeta?.netNew ?? 0) > 0 ? ` · ${previewMeta.netNew} new to enroll` : ''}
+                {loading ? 'Loading…' : `${willSendCount} will send now`}
+                {!loading && rows.length ? ` · ${rows.length - willSendCount} skipped` : ''}
+                {!loading && overrideCount ? ` · ${overrideCount} mid-conversation` : ''}
               </p>
             </div>
           </div>
@@ -97,43 +138,57 @@ export default function AudiencePreviewModal({
               <table className="crm-seq-preview-table">
                 <thead>
                   <tr>
+                    <th>Send?</th>
                     <th>Name</th>
-                    <th>Role</th>
-                    <th>Primary</th>
-                    <th>Apollo</th>
-                    <th>Hunter</th>
-                    <th>Lusha</th>
-                    <th>Personal</th>
+                    <th>Company</th>
+                    <th>Email</th>
+                    <th>Source list</th>
+                    <th>Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {!rows.length && (
                     <tr>
-                      <td colSpan={7} className="py-10 text-center text-neutral-400">No contacts match this audience.</td>
+                      <td colSpan={6} className="py-10 text-center text-neutral-400">No contacts match this audience.</td>
                     </tr>
                   )}
-                  {rows.map((row) => (
-                    <tr key={row._id}>
-                      <td className="font-medium text-neutral-800">{row.name || '—'}</td>
-                      <td className="text-neutral-500">{row.designation || '—'}</td>
-                      <td className="font-mono text-neutral-500">{trimEmail(row.email)}</td>
-                      <td className="font-mono text-neutral-500">{trimEmail(row.emailApollo)}</td>
-                      <td className="font-mono text-neutral-500">{trimEmail(row.emailHunter)}</td>
-                      <td className="font-mono text-neutral-500">{trimEmail(row.emailLusha)}</td>
-                      <td className="font-mono text-neutral-500">{trimEmail(row.emailPersonal)}</td>
-                    </tr>
-                  ))}
+                  {rows.map((row) => {
+                    const status = rowStatus(row, excludedSet);
+                    const checked = status.tone === 'send';
+                    return (
+                      <tr key={row.campaignContactId || row.leadId}>
+                        <td>
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            disabled={!status.toggleable}
+                            onChange={() => toggleExclude(row)}
+                            title={status.toggleable ? 'Include/exclude this contact' : 'This contact cannot be toggled here'}
+                          />
+                        </td>
+                        <td className="font-medium text-neutral-800">{row.name || '—'}</td>
+                        <td className="text-neutral-500">{row.companyName || '—'}</td>
+                        <td className="font-mono text-neutral-500">{row.email || '—'}</td>
+                        <td className="text-neutral-500">{row.campaignName || '—'}</td>
+                        <td>
+                          <span className={cn('inline-flex items-center rounded-full border px-2 py-0.5 text-2xs font-semibold', TONE_CLASSES[status.tone])}>
+                            {status.label}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
           )}
         </div>
 
-        {!loading && rows.length < total && (
+        {!loading && rows.length ? (
           <p className="border-t border-[var(--color-line)] px-4 py-2 text-center text-2xs text-neutral-400">
-            Showing {rows.length} of {total} contacts
+            Check the box to manually include/exclude a specific contact. Contacts blocked by a delivery rule (bounced, suppressed, missing email, or on hold in their campaign) can't be forced here.
           </p>
-        )}
+        ) : null}
       </div>
     </div>,
     document.body,

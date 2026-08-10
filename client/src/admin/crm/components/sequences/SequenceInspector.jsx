@@ -186,6 +186,12 @@ export default function SequenceInspector({
                     {mailboxUsage ? (
                       <>, using <span className="font-semibold">{Math.min(audiencePreview?.netNew || 0, mailboxUsage.remaining ?? mailboxUsage.dailyCap ?? 150)}</span> of the {mailboxUsage.remaining ?? Math.max(0, (mailboxUsage.dailyCap || 150) - (mailboxUsage.sentToday || 0))} sends left on this mailbox today</>
                     ) : null}. Click again to confirm.
+                    {(audiencePreview?.holdOverridden || 0) > 0 && (
+                      <span className="mt-1.5 block font-semibold">
+                        {audiencePreview.holdOverridden} of these {audiencePreview.holdOverridden === 1 ? 'is' : 'are'} mid-conversation
+                        {' '}(replied or paused) and will get an automated email because you selected {audiencePreview.holdOverridden === 1 ? 'them' : 'them'} at import.
+                      </span>
+                    )}
                   </p>
                 )}
                 <button
@@ -209,7 +215,7 @@ export default function SequenceInspector({
         campaignId={campaignId}
         sequenceId={sequenceId}
         audience={audience}
-        previewMeta={audiencePreview}
+        onPatchAudience={patchAudience}
       />
     </>
   );
@@ -455,7 +461,8 @@ function GlobalInspector({
               (acc, arr) => acc + (Array.isArray(arr) ? arr.length : 0),
               0,
             );
-            const count = audiencePreview?.eligible || totalSel || 0;
+            const total = (audiencePreview?.eligible || 0) + (audiencePreview?.blocked || 0);
+            const count = total || totalSel || 0;
             return (
               <button
                 type="button"
@@ -463,7 +470,7 @@ function GlobalInspector({
                 className="mt-2 inline-flex items-center gap-1 text-2xs font-semibold text-brand hover:underline"
               >
                 <Eye className="h-3 w-3" />
-                Preview full list ({count})
+                See who gets emailed & why ({count})
               </button>
             );
           })()}

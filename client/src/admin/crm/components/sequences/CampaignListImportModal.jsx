@@ -21,6 +21,17 @@ import { cn } from '../ui/primitives.jsx';
 import { DeliveryStatusBadge } from '../leads/LeadTableComponents.jsx';
 import OutreachDrawer from '../leads/OutreachDrawer.jsx';
 
+// Contacts in these campaign focus states are mid-conversation. The sequence
+// engine holds them back by default; ticking one here is the explicit decision
+// to send anyway, so it is surfaced at selection time rather than downstream.
+const HOLD_FOCUS_STATES = new Set(['active_reply', 'paused_after_reply', 'paused', 'manual_hold']);
+
+function isOnHold(lead) {
+  const state = lead.campaignFocusState;
+  if (!state) return false;
+  return HOLD_FOCUS_STATES.has(state) || !['pending', 'active_manual'].includes(state);
+}
+
 const STATUS_FILTERS = [
   { id: 'All', label: 'All contacts' },
   { id: 'Out of Office', label: 'Out of Office', isHighlight: true, icon: Clock },
@@ -372,7 +383,17 @@ export default function CampaignListImportModal({
                             </span>
                           </td>
                           <td>
-                            <DeliveryStatusBadge status={lead.deliveryStatus || 'Pending Inqueue'} />
+                            <div className="flex flex-col items-start gap-1">
+                              <DeliveryStatusBadge status={lead.deliveryStatus || 'Pending Inqueue'} />
+                              {isOnHold(lead) && (
+                                <span
+                                  className="inline-flex items-center rounded-full border border-orange-200 bg-orange-50 px-2 py-0.5 text-2xs font-semibold text-orange-700"
+                                  title="Mid-conversation. Normally held back from sequences — selecting this contact sends anyway."
+                                >
+                                  Mid-conversation — sends if selected
+                                </span>
+                              )}
+                            </div>
                           </td>
                           <td className="font-mono text-xs text-neutral-600">
                             <span className="inline-flex items-center gap-1 text-xs text-neutral-600">

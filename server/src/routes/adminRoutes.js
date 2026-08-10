@@ -694,7 +694,7 @@ router.get('/sequences/:id', asyncRoute(async (req, res) => {
   res.json(await getSequenceWithStats(req.params.id));
 }));
 
-router.get('/projects/:id/audience-preview', asyncRoute(async (req, res) => {
+router.post('/projects/:id/audience-preview', asyncRoute(async (req, res) => {
   const {
     sequenceId,
     leadIds,
@@ -705,21 +705,22 @@ router.get('/projects/:id/audience-preview', asyncRoute(async (req, res) => {
     excludeLeadIds,
     importedCampaignIds,
     importCampaign,
+    campaignSelections,
     full,
-  } = req.query || {};
-  const parseIds = (value) => (value ? String(value).split(',').filter(Boolean) : []);
-  const parseBool = (value) => value === 'true' || value === '1';
+  } = req.body || {};
+  const asIds = (value) => (Array.isArray(value) ? value.filter(Boolean) : []);
   res.json(await previewAudience(req.params.id, {
     sequenceId: sequenceId || undefined,
-    leadIds: parseIds(leadIds),
-    companyIds: parseIds(companyIds),
-    includeCompanyIds: parseIds(includeCompanyIds),
-    includeLeadIds: parseIds(includeLeadIds),
-    excludeCompanyIds: parseIds(excludeCompanyIds),
-    excludeLeadIds: parseIds(excludeLeadIds),
-    importedCampaignIds: parseIds(importedCampaignIds),
-    importCampaign: parseBool(importCampaign),
-    full: parseBool(full),
+    leadIds: asIds(leadIds),
+    companyIds: asIds(companyIds),
+    includeCompanyIds: asIds(includeCompanyIds),
+    includeLeadIds: asIds(includeLeadIds),
+    excludeCompanyIds: asIds(excludeCompanyIds),
+    excludeLeadIds: asIds(excludeLeadIds),
+    importedCampaignIds: asIds(importedCampaignIds),
+    importCampaign: Boolean(importCampaign),
+    campaignSelections: campaignSelections && typeof campaignSelections === 'object' ? campaignSelections : {},
+    full: Boolean(full),
   }));
 }));
 
@@ -767,6 +768,7 @@ router.post('/projects/:id/enroll', asyncRoute(async (req, res) => {
     excludeLeadIds: req.body?.excludeLeadIds,
     importedCampaignIds: req.body?.importedCampaignIds,
     importCampaign: req.body?.importCampaign,
+    campaignSelections: req.body?.campaignSelections,
     actor: getActor(req),
   });
   res.json(result);
@@ -784,6 +786,7 @@ router.post('/sequences/:id/launch', asyncRoute(async (req, res) => {
     excludeLeadIds: req.body?.excludeLeadIds,
     importedCampaignIds: req.body?.importedCampaignIds,
     importCampaign: req.body?.importCampaign,
+    campaignSelections: req.body?.campaignSelections,
     actor: getActor(req),
   });
   res.json(result);
@@ -821,7 +824,7 @@ router.get('/email/launch-batches/:batchId/send-status', asyncRoute(async (req, 
   res.json(await getLaunchBatchSendProgress(req.params.batchId));
 }));
 
-router.get('/audience-preview', asyncRoute(async (req, res) => {
+router.post('/audience-preview', asyncRoute(async (req, res) => {
   const {
     sequenceId,
     leadIds,
@@ -832,21 +835,22 @@ router.get('/audience-preview', asyncRoute(async (req, res) => {
     excludeLeadIds,
     importedCampaignIds,
     importCampaign,
+    campaignSelections,
     full,
-  } = req.query || {};
-  const parseIds = (value) => (value ? String(value).split(',').filter(Boolean) : []);
-  const parseBool = (value) => value === 'true' || value === '1';
+  } = req.body || {};
+  const asIds = (value) => (Array.isArray(value) ? value.filter(Boolean) : []);
   res.json(await previewAudience(null, {
     sequenceId: sequenceId || undefined,
-    leadIds: parseIds(leadIds),
-    companyIds: parseIds(companyIds),
-    includeCompanyIds: parseIds(includeCompanyIds),
-    includeLeadIds: parseIds(includeLeadIds),
-    excludeCompanyIds: parseIds(excludeCompanyIds),
-    excludeLeadIds: parseIds(excludeLeadIds),
-    importedCampaignIds: parseIds(importedCampaignIds),
-    importCampaign: parseBool(importCampaign),
-    full: parseBool(full),
+    leadIds: asIds(leadIds),
+    companyIds: asIds(companyIds),
+    includeCompanyIds: asIds(includeCompanyIds),
+    includeLeadIds: asIds(includeLeadIds),
+    excludeCompanyIds: asIds(excludeCompanyIds),
+    excludeLeadIds: asIds(excludeLeadIds),
+    importedCampaignIds: asIds(importedCampaignIds),
+    importCampaign: Boolean(importCampaign),
+    campaignSelections: campaignSelections && typeof campaignSelections === 'object' ? campaignSelections : {},
+    full: Boolean(full),
   }));
 }));
 

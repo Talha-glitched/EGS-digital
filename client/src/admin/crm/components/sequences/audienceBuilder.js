@@ -83,8 +83,12 @@ export function buildAudienceSummary(audience, preview, campaignLabels = {}) {
   const alreadyInQueue = preview?.alreadyInQueue || 0;
   const restarting = preview?.willRestart || 0;
 
-  const eligible = (preview?.eligible > 0) ? preview.eligible : totalSelectedInSelections;
-  const net = (preview?.netNew > 0) ? preview.netNew : eligible;
+  // Trust the fetched preview once it exists — even a genuine 0 (e.g. everyone
+  // blocked or manually excluded) must win over the raw selection count, or this
+  // text contradicts the per-contact breakdown in "See who gets emailed & why".
+  const hasPreview = preview && (preview.eligible > 0 || preview.netNew > 0 || preview.blocked > 0 || preview.alreadySent > 0 || preview.alreadyInQueue > 0 || preview.alreadyEnrolled > 0);
+  const eligible = hasPreview ? preview.eligible : totalSelectedInSelections;
+  const net = hasPreview ? preview.netNew : eligible;
 
   if (alreadyInQueue > 0 && net === 0) {
     return `${prefix} · All ${alreadyInQueue} contacts are already queued in Email → Outbox.`;

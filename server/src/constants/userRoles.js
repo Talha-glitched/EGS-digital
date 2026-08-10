@@ -119,7 +119,8 @@ export const ROUTE_PERMISSION_MAP = [
   { prefix: '/email', read: 'sequences:read', write: 'sequences:write' },
   { prefix: '/sent-emails', read: 'inbox:read', write: 'inbox:write' },
   { prefix: '/replies', read: 'inbox:read', write: 'inbox:write' },
-  { prefix: '/audience-preview', read: 'sequences:read', write: 'sequences:write' },
+  // POST (not GET) only because the exclude-id list can be too large for a query string; it's still a read.
+  { prefix: '/audience-preview', read: 'sequences:read', write: 'sequences:read' },
   { prefix: '/campaigns', read: 'campaigns:read', write: 'campaigns:write' },
   { prefix: '/sync', read: 'inbox:read', write: 'inbox:write' },
   { prefix: '/reports', read: 'reports:read', write: 'reports:read' },

@@ -266,6 +266,9 @@ export async function restoreSequence(id) {
   return { restored: true };
 }
 
+// The one blocked reason a user can override by ticking the contact at import.
+export const HOLD_REASON = 'campaign_focus_hold';
+
 function idList(...values) {
   return values.flat().filter(Boolean).map((value) => String(value).trim()).filter(Boolean);
 }
@@ -282,11 +285,15 @@ export async function previewAudience(projectId, options = {}) {
   const leadIds = idList(options.leadIds, options.includeLeadIds);
   const excludeCompanyIds = idList(options.excludeCompanyIds);
   const excludeLeadIds = idList(options.excludeLeadIds);
+  // Contacts the user ticked in the campaign-list import modal. Picking someone
+  // there IS the decision to email them, so it waives the soft campaign hold
+  // (replied / paused / manual) rather than making them choose a second time.
+  const consentedLeadIds = idList(...Object.values(options.campaignSelections || {}));
   const sequenceSqlId = await resolveSequenceSqlId(options.sequenceId);
   if (!campaignIds.length && !companyIds.length && !leadIds.length) {
     return { audienceContextId: String(projectId || 'global'), eligible: 0, netNew: 0, alreadyEnrolled: 0, alreadyCompleted: 0, alreadySent: 0, alreadyInQueue: 0, blocked: 0, sample: [], contacts: [] };
   }
-  const params = [campaignIds, companyIds, leadIds, excludeCompanyIds, excludeLeadIds, sequenceSqlId];
+  const params = [campaignIds, companyIds, leadIds, sequenceSqlId];
   const result = await db.query(`
     SELECT cc.id AS "campaignContactId",p.id AS "leadId",p.display_name AS name,por.title AS designation,
            o.id AS "companyId",o.canonical_name AS "companyName",ca.campaign_id AS "campaignId",c.name AS "campaignName",
@@ -310,16 +317,16 @@ export async function previewAudience(projectId, options = {}) {
     LEFT JOIN LATERAL(SELECT endpoint FROM endpoint_suppressions WHERE LOWER(endpoint)=LOWER(email.normalized_value) LIMIT 1)suppression ON TRUE
     LEFT JOIN LATERAL(
       SELECT se.id,se.execution_state FROM sequence_enrollments se
-      WHERE se.sequence_id=$6::uuid AND se.campaign_contact_id=cc.id
+      WHERE se.sequence_id=$4::uuid AND se.campaign_contact_id=cc.id
         AND se.reset_at IS NULL
       ORDER BY se.created_at DESC LIMIT 1
-    )existing ON $6::uuid IS NOT NULL
+    )existing ON $4::uuid IS NOT NULL
     LEFT JOIN LATERAL(
       SELECT COUNT(*) FILTER(WHERE sj.status='sent') AS sent_count,
              COUNT(*) FILTER(WHERE sj.status IN('pending','processing','failed')) AS queue_count
       FROM send_jobs sj JOIN sequence_enrollments se ON se.id=sj.enrollment_id
-      WHERE se.sequence_id=$6::uuid AND se.campaign_contact_id=cc.id AND se.reset_at IS NULL
-    )job_stats ON $6::uuid IS NOT NULL
+      WHERE se.sequence_id=$4::uuid AND se.campaign_contact_id=cc.id AND se.reset_at IS NULL
+    )job_stats ON $4::uuid IS NOT NULL
     WHERE (
       (CARDINALITY($1::text[])>0 AND (ca.campaign_id::text=ANY($1::text[]) OR c.mongo_campaign_id=ANY($1::text[])))
       OR (CARDINALITY($1::text[])=0 AND (
@@ -329,15 +336,36 @@ export async function previewAudience(projectId, options = {}) {
     )
       AND (CARDINALITY($2::text[])=0 OR o.id::text=ANY($2::text[]))
       AND (CARDINALITY($3::text[])=0 OR p.id::text=ANY($3::text[]))
-      AND NOT(o.id::text=ANY($4::text[])) AND NOT(p.id::text=ANY($5::text[]))
     ORDER BY p.display_name,ca.campaign_id
   `, params);
+  // Manual excludes are resolved here (not in the WHERE clause) so an excluded
+  // contact still comes back in the list — as ineligible — instead of vanishing,
+  // which left no row in the UI to toggle back in.
+  const excludedCompanySet = new Set(excludeCompanyIds.map(String));
+  const excludedLeadSet = new Set(excludeLeadIds.map(String));
+  const consentedLeadSet = new Set(consentedLeadIds.map(String));
   const contacts = result.rows.map((row) => {
     const alreadySent = row.sentCount > 0 || row.enrollmentState === 'completed';
     const alreadyInQueue = row.queueCount > 0;
     const alreadyEnrolled = Boolean(row.enrollmentId);
-    const eligible = !row.blockedReason;
-    return { ...row, eligible, alreadySent, alreadyInQueue, alreadyEnrolled, netNew: eligible && !alreadySent && !alreadyInQueue && !alreadyEnrolled };
+    const manuallyExcluded = excludedCompanySet.has(String(row.companyId)) || excludedLeadSet.has(String(row.leadId));
+    // Only the campaign hold is overridable. Missing email, suppression and
+    // bounced/opted-out are consent or deliverability facts, not preferences.
+    const holdOverridden = row.blockedReason === HOLD_REASON && consentedLeadSet.has(String(row.leadId));
+    const blockedReason = holdOverridden ? null : row.blockedReason;
+    const eligible = !blockedReason && !manuallyExcluded;
+    return {
+      ...row,
+      blockedReason,
+      holdOverridden,
+      originalBlockedReason: row.blockedReason,
+      manuallyExcluded,
+      eligible,
+      alreadySent,
+      alreadyInQueue,
+      alreadyEnrolled,
+      netNew: eligible && !alreadySent && !alreadyInQueue && !alreadyEnrolled,
+    };
   });
   const count = (predicate) => contacts.filter(predicate).length;
   const response = {
@@ -349,6 +377,9 @@ export async function previewAudience(projectId, options = {}) {
     alreadySent: count((row) => row.alreadySent),
     alreadyInQueue: count((row) => row.alreadyInQueue),
     blocked: count((row) => !row.eligible),
+    // Mid-conversation contacts about to receive automated mail — surfaced so the
+    // launch confirmation can say so out loud before anything actually sends.
+    holdOverridden: count((row) => row.holdOverridden && row.netNew),
     sample: contacts.slice(0, 25),
   };
   if (options.full) response.contacts = contacts;
@@ -555,10 +586,13 @@ export async function launchSequence(sequenceId, options = {}) {
       lead_id: contact.leadId,
       campaign_id: contact.campaignId,
       email: contact.email,
+      // Recorded per job so the send worker honours the same decision the user
+      // made at import; otherwise it re-applies the hold and the job sits pending.
+      hold_override: Boolean(contact.holdOverridden),
     }));
     const inserted = await client.query(`
       WITH input AS(
-        SELECT * FROM jsonb_to_recordset($1::jsonb) AS candidate(campaign_contact_id uuid,lead_id uuid,campaign_id uuid,email text)
+        SELECT * FROM jsonb_to_recordset($1::jsonb) AS candidate(campaign_contact_id uuid,lead_id uuid,campaign_id uuid,email text,hold_override boolean)
       ),new_enrollments AS(
         INSERT INTO sequence_enrollments(campaign_contact_id,sequence_version_id,execution_state,enrolled_at,lead_id,campaign_id,sequence_id,launch_batch_id,current_step_index,next_send_at,frozen,payload)
         SELECT candidate.campaign_contact_id,$2::uuid,'active',NOW(),candidate.lead_id,candidate.campaign_id,$3::uuid,$4::uuid,0,$5,FALSE,'{"source":"runtime_launch"}'::jsonb
@@ -570,7 +604,8 @@ export async function launchSequence(sequenceId, options = {}) {
       )
       INSERT INTO send_jobs(lead_id,campaign_id,enrollment_id,step_index,status,scheduled_for,recipient_email,rendered_subject,rendered_body,immediate_launch,manual_send,idempotency_key,payload)
       SELECT enrollment.lead_id,enrollment.campaign_id,enrollment.id,0,'pending',$5,input.email,$6,$7,FALSE,TRUE,
-             $4::text||':'||enrollment.campaign_contact_id::text||':0',jsonb_build_object('launchBatchId',$4::text,'sequenceId',$3::text)
+             $4::text||':'||enrollment.campaign_contact_id::text||':0',
+             jsonb_build_object('launchBatchId',$4::text,'sequenceId',$3::text,'holdOverride',COALESCE(input.hold_override,FALSE))
       FROM new_enrollments enrollment JOIN input ON input.campaign_contact_id=enrollment.campaign_contact_id
       ON CONFLICT(idempotency_key) WHERE idempotency_key IS NOT NULL DO NOTHING RETURNING id
     `, [JSON.stringify(candidatePayload), version.rows[0].id, seq.sqlId, launchId, scheduledFor, step.template_subject || '', step.template_body || '']);
@@ -582,7 +617,8 @@ export async function launchSequence(sequenceId, options = {}) {
   return {
     launchBatchId: launchId, launchId, enrolled, enrolledCount: enrolled,
     skippedAlreadySent: preview.alreadySent, skippedInQueue: preview.alreadyInQueue,
-    skippedBlocked: preview.blocked, eligible: preview.eligible, dryRun: Boolean(options.transactionOptions?.rollbackOnly),
+    skippedBlocked: preview.blocked, eligible: preview.eligible,
+    holdOverridden: preview.holdOverridden, dryRun: Boolean(options.transactionOptions?.rollbackOnly),
   };
 }
 
@@ -619,8 +655,20 @@ export async function listLaunchBatchJobs(batchId, options = {}) {
   const result = await db.query(`
     SELECT sj.id AS "_id",sj.id,sj.status,sj.step_index AS "stepIndex",sj.scheduled_for AS "scheduledFor",sj.sent_at AS "sentAt",
            sj.recipient_email AS "recipientEmail",sj.rendered_subject AS "renderedSubject",sj.error_message AS "errorMessage",
-           jsonb_build_object('_id',p.id,'name',p.display_name,'email',sj.recipient_email) AS "leadId"
+           jsonb_build_object('_id',p.id,'name',p.display_name,'email',sj.recipient_email) AS "leadId",
+           -- Why a pending job is not going out. Without this a blocked job just
+           -- reads "pending" forever and clicking Send appears to do nothing.
+           CASE WHEN sj.status<>'pending' THEN NULL
+                WHEN se.reset_at IS NOT NULL OR se.execution_state NOT IN('active','processing') THEN 'enrollment_inactive'
+                WHEN sup.endpoint IS NOT NULL THEN 'suppressed'
+                WHEN NOT COALESCE((sj.payload->>'holdOverride')::boolean,FALSE)
+                     AND COALESCE(cc.outreach_focus_state,'pending') NOT IN('pending','active_manual') THEN 'campaign_focus_hold'
+                WHEN sj.scheduled_for IS NOT NULL AND sj.scheduled_for>NOW() THEN 'not_due_yet'
+                WHEN COALESCE(sj.manual_send,FALSE) THEN 'awaiting_manual_release'
+                ELSE NULL END AS "blockedReason"
     FROM send_jobs sj JOIN sequence_enrollments se ON se.id=sj.enrollment_id JOIN people p ON p.id=se.lead_id
+    JOIN campaign_contacts cc ON cc.id=se.campaign_contact_id
+    LEFT JOIN LATERAL(SELECT endpoint FROM endpoint_suppressions WHERE LOWER(endpoint)=LOWER(sj.recipient_email) LIMIT 1) sup ON TRUE
     WHERE se.launch_batch_id=$1::uuid ${status} ORDER BY sj.created_at,sj.step_index`, params,
   );
   return { items: result.rows, total: result.rowCount };
@@ -647,7 +695,28 @@ export async function sendLaunchBatchJobs(batchId, options = {}) {
   );
   if (jobs.rowCount) await db.query(`UPDATE sequence_launches SET status='active',updated_at=NOW() WHERE id=$1::uuid`, [batchId]);
   if (jobs.rowCount) { const { kickSendQueue } = await import('./sendWorker.js'); kickSendQueue().catch(() => {}); }
-  return { started: jobs.rowCount > 0, running: jobs.rowCount > 0, queued: jobs.rowCount, remaining: jobs.rowCount, message: jobs.rowCount ? `${jobs.rowCount} email(s) released to the safe send worker.` : 'Nothing left to send.' };
+
+  // Releasing a job is not the same as it being sendable — the worker applies its
+  // own guards. Report the difference instead of claiming success for jobs that
+  // will silently sit pending forever.
+  const blocked = await db.query(`
+    SELECT COUNT(*)::int AS n FROM send_jobs sj
+    JOIN sequence_enrollments se ON se.id=sj.enrollment_id
+    JOIN campaign_contacts cc ON cc.id=se.campaign_contact_id
+    WHERE se.launch_batch_id=$1::uuid AND sj.status='pending'
+      AND (se.reset_at IS NOT NULL OR se.execution_state NOT IN('active','processing')
+        OR (NOT COALESCE((sj.payload->>'holdOverride')::boolean,FALSE)
+            AND COALESCE(cc.outreach_focus_state,'pending') NOT IN('pending','active_manual')))`, [batchId]);
+  const blockedCount = blocked.rows[0]?.n || 0;
+  const sendable = Math.max(0, jobs.rowCount - blockedCount);
+
+  let message;
+  if (!jobs.rowCount) message = 'Nothing left to send.';
+  else if (!blockedCount) message = `${jobs.rowCount} email(s) released to the safe send worker.`;
+  else if (!sendable) message = `None of these can send: ${blockedCount} held (recipient replied, paused, or enrollment inactive). Re-import and select them to send anyway.`;
+  else message = `${sendable} email(s) released. ${blockedCount} held (recipient replied, paused, or enrollment inactive) and will not send.`;
+
+  return { started: sendable > 0, running: sendable > 0, queued: sendable, remaining: sendable, blocked: blockedCount, message };
 }
 
 export async function getLaunchBatchSendProgress(batchId) {

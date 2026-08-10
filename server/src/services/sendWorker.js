@@ -138,7 +138,10 @@ async function processSendJob(jobId, { force = false } = {}) {
     if (!force && context.manual_send) throw Object.assign(new Error('This email is still held for manual batch release.'), { status: 409 });
     if (!force && context.scheduled_for && new Date(context.scheduled_for) > new Date()) throw Object.assign(new Error('This email is not due yet.'), { status: 409 });
     if (context.reset_at || !['active','processing'].includes(context.execution_state)) throw Object.assign(new Error('Enrollment is no longer active.'), { status: 409 });
-    if (!['pending','active_manual'].includes(context.outreach_focus_state || 'pending')) throw Object.assign(new Error('Campaign contact is held by campaign follow-up coordination.'), { status: 409 });
+    // A hold_override stamped at launch means the user explicitly selected this
+    // mid-conversation contact at import, so the campaign hold is already decided.
+    if (!context.payload?.holdOverride
+      && !['pending','active_manual'].includes(context.outreach_focus_state || 'pending')) throw Object.assign(new Error('Campaign contact is held by campaign follow-up coordination.'), { status: 409 });
     const suppressed = await client.query(`SELECT 1 FROM endpoint_suppressions WHERE LOWER(endpoint)=LOWER($1) LIMIT 1`, [context.recipient_email]);
     if (suppressed.rows.length) {
       await client.query(`UPDATE send_jobs SET status='cancelled',error_message='Recipient is suppressed',updated_at=NOW() WHERE id=$1::uuid`, [jobId]);
@@ -302,7 +305,9 @@ async function pollSendQueue() {
   const job = await db.query(`SELECT sj.id FROM send_jobs sj JOIN sequence_enrollments se ON se.id=sj.enrollment_id
     JOIN campaign_contacts cc ON cc.id=se.campaign_contact_id
     WHERE sj.status='pending' AND COALESCE(sj.manual_send,FALSE)=FALSE AND COALESCE(sj.scheduled_for,NOW())<=NOW()
-      AND se.execution_state='active' AND se.reset_at IS NULL AND COALESCE(cc.outreach_focus_state,'pending') IN('pending','active_manual')
+      AND se.execution_state='active' AND se.reset_at IS NULL
+      AND (COALESCE(cc.outreach_focus_state,'pending') IN('pending','active_manual')
+           OR COALESCE((sj.payload->>'holdOverride')::boolean,FALSE))
     ORDER BY sj.scheduled_for NULLS FIRST,sj.created_at LIMIT 1`);
   if (!job.rows.length) {
     return;

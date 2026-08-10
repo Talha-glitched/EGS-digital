@@ -17,6 +17,16 @@ import TablePagination from '../ui/TablePagination.jsx';
 import { EmptyState, cn } from '../ui/primitives.jsx';
 import { ChevronDown, ChevronRight, Play, Send, Trash2 } from 'lucide-react';
 
+// Why a pending job is not going out, so it never just sits at "pending" with
+// no explanation and no feedback when Send is clicked.
+const JOB_BLOCK_LABELS = {
+  campaign_focus_hold: 'Held — mid-conversation',
+  suppressed: 'Held — recipient suppressed',
+  enrollment_inactive: 'Held — enrollment no longer active',
+  not_due_yet: 'Scheduled for later',
+  awaiting_manual_release: 'Awaiting manual release',
+};
+
 const STATUS_CONFIG = {
   pending: { className: 'bg-amber-50 text-amber-800 ring-amber-200/70', label: 'Pending' },
   processing: { className: 'bg-blue-50 text-blue-800 ring-blue-200/70', label: 'Sending…' },
@@ -337,6 +347,14 @@ function BatchJobTable({ batchId, batchLabel, onJobsChanged }) {
                   <td className="px-3 py-2 text-center text-neutral-500">{(job.stepIndex ?? 0) + 1}</td>
                   <td className="px-3 py-2 text-center">
                     <StatusBadge status={job.status} />
+                    {job.blockedReason && (
+                      <div
+                        className="mt-1 text-2xs font-semibold text-orange-700"
+                        title="This job will not send until the reason is resolved."
+                      >
+                        {JOB_BLOCK_LABELS[job.blockedReason] || job.blockedReason}
+                      </div>
+                    )}
                   </td>
                   <td className="px-3 py-2 text-right">
                     <DeleteIconButton
@@ -446,13 +464,22 @@ export default function EmailOutboxWorkspace({ focusBatchId = '', onFocusBatchHa
                   )}
                 </div>
               </div>
-              <Link
-                to={`/admin/crm/sequences?edit=${batch.sequenceId}`}
-                onClick={(e) => e.stopPropagation()}
-                className="shrink-0 text-2xs font-semibold text-brand hover:underline"
-              >
-                Open sequence
-              </Link>
+              <div className="flex shrink-0 flex-col items-end gap-1">
+                <Link
+                  to={`/admin/crm/sequences?edit=${batch.sequenceId}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-2xs font-semibold text-brand hover:underline"
+                >
+                  Open sequence
+                </Link>
+                <Link
+                  to={`/admin/crm/sequence-live/${batch._id}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-2xs font-semibold text-brand hover:underline"
+                >
+                  Live send monitor
+                </Link>
+              </div>
             </button>
             {isOpen ? (
               <BatchJobTable batchId={batch._id} batchLabel={batch.sequenceName} onJobsChanged={loadBatches} />
