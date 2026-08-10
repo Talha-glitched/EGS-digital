@@ -236,7 +236,7 @@ function CrmShell({ projects, onLogout, status }) {
     '/admin/crm/pipeline': ['Ongoing Jobs', 'Work in progress from inquiry through execution'],
     '/admin/crm/jobs': ['Jobs Done', 'Completed and past production jobs directory'],
     '/admin/crm/tasks': ['Tasks', 'Calls, meetings, proposals, and overdue next actions'],
-    '/admin/crm/inventory': ['Inventory', 'Photograph, QR-tag, and track warehouse items across jobs'],
+    '/admin/crm/inventory': ['Inventory', 'Track items, quantities, notes, photos, and status across warehouse and job sites'],
     '/admin/crm/relationships': ['Key Relationships', 'Confirmed right POCs, last touchpoints, and follow-up timing'],
     '/admin/crm/people': ['Contacts', 'Search and manage every point of contact'],
     '/admin/crm/companies': ['Companies', 'Target companies, clients, and relationship history'],

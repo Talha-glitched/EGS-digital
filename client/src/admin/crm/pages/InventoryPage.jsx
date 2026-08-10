@@ -1,300 +1,256 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Boxes, Camera, History, MapPin, Plus, Printer, RotateCcw, ScanLine, Trash2, Warehouse, X } from 'lucide-react';
+import { Boxes, Building2, History, MapPin, Package, Plus, RotateCcw, Search, Trash2, Warehouse, X, FileText, Ban, Layers } from 'lucide-react';
 import { crmApiFetch } from '../crmApi.js';
 import { getMediaUrl } from '../utils/mediaUrl.js';
 import { Alert, Badge, EmptyState, LoadingState, PageHeader, PageSection, PageShell, StatCard } from '../components/ui/primitives.jsx';
 import { Modal } from '../components/ui/Modal.jsx';
 
-function CameraScanner({ onDetected, onClose }) {
-  const videoRef = useRef(null);
-  const [message, setMessage] = useState('Starting camera…');
-  useEffect(() => {
-    let stream;
-    let timer;
-    let cancelled = false;
-    async function start() {
-      if (!('BarcodeDetector' in window) || !navigator.mediaDevices?.getUserMedia) {
-        setMessage('Camera QR detection is not supported on this device.');
-        return;
-      }
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-        if (cancelled) return;
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play();
-        const detector = new window.BarcodeDetector({ formats: ['qr_code'] });
-        setMessage('Point the camera at the QR code.');
-        timer = setInterval(async () => {
-          try {
-            const codes = await detector.detect(videoRef.current);
-            if (codes[0]?.rawValue) {
-              onDetected(codes[0].rawValue);
-              onClose();
-            }
-          } catch {
-            /* keep scanning */
-          }
-        }, 450);
-      } catch {
-        setMessage('Camera permission was unavailable.');
-      }
-    }
-    start();
-    return () => {
-      cancelled = true;
-      if (timer) clearInterval(timer);
-      stream?.getTracks().forEach((track) => track.stop());
-    };
-  }, [onDetected, onClose]);
-  return (
-    <div className="relative overflow-hidden rounded-xl bg-neutral-950">
-      <video ref={videoRef} muted playsInline className="aspect-video w-full object-cover" />
-      <div className="absolute inset-x-0 bottom-0 bg-neutral-950/75 p-3 text-center text-xs text-white">{message}</div>
-      <button className="absolute right-2 top-2 rounded-full bg-white/90 p-2" onClick={onClose} aria-label="Close scanner"><X className="h-4 w-4" /></button>
-    </div>
-  );
-}
-
-function extractSlug(rawValue) {
-  const trimmed = String(rawValue || '').trim();
-  if (!trimmed) return '';
-  const match = trimmed.match(/\/inventory\/i\/([a-z0-9]+)/i);
-  if (match) return match[1];
-  return trimmed.replace(/^https?:\/\//, '').replace(/\/$/, '');
-}
-
 function ItemCard({ item, onOpen }) {
+  const primaryPhoto = (item.photoUrls && item.photoUrls[0]) || item.photoUrl;
+  const photoCount = item.photoUrls?.length || (item.photoUrl ? 1 : 0);
+
   return (
-    <button onClick={() => onOpen(item)} className="flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white text-left transition hover:border-brand hover:shadow-sm">
-      <div className="aspect-square w-full overflow-hidden bg-neutral-100">
-        {item.photoUrl ? <img src={getMediaUrl(item.photoUrl)} alt={item.name} className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center text-neutral-300"><Boxes className="h-8 w-8" /></div>}
+    <button onClick={() => onOpen(item)} className="group flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white text-left transition hover:border-neutral-400 hover:shadow-md">
+      <div className="relative aspect-square w-full overflow-hidden bg-neutral-100">
+        {primaryPhoto ? (
+          <img src={getMediaUrl(primaryPhoto)} alt={item.name} className="h-full w-full object-cover transition group-hover:scale-105" />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-neutral-300">
+            <Boxes className="h-10 w-10" />
+          </div>
+        )}
+        {photoCount > 1 && (
+          <div className="absolute bottom-2 right-2 rounded-md bg-neutral-900/80 px-2 py-0.5 text-3xs font-medium text-white shadow-sm backdrop-blur-xs">
+            {photoCount} photos
+          </div>
+        )}
+        <div className="absolute top-2 left-2">
+          <Badge tone="neutral" className="bg-white/90 text-neutral-800 shadow-xs backdrop-blur-xs font-semibold">
+            Qty: {item.quantity || 1}
+          </Badge>
+        </div>
       </div>
-      <div className="p-3">
-        <p className="text-sm font-semibold text-neutral-900">{item.name}</p>
-        <div className="mt-1.5 flex flex-wrap gap-1">
-          {item.status === 'job'
-            ? <Badge tone="info">At: {item.jobTitle || 'Job'}</Badge>
-            : <Badge tone="success">Warehouse</Badge>}
-          {!item.labelPrintedAt && <Badge tone="warning">New label</Badge>}
+      <div className="flex flex-1 flex-col justify-between p-3">
+        <div>
+          <p className="line-clamp-1 text-sm font-semibold text-neutral-900">{item.name}</p>
+          {item.notes && <p className="mt-1 line-clamp-1 text-2xs text-neutral-500">{item.notes}</p>}
+        </div>
+        <div className="mt-2.5 flex flex-wrap gap-1">
+          {item.status === 'job' && (
+            <Badge tone="info" icon={MapPin}>At Job: {item.jobTitle || 'Job Site'}</Badge>
+          )}
+          {item.status === 'warehouse' && (
+            <Badge tone="success" icon={Warehouse}>In Warehouse</Badge>
+          )}
+          {item.status === 'discarded' && (
+            <Badge tone="danger" icon={Ban}>Discarded</Badge>
+          )}
         </div>
       </div>
     </button>
   );
 }
 
-function ItemDetail({ item, jobs, busy, onClose, onSendToJob, onReturn, onArchive }) {
-  const [jobId, setJobId] = useState('');
-  const [qrOpen, setQrOpen] = useState(false);
-  const qrUrl = getMediaUrl(`/api/admin/inventory/items/${encodeURIComponent(item.slug)}/qr.svg`);
+function ItemDetail({ item, jobs, busy, onClose, onSaveItem, onArchive }) {
+  const photoList = item.photoUrls?.length ? item.photoUrls : (item.photoUrl ? [item.photoUrl] : []);
+  const [selectedPhotoIdx, setSelectedPhotoIdx] = useState(0);
 
-  return (
-    <Modal open onClose={onClose} title={item.name} subtitle={item.slug} icon={Boxes} size="md" footer={<button className="crm-btn-secondary" onClick={onClose}>Close</button>}>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100">
-          {item.photoUrl ? <img src={getMediaUrl(item.photoUrl)} alt={item.name} className="aspect-square w-full object-cover" /> : <div className="flex aspect-square items-center justify-center text-neutral-300"><Boxes className="h-10 w-10" /></div>}
-        </div>
-        <div className="flex flex-col gap-3">
-          <div>
-            {item.status === 'job'
-              ? <Badge tone="info">Currently at: {item.jobTitle || 'a Job'}</Badge>
-              : <Badge tone="success">Currently in Warehouse</Badge>}
-          </div>
+  const [name, setName] = useState(item.name || '');
+  const [quantity, setQuantity] = useState(item.quantity || 1);
+  const [notes, setNotes] = useState(item.notes || '');
+  const [status, setStatus] = useState(item.status || 'warehouse');
+  const [jobId, setJobId] = useState(item.jobId || '');
+  const [formError, setFormError] = useState('');
 
-          {item.status === 'warehouse' ? (
-            <div className="rounded-lg border border-neutral-200 p-3">
-              <label className="text-xs font-medium text-neutral-600">Send to Job
-                <select className="crm-select mt-1.5 w-full" value={jobId} onChange={(e) => setJobId(e.target.value)}>
-                  <option value="">Choose a Job</option>
-                  {jobs.map((entry) => <option key={entry.id} value={entry.id}>{entry.jobNumber ? `${entry.jobNumber} · ` : ''}{entry.name}</option>)}
-                </select>
-              </label>
-              <button className="crm-btn-primary mt-2 w-full justify-center" disabled={busy || !jobId} onClick={() => onSendToJob(item.id, jobId)}><Warehouse className="h-4 w-4" />Send to Job</button>
-            </div>
-          ) : (
-            <button className="crm-btn-primary justify-center" disabled={busy} onClick={() => onReturn(item.id)}><Warehouse className="h-4 w-4" />Return to Warehouse</button>
-          )}
+  const activePhoto = photoList[selectedPhotoIdx] || photoList[0];
 
-          <button className="crm-btn-secondary justify-center" onClick={() => setQrOpen((v) => !v)}><ScanLine className="h-4 w-4" />{qrOpen ? 'Hide' : 'Show'} QR code</button>
-          {qrOpen && (
-            <div className="rounded-lg border border-neutral-200 p-3 text-center">
-              <img src={qrUrl} alt={`QR code for ${item.name}`} className="mx-auto w-40" />
-              <p className="mt-2 text-xs font-semibold text-neutral-700">{item.name}</p>
-              <p className="text-2xs text-neutral-400">{item.slug}</p>
-              <p className="mt-1 text-2xs text-neutral-400">The name and code are printed on the label itself, so it's still identifiable off the sheet.</p>
-              <a href={qrUrl} download={`${item.slug}.svg`} className="crm-btn-secondary mt-2 w-full justify-center text-xs">Download QR (SVG)</a>
-            </div>
-          )}
-
-          <button className="crm-btn-secondary justify-center text-red-600" disabled={busy} onClick={() => onArchive(item.id)}><Trash2 className="h-4 w-4" />Remove item</button>
-          <p className="text-center text-2xs text-neutral-400">Removed items stay recoverable — the photo is kept for 60 days before it's cleared out.</p>
-        </div>
-      </div>
-    </Modal>
-  );
-}
-
-// Invisible on screen — only appears on the printed page. There's nothing to navigate to
-// or close: it mounts off-screen, waits for the QR images to actually load, opens the OS
-// print dialog, and unmounts itself as soon as that dialog closes (print or cancel), via
-// the 'afterprint' event.
-function PrintLabelSheet({ items, onDone }) {
-  useEffect(() => {
-    let cancelled = false;
-    function triggerPrint() {
-      if (!cancelled) window.print();
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!name.trim()) {
+      setFormError('Item name is required.');
+      return;
     }
-    function handleAfterPrint() { onDone(); }
-    window.addEventListener('afterprint', handleAfterPrint);
-
-    const images = Array.from(document.querySelectorAll('.crm-print-label-sheet img'));
-    const pending = images.filter((img) => !img.complete);
-    if (!pending.length) {
-      triggerPrint();
-    } else {
-      let remaining = pending.length;
-      const onSettle = () => { remaining -= 1; if (remaining <= 0) triggerPrint(); };
-      pending.forEach((img) => {
-        img.addEventListener('load', onSettle, { once: true });
-        img.addEventListener('error', onSettle, { once: true });
-      });
+    if (status === 'job' && !jobId) {
+      setFormError('Please select a job site.');
+      return;
     }
-    const fallback = setTimeout(triggerPrint, 4000);
-
-    return () => {
-      cancelled = true;
-      clearTimeout(fallback);
-      window.removeEventListener('afterprint', handleAfterPrint);
-    };
-  }, [onDone]);
-  return (
-    // Off-screen normally, but .crm-print-host resets to static during print — otherwise
-    // the label sheet's absolute positioning stays relative to this offset ancestor and
-    // renders off the printed page too (a blank print was exactly this bug).
-    <div className="crm-print-host fixed left-[-10000px] top-0">
-      <style>{`
-        @media print {
-          @page { size: A4 portrait; margin: 10mm; }
-          body * { visibility: hidden; }
-          .crm-print-host { position: static !important; left: auto !important; top: auto !important; }
-          .crm-print-label-sheet, .crm-print-label-sheet * { visibility: visible; }
-          .crm-print-label-sheet { position: absolute; top: 0; left: 0; width: 100%; }
-        }
-      `}</style>
-      {/* Each label's QR already has the item's name and code baked into the image itself
-          (see getItemQrSvg), so a sheet of these stays identifiable even off the page. */}
-      <div className="crm-print-label-sheet grid grid-cols-5 gap-[3mm]">
-        {items.map((item) => (
-          <div key={item.id} className="flex items-center justify-center border border-neutral-300 p-1.5 break-inside-avoid">
-            <img src={getMediaUrl(`/api/admin/inventory/items/${encodeURIComponent(item.slug)}/qr.svg`)} alt={item.name} className="w-[3.4cm]" />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function PrintPicker({ open, items, onClose, onPrint }) {
-  const [selected, setSelected] = useState(() => new Set());
-  useEffect(() => {
-    if (open) setSelected(new Set(items.filter((item) => !item.labelPrintedAt).map((item) => item.id)));
-  }, [open, items]);
-
-  function toggle(id) {
-    setSelected((current) => {
-      const next = new Set(current);
-      if (next.has(id)) next.delete(id); else next.add(id);
-      return next;
+    setFormError('');
+    await onSaveItem(item.id, {
+      name: name.trim(),
+      quantity: Math.max(1, parseInt(quantity, 10) || 1),
+      notes: notes.trim(),
+      status,
+      jobId: status === 'job' ? jobId : null,
     });
   }
 
-  const unprintedCount = items.filter((item) => !item.labelPrintedAt).length;
-
   return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      title="Print labels"
-      subtitle="New items are pre-selected. Tick anything else you want to (re)print."
-      icon={Printer}
-      size="md"
-      footer={(
-        <>
-          <button className="crm-btn-secondary" onClick={onClose}>Cancel</button>
-          <button
-            className="crm-btn-primary"
-            disabled={!selected.size}
-            onClick={() => onPrint(items.filter((item) => selected.has(item.id)))}
-          >
-            <Printer className="h-4 w-4" />Print {selected.size} label{selected.size === 1 ? '' : 's'}
-          </button>
-        </>
-      )}
-    >
-      <div className="mb-3 flex flex-wrap gap-2">
-        <button type="button" className="crm-btn-secondary text-xs" onClick={() => setSelected(new Set(items.filter((item) => !item.labelPrintedAt).map((item) => item.id)))}>Select unprinted ({unprintedCount})</button>
-        <button type="button" className="crm-btn-secondary text-xs" onClick={() => setSelected(new Set(items.map((item) => item.id)))}>Select all ({items.length})</button>
-        <button type="button" className="crm-btn-secondary text-xs" onClick={() => setSelected(new Set())}>Clear</button>
-      </div>
-      <div className="max-h-96 overflow-y-auto rounded-lg border border-neutral-200">
-        {items.map((item) => (
-          <label key={item.id} className="flex cursor-pointer items-center gap-3 border-b border-neutral-100 p-2 last:border-b-0 hover:bg-neutral-50">
-            <input type="checkbox" checked={selected.has(item.id)} onChange={() => toggle(item.id)} className="h-4 w-4" />
-            <div className="h-9 w-9 shrink-0 overflow-hidden rounded-md bg-neutral-100">
-              {item.photoUrl ? <img src={getMediaUrl(item.photoUrl)} alt={item.name} className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center text-neutral-300"><Boxes className="h-4 w-4" /></div>}
+    <Modal open onClose={onClose} title={item.name} subtitle={`Item ID: ${item.slug || item.id}`} icon={Boxes} size="lg" footer={<button type="button" className="crm-btn-secondary" onClick={onClose}>Close</button>}>
+      <form onSubmit={handleSubmit} className="grid gap-5 sm:grid-cols-2">
+        {/* Left Column: Photos Gallery */}
+        <div className="flex flex-col gap-3">
+          <div className="overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100">
+            {activePhoto ? (
+              <img src={getMediaUrl(activePhoto)} alt={item.name} className="aspect-square w-full object-cover" />
+            ) : (
+              <div className="flex aspect-square items-center justify-center text-neutral-300">
+                <Boxes className="h-12 w-12" />
+              </div>
+            )}
+          </div>
+          {photoList.length > 1 && (
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {photoList.map((photo, idx) => (
+                <button
+                  type="button"
+                  key={idx}
+                  onClick={() => setSelectedPhotoIdx(idx)}
+                  className={`h-14 w-14 shrink-0 overflow-hidden rounded-lg border-2 transition ${selectedPhotoIdx === idx ? 'border-brand shadow-sm' : 'border-transparent opacity-70 hover:opacity-100'}`}
+                >
+                  <img src={getMediaUrl(photo)} alt={`Thumbnail ${idx + 1}`} className="h-full w-full object-cover" />
+                </button>
+              ))}
             </div>
-            <p className="min-w-0 flex-1 truncate text-sm font-medium text-neutral-900">{item.name}</p>
-            {item.labelPrintedAt
-              ? <Badge tone="neutral">Printed {new Date(item.labelPrintedAt).toLocaleDateString('en-AE', { day: 'numeric', month: 'short' })}</Badge>
-              : <Badge tone="warning">New</Badge>}
-          </label>
-        ))}
-      </div>
-    </Modal>
-  );
-}
+          )}
+          <div className="rounded-lg bg-neutral-50 p-3 text-2xs text-neutral-500">
+            <p className="font-semibold text-neutral-700">Photo count: {photoList.length}</p>
+            <p className="mt-0.5">Multiple photos can be uploaded when registering inventory items.</p>
+          </div>
+        </div>
 
-function MarkPrintedConfirm({ open, count, onConfirm, onDismiss }) {
-  return (
-    <Modal
-      open={open}
-      onClose={onDismiss}
-      title="Have they printed?"
-      icon={Printer}
-      size="md"
-      footer={(
-        <>
-          <button className="crm-btn-secondary" onClick={onDismiss}>No, not yet</button>
-          <button className="crm-btn-primary" onClick={onConfirm}>Yes, mark as printed</button>
-        </>
-      )}
-    >
-      <p className="text-sm text-neutral-600">Have all {count} selected label{count === 1 ? '' : 's'} come out of the printer?</p>
+        {/* Right Column: Item Fields & Status Management */}
+        <div className="flex flex-col gap-4">
+          {formError && <Alert tone="danger">{formError}</Alert>}
+
+          <label className="text-xs font-medium text-neutral-700">Item Name
+            <input
+              className="crm-input mt-1 w-full"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. Grey ottoman"
+              required
+            />
+          </label>
+
+          <label className="text-xs font-medium text-neutral-700">Quantity
+            <input
+              type="number"
+              min="1"
+              className="crm-input mt-1 w-full"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+              required
+            />
+          </label>
+
+          <label className="text-xs font-medium text-neutral-700">Notes / Details
+            <textarea
+              className="crm-input mt-1 w-full text-xs"
+              rows={3}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Add dimensions, condition, serial number, or storage location notes..."
+            />
+          </label>
+
+          {/* Status Selector */}
+          <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-3.5">
+            <span className="text-xs font-semibold text-neutral-900">Current Status</span>
+            <div className="mt-2.5 grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => setStatus('warehouse')}
+                className={`flex flex-col items-center justify-center gap-1 rounded-lg border p-2 text-xs font-medium transition ${status === 'warehouse' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 font-semibold shadow-xs' : 'border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-100'}`}
+              >
+                <Warehouse className="h-4 w-4" />
+                <span>Warehouse</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setStatus('job')}
+                className={`flex flex-col items-center justify-center gap-1 rounded-lg border p-2 text-xs font-medium transition ${status === 'job' ? 'border-blue-600 bg-blue-50 text-blue-800 font-semibold shadow-xs' : 'border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-100'}`}
+              >
+                <MapPin className="h-4 w-4" />
+                <span>At Job Site</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setStatus('discarded')}
+                className={`flex flex-col items-center justify-center gap-1 rounded-lg border p-2 text-xs font-medium transition ${status === 'discarded' ? 'border-rose-600 bg-rose-50 text-rose-800 font-semibold shadow-xs' : 'border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-100'}`}
+              >
+                <Ban className="h-4 w-4" />
+                <span>Discarded</span>
+              </button>
+            </div>
+
+            {status === 'job' && (
+              <div className="mt-3">
+                <label className="text-xs font-medium text-neutral-700">Assign Job Site
+                  <select
+                    className="crm-select mt-1 w-full text-xs"
+                    value={jobId}
+                    onChange={(e) => setJobId(e.target.value)}
+                    required
+                  >
+                    <option value="">Choose a Job...</option>
+                    {jobs.map((entry) => (
+                      <option key={entry.id} value={entry.id}>
+                        {entry.jobNumber ? `${entry.jobNumber} · ` : ''}{entry.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-2 flex flex-col gap-2">
+            <button type="submit" className="crm-btn-primary w-full justify-center" disabled={busy}>
+              Save Changes
+            </button>
+            <button type="button" className="crm-btn-secondary w-full justify-center text-red-600 hover:bg-red-50" disabled={busy} onClick={() => onArchive(item.id)}>
+              <Trash2 className="h-4 w-4" />Remove Item
+            </button>
+          </div>
+        </div>
+      </form>
     </Modal>
   );
 }
 
 function RecentlyRemoved({ open, items, busy, onClose, onRestore }) {
   return (
-    <Modal open={open} onClose={onClose} title="Recently removed" subtitle="Photos are kept for 60 days after removal, then cleared automatically." icon={History} size="md">
+    <Modal open={open} onClose={onClose} title="Recently removed" subtitle="Removed items stay recoverable for 60 days." icon={History} size="md">
       {!items.length ? (
         <EmptyState title="Nothing removed" description="Items you remove will show up here for 60 days." />
       ) : (
-        <div className="flex flex-col gap-2">
-          {items.map((item) => (
-            <div key={item.id} className="flex items-center gap-3 rounded-lg border border-neutral-200 p-2">
-              <div className="h-12 w-12 shrink-0 overflow-hidden rounded-md bg-neutral-100">
-                {item.photoUrl ? <img src={getMediaUrl(item.photoUrl)} alt={item.name} className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center text-neutral-300"><Boxes className="h-5 w-5" /></div>}
+        <div className="flex flex-col gap-2 max-h-96 overflow-y-auto">
+          {items.map((item) => {
+            const primaryPhoto = (item.photoUrls && item.photoUrls[0]) || item.photoUrl;
+            return (
+              <div key={item.id} className="flex items-center gap-3 rounded-lg border border-neutral-200 p-2.5">
+                <div className="h-12 w-12 shrink-0 overflow-hidden rounded-md bg-neutral-100">
+                  {primaryPhoto ? (
+                    <img src={getMediaUrl(primaryPhoto)} alt={item.name} className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-neutral-300">
+                      <Boxes className="h-5 w-5" />
+                    </div>
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-neutral-900">{item.name}</p>
+                  <p className="text-2xs text-neutral-400">Qty: {item.quantity || 1} · Removed {new Date(item.deletedAt).toLocaleDateString('en-AE', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                </div>
+                <button className="crm-btn-secondary shrink-0 text-xs" disabled={busy} onClick={() => onRestore(item.id)}>
+                  <RotateCcw className="h-3.5 w-3.5" />Restore
+                </button>
               </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-neutral-900">{item.name}</p>
-                <p className="text-2xs text-neutral-400">Removed {new Date(item.deletedAt).toLocaleDateString('en-AE', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
-              </div>
-              <button className="crm-btn-secondary shrink-0 text-xs" disabled={busy || !item.photoUrl} onClick={() => onRestore(item.id)}>
-                <RotateCcw className="h-3.5 w-3.5" />{item.photoUrl ? 'Restore' : 'Photo purged'}
-              </button>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </Modal>
@@ -309,14 +265,20 @@ export default function InventoryPage() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+
+  // Filtering & Tabs State
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Add Item Modal State
   const [addOpen, setAddOpen] = useState(false);
   const [name, setName] = useState('');
-  const [photoFile, setPhotoFile] = useState(null);
-  const [photoPreview, setPhotoPreview] = useState('');
-  const [scanOpen, setScanOpen] = useState(false);
-  const [pickerOpen, setPickerOpen] = useState(false);
-  const [printBatch, setPrintBatch] = useState(null);
-  const [confirmBatch, setConfirmBatch] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [notes, setNotes] = useState('');
+  const [photoFiles, setPhotoFiles] = useState([]);
+  const [photoPreviews, setPhotoPreviews] = useState([]);
+
+  // Active Item Modal & Removed items
   const [activeItem, setActiveItem] = useState(null);
   const [removedOpen, setRemovedOpen] = useState(false);
   const [removedItems, setRemovedItems] = useState([]);
@@ -333,6 +295,7 @@ export default function InventoryPage() {
       setLoading(false);
     }
   }, []);
+
   useEffect(() => { load(); }, [load]);
 
   const loadRemoved = useCallback(async () => {
@@ -357,27 +320,69 @@ export default function InventoryPage() {
     })();
   }, [slug, navigate]);
 
-  const warehouseCount = useMemo(() => items.filter((entry) => entry.status === 'warehouse').length, [items]);
-  const jobCount = items.length - warehouseCount;
+  // Counts for tabs & stat cards
+  const counts = useMemo(() => {
+    const warehouse = items.filter((i) => i.status === 'warehouse').length;
+    const job = items.filter((i) => i.status === 'job').length;
+    const discarded = items.filter((i) => i.status === 'discarded').length;
+    return { all: items.length, warehouse, job, discarded };
+  }, [items]);
 
-  function pickPhoto(file) {
-    setPhotoFile(file);
-    setPhotoPreview(file ? URL.createObjectURL(file) : '');
+  // Filtered items based on status tab and search query
+  const filteredItems = useMemo(() => {
+    return items.filter((item) => {
+      if (statusFilter !== 'all' && item.status !== statusFilter) return false;
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase().trim();
+        const matchName = (item.name || '').toLowerCase().includes(q);
+        const matchNotes = (item.notes || '').toLowerCase().includes(q);
+        const matchJob = (item.jobTitle || '').toLowerCase().includes(q);
+        if (!matchName && !matchNotes && !matchJob) return false;
+      }
+      return true;
+    });
+  }, [items, statusFilter, searchQuery]);
+
+  function handlePhotoPick(e) {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    const newFiles = [...photoFiles, ...files].slice(0, 10);
+    setPhotoFiles(newFiles);
+    setPhotoPreviews(newFiles.map((file) => URL.createObjectURL(file)));
+  }
+
+  function removePhotoAt(index) {
+    const nextFiles = photoFiles.filter((_, i) => i !== index);
+    setPhotoFiles(nextFiles);
+    setPhotoPreviews(nextFiles.map((file) => URL.createObjectURL(file)));
+  }
+
+  function resetAddForm() {
+    setName('');
+    setQuantity(1);
+    setNotes('');
+    setPhotoFiles([]);
+    setPhotoPreviews([]);
+    setAddOpen(false);
   }
 
   async function submitNewItem(e) {
     e.preventDefault();
-    if (!name.trim() || !photoFile) return;
+    if (!name.trim() || !photoFiles.length) return;
     setBusy(true);
     setError('');
     try {
       const form = new FormData();
       form.append('name', name.trim());
-      form.append('photo', photoFile);
+      form.append('quantity', String(Math.max(1, parseInt(quantity, 10) || 1)));
+      if (notes.trim()) form.append('notes', notes.trim());
+
+      photoFiles.forEach((file) => {
+        form.append('photos', file);
+      });
+
       await crmApiFetch('/api/admin/inventory/items', { method: 'POST', body: form });
-      setName('');
-      pickPhoto(null);
-      setAddOpen(false);
+      resetAddForm();
       await load();
     } catch (err) {
       setError(err.message || 'Could not register item.');
@@ -386,31 +391,19 @@ export default function InventoryPage() {
     }
   }
 
-  async function handleSendToJob(itemId, jobId) {
+  async function handleSaveItem(itemId, updatePayload) {
     setBusy(true);
     setError('');
     try {
-      await crmApiFetch(`/api/admin/inventory/items/${itemId}/send-to-job`, { method: 'POST', body: JSON.stringify({ jobId }) });
+      await crmApiFetch(`/api/admin/inventory/items/${itemId}`, {
+        method: 'PATCH',
+        body: JSON.stringify(updatePayload),
+      });
       setActiveItem(null);
       navigate('/admin/crm/inventory');
       await load();
     } catch (err) {
-      setError(err.message || 'Could not send item to Job.');
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function handleReturn(itemId) {
-    setBusy(true);
-    setError('');
-    try {
-      await crmApiFetch(`/api/admin/inventory/items/${itemId}/return`, { method: 'POST' });
-      setActiveItem(null);
-      navigate('/admin/crm/inventory');
-      await load();
-    } catch (err) {
-      setError(err.message || 'Could not return item.');
+      setError(err.message || 'Could not update item.');
     } finally {
       setBusy(false);
     }
@@ -449,98 +442,204 @@ export default function InventoryPage() {
     loadRemoved();
   }
 
-  function handlePrintSelected(selectedItems) {
-    setPickerOpen(false);
-    setPrintBatch(selectedItems);
-  }
-
-  function handlePrintDone() {
-    const ids = (printBatch || []).map((item) => item.id);
-    setPrintBatch(null);
-    if (ids.length) setConfirmBatch(ids);
-  }
-
-  async function handleConfirmPrinted() {
-    const ids = confirmBatch || [];
-    setConfirmBatch(null);
-    if (!ids.length) return;
-    try {
-      await crmApiFetch('/api/admin/inventory/items/mark-printed', { method: 'POST', body: JSON.stringify({ itemIds: ids }) });
-      await load();
-    } catch (err) {
-      setError(err.message || 'Could not mark labels as printed.');
-    }
-  }
-
-  function handleScanned(rawValue) {
-    const foundSlug = extractSlug(rawValue);
-    if (foundSlug) navigate(`/admin/crm/inventory/i/${foundSlug}`);
-  }
-
-  if (loading) return <PageShell><LoadingState label="Loading warehouse items…" /></PageShell>;
+  if (loading) return <PageShell><LoadingState label="Loading inventory items…" /></PageShell>;
 
   return (
     <PageShell className="max-w-none">
       <PageHeader actions={
         <div className="flex flex-wrap gap-2">
-          <button className="crm-btn-secondary" onClick={() => setScanOpen(true)}><ScanLine className="h-4 w-4" />Scan QR</button>
-          <button className="crm-btn-secondary" onClick={() => setPickerOpen(true)} disabled={!items.length || !!printBatch}><Printer className="h-4 w-4" />Print labels</button>
-          <button className="crm-btn-secondary" onClick={openRemoved}><History className="h-4 w-4" />Recently removed</button>
-          <button className="crm-btn-primary" onClick={() => setAddOpen(true)}><Plus className="h-4 w-4" />Add item</button>
+          <button className="crm-btn-secondary text-xs" onClick={openRemoved}>
+            <History className="h-4 w-4" />Recently Removed
+          </button>
+          <button className="crm-btn-primary text-xs" onClick={() => setAddOpen(true)}>
+            <Plus className="h-4 w-4" />Add Item
+          </button>
         </div>
       } />
+
       <PageSection>
-        {error && <Alert>{error}</Alert>}
-        <div className="grid gap-3 sm:grid-cols-2">
-          <StatCard compact label="In warehouse" value={warehouseCount} icon={Warehouse} />
-          <StatCard compact label="Out at Jobs" value={jobCount} icon={MapPin} />
+        {error && <Alert tone="danger">{error}</Alert>}
+
+        {/* Stat Cards Overview */}
+        <div className="grid gap-3 grid-cols-2 md:grid-cols-4">
+          <StatCard compact label="Total Items" value={counts.all} icon={Package} />
+          <StatCard compact label="In Warehouse" value={counts.warehouse} icon={Warehouse} />
+          <StatCard compact label="At Job Sites" value={counts.job} icon={MapPin} />
+          <StatCard compact label="Discarded" value={counts.discarded} icon={Ban} />
         </div>
 
-        {!items.length ? (
-          <EmptyState title="No items yet" description="Photograph and add the furniture and equipment you want to track." />
+        {/* Search and Category Filter Toolbar */}
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-neutral-200 pb-3">
+          {/* Status Tabs */}
+          <div className="flex items-center gap-1 overflow-x-auto rounded-lg bg-neutral-100 p-1 text-xs">
+            <button
+              onClick={() => setStatusFilter('all')}
+              className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 font-medium transition ${statusFilter === 'all' ? 'bg-white text-neutral-900 shadow-xs font-semibold' : 'text-neutral-600 hover:text-neutral-900'}`}
+            >
+              <span>All Items</span>
+              <span className="rounded-full bg-neutral-200 px-1.5 py-0.2 text-3xs font-semibold">{counts.all}</span>
+            </button>
+
+            <button
+              onClick={() => setStatusFilter('warehouse')}
+              className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 font-medium transition ${statusFilter === 'warehouse' ? 'bg-white text-emerald-800 shadow-xs font-semibold' : 'text-neutral-600 hover:text-neutral-900'}`}
+            >
+              <Warehouse className="h-3.5 w-3.5 text-emerald-600" />
+              <span>In Warehouse</span>
+              <span className="rounded-full bg-emerald-100 text-emerald-800 px-1.5 py-0.2 text-3xs font-semibold">{counts.warehouse}</span>
+            </button>
+
+            <button
+              onClick={() => setStatusFilter('job')}
+              className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 font-medium transition ${statusFilter === 'job' ? 'bg-white text-blue-800 shadow-xs font-semibold' : 'text-neutral-600 hover:text-neutral-900'}`}
+            >
+              <MapPin className="h-3.5 w-3.5 text-blue-600" />
+              <span>At Job Site</span>
+              <span className="rounded-full bg-blue-100 text-blue-800 px-1.5 py-0.2 text-3xs font-semibold">{counts.job}</span>
+            </button>
+
+            <button
+              onClick={() => setStatusFilter('discarded')}
+              className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 font-medium transition ${statusFilter === 'discarded' ? 'bg-white text-rose-800 shadow-xs font-semibold' : 'text-neutral-600 hover:text-neutral-900'}`}
+            >
+              <Ban className="h-3.5 w-3.5 text-rose-600" />
+              <span>Discarded</span>
+              <span className="rounded-full bg-rose-100 text-rose-800 px-1.5 py-0.2 text-3xs font-semibold">{counts.discarded}</span>
+            </button>
+          </div>
+
+          {/* Search Box */}
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-neutral-400" />
+            <input
+              type="text"
+              placeholder="Search by name or notes..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="crm-input w-full pl-8 text-xs"
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery('')} className="absolute right-2.5 top-2.5 text-neutral-400 hover:text-neutral-600">
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Grid Display */}
+        {!filteredItems.length ? (
+          <EmptyState
+            title={items.length ? "No matching items" : "No inventory items yet"}
+            description={items.length ? "Try clearing your search query or selecting a different category tab." : "Add furniture, equipment, and materials to track their status and location."}
+          />
         ) : (
-          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-            {items.map((item) => <ItemCard key={item.id} item={item} onOpen={(entry) => navigate(`/admin/crm/inventory/i/${entry.slug}`)} />)}
+          <div className="mt-4 grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+            {filteredItems.map((item) => (
+              <ItemCard
+                key={item.id}
+                item={item}
+                onOpen={(entry) => navigate(`/admin/crm/inventory/i/${entry.slug || entry.id}`)}
+              />
+            ))}
           </div>
         )}
       </PageSection>
 
-      <Modal open={addOpen} onClose={() => { setAddOpen(false); pickPhoto(null); setName(''); }} title="Add warehouse item" subtitle="A photo and a name — that's all it takes." icon={Camera} size="md" footer={<><button className="crm-btn-secondary" onClick={() => setAddOpen(false)}>Cancel</button><button form="add-item-form" className="crm-btn-primary" disabled={busy || !name.trim() || !photoFile}>Add item</button></>}>
+      {/* Add Item Modal */}
+      <Modal
+        open={addOpen}
+        onClose={resetAddForm}
+        title="Add Inventory Item"
+        subtitle="Specify name, quantity, notes, and upload one or more photos."
+        icon={Plus}
+        size="md"
+        footer={(
+          <>
+            <button type="button" className="crm-btn-secondary" onClick={resetAddForm}>Cancel</button>
+            <button form="add-item-form" type="submit" className="crm-btn-primary" disabled={busy || !name.trim() || !photoFiles.length}>
+              {busy ? 'Adding...' : 'Add Item'}
+            </button>
+          </>
+        )}
+      >
         <form id="add-item-form" className="grid gap-4" onSubmit={submitNewItem}>
-          <label className="text-xs font-medium text-neutral-600">Photo
-            <div className="mt-1.5 flex items-center gap-3">
-              {photoPreview
-                ? <img src={photoPreview} alt="Preview" className="h-20 w-20 rounded-lg object-cover" />
-                : <div className="flex h-20 w-20 items-center justify-center rounded-lg bg-neutral-100 text-neutral-300"><Camera className="h-6 w-6" /></div>}
-              <input type="file" accept="image/*" capture="environment" onChange={(e) => pickPhoto(e.target.files?.[0] || null)} className="text-xs" />
+          <label className="text-xs font-medium text-neutral-700">Photos (1 or more)
+            <div className="mt-1.5 flex flex-wrap gap-2.5">
+              {photoPreviews.map((previewUrl, idx) => (
+                <div key={idx} className="relative h-20 w-20 overflow-hidden rounded-lg border border-neutral-200 bg-neutral-50 group">
+                  <img src={previewUrl} alt={`Preview ${idx + 1}`} className="h-full w-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => removePhotoAt(idx)}
+                    className="absolute right-1 top-1 rounded-full bg-neutral-900/75 p-1 text-white opacity-90 hover:opacity-100"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+              {photoFiles.length < 10 && (
+                <label className="flex h-20 w-20 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-neutral-300 bg-neutral-50 text-neutral-500 hover:border-neutral-400 hover:bg-neutral-100">
+                  <Plus className="h-5 w-5" />
+                  <span className="mt-1 text-3xs font-medium">Add Photo</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handlePhotoPick}
+                    className="hidden"
+                  />
+                </label>
+              )}
             </div>
+            <p className="mt-1 text-3xs text-neutral-400">Select multiple photo files if available.</p>
           </label>
-          <label className="text-xs font-medium text-neutral-600">Name
-            <input className="crm-input mt-1.5 w-full" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Grey ottoman" required />
+
+          <label className="text-xs font-medium text-neutral-700">Name
+            <input
+              className="crm-input mt-1 w-full"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. Executive Desk, Grey Ottoman"
+              required
+            />
+          </label>
+
+          <label className="text-xs font-medium text-neutral-700">Quantity
+            <input
+              type="number"
+              min="1"
+              className="crm-input mt-1 w-full"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+              required
+            />
+          </label>
+
+          <label className="text-xs font-medium text-neutral-700">Notes
+            <textarea
+              className="crm-input mt-1 w-full text-xs"
+              rows={2}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Optional description, dimensions, serials..."
+            />
           </label>
         </form>
       </Modal>
 
-      <Modal open={scanOpen} onClose={() => setScanOpen(false)} title="Scan a QR code" subtitle="Opens the matching item so you can confirm before sticking a label on." icon={ScanLine} size="md">
-        {scanOpen && <CameraScanner onDetected={handleScanned} onClose={() => setScanOpen(false)} />}
-      </Modal>
-
+      {/* Item Detail Modal */}
       {activeItem && (
         <ItemDetail
           item={activeItem}
           jobs={jobs}
           busy={busy}
           onClose={() => navigate('/admin/crm/inventory')}
-          onSendToJob={handleSendToJob}
-          onReturn={handleReturn}
+          onSaveItem={handleSaveItem}
           onArchive={handleArchive}
         />
       )}
 
-      <PrintPicker open={pickerOpen} items={items} onClose={() => setPickerOpen(false)} onPrint={handlePrintSelected} />
-      {printBatch && <PrintLabelSheet items={printBatch} onDone={handlePrintDone} />}
-      <MarkPrintedConfirm open={!!confirmBatch} count={confirmBatch?.length || 0} onConfirm={handleConfirmPrinted} onDismiss={() => setConfirmBatch(null)} />
-
+      {/* Recently Removed Modal */}
       <RecentlyRemoved
         open={removedOpen}
         items={removedItems}

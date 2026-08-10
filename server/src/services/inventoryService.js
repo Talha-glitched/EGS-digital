@@ -1,21 +1,16 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import QRCode from 'qrcode';
 import db from '../db/index.js';
 import { writeAuditLog } from './auditService.js';
 import { captureRevision } from './revisionService.js';
 import { getUploadSubdir } from '../utils/uploadPath.js';
 
 const uploadRoot = getUploadSubdir('inventory');
-const CLIENT_URL = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/$/, '');
 const PHOTO_EXTENSIONS = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp', 'image/heic': '.heic', 'image/heif': '.heif' };
 
 function text(value) { return String(value ?? '').trim() || null; }
 function uuid(value) { const result = text(value); return result && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(result) ? result : null; }
-function escapeXml(value) {
-  return String(value ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' }[ch]));
-}
 
 async function audit(actor, action, resourceId, summary, jobId = null) {
   await writeAuditLog({ userId: actor?.userId, userDisplayName: actor?.displayName || 'EGS Team', action, resource: 'inventory_item', resourceId, summary, metadata: jobId ? { ongoingJobId: jobId } : {} });
@@ -44,9 +39,9 @@ async function nextDisplayName(client, baseName) {
 
 export async function listWarehouseItems() {
   const [items, jobs] = await Promise.all([
-    db.query(`SELECT i.id, i.slug, i.name, i.photo_url AS "photoUrl", i.current_status AS "status", i.current_job_id AS "jobId", oj.job_number AS "jobNumber", oj.title AS "jobTitle", i.label_printed_at AS "labelPrintedAt", i.created_at AS "createdAt"
+    db.query(`SELECT i.id, i.slug, i.name, i.quantity, i.notes, i.photo_url AS "photoUrl", i.photo_urls AS "photoUrls", i.current_status AS "status", i.current_job_id AS "jobId", oj.job_number AS "jobNumber", oj.title AS "jobTitle", i.created_at AS "createdAt"
       FROM inventory_items i LEFT JOIN ongoing_jobs oj ON oj.id = i.current_job_id
-      WHERE i.status = 'active' AND i.deleted_at IS NULL AND i.slug IS NOT NULL ORDER BY i.created_at DESC`),
+      WHERE i.status = 'active' AND i.deleted_at IS NULL ORDER BY i.created_at DESC`),
     db.query(`SELECT oj.id, oj.job_number AS "jobNumber", oj.title AS name FROM ongoing_jobs oj
       WHERE oj.deleted_at IS NULL AND COALESCE(oj.summary_stage, '') NOT IN ('Job Done','Job Lost','Closed Won','Closed Lost')
       ORDER BY oj.updated_at DESC NULLS LAST`),
@@ -56,18 +51,26 @@ export async function listWarehouseItems() {
 
 export async function listRecentlyRemovedItems() {
   const result = await db.query(
-    `SELECT id, slug, name, photo_url AS "photoUrl", deleted_at AS "deletedAt"
+    `SELECT id, slug, name, quantity, notes, photo_url AS "photoUrl", photo_urls AS "photoUrls", deleted_at AS "deletedAt"
      FROM inventory_items WHERE deleted_at IS NOT NULL ORDER BY deleted_at DESC LIMIT 100`,
   );
   return result.rows;
 }
 
-export async function createWarehouseItem(payload = {}, photo, actor = {}) {
+export async function createWarehouseItem(payload = {}, photos = [], actor = {}) {
   const baseName = text(payload.name);
   if (!baseName) throw Object.assign(new Error('Item name is required.'), { status: 400 });
-  if (!photo) throw Object.assign(new Error('A photo is required.'), { status: 400 });
-  const extension = PHOTO_EXTENSIONS[String(photo.mimetype || '').toLowerCase()];
-  if (!extension) throw Object.assign(new Error('Photo must be a JPG, PNG, WebP, HEIC, or HEIF image.'), { status: 400 });
+
+  const rawPhotos = Array.isArray(photos) ? photos : (photos ? [photos] : []);
+  if (!rawPhotos.length) throw Object.assign(new Error('At least 1 photo is required.'), { status: 400 });
+
+  for (const photo of rawPhotos) {
+    const extension = PHOTO_EXTENSIONS[String(photo.mimetype || '').toLowerCase()];
+    if (!extension) throw Object.assign(new Error('Photos must be JPG, PNG, WebP, HEIC, or HEIF images.'), { status: 400 });
+  }
+
+  const quantity = Math.max(1, parseInt(payload.quantity, 10) || 1);
+  const notes = text(payload.notes);
 
   const client = await db.getClient();
   try {
@@ -76,17 +79,26 @@ export async function createWarehouseItem(payload = {}, photo, actor = {}) {
     const name = await nextDisplayName(client, baseName);
     const directory = path.join(uploadRoot, slug);
     await fs.mkdir(directory, { recursive: true });
-    const fileName = `photo${extension}`;
-    await fs.writeFile(path.join(directory, fileName), photo.buffer, { flag: 'wx' });
-    const photoUrl = `/uploads/inventory/${slug}/${fileName}`;
+
+    const photoUrls = [];
+    for (let i = 0; i < rawPhotos.length; i += 1) {
+      const photo = rawPhotos[i];
+      const extension = PHOTO_EXTENSIONS[String(photo.mimetype || '').toLowerCase()];
+      const fileName = `photo_${i}${extension}`;
+      await fs.writeFile(path.join(directory, fileName), photo.buffer, { flag: 'w' });
+      photoUrls.push(`/uploads/inventory/${slug}/${fileName}`);
+    }
+
+    const primaryPhotoUrl = photoUrls[0] || null;
+
     const result = await client.query(
-      `INSERT INTO inventory_items (sku, barcode, name, tracking_mode, status, slug, photo_url, current_status, created_by_user_id)
-       VALUES ($1, $1, $2, 'quantity_reusable', 'active', $1, $3, 'warehouse', $4::uuid)
-       RETURNING id, slug, name, photo_url AS "photoUrl", current_status AS "status"`,
-      [slug, name, photoUrl, actor?.userId || null],
+      `INSERT INTO inventory_items (sku, barcode, name, quantity, notes, tracking_mode, status, slug, photo_url, photo_urls, current_status, created_by_user_id)
+       VALUES ($1, $1, $2, $3, $4, 'quantity_reusable', 'active', $1, $5, $6, 'warehouse', $7::uuid)
+       RETURNING id, slug, name, quantity, notes, photo_url AS "photoUrl", photo_urls AS "photoUrls", current_status AS "status"`,
+      [slug, name, quantity, notes, primaryPhotoUrl, photoUrls, actor?.userId || null],
     );
     await client.query('COMMIT');
-    await audit(actor, 'create', result.rows[0].id, `Registered warehouse item: ${name}`);
+    await audit(actor, 'create', result.rows[0].id, `Registered warehouse item: ${name} (qty: ${quantity})`);
     return result.rows[0];
   } catch (error) {
     await client.query('ROLLBACK').catch(() => {});
@@ -96,42 +108,53 @@ export async function createWarehouseItem(payload = {}, photo, actor = {}) {
   }
 }
 
-export async function markItemsPrinted(itemIds = [], actor = {}) {
-  const ids = [...new Set((Array.isArray(itemIds) ? itemIds : []).map(uuid).filter(Boolean))];
-  if (!ids.length) throw Object.assign(new Error('No items were selected.'), { status: 400 });
+export async function updateWarehouseItem(itemId, payload = {}, actor = {}) {
+  const id = uuid(itemId);
+  if (!id) throw Object.assign(new Error('Item ID is required.'), { status: 400 });
+
+  const existing = await db.query(`SELECT * FROM inventory_items WHERE id = $1::uuid AND status = 'active' AND deleted_at IS NULL`, [id]);
+  if (!existing.rows.length) throw Object.assign(new Error('Item not found.'), { status: 404 });
+
+  const currentItem = existing.rows[0];
+  const name = text(payload.name) || currentItem.name;
+  const quantity = payload.quantity !== undefined ? Math.max(1, parseInt(payload.quantity, 10) || 1) : currentItem.quantity;
+  const notes = payload.notes !== undefined ? text(payload.notes) : currentItem.notes;
+  
+  let newStatus = text(payload.status) || currentItem.current_status;
+  if (!['warehouse', 'job', 'discarded'].includes(newStatus)) {
+    throw Object.assign(new Error('Invalid status. Must be warehouse, job, or discarded.'), { status: 400 });
+  }
+
+  let jobId = null;
+  if (newStatus === 'job') {
+    jobId = uuid(payload.jobId);
+    if (!jobId && currentItem.current_job_id) {
+      jobId = currentItem.current_job_id;
+    }
+    if (!jobId) throw Object.assign(new Error('A job must be selected when status is At Job Site.'), { status: 400 });
+    const jobRow = await db.query(`SELECT title FROM ongoing_jobs WHERE id = $1::uuid AND deleted_at IS NULL`, [jobId]);
+    if (!jobRow.rows.length) throw Object.assign(new Error('Job not found.'), { status: 404 });
+  }
+
   const result = await db.query(
-    `UPDATE inventory_items SET label_printed_at = NOW(), updated_at = NOW() WHERE id = ANY($1::uuid[]) AND status = 'active' AND deleted_at IS NULL RETURNING id`,
-    [ids],
+    `UPDATE inventory_items
+     SET name = $2, quantity = $3, notes = $4, current_status = $5, current_job_id = $6, updated_at = NOW()
+     WHERE id = $1::uuid AND status = 'active' AND deleted_at IS NULL
+     RETURNING id, slug, name, quantity, notes, photo_url AS "photoUrl", photo_urls AS "photoUrls", current_status AS "status", current_job_id AS "jobId"`,
+    [id, name, quantity, notes, newStatus, jobId],
   );
-  await audit(actor, 'update', null, `Marked ${result.rows.length} warehouse item label(s) as printed`);
-  return { ok: true, updated: result.rows.length };
+
+  await captureRevision({ resourceType: 'inventory_item', resourceId: id, before: currentItem, after: result.rows[0], changeType: 'update', actor });
+  await audit(actor, 'update', id, `Updated inventory item ${name}: status=${newStatus}`, jobId);
+  return result.rows[0];
 }
 
 export async function sendItemToJob(itemId, jobId, actor = {}) {
-  const id = uuid(itemId);
-  const job = uuid(jobId);
-  if (!id || !job) throw Object.assign(new Error('Item and Job are required.'), { status: 400 });
-  const jobRow = await db.query(`SELECT title FROM ongoing_jobs WHERE id = $1::uuid AND deleted_at IS NULL`, [job]);
-  if (!jobRow.rows.length) throw Object.assign(new Error('Job not found.'), { status: 404 });
-  const result = await db.query(
-    `UPDATE inventory_items SET current_status = 'job', current_job_id = $2::uuid, updated_at = NOW() WHERE id = $1::uuid AND status = 'active' AND deleted_at IS NULL RETURNING id, name`,
-    [id, job],
-  );
-  if (!result.rows.length) throw Object.assign(new Error('Item not found.'), { status: 404 });
-  await audit(actor, 'update', id, `Sent ${result.rows[0].name} to ${jobRow.rows[0].title}`, job);
-  return { ok: true };
+  return updateWarehouseItem(itemId, { status: 'job', jobId }, actor);
 }
 
 export async function returnItemToWarehouse(itemId, actor = {}) {
-  const id = uuid(itemId);
-  if (!id) throw Object.assign(new Error('Item is required.'), { status: 400 });
-  const result = await db.query(
-    `UPDATE inventory_items SET current_status = 'warehouse', current_job_id = NULL, updated_at = NOW() WHERE id = $1::uuid AND status = 'active' AND deleted_at IS NULL RETURNING id, name`,
-    [id],
-  );
-  if (!result.rows.length) throw Object.assign(new Error('Item not found.'), { status: 404 });
-  await audit(actor, 'update', id, `Returned ${result.rows[0].name} to the warehouse`);
-  return { ok: true };
+  return updateWarehouseItem(itemId, { status: 'warehouse', jobId: null }, actor);
 }
 
 export async function deleteWarehouseItem(itemId, actor = {}) {
@@ -144,7 +167,7 @@ export async function deleteWarehouseItem(itemId, actor = {}) {
     [id, actor?.userId || null],
   );
   await captureRevision({ resourceType: 'inventory_item', resourceId: id, before: existing.rows[0], after: null, changeType: 'soft_delete', actor });
-  await audit(actor, 'delete', id, `Removed ${result.rows[0].name} from the warehouse tracker (photo kept for 60 days)`);
+  await audit(actor, 'delete', id, `Removed ${result.rows[0].name} from inventory`);
   return { ok: true };
 }
 
@@ -155,45 +178,22 @@ export async function restoreWarehouseItem(itemId, actor = {}) {
     `UPDATE inventory_items SET deleted_at = NULL, deleted_by = NULL, updated_at = NOW() WHERE id = $1::uuid AND deleted_at IS NOT NULL RETURNING *`,
     [id],
   );
-  if (!result.rows.length) throw Object.assign(new Error('Removed item not found (or its photo has already been purged).'), { status: 404 });
-  if (!result.rows[0].photo_url) throw Object.assign(new Error('This item’s photo was purged after 60 days and can no longer be restored automatically — re-add it with a new photo.'), { status: 410 });
+  if (!result.rows.length) throw Object.assign(new Error('Removed item not found (or photo purged).'), { status: 404 });
   await captureRevision({ resourceType: 'inventory_item', resourceId: id, before: null, after: result.rows[0], changeType: 'restore', actor });
-  await audit(actor, 'update', id, `Restored ${result.rows[0].name} to the warehouse tracker`);
+  await audit(actor, 'update', id, `Restored ${result.rows[0].name} to inventory`);
   return { ok: true };
 }
 
-export async function getItemQrSvg(slug) {
-  const clean = text(slug);
-  if (!clean) throw Object.assign(new Error('Item code is required.'), { status: 400 });
-  const item = await db.query(`SELECT id, name FROM inventory_items WHERE slug = $1 AND status = 'active' AND deleted_at IS NULL`, [clean]);
-  if (!item.rows.length) throw Object.assign(new Error('Item not found.'), { status: 404 });
-  const name = item.rows[0].name;
-  const targetUrl = `${CLIENT_URL}/admin/crm/inventory/i/${clean}`;
-  const qrSvg = (await QRCode.toString(targetUrl, { type: 'svg', errorCorrectionLevel: 'H', margin: 0 })).trim();
-  const bodyMatch = qrSvg.match(/^<svg[^>]*viewBox="([^"]+)"[^>]*>([\s\S]*)<\/svg>$/);
-  const qrViewBox = bodyMatch ? bodyMatch[1] : '0 0 33 33';
-  const qrBody = bodyMatch ? bodyMatch[2] : qrSvg;
-
-  const width = 200;
-  const height = 240;
-  const displayName = name.length > 26 ? `${name.slice(0, 25)}…` : name;
-  const nameFontSize = name.length > 18 ? 12 : 15;
-
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-  <rect width="${width}" height="${height}" fill="#ffffff"/>
-  <svg x="20" y="14" width="160" height="160" viewBox="${qrViewBox}" shape-rendering="crispEdges">${qrBody}</svg>
-  <text x="${width / 2}" y="196" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="${nameFontSize}" font-weight="700" fill="#111111">${escapeXml(displayName)}</text>
-  <text x="${width / 2}" y="220" text-anchor="middle" font-family="'Courier New', monospace" font-size="12" fill="#666666">${escapeXml(clean)}</text>
-</svg>`;
-}
-
-export async function findItemBySlug(slug) {
-  const clean = text(slug);
+export async function findItemBySlug(slugOrId) {
+  const clean = text(slugOrId);
   if (!clean) return null;
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(clean);
   const result = await db.query(
-    `SELECT i.id, i.slug, i.name, i.photo_url AS "photoUrl", i.current_status AS "status", i.current_job_id AS "jobId", oj.title AS "jobTitle"
-     FROM inventory_items i LEFT JOIN ongoing_jobs oj ON oj.id = i.current_job_id WHERE i.slug = $1 AND i.status = 'active' AND i.deleted_at IS NULL`,
+    `SELECT i.id, i.slug, i.name, i.quantity, i.notes, i.photo_url AS "photoUrl", i.photo_urls AS "photoUrls", i.current_status AS "status", i.current_job_id AS "jobId", oj.title AS "jobTitle"
+     FROM inventory_items i LEFT JOIN ongoing_jobs oj ON oj.id = i.current_job_id
+     WHERE ${isUuid ? 'i.id = $1::uuid' : 'i.slug = $1'} AND i.status = 'active' AND i.deleted_at IS NULL`,
     [clean],
   );
   return result.rows[0] || null;
 }
+

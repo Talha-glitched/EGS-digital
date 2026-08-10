@@ -247,12 +247,11 @@ import {
   listWarehouseItems,
   listRecentlyRemovedItems,
   createWarehouseItem,
-  markItemsPrinted,
+  updateWarehouseItem,
   sendItemToJob,
   returnItemToWarehouse,
   deleteWarehouseItem,
   restoreWarehouseItem,
-  getItemQrSvg,
   findItemBySlug,
 } from '../services/inventoryService.js';
 import {
@@ -360,7 +359,7 @@ const fieldPhotoUpload = multer({
 });
 const warehouseItemUpload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 15 * 1024 * 1024, files: 1 },
+  limits: { fileSize: 15 * 1024 * 1024, files: 10 },
   fileFilter: (_req, file, callback) => {
     const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
     if (!allowed.includes(String(file.mimetype || '').toLowerCase())) return callback(Object.assign(new Error('Item photo must be a JPG, PNG, WebP, HEIC, or HEIF image.'), { status: 400 }));
@@ -1303,11 +1302,12 @@ router.get('/inventory', asyncRoute(async (req, res) => {
 router.get('/inventory/removed', asyncRoute(async (req, res) => {
   res.json(await listRecentlyRemovedItems());
 }));
-router.post('/inventory/items', warehouseItemUpload.single('photo'), asyncRoute(async (req, res) => {
-  res.status(201).json(await createWarehouseItem(req.body || {}, req.file, getActor(req)));
+router.post('/inventory/items', warehouseItemUpload.array('photos', 10), asyncRoute(async (req, res) => {
+  const files = req.files && req.files.length ? req.files : (req.file ? [req.file] : []);
+  res.status(201).json(await createWarehouseItem(req.body || {}, files, getActor(req)));
 }));
-router.post('/inventory/items/mark-printed', asyncRoute(async (req, res) => {
-  res.json(await markItemsPrinted(req.body?.itemIds, getActor(req)));
+router.patch('/inventory/items/:id', asyncRoute(async (req, res) => {
+  res.json(await updateWarehouseItem(req.params.id, req.body || {}, getActor(req)));
 }));
 router.post('/inventory/items/:id/send-to-job', asyncRoute(async (req, res) => {
   res.json(await sendItemToJob(req.params.id, req.body?.jobId, getActor(req)));
@@ -1320,9 +1320,6 @@ router.delete('/inventory/items/:id', asyncRoute(async (req, res) => {
 }));
 router.post('/inventory/items/:id/restore', asyncRoute(async (req, res) => {
   res.json(await restoreWarehouseItem(req.params.id, getActor(req)));
-}));
-router.get('/inventory/items/:slug/qr.svg', asyncRoute(async (req, res) => {
-  res.type('image/svg+xml').send(await getItemQrSvg(req.params.slug));
 }));
 router.get('/inventory/by-slug/:slug', asyncRoute(async (req, res) => {
   const item = await findItemBySlug(req.params.slug);
