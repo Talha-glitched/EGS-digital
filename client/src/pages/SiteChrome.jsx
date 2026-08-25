@@ -10,6 +10,7 @@ export function SiteNav({ active = 'home', cta = 'Send a brief' }) {
       textColor: 'var(--paper)',
       links: [
         { label: 'Exhibitions', href: '/exhibitions', ariaLabel: 'Open exhibitions page' },
+        { label: '6 Exhibition Offers', href: '/offers', ariaLabel: 'Open 6 exhibition offers page' },
         { label: 'Events / Graduations', href: '/events', ariaLabel: 'Open events and graduations page' },
         { label: 'Retail Rollouts', href: '/retail', ariaLabel: 'Open retail rollouts page' },
         { label: 'Fitouts', href: '/fitouts', ariaLabel: 'Open fitouts page' },

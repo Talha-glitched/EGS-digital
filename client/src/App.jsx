@@ -3,12 +3,14 @@ import { InquiryModalProvider } from './context/InquiryModalContext.jsx';
 import {
   EventsPage,
   ExhibitionsPage,
+  OffersPage,
   FitoutsPage,
   HomePage,
   RetailPage,
   CaseStudiesPage,
   GraduationPortfolioPage,
   PortfolioFablePage,
+  OffersV2Page,
 } from './pages/index.js';
 import AdminCrmPage from './pages/AdminCrmPage.jsx';
 
@@ -18,6 +20,11 @@ export default function App() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/exhibitions" element={<ExhibitionsPage />} />
+      <Route path="/offers" element={<OffersPage />} />
+      <Route path="/offers-v2" element={<OffersV2Page />} />
+      <Route path="/exhibition-offers" element={<OffersPage />} />
+      <Route path="/exhibition-offers-v2" element={<OffersV2Page />} />
+
       <Route path="/events" element={<EventsPage />} />
       <Route path="/graduation-portfolio" element={<GraduationPortfolioPage />} />
       <Route path="/portfolio-fable" element={<PortfolioFablePage />} />

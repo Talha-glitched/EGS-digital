@@ -57,6 +57,9 @@ export default function ExhibitionsHeroSection() {
           <InquiryCtaButton inquiryType="exhibitions" className="btn btn-primary" arrow={false}>
             Tell us about your stand <span className="arrow">-&gt;</span>
           </InquiryCtaButton>
+          <a href="/offers" className="btn btn-ghost" style={{ background: 'rgba(245, 241, 234, 0.15)', color: '#fff', borderColor: 'rgba(255, 255, 255, 0.35)' }}>
+            Explore 6 Specialist Offers
+          </a>
           <a href="/case-studies#philips-global-health-riyadh" className="btn btn-ghost">See proof</a>
         </motion.div>
       </div>
