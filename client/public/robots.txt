@@ -18,3 +18,4 @@ User-agent: PerplexityBot
 Allow: /
 
 Sitemap: https://www.exhibitgraphicsign.com/sitemap.xml
+Sitemap: https://www.exhibitgraphicsign.com/image-sitemap.xml

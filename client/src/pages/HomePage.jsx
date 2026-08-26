@@ -9,14 +9,10 @@ import StickyProcessShowcase from '../components/StickyProcessShowcase.jsx';
 import { Navbar } from '../components/Navbar.jsx';
 import { ClientMarquee, Footer } from './SiteChrome.jsx';
 import HomeServicesSection from '../components/home/HomeServicesSection.jsx';
-import HomeProofSection from '../components/home/HomeProofSection.jsx';
-import HomeProcessSection from '../components/home/HomeProcessSection.jsx';
-import HomeStandardsSection from '../components/home/HomeStandardsSection.jsx';
-import HomeHCTSection from '../components/home/HomeHCTSection.jsx';
 import HomeFAQSection from '../components/home/HomeFAQSection.jsx';
 import HomeCTASection from '../components/home/HomeCTASection.jsx';
-import CircularGallery from '../components/CircularGallery.jsx';
-import { images, processSteps, proofCards, services } from './siteData.js';
+import { images, services } from './siteData.js';
+import { EGS_ORGANIZATION } from '../utils/schemaGenerator.js';
 
 const homeRevealSelector = [
   '.home-page .chip',
@@ -26,14 +22,11 @@ const homeRevealSelector = [
   '.home-page .hero-feature-image .label',
   '.home-page .section-head h2',
   '.home-page .section-head p',
-  '.home-page .service-card',  '.home-page .proof-file-card',
-  '.home-page .home-circular-gallery',
-  '.home-page .proof-carousel-controls',
+  '.home-page .service-card',
+  '.home-page .proof-file-card',
   '.home-page .step',
   '.home-page .production-hub',
   '.home-page .cap-card',
-  '.home-page .dark-band .image-cell',
-  '.home-page .stat-poem .proof-chip',
   '.home-page .faq-item',
   '.home-page .section-band > .container > .btn',
   '.home-page .footer-grid > *',
@@ -45,66 +38,29 @@ const homeRevealSelector = [
 
 export default function HomePage() {
   const proofScrollRef = useRef(null);
-  const galleryFallbackImage = images.graduationWide;
-  const serviceGalleryItems = services.map((service) => ({
-    image: service.image || galleryFallbackImage,
-    text: service.title,
-    href: service.href,
-  }));
 
-  usePageLifecycle('Exhibit Graphic Sign | Exhibition Stands, Events, Retail Branding Dubai', {
+  usePageLifecycle('Exhibition Stand Contractor & Event Production Dubai | EGS', {
     revealSelector: homeRevealSelector,
-    description: 'Dubai production partner for high-stakes physical brand moments since 2010. We build custom exhibition stands, graduation ceremonies, retail activations, and office fitouts in the UAE.',
+    description: 'EGS is an in-house Dubai exhibition stand contractor and event production house. Turnkey booth design & fabrication, graduation ceremonies, retail rollouts, and fitouts across UAE since 2010.',
     ogImage: 'https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg',
-    structuredData: {
-      "@context": "https://schema.org",
-      "@type": "ProfessionalService",
-      "@id": "https://exhibitgraphicsign.com/#organization",
-      "name": "Exhibit Graphic Sign (EGS)",
-      "url": "https://exhibitgraphicsign.com/",
-      "logo": "https://exhibitgraphicsign.com/wp-content/uploads/2024/02/EGS-Logo-300x126.png",
-      "image": "https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg",
-      "description": "Dubai design & production partner for custom exhibition stands, event staging, retail branding, and office fitouts. Operating across the UAE since 2010.",
-      "foundingDate": "2010",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "Al Qusais",
-        "addressLocality": "Dubai",
-        "addressRegion": "Dubai",
-        "addressCountry": "AE"
+    structuredData: [
+      {
+        '@context': 'https://schema.org',
+        ...EGS_ORGANIZATION,
       },
-      "telephone": "+97142383278",
-      "contactPoint": [
-        {
-          "@type": "ContactPoint",
-          "telephone": "+97142383278",
-          "contactType": "sales",
-          "email": "info@exhibitgraphicsign.com",
-          "availableLanguage": ["English", "Arabic"]
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'Exhibit Graphic Sign',
+        url: 'https://www.exhibitgraphicsign.com/',
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: 'https://www.exhibitgraphicsign.com/?q={search_term_string}',
+          'query-input': 'required name=search_term_string',
         },
-        {
-          "@type": "ContactPoint",
-          "telephone": "+971524587992",
-          "contactType": "customer service",
-          "email": "info@exhibitgraphicsign.com",
-          "availableLanguage": ["English", "Arabic"]
-        }
-      ],
-      "sameAs": [
-        "https://www.nstands.com/companies/exhibit-graphic-sign/"
-      ]
-    }
+      },
+    ],
   });
-
-  const scrollProofCards = (direction) => {
-    const scroller = proofScrollRef.current;
-    if (!scroller) return;
-
-    scroller.scrollBy({
-      left: direction * Math.min(scroller.clientWidth * 0.86, 760),
-      behavior: 'smooth',
-    });
-  };
 
   return (
     <>
@@ -119,44 +75,6 @@ export default function HomePage() {
         <StickyProcessShowcase afterScroll={<HomeServicesSection services={services} />} />
 
         <ClientMarquee />
-         {/* <section className="section-band alt home-circular-gallery-section">
-          <div className="container">
-            <div className="section-head">
-              <h2>Explore services in motion.</h2>
-              <p>Scroll through core services and click a card to jump into that service page.</p>
-            </div>
-          </div>
-          <div className="home-circular-gallery reveal">
-            <CircularGallery
-              items={serviceGalleryItems}
-              bend={6}
-              textColor="#f5f1ea"
-              borderRadius={0.11}
-              showText
-              fallbackImage={galleryFallbackImage}
-              scrollEase={0.02}
-              scrollSpeed={1.8}
-              font="700 44px Arial"
-              planeWidth={700}
-              planeHeight={860}
-            />
-          </div>
-        </section>
-
-        */}
-
-        {/* <HomeProofSection
-          proofScrollRef={proofScrollRef}
-          proofCards={proofCards}
-          onScrollProofCards={scrollProofCards}
-        /> */}
-       
-
-        {/* <HomeProcessSection processSteps={processSteps} />
-
-        <HomeStandardsSection />
-
-        <HomeHCTSection image={images.hct} /> */}
 
         <HomeFAQSection />
 
@@ -167,4 +85,3 @@ export default function HomePage() {
     </>
   );
 }
-

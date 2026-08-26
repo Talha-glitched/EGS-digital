@@ -19,6 +19,7 @@ import graduationVipGuestStudent from '../assets/Graduation/SHJ3.jpg';
 import graduationOnsiteOperations from '../assets/Graduation/operation.jpeg';
 import rakEditedVideo from '../assets/Rak-Edited.mp4';
 import { getProjectCta } from '../utils/contactInquiry.js';
+import { buildPageSchemaBundle } from '../utils/schemaGenerator.js';
 
 const eventsCta = getProjectCta('events');
 
@@ -145,134 +146,23 @@ const revealSelector = [
 
 export default function EventsPage() {
   const navigate = useNavigate();
-  usePageLifecycle('Graduation Ceremony Setup UAE | Event Production Company Dubai | EGS', {
+  usePageLifecycle('Graduation Ceremony Setup & Event Production UAE | EGS', {
     revealSelector,
-    description: 'Professional event and graduation ceremony production across the UAE. Over 7 years serving Higher Colleges of Technology (HCT) for thousands of graduates.',
+    description: 'Professional event staging and graduation ceremony production across the UAE. Over 7 years serving Higher Colleges of Technology (HCT) with stage, LED backdrop, and AV production.',
     ogImage: 'https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg',
-    structuredData: [
-      {
-        "@context": "https://schema.org",
-        "@type": "Service",
-        "serviceType": "Graduation Ceremony Staging and Event Production",
-        "provider": {
-          "@type": "LocalBusiness",
-          "name": "Exhibit Graphic Sign (EGS)",
-          "url": "https://exhibitgraphicsign.com/"
-        },
-        "areaServed": ["AE"],
-        "description": "Full graduation ceremony production across the UAE including stage design, audio-video, seating layouts, and VIP protocol coordination."
+    structuredData: buildPageSchemaBundle({
+      service: {
+        name: 'Graduation Ceremony Staging and Event Production',
+        description: 'Full graduation ceremony production across the UAE including stage design, audio-video, seating layouts, and VIP protocol coordination.',
+        serviceType: 'Event Staging Contractor',
+        url: '/events',
       },
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "What does EGS handle?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The full ceremony production chain: design, production, installation, removal, and on-site management, including student registration support, stage setup, seating arrangements, venue branding, LED screen backdrops, lighting and sound system setup, and audio-video support."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What should we send before EGS can respond with a plan?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Date, venue, audience and graduate counts, ceremony format, stage and branding intent, VIP and protocol notes, registration and seating logic, rehearsal window, and any non-negotiable timings."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can EGS handle urgent changes close to showtime?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes, when it is physically possible. HCT Fujairah is the reference: a 5 to 6 metre stage extension sourced and finished before the ceremony after a late requirement change."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Is EGS only for graduations?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Graduations are the clearest proof at scale, but the same discipline applies to launches, convocations, and other institutional ceremonies where the room has to be correct before people arrive."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How do you protect ceremony start time and on-stage dignity?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Work is sequenced from fixed showtime backwards: stage, AV, and room readiness are commissioned and checked before rehearsal and doors, so leadership and families are not waiting on a visible scramble."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How should we think about VIPs, protocol, and leadership in the room?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Sightlines, movement, holding rooms, and stage order are planned with protocol in mind. The production has to support confidence for VIPs and leadership, not fight the ceremony script."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How do AV, lighting, sound, and LED backdrops stay coordinated on the day?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "One production path ties screens, audio, lighting, and branded surfaces to the same cue plan. Fewer disconnected teams means fewer gaps at the moment there is no second take."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How do registration, seating arrangements, and guest flow stay aligned with the stage?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Registration data, seating plans, and stage movement are treated as one flow problem, not three suppliers guessing at each other while guests arrive."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Will the environment read well for photography and video?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Stage, backdrop, and lighting choices are judged on how they read in a crowded room and on camera. Cheap-looking production shows in every graduate photo."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Do we work with one accountable team or many disconnected crews?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "EGS carries the physical ceremony production scope under one roof so coordination is not split across generic suppliers who treat graduation like a template gig."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can EGS support annual ceremony seasons without reinventing the brief every year?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Repeat seasons benefit from documented room reads, asset libraries, and post-event notes. Less re-explaining, more refinement."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What about rehearsal changes, cues, and last-minute script tweaks?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Rehearsal windows are built into the plan. When cues or order shift, the crew path is updated once and pushed through stage, AV, and registration touchpoints so the floor stays coherent."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What happens after the ceremony: strike and venue handback?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Removal is part of scope: controlled pack-down, asset recovery, and handover so the venue returns to use on schedule without loose ends in the room."
-            }
-          }
-        ]
-      }
-    ]
+      faqs,
+      breadcrumbs: [
+        { name: 'Home', url: '/' },
+        { name: 'Events & Graduations', url: '/events' },
+      ],
+    }),
   });
 
   return (
@@ -321,20 +211,16 @@ export default function EventsPage() {
           }
         />
         <MinimalScopeSection
-          title="What EGS handles."
-          copy="Graduation ceremonies need the whole chain under one roof, from design through strike, with student registration support, stage setup, seating arrangements, venue branding, LED screen backdrops, lighting and sound system setup, and audio-video support ready before families and leadership walk in."
+          title="What EGS delivers for ceremonies."
+          copy="Design, staging, LED backdrops, seating, audio-video, registration flow, and on-site support coordinated by one accountable production team."
           items={scopeItems}
         />
+        <MinimalFAQSection faqs={faqs} />
         <MinimalCTASection
-          title="Send the date, venue, and what has to be ready."
-          copy="EGS will read the room, the deadline, and what needs to move first."
-          cta={eventsCta}
-        />
-        <MinimalFAQSection
-          title="Questions ceremony teams ask first."
-          copy="Grounded answers for university and institutional leads: dignity, timing, VIPs, AV, guest flow, and repeat seasons."
-          faqs={faqs}
-          accordion
+          title="Plan your ceremony production."
+          copy="Send the date, venue, guest numbers, and stage requirements. EGS will return a structured staging and cue plan."
+          primaryCta={eventsCta}
+          secondaryCta={{ href: '/case-studies#hct-graduation-program', label: 'See HCT Case Study' }}
         />
         <Footer />
       </div>

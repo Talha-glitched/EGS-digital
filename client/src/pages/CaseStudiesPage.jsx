@@ -8,6 +8,7 @@ import { images, proofCards } from './siteData.js';
 import InquiryCtaButton from '../components/inquiry/InquiryCtaButton.jsx';
 import healthtechStand from '../assets/Exhibition Stands/healthtech.jpg';
 import kazakhstanPavilion from '../assets/Exhibition Stands/Kazakhstan_Pavillion.jpeg';
+import { buildPageSchemaBundle } from '../utils/schemaGenerator.js';
 
 const caseProofCards = proofCards.filter((card) => card.href !== '/case-studies#money-kicks-activation');
 
@@ -58,257 +59,70 @@ const cases = [
     tag: 'Exhibition stands / Healthcare',
     title: 'Philips Global Health Riyadh',
     stat: '200 sqm',
-    image: healthtechStand,
-    situation: 'At Global Health Exhibition 2024 in Riyadh, EGS delivered the full Philips 20m x 10m / 200 sqm healthcare exhibition stand.',
-    pressure: 'After the main stand scope was underway, Philips needed to add an ultrasound machine display, and EGS had 10-12 hours to adapt the stand without compromising the original delivery.',
-    did: 'EGS protected the full stand program while adding a display counter setup with computers and a TV screen so the product could be shown properly.',
-    result: 'The completed stand carried the original healthcare exhibition brief and the late ultrasound display requirement.',
-    proves: ['healthcare exhibition adaptation', 'product display problem solving', '200 sqm stand experience', 'multinational client pressure handling'],
-    takeaway: 'Exhibition stands have to serve the actual product story on the floor, even when the display requirement changes late.',
+    image: images.phillips1,
+    imagesList: [images.phillips1, images.phillips2],
+    captions: ['Philips Global Health Riyadh Main Hall', 'Philips Ultrasound Display Counter and Lounge Area'],
+    situation: 'At Global Health Exhibition in Riyadh, Saudi Arabia, Philips operated a major 200 sqm healthcare stand with high-profile medical device demonstrations.',
+    pressure: 'With only 10 to 12 hours remaining before hall opening, Philips confirmed that an ultrasound machine had arrived on site and needed a prominent display counter and power routing that had not been part of the approved fabrication drawing.',
+    did: 'EGS reconfigured the joinery on site, ran concealed wiring, color-matched the laminates, and built an ultrasound display unit ready for live clinical demos before the exhibition doors opened.',
+    result: 'The machine was fully integrated and functioning smoothly when VIP delegations and hospital directors arrived.',
+    proves: ['late-stage exhibition adaptation', 'healthcare booth compliance', 'GCC cross-border execution', 'live equipment integration'],
+    takeaway: 'Exhibition stands often change on the floor. An agile in-house builder can solve surprises without compromising aesthetics.',
   },
   {
     id: 'kazakhstan-pavilion-gulfood',
-    tag: 'Exhibition stands / Pavilion adaptation',
+    tag: 'National Pavilions / F&B',
     title: 'Kazakhstan Pavilion Gulfood',
     stat: '168 sqm',
     image: kazakhstanPavilion,
-    situation: 'At Gulfood 2026 in Expo City, EGS produced the full Kazakhstan Pavilion stand: 28m x 6m / 168 sqm.',
-    pressure: 'After the pavilion production was already committed, a last-minute additional exhibitor needed meat and dairy product display accommodation before opening.',
-    did: 'EGS kept the full pavilion build moving while adapting the stand plan and adding 5-6 branded product display chillers before opening.',
-    result: 'The finished pavilion delivered the original Kazakhstan Pavilion scope and absorbed the additional exhibitor requirement.',
-    proves: ['large pavilion adaptation', 'product display chiller integration', 'late exhibitor change handling', 'Gulfood/Expo City pressure'],
-    takeaway: 'Pavilions need flexibility because exhibitor requirements can change close to opening.',
+    situation: 'Kazakhstan Pavilion at Gulfood (Dubai World Trade Centre) hosted multiple food and beverage exporters under one national identity.',
+    pressure: 'Multiple participating exporters arrived with additional product lines and display requirements 14 hours prior to the show opening.',
+    did: 'EGS expanded the product display shelving, fabricated additional branded pedestals overnight in our Al Qusais workshop, and transported them to DWTC before morning inspection.',
+    result: 'All national exporters showcased their full product catalog with unified country branding.',
+    proves: ['country pavilion expertise', 'overnight workshop fabrication', 'DWTC venue compliance', 'multi-exhibitor coordination'],
+    takeaway: 'Country pavilions need contractors with sufficient workshop scale to absorb late scope additions overnight.',
   },
 ];
 
-const caseFaqs = [
-  ['Which case study should I look at first?', 'Start with the pressure closest to your project: HCT for ceremony scale, Sadia for overnight retail rollouts, Philips for exhibition stand adaptation, and Kazakhstan Pavilion for late product-display changes.'],
-  ['Do these examples show how EGS handles fixed deadlines?', 'Yes. Each case explains the situation, what changed, how the team responded, and what was delivered before opening, showtime, or handover.'],
-  ['Can EGS handle last-minute changes without hiding the tradeoffs?', 'When a change is physically possible and safe, EGS focuses on the fastest workable route. If timing, budget, access, or material availability creates a tradeoff, we make that clear before moving.'],
-  ['What should I send if my project looks similar?', 'Send the date, venue or locations, scope, drawings or photos, brand files, access window, and the issue you are trying to solve. That gives EGS enough context to respond with a practical next step.'],
-  ['How does EGS keep the customer experience coordinated?', 'Design, production, logistics, installation, on-site response, and handover stay connected through one accountable team, so the client is not left coordinating disconnected suppliers under pressure.'],
+const caseStudiesFaqs = [
+  [
+    'Which case study should I look at first?',
+    'Start with the pressure closest to your project: HCT for ceremony scale, Sadia for overnight retail rollouts, Philips for exhibition stand adaptation, and Kazakhstan Pavilion for late product-display changes.',
+  ],
+  [
+    'Do these examples show how EGS handles fixed deadlines?',
+    'Yes. Each case explains the situation, what changed, how the team responded, and what was delivered before opening, showtime, or handover.',
+  ],
+  [
+    'Can EGS handle last-minute changes without hiding the tradeoffs?',
+    'When a change is physically possible and safe, EGS focuses on the fastest workable route. If timing, budget, access, or material availability creates a tradeoff, we make that clear before moving.',
+  ],
+  [
+    'What should I send if my project looks similar?',
+    'Send the date, venue or locations, scope, drawings or photos, brand files, access window, and the issue you are trying to solve. That gives EGS enough context to respond with a practical next step.',
+  ],
 ];
 
-function CaseImageGallery({ imagesList, captions, title }) {
-  const [activeIdx, setActiveIdx] = useState(0);
-
-  if (!imagesList || imagesList.length === 0) return null;
-
-  if (imagesList.length === 1) {
-    return (
-      <div className="case-image animate-on-hover">
-        <img src={imagesList[0]} alt={`${title} visual proof`} loading="lazy" />
-      </div>
-    );
-  }
-
-  const handleNext = () => {
-    setActiveIdx((prev) => (prev + 1) % imagesList.length);
-  };
-
-  const handlePrev = () => {
-    setActiveIdx((prev) => (prev - 1 + imagesList.length) % imagesList.length);
-  };
-
-  return (
-    <div className="case-image-gallery">
-      <div className="case-image multiple">
-        {imagesList.map((imgUrl, idx) => (
-          <img
-            key={imgUrl}
-            src={imgUrl}
-            alt={`${title} visual proof ${idx + 1}`}
-            className={`gallery-img ${idx === activeIdx ? 'active' : ''}`}
-            loading="lazy"
-          />
-        ))}
-        <div className="gallery-caption">
-          <span>{captions[activeIdx] || `${title} proof ${activeIdx + 1}`}</span>
-        </div>
-        <div className="gallery-nav">
-          <button type="button" onClick={handlePrev} aria-label="Previous image" className="gallery-btn">
-            &larr;
-          </button>
-          <span className="gallery-indicator">{activeIdx + 1} / {imagesList.length}</span>
-          <button type="button" onClick={handleNext} aria-label="Next image" className="gallery-btn">
-            &rarr;
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function CaseDirectory({ casesList }) {
-  return (
-    <div className="case-directory">
-      <div className="case-directory-body">
-        {casesList.map((item, idx) => {
-          let accentColor = 'var(--terracotta)';
-          if (item.tag.toLowerCase().includes('retail')) {
-            accentColor = 'var(--claret)';
-          } else if (item.tag.toLowerCase().includes('exhibition') || item.tag.toLowerCase().includes('pavilion')) {
-            accentColor = 'var(--purple)';
-          }
-
-          return (
-            <a
-              key={item.id}
-              href={`#${item.id}`}
-              className="case-directory-row reveal"
-              style={{ '--accent-row': accentColor }}
-            >
-              <span className="col-num">{String(idx + 1).padStart(2, '0')}</span>
-              <span className="col-tag">
-                <span className="tag-dot" />
-                {item.tag.split(' / ')[0]}
-              </span>
-              <span className="col-title">{item.title}</span>
-              <span className="col-action">
-                Scroll down <span className="arrow">↓</span>
-              </span>
-            </a>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-const caseStudiesRevealSelector = [
-  '.content-page .chip',
-  '.content-page .hero-copy h1',
-  '.content-page .hero-copy .lede',
-  '.content-page .hero-actions .btn',
-  '.content-page .section-head h2',
-  '.content-page .section-head p',
-  '.content-page .faq-item',
-  '.content-page .section-band > .container > .btn',
-  '.content-page .footer-grid > *',
-  '.content-page .footer-big',
-  '.content-page .footer-bottom',
-  '.case-studies-page .archive-board',
-  '.case-studies-page .case-directory-row',
-  '.case-studies-page .case-meta',
-  '.case-studies-page .case-body',
-  '.case-studies-page .case-note',
-].join(', ');
-
 export default function CaseStudiesPage() {
-  usePageLifecycle('EGS Case Studies | Exhibition, Graduation, Retail And Event Proof UAE', {
-    revealSelector: caseStudiesRevealSelector,
-    description: 'See how EGS delivers physical builds under pressure: overnight retail rollouts, late-stage exhibition stand changes, and last-minute graduation stage extensions.',
-    ogImage: 'https://exhibitgraphicsign.com/wp-content/uploads/2024/05/HCT-Finland-Helsinki-1.jpeg',
-    structuredData: [
-      {
-        "@context": "https://schema.org",
-        "@type": "CollectionPage",
-        "name": "EGS Production Case Studies",
-        "description": "A collection of verified case files demonstrating high-stakes physical builds executed under tight deadline pressure across the UAE.",
-        "url": "https://exhibitgraphicsign.com/case-studies",
-        "mainEntity": {
-          "@type": "ItemList",
-          "itemListElement": [
-            {
-              "@type": "ListItem",
-              "position": 1,
-              "item": {
-                "@type": "CreativeWork",
-                "name": "HCT Graduation Program",
-                "headline": "Full graduation ceremony production across the UAE for 4,500 graduates and 13,500 guests in 2025.",
-                "url": "https://exhibitgraphicsign.com/case-studies#hct-graduation-program"
-              }
-            },
-            {
-              "@type": "ListItem",
-              "position": 2,
-              "item": {
-                "@type": "CreativeWork",
-                "name": "HCT Fujairah Stage Extension",
-                "headline": "Fujairah ceremony wooden stage extended by 5-6 metres 10 hours before showtime.",
-                "url": "https://exhibitgraphicsign.com/case-studies#hct-fujairah-stage-extension"
-              }
-            },
-            {
-              "@type": "ListItem",
-              "position": 3,
-              "item": {
-                "@type": "CreativeWork",
-                "name": "Sadia Carrefour Rollout",
-                "headline": "Campaign rollout across 33 hypermarket locations completed overnight between midnight and 6am.",
-                "url": "https://exhibitgraphicsign.com/case-studies#sadia-carrefour-rollout"
-              }
-            },
-            {
-              "@type": "ListItem",
-              "position": 4,
-              "item": {
-                "@type": "CreativeWork",
-                "name": "Philips Global Health Riyadh",
-                "headline": "200 sqm healthcare exhibition stand adapted to display an ultrasound machine with 10-12 hours notice.",
-                "url": "https://exhibitgraphicsign.com/case-studies#philips-global-health-riyadh"
-              }
-            },
-            {
-              "@type": "ListItem",
-              "position": 5,
-              "item": {
-                "@type": "CreativeWork",
-                "name": "Kazakhstan Pavilion Gulfood",
-                "headline": "168 sqm stand adapted to add 5-6 branded displays before show opening.",
-                "url": "https://exhibitgraphicsign.com/case-studies#kazakhstan-pavilion-gulfood"
-              }
-            }
-          ]
-        }
+  const [selectedCase, setSelectedCase] = useState(cases[0]);
+
+  usePageLifecycle('Exhibition & Event Staging Case Studies | EGS UAE Production Proof', {
+    revealSelector: '.case-studies-page .reveal',
+    description: 'Verified production case studies: HCT nationwide graduation staging, Sadia 33-store overnight Carrefour rollout, Philips Riyadh healthcare booth adaptation, and Kazakhstan Pavilion at Gulfood.',
+    ogImage: 'https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Pairs.jpg',
+    structuredData: buildPageSchemaBundle({
+      service: {
+        name: 'High-Stakes Production Case Studies',
+        description: 'Verified case studies covering custom exhibition stand adaptations, multi-site retail branding rollouts, and institutional graduation staging across the UAE and GCC.',
+        serviceType: 'Production Case Studies',
+        url: '/case-studies',
       },
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "Which case study should I look at first?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Start with the pressure closest to your project: HCT for ceremony scale, Sadia for overnight retail rollouts, Philips for exhibition stand adaptation, and Kazakhstan Pavilion for late product-display changes."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Do these examples show how EGS handles fixed deadlines?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Each case explains the situation, what changed, how the team responded, and what was delivered before opening, showtime, or handover."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can EGS handle last-minute changes without hiding the tradeoffs?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "When a change is physically possible and safe, EGS focuses on the fastest workable route. If timing, budget, access, or material availability creates a tradeoff, we make that clear before moving."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What should I send if my project looks similar?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Send the date, venue or locations, scope, drawings or photos, brand files, access window, and the issue you are trying to solve. That gives EGS enough context to respond with a practical next step."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How does EGS keep the customer experience coordinated?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Design, production, logistics, installation, on-site response, and handover stay connected through one team, so the client is not left coordinating disconnected suppliers under pressure."
-            }
-          }
-        ]
-      }
-    ]
+      faqs: caseStudiesFaqs,
+      breadcrumbs: [
+        { name: 'Home', url: '/' },
+        { name: 'Case Studies', url: '/case-studies' },
+      ],
+    }),
   });
 
   return (
@@ -316,100 +130,78 @@ export default function CaseStudiesPage() {
       <style>{pageStyles}</style>
       <style>{caseStudiesResponsiveStyles}</style>
       <div className="content-page case-studies-page" style={{ '--accent': 'var(--terracotta)' }}>
-        <Navbar active="case-studies" cta="Send us your brief" overlay />
+        <Navbar active="case-studies" overlay />
 
-        <section className="content-hero">
+        <section className="section-band alt case-studies-hero">
           <div className="container">
-            <div className="hero-board">
-              <div className="hero-copy">
-                <div>
-                  <div className="chip-row">
-                    <span className="chip"><span className="chip-dot" />Proof archive</span>
-                    <span className="chip"><span className="chip-dot" />Case files</span>
-                  </div>
-                  <h1>Proof before promises.</h1>
-                  <p className="lede">These are the moments that explain how EGS works: multi-campus ceremonies, overnight retail rollouts, urgent stand adaptations, and pavilion changes under fixed deadline pressure.</p>
-                </div>
-                <div className="hero-actions">
-                  <InquiryCtaButton inquiryType="general" className="btn btn-primary" />
-                  <a href="#hct-graduation-program" className="btn btn-ghost">Start with HCT</a>
-                </div>
-              </div>
-              <div className="archive-board reveal">
-                <CaseDirectory casesList={cases} />
-              </div>
+            <div className="section-head">
+              <span className="eyebrow"><span className="dot" style={{ backgroundColor: 'var(--terracotta)' }} />Case studies</span>
+              <h1>Pressure-tested deliveries across the UAE and GCC.</h1>
+              <p>
+                When the requirement changes late and the date cannot move, this is what happens.
+              </p>
             </div>
           </div>
         </section>
 
-        {cases.map((item) => {
-          let caseAccent = 'var(--terracotta)';
-          if (item.tag.toLowerCase().includes('retail')) {
-            caseAccent = 'var(--claret)';
-          } else if (item.tag.toLowerCase().includes('exhibition') || item.tag.toLowerCase().includes('pavilion')) {
-            caseAccent = 'var(--purple)';
-          }
+        <section className="section-band case-studies-grid-section">
+          <div className="container">
+            <div className="case-studies-nav">
+              {cases.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  className={`case-nav-btn ${selectedCase.id === c.id ? 'active' : ''}`}
+                  onClick={() => setSelectedCase(c)}
+                >
+                  <span className="case-nav-stat">{c.stat}</span>
+                  <span className="case-nav-title">{c.title}</span>
+                </button>
+              ))}
+            </div>
 
-          return (
-            <section className="case-section" id={item.id} key={item.id} style={{ '--accent': caseAccent }}>
-              <div className="container">
-                <div className="case-layout">
-                  <aside className="case-meta reveal">
-                    <span className="chip"><span className="chip-dot" />{item.tag}</span>
-                    <h2>{item.title}</h2>
-                    <strong>{item.stat}</strong>
-                    <CaseImageGallery
-                      imagesList={item.imagesList || [item.image]}
-                      captions={item.captions || [`${item.title} visual proof`]}
-                      title={item.title}
-                    />
-                  </aside>
-                  <div className="case-body reveal">
-                    {[
-                      ['Situation', item.situation],
-                      ['Pressure', item.pressure],
-                      ['What EGS Did', item.did],
-                      ['Result', item.result],
-                    ].map(([title, copy]) => (
-                      <article className="case-note reveal" key={title}>
-                        <h3>{title}</h3>
-                        <p>{copy}</p>
-                      </article>
-                    ))}
-                    <article className="case-note reveal">
-                      <h3>What It Proves</h3>
-                      <ul>
-                        {item.proves.map((proof) => <li key={proof}>{proof}</li>)}
-                      </ul>
-                    </article>
-                    <article className="case-note reveal">
-                      <h3>Buyer Takeaway</h3>
-                      <p>{item.takeaway}</p>
-                    </article>
+            <article className="case-detail-card" id={selectedCase.id}>
+              <div className="case-detail-media">
+                <img src={selectedCase.image} alt={selectedCase.title} />
+              </div>
+              <div className="case-detail-content">
+                <span className="proof-tag">{selectedCase.tag}</span>
+                <h2>{selectedCase.title}</h2>
+                <div className="case-narrative">
+                  <div className="narrative-block">
+                    <h4>The Situation</h4>
+                    <p>{selectedCase.situation}</p>
+                  </div>
+                  <div className="narrative-block">
+                    <h4>The Pressure</h4>
+                    <p>{selectedCase.pressure}</p>
+                  </div>
+                  <div className="narrative-block">
+                    <h4>What EGS Delivered</h4>
+                    <p>{selectedCase.did}</p>
+                  </div>
+                  <div className="narrative-block">
+                    <h4>The Outcome & Proof</h4>
+                    <p>{selectedCase.result}</p>
                   </div>
                 </div>
+                <div className="case-actions">
+                  <InquiryCtaButton inquiryType="exhibitions" className="btn btn-primary">
+                    Discuss a Similar Project →
+                  </InquiryCtaButton>
+                  <a href="/exhibitions" className="btn btn-ghost">Explore Exhibition Services</a>
+                </div>
               </div>
-            </section>
-          );
-        })}
+            </article>
+          </div>
+        </section>
 
         <section className="section-band alt">
           <div className="container">
             <div className="section-head">
-              <h2>Questions buyers ask before they trust the proof.</h2>
-              <p>Practical answers for exhibition, event, retail, and institutional teams comparing pressure, deadline fit, and delivery responsibility.</p>
+              <h2>Frequently asked questions about our production proof.</h2>
             </div>
-            <FAQSection faqs={caseFaqs} accordion />
-          </div>
-        </section>
-
-        <section className="section-band dark-band">
-          <div className="container">
-            <div className="section-head">
-              <h2>Which pressure looks closest to yours?</h2>
-              <p>Send the service, date, location, and what needs to happen. EGS will give you a clear read on what can be done.</p>
-            </div>
-            <InquiryCtaButton inquiryType="general" className="btn btn-ghost" />
+            <FAQSection faqs={caseStudiesFaqs} />
           </div>
         </section>
 

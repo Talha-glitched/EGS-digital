@@ -20,6 +20,7 @@ import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 import { Footer } from './SiteChrome.jsx';
 import { images } from './siteData.js';
 import { getProjectCta } from '../utils/contactInquiry.js';
+import { buildPageSchemaBundle } from '../utils/schemaGenerator.js';
 
 const retailCta = getProjectCta('retail');
 
@@ -107,86 +108,23 @@ const revealSelector = [
 ].join(', ');
 
 export default function RetailPage() {
-  usePageLifecycle('Retail Branding Installation UAE | Mall And Hypermarket Rollouts | EGS', {
+  usePageLifecycle('Retail Branding Rollouts & Hypermarket Displays UAE | EGS', {
     revealSelector,
-    description: 'Multi-location retail branding rollouts, hypermarket displays (Carrefour, Sadia), and mall activations completed overnight within tight access windows.',
+    description: 'Nationwide retail branding rollouts, supermarket chiller displays (Carrefour, Sadia), and mall activations executed overnight with in-house fabrication.',
     ogImage: 'https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Pairs.jpg',
-    structuredData: [
-      {
-        "@context": "https://schema.org",
-        "@type": "Service",
-        "serviceType": "Retail Branding Rollouts and Mall Activations",
-        "provider": {
-          "@type": "LocalBusiness",
-          "name": "Exhibit Graphic Sign (EGS)",
-          "url": "https://exhibitgraphicsign.com/"
-        },
-        "areaServed": ["AE"],
-        "description": "Overnight multi-site retail rollouts, hypermarket product chiller displays, custom POSM designs, and temporary mall campaign installs."
+    structuredData: buildPageSchemaBundle({
+      service: {
+        name: 'Retail Branding Rollouts and Mall Activations',
+        description: 'Overnight multi-site retail rollouts, hypermarket product chiller displays, custom POSM designs, and temporary mall campaign installs.',
+        serviceType: 'Retail Branding Contractor',
+        url: '/retail',
       },
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "Can EGS keep every branch ready by launch morning?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "That is the point of the rollout plan. EGS maps production status, route order, access windows, crew splits, supervisors, and completion photos before teams move, so launch readiness is checked branch by branch."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How do you keep branding consistent across all locations?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Printing, fabrication, packing, installation, and QA/QC stay under one team. That reduces color drift, wrong dimensions, uneven placement, and the small finish differences that make one store look off-brand."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can you work around mall and hypermarket access restrictions?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. EGS plans around closing times, loading docks, gate passes, security procedures, store contacts, and mall approval requirements so installers are ready when the access window opens."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What proof do you have for urgent multi-location work?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "For Sadia, EGS completed 33 Carrefour hypermarket locations across the UAE between midnight and before 6am, using 13 vehicles with QA/QC supervisors moving across teams."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What should we send for a serious estimate?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Send the branch list, launch date, access windows, asset types, quantities, dimensions, artwork status, and store or mall contacts. Site photos help EGS catch fit, access, and placement issues earlier."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can EGS produce the assets as well as install them?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. EGS handles large-format printing, POSM, display units, joinery, metalwork, packing, dispatch, installation, and supervisor checks so every location receives the right assets."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What happens if branches, quantities, or timing change late?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "EGS reviews the change against material readiness, production load, access windows, and crew availability, then separates what can be compressed from what would risk the launch standard."
-            }
-          }
-        ]
-      }
-    ]
+      faqs,
+      breadcrumbs: [
+        { name: 'Home', url: '/' },
+        { name: 'Retail Rollouts', url: '/retail' },
+      ],
+    }),
   });
 
   return (
@@ -238,8 +176,9 @@ export default function RetailPage() {
 
         <MinimalCTASection
           title="Send the location list and launch date."
-          copy="EGS will look at access, assets, teams, and QA/QC together to ensure your campaign opens on time."
-          cta={retailCta}
+          copy="EGS will return route mapping, vehicle counts, crew allocation, and a confirmed overnight install schedule."
+          primaryCta={retailCta}
+          secondaryCta={{ href: '/case-studies#sadia-carrefour-rollout', label: 'Read 33-Store Rollout Case Study' }}
         />
 
         <Footer />

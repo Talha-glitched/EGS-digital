@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://www.exhibitgraphicsign.com/exhibitions</loc>
+    <image:image>
+      <image:loc>https://www.exhibitgraphicsign.com/assets/images/philips-global-health-riyadh.jpg</image:loc>
+      <image:title>Custom Exhibition Stand for Philips Healthcare</image:title>
+      <image:caption>Healthcare exhibition stand design and build by EGS with illuminated branding</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.exhibitgraphicsign.com/assets/images/kazakhstan-pavilion-gulfood.jpg</image:loc>
+      <image:title>Kazakhstan Pavilion at Gulfood DWTC Dubai</image:title>
+      <image:caption>National country pavilion custom build at Dubai World Trade Centre</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.exhibitgraphicsign.com/assets/images/hct-exhibition-booth.jpg</image:loc>
+      <image:title>HCT Custom Exhibition Stand Dubai</image:title>
+      <image:caption>Custom institutional exhibition stand with digital screens and meeting lounge</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.exhibitgraphicsign.com/events</loc>
+    <image:image>
+      <image:loc>https://www.exhibitgraphicsign.com/assets/images/hct-graduation-stage.jpg</image:loc>
+      <image:title>Graduation Ceremony Stage Staging Higher Colleges of Technology UAE</image:title>
+      <image:caption>Grand ceremonial staging, LED backdrop, and VIP seating production by EGS</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.exhibitgraphicsign.com/retail</loc>
+    <image:image>
+      <image:loc>https://www.exhibitgraphicsign.com/assets/images/sadia-carrefour-retail-rollout.jpg</image:loc>
+      <image:title>Sadia Carrefour Hypermarket Display Stand UAE</image:title>
+      <image:caption>Overnight retail branding and chiller display rollout across 33 Carrefour stores</image:caption>
+    </image:image>
+  </url>
+</urlset>

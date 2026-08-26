@@ -16,12 +16,13 @@ import hctStand from '../assets/Exhibition Stands/HCT1.jpeg';
 import healthtechStand from '../assets/Exhibition Stands/healthtech.jpg';
 import kazakhstanPavilion from '../assets/Exhibition Stands/Kazakhstan_Pavillion.jpeg';
 import { getProjectCta } from '../utils/contactInquiry.js';
+import { buildPageSchemaBundle } from '../utils/schemaGenerator.js';
 
 const exhibitionsCta = getProjectCta('exhibitions');
 
 const exhibitionsShowcaseSteps = [
   {
-    label: 'Global Health Exhibition ',
+    label: 'Global Health Exhibition',
     image: healthtechStand,
     alt: 'Healthcare exhibition stand with illuminated branded walls and product displays',
   },
@@ -42,7 +43,6 @@ const exhibitionsShowcaseSteps = [
   },
 ];
 
-
 const exhibitionsRevealSelector = [
   '.exhibitions-page .exhibitions-kicker',
   '.exhibitions-page .exhibitions-hero-copy h1',
@@ -62,71 +62,47 @@ const exhibitionsRevealSelector = [
   '.exhibitions-page .footer-bottom',
 ].join(', ');
 
+const exhibitionsFaqs = [
+  [
+    'What should an exhibition manager send first?',
+    'Send the show name, stand size, hall, open sides, floorplan, deadline, product list, storage needs, brand files, and any organiser rules. EGS can then price the real scope instead of guessing.',
+  ],
+  [
+    'How does EGS keep exhibition stand pricing transparent?',
+    'We separate the stand scope, materials, production requirements, installation windows, and change requests clearly, so marketing and procurement teams know what is included and what may affect cost.',
+  ],
+  [
+    'Can EGS advise us if the design or budget is unrealistic?',
+    'Yes. Ethical delivery means saying what will work, what needs adjustment, and what could create risk on site before the team commits to production.',
+  ],
+  [
+    'Can EGS handle last-minute changes before opening day?',
+    'Yes, when the change is physically possible, safe, and allowed by the venue schedule. Philips Global Health Riyadh and Kazakhstan Pavilion are examples of late adaptation under pressure.',
+  ],
+  [
+    'How does EGS coordinate the stand before and during the exhibition?',
+    'Design, approvals, fabrication, transport, installation, on-site fixes, and handover stay connected through one team, so the stand is ready for visitors and the client is not chasing disconnected suppliers.',
+  ],
+];
+
 export default function ExhibitionsPage() {
-  usePageLifecycle('Exhibition Stand Contractor Dubai | Custom Exhibition Stands UAE | EGS', {
+  usePageLifecycle('Custom Exhibition Stand Contractor Dubai | Design & Build | EGS', {
     revealSelector: exhibitionsRevealSelector,
-    description: 'Custom exhibition stands for high-stakes trade shows in Dubai & Riyadh (GITEX, Arab Health, Gulfood). In-house fabrication, custom wireframes, and late-stage adaptation.',
+    description: 'Premier exhibition stand contractor in Dubai & Riyadh. In-house custom booth design, CNC joinery fabrication, and turnkey installation at DWTC & ADNEC.',
     ogImage: 'https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Pairs.jpg',
-    structuredData: [
-      {
-        "@context": "https://schema.org",
-        "@type": "Service",
-        "serviceType": "Exhibition Stand Contractor",
-        "provider": {
-          "@type": "LocalBusiness",
-          "name": "Exhibit Graphic Sign (EGS)",
-          "url": "https://exhibitgraphicsign.com/"
-        },
-        "areaServed": ["AE", "SA"],
-        "description": "Custom exhibition stands for trade shows in Dubai & Riyadh. In-house fabrication, custom wireframes, and late-stage adaptation."
+    structuredData: buildPageSchemaBundle({
+      service: {
+        name: 'Custom Exhibition Stand Design and Fabrication Contractor',
+        description: 'Turnkey custom exhibition stands, booth fabrication, joinery, and on-site management at DWTC, ADNEC, and Riyadh.',
+        serviceType: 'Exhibition Stand Contractor',
+        url: '/exhibitions',
       },
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "What should an exhibition manager send first?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Send the show name, stand size, hall, open sides, floorplan, deadline, product list, storage needs, brand files, and any organiser rules. EGS can then price the real scope instead of guessing."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How does EGS keep exhibition stand pricing transparent?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "We separate the stand scope, materials, production requirements, installation windows, and change requests clearly, so marketing and procurement teams know what is included and what may affect cost."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can EGS advise us if the design or budget is unrealistic?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Ethical delivery means saying what will work, what needs adjustment, and what could create risk on site before the team commits to production."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can EGS handle last-minute changes before opening day?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes, when the change is physically possible, safe, and allowed by the venue schedule. Philips Global Health Riyadh and Kazakhstan Pavilion are examples of late adaptation under pressure."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How does EGS coordinate the stand before and during the exhibition?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Design, approvals, fabrication, transport, installation, on-site fixes, and handover stay connected through one team, so the stand is ready for visitors and the client is not chasing disconnected suppliers."
-            }
-          }
-        ]
-      }
-    ]
+      faqs: exhibitionsFaqs,
+      breadcrumbs: [
+        { name: 'Home', url: '/' },
+        { name: 'Exhibition Stands', url: '/exhibitions' },
+      ],
+    }),
   });
 
   return (
