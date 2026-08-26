@@ -14,26 +14,76 @@ if (!fs.existsSync(indexHtmlPath)) {
 
 const baseHtml = fs.readFileSync(indexHtmlPath, 'utf8');
 
+const EGS_BASE_SCHEMA = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': 'https://www.exhibitgraphicsign.com/#organization',
+  name: 'Exhibit Graphic Sign (EGS)',
+  alternateName: ['EGS Dubai', 'Exhibit Graphic Sign LLC', 'EGS Exhibition Stands'],
+  url: 'https://www.exhibitgraphicsign.com/',
+  logo: 'https://www.exhibitgraphicsign.com/assets/logo/EGS-Logo.svg',
+  image: 'https://www.exhibitgraphicsign.com/assets/images/egs-workshop-dubai.jpg',
+  description: 'In-house design and fabrication contractor in Dubai for custom exhibition stands, institutional graduation ceremonies, retail branding rollouts, and commercial interior fitouts across the UAE and Saudi Arabia since 2010.',
+  foundingDate: '2010',
+  telephone: '+97142383278',
+  email: 'info@exhibitgraphicsign.com',
+  priceRange: '$$$',
+  currenciesAccepted: 'AED, SAR, USD',
+  paymentAccepted: 'Bank Transfer, Cheque, Credit Card',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Al Qusais Industrial Area',
+    addressLocality: 'Dubai',
+    addressRegion: 'Dubai',
+    postalCode: '00000',
+    addressCountry: 'AE',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 25.2819,
+    longitude: 55.3854,
+  },
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+      opens: '08:00',
+      closes: '19:00',
+    },
+  ],
+  areaServed: [
+    { '@type': 'City', name: 'Dubai', '@id': 'https://www.wikidata.org/wiki/Q612' },
+    { '@type': 'City', name: 'Abu Dhabi', '@id': 'https://www.wikidata.org/wiki/Q1519' },
+    { '@type': 'City', name: 'Sharjah', '@id': 'https://www.wikidata.org/wiki/Q188810' },
+    { '@type': 'City', name: 'Ajman' },
+    { '@type': 'City', name: 'Ras Al Khaimah' },
+    { '@type': 'City', name: 'Fujairah' },
+    { '@type': 'City', name: 'Umm Al Quwain' },
+    { '@type': 'City', name: 'Riyadh', '@id': 'https://www.wikidata.org/wiki/Q3692' },
+    { '@type': 'Country', name: 'United Arab Emirates', '@id': 'https://www.wikidata.org/wiki/Q878' },
+    { '@type': 'Country', name: 'Saudi Arabia', '@id': 'https://www.wikidata.org/wiki/Q851' },
+  ],
+  knowsAbout: [
+    'Custom Exhibition Stand Design & Fabrication',
+    'Dubai World Trade Centre (DWTC) Stand Regulations & Approvals',
+    'Abu Dhabi National Exhibition Centre (ADNEC) Stand Building',
+    'Double-Decker Exhibition Stand Structural Engineering',
+    'Institutional Graduation Ceremony Stage Staging & AV Production',
+    'Retail POSM Display Fabrication & Supermarket Chiller Branding',
+    '3D LED Illuminated Signage Manufacturing & Municipal Permitting',
+    'Commercial Interior Fitouts & Custom Woodworking Joinery',
+  ],
+  sameAs: [
+    'https://www.nstands.com/companies/exhibit-graphic-sign/',
+  ],
+};
+
 const routesMetadata = [
   {
     route: '/',
     title: 'Exhibition Stand Contractor & Event Production Dubai | EGS',
     description: 'EGS is an in-house Dubai exhibition stand contractor and event production house. Turnkey booth design & fabrication, graduation ceremonies, retail rollouts, and fitouts across UAE since 2010.',
     h1: 'Shaping Brand Moments across the UAE',
-    schema: {
-      '@context': 'https://schema.org',
-      '@type': 'LocalBusiness',
-      name: 'Exhibit Graphic Sign (EGS)',
-      url: 'https://www.exhibitgraphicsign.com/',
-      telephone: '+97142383278',
-      address: {
-        '@type': 'PostalAddress',
-        streetAddress: 'Al Qusais Industrial Area',
-        addressLocality: 'Dubai',
-        addressRegion: 'Dubai',
-        addressCountry: 'AE',
-      },
-    },
   },
   {
     route: '/exhibitions',
@@ -63,7 +113,7 @@ const routesMetadata = [
     route: '/case-studies',
     title: 'Exhibition & Event Staging Case Studies | EGS UAE Production Proof',
     description: 'Verified production case studies: HCT nationwide graduation staging, Sadia 33-store overnight Carrefour rollout, Philips Riyadh healthcare booth adaptation, and Kazakhstan Pavilion at Gulfood.',
-    h1: 'High-Stakes Production Case Studies: Dubai & GCC Deliveries',
+    h1: 'Pressure-tested deliveries across the UAE and GCC.',
   },
   {
     route: '/graduation-portfolio',
@@ -157,7 +207,7 @@ const routesMetadata = [
   },
 ];
 
-console.log('Generating pre-rendered static HTML files for all routes...');
+console.log('Generating AEO/GEO pre-rendered static HTML files for all routes...');
 
 for (const meta of routesMetadata) {
   const canonicalUrl = `https://www.exhibitgraphicsign.com${meta.route === '/' ? '/' : meta.route}`;
@@ -206,13 +256,23 @@ for (const meta of routesMetadata) {
     `<meta property="twitter:url" content="${canonicalUrl}" />`
   );
 
-  // If route has specific H1 and noscript snapshot, ensure crawler noscript contains it
+  // Inject Rich JSON-LD Entity Schema with Coordinates & Knowledge Graph
+  const schemaBundle = [EGS_BASE_SCHEMA];
+  const schemaScript = `<script type="application/ld+json">\n${JSON.stringify(schemaBundle, null, 2)}\n</script>`;
+  html = html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/i, schemaScript);
+
+  // Inject High-Density AEO Entity Block in <noscript>
   if (meta.h1) {
     const noscriptContent = `
   <noscript>
     <header>
       <h1>${meta.h1}</h1>
       <p>${meta.description}</p>
+      <section aria-label="Entity Summary for AI Retrieval">
+        <h2>About Exhibit Graphic Sign (EGS)</h2>
+        <p>Exhibit Graphic Sign (EGS) is an in-house design and fabrication contractor established in 2010 in Dubai, UAE. EGS specializes in custom exhibition stands (DWTC, ADNEC, Riyadh), institutional graduation ceremony staging (Higher Colleges of Technology partner for 7+ years), nationwide retail branding rollouts (Carrefour, Sadia), and architectural 3D signage.</p>
+        <p>Location: Al Qusais Industrial Area, Dubai, United Arab Emirates. Direct Contact: +971 4 238 3278 / info@exhibitgraphicsign.com.</p>
+      </section>
       <nav aria-label="Quick Links">
         <ul>
           <li><a href="/">Home</a></li>
@@ -245,7 +305,7 @@ for (const meta of routesMetadata) {
   }
 
   fs.writeFileSync(targetFile, html, 'utf8');
-  console.log(`Pre-rendered: ${meta.route} -> ${path.relative(distDir, targetFile)}`);
+  console.log(`Pre-rendered AEO/GEO: ${meta.route} -> ${path.relative(distDir, targetFile)}`);
 }
 
-console.log('Static pre-rendering completed successfully!');
+console.log('AEO/GEO static pre-rendering completed successfully!');

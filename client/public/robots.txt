@@ -1,11 +1,23 @@
 User-agent: *
 Allow: /
 
-# Ensure AI Search Engines & LLM agents can index our content for Answer Engine Optimization (AEO)
+# Generative Engine Optimization (GEO) & Answer Engine Optimization (AEO) Directives
 User-agent: GPTBot
 Allow: /
 
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
 User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
 Allow: /
 
 User-agent: Google-Extended
@@ -14,8 +26,12 @@ Allow: /
 User-agent: Applebot-Extended
 Allow: /
 
-User-agent: PerplexityBot
+User-agent: cohere-ai
 Allow: /
 
+# Machine-Readable LLM Knowledge Base
+LLMS-Txt: https://www.exhibitgraphicsign.com/llms.txt
+
+# Sitemaps
 Sitemap: https://www.exhibitgraphicsign.com/sitemap.xml
 Sitemap: https://www.exhibitgraphicsign.com/image-sitemap.xml
