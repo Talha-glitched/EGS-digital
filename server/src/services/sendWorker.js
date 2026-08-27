@@ -19,6 +19,7 @@ import {
 } from '../utils/uaeBusinessHours.js';
 import { parseStepDelay } from '../utils/sequenceDelay.js';
 import { syncAutoCampaignStatus } from './projectService.js';
+import { renderEmailHtml, getEmailAttachments } from '../utils/emailTemplateRenderer.js';
 
 const POLL_INTERVAL_MS = 5000;
 
@@ -40,26 +41,6 @@ async function recoverStaleProcessingJobs() {
   } catch (err) {
     console.warn('[SendWorker] Stale recovery warning:', err.message);
   }
-}
-
-function renderEmailHtml({ body, leadId, stepIndex }) {
-  const escapedBody = String(body || '')
-    .split(/\r?\n/)
-    .map((line) =>
-      line.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
-    )
-    .join('<br>');
-
-  let pixel = '';
-  if (isPublicTrackableUrl()) {
-    const baseUrl = getBaseUrl().replace(/\/$/, '');
-    pixel = `<img src="${baseUrl}/api/track/open/${leadId}/${stepIndex}" width="1" height="1" alt="" style="display:none;" />`;
-  }
-
-  return `<!doctype html><html><body style="font-family:Inter,Arial,sans-serif;color:#1A1715;line-height:1.6;">
-    <div style="max-width:620px;margin:0 auto;padding:24px;">${escapedBody}</div>
-    ${pixel}
-  </body></html>`;
 }
 
 /** @deprecated Kept for tests; no longer appends footer to outbound mail. */
@@ -160,10 +141,24 @@ async function processSendJob(jobId, { force = false } = {}) {
     const templateContext = { personName, firstName: personName.split(/\s+/)[0] || personName, companyName: context.company_name || '' };
     const subject = renderTemplate(context.rendered_subject || context.template_subject, templateContext);
     const body = renderTemplate(context.rendered_body || context.template_body, templateContext);
-    const { fromEmail, fromName } = getFromIdentity({ id: context.campaign_id, name: context.campaign_name });
+    const templateType = context.payload?.templateType || (context.campaign_name?.toLowerCase().includes('graduation') ? 'graduations' : (context.campaign_name?.toLowerCase().includes('fitout') ? 'fitouts' : 'exhibitions'));
     const sent = await sendAuthenticatedMail({
-      fromName,fromEmail,to:context.recipient_email,subject,text:body,
-      html:renderEmailHtml({ body, leadId: context.person_id, stepIndex: context.step_index }),campaignId:context.campaign_id,
+      fromName,
+      fromEmail,
+      to: context.recipient_email,
+      subject,
+      text: body,
+      html: renderEmailHtml({
+        body,
+        subject,
+        leadId: context.person_id,
+        stepIndex: context.step_index,
+        templateType,
+        personName,
+        companyName: context.company_name,
+        inlineCid: false,
+      }),
+      campaignId: context.campaign_id,
       forceSmtp: true,
     });
     const providerMessageId = String(sent?.messageId || '').trim();
@@ -244,6 +239,9 @@ async function deliverSequenceEmail({
   const body = String(generated.body || '').trim();
   const { fromEmail, fromName } = getFromIdentity(campaign);
 
+  const templateType = step?.templateType || (campaign?.name?.toLowerCase().includes('graduation') ? 'graduations' : (campaign?.name?.toLowerCase().includes('fitout') ? 'fitouts' : 'exhibitions'));
+  const attachments = getEmailAttachments(templateType);
+
   console.log(`[SendWorker] Invoking sendAuthenticatedMail for "${generated.subject}" to ${targetEmail}...`);
   const result = await sendAuthenticatedMail({
     fromName,
@@ -253,8 +251,13 @@ async function deliverSequenceEmail({
     text: body,
     html: renderEmailHtml({
       body,
+      subject: generated.subject,
       leadId: person.id,
       stepIndex: enrollment.current_step_index || 0,
+      templateType,
+      personName: person.display_name,
+      companyName: organization?.canonical_name,
+      inlineCid: false,
     }),
     campaignId: campaign?.id,
     forceSmtp: true,

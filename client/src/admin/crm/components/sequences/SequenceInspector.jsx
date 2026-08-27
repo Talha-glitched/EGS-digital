@@ -16,12 +16,16 @@ import {
   X,
   Play,
   SlidersHorizontal,
+  Layout,
 } from 'lucide-react';
 import SearchableSelect from '../ui/SearchableSelect.jsx';
 import SearchableMultiSelect from '../ui/SearchableMultiSelect.jsx';
 import MailboxUsagePopover from './MailboxUsagePopover.jsx';
 import AudiencePreviewModal from './AudiencePreviewModal.jsx';
 import CampaignListImportModal from './CampaignListImportModal.jsx';
+import EmailPreviewModal from './EmailPreviewModal.jsx';
+import EmailTemplatePickerModal from './EmailTemplatePickerModal.jsx';
+import { EMAIL_TEMPLATES, getTemplateById } from '../../constants/emailTemplates.js';
 import {
   buildAudienceSummary,
   buildImportedListLabels,
@@ -551,11 +555,71 @@ function AudienceAddRow({ icon: Icon, label, values, onChange, options, placehol
 }
 
 function NodeInspector({ node, onUpdate, onDelete, canDelete }) {
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
+
   const update = (field, value) => onUpdate(node.id, { ...node.data, [field]: value });
 
   if (node.type === 'email') {
+    const currentTemplateId = node.data?.templateType || 'exhibitions';
+    const currentTemplate = getTemplateById(currentTemplateId);
+
+    const handleSelectTemplate = (templateId, { applyCopy, template } = {}) => {
+      const patch = { templateType: templateId };
+      if (applyCopy && template) {
+        patch.subjectTemplate = template.defaultSubject;
+        patch.bodyTemplate = template.defaultBody;
+      }
+      onUpdate(node.id, { ...node.data, ...patch });
+    };
+
     return (
       <>
+        {/* TEMPLATE PICKER CARD */}
+        <div className="rounded-lg border border-[var(--color-line)] bg-neutral-50/70 p-2.5 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-2xs font-semibold uppercase tracking-wide text-neutral-500">Design Template</span>
+            <button
+              type="button"
+              onClick={() => setPickerOpen(true)}
+              className="text-2xs font-semibold text-brand hover:underline"
+            >
+              Gallery
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-1">
+            {EMAIL_TEMPLATES.map((tpl) => {
+              const isSelected = currentTemplateId === tpl.id;
+              return (
+                <button
+                  key={tpl.id}
+                  type="button"
+                  onClick={() => handleSelectTemplate(tpl.id, { applyCopy: false })}
+                  className={cn(
+                    'flex items-center justify-between px-2 py-1 rounded text-2xs transition-all text-left',
+                    isSelected
+                      ? 'bg-white border border-neutral-900 font-semibold text-neutral-900 shadow-2xs'
+                      : 'bg-white/60 border border-neutral-200 text-neutral-600 hover:bg-white',
+                  )}
+                >
+                  <span className="truncate">{tpl.name.split('&')[0].trim()}</span>
+                  <span className="h-1.5 w-1.5 rounded-full shrink-0 ml-1" style={{ backgroundColor: tpl.accentColor }} />
+                </button>
+              );
+            })}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setPreviewOpen(true)}
+            className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-md bg-white border border-neutral-200 text-2xs font-semibold text-neutral-800 shadow-2xs hover:bg-neutral-100 transition-all cursor-pointer"
+          >
+            <Eye className="h-3 w-3 text-brand" />
+            Preview Email as Recipient
+          </button>
+        </div>
+
         <label className="flex items-center gap-1.5 rounded-md border border-[var(--color-line)] p-2 text-2xs">
           <input
             type="checkbox"
@@ -577,7 +641,7 @@ function NodeInspector({ node, onUpdate, onDelete, canDelete }) {
         <CompactField label="Subject">
           <input
             className="crm-input crm-seq-input py-1.5 font-mono text-2xs"
-            value={node.data?.subjectTemplate || ''}
+            value={node.data?.subjectTemplate ?? currentTemplate.defaultSubject}
             onChange={(e) => update('subjectTemplate', e.target.value)}
           />
         </CompactField>
@@ -585,7 +649,7 @@ function NodeInspector({ node, onUpdate, onDelete, canDelete }) {
           <textarea
             rows={8}
             className="crm-input crm-seq-input resize-y font-mono text-2xs leading-relaxed"
-            value={node.data?.bodyTemplate || ''}
+            value={node.data?.bodyTemplate ?? currentTemplate.defaultBody}
             onChange={(e) => update('bodyTemplate', e.target.value)}
           />
         </CompactField>
@@ -595,6 +659,28 @@ function NodeInspector({ node, onUpdate, onDelete, canDelete }) {
             Remove
           </button>
         )}
+
+        <EmailPreviewModal
+          open={previewOpen}
+          onClose={() => setPreviewOpen(false)}
+          templateType={currentTemplateId}
+          subject={node.data?.subjectTemplate ?? currentTemplate.defaultSubject}
+          body={node.data?.bodyTemplate ?? currentTemplate.defaultBody}
+          aiPrompt={node.data?.aiPrompt || ''}
+          useAi={node.data?.useAiPersonalization !== false}
+          onApplyTemplate={(id) => handleSelectTemplate(id, { applyCopy: false })}
+        />
+
+        <EmailTemplatePickerModal
+          open={pickerOpen}
+          onClose={() => setPickerOpen(false)}
+          selectedTemplateId={currentTemplateId}
+          onSelectTemplate={handleSelectTemplate}
+          onPreviewTemplate={(id) => {
+            handleSelectTemplate(id, { applyCopy: false });
+            setPreviewOpen(true);
+          }}
+        />
       </>
     );
   }

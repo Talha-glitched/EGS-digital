@@ -708,7 +708,7 @@ export default function SequenceStudio({
       />
 
       <SequenceInspector
-        selectedNode={null}
+        selectedNode={nodes.find((n) => n.id === selectedNodeId) || null}
         nodes={nodes}
         onUpdateNode={updateNodeData}
         onDeleteNode={deleteNode}

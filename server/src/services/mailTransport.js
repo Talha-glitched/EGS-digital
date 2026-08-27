@@ -142,6 +142,7 @@ export async function sendAuthenticatedMail({
   inReplyTo,
   references,
   campaignId,
+  attachments,
   forceSmtp = false,
 }) {
   const { getSystemSettings } = await import('./systemSettingsService.js');
@@ -152,6 +153,8 @@ export async function sendAuthenticatedMail({
     console.error('[Email] ERROR: At least one recipient is required.');
     throw new Error('At least one recipient is required.');
   }
+
+  const formattedAttachments = Array.isArray(attachments) ? attachments : [];
 
   if (settings.useResend && !forceSmtp) {
     const apiKey = process.env.RESEND_API_KEY;
@@ -168,6 +171,20 @@ export async function sendAuthenticatedMail({
     console.log(`[Email] From Header: ${fromHeader}`);
     console.log(`[Email] Subject: "${subject}"`);
 
+    const resendAttachments = formattedAttachments.map((att) => {
+      if (att.content) return { filename: att.filename, content: att.content };
+      if (att.path) {
+        try {
+          const fs = require('node:fs');
+          const buffer = fs.readFileSync(att.path);
+          return { filename: att.filename, content: buffer.toString('base64') };
+        } catch {
+          return { filename: att.filename, path: att.path };
+        }
+      }
+      return att;
+    });
+
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -181,6 +198,7 @@ export async function sendAuthenticatedMail({
         subject,
         text,
         html,
+        attachments: resendAttachments.length ? resendAttachments : undefined,
         headers: {
           ...(inReplyTo && { 'In-Reply-To': inReplyTo }),
           ...(references && { 'References': Array.isArray(references) ? references.join(' ') : references }),
@@ -208,6 +226,7 @@ export async function sendAuthenticatedMail({
         subject,
         text,
         html,
+        attachments: formattedAttachments,
         headers: {
           'List-Unsubscribe': `<mailto:${resendFrom}?subject=unsubscribe>`,
           ...(inReplyTo && { 'In-Reply-To': inReplyTo }),
@@ -257,6 +276,7 @@ export async function sendAuthenticatedMail({
     subject,
     text,
     html,
+    attachments: formattedAttachments,
     headers: {
       'List-Unsubscribe': `<mailto:${smtpUser}?subject=unsubscribe>`,
       ...(inReplyTo && { 'In-Reply-To': inReplyTo }),

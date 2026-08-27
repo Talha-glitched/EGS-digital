@@ -15,6 +15,7 @@ import {
 import { exportCampaignToBuffer } from '../services/excelExportService.js';
 import db from '../db/index.js';
 import { sendAuthenticatedMail, getFromIdentity } from '../services/mailTransport.js';
+import { renderEmailHtml, getEmailAttachments } from '../utils/emailTemplateRenderer.js';
 import { getSystemSettings, updateSystemSettings } from '../services/systemSettingsService.js';
 import { getResendMetrics } from '../services/resendService.js';
 import { syncAllResendReplies } from '../services/resendAutoSyncService.js';
@@ -750,6 +751,66 @@ router.post('/sequences/bulk-delete', asyncRoute(async (req, res) => {
     return res.status(400).json({ message: 'ids array is required.' });
   }
   res.json(await deleteSequences(ids));
+}));
+
+router.post('/sequences/test-email', asyncRoute(async (req, res) => {
+  const { toEmail, recipientName, recipientCompany, subject, body, templateType } = req.body || {};
+  if (!toEmail) {
+    return res.status(400).json({ message: 'Recipient email is required.' });
+  }
+
+  // Derive recipient name and company dynamically
+  const emailPrefix = String(toEmail).split('@')[0] || 'Recipient';
+  const rawPrefixPart = emailPrefix.split(/[._-]/)[0] || 'Friend';
+  const cleanName = String(recipientName || '').trim() || (rawPrefixPart.charAt(0).toUpperCase() + rawPrefixPart.slice(1));
+  const cleanCompany = String(recipientCompany || '').trim() || 'Your Organization';
+
+  const selectedTemplateType = templateType || 'exhibitions';
+
+  // Replace placeholders dynamically
+  const subjectTemplate = String(subject || 'Exhibit Graphic Sign');
+  const bodyTemplate = String(body || 'Hi {{name}},\n\nThis is a test email preview from Exhibit Graphic Sign.');
+
+  const resolvedSubject = subjectTemplate
+    .replace(/{{\s*(?:name|first_name|firstname)\s*}}/gi, cleanName)
+    .replace(/\[First\]/gi, cleanName)
+    .replace(/{{\s*(?:company|company_name|companyname)\s*}}/gi, cleanCompany)
+    .replace(/\[University\]/gi, cleanCompany)
+    .replace(/{{\s*(?:university|institution)\s*}}/gi, cleanCompany);
+
+  const resolvedBody = bodyTemplate
+    .replace(/{{\s*(?:name|first_name|firstname)\s*}}/gi, cleanName)
+    .replace(/\[First\]/gi, cleanName)
+    .replace(/{{\s*(?:company|company_name|companyname)\s*}}/gi, cleanCompany)
+    .replace(/\[University\]/gi, cleanCompany)
+    .replace(/{{\s*(?:university|institution)\s*}}/gi, cleanCompany);
+
+  const { fromEmail, fromName } = getFromIdentity({ name: 'Exhibit Graphic Sign' });
+  const finalHtml = renderEmailHtml({
+    body: resolvedBody,
+    subject: resolvedSubject,
+    templateType: selectedTemplateType,
+    personName: cleanName,
+    companyName: cleanCompany,
+    inlineCid: false,
+  });
+
+  const result = await sendAuthenticatedMail({
+    fromName,
+    fromEmail,
+    to: toEmail,
+    subject: `[TEST PREVIEW] ${resolvedSubject}`,
+    text: resolvedBody,
+    html: finalHtml,
+    forceSmtp: true,
+  });
+
+  res.json({
+    ok: true,
+    messageId: result?.messageId,
+    recipientName: cleanName,
+    recipientCompany: cleanCompany,
+  });
 }));
 
 router.post('/projects/:id/enroll', asyncRoute(async (req, res) => {
