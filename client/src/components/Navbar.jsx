@@ -24,7 +24,7 @@ const defaultItems = [
     textColor: 'var(--paper)',
     links: [
       { label: 'Exhibitions', href: '/exhibitions', ariaLabel: 'Open exhibitions page', icon: exhibitionIcon },
-      { label: '6 Exhibition Offers', href: '/offers', ariaLabel: 'Open 6 exhibition offers page', icon: exhibitionIcon },
+      { label: 'Solutions', href: '/offers', ariaLabel: 'Open 6 exhibition offers page', icon: exhibitionIcon },
       { label: 'Events / Graduations', href: '/events', ariaLabel: 'Open events and graduations page', icon: eventIcon },
       { label: 'Retail Rollouts', href: '/retail', ariaLabel: 'Open retail rollouts page', icon: retailIcon },
       { label: 'Fitouts', href: '/fitouts', ariaLabel: 'Open fitouts page', icon: interiorIcon },
