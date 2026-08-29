@@ -197,24 +197,19 @@ export function formatBodyHtml(text = '') {
       const lines = trimmed.split('\n').map((line) => {
         if (line.trim().startsWith('•') || line.trim().startsWith('-') || line.trim().startsWith('*')) {
           const bulletContent = line.trim().replace(/^[•\-*]\s*/, '');
-          return `<div style="margin: 4px 0 4px 12px; line-height: 1.55;">• ${bulletContent}</div>`;
+          return `<div style="margin: 4px 0 4px 12px; line-height: 1.5;">• ${bulletContent}</div>`;
         }
         return line;
       });
-      return `<p style="margin: 0 0 16px 0; line-height: 1.62; font-size: 15px; color: #2A2522;">${lines.join('<br>')}</p>`;
+      return `<p style="margin: 0 0 14px 0; line-height: 1.55; font-size: 14px; color: #222222; font-family: Arial, Helvetica, sans-serif;">${lines.join('<br>')}</p>`;
     })
     .join('');
 }
 
 /**
- * Compiles email template HTML for outbound dispatch.
- * Content order:
- * 1. Branded Header (logo & category)
- * 2. Body Text First (direct personalized message)
- * 3. Capability Pillars & Proof Statement
- * 4. Two Works Showcase at Bottom (real project photography & details)
- * 5. Action Buttons & Direct WhatsApp
- * 6. Executive Signature & Footer
+ * Compiles Primary-Inbox Optimized Executive Email HTML.
+ * Engineered specifically to land in the recipient's PRIMARY INBOX (avoiding Promotions & Spam folders).
+ * Format: Clean 1-on-1 personal executive correspondence with clean signature.
  */
 export function renderEmailHtml({
   body = '',
@@ -247,220 +242,44 @@ export function renderEmailHtml({
   // Body content HTML
   const bodyHtml = formatBodyHtml(body);
 
-  // Capability strip HTML
-  let capabilitiesHtml = '';
-  if (config.capabilities && config.capabilities.length > 0) {
-    const capCards = config.capabilities.map((cap) => `
-      <td width="33.33%" style="vertical-align: top; padding: 12px; background-color: #FAF7F2; border-radius: 8px; border: 1px solid #EAE4D9;">
-        <div style="font-size: 18px; margin-bottom: 6px;">${cap.icon}</div>
-        <div style="font-size: 12px; font-weight: 700; color: #1A1715; margin-bottom: 4px; line-height: 1.3;">${cap.title}</div>
-        <div style="font-size: 11px; color: #5A514A; line-height: 1.4;">${cap.desc}</div>
-      </td>
-    `).join('<td width="10" style="width: 10px;"></td>');
-
-    capabilitiesHtml = `
-      <!-- CAPABILITIES STRIP -->
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 20px 0;">
-        <tr>
-          ${capCards}
-        </tr>
-      </table>
-    `;
-  }
-
-  // Proof statement HTML
-  let proofHtml = '';
-  if (config.proofText) {
-    proofHtml = `
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 16px 0;">
-        <tr>
-          <td style="background-color: #F2EDE4; border-left: 3px solid ${config.accentColor}; padding: 10px 14px; border-radius: 0 6px 6px 0;">
-            <span style="font-size: 11px; font-weight: 600; color: #4A423B; line-height: 1.45; display: block;">
-              ✦ ${config.proofText}
-            </span>
-          </td>
-        </tr>
-      </table>
-    `;
-  }
-
-  // Two Works Showcase HTML (at bottom)
-  let worksShowcaseHtml = '';
-  if (config.showcaseWorks && config.showcaseWorks.length >= 2) {
-    const [work1, work2] = config.showcaseWorks;
-    const work1Img = resolveAssetUrl(work1.image, 'work1_img');
-    const work2Img = resolveAssetUrl(work2.image, 'work2_img');
-
-    worksShowcaseHtml = `
-      <!-- SHOWCASE OF 2 RECENT WORKS (AT BOTTOM) -->
-      <div style="margin: 28px 0 20px 0; padding-top: 22px; border-top: 1px solid #EAE4D9;">
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 12px;">
-          <tr>
-            <td>
-              <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #8B8178; display: block;">
-                ✦ Recent Deliveries &amp; Project Showcase
-              </span>
-            </td>
-          </tr>
-        </table>
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse: separate;">
-          <tr>
-            <!-- WORK 1 -->
-            <td width="48%" style="vertical-align: top; background-color: #FAF7F2; border-radius: 10px; border: 1px solid #EAE4D9; overflow: hidden;">
-              <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td style="line-height: 0; overflow: hidden; background-color: #1A1715;">
-                    <img src="${work1Img}" alt="${work1.title}" width="270" style="width: 100%; max-width: 270px; height: 140px; object-fit: cover; display: block; border: 0;" />
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding: 12px 14px;">
-                    <span style="display: inline-block; background-color: ${config.accentColor}; color: #ffffff; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 2px 6px; border-radius: 3px; margin-bottom: 5px;">${work1.badge}</span>
-                    <div style="font-size: 12px; font-weight: 700; color: #1A1715; line-height: 1.35; margin-bottom: 3px;">${work1.title}</div>
-                    <div style="font-size: 11px; color: #5A514A; line-height: 1.4;">${work1.desc}</div>
-                  </td>
-                </tr>
-              </table>
-            </td>
-            <td width="4%" style="width: 4%;"></td>
-            <!-- WORK 2 -->
-            <td width="48%" style="vertical-align: top; background-color: #FAF7F2; border-radius: 10px; border: 1px solid #EAE4D9; overflow: hidden;">
-              <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td style="line-height: 0; overflow: hidden; background-color: #1A1715;">
-                    <img src="${work2Img}" alt="${work2.title}" width="270" style="width: 100%; max-width: 270px; height: 140px; object-fit: cover; display: block; border: 0;" />
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding: 12px 14px;">
-                    <span style="display: inline-block; background-color: ${config.secondaryColor || '#2F3193'}; color: #ffffff; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 2px 6px; border-radius: 3px; margin-bottom: 5px;">${work2.badge}</span>
-                    <div style="font-size: 12px; font-weight: 700; color: #1A1715; line-height: 1.35; margin-bottom: 3px;">${work2.title}</div>
-                    <div style="font-size: 11px; color: #5A514A; line-height: 1.4;">${work2.desc}</div>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </table>
-      </div>
-    `;
-  }
-
-  // Call to action buttons
-  const buttonsHtml = `
-    <table cellpadding="0" cellspacing="0" border="0" style="margin: 24px 0 16px 0;">
-      <tr>
-        <td style="padding-right: 12px;">
-          <a href="${config.ctaUrl}" target="_blank" rel="noopener noreferrer" style="display: inline-block; background-color: ${config.accentColor}; color: #ffffff; text-decoration: none; font-size: 13px; font-weight: 600; padding: 11px 22px; border-radius: 6px; text-align: center;">
-            ${config.ctaText} →
-          </a>
-        </td>
-        <td>
-          <a href="https://wa.me/971524587992?text=${encodeURIComponent(`Hi EGS, I am inquiring about ${config.name}`)}" target="_blank" rel="noopener noreferrer" style="display: inline-block; background-color: #25D366; color: #ffffff; text-decoration: none; font-size: 13px; font-weight: 600; padding: 11px 18px; border-radius: 6px; text-align: center;">
-            💬 ${config.whatsappText}
-          </a>
-        </td>
-      </tr>
-    </table>
-  `;
-
   return `<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>${subject || 'Exhibit Graphic Sign'}</title>
 </head>
-<body style="margin: 0; padding: 0; background-color: #F5F1EA; font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #1A1715;">
-  <center style="width: 100%; background-color: #F5F1EA; padding: 24px 8px;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 620px; margin: 0 auto; background-color: #FFFFFF; border-radius: 14px; border: 1px solid #EAE4D9; overflow: hidden; box-shadow: 0 6px 24px rgba(26,23,21,0.06);">
-      
-      <!-- HEADER -->
-      <tr>
-        <td style="padding: 24px 28px 18px 28px; background-color: #FFFFFF; border-bottom: 1px solid #F0ECE4;">
-          <table width="100%" cellpadding="0" cellspacing="0" border="0">
-            <tr>
-              <td style="vertical-align: middle;">
-                <a href="https://exhibitgraphicsign.com" target="_blank" rel="noopener noreferrer" style="text-decoration: none; display: inline-block;">
-                  <img src="${logoUrl}" alt="Exhibit Graphic Sign (EGS)" width="132" style="width: 132px; max-width: 132px; height: auto; display: block; border: 0;" />
-                </a>
-              </td>
-              <td align="right" style="vertical-align: middle;">
-                <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #8B8178; display: block;">
-                  ${config.category.toUpperCase()}
-                </span>
-                <span style="font-size: 10px; font-weight: 600; color: ${config.accentColor};">
-                  UAE · KSA
-                </span>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
+<body style="margin: 0; padding: 16px; background-color: #FFFFFF; font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 1.55; color: #222222; -webkit-text-size-adjust: 100%;">
+  <div style="max-width: 600px; margin: 0; padding: 0;">
+    <!-- MESSAGE BODY -->
+    <div style="font-size: 14px; line-height: 1.55; color: #222222; font-family: Arial, Helvetica, sans-serif;">
+      ${bodyHtml}
+    </div>
 
-      <!-- BODY CONTENT -->
-      <tr>
-        <td style="padding: 28px 28px 20px 28px;">
-          <!-- 1. EMAIL TEXT (FIRST) -->
-          <div style="font-size: 15px; line-height: 1.62; color: #2A2522; margin-bottom: 20px;">
-            ${bodyHtml}
-          </div>
+    <!-- EXECUTIVE SIGNATURE BLOCK -->
+    <div style="margin-top: 28px; padding-top: 16px; border-top: 1px solid #E5E5E5; font-family: Arial, Helvetica, sans-serif;">
+      <table cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse;">
+        <tr>
+          <td style="vertical-align: top; padding-right: 14px;">
+            <img src="${logoUrl}" alt="Exhibit Graphic Sign" width="105" style="width: 105px; max-width: 105px; height: auto; display: block; border: 0;" />
+          </td>
+          <td style="vertical-align: top; border-left: 2px solid #D9262E; padding-left: 12px;">
+            <div style="font-size: 14px; font-weight: bold; color: #111111; line-height: 1.3;">Masuood-ul-Rasheed</div>
+            <div style="font-size: 12px; color: #555555; margin-top: 2px; line-height: 1.3;">Project Director &middot; Exhibit Graphic Sign LLC</div>
+            <div style="font-size: 12px; color: #444444; margin-top: 5px; line-height: 1.4;">
+              <span>Direct: +971 52 458 7992</span> &nbsp;|&nbsp;
+              <a href="${config.ctaUrl || 'https://exhibitgraphicsign.com'}" style="color: #D9262E; text-decoration: none; font-weight: 500;">exhibitgraphicsign.com</a>
+            </div>
+            <div style="font-size: 11px; color: #777777; margin-top: 3px; line-height: 1.3;">
+              Dubai Production Facility &amp; Head Office &middot; Al Quoz &amp; DIC, UAE
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
 
-          <!-- 2. CAPABILITY PILLARS -->
-          ${capabilitiesHtml}
-
-          <!-- 3. PROOF STATEMENT -->
-          ${proofHtml}
-
-          <!-- 4. TWO SHOWCASE WORKS (AT BOTTOM) -->
-          ${worksShowcaseHtml}
-
-          <!-- 5. CALL TO ACTION BUTTONS -->
-          ${buttonsHtml}
-
-          <!-- 6. SIGNATURE BLOCK -->
-          <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 24px; padding-top: 18px; border-top: 1px solid #EAE4D9;">
-            <tr>
-              <td width="48" style="vertical-align: top; padding-right: 14px;">
-                <div style="width: 44px; height: 44px; border-radius: 50%; background-color: #1A1715; color: #ffffff; text-align: center; line-height: 44px; font-weight: 700; font-size: 14px;">
-                  MR
-                </div>
-              </td>
-              <td style="vertical-align: top;">
-                <div style="font-size: 14px; font-weight: 700; color: #1A1715;">Masuood-ul-Rasheed</div>
-                <div style="font-size: 12px; color: #5A514A; margin-top: 1px;">Project Director · Exhibit Graphic Sign LLC</div>
-                <div style="font-size: 11px; color: #8B8178; margin-top: 3px;">
-                  <span>Direct: +971 52 458 7992</span> · 
-                  <a href="https://exhibitgraphicsign.com" style="color: ${config.accentColor}; text-decoration: none;">exhibitgraphicsign.com</a>
-                </div>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-
-      <!-- FOOTER -->
-      <tr>
-        <td style="padding: 18px 28px; background-color: #F8F5EF; border-top: 1px solid #EAE4D9; font-size: 11px; color: #8B8178; line-height: 1.5;">
-          <table width="100%" cellpadding="0" cellspacing="0" border="0">
-            <tr>
-              <td style="vertical-align: middle;">
-                <strong style="color: #5A514A;">Exhibit Graphic Sign LLC</strong><br>
-                Dubai Production Facility & Head Office · Al Quoz & Dubai Industrial City, UAE.
-              </td>
-              <td align="right" style="vertical-align: middle;">
-                <a href="https://exhibitgraphicsign.com" style="color: #5A514A; text-decoration: underline; margin-right: 8px;">Website</a>
-                <a href="mailto:info@exhibitgraphicsign.com" style="color: #5A514A; text-decoration: underline;">Contact</a>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-    
     ${trackingPixel}
-  </center>
+  </div>
 </body>
 </html>`;
 }

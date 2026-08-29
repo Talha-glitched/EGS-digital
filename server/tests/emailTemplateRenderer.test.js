@@ -35,7 +35,7 @@ Let's talk soon.`;
   assert.match(html, /<p style=".*">Let&#39;s talk soon\.<\/p>|<p style=".*">Let's talk soon\.<\/p>/);
 });
 
-test('renderEmailHtml compiles Exhibition template with logo, hero, capabilities and CTAs', () => {
+test('renderEmailHtml compiles Exhibition template with logo, body content and executive signature', () => {
   const html = renderEmailHtml({
     templateType: 'exhibitions',
     subject: 'Custom DWTC Exhibition Stands',
@@ -47,17 +47,15 @@ test('renderEmailHtml compiles Exhibition template with logo, hero, capabilities
 
   assert.match(html, /<!DOCTYPE html>/i);
   assert.match(html, /https:\/\/exhibitgraphicsign\.com\/email-assets\/egs-logo\.png/);
-  assert.match(html, /https:\/\/exhibitgraphicsign\.com\/email-assets\/exhibitions-hero\.jpg/);
-  assert.match(html, /Philips Global Health Stand/);
-  assert.match(html, /3D Concept &amp; Engineering|3D Concept & Engineering/);
-  assert.match(html, /Dubai In-House Workshop/);
-  assert.match(html, /Request 3D Stand Concept/);
-  assert.match(html, /https:\/\/wa\.me\/971524587992/);
+  assert.match(html, /Hi Sarah,/);
+  assert.match(html, /We provide custom exhibition stands\./);
   assert.match(html, /Masuood-ul-Rasheed/);
-  assert.match(html, /Exhibit Graphic Sign LLC/);
+  assert.match(html, /Project Director &middot; Exhibit Graphic Sign LLC|Project Director · Exhibit Graphic Sign LLC/);
+  assert.match(html, /\+971 52 458 7992/);
+  assert.match(html, /exhibitgraphicsign\.com/);
 });
 
-test('renderEmailHtml compiles Graduation ceremony template with stats and stage production proof', () => {
+test('renderEmailHtml compiles Graduation ceremony template with clean executive layout', () => {
   const html = renderEmailHtml({
     templateType: 'graduations',
     subject: 'UAE-Wide Graduation Production',
@@ -67,15 +65,13 @@ test('renderEmailHtml compiles Graduation ceremony template with stats and stage
     customBaseUrl: 'https://exhibitgraphicsign.com',
   });
 
-  assert.match(html, /https:\/\/exhibitgraphicsign\.com\/email-assets\/graduations-hero\.jpg/);
-  assert.match(html, /HCT Grand Ceremonies/);
-  assert.match(html, /4,500\+? Graduates/);
-  assert.match(html, /Ceremonial Stage &amp; LED Backdrops|Ceremonial Stage & LED Backdrops/);
-  assert.match(html, /Broadcast AV &amp; Theatrical Lighting|Broadcast AV & Theatrical Lighting/);
-  assert.match(html, /Discuss Ceremony Scope/);
+  assert.match(html, /<!DOCTYPE html>/i);
+  assert.match(html, /Hi Dr\. Tariq,/);
+  assert.match(html, /We delivered seven HCT grand ceremonies\./);
+  assert.match(html, /Masuood-ul-Rasheed/);
 });
 
-test('renderEmailHtml compiles Interior fitout template with Velocity showcase and joinery pillars', () => {
+test('renderEmailHtml compiles Interior fitout template with clean executive layout', () => {
   const html = renderEmailHtml({
     templateType: 'fitouts',
     subject: 'Turnkey Commercial Interior Fitouts',
@@ -85,9 +81,8 @@ test('renderEmailHtml compiles Interior fitout template with Velocity showcase a
     customBaseUrl: 'https://exhibitgraphicsign.com',
   });
 
-  assert.match(html, /https:\/\/exhibitgraphicsign\.com\/email-assets\/fitouts-hero\.jpg/);
-  assert.match(html, /Velocity Corporate Offices/);
-  assert.match(html, /Turnkey Joinery &amp; Partitions|Turnkey Joinery & Partitions/);
-  assert.match(html, /3D Architectural Signage/);
-  assert.match(html, /Book Site Survey \/ Consultation/);
+  assert.match(html, /<!DOCTYPE html>/i);
+  assert.match(html, /Hi Omar,/);
+  assert.match(html, /We handle turnkey fitouts directly from our Dubai workshop\./);
+  assert.match(html, /Masuood-ul-Rasheed/);
 });

@@ -142,6 +142,7 @@ async function processSendJob(jobId, { force = false } = {}) {
     const subject = renderTemplate(context.rendered_subject || context.template_subject, templateContext);
     const body = renderTemplate(context.rendered_body || context.template_body, templateContext);
     const templateType = context.payload?.templateType || (context.campaign_name?.toLowerCase().includes('graduation') ? 'graduations' : (context.campaign_name?.toLowerCase().includes('fitout') ? 'fitouts' : 'exhibitions'));
+    const { fromEmail, fromName } = getFromIdentity(context.campaign_id ? { id: context.campaign_id, name: context.campaign_name } : null);
     const sent = await sendAuthenticatedMail({
       fromName,
       fromEmail,
@@ -159,7 +160,6 @@ async function processSendJob(jobId, { force = false } = {}) {
         inlineCid: false,
       }),
       campaignId: context.campaign_id,
-      forceSmtp: true,
     });
     const providerMessageId = String(sent?.messageId || '').trim();
     const finish = await db.getClient();
@@ -260,7 +260,6 @@ async function deliverSequenceEmail({
       inlineCid: false,
     }),
     campaignId: campaign?.id,
-    forceSmtp: true,
   });
   const messageId = String(result?.messageId || '').trim();
 

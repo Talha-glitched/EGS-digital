@@ -7,6 +7,7 @@ import ExhibitorImportModal from '../components/projects/ExhibitorImportModal.js
 import ContactBlenderModal from '../components/projects/ContactBlenderModal.jsx';
 import ProjectPerformanceModal from '../components/projects/ProjectPerformanceModal.jsx';
 import ProjectResourcesModal from '../components/projects/ProjectResourcesModal.jsx';
+import CampaignLaunchMonitorModal from '../components/projects/CampaignLaunchMonitorModal.jsx';
 import CompanyDetailsDrawer from '../components/leads/CompanyDetailsDrawer.jsx';
 import OutreachDrawer from '../components/leads/OutreachDrawer.jsx';
 import EmailDetailsDrawer from '../components/leads/EmailDetailsDrawer.jsx';
@@ -36,6 +37,7 @@ import {
   TrendingUp,
   CalendarCheck2,
   FolderKanban,
+  Send,
 } from 'lucide-react';
 import { buildOwnerOptions } from '../components/tasks/taskUtils.js';
 
@@ -253,6 +255,7 @@ export default function ProjectDetailWorkspace() {
                 Email sequences
               </Link>
               <ActionBtn icon={BarChart3} label="Performance" onClick={() => setModal('performance')} variant="secondary" />
+              <ActionBtn icon={Send} label="Send progress" onClick={() => setModal('monitor')} variant="secondary" />
             </div>
             <div className="ml-auto">
               <ActionBtn
@@ -370,6 +373,13 @@ export default function ProjectDetailWorkspace() {
       <ProjectResourcesModal
         open={modal === 'resources'}
         onClose={() => setModal(null)}
+        projectName={project?.projectName}
+      />
+
+      <CampaignLaunchMonitorModal
+        open={modal === 'monitor'}
+        onClose={() => setModal(null)}
+        projectId={id}
         projectName={project?.projectName}
       />
 

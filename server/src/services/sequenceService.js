@@ -628,6 +628,7 @@ export async function listLaunchBatches(options = {}) {
   const params = [];
   let where = `WHERE sl.status<>'historical'`;
   if (options.sequenceId) { params.push(String(options.sequenceId)); where += ` AND (s.id::text=$${params.length} OR s.mongo_sequence_id=$${params.length})`; }
+  if (options.campaignId) { params.push(String(options.campaignId)); where += ` AND (sl.campaign_id::text=$${params.length} OR EXISTS(SELECT 1 FROM sequence_enrollments se WHERE se.launch_batch_id=sl.id AND se.campaign_id::text=$${params.length}))`; }
   if (options.launchBatchId) { params.push(String(options.launchBatchId)); where += ` AND sl.id::text=$${params.length}`; }
   const total = await db.query(`SELECT COUNT(*)::int AS count FROM sequence_launches sl JOIN sequences s ON s.id=sl.sequence_id ${where}`, params);
   params.push(limit, (page - 1) * limit);

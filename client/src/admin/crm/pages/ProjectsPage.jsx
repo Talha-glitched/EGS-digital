@@ -25,6 +25,7 @@ import {
   Alert,
   Badge,
 } from '../components/ui/primitives.jsx';
+import CampaignLaunchMonitorModal from '../components/projects/CampaignLaunchMonitorModal.jsx';
 import {
   Megaphone,
   Plus,
@@ -33,6 +34,7 @@ import {
   MessageCircle,
   Calendar,
   Edit2,
+  Send,
 } from 'lucide-react';
 import {
   AdvancedFilterPopover,
@@ -339,6 +341,7 @@ export default function ProjectsPage({ initialProjects }) {
   const [savingStageId, setSavingStageId] = useState(null);
   const [bulkDeleting, setBulkDeleting] = useState(false);
   const [editingDateCampaign, setEditingDateCampaign] = useState(null);
+  const [activeMonitorCampaign, setActiveMonitorCampaign] = useState(null);
 
   const {
     filtered: visibleCampaigns,
@@ -645,10 +648,21 @@ export default function ProjectsPage({ initialProjects }) {
                               {formatCount(campaign.pocsResponded)}
                             </td>
                             <td className="text-center" onClick={stopRowClick}>
-                              <DeleteIconButton
-                                label={`Delete ${campaign.projectName}`}
-                                onClick={() => deleteCampaignItem(campaign)}
-                              />
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => setActiveMonitorCampaign(campaign)}
+                                  className="inline-flex items-center gap-1 rounded-lg border border-line bg-white px-2 py-1 text-2xs font-semibold text-neutral-700 hover:border-brand/40 hover:bg-brand-soft hover:text-brand transition shadow-2xs"
+                                  title="View sequence send progress & live monitor"
+                                >
+                                  <Send className="h-3 w-3 text-neutral-400 group-hover:text-brand" />
+                                  <span>Progress</span>
+                                </button>
+                                <DeleteIconButton
+                                  label={`Delete ${campaign.projectName}`}
+                                  onClick={() => deleteCampaignItem(campaign)}
+                                />
+                              </div>
                             </td>
                           </ClickableTableRow>
                         ))}
@@ -690,6 +704,13 @@ export default function ProjectsPage({ initialProjects }) {
           onSave={handleSaveDates}
         />
       )}
+
+      <CampaignLaunchMonitorModal
+        open={Boolean(activeMonitorCampaign)}
+        onClose={() => setActiveMonitorCampaign(null)}
+        projectId={activeMonitorCampaign?._id}
+        projectName={activeMonitorCampaign?.projectName}
+      />
     </PageShell>
   );
 }
