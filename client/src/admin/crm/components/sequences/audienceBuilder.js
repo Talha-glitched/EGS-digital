@@ -10,8 +10,7 @@ export const EMPTY_AUDIENCE = {
 export function normalizeCampaignId(value) {
   if (value == null) return '';
   const id = String(value).trim();
-  if (!id || id === 'null' || id === 'undefined') return '';
-  if (!/^[a-f\d]{24}$/i.test(id)) return '';
+  if (!id || id === 'null' || id === 'undefined' || id === '[object Object]') return '';
   return id;
 }
 

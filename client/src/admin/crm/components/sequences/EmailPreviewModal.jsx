@@ -339,7 +339,7 @@ export default function EmailPreviewModal({
           </div>
           <div className="flex items-center gap-2">
             <span className="font-semibold text-neutral-500 w-16">From:</span>
-            <span className="text-neutral-700">Exhibit Graphic Sign &lt;rana@masuood.exhibitgraphicsign.com&gt;</span>
+            <span className="text-neutral-700">Exhibit Graphic Sign &lt;talha@exhibitgraphicsign.com&gt;</span>
             <span className="ml-auto text-neutral-400">To: {activePersona.name} &lt;{activePersona.email}&gt;</span>
           </div>
         </div>

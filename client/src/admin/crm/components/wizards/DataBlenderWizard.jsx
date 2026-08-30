@@ -12,7 +12,20 @@ const INTERNAL_FIELDS = [
   { key: 'phone', label: 'Phone', required: false, hint: 'Optional — used for WhatsApp handoff in the Inbox.' },
 ];
 
-const VENDORS = ['Apollo', 'Hunter', 'Lusha', 'Manual'];
+const VENDORS = [
+  'Custom / Other CSV',
+  'LinkedIn / Sales Nav',
+  'Google Sheets / Excel',
+  'Apollo',
+  'Hunter',
+  'Lusha',
+  'ZoomInfo',
+  'Clay',
+  'Snov.io',
+  'Seamless.ai',
+  'HubSpot / Zoho / CRM',
+  'Manual',
+];
 const STEPS = ['Upload file', 'Map columns', 'Review & import'];
 const STEP_META = [
   { description: 'Choose the data source and upload an unmodified export.' },

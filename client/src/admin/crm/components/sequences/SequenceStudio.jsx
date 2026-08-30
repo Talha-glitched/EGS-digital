@@ -52,9 +52,9 @@ function buildAudienceParams(audience) {
 }
 
 export default function SequenceStudio({
-  sequences,
-  campaigns,
-  mailStatus,
+  sequences = [],
+  campaigns = [],
+  mailStatus = null,
   onRefresh,
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -600,7 +600,11 @@ export default function SequenceStudio({
         fetchMailboxUsage().then(setMailboxUsage).catch(() => {});
         const targetBatch = result.launchBatchId || result.launchId;
         if (targetBatch) {
-          window.open(`/admin/crm/sequence-live/${targetBatch}`, '_blank');
+          try {
+            window.open(`/admin/crm/sequence-live/${targetBatch}`, '_blank');
+          } catch (openErr) {
+            console.warn('Could not open live monitor popup:', openErr);
+          }
           return;
         }
       } else if (!launch) {

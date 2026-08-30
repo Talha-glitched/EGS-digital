@@ -30,10 +30,19 @@ const FIELD_LABELS = {
 const EMAIL_FIELDS = ['emailApollo', 'emailHunter', 'emailLusha', 'emailLusha2', 'emailPersonal', 'email'];
 
 const FALLBACK_SOURCES = [
-  { id: '', label: 'None — map vendor emails above' },
-  { id: 'Apollo', label: 'Apollo' },
-  { id: 'Hunter', label: 'Hunter' },
+  { id: '', label: 'Auto-detect from columns / Map headers' },
+  { id: 'Custom / Other CSV', label: 'Custom / Other CSV or Excel' },
+  { id: 'LinkedIn / Sales Nav', label: 'LinkedIn / Sales Navigator' },
+  { id: 'Google Sheets / General Excel', label: 'Google Sheets / Excel' },
+  { id: 'Apollo', label: 'Apollo.io' },
+  { id: 'Hunter', label: 'Hunter.io' },
   { id: 'Lusha', label: 'Lusha' },
+  { id: 'ZoomInfo', label: 'ZoomInfo' },
+  { id: 'Clay', label: 'Clay' },
+  { id: 'Snov.io', label: 'Snov.io' },
+  { id: 'Seamless.ai', label: 'Seamless.ai' },
+  { id: 'HubSpot / Zoho / CRM', label: 'HubSpot / Zoho / CRM' },
+  { id: 'Manual', label: 'Manual Entry' },
 ];
 
 function pickMapping(suggested = {}) {

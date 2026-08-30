@@ -3,6 +3,7 @@ import { unwrapBson } from '../utils/bsonUnwrap.js';
 import { getMailConfigStatus } from './mailTransport.js';
 import { writeAuditLog } from './auditService.js';
 import { applyReferralFocus, releaseWrongPocFocus } from './campaignContactCoordinationService.js';
+import { normalizeDomain, normalizeEmail } from '../utils/normalizeDomain.js';
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const cleanText = (value) => String(value ?? '').trim();
@@ -1336,8 +1337,107 @@ export async function deleteLeads(ids = [], actor = {}) {
   return { deleted: res.rowCount, failed: cleanIds.length - res.rowCount, results: cleanIds.map((id) => ({ id, ok: true })) };
 }
 
-export async function importTargetCompanies(projectId, companyRows) {
-  return { importedCount: (companyRows || []).length };
+export async function importTargetCompanies(projectId, companyRows = []) {
+  const campaignRes = await db.query(
+    `SELECT id, name FROM campaigns WHERE id::text = $1 OR mongo_campaign_id = $1 LIMIT 1`,
+    [String(projectId)]
+  );
+  if (!campaignRes.rows.length) {
+    const error = new Error('Project not found.');
+    error.status = 404;
+    throw error;
+  }
+  const campaignId = campaignRes.rows[0].id;
+
+  let created = 0;
+  let linked = 0;
+  let contactsCreated = 0;
+
+  for (const row of companyRows) {
+    const name = String(row.companyName || '').trim();
+    const domain = normalizeDomain(row.domain);
+    if (!name && !domain) continue;
+
+    const nameToUse = name || (domain ? domain.split('.')[0] : 'Unknown');
+
+    // Find or create organization
+    let orgId = null;
+    if (domain) {
+      const q = await db.query(
+        `SELECT organization_id FROM organization_identifiers WHERE type = 'domain' AND normalized_value = $1 LIMIT 1`,
+        [domain]
+      );
+      if (q.rows.length > 0) orgId = q.rows[0].organization_id;
+    }
+    if (!orgId && name) {
+      const q = await db.query(
+        `SELECT id FROM organizations WHERE lower(canonical_name) = lower($1) LIMIT 1`,
+        [name]
+      );
+      if (q.rows.length > 0) orgId = q.rows[0].id;
+    }
+
+    if (orgId) {
+      linked += 1;
+    } else {
+      const ins = await db.query(
+        `INSERT INTO organizations (canonical_name) VALUES ($1) RETURNING id`,
+        [nameToUse]
+      );
+      orgId = ins.rows[0].id;
+      created += 1;
+    }
+
+    if (domain) {
+      await db.query(
+        `INSERT INTO organization_identifiers (organization_id, type, original_value, normalized_value)
+         VALUES ($1::uuid, 'domain', $2, $2)
+         ON CONFLICT DO NOTHING`,
+        [orgId, domain]
+      );
+    }
+
+    // Link into campaign_accounts
+    await db.query(
+      `INSERT INTO campaign_accounts (campaign_id, organization_id)
+       VALUES ($1::uuid, $2::uuid)
+       ON CONFLICT (campaign_id, organization_id) DO NOTHING`,
+      [campaignId, orgId]
+    );
+
+    // Add generic emails to organization_contact_methods
+    if (Array.isArray(row.genericEmails)) {
+      for (const email of row.genericEmails) {
+        const norm = normalizeEmail(email);
+        if (norm) {
+          await db.query(
+            `INSERT INTO organization_contact_methods (organization_id, type, original_value, normalized_value)
+             VALUES ($1::uuid, 'email', $2, $3)
+             ON CONFLICT DO NOTHING`,
+            [orgId, email, norm]
+          );
+          contactsCreated += 1;
+        }
+      }
+    }
+  }
+
+  // Update target_companies_count on campaign
+  await db.query(
+    `UPDATE campaigns
+     SET target_companies_count = (
+       SELECT COUNT(DISTINCT organization_id) FROM campaign_accounts WHERE campaign_id = $1::uuid
+     )
+     WHERE id = $1::uuid`,
+    [campaignId]
+  );
+
+  return {
+    created,
+    linked,
+    contactsCreated,
+    importedCount: (companyRows || []).length,
+  };
 }
 
 export async function logRevenue(projectId, payload, actor = 'admin') {

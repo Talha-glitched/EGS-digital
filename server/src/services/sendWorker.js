@@ -296,51 +296,61 @@ async function deliverSequenceEmail({
   return { generated, body, messageId };
 }
 
-async function pollSendQueue() {
+async function pollSendQueue({ force = false, maxJobs = 10 } = {}) {
   if (isProcessing) {
     return;
   }
-  if (Date.now() < nextAllowedSendAt) {
-    return;
-  }
-
-  const job = await db.query(`SELECT sj.id FROM send_jobs sj JOIN sequence_enrollments se ON se.id=sj.enrollment_id
-    JOIN campaign_contacts cc ON cc.id=se.campaign_contact_id
-    WHERE sj.status='pending' AND COALESCE(sj.manual_send,FALSE)=FALSE AND COALESCE(sj.scheduled_for,NOW())<=NOW()
-      AND se.execution_state='active' AND se.reset_at IS NULL
-      AND (COALESCE(cc.outreach_focus_state,'pending') IN('pending','active_manual')
-           OR COALESCE((sj.payload->>'holdOverride')::boolean,FALSE))
-    ORDER BY sj.scheduled_for NULLS FIRST,sj.created_at LIMIT 1`);
-  if (!job.rows.length) {
+  if (!force && Date.now() < nextAllowedSendAt) {
     return;
   }
 
   isProcessing = true;
   try {
-    const hourlyCap = Number(process.env.MAILBOX_HOURLY_CAP) || 199;
-    const currentHourlyCount = await getHourlySendCount();
-    if (currentHourlyCount >= hourlyCap) {
-      const waitMs = await getMsUntilHourlyLimitResumes();
-      console.warn(`[SendWorker] Hourly SMTP rate limit reached (${currentHourlyCount}/${hourlyCap}). Pausing worker for ${Math.ceil(waitMs / 60000)} minute(s)...`);
-      nextAllowedSendAt = Date.now() + waitMs;
-      return;
+    let processedInThisRun = 0;
+    while (processedInThisRun < maxJobs) {
+      const hourlyCap = Number(process.env.MAILBOX_HOURLY_CAP) || 199;
+      const currentHourlyCount = await getHourlySendCount();
+      if (currentHourlyCount >= hourlyCap) {
+        const waitMs = await getMsUntilHourlyLimitResumes();
+        console.warn(`[SendWorker] Hourly SMTP rate limit reached (${currentHourlyCount}/${hourlyCap}). Pausing worker for ${Math.ceil(waitMs / 60000)} minute(s)...`);
+        nextAllowedSendAt = Date.now() + waitMs;
+        break;
+      }
+
+      const dailyCap = Number(process.env.MAILBOX_DAILY_CAP) || 500;
+      const currentDailyCount = await getDailySendCount();
+      if (currentDailyCount >= dailyCap) {
+        console.warn(`[SendWorker] Daily send limit reached (${currentDailyCount}/${dailyCap}).`);
+        nextAllowedSendAt = Date.now() + 60000;
+        break;
+      }
+
+      if (process.env.ENFORCE_UAE_BUSINESS_HOURS === 'true' && !force && !isWithinUaeBusinessHours()) {
+        nextAllowedSendAt = Date.now() + 60000;
+        break;
+      }
+
+      const job = await db.query(`SELECT sj.id FROM send_jobs sj JOIN sequence_enrollments se ON se.id=sj.enrollment_id
+        JOIN campaign_contacts cc ON cc.id=se.campaign_contact_id
+        WHERE sj.status='pending' AND COALESCE(sj.manual_send,FALSE)=FALSE AND COALESCE(sj.scheduled_for,NOW())<=NOW()
+          AND se.execution_state='active' AND se.reset_at IS NULL
+          AND (COALESCE(cc.outreach_focus_state,'pending') IN('pending','active_manual')
+               OR COALESCE((sj.payload->>'holdOverride')::boolean,FALSE))
+        ORDER BY sj.scheduled_for NULLS FIRST,sj.created_at LIMIT 1`);
+      if (!job.rows.length) {
+        break;
+      }
+
+      await processSendJob(job.rows[0].id, { force });
+      processedInThisRun += 1;
+
+      if (processedInThisRun < maxJobs) {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+      }
     }
 
-    const dailyCap = Number(process.env.MAILBOX_DAILY_CAP) || 150;
-    const currentDailyCount = await getDailySendCount();
-    if (currentDailyCount >= dailyCap) {
-      nextAllowedSendAt = Date.now() + 60000;
-      return;
-    }
-
-    if (!isWithinUaeBusinessHours()) {
-      nextAllowedSendAt = Date.now() + 60000;
-      return;
-    }
-
-    await processSendJob(job.rows[0].id);
-
-    nextAllowedSendAt = Date.now() + randomSendDelayMs();
+    const delayMs = Number(process.env.DELAY_BETWEEN_EMAILS_MS) || 2000;
+    nextAllowedSendAt = Date.now() + delayMs;
   } catch (error) {
     console.error('[SendWorker] Polling dispatch error:', error.message);
   } finally {
@@ -368,8 +378,9 @@ export async function cancelLeadJobs(leadId) {
   }
 }
 
-export function kickSendQueue() {
-  return pollSendQueue();
+export function kickSendQueue(options = { force: true }) {
+  nextAllowedSendAt = 0;
+  return pollSendQueue(options);
 }
 
 export function startSendWorker() {

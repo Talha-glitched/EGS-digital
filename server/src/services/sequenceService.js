@@ -695,7 +695,7 @@ export async function sendLaunchBatchJobs(batchId, options = {}) {
      FROM selected WHERE sj.id=selected.id RETURNING sj.id`, [batchId, maxCount],
   );
   if (jobs.rowCount) await db.query(`UPDATE sequence_launches SET status='active',updated_at=NOW() WHERE id=$1::uuid`, [batchId]);
-  if (jobs.rowCount) { const { kickSendQueue } = await import('./sendWorker.js'); kickSendQueue().catch(() => {}); }
+  if (jobs.rowCount) { const { kickSendQueue } = await import('./sendWorker.js'); kickSendQueue({ force: true }).catch(() => {}); }
 
   // Releasing a job is not the same as it being sendable — the worker applies its
   // own guards. Report the difference instead of claiming success for jobs that

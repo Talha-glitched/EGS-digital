@@ -35,7 +35,7 @@ Let's talk soon.`;
   assert.match(html, /<p style=".*">Let&#39;s talk soon\.<\/p>|<p style=".*">Let's talk soon\.<\/p>/);
 });
 
-test('renderEmailHtml compiles Exhibition template with logo, body content and executive signature', () => {
+test('renderEmailHtml compiles Exhibition template with logo, body content, showcase photo and executive signature', () => {
   const html = renderEmailHtml({
     templateType: 'exhibitions',
     subject: 'Custom DWTC Exhibition Stands',
@@ -47,6 +47,8 @@ test('renderEmailHtml compiles Exhibition template with logo, body content and e
 
   assert.match(html, /<!DOCTYPE html>/i);
   assert.match(html, /https:\/\/exhibitgraphicsign\.com\/email-assets\/egs-logo\.png/);
+  assert.match(html, /https:\/\/exhibitgraphicsign\.com\/email-assets\/exhibitions-hero\.jpg/);
+  assert.match(html, /Philips Stand — DWTC Dubai/);
   assert.match(html, /Hi Sarah,/);
   assert.match(html, /We provide custom exhibition stands\./);
   assert.match(html, /Masuood-ul-Rasheed/);
@@ -55,7 +57,7 @@ test('renderEmailHtml compiles Exhibition template with logo, body content and e
   assert.match(html, /exhibitgraphicsign\.com/);
 });
 
-test('renderEmailHtml compiles Graduation ceremony template with clean executive layout', () => {
+test('renderEmailHtml compiles Graduation ceremony template with clean executive layout and stage photo', () => {
   const html = renderEmailHtml({
     templateType: 'graduations',
     subject: 'UAE-Wide Graduation Production',
@@ -66,12 +68,14 @@ test('renderEmailHtml compiles Graduation ceremony template with clean executive
   });
 
   assert.match(html, /<!DOCTYPE html>/i);
+  assert.match(html, /https:\/\/exhibitgraphicsign\.com\/email-assets\/graduations-hero\.jpg/);
+  assert.match(html, /HCT Grand Ceremonies — UAE-Wide/);
   assert.match(html, /Hi Dr\. Tariq,/);
   assert.match(html, /We delivered seven HCT grand ceremonies\./);
   assert.match(html, /Masuood-ul-Rasheed/);
 });
 
-test('renderEmailHtml compiles Interior fitout template with clean executive layout', () => {
+test('renderEmailHtml compiles Interior fitout template with clean executive layout and fitout photo', () => {
   const html = renderEmailHtml({
     templateType: 'fitouts',
     subject: 'Turnkey Commercial Interior Fitouts',
@@ -82,6 +86,8 @@ test('renderEmailHtml compiles Interior fitout template with clean executive lay
   });
 
   assert.match(html, /<!DOCTYPE html>/i);
+  assert.match(html, /https:\/\/exhibitgraphicsign\.com\/email-assets\/fitouts-hero\.jpg/);
+  assert.match(html, /Velocity Commercial Workspaces/);
   assert.match(html, /Hi Omar,/);
   assert.match(html, /We handle turnkey fitouts directly from our Dubai workshop\./);
   assert.match(html, /Masuood-ul-Rasheed/);

@@ -8,29 +8,54 @@ import { pickDedupEmail, firstContactEmail, joinContactEmails, normalizePersonNa
 import { fixMojibakeName } from '../utils/fixMojibakeName.js';
 
 const FIELD_ALIASES = {
-  email: ['email', 'emailaddress', 'mail', 'e-mail', 'contactemail', 'primaryemail', 'email_address', 'emailforoutreach'],
+  email: [
+    'email', 'emailaddress', 'mail', 'e-mail', 'contactemail', 'primaryemail',
+    'email_address', 'emailforoutreach', 'workemail', 'businessemail',
+    'officialemail', 'work_email', 'corporateemail', 'directemail', 'useremail',
+  ],
   emailApollo: ['emailapollo', 'apolloemail'],
   emailHunter: ['emailhunter', 'hunteremail'],
-  emailLusha: ['emaillusha', 'lushaemail', 'workemail'],
-  emailLusha2: ['emaillusha2', 'lushaemail2', 'workemail2'],
-  emailPersonal: ['emailpersonal', 'personalemail', 'privateemail'],
-  name: ['name', 'fullname', 'contactname', 'person', 'full name'],
-  firstName: ['firstname', 'contactfirstname', 'first name'],
-  lastName: ['lastname', 'contactlastname', 'last name', 'surname'],
-  designation: ['designation', 'title', 'jobtitle', 'position', 'role'],
-  companyName: ['company', 'companyname', 'organization', 'organisation', 'accountname', 'account'],
-  domain: ['domain', 'website', 'companywebsite', 'url', 'companydomain', 'websiteurl', 'web'],
-  industry: ['industry', 'sector', 'vertical'],
-  boothNumber: ['booth', 'boothnumber', 'stand', 'standnumber', 'hall', 'location'],
-  phone: ['phone', 'phonenumber', 'mobile', 'directphone', 'phone_number', 'mobile_phone', 'direct_phone', 'companyphone'],
-  linkedin: ['linkedin', 'linkedinurl', 'personlinkedinurl', 'profileurl', 'contactlinkedin', 'linkedin_url', 'person_linkedin_url', 'linkedinprofile'],
+  emailLusha: ['emaillusha', 'lushaemail', 'workemail', 'work_email'],
+  emailLusha2: ['emaillusha2', 'lushaemail2', 'workemail2', 'work_email_2'],
+  emailPersonal: ['emailpersonal', 'personalemail', 'privateemail', 'personal_email'],
+  name: [
+    'name', 'fullname', 'contactname', 'person', 'full name', 'contact_name',
+    'prospectname', 'prospect_name', 'leadname', 'lead_name', 'displayname',
+  ],
+  firstName: ['firstname', 'contactfirstname', 'first name', 'first_name', 'givenname', 'fname'],
+  lastName: ['lastname', 'contactlastname', 'last name', 'last_name', 'surname', 'familyname', 'lname'],
+  designation: [
+    'designation', 'title', 'jobtitle', 'position', 'role', 'job_title',
+    'occupation', 'job', 'headline', 'function',
+  ],
+  companyName: [
+    'company', 'companyname', 'organization', 'organisation', 'accountname',
+    'account', 'company_name', 'organization_name', 'org_name', 'firm',
+    'employer', 'client',
+  ],
+  domain: [
+    'domain', 'website', 'companywebsite', 'url', 'companydomain', 'websiteurl',
+    'web', 'company_website', 'company_domain', 'site', 'website_url', 'homepage',
+  ],
+  industry: ['industry', 'sector', 'vertical', 'category', 'business_type'],
+  boothNumber: ['booth', 'boothnumber', 'stand', 'standnumber', 'hall', 'location', 'booth_number', 'stand_number'],
+  phone: [
+    'phone', 'phonenumber', 'mobile', 'directphone', 'phone_number', 'mobile_phone',
+    'direct_phone', 'companyphone', 'telephone', 'tel', 'contactnumber', 'contact_number',
+    'cell', 'cellphone',
+  ],
+  linkedin: [
+    'linkedin', 'linkedinurl', 'personlinkedinurl', 'profileurl', 'contactlinkedin',
+    'linkedin_url', 'person_linkedin_url', 'linkedinprofile', 'linkedin_profile',
+    'profile_url', 'social_url', 'linkedin_link',
+  ],
   
   // Scraper fields
-  city: ['city', 'hqcity', 'location', 'companycity'],
-  country: ['country', 'hqcountry', 'locationcountry', 'companycountry'],
-  genericEmail: ['genericemail', 'generalemail', 'infoemail', 'companyemail'],
-  genericPhone: ['genericphone', 'generalphone', 'infophone', 'companyphone'],
-  notes: ['notes', 'note', 'comments', 'comment'],
+  city: ['city', 'hqcity', 'location', 'companycity', 'headquarters_city'],
+  country: ['country', 'hqcountry', 'locationcountry', 'companycountry', 'headquarters_country'],
+  genericEmail: ['genericemail', 'generalemail', 'infoemail', 'companyemail', 'general_email', 'info_email'],
+  genericPhone: ['genericphone', 'generalphone', 'infophone', 'companyphone', 'general_phone'],
+  notes: ['notes', 'note', 'comments', 'comment', 'description'],
 };
 
 export const COMPANY_FIELDS = ['companyName', 'domain', 'industry', 'boothNumber', 'city', 'country', 'genericEmail', 'genericPhone', 'notes'];
@@ -65,6 +90,14 @@ const VENDOR_HEADERS = {
   Apollo: ['apollo', 'apollo.io', 'person linkedin url'],
   Hunter: ['hunter', 'hunter.io', 'hunter score'],
   Lusha: ['lusha', 'lusha phone', 'work email 2'],
+  ZoomInfo: ['zoominfo', 'zi', 'zoom info'],
+  LinkedIn: ['sales nav', 'salesnavigator', 'linkedin export', 'connection'],
+  Clay: ['clay', 'clay.com', 'clay enrich'],
+  Snov: ['snov', 'snov.io'],
+  Seamless: ['seamless', 'seamless.ai'],
+  UpLead: ['uplead', 'uplead.com'],
+  HubSpot: ['hubspot', 'hs_lead'],
+  Zoho: ['zoho', 'zoho_crm'],
 };
 
 function normalizeHeader(value) {
@@ -567,7 +600,7 @@ export async function blendAndIngestLeads(projectId, uploads) {
 
     // Check PostgreSQL suppression table
     const suppRes = await db.query(
-      `SELECT id FROM endpoint_suppressions WHERE normalized_value = $1 OR endpoint = $1 LIMIT 1`,
+      `SELECT id FROM endpoint_suppressions WHERE LOWER(endpoint) = LOWER($1) LIMIT 1`,
       [email.toLowerCase()]
     );
     if (suppRes.rows.length > 0) {
@@ -714,7 +747,7 @@ export async function blendAndIngestLeads(projectId, uploads) {
      SET target_companies_count = (
            SELECT COUNT(DISTINCT organization_id) FROM campaign_accounts WHERE campaign_id = $1::uuid
          ),
-         companies_with_pocs_found = (
+         companies_with_pocs = (
            SELECT COUNT(DISTINCT ca.organization_id)
            FROM campaign_contacts cc
            JOIN campaign_accounts ca ON cc.campaign_account_id = ca.id

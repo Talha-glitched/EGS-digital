@@ -22,26 +22,9 @@ export const TEMPLATE_CONFIGS = {
     secondaryColor: '#2F3193',
     heroImage: '/email-assets/exhibitions-hero.jpg',
     subImage: '/email-assets/exhibitions-sub.jpg',
-    showcaseWorks: [
-      {
-        image: '/email-assets/exhibitions-hero.jpg',
-        badge: 'DWTC Stand',
-        title: 'Philips Global Health Stand',
-        desc: 'Custom dual-level architectural structure, illuminated 3D branding & certified DWTC build.',
-      },
-      {
-        image: '/email-assets/exhibitions-sub.jpg',
-        badge: 'Arab Health',
-        title: 'HealthTech Custom Pavilion',
-        desc: 'Curved architectural canopy, integrated LED lighting & private VIP meeting lounge.',
-      },
-    ],
-    capabilities: [
-      { icon: '📐', title: '3D Concept & Engineering', desc: 'Custom 3D renders with full structural compliance for DWTC & ADNEC.' },
-      { icon: '🏭', title: 'Dubai In-House Workshop', desc: 'Direct manufacturing joinery, acrylics, metalwork & graphics.' },
-      { icon: '⚡', title: 'Turnkey Handover & Standby', desc: 'On-time delivery with 24/7 dedicated on-site standby crew.' },
-    ],
-    proofText: 'Trusted by global industry leaders across Arab Health, GITEX, ADIPEC, Dubai Airshow, and Cityscape.',
+    showcaseTitle: 'Philips Stand — DWTC Dubai',
+    showcaseBadge: 'Recent Build',
+    showcaseCaption: 'Custom dual-level structure, 3D illuminated branding & certified DWTC build.',
     ctaText: 'Request 3D Stand Concept',
     ctaUrl: 'https://exhibitgraphicsign.com/exhibitions',
     whatsappText: 'Chat on WhatsApp',
@@ -54,26 +37,9 @@ export const TEMPLATE_CONFIGS = {
     secondaryColor: '#D9262E',
     heroImage: '/email-assets/graduations-hero.jpg',
     subImage: '/email-assets/graduations-sub.jpg',
-    showcaseWorks: [
-      {
-        image: '/email-assets/graduations-hero.jpg',
-        badge: '4,500+ Graduates',
-        title: 'HCT Grand Ceremonies (UAE-Wide)',
-        desc: 'Panoramic ceremonial stage, curved high-res LED backdrop & VIP royal protocol.',
-      },
-      {
-        image: '/email-assets/graduations-sub.jpg',
-        badge: 'Sharjah Staging',
-        title: 'Sharjah Ceremonial Arena',
-        desc: 'Theatrical spotlighting, acoustic audio coverage & numbered graduate seating flow.',
-      },
-    ],
-    capabilities: [
-      { icon: '🏛️', title: 'Ceremonial Stage & LED Backdrops', desc: 'Custom prosceniums, high-res curved LED walls & podiums.' },
-      { icon: '🎙️', title: 'Broadcast AV & Theatrical Lighting', desc: 'Acoustic sound coverage, theatrical spotlights & multi-cam feeds.' },
-      { icon: '👥', title: 'VIP Protocol & Graduate Seating', desc: 'Dignitary arrival zones, numbered seating & precision crowd flow.' },
-    ],
-    proofText: 'Proven institutional execution at Zayed Sports Complex Fujairah, Coca-Cola Arena Dubai, AUD, and HCT nationwide.',
+    showcaseTitle: 'HCT Grand Ceremonies — UAE-Wide',
+    showcaseBadge: '4,500+ Graduates',
+    showcaseCaption: 'Panoramic ceremonial stage, curved high-res LED backdrop & VIP royal protocol.',
     ctaText: 'Discuss Ceremony Scope',
     ctaUrl: 'https://exhibitgraphicsign.com/events',
     whatsappText: 'WhatsApp Coordination',
@@ -86,26 +52,9 @@ export const TEMPLATE_CONFIGS = {
     secondaryColor: '#D9262E',
     heroImage: '/email-assets/fitouts-hero.jpg',
     subImage: '/email-assets/fitouts-sub.jpg',
-    showcaseWorks: [
-      {
-        image: '/email-assets/fitouts-hero.jpg',
-        badge: 'Corporate Fitout',
-        title: 'Velocity Corporate Offices',
-        desc: 'Turnkey joinery, glass partitions, executive acoustic panelling & workstations.',
-      },
-      {
-        image: '/email-assets/fitouts-sub.jpg',
-        badge: 'Branded Space',
-        title: 'Showroom & Reception Space',
-        desc: '3D illuminated architectural signage, custom reception desk & wall cladding.',
-      },
-    ],
-    capabilities: [
-      { icon: '🛠️', title: 'Turnkey Joinery & Partitions', desc: 'Glass partitions, acoustic panelling & custom executive joinery.' },
-      { icon: '🏢', title: '3D Architectural Signage', desc: 'Illuminated lobby logos, frosted vinyl & comprehensive wayfinding.' },
-      { icon: '📋', title: 'Fast-Track Approvals & Handover', desc: 'Direct authority management with zero business disruption.' },
-    ],
-    proofText: 'Direct manufacturing in our Dubai workshop — zero broker markups and guaranteed handover deadlines.',
+    showcaseTitle: 'Velocity Commercial Workspaces',
+    showcaseBadge: 'Corporate Fitout',
+    showcaseCaption: 'Turnkey joinery, glass partitions, executive acoustic panelling & 3D signage.',
     ctaText: 'Book Site Survey / Consultation',
     ctaUrl: 'https://exhibitgraphicsign.com/fitouts',
     whatsappText: 'WhatsApp Consultation',
@@ -118,9 +67,9 @@ export const TEMPLATE_CONFIGS = {
     secondaryColor: '#D9262E',
     heroImage: null,
     subImage: null,
-    showcaseWorks: [],
-    capabilities: [],
-    proofText: '',
+    showcaseTitle: '',
+    showcaseBadge: '',
+    showcaseCaption: '',
     ctaText: 'Visit EGS Website',
     ctaUrl: 'https://exhibitgraphicsign.com',
     whatsappText: 'Chat on WhatsApp',
@@ -164,22 +113,13 @@ export function getEmailAttachments(templateType) {
     });
   }
 
-  if (config.showcaseWorks && config.showcaseWorks.length >= 2) {
-    const [work1, work2] = config.showcaseWorks;
-    const work1Path = getEmailAssetPath(work1.image);
-    if (fs.existsSync(work1Path)) {
+  if (config.heroImage) {
+    const heroPath = getEmailAssetPath(config.heroImage);
+    if (fs.existsSync(heroPath)) {
       attachments.push({
-        filename: path.basename(work1.image),
-        path: work1Path,
-        cid: 'work1_img',
-      });
-    }
-    const work2Path = getEmailAssetPath(work2.image);
-    if (fs.existsSync(work2Path)) {
-      attachments.push({
-        filename: path.basename(work2.image),
-        path: work2Path,
-        cid: 'work2_img',
+        filename: path.basename(config.heroImage),
+        path: heroPath,
+        cid: 'showcase_img',
       });
     }
   }
@@ -207,9 +147,9 @@ export function formatBodyHtml(text = '') {
 }
 
 /**
- * Compiles Primary-Inbox Optimized Executive Email HTML.
+ * Compiles Primary-Inbox Optimized Executive Email HTML with optional showcase work sample.
  * Engineered specifically to land in the recipient's PRIMARY INBOX (avoiding Promotions & Spam folders).
- * Format: Clean 1-on-1 personal executive correspondence with clean signature.
+ * Format: Clean 1-on-1 personal executive correspondence -> Showcase photo sample -> Executive signature.
  */
 export function renderEmailHtml({
   body = '',
@@ -242,6 +182,38 @@ export function renderEmailHtml({
   // Body content HTML
   const bodyHtml = formatBodyHtml(body);
 
+  // Deliverability-optimized Showcase Work Photo (Below text, above signature)
+  let showcaseHtml = '';
+  if (config.heroImage) {
+    const showcaseImgUrl = resolveAssetUrl(config.heroImage, 'showcase_img');
+    showcaseHtml = `
+    <!-- RECENT WORK SHOWCASE (PRIMARY INBOX OPTIMIZED EMBED) -->
+    <div style="margin: 22px 0 18px 0; max-width: 560px;">
+      <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; border-collapse: separate; border-spacing: 0; background-color: #FAFAF9; border: 1px solid #E8E5DF; border-radius: 8px; overflow: hidden;">
+        <tr>
+          <td style="padding: 0; line-height: 0; background-color: #111111;">
+            <a href="${config.ctaUrl || 'https://exhibitgraphicsign.com'}" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none;">
+              <img src="${showcaseImgUrl}" alt="${config.showcaseTitle || 'Recent EGS Project Build'}" width="560" style="width: 100%; max-width: 560px; height: auto; max-height: 280px; object-fit: cover; display: block; border: 0;" />
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 9px 13px; background-color: #F8F6F2; border-top: 1px solid #E8E5DF;">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+              <tr>
+                <td style="vertical-align: middle;">
+                  <span style="display: inline-block; background-color: #D9262E; color: #FFFFFF; font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.04em; padding: 2px 6px; border-radius: 3px; font-family: Arial, Helvetica, sans-serif; margin-right: 6px;">${config.showcaseBadge || 'Recent Build'}</span>
+                  <strong style="font-size: 12px; color: #111111; font-family: Arial, Helvetica, sans-serif;">${config.showcaseTitle}</strong>
+                  <span style="font-size: 11px; color: #666666; font-family: Arial, Helvetica, sans-serif; margin-left: 4px;">&middot; ${config.showcaseCaption}</span>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>`;
+  }
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -256,8 +228,11 @@ export function renderEmailHtml({
       ${bodyHtml}
     </div>
 
+    <!-- SHOWCASE WORK SAMPLE -->
+    ${showcaseHtml}
+
     <!-- EXECUTIVE SIGNATURE BLOCK -->
-    <div style="margin-top: 28px; padding-top: 16px; border-top: 1px solid #E5E5E5; font-family: Arial, Helvetica, sans-serif;">
+    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #E5E5E5; font-family: Arial, Helvetica, sans-serif;">
       <table cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse;">
         <tr>
           <td style="vertical-align: top; padding-right: 14px;">

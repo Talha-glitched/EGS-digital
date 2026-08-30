@@ -117,7 +117,7 @@ function EmailEditor({ data, onChange }) {
 
       <div className="crm-seq-editor-callout">
         <Sparkles className="h-4 w-4 text-brand" />
-        <p>Personalize with placeholders like <code>[First]</code>, <code>{{name}}</code>, <code>{{company}}</code>, or <code>[University]</code>.</p>
+        <p>Personalize with placeholders like <code>[First]</code>, <code>{'{{name}}'}</code>, <code>{'{{company}}'}</code>, or <code>[University]</code>.</p>
       </div>
 
       <label className="crm-seq-editor-toggle">
@@ -180,7 +180,7 @@ function EmailEditor({ data, onChange }) {
         selectedTemplateId={currentTemplateId}
         onSelectTemplate={handleSelectTemplate}
         onPreviewTemplate={(id) => {
-          setSelectedTemplateId(id);
+          handleSelectTemplate(id, { applyCopy: false });
           setPreviewOpen(true);
         }}
       />
