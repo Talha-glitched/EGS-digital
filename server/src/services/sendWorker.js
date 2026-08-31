@@ -325,7 +325,7 @@ async function pollSendQueue({ force = false, maxJobs = 10 } = {}) {
   try {
     let processedInThisRun = 0;
     while (processedInThisRun < maxJobs) {
-      const hourlyCap = Number(process.env.MAILBOX_HOURLY_CAP) || 199;
+      const hourlyCap = Number(process.env.MAILBOX_HOURLY_CAP) || 150;
       const currentHourlyCount = await getHourlySendCount();
       if (currentHourlyCount >= hourlyCap) {
         const waitMs = await getMsUntilHourlyLimitResumes();
@@ -435,11 +435,33 @@ export async function sendJobNow(jobId) {
 const MAX_BATCH_SEND_COUNT = 100;
 
 export async function sendPendingJobsBatch(jobIds = [], options = {}) {
+  const hourlyCap = Number(process.env.MAILBOX_HOURLY_CAP) || 150;
   const ids = Array.isArray(jobIds) ? jobIds.slice(0, MAX_BATCH_SEND_COUNT) : [];
   const results = [];
   for (const id of ids) {
-    try { results.push({ id, ok: true, result: await processSendJob(id, { force: true }) }); }
-    catch (error) { results.push({ id, ok: false, error: error.message }); }
+    const currentHourly = await getHourlySendCount();
+    if (currentHourly >= hourlyCap) {
+      const waitMs = await getMsUntilHourlyLimitResumes();
+      results.push({
+        id,
+        ok: false,
+        skipped: true,
+        error: `Hourly rate limit of ${hourlyCap} emails reached (${currentHourly}/${hourlyCap}). Pausing for ${Math.ceil(waitMs / 60000)} minute(s).`,
+      });
+      continue;
+    }
+    try {
+      results.push({ id, ok: true, result: await processSendJob(id, { force: true }) });
+    } catch (error) {
+      results.push({ id, ok: false, error: error.message });
+    }
   }
-  return { sent: results.filter((row) => row.ok).length, failed: results.filter((row) => !row.ok).length, skipped: 0, processed: results.length, maxPerRequest: MAX_BATCH_SEND_COUNT, results };
+  return {
+    sent: results.filter((row) => row.ok).length,
+    failed: results.filter((row) => !row.ok && !row.skipped).length,
+    skipped: results.filter((row) => row.skipped).length,
+    processed: results.length,
+    maxPerRequest: MAX_BATCH_SEND_COUNT,
+    results,
+  };
 }

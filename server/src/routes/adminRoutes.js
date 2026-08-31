@@ -819,6 +819,27 @@ router.post('/sequences/test-email', asyncRoute(async (req, res) => {
       html: finalHtml,
     });
 
+    const messageId = String(result?.messageId || '').trim();
+
+    // Track test email in messages table so it is counted in the 150 emails/hour limit
+    try {
+      const convRes = await db.query(
+        `INSERT INTO conversations (channel, external_thread_id, subject)
+         VALUES ('email', $1, $2) RETURNING id`,
+        [messageId || null, `[TEST PREVIEW] ${resolvedSubject}`]
+      );
+      const convId = convRes.rows[0]?.id;
+      if (convId) {
+        await db.query(
+          `INSERT INTO messages (conversation_id, direction, channel, external_message_id, subject, body, delivery_state, occurred_at)
+           VALUES ($1::uuid, 'outbound', 'email', $2, $3, $4, 'sent', CURRENT_TIMESTAMP)`,
+          [convId, messageId || null, `[TEST PREVIEW] ${resolvedSubject}`, resolvedBody]
+        );
+      }
+    } catch (mErr) {
+      console.warn('[TestEmail] Warning: Failed to record test email in PG messages table:', mErr.message);
+    }
+
     return res.json({
       ok: true,
       messageId: result?.messageId,
