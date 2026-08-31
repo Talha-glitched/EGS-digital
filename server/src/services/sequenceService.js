@@ -263,7 +263,7 @@ export async function deleteSequence(id) {
         )
       `, [sqlId]);
 
-      await client.query(`DELETE FROM send_jobs WHERE sequence_id = $1::uuid OR enrollment_id IN (SELECT id FROM sequence_enrollments WHERE sequence_id = $1::uuid)`, [sqlId]);
+      await client.query(`DELETE FROM send_jobs WHERE enrollment_id IN (SELECT id FROM sequence_enrollments WHERE sequence_id = $1::uuid)`, [sqlId]);
       await client.query(`DELETE FROM sequence_enrollments WHERE sequence_id = $1::uuid`, [sqlId]);
       await client.query(`DELETE FROM sequences WHERE id = $1::uuid`, [sqlId]);
     }
@@ -873,8 +873,14 @@ export async function cleanupOrphanedSequenceStates() {
   try {
     await db.query(`
       DELETE FROM send_jobs
-      WHERE sequence_id IS NOT NULL
-        AND sequence_id NOT IN (SELECT id FROM sequences)
+      WHERE enrollment_id IS NOT NULL
+        AND (
+          enrollment_id NOT IN (SELECT id FROM sequence_enrollments)
+          OR enrollment_id IN (
+            SELECT id FROM sequence_enrollments
+            WHERE sequence_id IS NOT NULL AND sequence_id NOT IN (SELECT id FROM sequences)
+          )
+        )
     `);
 
     await db.query(`
