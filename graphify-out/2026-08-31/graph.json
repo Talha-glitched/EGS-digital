@@ -1718,8 +1718,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationsourcedrawer",
-      "community": 181,
-      "community_name": "CommunicationsOverview.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "communicationsourcedrawer.jsx"
     },
     {
@@ -1730,8 +1730,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationsourcedrawer_when",
-      "community": 181,
-      "community_name": "CommunicationsOverview.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "when()"
     },
     {
@@ -1742,8 +1742,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationsourcedrawer_communicationsourcedrawer",
-      "community": 181,
-      "community_name": "CommunicationsOverview.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "communicationsourcedrawer()"
     },
     {
@@ -1753,8 +1753,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationsoverview",
-      "community": 181,
-      "community_name": "CommunicationsOverview.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "communicationsoverview.jsx"
     },
     {
@@ -1765,8 +1765,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationsoverview_when",
-      "community": 181,
-      "community_name": "CommunicationsOverview.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "when()"
     },
     {
@@ -1777,8 +1777,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationsoverview_messagerow",
-      "community": 181,
-      "community_name": "CommunicationsOverview.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "messagerow()"
     },
     {
@@ -1789,8 +1789,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationsoverview_attentionrow",
-      "community": 181,
-      "community_name": "CommunicationsOverview.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "attentionrow()"
     },
     {
@@ -1801,8 +1801,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationsoverview_communicationsoverview",
-      "community": 181,
-      "community_name": "CommunicationsOverview.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "communicationsoverview()"
     },
     {
@@ -1813,8 +1813,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationsoverview_linkedcommunicationsworkspace",
-      "community": 181,
-      "community_name": "CommunicationsOverview.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "linkedcommunicationsworkspace()"
     },
     {
@@ -1824,8 +1824,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_replyreviewmodal",
-      "community": 181,
-      "community_name": "CommunicationsOverview.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "replyreviewmodal.jsx"
     },
     {
@@ -1835,8 +1835,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_replyreviewmodal_outcomes",
-      "community": 181,
-      "community_name": "CommunicationsOverview.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "outcomes"
     },
     {
@@ -1846,8 +1846,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_replyreviewmodal_active",
-      "community": 181,
-      "community_name": "CommunicationsOverview.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "active"
     },
     {
@@ -1858,8 +1858,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_replyreviewmodal_tomorrowatten",
-      "community": 181,
-      "community_name": "CommunicationsOverview.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "tomorrowatten()"
     },
     {
@@ -1870,8 +1870,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_replyreviewmodal_replyreviewmodal",
-      "community": 181,
-      "community_name": "CommunicationsOverview.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "replyreviewmodal()"
     },
     {
@@ -2193,8 +2193,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobartifactspanel",
-      "community": 181,
-      "community_name": "CommunicationsOverview.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "jobartifactspanel.jsx"
     },
     {
@@ -2204,8 +2204,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobartifactspanel_decision_labels",
-      "community": 181,
-      "community_name": "CommunicationsOverview.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "decision_labels"
     },
     {
@@ -2216,8 +2216,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobartifactspanel_when",
-      "community": 181,
-      "community_name": "CommunicationsOverview.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "when()"
     },
     {
@@ -2228,8 +2228,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobartifactspanel_decisioncomposer",
-      "community": 181,
-      "community_name": "CommunicationsOverview.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "decisioncomposer()"
     },
     {
@@ -2240,8 +2240,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobartifactspanel_versioncard",
-      "community": 181,
-      "community_name": "CommunicationsOverview.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "versioncard()"
     },
     {
@@ -2252,8 +2252,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobartifactspanel_versionupload",
-      "community": 181,
-      "community_name": "CommunicationsOverview.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "versionupload()"
     },
     {
@@ -2264,8 +2264,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobartifactspanel_jobartifactspanel",
-      "community": 181,
-      "community_name": "CommunicationsOverview.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "jobartifactspanel()"
     },
     {
@@ -2275,8 +2275,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobcloseoutpanel",
-      "community": 245,
-      "community_name": "InventoryPage.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "jobcloseoutpanel.jsx"
     },
     {
@@ -2286,8 +2286,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobcloseoutpanel_evidence_labels",
-      "community": 245,
-      "community_name": "InventoryPage.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "evidence_labels"
     },
     {
@@ -2297,8 +2297,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobcloseoutpanel_status_labels",
-      "community": 245,
-      "community_name": "InventoryPage.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "status_labels"
     },
     {
@@ -2309,8 +2309,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobcloseoutpanel_localinput",
-      "community": 245,
-      "community_name": "InventoryPage.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "localinput()"
     },
     {
@@ -2321,8 +2321,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobcloseoutpanel_when",
-      "community": 245,
-      "community_name": "InventoryPage.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "when()"
     },
     {
@@ -2333,8 +2333,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobcloseoutpanel_jobcloseoutpanel",
-      "community": 245,
-      "community_name": "InventoryPage.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "jobcloseoutpanel()"
     },
     {
@@ -2344,8 +2344,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_layout_sidebar",
-      "community": 11,
-      "community_name": "CrmApp.jsx",
+      "community": 3,
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "sidebar.jsx"
     },
     {
@@ -2355,8 +2355,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_layout_sidebar_base_nav_groups",
-      "community": 11,
-      "community_name": "CrmApp.jsx",
+      "community": 3,
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "base_nav_groups"
     },
     {
@@ -2367,8 +2367,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_layout_sidebar_navitem",
-      "community": 11,
-      "community_name": "CrmApp.jsx",
+      "community": 3,
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "navitem()"
     },
     {
@@ -2379,8 +2379,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_layout_sidebar_sidebar",
-      "community": 11,
-      "community_name": "CrmApp.jsx",
+      "community": 3,
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "sidebar()"
     },
     {
@@ -2507,8 +2507,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_layout_topnavbar",
-      "community": 11,
-      "community_name": "CrmApp.jsx",
+      "community": 3,
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "topnavbar.jsx"
     },
     {
@@ -2519,8 +2519,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_layout_topnavbar_shortcuthint",
-      "community": 11,
-      "community_name": "CrmApp.jsx",
+      "community": 3,
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "shortcuthint()"
     },
     {
@@ -2531,8 +2531,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_layout_topnavbar_topnavbar",
-      "community": 11,
-      "community_name": "CrmApp.jsx",
+      "community": 3,
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "topnavbar()"
     },
     {
@@ -4533,8 +4533,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_audiencepreviewmodal",
-      "community": 53,
-      "community_name": "CampaignListImportModal.jsx",
+      "community": 45,
+      "community_name": "SequenceStudio.jsx",
       "norm_label": "audiencepreviewmodal.jsx"
     },
     {
@@ -4544,8 +4544,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_audiencepreviewmodal_blocked_reason_labels",
-      "community": 53,
-      "community_name": "CampaignListImportModal.jsx",
+      "community": 45,
+      "community_name": "SequenceStudio.jsx",
       "norm_label": "blocked_reason_labels"
     },
     {
@@ -4556,8 +4556,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_audiencepreviewmodal_rowstatus",
-      "community": 53,
-      "community_name": "CampaignListImportModal.jsx",
+      "community": 45,
+      "community_name": "SequenceStudio.jsx",
       "norm_label": "rowstatus()"
     },
     {
@@ -4567,8 +4567,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_audiencepreviewmodal_tone_classes",
-      "community": 53,
-      "community_name": "CampaignListImportModal.jsx",
+      "community": 45,
+      "community_name": "SequenceStudio.jsx",
       "norm_label": "tone_classes"
     },
     {
@@ -4579,8 +4579,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_audiencepreviewmodal_audiencepreviewmodal",
-      "community": 53,
-      "community_name": "CampaignListImportModal.jsx",
+      "community": 45,
+      "community_name": "SequenceStudio.jsx",
       "norm_label": "audiencepreviewmodal()"
     },
     {
@@ -5681,7 +5681,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_actionbadge",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "actionbadge.jsx"
     },
     {
@@ -5692,7 +5692,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_actionbadge_tones",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "tones"
     },
     {
@@ -5704,7 +5704,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_actionbadge_actionbadge",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "actionbadge()"
     },
     {
@@ -5715,7 +5715,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_activitydetaildrawer",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "activitydetaildrawer.jsx"
     },
     {
@@ -5727,7 +5727,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_activitydetaildrawer_activitydetaildrawer",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "activitydetaildrawer()"
     },
     {
@@ -5739,7 +5739,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_activitydetaildrawer_detailitem",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "detailitem()"
     },
     {
@@ -5751,7 +5751,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_activitydetaildrawer_action_summary",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "action_summary()"
     },
     {
@@ -5762,7 +5762,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_changetypebadge",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "changetypebadge.jsx"
     },
     {
@@ -5773,7 +5773,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_changetypebadge_tones",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "tones"
     },
     {
@@ -5785,7 +5785,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_changetypebadge_changetypebadge",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "changetypebadge()"
     },
     {
@@ -5842,8 +5842,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_credentialresultmodal_credentialresultmodal",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 4,
+      "community_name": "Alert",
       "norm_label": "credentialresultmodal()"
     },
     {
@@ -5866,7 +5866,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_fielddifflist",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "fielddifflist.jsx"
     },
     {
@@ -5878,7 +5878,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_fielddifflist_fielddifflist",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "fielddifflist()"
     },
     {
@@ -5889,7 +5889,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_revisiondetaildrawer",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "revisiondetaildrawer.jsx"
     },
     {
@@ -5901,7 +5901,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_revisiondetaildrawer_revisiondetaildrawer",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "revisiondetaildrawer()"
     },
     {
@@ -5913,7 +5913,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_revisiondetaildrawer_detailitem",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "detailitem()"
     },
     {
@@ -5923,8 +5923,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_rolebadge",
-      "community": 11,
-      "community_name": "CrmApp.jsx",
+      "community": 3,
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "rolebadge.jsx"
     },
     {
@@ -5934,8 +5934,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_rolebadge_role_styles",
-      "community": 11,
-      "community_name": "CrmApp.jsx",
+      "community": 3,
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "role_styles"
     },
     {
@@ -5945,8 +5945,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_rolebadge_role_labels",
-      "community": 11,
-      "community_name": "CrmApp.jsx",
+      "community": 3,
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "role_labels"
     },
     {
@@ -5957,8 +5957,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_rolebadge_rolebadge",
-      "community": 11,
-      "community_name": "CrmApp.jsx",
+      "community": 3,
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "rolebadge()"
     },
     {
@@ -5969,7 +5969,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_settingsfilterselect",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "settingsfilterselect.jsx"
     },
     {
@@ -5981,7 +5981,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_settingsfilterselect_settingsfilterselect",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "settingsfilterselect()"
     },
     {
@@ -5992,7 +5992,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_settingspageheader",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "settingspageheader.jsx"
     },
     {
@@ -6004,7 +6004,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_settingspageheader_settingspageheader",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "settingspageheader()"
     },
     {
@@ -6015,7 +6015,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_settingsshell",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "settingsshell.jsx"
     },
     {
@@ -6026,7 +6026,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_settingsshell_tabs",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "tabs"
     },
     {
@@ -6038,7 +6038,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_settingsshell_settingsshell",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "settingsshell()"
     },
     {
@@ -6048,8 +6048,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_useradmindrawer",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 3,
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "useradmindrawer.jsx"
     },
     {
@@ -6060,8 +6060,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_useradmindrawer_useradmindrawer",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 3,
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "useradmindrawer()"
     },
     {
@@ -6072,8 +6072,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_useradmindrawer_detailitem",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 3,
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "detailitem()"
     },
     {
@@ -6084,7 +6084,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_settingsutils",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "settingsutils.js"
     },
     {
@@ -6095,7 +6095,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_settingsutils_action_labels",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "action_labels"
     },
     {
@@ -6106,7 +6106,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_settingsutils_change_type_labels",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "change_type_labels"
     },
     {
@@ -6118,7 +6118,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_settingsutils_formatsettingswhen",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "formatsettingswhen()"
     },
     {
@@ -6130,7 +6130,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_settingsutils_formatauditvalue",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "formatauditvalue()"
     },
     {
@@ -6141,8 +6141,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_settingsutils_userinitials",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 3,
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "userinitials()"
     },
     {
@@ -6154,7 +6154,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_settingsutils_resourcelabel",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "resourcelabel()"
     },
     {
@@ -6166,7 +6166,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_settingsutils_snapshottitle",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "snapshottitle()"
     },
     {
@@ -7048,7 +7048,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_searchinput",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "searchinput.jsx"
     },
     {
@@ -7060,7 +7060,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_searchinput_searchinput",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "searchinput()"
     },
     {
@@ -8343,7 +8343,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_primitives_loadingstate",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "loadingstate()"
     },
     {
@@ -8726,8 +8726,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_datablenderwizard",
-      "community": 4,
-      "community_name": "Alert",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "datablenderwizard.jsx"
     },
     {
@@ -8737,8 +8737,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_datablenderwizard_internal_fields",
-      "community": 4,
-      "community_name": "Alert",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "internal_fields"
     },
     {
@@ -8748,8 +8748,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_datablenderwizard_vendors",
-      "community": 4,
-      "community_name": "Alert",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "vendors"
     },
     {
@@ -8759,8 +8759,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_datablenderwizard_steps",
-      "community": 4,
-      "community_name": "Alert",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "steps"
     },
     {
@@ -8770,8 +8770,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_datablenderwizard_step_meta",
-      "community": 4,
-      "community_name": "Alert",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "step_meta"
     },
     {
@@ -8782,8 +8782,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_datablenderwizard_datablenderwizard",
-      "community": 4,
-      "community_name": "Alert",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "datablenderwizard()"
     },
     {
@@ -8794,8 +8794,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_datablenderwizard_previewstat",
-      "community": 4,
-      "community_name": "Alert",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "previewstat()"
     },
     {
@@ -9673,8 +9673,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_uploadingestfile",
-      "community": 4,
-      "community_name": "Alert",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "uploadingestfile()"
     },
     {
@@ -9685,8 +9685,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_previewingestfile",
-      "community": 4,
-      "community_name": "Alert",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "previewingestfile()"
     },
     {
@@ -10669,8 +10669,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_updateuser",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 3,
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "updateuser()"
     },
     {
@@ -10705,8 +10705,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_resetuserpassword",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 3,
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "resetuserpassword()"
     },
     {
@@ -10730,7 +10730,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_fetchauditlog",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "fetchauditlog()"
     },
     {
@@ -10742,7 +10742,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_fetchauditlogentry",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "fetchauditlogentry()"
     },
     {
@@ -10778,7 +10778,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_fetchrevisionentry",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "fetchrevisionentry()"
     },
     {
@@ -11297,8 +11297,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_hooks_usepermissions",
-      "community": 11,
-      "community_name": "CrmApp.jsx",
+      "community": 3,
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "usepermissions.js"
     },
     {
@@ -11309,8 +11309,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_hooks_usepermissions_usepermissions",
-      "community": 11,
-      "community_name": "CrmApp.jsx",
+      "community": 3,
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "usepermissions()"
     },
     {
@@ -11436,7 +11436,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_datarecoverypage",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "datarecoverypage.jsx"
     },
     {
@@ -11447,7 +11447,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_datarecoverypage_type_filters",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "type_filters"
     },
     {
@@ -11458,7 +11458,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_datarecoverypage_change_filters",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "change_filters"
     },
     {
@@ -11470,7 +11470,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_datarecoverypage_datarecoverypage",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "datarecoverypage()"
     },
     {
@@ -11583,7 +11583,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_emailsettingspage",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "emailsettingspage.jsx"
     },
     {
@@ -11595,7 +11595,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_emailsettingspage_settingsskeleton",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "settingsskeleton()"
     },
     {
@@ -11607,7 +11607,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_emailsettingspage_deliverymodebanner",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "deliverymodebanner()"
     },
     {
@@ -11619,7 +11619,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_emailsettingspage_smtpconnectioncards",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "smtpconnectioncards()"
     },
     {
@@ -11631,7 +11631,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_emailsettingspage_emailsettingspage",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "emailsettingspage()"
     },
     {
@@ -11710,8 +11710,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_inventorypage",
-      "community": 245,
-      "community_name": "InventoryPage.jsx",
+      "community": 11,
+      "community_name": "CrmApp.jsx",
       "norm_label": "inventorypage.jsx"
     },
     {
@@ -11722,8 +11722,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_inventorypage_itemcard",
-      "community": 245,
-      "community_name": "InventoryPage.jsx",
+      "community": 11,
+      "community_name": "CrmApp.jsx",
       "norm_label": "itemcard()"
     },
     {
@@ -11734,8 +11734,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_inventorypage_itemdetail",
-      "community": 245,
-      "community_name": "InventoryPage.jsx",
+      "community": 11,
+      "community_name": "CrmApp.jsx",
       "norm_label": "itemdetail()"
     },
     {
@@ -11746,8 +11746,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_inventorypage_recentlyremoved",
-      "community": 245,
-      "community_name": "InventoryPage.jsx",
+      "community": 11,
+      "community_name": "CrmApp.jsx",
       "norm_label": "recentlyremoved()"
     },
     {
@@ -11758,8 +11758,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_inventorypage_inventorypage",
-      "community": 245,
-      "community_name": "InventoryPage.jsx",
+      "community": 11,
+      "community_name": "CrmApp.jsx",
       "norm_label": "inventorypage()"
     },
     {
@@ -12319,8 +12319,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_teamsettingspage",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 3,
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "teamsettingspage.jsx"
     },
     {
@@ -12331,8 +12331,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_teamsettingspage_teamsettingspage",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 3,
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "teamsettingspage()"
     },
     {
@@ -12343,7 +12343,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_useractivitypage",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "useractivitypage.jsx"
     },
     {
@@ -12354,7 +12354,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_useractivitypage_action_filters",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "action_filters"
     },
     {
@@ -12366,7 +12366,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_useractivitypage_useractivitypage",
       "community": 3,
-      "community_name": "LoadingState",
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "useractivitypage()"
     },
     {
@@ -12608,8 +12608,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_utils_mediaurl",
-      "community": 245,
-      "community_name": "InventoryPage.jsx",
+      "community": 11,
+      "community_name": "CrmApp.jsx",
       "norm_label": "mediaurl.js"
     },
     {
@@ -12620,8 +12620,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_utils_mediaurl_getmediaurl",
-      "community": 245,
-      "community_name": "InventoryPage.jsx",
+      "community": 11,
+      "community_name": "CrmApp.jsx",
       "norm_label": "getmediaurl()"
     },
     {
@@ -17655,7 +17655,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_service_families",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "service_families"
     },
     {
@@ -17666,7 +17666,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_service_offerings",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "service_offerings"
     },
     {
@@ -17677,7 +17677,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_uoms",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "uoms"
     },
     {
@@ -17688,7 +17688,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_service_allowed_uoms",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "service_allowed_uoms"
     },
     {
@@ -17720,8 +17720,8 @@
       "source_location": "L180",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_organizations",
-      "community": 208,
-      "community_name": "organizations",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "organizations"
     },
     {
@@ -17731,8 +17731,8 @@
       "source_location": "L192",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_organization_identifiers",
-      "community": 208,
-      "community_name": "organizations",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "organization_identifiers"
     },
     {
@@ -17753,8 +17753,8 @@
       "source_location": "L214",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_locations",
-      "community": 208,
-      "community_name": "organizations",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "locations"
     },
     {
@@ -17764,8 +17764,8 @@
       "source_location": "L224",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_people",
-      "community": 208,
-      "community_name": "organizations",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "people"
     },
     {
@@ -17819,8 +17819,8 @@
       "source_location": "L282",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_events",
-      "community": 208,
-      "community_name": "organizations",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "events"
     },
     {
@@ -17830,8 +17830,8 @@
       "source_location": "L289",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_event_editions",
-      "community": 208,
-      "community_name": "organizations",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "event_editions"
     },
     {
@@ -17841,8 +17841,8 @@
       "source_location": "L298",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_event_participations",
-      "community": 208,
-      "community_name": "organizations",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "event_participations"
     },
     {
@@ -17852,8 +17852,8 @@
       "source_location": "L308",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_campaigns",
-      "community": 208,
-      "community_name": "organizations",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "campaigns"
     },
     {
@@ -17984,8 +17984,8 @@
       "source_location": "L424",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_interactions",
-      "community": 208,
-      "community_name": "organizations",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "interactions"
     },
     {
@@ -17995,8 +17995,8 @@
       "source_location": "L436",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_tasks",
-      "community": 26,
-      "community_name": "01_init_postgresql_schema.sql",
+      "community": 101,
+      "community_name": "job_scope_lines",
       "norm_label": "tasks"
     },
     {
@@ -18017,7 +18017,7 @@
       "source_location": "L462",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_ongoing_jobs",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "ongoing_jobs"
     },
@@ -18040,7 +18040,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_phases",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "job_phases"
     },
     {
@@ -18051,7 +18051,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_locations",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "job_locations"
     },
     {
@@ -18062,7 +18062,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_scope_lines",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "job_scope_lines"
     },
     {
@@ -18084,7 +18084,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_design_sets",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "design_sets"
     },
     {
@@ -18095,7 +18095,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_quotes",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "quotes"
     },
     {
@@ -18106,7 +18106,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_quote_versions",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "quote_versions"
     },
     {
@@ -18117,7 +18117,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_quote_lines",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "quote_lines"
     },
     {
@@ -18128,7 +18128,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_design_versions",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "design_versions"
     },
     {
@@ -18139,7 +18139,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_artifact_decisions",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "artifact_decisions"
     },
     {
@@ -18150,7 +18150,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_production_releases",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "production_releases"
     },
     {
@@ -18161,7 +18161,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_production_release_design_versions",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "production_release_design_versions"
     },
     {
@@ -18172,7 +18172,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_activities",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "job_activities"
     },
     {
@@ -18204,7 +18204,7 @@
       "source_location": "L717",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_financial_milestones",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "financial_milestones"
     },
@@ -18215,7 +18215,7 @@
       "source_location": "L728",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_events",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "job_events"
     },
@@ -18348,7 +18348,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_project_time_entries",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "project_time_entries"
     },
     {
@@ -18446,7 +18446,7 @@
       "source_location": "L1011",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_cost_estimates",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "job_cost_estimates"
     },
@@ -18457,7 +18457,7 @@
       "source_location": "L1019",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_actual_costs",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "job_actual_costs"
     },
@@ -18468,7 +18468,7 @@
       "source_location": "L1028",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_cost_confirmations",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "job_cost_confirmations"
     },
@@ -18545,8 +18545,8 @@
       "source_location": "L1057",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_closeouts",
-      "community": 208,
-      "community_name": "organizations",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "job_closeouts"
     },
     {
@@ -18568,7 +18568,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_snags",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "job_snags"
     },
     {
@@ -18633,8 +18633,8 @@
       "source_location": "L1155",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_task_dependencies",
-      "community": 26,
-      "community_name": "01_init_postgresql_schema.sql",
+      "community": 101,
+      "community_name": "job_scope_lines",
       "norm_label": "task_dependencies"
     },
     {
@@ -18644,8 +18644,8 @@
       "source_location": "L1164",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_task_evidence",
-      "community": 26,
-      "community_name": "01_init_postgresql_schema.sql",
+      "community": 101,
+      "community_name": "job_scope_lines",
       "norm_label": "task_evidence"
     },
     {
@@ -18655,8 +18655,8 @@
       "source_location": "L1172",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_prevent_task_dependency_cycle",
-      "community": 26,
-      "community_name": "01_init_postgresql_schema.sql",
+      "community": 101,
+      "community_name": "job_scope_lines",
       "norm_label": "prevent_task_dependency_cycle()"
     },
     {
@@ -18666,8 +18666,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "predecessors",
-      "community": 26,
-      "community_name": "01_init_postgresql_schema.sql",
+      "community": 101,
+      "community_name": "job_scope_lines",
       "norm_label": "predecessors"
     },
     {
@@ -18700,7 +18700,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_validate_task_job_context",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "validate_task_job_context()"
     },
     {
@@ -18733,7 +18733,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_field_execution_submissions",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "field_execution_submissions"
     },
     {
@@ -18744,7 +18744,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_field_execution_files",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "field_execution_files"
     },
     {
@@ -18766,7 +18766,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_delivery_activations",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "job_delivery_activations"
     },
     {
@@ -18922,7 +18922,7 @@
       "_origin": "ast",
       "id": "server_scripts_04_add_missing_tables",
       "community": 208,
-      "community_name": "organizations",
+      "community_name": "04_add_missing_tables.sql",
       "norm_label": "04_add_missing_tables.sql"
     },
     {
@@ -18933,7 +18933,7 @@
       "_origin": "ast",
       "id": "server_scripts_04_add_missing_tables_completed_jobs",
       "community": 208,
-      "community_name": "organizations",
+      "community_name": "04_add_missing_tables.sql",
       "norm_label": "completed_jobs"
     },
     {
@@ -18944,7 +18944,7 @@
       "_origin": "ast",
       "id": "server_scripts_04_add_missing_tables_daily_review_records",
       "community": 208,
-      "community_name": "organizations",
+      "community_name": "04_add_missing_tables.sql",
       "norm_label": "daily_review_records"
     },
     {
@@ -18955,7 +18955,7 @@
       "_origin": "ast",
       "id": "server_scripts_04_add_missing_tables_analytics_snapshots",
       "community": 208,
-      "community_name": "organizations",
+      "community_name": "04_add_missing_tables.sql",
       "norm_label": "analytics_snapshots"
     },
     {
@@ -18966,7 +18966,7 @@
       "_origin": "ast",
       "id": "server_scripts_04_add_missing_tables_revenue_entries",
       "community": 208,
-      "community_name": "organizations",
+      "community_name": "04_add_missing_tables.sql",
       "norm_label": "revenue_entries"
     },
     {
@@ -19076,7 +19076,7 @@
       "_origin": "ast",
       "id": "server_scripts_12_job_commercial_artifacts",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "12_job_commercial_artifacts.sql"
     },
     {
@@ -19087,7 +19087,7 @@
       "_origin": "ast",
       "id": "server_scripts_12_job_commercial_artifacts_design_sets",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "design_sets"
     },
     {
@@ -19098,7 +19098,7 @@
       "_origin": "ast",
       "id": "server_scripts_12_job_commercial_artifacts_artifact_decisions",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "artifact_decisions"
     },
     {
@@ -19109,7 +19109,7 @@
       "_origin": "ast",
       "id": "server_scripts_13_production_execution",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "13_production_execution.sql"
     },
     {
@@ -19120,7 +19120,7 @@
       "_origin": "ast",
       "id": "server_scripts_13_production_execution_production_releases",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "production_releases"
     },
     {
@@ -19131,7 +19131,7 @@
       "_origin": "ast",
       "id": "server_scripts_13_production_execution_production_release_design_versions",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "production_release_design_versions"
     },
     {
@@ -19142,7 +19142,7 @@
       "_origin": "ast",
       "id": "server_scripts_13_production_execution_job_activities",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "job_activities"
     },
     {
@@ -19153,7 +19153,7 @@
       "_origin": "ast",
       "id": "server_scripts_13_production_execution_job_activity_updates",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "job_activity_updates"
     },
     {
@@ -19229,8 +19229,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "server_scripts_15_resources_and_project_time",
-      "community": 250,
-      "community_name": "project_time_entries",
+      "community": 72,
+      "community_name": "users",
       "norm_label": "15_resources_and_project_time.sql"
     },
     {
@@ -19240,8 +19240,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "server_scripts_15_resources_and_project_time_operational_resources",
-      "community": 250,
-      "community_name": "project_time_entries",
+      "community": 72,
+      "community_name": "users",
       "norm_label": "operational_resources"
     },
     {
@@ -19251,8 +19251,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "supplier_profiles",
-      "community": 250,
-      "community_name": "project_time_entries",
+      "community": 72,
+      "community_name": "users",
       "norm_label": "supplier_profiles"
     },
     {
@@ -19262,8 +19262,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "server_scripts_15_resources_and_project_time_job_activity_resource_assignments",
-      "community": 250,
-      "community_name": "project_time_entries",
+      "community": 72,
+      "community_name": "users",
       "norm_label": "job_activity_resource_assignments"
     },
     {
@@ -19273,8 +19273,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_scripts_15_resources_and_project_time_sql_job_activities",
-      "community": 250,
-      "community_name": "project_time_entries",
+      "community": 72,
+      "community_name": "users",
       "norm_label": "job_activities"
     },
     {
@@ -19284,8 +19284,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "server_scripts_15_resources_and_project_time_resource_availability_blocks",
-      "community": 250,
-      "community_name": "project_time_entries",
+      "community": 72,
+      "community_name": "users",
       "norm_label": "resource_availability_blocks"
     },
     {
@@ -19295,8 +19295,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "server_scripts_15_resources_and_project_time_project_time_entries",
-      "community": 250,
-      "community_name": "project_time_entries",
+      "community": 72,
+      "community_name": "users",
       "norm_label": "project_time_entries"
     },
     {
@@ -19306,8 +19306,8 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "server_scripts_15_resources_and_project_time_project_time_corrections",
-      "community": 250,
-      "community_name": "project_time_entries",
+      "community": 72,
+      "community_name": "users",
       "norm_label": "project_time_corrections"
     },
     {
@@ -19450,7 +19450,7 @@
       "_origin": "ast",
       "id": "server_scripts_17_job_closeout_job_snags",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "job_snags"
     },
     {
@@ -19956,7 +19956,7 @@
       "_origin": "ast",
       "id": "server_scripts_25_job_activation",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "25_job_activation.sql"
     },
     {
@@ -19967,7 +19967,7 @@
       "_origin": "ast",
       "id": "server_scripts_25_job_activation_delivery_activity_templates",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "delivery_activity_templates"
     },
     {
@@ -19978,7 +19978,7 @@
       "_origin": "ast",
       "id": "server_scripts_25_job_activation_job_delivery_activations",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "job_delivery_activations"
     },
     {
@@ -20065,7 +20065,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "server_scripts_30_financial_settlement_spine",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "30_financial_settlement_spine.sql"
     },
@@ -20076,7 +20076,7 @@
       "source_location": "L202",
       "_origin": "ast",
       "id": "server_scripts_30_financial_settlement_spine_job_settlement_status",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "job_settlement_status"
     },
@@ -20087,7 +20087,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "zoho_invoices",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "zoho_invoices"
     },
@@ -20098,7 +20098,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "milestone",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "milestone"
     },
@@ -20109,7 +20109,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "resolved",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "resolved"
     },
@@ -20120,7 +20120,7 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "server_scripts_30_financial_settlement_spine_assert_zoho_mirror_is_synced_only",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "assert_zoho_mirror_is_synced_only()"
     },
@@ -37871,8 +37871,8 @@
       "source_location": "L221",
       "_origin": "ast",
       "id": "crm_live_mongo_data_audit_finding_5_historical_jobs_require_controlled_identity_creation_and_matching",
-      "community": 85,
-      "community_name": "EGS CRM Live Mongo Data Audit for SQL Migration",
+      "community": 181,
+      "community_name": "Finding 5 \u2014 Historical Jobs require controlled identity creation and matching",
       "norm_label": "finding 5 \u2014 historical jobs require controlled identity creation and matching"
     },
     {
@@ -37882,8 +37882,8 @@
       "source_location": "L223",
       "_origin": "ast",
       "id": "crm_live_mongo_data_audit_job_opportunity_overlap",
-      "community": 85,
-      "community_name": "EGS CRM Live Mongo Data Audit for SQL Migration",
+      "community": 181,
+      "community_name": "Finding 5 \u2014 Historical Jobs require controlled identity creation and matching",
       "norm_label": "job/opportunity overlap"
     },
     {
@@ -37893,8 +37893,8 @@
       "source_location": "L237",
       "_origin": "ast",
       "id": "crm_live_mongo_data_audit_customer_organization_coverage",
-      "community": 85,
-      "community_name": "EGS CRM Live Mongo Data Audit for SQL Migration",
+      "community": 181,
+      "community_name": "Finding 5 \u2014 Historical Jobs require controlled identity creation and matching",
       "norm_label": "customer organization coverage"
     },
     {
@@ -37904,8 +37904,8 @@
       "source_location": "L257",
       "_origin": "ast",
       "id": "crm_live_mongo_data_audit_services",
-      "community": 85,
-      "community_name": "EGS CRM Live Mongo Data Audit for SQL Migration",
+      "community": 181,
+      "community_name": "Finding 5 \u2014 Historical Jobs require controlled identity creation and matching",
       "norm_label": "services"
     },
     {
@@ -37915,8 +37915,8 @@
       "source_location": "L271",
       "_origin": "ast",
       "id": "crm_live_mongo_data_audit_financial_and_completion_meaning",
-      "community": 85,
-      "community_name": "EGS CRM Live Mongo Data Audit for SQL Migration",
+      "community": 181,
+      "community_name": "Finding 5 \u2014 Historical Jobs require controlled identity creation and matching",
       "norm_label": "financial and completion meaning"
     },
     {
@@ -79392,7 +79392,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/constants/emailTemplates.js",
-      "source_location": "L319",
+      "source_location": "L317",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_constants_emailtemplates_buildemailhtml",
@@ -144223,7 +144223,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "server/src/utils/emailTemplateRenderer.js",
-      "source_location": "L235",
+      "source_location": "L233",
       "weight": 1.0,
       "_origin": "ast",
       "source": "server_src_utils_emailtemplaterenderer_renderemailhtml",

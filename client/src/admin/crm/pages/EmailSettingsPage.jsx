@@ -60,85 +60,91 @@ function DeliveryModeBanner({ useResend }) {
 }
 
 function SmtpConnectionCards({ emailStatus }) {
+  const accounts = emailStatus?.accounts && emailStatus.accounts.length > 0
+    ? emailStatus.accounts
+    : [
+        {
+          email: 'talha@exhibitgraphicsign.com',
+          name: 'Talha Masuood',
+          title: 'Operations & Technical Director',
+          isPrimary: true,
+          smtpReady: emailStatus?.smtpReady,
+          imapReady: emailStatus?.imapReady,
+        },
+        {
+          email: 'masuood@exhibitgraphicsign.com',
+          name: 'Masuood-ul-Rasheed',
+          title: 'Managing Director',
+          isPrimary: false,
+          smtpReady: emailStatus?.smtp2Ready,
+          imapReady: emailStatus?.imap2Ready,
+        },
+        {
+          email: 'haider@exhibitgraphicsign.com',
+          name: 'Dr. Haider',
+          title: 'Project Director',
+          isPrimary: false,
+          smtpReady: emailStatus?.smtp3Ready,
+          imapReady: emailStatus?.imap3Ready,
+        },
+      ];
+
   return (
     <PageSection>
-      <h2 className="mb-3 text-sm font-bold text-[var(--color-ink)]">Connection Ready States</h2>
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-neutral-100 text-neutral-600">
-              <ShieldCheck className="h-5 w-5" />
-            </div>
+      <h2 className="mb-3 text-sm font-bold text-[var(--color-ink)]">Configured Mailboxes ({accounts.length})</h2>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {accounts.map((acc, idx) => (
+          <Card key={acc.email || idx} className="p-4 flex flex-col justify-between">
             <div>
-              <h3 className="text-xs font-semibold text-[var(--color-ink)]">User 1 (Primary System Sender)</h3>
-              <p className="text-xs text-neutral-400">talha@exhibitgraphicsign.com</p>
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-neutral-100 text-neutral-600">
+                  <ShieldCheck className="h-5 w-5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <h3 className="text-xs font-semibold text-[var(--color-ink)] truncate">
+                      {acc.name || `User ${idx + 1}`}
+                    </h3>
+                    {acc.isPrimary && (
+                      <span className="rounded bg-brand/10 px-1.5 py-0.5 text-3xs font-bold uppercase tracking-wider text-brand">
+                        Primary
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-neutral-500 truncate font-mono">{acc.email}</p>
+                  {acc.title && <p className="text-2xs text-neutral-400 truncate mt-0.5">{acc.title}</p>}
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="mt-4 space-y-2 border-t border-[var(--color-line)] pt-3">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-neutral-500">Outbound SMTP Transport</span>
-              {emailStatus?.smtpReady ? (
-                <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600">
-                  <CheckCircle2 className="h-3.5 w-3.5" /> Ready
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-500">
-                  <XCircle className="h-3.5 w-3.5" /> Missing Config
-                </span>
-              )}
-            </div>
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-neutral-500">Inbound IMAP Sync</span>
-              {emailStatus?.imapReady ? (
-                <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600">
-                  <CheckCircle2 className="h-3.5 w-3.5" /> Ready
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-500">
-                  <XCircle className="h-3.5 w-3.5" /> Missing Config
-                </span>
-              )}
-            </div>
-          </div>
-        </Card>
 
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-neutral-100 text-neutral-600">
-              <ShieldCheck className="h-5 w-5" />
+            <div className="mt-4 space-y-2 border-t border-[var(--color-line)] pt-3">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-neutral-500">Outbound SMTP</span>
+                {acc.smtpReady ? (
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600">
+                    <CheckCircle2 className="h-3.5 w-3.5" /> Ready
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-500">
+                    <XCircle className="h-3.5 w-3.5" /> Missing Config
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-neutral-500">Inbound IMAP Sync</span>
+                {acc.imapReady ? (
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600">
+                    <CheckCircle2 className="h-3.5 w-3.5" /> Ready
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-500">
+                    <XCircle className="h-3.5 w-3.5" /> Missing Config
+                  </span>
+                )}
+              </div>
             </div>
-            <div>
-              <h3 className="text-xs font-semibold text-[var(--color-ink)]">User 2 (Secondary Outreach)</h3>
-              <p className="text-xs text-neutral-400">masuood@exhibitgraphicsign.com</p>
-            </div>
-          </div>
-          <div className="mt-4 space-y-2 border-t border-[var(--color-line)] pt-3">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-neutral-500">Outbound SMTP Transport</span>
-              {emailStatus?.smtp2Ready ? (
-                <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600">
-                  <CheckCircle2 className="h-3.5 w-3.5" /> Ready
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-500">
-                  <XCircle className="h-3.5 w-3.5" /> Missing Config
-                </span>
-              )}
-            </div>
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-neutral-500">Inbound IMAP Sync</span>
-              {emailStatus?.imap2Ready ? (
-                <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600">
-                  <CheckCircle2 className="h-3.5 w-3.5" /> Ready
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-500">
-                  <XCircle className="h-3.5 w-3.5" /> Missing Config
-                </span>
-              )}
-            </div>
-          </div>
-        </Card>
+          </Card>
+        ))}
       </div>
     </PageSection>
   );

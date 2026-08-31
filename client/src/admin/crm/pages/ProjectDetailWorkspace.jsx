@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
-import { crmApiFetch, formatPercent, updateCampaign, fetchAllProjectLeads, fetchAllProjectCompanies } from '../crmApi.js';
+import { crmApiFetch, formatPercent, updateCampaign, fetchAllProjectLeads, fetchAllProjectCompanies, fetchConfiguredEmailAccounts } from '../crmApi.js';
 import ProjectDatabaseTable from '../components/projects/ProjectDatabaseTable.jsx';
 import CampaignStageControl from '../components/projects/CampaignStageControl.jsx';
 import ExhibitorImportModal from '../components/projects/ExhibitorImportModal.jsx';
@@ -38,6 +38,7 @@ import {
   CalendarCheck2,
   FolderKanban,
   Send,
+  Mail,
 } from 'lucide-react';
 import { buildOwnerOptions } from '../components/tasks/taskUtils.js';
 
@@ -57,6 +58,8 @@ export default function ProjectDetailWorkspace() {
   const [selectedEmail, setSelectedEmail] = useState(null);
   const [modal, setModal] = useState(null);
   const [savingStage, setSavingStage] = useState(false);
+  const [emailAccounts, setEmailAccounts] = useState([]);
+  const [savingSender, setSavingSender] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'companies';
@@ -124,6 +127,9 @@ export default function ProjectDetailWorkspace() {
 
   useEffect(() => {
     refresh().catch(console.error);
+    fetchConfiguredEmailAccounts().then((accounts) => {
+      if (Array.isArray(accounts)) setEmailAccounts(accounts);
+    }).catch(console.error);
   }, [refresh]);
 
   function showToast(msg) {
@@ -156,6 +162,22 @@ export default function ProjectDetailWorkspace() {
     }
   }
 
+  async function handleSenderChange(e) {
+    const newEmail = e.target.value;
+    setSavingSender(true);
+    try {
+      const matched = emailAccounts.find((a) => a.email.toLowerCase() === String(newEmail).toLowerCase());
+      const newName = matched?.name || 'Exhibit Graphic Sign';
+      const updated = await updateCampaign(id, { fromEmail: newEmail, fromName: newName });
+      setProject((prev) => ({ ...prev, ...updated, fromEmail: newEmail, fromName: newName }));
+      showToast(`Sender mailbox updated to ${newEmail}`);
+    } catch (error) {
+      showToast(error.message || 'Failed to update sender mailbox.');
+    } finally {
+      setSavingSender(false);
+    }
+  }
+
   const openTasks = useMemo(() => tasks.filter((task) => task.status !== 'Done'), [tasks]);
   const ownerOptions = useMemo(() => buildOwnerOptions(tasks, opportunities.map((item) => item.owner)), [tasks, opportunities]);
 
@@ -184,13 +206,36 @@ export default function ProjectDetailWorkspace() {
           <ChevronLeft className="h-3.5 w-3.5" />
           All campaigns
         </Link>
-        <CampaignStageControl
-          status={project.status}
-          statusSource={project.statusSource}
-          onChange={handleStageChange}
-          saving={savingStage}
-          showHint
-        />
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 rounded-lg border border-[var(--color-line)] bg-white px-2.5 py-1 text-xs shadow-2xs">
+            <Mail className="h-3.5 w-3.5 text-neutral-400 shrink-0" />
+            <span className="text-2xs font-bold uppercase tracking-wider text-neutral-400">Sender:</span>
+            <select
+              className="bg-transparent font-semibold text-neutral-700 focus:outline-none cursor-pointer text-xs"
+              value={project.fromEmail || ''}
+              disabled={savingSender}
+              onChange={handleSenderChange}
+              title="Change sender mailbox for this campaign"
+            >
+              {emailAccounts.length > 0 ? (
+                emailAccounts.map((acc) => (
+                  <option key={acc.email} value={acc.email}>
+                    {acc.name ? `${acc.name} (${acc.email})` : acc.email}
+                  </option>
+                ))
+              ) : (
+                <option value={project.fromEmail || ''}>{project.fromEmail || 'Default Mailbox'}</option>
+              )}
+            </select>
+          </div>
+          <CampaignStageControl
+            status={project.status}
+            statusSource={project.statusSource}
+            onChange={handleStageChange}
+            saving={savingStage}
+            showHint
+          />
+        </div>
       </div>
 
       <PageSection>

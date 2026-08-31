@@ -52,9 +52,11 @@ test('renderEmailHtml compiles Exhibition template with logo, body content, show
   assert.match(html, /Hi Sarah,/);
   assert.match(html, /We provide custom exhibition stands\./);
   assert.match(html, /Masuood-ul-Rasheed/);
-  assert.match(html, /Project Director &middot; Exhibit Graphic Sign LLC|Project Director · Exhibit Graphic Sign LLC/);
+  assert.match(html, /Managing Director &middot; Exhibit Graphic Sign LLC|Managing Director · Exhibit Graphic Sign LLC/);
   assert.match(html, /\+971 52 458 7992/);
   assert.match(html, /exhibitgraphicsign\.com/);
+  assert.doesNotMatch(html, /Al Quoz/i);
+  assert.doesNotMatch(html, /DIC/i);
 });
 
 test('renderEmailHtml compiles Graduation ceremony template with clean executive layout and stage photo', () => {
@@ -73,6 +75,7 @@ test('renderEmailHtml compiles Graduation ceremony template with clean executive
   assert.match(html, /Hi Dr\. Tariq,/);
   assert.match(html, /We delivered seven HCT grand ceremonies\./);
   assert.match(html, /Masuood-ul-Rasheed/);
+  assert.doesNotMatch(html, /Al Quoz/i);
 });
 
 test('renderEmailHtml compiles Interior fitout template with clean executive layout and fitout photo', () => {
@@ -91,4 +94,32 @@ test('renderEmailHtml compiles Interior fitout template with clean executive lay
   assert.match(html, /Hi Omar,/);
   assert.match(html, /We handle turnkey fitouts directly from our Dubai workshop\./);
   assert.match(html, /Masuood-ul-Rasheed/);
+  assert.doesNotMatch(html, /Al Quoz/i);
 });
+
+test('renderEmailHtml dynamically reflects Talha Masuood sender identity', () => {
+  const html = renderEmailHtml({
+    templateType: 'exhibitions',
+    subject: 'Philips Stand DWTC',
+    body: 'Hi Sarah,\n\nLooking forward to collaborating.\n\nBest,\nMasuood',
+    senderEmail: 'talha@exhibitgraphicsign.com',
+    customBaseUrl: 'https://exhibitgraphicsign.com',
+  });
+
+  assert.match(html, /Talha Masuood/);
+  assert.match(html, /Operations & Technical Director/);
+});
+
+test('renderEmailHtml dynamically reflects Dr. Haider sender identity', () => {
+  const html = renderEmailHtml({
+    templateType: 'exhibitions',
+    subject: 'Philips Stand DWTC',
+    body: 'Hi Sarah,\n\nLooking forward to collaborating.\n\nBest,\nMasuood',
+    senderEmail: 'haider@exhibitgraphicsign.com',
+    customBaseUrl: 'https://exhibitgraphicsign.com',
+  });
+
+  assert.match(html, /Dr\. Haider/);
+  assert.match(html, /Project Director/);
+});
+

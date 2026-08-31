@@ -161,9 +161,45 @@ export function renderEmailHtml({
   companyName = '',
   customBaseUrl = '',
   inlineCid = false,
+  senderName = '',
+  senderEmail = '',
+  senderTitle = '',
 }) {
   const config = getTemplateConfig(templateType);
   const effectiveBaseUrl = (customBaseUrl || (isPublicTrackableUrl() ? getBaseUrl() : 'https://exhibitgraphicsign.com')).replace(/\/$/, '');
+
+  let executiveName = String(senderName || '').trim();
+  let executiveTitle = String(senderTitle || '').trim();
+
+  if (!executiveName && senderEmail) {
+    const lower = String(senderEmail).toLowerCase();
+    if (lower.includes('haider')) {
+      executiveName = 'Dr. Haider';
+      executiveTitle = executiveTitle || 'Project Director · Exhibit Graphic Sign LLC';
+    } else if (lower.includes('masuood')) {
+      executiveName = 'Masuood-ul-Rasheed';
+      executiveTitle = executiveTitle || 'Managing Director · Exhibit Graphic Sign LLC';
+    } else if (lower.includes('talha')) {
+      executiveName = 'Talha Masuood';
+      executiveTitle = executiveTitle || 'Operations & Technical Director · Exhibit Graphic Sign LLC';
+    }
+  }
+
+  if (!executiveName) {
+    executiveName = 'Masuood-ul-Rasheed';
+  }
+  if (!executiveTitle) {
+    const lowerName = executiveName.toLowerCase();
+    if (lowerName.includes('haider')) {
+      executiveTitle = 'Project Director · Exhibit Graphic Sign LLC';
+    } else if (lowerName.includes('masuood')) {
+      executiveTitle = 'Managing Director · Exhibit Graphic Sign LLC';
+    } else if (lowerName.includes('talha')) {
+      executiveTitle = 'Operations & Technical Director · Exhibit Graphic Sign LLC';
+    } else {
+      executiveTitle = 'Exhibit Graphic Sign LLC';
+    }
+  }
 
   const resolveAssetUrl = (path, cidName) => {
     if (inlineCid && cidName) return `cid:${cidName}`;
@@ -179,8 +215,24 @@ export function renderEmailHtml({
     trackingPixel = `<img src="${effectiveBaseUrl}/api/track/open/${leadId}/${stepIndex}" width="1" height="1" alt="" style="display:none;width:1px;height:1px;border:0;" />`;
   }
 
+  // Adjust body content if default sign-off is present
+  let formattedBodyText = String(body || '');
+  if (executiveName && executiveName !== 'Masuood-ul-Rasheed') {
+    formattedBodyText = formattedBodyText
+      .replace(/Masuood-ul-Rasheed/g, executiveName)
+      .replace(/\bMasuood\b/g, executiveName);
+    if (executiveTitle) {
+      formattedBodyText = formattedBodyText
+        .replace(/Project Director · Exhibit Graphic Sign/g, executiveTitle.replace(' LLC', ''))
+        .replace(/Managing Director · Exhibit Graphic Sign/g, executiveTitle.replace(' LLC', ''));
+    }
+  }
+  formattedBodyText = formattedBodyText
+    .replace(/{{\s*sender_name\s*}}/gi, executiveName)
+    .replace(/{{\s*sender_title\s*}}/gi, executiveTitle);
+
   // Body content HTML
-  const bodyHtml = formatBodyHtml(body);
+  const bodyHtml = formatBodyHtml(formattedBodyText);
 
   // Deliverability-optimized Showcase Work Photo (Below text, above signature)
   let showcaseHtml = '';
@@ -239,14 +291,11 @@ export function renderEmailHtml({
             <img src="${logoUrl}" alt="Exhibit Graphic Sign" width="105" style="width: 105px; max-width: 105px; height: auto; display: block; border: 0;" />
           </td>
           <td style="vertical-align: top; border-left: 2px solid #D9262E; padding-left: 12px;">
-            <div style="font-size: 14px; font-weight: bold; color: #111111; line-height: 1.3;">Masuood-ul-Rasheed</div>
-            <div style="font-size: 12px; color: #555555; margin-top: 2px; line-height: 1.3;">Project Director &middot; Exhibit Graphic Sign LLC</div>
+            <div style="font-size: 14px; font-weight: bold; color: #111111; line-height: 1.3;">${executiveName}</div>
+            <div style="font-size: 12px; color: #555555; margin-top: 2px; line-height: 1.3;">${executiveTitle}</div>
             <div style="font-size: 12px; color: #444444; margin-top: 5px; line-height: 1.4;">
               <span>Direct: +971 52 458 7992</span> &nbsp;|&nbsp;
               <a href="${config.ctaUrl || 'https://exhibitgraphicsign.com'}" style="color: #D9262E; text-decoration: none; font-weight: 500;">exhibitgraphicsign.com</a>
-            </div>
-            <div style="font-size: 11px; color: #777777; margin-top: 3px; line-height: 1.3;">
-              Dubai Production Facility &amp; Head Office &middot; Al Quoz &amp; DIC, UAE
             </div>
           </td>
         </tr>

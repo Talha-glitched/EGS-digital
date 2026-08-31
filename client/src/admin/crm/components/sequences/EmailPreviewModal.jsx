@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { Modal } from '../ui/Modal.jsx';
 import { buildEmailHtml, EMAIL_TEMPLATES, getTemplateById } from '../../constants/emailTemplates.js';
-import { crmApiFetch } from '../../crmApi.js';
+import { crmApiFetch, fetchConfiguredEmailAccounts } from '../../crmApi.js';
 import { cn } from '../ui/primitives.jsx';
 
 const SAMPLE_PERSONAS = [
@@ -85,10 +85,26 @@ export default function EmailPreviewModal({
   const [testCompany, setTestCompany] = useState('');
   const [sendingTest, setSendingTest] = useState(false);
   const [testSentStatus, setTestSentStatus] = useState(null);
+  const [emailAccounts, setEmailAccounts] = useState([]);
+  const [selectedFromEmail, setSelectedFromEmail] = useState('');
 
   useEffect(() => {
     if (templateType) setSelectedTemplateId(templateType);
   }, [templateType]);
+
+  useEffect(() => {
+    if (open) {
+      fetchConfiguredEmailAccounts().then((accounts) => {
+        if (Array.isArray(accounts) && accounts.length > 0) {
+          setEmailAccounts(accounts);
+          if (!selectedFromEmail) {
+            const primary = accounts.find((a) => a.isPrimary) || accounts[0];
+            setSelectedFromEmail(primary.email);
+          }
+        }
+      }).catch(console.error);
+    }
+  }, [open]);
 
   // Match default persona to template category
   useEffect(() => {
@@ -121,6 +137,10 @@ export default function EmailPreviewModal({
     [selectedTemplateId],
   );
 
+  const matchedSender = useMemo(() => {
+    return emailAccounts.find((a) => a.email.toLowerCase() === String(selectedFromEmail).toLowerCase());
+  }, [emailAccounts, selectedFromEmail]);
+
   const htmlContent = useMemo(() => {
     return buildEmailHtml({
       templateType: selectedTemplateId,
@@ -128,8 +148,11 @@ export default function EmailPreviewModal({
       body,
       context: activePersona,
       baseUrl: window.location.origin,
+      senderEmail: selectedFromEmail,
+      senderName: matchedSender?.name,
+      senderTitle: matchedSender?.title,
     });
-  }, [selectedTemplateId, subject, body, activePersona]);
+  }, [selectedTemplateId, subject, body, activePersona, selectedFromEmail, matchedSender]);
 
   const handleEmailChange = (val) => {
     setTestEmail(val);
@@ -179,11 +202,13 @@ export default function EmailPreviewModal({
           subject: subject || activeTemplate.defaultSubject,
           body: body || activeTemplate.defaultBody,
           templateType: selectedTemplateId,
+          fromEmail: selectedFromEmail || undefined,
+          fromName: matchedSender?.name || undefined,
         }),
       });
       setTestSentStatus({
         ok: true,
-        msg: `Test email sent to ${testEmail} addressed to "${res?.recipientName || cleanFirstName}" (${res?.recipientCompany || cleanCompany})!`,
+        msg: `Test email sent from "${res?.fromEmail || selectedFromEmail}" to ${testEmail} addressed to "${res?.recipientName || cleanFirstName}" (${res?.recipientCompany || cleanCompany})!`,
       });
     } catch (err) {
       setTestSentStatus({ ok: false, msg: err.message || 'Failed to send test email.' });
@@ -393,13 +418,27 @@ export default function EmailPreviewModal({
         {/* BOTTOM ACTION: SEND TEST EMAIL WITH DYNAMIC RECIPIENT REPLACEMENT */}
         <div className="p-3 bg-neutral-50 border border-neutral-200/80 rounded-xl space-y-2">
           <form onSubmit={handleSendTest} className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-semibold text-neutral-700 whitespace-nowrap">Send test email:</span>
+            <span className="text-xs font-semibold text-neutral-700 whitespace-nowrap">Send test:</span>
+            {emailAccounts.length > 0 && (
+              <select
+                value={selectedFromEmail}
+                onChange={(e) => setSelectedFromEmail(e.target.value)}
+                className="crm-select !py-1 text-xs w-48 font-medium text-neutral-700"
+                title="Select sender mailbox"
+              >
+                {emailAccounts.map((acc) => (
+                  <option key={acc.email} value={acc.email}>
+                    From: {acc.name ? `${acc.name} (${acc.email})` : acc.email}
+                  </option>
+                ))}
+              </select>
+            )}
             <input
               type="email"
               value={testEmail}
               onChange={(e) => handleEmailChange(e.target.value)}
               placeholder="recipient@company.com"
-              className="crm-input py-1 text-xs flex-1 min-w-[180px]"
+              className="crm-input !py-1 text-xs flex-1 min-w-[170px]"
               required
             />
             <input
@@ -407,7 +446,7 @@ export default function EmailPreviewModal({
               value={testName}
               onChange={(e) => setTestName(e.target.value)}
               placeholder="First Name (e.g. Talha)"
-              className="crm-input py-1 text-xs w-36"
+              className="crm-input !py-1 text-xs w-32"
               title="First name to replace {{name}} and [First]"
             />
             <input
@@ -415,7 +454,7 @@ export default function EmailPreviewModal({
               value={testCompany}
               onChange={(e) => setTestCompany(e.target.value)}
               placeholder="Company (e.g. EGS)"
-              className="crm-input py-1 text-xs w-36"
+              className="crm-input !py-1 text-xs w-32"
               title="Company name to replace {{company}} and [University]"
             />
             <button

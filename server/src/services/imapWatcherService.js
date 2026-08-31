@@ -13,6 +13,7 @@ import {
   extractMailboxFromHeader,
   isBounceSender,
   extractBouncedEmailFromBody,
+  getConfiguredEmailAccounts,
 } from './mailTransport.js';
 
 const MAX_REPLY_TEXT = 100000;
@@ -83,9 +84,8 @@ export function parseEmailSourceToText(source) {
 
 async function findLeadForMessage(message) {
   const fromAddress = String(message.envelope?.from?.[0]?.address || '').trim().toLowerCase();
-  const smtpUser = String(process.env.EMAIL_SMTP_USER || '').trim().toLowerCase();
-  const smtpUser2 = String(process.env.EMAIL_SMTP_USER2 || '').trim().toLowerCase();
-  if (fromAddress === smtpUser || (smtpUser2 && fromAddress === smtpUser2)) {
+  const configuredEmails = getConfiguredEmailAccounts().map((a) => a.email.toLowerCase());
+  if (configuredEmails.includes(fromAddress)) {
     return null;
   }
 
@@ -316,9 +316,8 @@ export async function syncImapMailboxForUser(email) {
       for await (const message of client.fetch(cappedUids, { envelope: true, source: true, uid: true }, { uid: true })) {
         stats.scanned += 1;
         const fromAddr = String(message.envelope?.from?.[0]?.address || '').trim().toLowerCase();
-        const smtpUser = String(process.env.EMAIL_SMTP_USER || '').trim().toLowerCase();
-        const smtpUser2 = String(process.env.EMAIL_SMTP_USER2 || '').trim().toLowerCase();
-        if (fromAddr === smtpUser || (smtpUser2 && fromAddr === smtpUser2)) {
+        const configuredEmails = getConfiguredEmailAccounts().map((a) => a.email.toLowerCase());
+        if (configuredEmails.includes(fromAddr)) {
           stats.skippedNoLead += 1;
           continue;
         }
@@ -360,10 +359,8 @@ export async function syncImapMailboxForUser(email) {
 }
 
 export async function syncImapMailbox() {
-  const users = [
-    process.env.EMAIL_SMTP_USER,
-    process.env.EMAIL_SMTP_USER2,
-  ].filter(Boolean);
+  const accounts = getConfiguredEmailAccounts();
+  const users = accounts.map((a) => a.email).filter(Boolean);
 
   const results = {};
   for (const user of users) {

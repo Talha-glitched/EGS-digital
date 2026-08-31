@@ -238,6 +238,7 @@ export async function listProjects({ summary = false } = {}) {
        SELECT campaign.id AS "_id", campaign.id, campaign.mongo_campaign_id,
               campaign.name AS "projectName", campaign.lifecycle AS "milestone",
               campaign.starts_on AS "startsOn", campaign.ends_on AS "endsOn",
+              campaign.from_email AS "fromEmail", campaign.from_name AS "fromName",
               campaign.created_at AS "createdAt", campaign.payload,
               coverage.target_companies AS "targetCompaniesCount",
               coverage.pocs_found AS "pocsFound",
@@ -261,6 +262,8 @@ export async function listProjects({ summary = false } = {}) {
         status: row.milestone || p.status || 'Active Planning',
         startDate: row.startsOn || p.startDate || p.startsOn || null,
         endDate: row.endsOn || p.endDate || p.endsOn || null,
+        fromEmail: row.fromEmail || p.fromEmail || p.from_email || '',
+        fromName: row.fromName || p.fromName || p.from_name || 'Exhibit Graphic Sign',
         createdAt: row.createdAt,
         targetCompaniesCount: Number(row.targetCompaniesCount) || 0,
         companiesWithPocsFound: Number(row.pocsFound) || 0,
@@ -290,7 +293,8 @@ export async function getProject(id) {
     await syncAutoCampaignStatus(id);
     const res = await db.query(
       `SELECT id AS "_id", id, name AS "projectName", lifecycle AS "milestone",
-              starts_on AS "startsOn", ends_on AS "endsOn", created_at AS "createdAt", payload
+              starts_on AS "startsOn", ends_on AS "endsOn", from_email AS "fromEmail",
+              from_name AS "fromName", created_at AS "createdAt", payload
        FROM campaigns
        WHERE (id::text = $1::text OR mongo_campaign_id = $1) AND deleted_at IS NULL LIMIT 1`,
       [String(id)]
@@ -309,6 +313,8 @@ export async function getProject(id) {
         status: row.milestone || p.status || 'Active Planning',
         startDate: row.startsOn || p.startDate || p.startsOn || null,
         endDate: row.endsOn || p.endDate || p.endsOn || null,
+        fromEmail: row.fromEmail || p.fromEmail || p.from_email || '',
+        fromName: row.fromName || p.fromName || p.from_name || 'Exhibit Graphic Sign',
         createdAt: row.createdAt,
         targetCompaniesCount: Number(metrics?.targetCompaniesCount) || 0,
         companiesWithPocsFound: Number(metrics?.pocsFound) || 0,
@@ -387,7 +393,7 @@ export async function recalculateAllCampaignCoverageStats() {
 }
 
 export async function createProject(payload) {
-  const { projectName, milestone, startDate, endDate, startsOn, endsOn } = payload;
+  const { projectName, milestone, startDate, endDate, startsOn, endsOn, fromEmail, fromName } = payload;
   if (!projectName?.trim()) {
     const error = new Error('Project name is required.');
     error.status = 400;
@@ -398,19 +404,24 @@ export async function createProject(payload) {
   const status = milestone || 'Active Planning';
   const start = startDate || startsOn || null;
   const end = endDate || endsOn || null;
+  const fEmail = (fromEmail || '').trim();
+  const fName = (fromName || 'Exhibit Graphic Sign').trim();
 
   const res = await db.query(
-    `INSERT INTO campaigns (name, lifecycle, starts_on, ends_on, payload)
-     VALUES ($1, $2, $3, $4, $5::jsonb)
+    `INSERT INTO campaigns (name, lifecycle, starts_on, ends_on, from_email, from_name, payload)
+     VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb)
      RETURNING id AS "_id", id, name AS "projectName", lifecycle AS "milestone",
-               starts_on AS "startDate", ends_on AS "endDate", created_at AS "createdAt"`,
-    [name, status, start, end, JSON.stringify({ projectName: name, milestone: status, startDate: start, endDate: end, ...payload })]
+               starts_on AS "startDate", ends_on AS "endDate", from_email AS "fromEmail",
+               from_name AS "fromName", created_at AS "createdAt"`,
+    [name, status, start, end, fEmail, fName, JSON.stringify({ projectName: name, milestone: status, startDate: start, endDate: end, fromEmail: fEmail, fromName: fName, ...payload })]
   );
 
   const row = res.rows[0];
   return {
     ...row,
     status: row.milestone,
+    fromEmail: row.fromEmail || fEmail,
+    fromName: row.fromName || fName,
   };
 }
 
@@ -420,6 +431,8 @@ export async function updateProject(id, payload) {
   const milestone = payload.milestone ? payload.milestone.trim() : existing.milestone;
   const startDate = payload.startDate !== undefined ? payload.startDate : (payload.startsOn !== undefined ? payload.startsOn : existing.startDate);
   const endDate = payload.endDate !== undefined ? payload.endDate : (payload.endsOn !== undefined ? payload.endsOn : existing.endDate);
+  const fromEmail = payload.fromEmail !== undefined ? String(payload.fromEmail || '').trim() : (existing.fromEmail || '');
+  const fromName = payload.fromName !== undefined ? String(payload.fromName || '').trim() : (existing.fromName || 'Exhibit Graphic Sign');
 
   const res = await db.query(
     `UPDATE campaigns SET
@@ -427,12 +440,15 @@ export async function updateProject(id, payload) {
        lifecycle = $3,
        starts_on = $4,
        ends_on = $5,
-       payload = $6::jsonb,
+       from_email = $6,
+       from_name = $7,
+       payload = $8::jsonb,
        updated_at = NOW()
      WHERE (id::text = $1::text OR mongo_campaign_id = $1)
      RETURNING id AS "_id", id, name AS "projectName", lifecycle AS "milestone",
-               starts_on AS "startDate", ends_on AS "endDate", created_at AS "createdAt"`,
-    [String(id), projectName, milestone, startDate || null, endDate || null, JSON.stringify({ ...existing, ...payload, projectName, milestone, startDate, endDate })]
+               starts_on AS "startDate", ends_on AS "endDate", from_email AS "fromEmail",
+               from_name AS "fromName", created_at AS "createdAt"`,
+    [String(id), projectName, milestone, startDate || null, endDate || null, fromEmail, fromName, JSON.stringify({ ...existing, ...payload, projectName, milestone, startDate, endDate, fromEmail, fromName })]
   );
 
   if (!res.rows[0]) {
@@ -445,6 +461,8 @@ export async function updateProject(id, payload) {
   return {
     ...row,
     status: row.milestone,
+    fromEmail: row.fromEmail || fromEmail,
+    fromName: row.fromName || fromName,
   };
 }
 

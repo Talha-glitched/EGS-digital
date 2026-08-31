@@ -103,7 +103,7 @@ async function processSendJob(jobId, { force = false } = {}) {
     const result = await client.query(`
       SELECT sj.*,se.campaign_contact_id,se.sequence_version_id,se.sequence_id,se.launch_batch_id,se.execution_state,se.reset_at,
              cc.outreach_focus_state,ca.organization_id,ca.campaign_id,por.person_id,p.display_name AS person_name,
-             o.canonical_name AS company_name,c.name AS campaign_name,pcm.id AS contact_method_id,
+             o.canonical_name AS company_name,c.name AS campaign_name,c.from_email AS campaign_from_email,c.from_name AS campaign_from_name,pcm.id AS contact_method_id,
              step.step_number,step.template_subject,step.template_body
       FROM send_jobs sj JOIN sequence_enrollments se ON se.id=sj.enrollment_id
       JOIN campaign_contacts cc ON cc.id=se.campaign_contact_id JOIN campaign_accounts ca ON ca.id=cc.campaign_account_id
@@ -142,7 +142,12 @@ async function processSendJob(jobId, { force = false } = {}) {
     const subject = renderTemplate(context.rendered_subject || context.template_subject, templateContext);
     const body = renderTemplate(context.rendered_body || context.template_body, templateContext);
     const templateType = context.payload?.templateType || (context.campaign_name?.toLowerCase().includes('graduation') ? 'graduations' : (context.campaign_name?.toLowerCase().includes('fitout') ? 'fitouts' : 'exhibitions'));
-    const { fromEmail, fromName } = getFromIdentity(context.campaign_id ? { id: context.campaign_id, name: context.campaign_name } : null);
+    const { fromEmail, fromName, fromTitle } = getFromIdentity(context.campaign_id ? {
+      id: context.campaign_id,
+      name: context.campaign_name,
+      fromEmail: context.campaign_from_email,
+      fromName: context.campaign_from_name,
+    } : null);
     const sent = await sendAuthenticatedMail({
       fromName,
       fromEmail,
@@ -158,6 +163,9 @@ async function processSendJob(jobId, { force = false } = {}) {
         personName,
         companyName: context.company_name,
         inlineCid: false,
+        senderName: fromName,
+        senderEmail: fromEmail,
+        senderTitle: fromTitle,
       }),
       campaignId: context.campaign_id,
     });
@@ -237,7 +245,7 @@ async function deliverSequenceEmail({
     step,
   });
   const body = String(generated.body || '').trim();
-  const { fromEmail, fromName } = getFromIdentity(campaign);
+  const { fromEmail, fromName, fromTitle } = getFromIdentity(campaign);
 
   const templateType = step?.templateType || (campaign?.name?.toLowerCase().includes('graduation') ? 'graduations' : (campaign?.name?.toLowerCase().includes('fitout') ? 'fitouts' : 'exhibitions'));
   const attachments = getEmailAttachments(templateType);
@@ -258,6 +266,9 @@ async function deliverSequenceEmail({
       personName: person.display_name,
       companyName: organization?.canonical_name,
       inlineCid: false,
+      senderName: fromName,
+      senderEmail: fromEmail,
+      senderTitle: fromTitle,
     }),
     campaignId: campaign?.id,
   });

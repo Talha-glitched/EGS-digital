@@ -761,3 +761,8 @@ export async function fetchVendorPerformance(campaignId = null) {
   const qs = campaignId ? `?campaignId=${encodeURIComponent(campaignId)}` : '';
   return crmApiFetch(`/api/admin/crm/vendor-performance${qs}`);
 }
+
+export async function fetchConfiguredEmailAccounts() {
+  return crmApiFetch('/api/admin/email-accounts').catch(() => []);
+}
+

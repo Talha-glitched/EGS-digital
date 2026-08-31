@@ -14,7 +14,7 @@ import {
 } from '../services/ingestionService.js';
 import { exportCampaignToBuffer } from '../services/excelExportService.js';
 import db from '../db/index.js';
-import { sendAuthenticatedMail, getFromIdentity } from '../services/mailTransport.js';
+import { sendAuthenticatedMail, getFromIdentity, getConfiguredEmailAccounts } from '../services/mailTransport.js';
 import { renderEmailHtml, getEmailAttachments } from '../utils/emailTemplateRenderer.js';
 import { getSystemSettings, updateSystemSettings } from '../services/systemSettingsService.js';
 import { getResendMetrics } from '../services/resendService.js';
@@ -753,8 +753,23 @@ router.post('/sequences/bulk-delete', asyncRoute(async (req, res) => {
   res.json(await deleteSequences(ids));
 }));
 
+router.get('/email-accounts', asyncRoute(async (_req, res) => {
+  const accounts = getConfiguredEmailAccounts();
+  const safeAccounts = accounts.map((acc) => ({
+    email: acc.email,
+    name: acc.name,
+    title: acc.title,
+    isPrimary: Boolean(acc.isPrimary),
+    smtpHost: acc.smtpHost,
+    smtpPort: acc.smtpPort,
+    smtpReady: Boolean(acc.smtpHost && acc.smtpPort && acc.user && acc.pass),
+    imapReady: Boolean(acc.imapHost && acc.imapPort && acc.user && acc.pass),
+  }));
+  res.json(safeAccounts);
+}));
+
 router.post('/sequences/test-email', asyncRoute(async (req, res) => {
-  const { toEmail, recipientName, recipientCompany, subject, body, templateType } = req.body || {};
+  const { toEmail, recipientName, recipientCompany, subject, body, templateType, fromEmail: requestedFromEmail, fromName: requestedFromName } = req.body || {};
   if (!toEmail) {
     return res.status(400).json({ message: 'Recipient email is required.' });
   }
@@ -786,7 +801,12 @@ router.post('/sequences/test-email', asyncRoute(async (req, res) => {
       .replace(/\[University\]/gi, cleanCompany)
       .replace(/{{\s*(?:university|institution)\s*}}/gi, cleanCompany);
 
-    const { fromEmail, fromName } = getFromIdentity({ name: 'Exhibit Graphic Sign' });
+    const { fromEmail, fromName, fromTitle } = getFromIdentity({
+      fromEmail: requestedFromEmail,
+      fromName: requestedFromName,
+      name: requestedFromName || 'Exhibit Graphic Sign',
+    });
+
     const finalHtml = renderEmailHtml({
       body: resolvedBody,
       subject: resolvedSubject,
@@ -794,6 +814,9 @@ router.post('/sequences/test-email', asyncRoute(async (req, res) => {
       personName: cleanName,
       companyName: cleanCompany,
       inlineCid: false,
+      senderName: fromName,
+      senderEmail: fromEmail,
+      senderTitle: fromTitle,
     });
 
     const result = await sendAuthenticatedMail({
@@ -810,6 +833,8 @@ router.post('/sequences/test-email', asyncRoute(async (req, res) => {
       messageId: result?.messageId,
       recipientName: cleanName,
       recipientCompany: cleanCompany,
+      fromEmail,
+      fromName,
     });
   } catch (error) {
     console.error('[TestEmail Failed]:', error);

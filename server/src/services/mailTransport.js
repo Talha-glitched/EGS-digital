@@ -18,50 +18,216 @@ export function isPublicTrackableUrl(url = getBaseUrl()) {
   }
 }
 
+export function deriveNameFromEmail(email) {
+  const lower = String(email || '').toLowerCase();
+  if (lower.includes('masuood')) return 'Masuood-ul-Rasheed';
+  if (lower.includes('haider')) return 'Dr. Haider';
+  if (lower.includes('talha')) return 'Talha Masuood';
+  const prefix = String(email || '').split('@')[0] || '';
+  if (!prefix) return 'Exhibit Graphic Sign';
+  const cleaned = prefix.split(/[._-]/)[0];
+  return cleaned ? (cleaned.charAt(0).toUpperCase() + cleaned.slice(1)) : 'Exhibit Graphic Sign';
+}
+
+export function deriveTitleFromEmail(email) {
+  const lower = String(email || '').toLowerCase();
+  if (lower.includes('haider')) return 'Project Director · Exhibit Graphic Sign LLC';
+  if (lower.includes('masuood')) return 'Managing Director · Exhibit Graphic Sign LLC';
+  if (lower.includes('talha')) return 'Operations & Technical Director · Exhibit Graphic Sign LLC';
+  return 'Exhibit Graphic Sign LLC';
+}
+
+export function getConfiguredEmailAccounts() {
+  const accounts = [];
+  const seenEmails = new Set();
+
+  const defaultSmtpHost = process.env.EMAIL_SMTP_HOST || 'mail.exhibitgraphicsign.com';
+  const defaultSmtpPort = Number(process.env.EMAIL_SMTP_PORT || 465);
+  const defaultImapHost = process.env.EMAIL_IMAP_HOST || defaultSmtpHost;
+  const defaultImapPort = Number(process.env.EMAIL_IMAP_PORT || 993);
+
+  // 1. Check EMAIL_ACCOUNTS JSON env var
+  if (process.env.EMAIL_ACCOUNTS) {
+    try {
+      const parsed = JSON.parse(process.env.EMAIL_ACCOUNTS);
+      if (Array.isArray(parsed)) {
+        for (const item of parsed) {
+          const email = String(item.email || item.user || '').trim();
+          if (email && email.includes('@') && !seenEmails.has(email.toLowerCase())) {
+            seenEmails.add(email.toLowerCase());
+            accounts.push({
+              email,
+              user: email,
+              pass: item.pass || item.password || '',
+              name: item.name || item.displayName || deriveNameFromEmail(email),
+              title: item.title || deriveTitleFromEmail(email),
+              smtpHost: item.smtpHost || item.host || defaultSmtpHost,
+              smtpPort: Number(item.smtpPort || item.port || defaultSmtpPort),
+              imapHost: item.imapHost || defaultImapHost,
+              imapPort: Number(item.imapPort || defaultImapPort),
+              isPrimary: accounts.length === 0,
+            });
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('[MailTransport] Failed to parse EMAIL_ACCOUNTS JSON:', err.message);
+    }
+  }
+
+  // 2. Check numbered users (EMAIL_SMTP_USER, EMAIL_SMTP_USER2 ... EMAIL_SMTP_USER20)
+  const scanKeys = [
+    { userKey: 'EMAIL_SMTP_USER', passKey: 'EMAIL_SMTP_PASS', nameKey: 'EMAIL_SMTP_USER_NAME', titleKey: 'EMAIL_SMTP_USER_TITLE' },
+  ];
+  for (let i = 2; i <= 20; i++) {
+    scanKeys.push({
+      userKey: `EMAIL_SMTP_USER${i}`,
+      altUserKey: `EMAIL_SMTP_USER_${i}`,
+      passKey: `EMAIL_SMTP_USER${i}_PASS`,
+      altPassKey: `EMAIL_SMTP_USER_${i}_PASS`,
+      nameKey: `EMAIL_SMTP_USER${i}_NAME`,
+      altNameKey: `EMAIL_SMTP_USER_${i}_NAME`,
+      titleKey: `EMAIL_SMTP_USER${i}_TITLE`,
+      altTitleKey: `EMAIL_SMTP_USER_${i}_TITLE`,
+      smtpHostKey: `EMAIL_SMTP_USER${i}_HOST`,
+      smtpPortKey: `EMAIL_SMTP_USER${i}_PORT`,
+      imapHostKey: `EMAIL_IMAP_USER${i}_HOST`,
+      imapPortKey: `EMAIL_IMAP_USER${i}_PORT`,
+    });
+  }
+
+  for (let i = 0; i < scanKeys.length; i++) {
+    const k = scanKeys[i];
+    const userVal = process.env[k.userKey] || (k.altUserKey ? process.env[k.altUserKey] : '');
+    const email = String(userVal || '').trim();
+    if (email && email.includes('@') && !seenEmails.has(email.toLowerCase())) {
+      seenEmails.add(email.toLowerCase());
+      const passVal = process.env[k.passKey] || (k.altPassKey ? process.env[k.altPassKey] : '') || '';
+      const nameVal = process.env[k.nameKey] || (k.altNameKey ? process.env[k.altNameKey] : '') || (i === 0 ? (process.env.EMAIL_FROM_NAME || deriveNameFromEmail(email)) : deriveNameFromEmail(email));
+      const titleVal = process.env[k.titleKey] || (k.altTitleKey ? process.env[k.altTitleKey] : '') || deriveTitleFromEmail(email);
+      const hostVal = (k.smtpHostKey && process.env[k.smtpHostKey]) || defaultSmtpHost;
+      const portVal = Number((k.smtpPortKey && process.env[k.smtpPortKey]) || defaultSmtpPort);
+      const imapHostVal = (k.imapHostKey && process.env[k.imapHostKey]) || defaultImapHost;
+      const imapPortVal = Number((k.imapPortKey && process.env[k.imapPortKey]) || defaultImapPort);
+
+      accounts.push({
+        email,
+        user: email,
+        pass: passVal,
+        name: nameVal,
+        title: titleVal,
+        smtpHost: hostVal,
+        smtpPort: portVal,
+        imapHost: imapHostVal,
+        imapPort: imapPortVal,
+        isPrimary: accounts.length === 0,
+      });
+    }
+  }
+
+  // 3. Check EMAIL_SMTP_USERS delimited format: email1:pass1:Name1,email2:pass2:Name2
+  if (process.env.EMAIL_SMTP_USERS) {
+    const entries = process.env.EMAIL_SMTP_USERS.split(/[,;\n]/).map((s) => s.trim()).filter(Boolean);
+    for (const entry of entries) {
+      const [entryEmail, entryPass, entryName, entryTitle] = entry.split(':').map((s) => s?.trim());
+      if (entryEmail && entryEmail.includes('@') && !seenEmails.has(entryEmail.toLowerCase())) {
+        seenEmails.add(entryEmail.toLowerCase());
+        accounts.push({
+          email: entryEmail,
+          user: entryEmail,
+          pass: entryPass || '',
+          name: entryName || deriveNameFromEmail(entryEmail),
+          title: entryTitle || deriveTitleFromEmail(entryEmail),
+          smtpHost: defaultSmtpHost,
+          smtpPort: defaultSmtpPort,
+          imapHost: defaultImapHost,
+          imapPort: defaultImapPort,
+          isPrimary: accounts.length === 0,
+        });
+      }
+    }
+  }
+
+  return accounts;
+}
+
 export function getCredentialsForEmail(fromEmail) {
   const normalizedEmail = String(fromEmail || '').trim().toLowerCase();
-  const user1 = String(process.env.EMAIL_SMTP_USER || '').trim().toLowerCase();
-  const user2 = String(process.env.EMAIL_SMTP_USER2 || '').trim().toLowerCase();
+  const accounts = getConfiguredEmailAccounts();
 
-  if (user2 && normalizedEmail === user2) {
+  if (normalizedEmail) {
+    const matched = accounts.find((a) => a.email.toLowerCase() === normalizedEmail);
+    if (matched) {
+      return {
+        user: matched.user,
+        pass: matched.pass,
+        name: matched.name,
+        title: matched.title,
+        host: matched.smtpHost,
+        port: matched.smtpPort,
+        imapHost: matched.imapHost,
+        imapPort: matched.imapPort,
+      };
+    }
+  }
+
+  const primary = accounts[0];
+  if (primary) {
     return {
-      user: process.env.EMAIL_SMTP_USER2.trim(),
-      pass: process.env.EMAIL_SMTP_USER2_PASS,
+      user: primary.user,
+      pass: primary.pass,
+      name: primary.name,
+      title: primary.title,
+      host: primary.smtpHost,
+      port: primary.smtpPort,
+      imapHost: primary.imapHost,
+      imapPort: primary.imapPort,
     };
   }
 
   return {
     user: process.env.EMAIL_SMTP_USER ? process.env.EMAIL_SMTP_USER.trim() : '',
-    pass: process.env.EMAIL_SMTP_PASS,
+    pass: process.env.EMAIL_SMTP_PASS || '',
+    name: process.env.EMAIL_FROM_NAME || 'Exhibit Graphic Sign',
+    title: 'Exhibit Graphic Sign LLC',
+    host: process.env.EMAIL_SMTP_HOST,
+    port: Number(process.env.EMAIL_SMTP_PORT || 465),
+    imapHost: process.env.EMAIL_IMAP_HOST,
+    imapPort: Number(process.env.EMAIL_IMAP_PORT || 993),
   };
 }
 
 export function getMailConfigStatus() {
-  const smtpReady = Boolean(
-    process.env.EMAIL_SMTP_HOST &&
-      process.env.EMAIL_SMTP_PORT &&
-      process.env.EMAIL_SMTP_USER &&
-      process.env.EMAIL_SMTP_PASS
-  );
-  const imapReady = Boolean(
-    process.env.EMAIL_IMAP_HOST &&
-      process.env.EMAIL_IMAP_PORT &&
-      process.env.EMAIL_SMTP_USER &&
-      process.env.EMAIL_SMTP_PASS
-  );
-  const smtp2Ready = Boolean(
-    process.env.EMAIL_SMTP_HOST &&
-      process.env.EMAIL_SMTP_PORT &&
-      process.env.EMAIL_SMTP_USER2 &&
-      process.env.EMAIL_SMTP_USER2_PASS
-  );
-  const imap2Ready = Boolean(
-    process.env.EMAIL_IMAP_HOST &&
-      process.env.EMAIL_IMAP_PORT &&
-      process.env.EMAIL_SMTP_USER2 &&
-      process.env.EMAIL_SMTP_USER2_PASS
-  );
-  return { smtpReady, imapReady, smtp2Ready, imap2Ready };
+  const accounts = getConfiguredEmailAccounts();
+  const accountsStatus = accounts.map((acc, index) => {
+    const smtpReady = Boolean(acc.smtpHost && acc.smtpPort && acc.user && acc.pass);
+    const imapReady = Boolean(acc.imapHost && acc.imapPort && acc.user && acc.pass);
+    return {
+      index: index + 1,
+      email: acc.email,
+      name: acc.name,
+      title: acc.title,
+      user: acc.user,
+      smtpHost: acc.smtpHost,
+      smtpPort: acc.smtpPort,
+      imapHost: acc.imapHost,
+      imapPort: acc.imapPort,
+      smtpReady,
+      imapReady,
+      isPrimary: Boolean(acc.isPrimary),
+    };
+  });
+
+  const primary = accountsStatus[0];
+  const secondary = accountsStatus[1];
+
+  return {
+    smtpReady: Boolean(primary?.smtpReady),
+    imapReady: Boolean(primary?.imapReady),
+    smtp2Ready: Boolean(secondary?.smtpReady),
+    imap2Ready: Boolean(secondary?.imapReady),
+    accounts: accountsStatus,
+  };
 }
 
 function envTlsRejectUnauthorized(imapSpecificEnv) {
@@ -239,12 +405,13 @@ export function createTransporter(fromEmail) {
   const rejectUnauthorized = envTlsRejectUnauthorized(process.env.EMAIL_SMTP_TLS_REJECT_UNAUTHORIZED);
   const creds = getCredentialsForEmail(fromEmail);
   const domain = creds.user.includes('@') ? creds.user.split('@')[1] : 'exhibitgraphicsign.com';
-  const port = Number(process.env.EMAIL_SMTP_PORT || 465);
+  const port = Number(creds.port || process.env.EMAIL_SMTP_PORT || 465);
+  const host = creds.host || process.env.EMAIL_SMTP_HOST;
   const secure = port === 465;
 
   return nodemailer.createTransport({
     name: domain,
-    host: process.env.EMAIL_SMTP_HOST,
+    host,
     port,
     secure,
     ...(port === 587 && { requireTLS: true }),
@@ -262,10 +429,13 @@ export function createTransporter(fromEmail) {
 export function createImapClient(email) {
   const rejectUnauthorized = envTlsRejectUnauthorized(process.env.EMAIL_IMAP_TLS_REJECT_UNAUTHORIZED);
   const creds = getCredentialsForEmail(email);
+  const port = Number(creds.imapPort || process.env.EMAIL_IMAP_PORT || 993);
+  const host = creds.imapHost || process.env.EMAIL_IMAP_HOST;
+
   return new ImapFlow({
-    host: process.env.EMAIL_IMAP_HOST,
-    port: Number(process.env.EMAIL_IMAP_PORT || 993),
-    secure: Number(process.env.EMAIL_IMAP_PORT || 993) === 993,
+    host,
+    port,
+    secure: port === 993,
     auth: {
       user: creds.user,
       pass: creds.pass,
@@ -283,9 +453,20 @@ export function resolveImapSyncDays() {
 }
 
 export function getFromIdentity(project) {
+  const customEmail = project?.fromEmail || project?.from_email;
+  const customName = project?.fromName || project?.from_name;
+  const accounts = getConfiguredEmailAccounts();
+  const primary = accounts[0] || {};
+
+  const resolvedEmail = customEmail || process.env.RESEND_FROM_EMAIL || primary.email || 'rana@exhibitgraphicsign.com';
+  const matchedAccount = accounts.find((a) => a.email.toLowerCase() === String(resolvedEmail).toLowerCase());
+  const resolvedName = customName || matchedAccount?.name || (customEmail ? deriveNameFromEmail(customEmail) : (process.env.EMAIL_FROM_NAME || 'Exhibit Graphic Sign'));
+  const resolvedTitle = matchedAccount?.title || deriveTitleFromEmail(resolvedEmail);
+
   return {
-    fromEmail: project?.fromEmail || process.env.RESEND_FROM_EMAIL || process.env.EMAIL_SMTP_USER || 'rana@exhibitgraphicsign.com',
-    fromName: project?.fromName || process.env.EMAIL_FROM_NAME || 'Exhibit Graphic Sign',
+    fromEmail: resolvedEmail,
+    fromName: resolvedName,
+    fromTitle: resolvedTitle,
   };
 }
 

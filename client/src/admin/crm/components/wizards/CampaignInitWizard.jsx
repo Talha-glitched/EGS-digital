@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { crmApiFetch, previewCompaniesFile, uploadCompaniesFile } from '../../crmApi.js';
+import { useState, useEffect } from 'react';
+import { crmApiFetch, previewCompaniesFile, uploadCompaniesFile, fetchConfiguredEmailAccounts } from '../../crmApi.js';
 import { Modal } from '../ui/Modal.jsx';
 import {
   ModalActionFooter,
@@ -18,6 +18,7 @@ import {
   Wand2,
   Megaphone,
   FileSpreadsheet,
+  Mail,
 } from 'lucide-react';
 import { Alert, Field, InfoPanel } from '../ui/primitives.jsx';
 
@@ -62,17 +63,36 @@ export default function CampaignInitWizard({ open, onClose, onCreated, onComplet
   const [projectId, setProjectId] = useState(null);
   const [uploadResult, setUploadResult] = useState(null);
   const [skippedUpload, setSkippedUpload] = useState(false);
+  const [emailAccounts, setEmailAccounts] = useState([]);
   const [form, setForm] = useState({
     projectName: '',
     milestone: '',
     startDate: '',
     endDate: '',
+    fromEmail: '',
+    fromName: '',
   });
   const [file, setFile] = useState(null);
   const [headers, setHeaders] = useState([]);
   const [sampleRows, setSampleRows] = useState([]);
   const [rowCount, setRowCount] = useState(0);
   const [mapping, setMapping] = useState({});
+
+  useEffect(() => {
+    if (open) {
+      fetchConfiguredEmailAccounts().then((accounts) => {
+        if (Array.isArray(accounts) && accounts.length > 0) {
+          setEmailAccounts(accounts);
+          const primary = accounts.find((a) => a.isPrimary) || accounts[0];
+          setForm((prev) => ({
+            ...prev,
+            fromEmail: prev.fromEmail || primary.email,
+            fromName: prev.fromName || primary.name || 'Exhibit Graphic Sign',
+          }));
+        }
+      });
+    }
+  }, [open]);
 
   const isSuccess = step === 2;
   const mappingReady = Boolean(mapping.companyName && mapping.domain);
@@ -85,7 +105,7 @@ export default function CampaignInitWizard({ open, onClose, onCreated, onComplet
     setProjectId(null);
     setUploadResult(null);
     setSkippedUpload(false);
-    setForm({ projectName: '', milestone: '', startDate: '', endDate: '' });
+    setForm({ projectName: '', milestone: '', startDate: '', endDate: '', fromEmail: '', fromName: '' });
     setFile(null);
     setHeaders([]);
     setSampleRows([]);
@@ -105,6 +125,8 @@ export default function CampaignInitWizard({ open, onClose, onCreated, onComplet
           milestone: form.milestone.trim(),
           startDate: form.startDate || null,
           endDate: form.endDate || null,
+          fromEmail: form.fromEmail || undefined,
+          fromName: form.fromName || undefined,
         }),
       });
       setProjectId(project._id);
@@ -270,6 +292,32 @@ export default function CampaignInitWizard({ open, onClose, onCreated, onComplet
                     />
                   </Field>
                 </div>
+
+                <Field label="Sending mailbox / address" hint="Emails in this campaign will be dispatched from this authenticated mailbox.">
+                  <select
+                    className="crm-select"
+                    value={form.fromEmail}
+                    onChange={(e) => {
+                      const selectedEmail = e.target.value;
+                      const matched = emailAccounts.find((a) => a.email.toLowerCase() === selectedEmail.toLowerCase());
+                      setForm({
+                        ...form,
+                        fromEmail: selectedEmail,
+                        fromName: matched?.name || form.fromName || 'Exhibit Graphic Sign',
+                      });
+                    }}
+                  >
+                    {emailAccounts.length > 0 ? (
+                      emailAccounts.map((acc) => (
+                        <option key={acc.email} value={acc.email}>
+                          {acc.name ? `${acc.name} (${acc.email})` : acc.email} {acc.isPrimary ? '— Primary' : ''}
+                        </option>
+                      ))
+                    ) : (
+                      <option value={form.fromEmail || ''}>{form.fromEmail || 'Default System Mailbox'}</option>
+                    )}
+                  </select>
+                </Field>
               </div>
             </ModalSection>
           </ModalStack>

@@ -116,6 +116,7 @@ export const ROUTE_PERMISSION_MAP = [
   // Previously unmapped and therefore reachable by every authenticated role.
   // Releasing a launch batch actually sends outbound email, so it must be a
   // sequence write rather than a fall-through read.
+  { prefix: '/email-accounts', read: 'sequences:read', write: 'sequences:write' },
   { prefix: '/email', read: 'sequences:read', write: 'sequences:write' },
   { prefix: '/sent-emails', read: 'inbox:read', write: 'inbox:write' },
   { prefix: '/replies', read: 'inbox:read', write: 'inbox:write' },
