@@ -73,6 +73,8 @@ export default function EmailPreviewModal({
   body = '',
   aiPrompt = '',
   useAi = false,
+  fromEmail = '',
+  fromName = '',
   onApplyTemplate,
 }) {
   const [deviceMode, setDeviceMode] = useState('desktop'); // 'desktop' | 'mobile'
@@ -86,25 +88,31 @@ export default function EmailPreviewModal({
   const [sendingTest, setSendingTest] = useState(false);
   const [testSentStatus, setTestSentStatus] = useState(null);
   const [emailAccounts, setEmailAccounts] = useState([]);
-  const [selectedFromEmail, setSelectedFromEmail] = useState('');
+  const [selectedFromEmail, setSelectedFromEmail] = useState(fromEmail || '');
 
   useEffect(() => {
     if (templateType) setSelectedTemplateId(templateType);
   }, [templateType]);
 
   useEffect(() => {
+    if (fromEmail) {
+      setSelectedFromEmail(fromEmail);
+    }
+  }, [fromEmail]);
+
+  useEffect(() => {
     if (open) {
       fetchConfiguredEmailAccounts().then((accounts) => {
         if (Array.isArray(accounts) && accounts.length > 0) {
           setEmailAccounts(accounts);
-          if (!selectedFromEmail) {
+          if (!selectedFromEmail && !fromEmail) {
             const primary = accounts.find((a) => a.isPrimary) || accounts[0];
             setSelectedFromEmail(primary.email);
           }
         }
       }).catch(console.error);
     }
-  }, [open]);
+  }, [open, fromEmail, selectedFromEmail]);
 
   // Match default persona to template category
   useEffect(() => {

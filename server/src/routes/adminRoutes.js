@@ -879,6 +879,8 @@ router.post('/sequences/:id/launch', asyncRoute(async (req, res) => {
     importedCampaignIds: req.body?.importedCampaignIds,
     importCampaign: req.body?.importCampaign,
     campaignSelections: req.body?.campaignSelections,
+    fromEmail: req.body?.fromEmail,
+    fromName: req.body?.fromName,
     actor: getActor(req),
   });
   res.json(result);

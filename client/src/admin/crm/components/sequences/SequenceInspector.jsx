@@ -73,6 +73,10 @@ export default function SequenceInspector({
   onDeleteNode,
   sequenceName,
   onSequenceNameChange,
+  fromEmail,
+  fromName,
+  onSenderChange,
+  emailAccounts = [],
   campaignId,
   campaignOptions,
   allCampaignOptions = [],
@@ -148,6 +152,10 @@ export default function SequenceInspector({
             <GlobalInspector
               sequenceName={sequenceName}
               onSequenceNameChange={onSequenceNameChange}
+              fromEmail={fromEmail}
+              fromName={fromName}
+              onSenderChange={onSenderChange}
+              emailAccounts={emailAccounts}
               campaignId={campaignId}
               allCampaignOptions={allCampaignOptions}
               audience={audience}
@@ -170,6 +178,9 @@ export default function SequenceInspector({
               onUpdate={onUpdateNode}
               onDelete={onDeleteNode}
               canDelete={nodes.length > 1 || selectedNode.type !== 'email'}
+              fromEmail={fromEmail}
+              fromName={fromName}
+              emailAccounts={emailAccounts}
             />
           )}
           </div>
@@ -228,6 +239,10 @@ export default function SequenceInspector({
 function GlobalInspector({
   sequenceName,
   onSequenceNameChange,
+  fromEmail,
+  fromName,
+  onSenderChange,
+  emailAccounts = [],
   campaignId,
   allCampaignOptions = [],
   audience,
@@ -348,6 +363,55 @@ function GlobalInspector({
             <span className="font-semibold text-[var(--color-ink)]">Email → Outbox</span>.
           </p>
         )}
+      </InspectorSection>
+
+      <InspectorSection title="Sender mailbox" icon={Mail}>
+        <CompactField label="Sending Account" hint="Emails in this sequence will be sent from this executive mailbox">
+          <select
+            className="crm-input crm-seq-input py-2 text-xs font-medium text-[var(--color-ink)]"
+            value={fromEmail || (emailAccounts.find((a) => a.isPrimary)?.email || 'haider@exhibitgraphicsign.com')}
+            onChange={(e) => {
+              const val = e.target.value;
+              const matched = emailAccounts.find((a) => a.email.toLowerCase() === val.toLowerCase());
+              onSenderChange?.({
+                email: val,
+                name: matched?.name || (val.includes('haider') ? 'Dr. Haider' : val.includes('masuood') ? 'Masuood-ul-Rasheed' : 'Talha Masuood'),
+              });
+            }}
+          >
+            {emailAccounts.length > 0 ? (
+              emailAccounts.map((acc) => (
+                <option key={acc.email} value={acc.email}>
+                  {acc.name} ({acc.email}) — {acc.title || (acc.isPrimary ? 'Primary' : 'Sender')}
+                </option>
+              ))
+            ) : (
+              <>
+                <option value="haider@exhibitgraphicsign.com">Dr. Haider (haider@exhibitgraphicsign.com) — Project Director (Default)</option>
+                <option value="masuood@exhibitgraphicsign.com">Masuood-ul-Rasheed (masuood@exhibitgraphicsign.com) — Managing Director</option>
+                <option value="talha@exhibitgraphicsign.com">Talha Masuood (talha@exhibitgraphicsign.com) — Operations & Technical Director</option>
+              </>
+            )}
+          </select>
+        </CompactField>
+        {(() => {
+          const effectiveEmail = fromEmail || (emailAccounts.find((a) => a.isPrimary)?.email || 'haider@exhibitgraphicsign.com');
+          const matched = emailAccounts.find((a) => a.email.toLowerCase() === effectiveEmail.toLowerCase());
+          const isReady = matched ? (matched.smtpReady !== false) : true;
+          return (
+            <div className="flex items-center justify-between rounded-lg border border-neutral-200/80 bg-neutral-50 px-2.5 py-2 text-2xs">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className={cn('h-2 w-2 rounded-full shrink-0', isReady ? 'bg-emerald-500' : 'bg-amber-500')} />
+                <span className="truncate font-medium text-[var(--color-ink)]">
+                  {matched?.title || (effectiveEmail.includes('haider') ? 'Project Director · Exhibit Graphic Sign LLC' : effectiveEmail.includes('masuood') ? 'Managing Director · Exhibit Graphic Sign LLC' : 'Operations & Technical Director · Exhibit Graphic Sign LLC')}
+                </span>
+              </div>
+              <span className="shrink-0 text-neutral-400 font-mono">
+                {isReady ? 'SMTP active' : 'Check SMTP'}
+              </span>
+            </div>
+          );
+        })()}
       </InspectorSection>
 
       <InspectorSection title="Send to" icon={Users}>
@@ -554,7 +618,7 @@ function AudienceAddRow({ icon: Icon, label, values, onChange, options, placehol
   );
 }
 
-function NodeInspector({ node, onUpdate, onDelete, canDelete }) {
+function NodeInspector({ node, onUpdate, onDelete, canDelete, fromEmail, fromName, emailAccounts = [] }) {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
 
@@ -573,8 +637,19 @@ function NodeInspector({ node, onUpdate, onDelete, canDelete }) {
       onUpdate(node.id, { ...node.data, ...patch });
     };
 
+    const effectiveFromEmail = fromEmail || 'haider@exhibitgraphicsign.com';
+    const effectiveFromName = fromName || (effectiveFromEmail.includes('haider') ? 'Dr. Haider' : effectiveFromEmail.includes('masuood') ? 'Masuood-ul-Rasheed' : 'Talha Masuood');
+
     return (
       <>
+        {/* SENDER IDENTITY BADGE */}
+        <div className="flex items-center justify-between px-2.5 py-1.5 rounded-lg border border-neutral-200/80 bg-neutral-50 text-2xs">
+          <div className="flex items-center gap-1.5 text-neutral-600 truncate">
+            <Mail className="h-3 w-3 text-brand shrink-0" />
+            <span className="truncate">From: <strong className="text-neutral-900">{effectiveFromName}</strong> <span className="text-neutral-400 font-mono">({effectiveFromEmail})</span></span>
+          </div>
+        </div>
+
         {/* TEMPLATE PICKER CARD */}
         <div className="rounded-lg border border-[var(--color-line)] bg-neutral-50/70 p-2.5 space-y-2">
           <div className="flex items-center justify-between">
@@ -668,6 +743,8 @@ function NodeInspector({ node, onUpdate, onDelete, canDelete }) {
           body={node.data?.bodyTemplate ?? currentTemplate.defaultBody}
           aiPrompt={node.data?.aiPrompt || ''}
           useAi={node.data?.useAiPersonalization !== false}
+          fromEmail={effectiveFromEmail}
+          fromName={effectiveFromName}
           onApplyTemplate={(id) => handleSelectTemplate(id, { applyCopy: false })}
         />
 

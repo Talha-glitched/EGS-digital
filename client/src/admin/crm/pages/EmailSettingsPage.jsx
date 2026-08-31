@@ -64,9 +64,9 @@ function SmtpConnectionCards({ emailStatus }) {
     ? emailStatus.accounts
     : [
         {
-          email: 'talha@exhibitgraphicsign.com',
-          name: 'Talha Masuood',
-          title: 'Operations & Technical Director',
+          email: 'haider@exhibitgraphicsign.com',
+          name: 'Dr. Haider',
+          title: 'Project Director',
           isPrimary: true,
           smtpReady: emailStatus?.smtpReady,
           imapReady: emailStatus?.imapReady,
@@ -80,9 +80,9 @@ function SmtpConnectionCards({ emailStatus }) {
           imapReady: emailStatus?.imap2Ready,
         },
         {
-          email: 'haider@exhibitgraphicsign.com',
-          name: 'Dr. Haider',
-          title: 'Project Director',
+          email: 'talha@exhibitgraphicsign.com',
+          name: 'Talha Masuood',
+          title: 'Operations & Technical Director',
           isPrimary: false,
           smtpReady: emailStatus?.smtp3Ready,
           imapReady: emailStatus?.imap3Ready,

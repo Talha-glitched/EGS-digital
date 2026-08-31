@@ -55,14 +55,25 @@ export default function SequenceStudio({
   sequences = [],
   campaigns = [],
   mailStatus = null,
+  emailAccounts = [],
   onRefresh,
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const campaignParam = searchParams.get('campaign');
 
+  const defaultPrimary = useMemo(() => {
+    return emailAccounts.find((a) => a.isPrimary) || emailAccounts[0] || {
+      email: 'haider@exhibitgraphicsign.com',
+      name: 'Dr. Haider',
+      title: 'Project Director · Exhibit Graphic Sign LLC',
+    };
+  }, [emailAccounts]);
+
   const [activeSequenceId, setActiveSequenceId] = useState(null);
   const [sequenceName, setSequenceName] = useState('Untitled sequence');
+  const [fromEmail, setFromEmail] = useState('');
+  const [fromName, setFromName] = useState('');
   const [campaignId, setCampaignId] = useState(
     () => normalizeCampaignId(campaignParam || ''),
   );
@@ -140,9 +151,11 @@ export default function SequenceStudio({
 
   const buildDraftSnapshot = useCallback(() => JSON.stringify({
     name: sequenceName,
+    fromEmail,
+    fromName,
     steps: flowToSteps(nodes, edges),
     flowGraph: flowGraphFromState(nodes, edges),
-  }), [sequenceName, nodes, edges]);
+  }), [sequenceName, fromEmail, fromName, nodes, edges]);
 
   const persistDraft = useCallback(async ({ silent = false } = {}) => {
     const steps = flowToSteps(nodes, edges);
@@ -159,12 +172,23 @@ export default function SequenceStudio({
       setAutosaveStatus('saving');
     }
 
+    const effectiveFromEmail = fromEmail || defaultPrimary.email;
+    const effectiveFromName = fromName || defaultPrimary.name;
+
     try {
       let seqId = activeSequenceId;
       if (!seqId) {
         const created = await crmApiFetch('/api/admin/sequences', {
           method: 'POST',
-          body: JSON.stringify({ name: sequenceName, steps, flowGraph, audience, campaignId }),
+          body: JSON.stringify({
+            name: sequenceName,
+            steps,
+            flowGraph,
+            audience,
+            campaignId,
+            fromEmail: effectiveFromEmail,
+            fromName: effectiveFromName,
+          }),
         });
         seqId = created._id;
         setActiveSequenceId(seqId);
@@ -172,7 +196,15 @@ export default function SequenceStudio({
       } else {
         await crmApiFetch(`/api/admin/sequences/${seqId}`, {
           method: 'PATCH',
-          body: JSON.stringify({ name: sequenceName, steps, flowGraph, audience, campaignId }),
+          body: JSON.stringify({
+            name: sequenceName,
+            steps,
+            flowGraph,
+            audience,
+            campaignId,
+            fromEmail: effectiveFromEmail,
+            fromName: effectiveFromName,
+          }),
         });
       }
 
@@ -196,7 +228,10 @@ export default function SequenceStudio({
     audience,
     buildDraftSnapshot,
     campaignId,
+    defaultPrimary,
     dismissToast,
+    fromEmail,
+    fromName,
     nodes,
     edges,
     onRefresh,
@@ -239,6 +274,8 @@ export default function SequenceStudio({
 
       setActiveSequenceId(seq._id);
       setSequenceName(seq.name || 'Untitled sequence');
+      setFromEmail(seq.fromEmail || seq.from_email || '');
+      setFromName(seq.fromName || seq.from_name || '');
       setCampaignId(linkedCampaignId || loadedAudience.importedCampaignIds?.[0] || '');
       setAudience(loadedAudience);
       setAudiencePreview({ eligible: 0, netNew: 0, sample: [] });
@@ -267,6 +304,8 @@ export default function SequenceStudio({
     }
     setActiveSequenceId(null);
     setSequenceName('Untitled sequence');
+    setFromEmail(defaultPrimary.email);
+    setFromName(defaultPrimary.name);
     setCampaignId(cid);
     setNodes(flow.nodes);
     setEdges(flow.edges);
@@ -279,7 +318,7 @@ export default function SequenceStudio({
     setAudience({ ...EMPTY_AUDIENCE });
     setAudiencePreview({ eligible: 0, netNew: 0, sample: [] });
     dismissToast();
-  }, [campaignParam, campaigns, dismissToast]);
+  }, [campaignParam, campaigns, defaultPrimary, dismissToast]);
 
   useEffect(() => {
     fetchMailboxUsage().then(setMailboxUsage).catch(() => {});
@@ -579,6 +618,8 @@ export default function SequenceStudio({
       if (launch) {
         const body = {
           confirmEnrollment: true,
+          fromEmail: fromEmail || defaultPrimary.email,
+          fromName: fromName || defaultPrimary.name,
           ...buildAudienceParams(audience),
         };
         const result = await launchSequence(seqId, body);
@@ -693,6 +734,9 @@ export default function SequenceStudio({
           onSave={updateNodeData}
           onDelete={deleteNode}
           canDelete={nodes.length > 1 || editingNode?.type !== 'email'}
+          fromEmail={fromEmail || defaultPrimary.email}
+          fromName={fromName || defaultPrimary.name}
+          emailAccounts={emailAccounts}
         />
         <SequenceStudioToast
           message={toast.message}
@@ -718,6 +762,14 @@ export default function SequenceStudio({
         onDeleteNode={deleteNode}
         sequenceName={sequenceName}
         onSequenceNameChange={setSequenceName}
+        fromEmail={fromEmail || defaultPrimary.email}
+        fromName={fromName || defaultPrimary.name}
+        onSenderChange={({ email, name }) => {
+          setFromEmail(email);
+          setFromName(name);
+          setLaunchArmed(false);
+        }}
+        emailAccounts={emailAccounts}
         campaignId={campaignId}
         campaignOptions={campaignOptions}
         allCampaignOptions={campaignOptions}

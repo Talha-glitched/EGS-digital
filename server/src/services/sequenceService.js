@@ -590,6 +590,8 @@ export async function launchSequence(sequenceId, options = {}) {
       // made at import; otherwise it re-applies the hold and the job sits pending.
       hold_override: Boolean(contact.holdOverridden),
     }));
+    const effectiveFromEmail = options.fromEmail || seq.fromEmail || seq.from_email || null;
+    const effectiveFromName = options.fromName || seq.fromName || seq.from_name || null;
     const inserted = await client.query(`
       WITH input AS(
         SELECT * FROM jsonb_to_recordset($1::jsonb) AS candidate(campaign_contact_id uuid,lead_id uuid,campaign_id uuid,email text,hold_override boolean)
@@ -605,10 +607,10 @@ export async function launchSequence(sequenceId, options = {}) {
       INSERT INTO send_jobs(lead_id,campaign_id,enrollment_id,step_index,status,scheduled_for,recipient_email,rendered_subject,rendered_body,immediate_launch,manual_send,idempotency_key,payload)
       SELECT enrollment.lead_id,enrollment.campaign_id,enrollment.id,0,'pending',$5,input.email,$6,$7,FALSE,TRUE,
              $4::text||':'||enrollment.campaign_contact_id::text||':0',
-             jsonb_build_object('launchBatchId',$4::text,'sequenceId',$3::text,'holdOverride',COALESCE(input.hold_override,FALSE))
+             jsonb_build_object('launchBatchId',$4::text,'sequenceId',$3::text,'holdOverride',COALESCE(input.hold_override,FALSE),'fromEmail',$8::text,'fromName',$9::text)
       FROM new_enrollments enrollment JOIN input ON input.campaign_contact_id=enrollment.campaign_contact_id
       ON CONFLICT(idempotency_key) WHERE idempotency_key IS NOT NULL DO NOTHING RETURNING id
-    `, [JSON.stringify(candidatePayload), version.rows[0].id, seq.sqlId, launchId, scheduledFor, step.template_subject || '', step.template_body || '']);
+    `, [JSON.stringify(candidatePayload), version.rows[0].id, seq.sqlId, launchId, scheduledFor, step.template_subject || '', step.template_body || '', effectiveFromEmail, effectiveFromName]);
     enrolled = inserted.rowCount;
     await client.query(`UPDATE sequence_launches SET enrolled_count=$2,updated_at=NOW() WHERE id=$1::uuid`, [launchId, enrolled]);
     await client.query(`UPDATE sequences SET is_active=TRUE,updated_at=NOW() WHERE id=$1::uuid`, [seq.sqlId]);

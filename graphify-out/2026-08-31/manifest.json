@@ -805,8 +805,8 @@
     "semantic_hash": "aa9cf7a2b10580a38b862787ad3c1958"
   },
   "client/src/admin/crm/pages/EmailSettingsPage.jsx": {
-    "mtime": 1788146205.7918699,
-    "ast_hash": "25c3545aae4d6c822d7d39fbc84eff8e",
+    "mtime": 1788146556.5157642,
+    "ast_hash": "0d8b3f78cb3405ab09faa16964e4d417",
     "semantic_hash": ""
   },
   "client/src/admin/crm/pages/GlobalDashboard.jsx": {
@@ -2400,8 +2400,8 @@
     "semantic_hash": "0656ceaf0addb6a23dd86c84cd61771f"
   },
   "server/src/services/mailTransport.js": {
-    "mtime": 1788145882.5931487,
-    "ast_hash": "25d73767697bca502d7f460496353429",
+    "mtime": 1788146500.921989,
+    "ast_hash": "d7926403febd12a7ac6820102c81193f",
     "semantic_hash": ""
   },
   "server/src/services/openaiService.js": {
@@ -5700,8 +5700,8 @@
     "semantic_hash": ""
   },
   "client/src/admin/crm/constants/emailTemplates.js": {
-    "mtime": 1788145913.7230177,
-    "ast_hash": "0446da95ae541088876aed55a2edad16",
+    "mtime": 1788146541.130103,
+    "ast_hash": "6e30a51646116950e084525b4a69a188",
     "semantic_hash": ""
   },
   "client/src/components/offers/OfferCard.jsx": {
@@ -5830,13 +5830,13 @@
     "semantic_hash": ""
   },
   "server/src/utils/emailTemplateRenderer.js": {
-    "mtime": 1788146267.760282,
-    "ast_hash": "35e3bcacb5f9a88327ac8992f685c5e2",
+    "mtime": 1788146515.779618,
+    "ast_hash": "46fa587626227a223ccd7e2a896c7d6e",
     "semantic_hash": ""
   },
   "server/tests/emailTemplateRenderer.test.js": {
-    "mtime": 1788146277.2237208,
-    "ast_hash": "73a6f25465d146b5f748bede647ef1c9",
+    "mtime": 1788146574.526395,
+    "ast_hash": "34f74be6bc4b27881c8e9b192209fbc7",
     "semantic_hash": ""
   },
   "client/public/llms-full.txt": {

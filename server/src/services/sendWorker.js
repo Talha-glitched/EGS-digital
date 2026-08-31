@@ -103,12 +103,15 @@ async function processSendJob(jobId, { force = false } = {}) {
     const result = await client.query(`
       SELECT sj.*,se.campaign_contact_id,se.sequence_version_id,se.sequence_id,se.launch_batch_id,se.execution_state,se.reset_at,
              cc.outreach_focus_state,ca.organization_id,ca.campaign_id,por.person_id,p.display_name AS person_name,
-             o.canonical_name AS company_name,c.name AS campaign_name,c.from_email AS campaign_from_email,c.from_name AS campaign_from_name,pcm.id AS contact_method_id,
+             o.canonical_name AS company_name,c.name AS campaign_name,c.from_email AS campaign_from_email,c.from_name AS campaign_from_name,
+             s.payload AS sequence_payload,
+             pcm.id AS contact_method_id,
              step.step_number,step.template_subject,step.template_body
       FROM send_jobs sj JOIN sequence_enrollments se ON se.id=sj.enrollment_id
       JOIN campaign_contacts cc ON cc.id=se.campaign_contact_id JOIN campaign_accounts ca ON ca.id=cc.campaign_account_id
       JOIN person_organization_roles por ON por.id=cc.role_id JOIN people p ON p.id=por.person_id
       JOIN organizations o ON o.id=ca.organization_id LEFT JOIN campaigns c ON c.id=ca.campaign_id
+      LEFT JOIN sequences s ON s.id=se.sequence_id
       LEFT JOIN person_contact_methods pcm ON pcm.person_id=p.id AND pcm.type='email' AND LOWER(pcm.normalized_value)=LOWER(sj.recipient_email)
       JOIN sequence_steps step ON step.sequence_version_id=se.sequence_version_id AND step.step_number=sj.step_index+1
       WHERE sj.id=$1::uuid FOR UPDATE OF sj`, [jobId]);
@@ -142,12 +145,16 @@ async function processSendJob(jobId, { force = false } = {}) {
     const subject = renderTemplate(context.rendered_subject || context.template_subject, templateContext);
     const body = renderTemplate(context.rendered_body || context.template_body, templateContext);
     const templateType = context.payload?.templateType || (context.campaign_name?.toLowerCase().includes('graduation') ? 'graduations' : (context.campaign_name?.toLowerCase().includes('fitout') ? 'fitouts' : 'exhibitions'));
-    const { fromEmail, fromName, fromTitle } = getFromIdentity(context.campaign_id ? {
-      id: context.campaign_id,
+    const jobPayload = context.payload || {};
+    const seqPayload = context.sequence_payload || {};
+    const sequenceFromEmail = jobPayload.fromEmail || seqPayload.fromEmail || seqPayload.from_email;
+    const sequenceFromName = jobPayload.fromName || seqPayload.fromName || seqPayload.from_name;
+    const { fromEmail, fromName, fromTitle } = getFromIdentity({
+      fromEmail: sequenceFromEmail || context.campaign_from_email,
+      fromName: sequenceFromName || context.campaign_from_name,
       name: context.campaign_name,
-      fromEmail: context.campaign_from_email,
-      fromName: context.campaign_from_name,
-    } : null);
+      id: context.campaign_id,
+    });
     const sent = await sendAuthenticatedMail({
       fromName,
       fromEmail,

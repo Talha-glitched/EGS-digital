@@ -40,7 +40,7 @@ function EditorField({ label, hint, children }) {
   );
 }
 
-function EmailEditor({ data, onChange }) {
+function EmailEditor({ data, onChange, fromEmail, fromName }) {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
 
@@ -57,8 +57,19 @@ function EmailEditor({ data, onChange }) {
     onChange({ ...data, ...patch });
   };
 
+  const effectiveFromEmail = fromEmail || 'haider@exhibitgraphicsign.com';
+  const effectiveFromName = fromName || (effectiveFromEmail.includes('haider') ? 'Dr. Haider' : effectiveFromEmail.includes('masuood') ? 'Masuood-ul-Rasheed' : 'Talha Masuood');
+
   return (
     <div className="crm-seq-editor-sections">
+      {/* SENDER IDENTITY BADGE */}
+      <div className="flex items-center justify-between px-3 py-2 bg-neutral-50 rounded-xl border border-neutral-200/80 text-xs">
+        <div className="flex items-center gap-2 text-neutral-600 truncate">
+          <Mail className="h-4 w-4 text-brand shrink-0" />
+          <span className="truncate">Sender: <strong className="text-neutral-900">{effectiveFromName}</strong> <span className="text-neutral-400 font-mono">({effectiveFromEmail})</span></span>
+        </div>
+      </div>
+
       {/* TEMPLATE PICKER STRIP */}
       <div className="p-3 bg-neutral-50 rounded-xl border border-neutral-200/80 space-y-2">
         <div className="flex items-center justify-between">
@@ -108,43 +119,37 @@ function EmailEditor({ data, onChange }) {
                     style={{ backgroundColor: tpl.accentColor }}
                   />
                 </div>
-                <span className="text-[10px] text-neutral-400 truncate">{tpl.category}</span>
+                <span className="text-2xs text-neutral-400 font-mono uppercase">{tpl.category}</span>
               </button>
             );
           })}
         </div>
       </div>
 
-      <div className="crm-seq-editor-callout">
-        <Sparkles className="h-4 w-4 text-brand" />
-        <p>Personalize with placeholders like <code>[First]</code>, <code>{'{{name}}'}</code>, <code>{'{{company}}'}</code>, or <code>[University]</code>.</p>
+      <div className="crm-seq-editor-split">
+        <label className="crm-seq-editor-toggle">
+          <input
+            type="checkbox"
+            checked={data?.useAiPersonalization !== false}
+            onChange={(e) => update('useAiPersonalization', e.target.checked)}
+          />
+          <Sparkles className="h-4 w-4 text-brand" />
+          <span>AI personalize for recipient</span>
+        </label>
       </div>
 
-      <label className="crm-seq-editor-toggle">
-        <input
-          type="checkbox"
-          checked={data?.useAiPersonalization !== false}
-          onChange={(e) => update('useAiPersonalization', e.target.checked)}
-        />
-        <span className="crm-seq-editor-toggle-copy">
-          <strong>AI personalization</strong>
-          <span>Generate a tailored version per contact at send time.</span>
-        </span>
-      </label>
-
       {data?.useAiPersonalization !== false && (
-        <EditorField label="AI prompt" hint="Optional instructions for tone, angle, or offer.">
-          <textarea
-            rows={3}
+        <EditorField label="AI prompt" hint="Instruct the AI how to customize the opening hook or value prop">
+          <input
             className="crm-input crm-seq-editor-input"
             value={data?.aiPrompt || ''}
             onChange={(e) => update('aiPrompt', e.target.value)}
-            placeholder="e.g. Reference their company booth and graduation season timing…"
+            placeholder="Focus on past DWTC exhibitions and turnkey project delivery"
           />
         </EditorField>
       )}
 
-      <EditorField label="Subject line">
+      <EditorField label="Subject line" hint="Supports {{name}}, {{first_name}}, {{company}}, etc.">
         <input
           className="crm-input crm-seq-editor-input font-mono"
           value={data?.subjectTemplate ?? currentTemplate.defaultSubject}
@@ -171,6 +176,8 @@ function EmailEditor({ data, onChange }) {
         body={data?.bodyTemplate ?? currentTemplate.defaultBody}
         aiPrompt={data?.aiPrompt || ''}
         useAi={data?.useAiPersonalization !== false}
+        fromEmail={effectiveFromEmail}
+        fromName={effectiveFromName}
         onApplyTemplate={(id) => handleSelectTemplate(id, { applyCopy: false })}
       />
 
@@ -338,6 +345,8 @@ export default function SequenceNodeEditorModal({
   onSave,
   onDelete,
   canDelete,
+  fromEmail,
+  fromName,
 }) {
   if (!node) return null;
 
@@ -380,7 +389,7 @@ export default function SequenceNodeEditorModal({
         </div>
       )}
     >
-      {node.type === 'email' && <EmailEditor data={node.data} onChange={handleDataChange} />}
+      {node.type === 'email' && <EmailEditor data={node.data} onChange={handleDataChange} fromEmail={fromEmail} fromName={fromName} />}
       {node.type === 'wait' && <WaitEditor data={node.data} onChange={handleDataChange} />}
       {node.type === 'condition' && <ConditionEditor data={node.data} onChange={handleDataChange} />}
     </Modal>
