@@ -17471,7 +17471,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_service_families",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "service_families"
     },
     {
@@ -17482,7 +17482,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_service_offerings",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "service_offerings"
     },
     {
@@ -17493,7 +17493,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_uoms",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "uoms"
     },
     {
@@ -17504,7 +17504,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_service_allowed_uoms",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "service_allowed_uoms"
     },
     {
@@ -17536,8 +17536,8 @@
       "source_location": "L180",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_organizations",
-      "community": 66,
-      "community_name": "organizations",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "organizations"
     },
     {
@@ -17547,8 +17547,8 @@
       "source_location": "L192",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_organization_identifiers",
-      "community": 66,
-      "community_name": "organizations",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "organization_identifiers"
     },
     {
@@ -17569,8 +17569,8 @@
       "source_location": "L214",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_locations",
-      "community": 66,
-      "community_name": "organizations",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "locations"
     },
     {
@@ -17580,8 +17580,8 @@
       "source_location": "L224",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_people",
-      "community": 66,
-      "community_name": "organizations",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "people"
     },
     {
@@ -17635,8 +17635,8 @@
       "source_location": "L282",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_events",
-      "community": 66,
-      "community_name": "organizations",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "events"
     },
     {
@@ -17646,8 +17646,8 @@
       "source_location": "L289",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_event_editions",
-      "community": 66,
-      "community_name": "organizations",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "event_editions"
     },
     {
@@ -17657,8 +17657,8 @@
       "source_location": "L298",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_event_participations",
-      "community": 66,
-      "community_name": "organizations",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "event_participations"
     },
     {
@@ -17668,8 +17668,8 @@
       "source_location": "L308",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_campaigns",
-      "community": 66,
-      "community_name": "organizations",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "campaigns"
     },
     {
@@ -17800,8 +17800,8 @@
       "source_location": "L424",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_interactions",
-      "community": 66,
-      "community_name": "organizations",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "interactions"
     },
     {
@@ -17833,7 +17833,7 @@
       "source_location": "L462",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_ongoing_jobs",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "ongoing_jobs"
     },
@@ -17856,7 +17856,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_phases",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "job_phases"
     },
     {
@@ -17867,7 +17867,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_locations",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "job_locations"
     },
     {
@@ -17878,7 +17878,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_scope_lines",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "job_scope_lines"
     },
     {
@@ -17900,7 +17900,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_design_sets",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "design_sets"
     },
     {
@@ -17911,7 +17911,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_quotes",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "quotes"
     },
     {
@@ -17922,7 +17922,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_quote_versions",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "quote_versions"
     },
     {
@@ -17933,7 +17933,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_quote_lines",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "quote_lines"
     },
     {
@@ -17944,7 +17944,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_design_versions",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "design_versions"
     },
     {
@@ -17955,7 +17955,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_artifact_decisions",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "artifact_decisions"
     },
     {
@@ -17966,7 +17966,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_production_releases",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "production_releases"
     },
     {
@@ -17977,7 +17977,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_production_release_design_versions",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "production_release_design_versions"
     },
     {
@@ -17988,7 +17988,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_activities",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "job_activities"
     },
     {
@@ -18020,7 +18020,7 @@
       "source_location": "L717",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_financial_milestones",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "financial_milestones"
     },
@@ -18031,7 +18031,7 @@
       "source_location": "L728",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_events",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "job_events"
     },
@@ -18164,7 +18164,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_project_time_entries",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "project_time_entries"
     },
     {
@@ -18262,7 +18262,7 @@
       "source_location": "L1011",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_cost_estimates",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "job_cost_estimates"
     },
@@ -18273,7 +18273,7 @@
       "source_location": "L1019",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_actual_costs",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "job_actual_costs"
     },
@@ -18284,7 +18284,7 @@
       "source_location": "L1028",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_cost_confirmations",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "job_cost_confirmations"
     },
@@ -18361,8 +18361,8 @@
       "source_location": "L1057",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_closeouts",
-      "community": 66,
-      "community_name": "organizations",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "job_closeouts"
     },
     {
@@ -18384,7 +18384,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_snags",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "job_snags"
     },
     {
@@ -18516,7 +18516,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_validate_task_job_context",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "validate_task_job_context()"
     },
     {
@@ -18549,7 +18549,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_field_execution_submissions",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "field_execution_submissions"
     },
     {
@@ -18560,7 +18560,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_field_execution_files",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "field_execution_files"
     },
     {
@@ -18582,7 +18582,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_delivery_activations",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "job_delivery_activations"
     },
     {
@@ -18738,7 +18738,7 @@
       "_origin": "ast",
       "id": "server_scripts_04_add_missing_tables",
       "community": 66,
-      "community_name": "organizations",
+      "community_name": "04_add_missing_tables.sql",
       "norm_label": "04_add_missing_tables.sql"
     },
     {
@@ -18749,7 +18749,7 @@
       "_origin": "ast",
       "id": "server_scripts_04_add_missing_tables_completed_jobs",
       "community": 66,
-      "community_name": "organizations",
+      "community_name": "04_add_missing_tables.sql",
       "norm_label": "completed_jobs"
     },
     {
@@ -18760,7 +18760,7 @@
       "_origin": "ast",
       "id": "server_scripts_04_add_missing_tables_daily_review_records",
       "community": 66,
-      "community_name": "organizations",
+      "community_name": "04_add_missing_tables.sql",
       "norm_label": "daily_review_records"
     },
     {
@@ -18771,7 +18771,7 @@
       "_origin": "ast",
       "id": "server_scripts_04_add_missing_tables_analytics_snapshots",
       "community": 66,
-      "community_name": "organizations",
+      "community_name": "04_add_missing_tables.sql",
       "norm_label": "analytics_snapshots"
     },
     {
@@ -18782,7 +18782,7 @@
       "_origin": "ast",
       "id": "server_scripts_04_add_missing_tables_revenue_entries",
       "community": 66,
-      "community_name": "organizations",
+      "community_name": "04_add_missing_tables.sql",
       "norm_label": "revenue_entries"
     },
     {
@@ -18892,7 +18892,7 @@
       "_origin": "ast",
       "id": "server_scripts_12_job_commercial_artifacts",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "12_job_commercial_artifacts.sql"
     },
     {
@@ -18903,7 +18903,7 @@
       "_origin": "ast",
       "id": "server_scripts_12_job_commercial_artifacts_design_sets",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "design_sets"
     },
     {
@@ -18914,7 +18914,7 @@
       "_origin": "ast",
       "id": "server_scripts_12_job_commercial_artifacts_artifact_decisions",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "artifact_decisions"
     },
     {
@@ -18925,7 +18925,7 @@
       "_origin": "ast",
       "id": "server_scripts_13_production_execution",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "13_production_execution.sql"
     },
     {
@@ -18936,7 +18936,7 @@
       "_origin": "ast",
       "id": "server_scripts_13_production_execution_production_releases",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "production_releases"
     },
     {
@@ -18947,7 +18947,7 @@
       "_origin": "ast",
       "id": "server_scripts_13_production_execution_production_release_design_versions",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "production_release_design_versions"
     },
     {
@@ -18958,7 +18958,7 @@
       "_origin": "ast",
       "id": "server_scripts_13_production_execution_job_activities",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "job_activities"
     },
     {
@@ -18969,7 +18969,7 @@
       "_origin": "ast",
       "id": "server_scripts_13_production_execution_job_activity_updates",
       "community": 81,
-      "community_name": "design_versions",
+      "community_name": "ongoing_jobs",
       "norm_label": "job_activity_updates"
     },
     {
@@ -19266,7 +19266,7 @@
       "_origin": "ast",
       "id": "server_scripts_17_job_closeout_job_snags",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "job_snags"
     },
     {
@@ -19772,7 +19772,7 @@
       "_origin": "ast",
       "id": "server_scripts_25_job_activation",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "25_job_activation.sql"
     },
     {
@@ -19783,7 +19783,7 @@
       "_origin": "ast",
       "id": "server_scripts_25_job_activation_delivery_activity_templates",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "delivery_activity_templates"
     },
     {
@@ -19794,7 +19794,7 @@
       "_origin": "ast",
       "id": "server_scripts_25_job_activation_job_delivery_activations",
       "community": 101,
-      "community_name": "ongoing_jobs",
+      "community_name": "job_scope_lines",
       "norm_label": "job_delivery_activations"
     },
     {
@@ -19881,7 +19881,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "server_scripts_30_financial_settlement_spine",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "30_financial_settlement_spine.sql"
     },
@@ -19892,7 +19892,7 @@
       "source_location": "L202",
       "_origin": "ast",
       "id": "server_scripts_30_financial_settlement_spine_job_settlement_status",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "job_settlement_status"
     },
@@ -19903,7 +19903,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "zoho_invoices",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "zoho_invoices"
     },
@@ -19914,7 +19914,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "milestone",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "milestone"
     },
@@ -19925,7 +19925,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "resolved",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "resolved"
     },
@@ -19936,7 +19936,7 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "server_scripts_30_financial_settlement_spine_assert_zoho_mirror_is_synced_only",
-      "community": 101,
+      "community": 81,
       "community_name": "ongoing_jobs",
       "norm_label": "assert_zoho_mirror_is_synced_only()"
     },
@@ -20571,7 +20571,7 @@
       "_origin": "ast",
       "id": "server_scripts_backfillallemailstohtml",
       "community": 208,
-      "community_name": "main",
+      "community_name": "Reply",
       "norm_label": "backfillallemailstohtml.mjs"
     },
     {
@@ -20583,7 +20583,7 @@
       "_origin": "ast",
       "id": "server_scripts_backfillallemailstohtml_striplatestsubjectprefix",
       "community": 208,
-      "community_name": "main",
+      "community_name": "Reply",
       "norm_label": "striplatestsubjectprefix()"
     },
     {
@@ -20595,7 +20595,7 @@
       "_origin": "ast",
       "id": "server_scripts_backfillallemailstohtml_striphtmltags",
       "community": 208,
-      "community_name": "main",
+      "community_name": "Reply",
       "norm_label": "striphtmltags()"
     },
     {
@@ -20607,7 +20607,7 @@
       "_origin": "ast",
       "id": "server_scripts_backfillallemailstohtml_converttexttooutlookhtml",
       "community": 208,
-      "community_name": "main",
+      "community_name": "Reply",
       "norm_label": "converttexttooutlookhtml()"
     },
     {
@@ -20619,7 +20619,7 @@
       "_origin": "ast",
       "id": "server_scripts_backfillallemailstohtml_main",
       "community": 208,
-      "community_name": "main",
+      "community_name": "Reply",
       "norm_label": "main()"
     },
     {
@@ -20629,8 +20629,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_scripts_backfillleadcontactmodel",
-      "community": 89,
-      "community_name": "ingestionService.js",
+      "community": 16,
+      "community_name": "contactEmails.js",
       "norm_label": "backfillleadcontactmodel.js"
     },
     {
@@ -20641,8 +20641,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_backfillleadcontactmodel_main",
-      "community": 89,
-      "community_name": "ingestionService.js",
+      "community": 16,
+      "community_name": "contactEmails.js",
       "norm_label": "main()"
     },
     {
@@ -20652,8 +20652,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_scripts_backfillresendemails",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "backfillresendemails.mjs"
     },
     {
@@ -20663,8 +20663,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "server_scripts_backfillresendemails_filename",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "__filename"
     },
     {
@@ -20674,8 +20674,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "server_scripts_backfillresendemails_dirname",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "__dirname"
     },
     {
@@ -20686,8 +20686,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_backfillresendemails_parseemailandname",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "parseemailandname()"
     },
     {
@@ -20698,8 +20698,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_backfillresendemails_runbackfill",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "runbackfill()"
     },
     {
@@ -20869,8 +20869,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_scripts_cleanupduplicatetasksandnotes",
-      "community": 78,
-      "community_name": "main",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "cleanupduplicatetasksandnotes.mjs"
     },
     {
@@ -20881,8 +20881,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_cleanupduplicatetasksandnotes_cleantextstring",
-      "community": 78,
-      "community_name": "main",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "cleantextstring()"
     },
     {
@@ -20893,8 +20893,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_cleanupduplicatetasksandnotes_main",
-      "community": 78,
-      "community_name": "main",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "main()"
     },
     {
@@ -20904,8 +20904,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_scripts_consolidateduplicateleads",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "consolidateduplicateleads.mjs"
     },
     {
@@ -20916,8 +20916,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_consolidateduplicateleads_main",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "main()"
     },
     {
@@ -20927,8 +20927,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_scripts_convertconfirmedpocstokeyrelationships",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "convertconfirmedpocstokeyrelationships.mjs"
     },
     {
@@ -20939,8 +20939,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_convertconfirmedpocstokeyrelationships_main",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "main()"
     },
     {
@@ -20950,8 +20950,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_scripts_debug_sync",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "debug-sync.mjs"
     },
     {
@@ -20961,8 +20961,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "server_scripts_debug_sync_client",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "client"
     },
     {
@@ -20972,8 +20972,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_scripts_find_email_html_body",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "find_email_html_body.mjs"
     },
     {
@@ -20984,8 +20984,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_find_email_html_body_run",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "run()"
     },
     {
@@ -21157,8 +21157,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_scripts_inspect_uzair_new_reply",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "inspect-uzair-new-reply.mjs"
     },
     {
@@ -21237,8 +21237,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_scripts_inspect_raed_reply",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "inspect_raed_reply.mjs"
     },
     {
@@ -21249,8 +21249,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_inspect_raed_reply_run",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "run()"
     },
     {
@@ -21375,8 +21375,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_scripts_markcampaignemailed",
-      "community": 47,
-      "community_name": "analyticsCronService.js",
+      "community": 10,
+      "community_name": "campaignCleanupDelete.js",
       "norm_label": "markcampaignemailed.js"
     },
     {
@@ -21386,8 +21386,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "server_scripts_markcampaignemailed_preserve_statuses",
-      "community": 47,
-      "community_name": "analyticsCronService.js",
+      "community": 10,
+      "community_name": "campaignCleanupDelete.js",
       "norm_label": "preserve_statuses"
     },
     {
@@ -21398,8 +21398,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_markcampaignemailed_findcampaign",
-      "community": 47,
-      "community_name": "analyticsCronService.js",
+      "community": 10,
+      "community_name": "campaignCleanupDelete.js",
       "norm_label": "findcampaign()"
     },
     {
@@ -21410,8 +21410,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_markcampaignemailed_main",
-      "community": 47,
-      "community_name": "analyticsCronService.js",
+      "community": 10,
+      "community_name": "campaignCleanupDelete.js",
       "norm_label": "main()"
     },
     {
@@ -21794,8 +21794,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_scripts_re_sync_cleaned_replies",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "re-sync-cleaned-replies.mjs"
     },
     {
@@ -21805,8 +21805,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "server_scripts_re_sync_cleaned_replies_idstodelete",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "idstodelete"
     },
     {
@@ -23590,8 +23590,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_scripts_sync_all_lead_sources",
-      "community": 47,
-      "community_name": "analyticsCronService.js",
+      "community": 16,
+      "community_name": "contactEmails.js",
       "norm_label": "sync_all_lead_sources.mjs"
     },
     {
@@ -23602,8 +23602,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_sync_all_lead_sources_run",
-      "community": 47,
-      "community_name": "analyticsCronService.js",
+      "community": 16,
+      "community_name": "contactEmails.js",
       "norm_label": "run()"
     },
     {
@@ -23839,8 +23839,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_scripts_test_vendor_matrix",
-      "community": 47,
-      "community_name": "analyticsCronService.js",
+      "community": 89,
+      "community_name": "ingestionService.js",
       "norm_label": "test_vendor_matrix.mjs"
     },
     {
@@ -23851,8 +23851,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_test_vendor_matrix_run",
-      "community": 47,
-      "community_name": "analyticsCronService.js",
+      "community": 89,
+      "community_name": "ingestionService.js",
       "norm_label": "run()"
     },
     {
@@ -25012,8 +25012,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_src_models_email",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "email.js"
     },
     {
@@ -25023,8 +25023,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "server_src_models_email_emailschema",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "emailschema"
     },
     {
@@ -25034,8 +25034,8 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "server_src_models_email_email",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "email"
     },
     {
@@ -25375,8 +25375,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_src_models_reply",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "reply.js"
     },
     {
@@ -25386,8 +25386,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "server_src_models_reply_threadmessageschema",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "threadmessageschema"
     },
     {
@@ -25397,8 +25397,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "server_src_models_reply_replyschema",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "replyschema"
     },
     {
@@ -25408,8 +25408,8 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "server_src_models_reply_reply",
-      "community": 2,
-      "community_name": "campaignCleanupInventory.js",
+      "community": 208,
+      "community_name": "Reply",
       "norm_label": "reply"
     },
     {
@@ -26296,8 +26296,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_src_services_analyticscronservice",
-      "community": 47,
-      "community_name": "analyticsCronService.js",
+      "community": 89,
+      "community_name": "ingestionService.js",
       "norm_label": "analyticscronservice.js"
     },
     {
@@ -26307,8 +26307,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "server_src_services_analyticscronservice_vendors",
-      "community": 47,
-      "community_name": "analyticsCronService.js",
+      "community": 89,
+      "community_name": "ingestionService.js",
       "norm_label": "vendors"
     },
     {
@@ -26319,8 +26319,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_analyticscronservice_computevendormatrix",
-      "community": 47,
-      "community_name": "analyticsCronService.js",
+      "community": 89,
+      "community_name": "ingestionService.js",
       "norm_label": "computevendormatrix()"
     },
     {
@@ -26331,8 +26331,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_analyticscronservice_refreshcampaigncoveragecounters",
-      "community": 47,
-      "community_name": "analyticsCronService.js",
+      "community": 89,
+      "community_name": "ingestionService.js",
       "norm_label": "refreshcampaigncoveragecounters()"
     },
     {
@@ -26355,8 +26355,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_analyticscronservice_computeglobalsnapshot",
-      "community": 47,
-      "community_name": "analyticsCronService.js",
+      "community": 89,
+      "community_name": "ingestionService.js",
       "norm_label": "computeglobalsnapshot()"
     },
     {
@@ -26367,8 +26367,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_analyticscronservice_runanalyticscron",
-      "community": 47,
-      "community_name": "analyticsCronService.js",
+      "community": 89,
+      "community_name": "ingestionService.js",
       "norm_label": "runanalyticscron()"
     },
     {
@@ -26379,8 +26379,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_analyticscronservice_startanalyticscron",
-      "community": 47,
-      "community_name": "analyticsCronService.js",
+      "community": 89,
+      "community_name": "ingestionService.js",
       "norm_label": "startanalyticscron()"
     },
     {
@@ -26391,8 +26391,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_analyticscronservice_stopanalyticscron",
-      "community": 47,
-      "community_name": "analyticsCronService.js",
+      "community": 89,
+      "community_name": "ingestionService.js",
       "norm_label": "stopanalyticscron()"
     },
     {
@@ -34045,8 +34045,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_src_utils_companyresolver",
-      "community": 89,
-      "community_name": "ingestionService.js",
+      "community": 16,
+      "community_name": "contactEmails.js",
       "norm_label": "companyresolver.js"
     },
     {
@@ -34057,8 +34057,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_utils_companyresolver_normalizecompanyname",
-      "community": 89,
-      "community_name": "ingestionService.js",
+      "community": 16,
+      "community_name": "contactEmails.js",
       "norm_label": "normalizecompanyname()"
     },
     {
@@ -34069,8 +34069,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_utils_companyresolver_resolvecompanyforcontact",
-      "community": 89,
-      "community_name": "ingestionService.js",
+      "community": 16,
+      "community_name": "contactEmails.js",
       "norm_label": "resolvecompanyforcontact()"
     },
     {
@@ -34293,8 +34293,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_utils_contactemails_resolveleadvendorsource",
-      "community": 47,
-      "community_name": "analyticsCronService.js",
+      "community": 16,
+      "community_name": "contactEmails.js",
       "norm_label": "resolveleadvendorsource()"
     },
     {
@@ -34888,8 +34888,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_src_utils_normalizedomain",
-      "community": 89,
-      "community_name": "ingestionService.js",
+      "community": 16,
+      "community_name": "contactEmails.js",
       "norm_label": "normalizedomain.js"
     },
     {
@@ -34900,8 +34900,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_utils_normalizedomain_normalizedomain",
-      "community": 89,
-      "community_name": "ingestionService.js",
+      "community": 16,
+      "community_name": "contactEmails.js",
       "norm_label": "normalizedomain()"
     },
     {
@@ -64195,7 +64195,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/admin/crm/components/sequences/SequenceStudio.jsx",
-      "source_location": "L716",
+      "source_location": "L713",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_components_sequences_sequencestudio_sequencestudio",
@@ -64207,7 +64207,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/admin/crm/components/sequences/SequenceStudio.jsx",
-      "source_location": "L718",
+      "source_location": "L715",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_components_sequences_sequencestudio_sequencestudio",
@@ -152193,5 +152193,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "4aa23c6a653e1b05a8cff5a8c3660592ea48da9d"
+  "built_at_commit": "b63fcced4940b8ce1aa4a57ce562350eeb1031a6"
 }

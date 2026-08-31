@@ -587,11 +587,29 @@ export async function launchSequence(sequenceId, options = {}) {
   assertLaunchAudience({ ...options, projectId });
   const preview = await previewAudience(projectId, { ...options, sequenceId: seq.sqlId, full: true });
   const candidates = (preview.contacts || []).filter((row) => row.netNew);
-  if (!candidates.length) return {
-    launchBatchId: null, launchId: null, enrolled: 0, enrolledCount: 0,
-    skippedAlreadySent: preview.alreadySent, skippedInQueue: preview.alreadyInQueue,
-    skippedBlocked: preview.blocked, eligible: preview.eligible,
-  };
+  if (!candidates.length) {
+    const updatePending = await db.query(`
+      UPDATE send_jobs sj
+      SET manual_send = FALSE, status = 'pending', updated_at = NOW()
+      FROM sequence_enrollments se
+      WHERE sj.enrollment_id = se.id
+        AND se.sequence_id = $1::uuid
+        AND sj.status IN ('pending', 'failed')
+      RETURNING sj.id
+    `, [seq.sqlId]);
+    if (updatePending.rowCount > 0) {
+      const { kickSendQueue } = await import('./sendWorker.js');
+      kickSendQueue().catch(() => {});
+    }
+    return {
+      launchBatchId: null, launchId: null,
+      enrolled: updatePending.rowCount || preview.alreadyInQueue || 0,
+      enrolledCount: updatePending.rowCount || preview.alreadyInQueue || 0,
+      skippedAlreadySent: preview.alreadySent,
+      skippedInQueue: Math.max(0, (preview.alreadyInQueue || 0) - (updatePending.rowCount || 0)),
+      skippedBlocked: preview.blocked, eligible: preview.eligible,
+    };
+  }
 
   const client = await db.getClient();
   let launchId;
@@ -641,7 +659,7 @@ export async function launchSequence(sequenceId, options = {}) {
         ) RETURNING id,campaign_contact_id,lead_id,campaign_id
       )
       INSERT INTO send_jobs(lead_id,campaign_id,enrollment_id,step_index,status,scheduled_for,recipient_email,rendered_subject,rendered_body,immediate_launch,manual_send,idempotency_key,payload)
-      SELECT enrollment.lead_id,enrollment.campaign_id,enrollment.id,0,'pending',$5,input.email,$6,$7,FALSE,TRUE,
+      SELECT enrollment.lead_id,enrollment.campaign_id,enrollment.id,0,'pending',$5,input.email,$6,$7,FALSE,FALSE,
              $4::text||':'||enrollment.campaign_contact_id::text||':0',
              jsonb_build_object('launchBatchId',$4::text,'sequenceId',$3::text,'holdOverride',COALESCE(input.hold_override,FALSE),'fromEmail',$8::text,'fromName',$9::text)
       FROM new_enrollments enrollment JOIN input ON input.campaign_contact_id=enrollment.campaign_contact_id
@@ -652,6 +670,12 @@ export async function launchSequence(sequenceId, options = {}) {
     await client.query(`UPDATE sequences SET is_active=TRUE,updated_at=NOW() WHERE id=$1::uuid`, [seq.sqlId]);
     if (options.transactionOptions?.rollbackOnly) await client.query('ROLLBACK'); else await client.query('COMMIT');
   } catch (error) { await client.query('ROLLBACK').catch(() => {}); throw error; } finally { client.release(); }
+
+  if (enrolled > 0) {
+    const { kickSendQueue } = await import('./sendWorker.js');
+    kickSendQueue().catch(() => {});
+  }
+
   return {
     launchBatchId: launchId, launchId, enrolled, enrolledCount: enrolled,
     skippedAlreadySent: preview.alreadySent, skippedInQueue: preview.alreadyInQueue,
@@ -903,6 +927,12 @@ export async function cleanupOrphanedSequenceStates() {
           JOIN conversations conv ON conv.id = m.conversation_id
           WHERE conv.campaign_contact_id = cc.id AND m.direction = 'outbound'
         )
+    `);
+
+    await db.query(`
+      UPDATE send_jobs
+      SET manual_send = FALSE
+      WHERE status = 'pending' AND manual_send = TRUE
     `);
   } catch (err) {
     console.warn('[CRM] Orphan sequence state cleanup warning:', err.message);
