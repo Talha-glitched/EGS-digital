@@ -566,10 +566,22 @@ function GlobalInspector({
         </div>
 
         {isSend && (
-          <div className="crm-seq-enroll-panel crm-seq-expand-in">
+          <div className="crm-seq-enroll-panel crm-seq-expand-in space-y-2.5">
             <MailboxUsagePopover usage={mailboxUsage} />
             {!mailStatus?.emailDeliveryReady && (
               <Alert tone="warning" className="mt-2 !py-1.5 !text-2xs">Email delivery is not configured.</Alert>
+            )}
+            {onResetEnrollments && (
+              <div className="pt-2 border-t border-neutral-100 flex items-center justify-between">
+                <span className="text-2xs text-neutral-500">Need to restart or re-send?</span>
+                <button
+                  type="button"
+                  onClick={onResetEnrollments}
+                  className="text-2xs font-semibold text-brand hover:text-brand/80 hover:underline cursor-pointer"
+                >
+                  Reset enrollments
+                </button>
+              </div>
             )}
           </div>
         )}
