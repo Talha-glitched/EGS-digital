@@ -15,12 +15,11 @@ function ShortcutHint() {
 
 export default function TopNavbar({ title, subtitle, pageInfo, onMenu, status, onOpenSearch }) {
   const infoText = pageInfo ?? subtitle;
-  const { displayName, role, user } = usePermissions(status);
-  const systemReady = status?.mongodbReady && status?.smtpReady && status?.imapReady;
+  const systemReady = (status?.postgresReady || status?.mongodbReady) && (status?.smtpReady || status?.emailDeliveryReady) && status?.imapReady;
   const healthLabel = systemReady ? 'System ready' : 'Setup needed';
   const healthTitle = [
-    `Database: ${status?.mongodbReady ? 'ready' : 'not connected'}`,
-    `Sending: ${status?.smtpReady ? 'ready' : 'not configured'}`,
+    `Database: ${status?.postgresReady || status?.mongodbReady ? 'ready' : 'not connected'}`,
+    `Sending: ${status?.smtpReady || status?.emailDeliveryReady ? 'ready' : 'not configured'}`,
     `Inbox sync: ${status?.imapReady ? 'ready' : 'not configured'}`,
   ].join(' · ');
 

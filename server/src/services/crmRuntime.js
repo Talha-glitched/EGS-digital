@@ -4,6 +4,7 @@ import { startAnalyticsCron } from './analyticsCronService.js';
 import { getMailConfigStatus } from './mailTransport.js';
 import { recalculateAllCampaignCoverageStats } from './projectService.js';
 import { startInventoryPhotoRetentionCron } from './inventoryPhotoRetentionService.js';
+import { cleanupOrphanedSequenceStates } from './sequenceService.js';
 
 export function initializeCrmRuntime() {
   const { imapReady, imap2Ready } = getMailConfigStatus();
@@ -21,6 +22,10 @@ export function initializeCrmRuntime() {
 
   startInventoryPhotoRetentionCron();
   console.info('Inventory photo retention cron started.');
+
+  cleanupOrphanedSequenceStates().catch((err) => {
+    console.error('[CRM] Cleanup orphaned sequence states failed:', err.message);
+  });
 
   // Keep exhibitor / POC coverage accurate for every campaign (existing + future imports).
   recalculateAllCampaignCoverageStats()

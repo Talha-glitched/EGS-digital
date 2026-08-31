@@ -239,25 +239,61 @@ export async function updateSequence(id, payload) {
 }
 
 export async function deleteSequence(id) {
-  const res = await db.query(
-    `DELETE FROM sequences WHERE (id::text = $1::text OR mongo_sequence_id = $1) RETURNING id`,
-    [String(id)]
-  );
-  return { deleted: res.rowCount > 0 };
+  const client = await db.getClient();
+  try {
+    await client.query('BEGIN');
+    const seqRes = await client.query(
+      `SELECT id FROM sequences WHERE (id::text = $1::text OR mongo_sequence_id = $1) LIMIT 1`,
+      [String(id)]
+    );
+    const sqlId = seqRes.rows[0]?.id;
+    if (sqlId) {
+      await client.query(`
+        UPDATE campaign_contacts cc
+        SET outreach_focus_state = 'pending',
+            delivery_state = CASE WHEN cc.delivery_state = 'Emailed Outbound' THEN NULL ELSE cc.delivery_state END
+        WHERE cc.id IN (
+          SELECT se.campaign_contact_id FROM sequence_enrollments se
+          WHERE se.sequence_id = $1::uuid
+        )
+        AND NOT EXISTS (
+          SELECT 1 FROM messages m
+          JOIN conversations conv ON conv.id = m.conversation_id
+          WHERE conv.campaign_contact_id = cc.id AND m.direction = 'outbound'
+        )
+      `, [sqlId]);
+
+      await client.query(`DELETE FROM send_jobs WHERE sequence_id = $1::uuid OR enrollment_id IN (SELECT id FROM sequence_enrollments WHERE sequence_id = $1::uuid)`, [sqlId]);
+      await client.query(`DELETE FROM sequence_enrollments WHERE sequence_id = $1::uuid`, [sqlId]);
+      await client.query(`DELETE FROM sequences WHERE id = $1::uuid`, [sqlId]);
+    }
+    await client.query('COMMIT');
+    return { deleted: Boolean(sqlId) };
+  } catch (err) {
+    await client.query('ROLLBACK').catch(() => {});
+    throw err;
+  } finally {
+    client.release();
+  }
 }
 
 export async function deleteSequences(ids = []) {
   const cleanIds = (Array.isArray(ids) ? ids : []).map(String);
   if (!cleanIds.length) return { deleted: 0, failed: 0, results: [] };
 
-  const res = await db.query(
-    `DELETE FROM sequences WHERE id::text = ANY($1::text[]) OR mongo_sequence_id = ANY($1::text[]) RETURNING id`,
-    [cleanIds]
-  );
+  let deletedCount = 0;
+  for (const id of cleanIds) {
+    try {
+      const res = await deleteSequence(id);
+      if (res.deleted) deletedCount++;
+    } catch {
+      /* continue */
+    }
+  }
 
   return {
-    deleted: res.rowCount,
-    failed: cleanIds.length - res.rowCount,
+    deleted: deletedCount,
+    failed: cleanIds.length - deletedCount,
     results: cleanIds.map((id) => ({ id, ok: true })),
   };
 }
@@ -285,9 +321,7 @@ export async function previewAudience(projectId, options = {}) {
   const leadIds = idList(options.leadIds, options.includeLeadIds);
   const excludeCompanyIds = idList(options.excludeCompanyIds);
   const excludeLeadIds = idList(options.excludeLeadIds);
-  // Contacts the user ticked in the campaign-list import modal. Picking someone
-  // there IS the decision to email them, so it waives the soft campaign hold
-  // (replied / paused / manual) rather than making them choose a second time.
+  const isImportAll = Boolean(options.importCampaign || options.importedCampaignIds?.length > 0);
   const consentedLeadIds = idList(...Object.values(options.campaignSelections || {}));
   const sequenceSqlId = await resolveSequenceSqlId(options.sequenceId);
   if (!campaignIds.length && !companyIds.length && !leadIds.length) {
@@ -304,7 +338,9 @@ export async function previewAudience(projectId, options = {}) {
              WHEN email.normalized_value IS NULL THEN 'missing_email'
              WHEN suppression.endpoint IS NOT NULL THEN 'suppressed'
              WHEN COALESCE(cc.delivery_state,'') IN('Bounced / Invalid','Opted Out') THEN 'delivery_blocked'
-             WHEN COALESCE(cc.outreach_focus_state,'pending') NOT IN('pending','active_manual') THEN 'campaign_focus_hold'
+             WHEN COALESCE(cc.outreach_focus_state,'pending') NOT IN('pending','active_manual')
+                  AND EXISTS (SELECT 1 FROM messages m JOIN conversations conv ON conv.id = m.conversation_id WHERE conv.campaign_contact_id = cc.id AND m.direction = 'outbound')
+                  THEN 'campaign_focus_hold'
              ELSE NULL
            END AS "blockedReason"
     FROM campaign_contacts cc
@@ -351,7 +387,7 @@ export async function previewAudience(projectId, options = {}) {
     const manuallyExcluded = excludedCompanySet.has(String(row.companyId)) || excludedLeadSet.has(String(row.leadId));
     // Only the campaign hold is overridable. Missing email, suppression and
     // bounced/opted-out are consent or deliverability facts, not preferences.
-    const holdOverridden = row.blockedReason === HOLD_REASON && consentedLeadSet.has(String(row.leadId));
+    const holdOverridden = (row.blockedReason === HOLD_REASON) && (isImportAll || consentedLeadSet.has(String(row.leadId)));
     const blockedReason = holdOverridden ? null : row.blockedReason;
     const eligible = !blockedReason && !manuallyExcluded;
     return {
@@ -831,4 +867,38 @@ export async function purgeLeadFromQueue(leadId) {
     );
   } catch (err) {}
   return true;
+}
+
+export async function cleanupOrphanedSequenceStates() {
+  try {
+    await db.query(`
+      DELETE FROM send_jobs
+      WHERE sequence_id IS NOT NULL
+        AND sequence_id NOT IN (SELECT id FROM sequences)
+    `);
+
+    await db.query(`
+      DELETE FROM sequence_enrollments
+      WHERE sequence_id IS NOT NULL
+        AND sequence_id NOT IN (SELECT id FROM sequences)
+    `);
+
+    await db.query(`
+      UPDATE campaign_contacts cc
+      SET outreach_focus_state = 'pending',
+          delivery_state = CASE WHEN cc.delivery_state = 'Emailed Outbound' THEN NULL ELSE cc.delivery_state END
+      WHERE (cc.outreach_focus_state NOT IN ('pending', 'active_manual') OR cc.delivery_state = 'Emailed Outbound')
+        AND NOT EXISTS (
+          SELECT 1 FROM sequence_enrollments se
+          WHERE se.campaign_contact_id = cc.id AND se.reset_at IS NULL
+        )
+        AND NOT EXISTS (
+          SELECT 1 FROM messages m
+          JOIN conversations conv ON conv.id = m.conversation_id
+          WHERE conv.campaign_contact_id = cc.id AND m.direction = 'outbound'
+        )
+    `);
+  } catch (err) {
+    console.warn('[CRM] Orphan sequence state cleanup warning:', err.message);
+  }
 }
