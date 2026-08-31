@@ -343,7 +343,7 @@ export async function deleteSequences(ids = []) {
 function isUsableCampaignId(value) {
   if (value == null) return false;
   const id = String(value).trim();
-  return Boolean(id) && id !== 'null' && id !== 'undefined' && /^[a-f\d]{24}$/i.test(id);
+  return Boolean(id) && id !== 'null' && id !== 'undefined' && (/^[a-f\d]{24}$/i.test(id) || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id));
 }
 
 export async function previewSequenceAudience(campaignId, options = {}) {

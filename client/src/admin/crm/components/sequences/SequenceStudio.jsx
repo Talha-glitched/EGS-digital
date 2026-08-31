@@ -590,15 +590,12 @@ export default function SequenceStudio({
       return;
     }
 
-    if (launch && !(audiencePreview?.netNew > 0)) {
-      showToast('Import an audience list before launching.', 'error');
-      return;
-    }
-
     const hasAudience = Boolean(
       audience.importedCampaignIds?.length
       || audience.includeContactIds?.length
-      || audience.includeCompanyIds?.length,
+      || audience.includeCompanyIds?.length
+      || (audiencePreview?.netNew || 0) > 0
+      || (audiencePreview?.eligible || 0) > 0,
     );
     if (launch && !hasAudience) {
       showToast('Import a campaign list or add companies/contacts before launching.', 'error');

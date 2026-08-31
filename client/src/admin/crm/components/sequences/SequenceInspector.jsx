@@ -212,7 +212,7 @@ export default function SequenceInspector({
                 <button
                   type="button"
                   onClick={onLaunch}
-                  disabled={busy || !(audiencePreview?.netNew || 0)}
+                  disabled={busy || !((audiencePreview?.netNew || 0) > 0 || (audiencePreview?.eligible || 0) > 0 || audience.importedCampaignIds?.length || audience.includeContactIds?.length || audience.includeCompanyIds?.length)}
                   className={cn('crm-btn-primary w-full !py-2.5 text-xs', launchArmed && 'ring-2 ring-orange-200')}
                 >
                   <Send className="h-3.5 w-3.5" />

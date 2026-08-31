@@ -345,8 +345,8 @@
     "semantic_hash": ""
   },
   "client/src/admin/crm/components/sequences/SequenceInspector.jsx": {
-    "mtime": 1788147870.7755876,
-    "ast_hash": "503f0e23461c82466bdfb92ce438dd27",
+    "mtime": 1788165569.423946,
+    "ast_hash": "13751689893c807679e81d27186f891f",
     "semantic_hash": ""
   },
   "client/src/admin/crm/components/sequences/SequenceListPanel.jsx": {
@@ -365,8 +365,8 @@
     "semantic_hash": ""
   },
   "client/src/admin/crm/components/sequences/SequenceStudio.jsx": {
-    "mtime": 1788147810.861241,
-    "ast_hash": "95c7c7ae315e681fadc6e8df353fe4ef",
+    "mtime": 1788165581.812785,
+    "ast_hash": "8eed580372d9add68026a18a4850fe8c",
     "semantic_hash": ""
   },
   "client/src/admin/crm/components/sequences/SequenceStudioToast.jsx": {
@@ -705,8 +705,8 @@
     "semantic_hash": "f9f09740463d055049bd6ff05d2e7a50"
   },
   "client/src/admin/crm/crmApi.js": {
-    "mtime": 1788146082.9916873,
-    "ast_hash": "b9964d9fa9127e6c420497ffe531154c",
+    "mtime": 1788165533.4932077,
+    "ast_hash": "a16ed9a76ae9763386d382552ad43538",
     "semantic_hash": ""
   },
   "client/src/admin/crm/hooks/sortUtils.js": {

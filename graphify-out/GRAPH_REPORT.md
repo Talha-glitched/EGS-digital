@@ -1,16 +1,16 @@
 # Graph Report - EGS-web  (2026-08-31)
 
 ## Corpus Check
-- 612 files · ~4,096,905 words
+- 612 files · ~4,096,917 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3902 nodes · 9274 edges · 254 communities (205 shown, 49 thin omitted)
+- 3902 nodes · 9274 edges · 252 communities (204 shown, 48 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 52 edges (avg confidence: 0.66)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `4aa23c6a`
+- Built from commit: `b63fcced`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -62,7 +62,6 @@
 - SensitiveDataContext.jsx
 - InventoryPage.jsx
 - supplierProcurementService.js
-- analyticsCronService.js
 - auditDatabaseMigrationRisks.js
 - profileDatabaseForSqlMigration.js
 - jobDeliveryService.js
@@ -81,7 +80,7 @@
 - sequenceFlowExecutor.js
 - app.js
 - Prerequisites
-- organizations
+- 04_add_missing_tables.sql
 - ProjectDatabaseTable.jsx
 - jobCloseoutService.js
 - jobSettlementService.js
@@ -93,10 +92,9 @@
 - restoreEmailThreadsFromStaging.js
 - Section Order
 - dailyReview.test.js
-- main
 - usePageLifecycle
 - scripts
-- design_versions
+- ongoing_jobs
 - Section Order
 - Section Order
 - Section Order
@@ -116,7 +114,7 @@
 - emailTemplateRenderer.js
 - runInventoryRefactorMigration.js
 - ServicesV2.jsx
-- ongoing_jobs
+- job_scope_lines
 - auditBusinessSemanticsReadOnly.js
 - recoverRuntimeInboundContext.js
 - src/constants/pocQualification.js
@@ -209,7 +207,7 @@
 - SEO And AI Engine Optimization
 - Anti-Slop Editorial Standards
 - Numbers That Would Increase Buyer Confidence
-- main
+- Reply
 - 31_quote_revision_provenance.sql
 - fieldExecutionService.js
 - ActiveSelectionContext.jsx
@@ -276,7 +274,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (254 total, 49 thin omitted)
+## Communities (252 total, 48 thin omitted)
 
 ### Community 0 - "crmApi.js"
 Cohesion: 0.05
@@ -287,8 +285,8 @@ Cohesion: 0.05
 Nodes (80): ALL_READ, ALL_WRITE, DENY_PERMISSION, getPermissionsForRole(), isValidRole(), permissionForRequest(), ROLE_LABELS, ROLE_PERMISSIONS (+72 more)
 
 ### Community 2 - "campaignCleanupInventory.js"
-Cohesion: 0.06
-Nodes (56): __dirname, __filename, runAudit(), __dirname, __filename, parseEmailAndName(), runBackfill(), main() (+48 more)
+Cohesion: 0.08
+Nodes (41): __dirname, __filename, runAudit(), main(), pad(), run(), run(), isDryRun (+33 more)
 
 ### Community 3 - "RevisionDetailDrawer.jsx"
 Cohesion: 0.20
@@ -320,7 +318,7 @@ Nodes (42): BM25, detect_domain(), _load_csv(), Build BM25 index from documents,
 
 ### Community 10 - "campaignCleanupDelete.js"
 Cohesion: 0.09
-Nodes (35): main(), __dirname, main(), XLSX_PATH, run(), run(), run(), AnalyticsSnapshot (+27 more)
+Nodes (38): main(), __dirname, main(), XLSX_PATH, run(), run(), run(), findCampaign() (+30 more)
 
 ### Community 11 - "CommunicationJobModal.jsx"
 Cohesion: 0.23
@@ -343,8 +341,8 @@ Cohesion: 0.06
 Nodes (41): CampaignVendorPerformanceGrid(), SOURCE_DOT, CoverageMetricsBanner(), MetricCard(), SOURCE_DOT, VendorPerformanceGrid(), DECISION_LABELS, JobArtifactsPanel() (+33 more)
 
 ### Community 16 - "contactEmails.js"
-Cohesion: 0.10
-Nodes (41): findCampaign(), main(), normLi(), normName(), parseExcel(), run(), run(), recalculateCampaignCoverageStats() (+33 more)
+Cohesion: 0.09
+Nodes (47): findCampaign(), main(), normLi(), normName(), parseExcel(), main(), run(), run() (+39 more)
 
 ### Community 17 - "dependencies"
 Cohesion: 0.05
@@ -384,7 +382,7 @@ Nodes (23): AUTO_LOCKED_STATUSES, deriveAutoCampaignStatus(), syncAutoCampaignSt
 
 ### Community 26 - "01_init_postgresql_schema.sql"
 Cohesion: 0.06
-Nodes (52): predecessors, prevent_task_dependency_cycle, campaign_accounts, campaign_contact_focus_events, campaign_contacts, communication_job_actions, conversation_job_links, conversation_participants (+44 more)
+Nodes (62): predecessors, prevent_task_dependency_cycle, campaign_accounts, campaign_contact_focus_events, campaign_contacts, campaigns, communication_job_actions, conversation_job_links (+54 more)
 
 ### Community 27 - "completedJobService.js"
 Cohesion: 0.13
@@ -466,10 +464,6 @@ Nodes (11): EVIDENCE_LABELS, JobCloseoutPanel(), localInput(), STATUS_LABELS, wh
 Cohesion: 0.25
 Nodes (21): addSupplierCommitmentUpdate(), assertJob(), assertWorkPackage(), audit(), COMMITMENT_STATUSES, createSupplier(), createSupplierCommitment(), createSupplierQuote() (+13 more)
 
-### Community 47 - "analyticsCronService.js"
-Cohesion: 0.17
-Nodes (12): findCampaign(), main(), PRESERVE_STATUSES, run(), run(), computeGlobalSnapshot(), computeVendorMatrix(), refreshCampaignCoverageCounters() (+4 more)
-
 ### Community 48 - "auditDatabaseMigrationRisks.js"
 Cohesion: 0.26
 Nodes (18): add(), auditCampaignCounters(), auditCompanies(), auditJobs(), auditLeads(), auditMessages(), auditOpportunities(), auditOutreachConsistency() (+10 more)
@@ -542,9 +536,9 @@ Nodes (37): app, clientDistDir, clientIndexPath, __dirname, __filename, projectR
 Cohesion: 0.06
 Nodes (32): Accessibility, Available Domains, Available Stacks, Common Rules for Professional UI, Common Sticking Points, Example Workflow, How to Use This Skill, Icons & Visual Elements (+24 more)
 
-### Community 66 - "organizations"
-Cohesion: 0.17
-Nodes (14): campaigns, event_editions, event_participations, events, interactions, job_closeouts, locations, organization_identifiers (+6 more)
+### Community 66 - "04_add_missing_tables.sql"
+Cohesion: 0.40
+Nodes (4): analytics_snapshots, completed_jobs, daily_review_records, revenue_entries
 
 ### Community 67 - "ProjectDatabaseTable.jsx"
 Cohesion: 0.06
@@ -598,9 +592,9 @@ Nodes (49): exhibitionFaqs, ExhibitionsFAQSection(), Footer(), InquiryCtaButton(
 Cohesion: 0.14
 Nodes (13): dependencies, @microsoft/clarity, @microsoft/clarity, name, private, scripts, build, dev (+5 more)
 
-### Community 81 - "design_versions"
-Cohesion: 0.21
-Nodes (12): artifact_decisions, design_sets, design_versions, production_release_design_versions, production_releases, quote_versions, quotes, artifact_decisions (+4 more)
+### Community 81 - "ongoing_jobs"
+Cohesion: 0.12
+Nodes (22): milestone, resolved, artifact_decisions, design_sets, design_versions, financial_milestones, job_actual_costs, job_cost_confirmations (+14 more)
 
 ### Community 82 - "Section Order"
 Cohesion: 0.08
@@ -631,8 +625,8 @@ Cohesion: 0.08
 Nodes (23): 07 Contact Page Content Spec, 1. Hero, 2. Choose Your Brief, 3. What To Include, 4. Recommended Form Fields, 5. What Happens Next, 6. Direct Contact Details, 7. Proof Reminder (+15 more)
 
 ### Community 89 - "ingestionService.js"
-Cohesion: 0.11
-Nodes (37): main(), findOrCreateCampaign(), main(), markCampaignEmailed(), parseArgs(), PRESERVE_STATUSES, computeProjectSnapshot(), blendAndIngestLeads() (+29 more)
+Cohesion: 0.09
+Nodes (40): findOrCreateCampaign(), main(), markCampaignEmailed(), parseArgs(), PRESERVE_STATUSES, run(), computeGlobalSnapshot(), computeProjectSnapshot() (+32 more)
 
 ### Community 90 - "systemSettingsService.js"
 Cohesion: 0.47
@@ -674,9 +668,9 @@ Nodes (11): getBaseUrl(), isPublicTrackableUrl(), deliverSequenceEmail(), __dirn
 Cohesion: 0.47
 Nodes (4): chapterProgress(), PAGE_THEMES, ServicesV2(), smoothstep()
 
-### Community 101 - "ongoing_jobs"
-Cohesion: 0.13
-Nodes (29): milestone, resolved, field_execution_files, field_execution_submissions, financial_milestones, job_activities, job_actual_costs, job_cost_confirmations (+21 more)
+### Community 101 - "job_scope_lines"
+Cohesion: 0.21
+Nodes (19): field_execution_files, field_execution_submissions, job_activities, job_delivery_activations, job_locations, job_phases, job_scope_lines, job_snags (+11 more)
 
 ### Community 102 - "auditBusinessSemanticsReadOnly.js"
 Cohesion: 0.40
@@ -914,9 +908,9 @@ Nodes (5): Anti-Slop Editorial Standards, Banned Or High-Risk Phrases, Paragraph
 Cohesion: 0.40
 Nodes (5): Events / Graduation Buyers, Exhibition Buyers, Numbers That Would Increase Buyer Confidence, Procurement Buyers, Retail / Trade Marketing Buyers
 
-### Community 208 - "main"
-Cohesion: 0.80
-Nodes (4): convertTextToOutlookHtml(), main(), stripHtmlTags(), stripLatestSubjectPrefix()
+### Community 208 - "Reply"
+Cohesion: 0.09
+Nodes (21): convertTextToOutlookHtml(), main(), stripHtmlTags(), stripLatestSubjectPrefix(), __dirname, __filename, parseEmailAndName(), runBackfill() (+13 more)
 
 ### Community 209 - "31_quote_revision_provenance.sql"
 Cohesion: 0.60
@@ -957,7 +951,7 @@ Nodes (3): getPocOption(), POC_QUALIFICATION_OPTIONS, POC_STATUS_LABELS
 ## Knowledge Gaps
 - **1183 isolated node(s):** `name`, `private`, `type`, `dev`, `build` (+1178 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **49 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **48 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
@@ -975,4 +969,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `employeeOperationsService.js` be split into smaller, more focused modules?**
   _Cohesion score 0.0537280701754386 - nodes in this community are weakly interconnected._
 - **Should `campaignCleanupInventory.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.059609730018711574 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08249603384452671 - nodes in this community are weakly interconnected._
