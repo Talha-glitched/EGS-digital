@@ -437,11 +437,21 @@ export async function listSentEmails(options = {}) {
   const params = [];
   const add = (value) => { params.push(value); return `$${params.length}`; };
 
-  if (options.campaignId) conditions.push(`conv.campaign_id::text = ${add(String(options.campaignId))}`);
+  if (options.campaignId) {
+    const campVal = add(String(options.campaignId));
+    conditions.push(`(conv.campaign_id::text = ${campVal} OR ca.campaign_id::text = ${campVal})`);
+  }
   if (options.sequenceId) conditions.push(`seq.id::text = ${add(String(options.sequenceId))} OR seq.mongo_sequence_id = $${params.length}`);
-  if (String(options.repliedOnly) === 'true') {
+
+  const replyType = String(options.replyType || '').toLowerCase();
+  if (replyType === 'ooo' || options.replyIntent === 'OOO') {
+    conditions.push(`EXISTS (SELECT 1 FROM messages reply WHERE reply.conversation_id = m.conversation_id AND reply.direction = 'inbound' AND COALESCE(reply.is_migration_duplicate, false) = false AND reply.suggested_intent = 'OOO')`);
+  } else if (replyType === 'direct' || replyType === 'human') {
+    conditions.push(`EXISTS (SELECT 1 FROM messages reply WHERE reply.conversation_id = m.conversation_id AND reply.direction = 'inbound' AND COALESCE(reply.is_migration_duplicate, false) = false AND COALESCE(reply.suggested_intent, 'Neutral') != 'OOO')`);
+  } else if (String(options.repliedOnly) === 'true' || replyType === 'replied') {
     conditions.push(`EXISTS (SELECT 1 FROM messages reply WHERE reply.conversation_id = m.conversation_id AND reply.direction = 'inbound' AND COALESCE(reply.is_migration_duplicate, false) = false)`);
   }
+
   if (options.q) {
     const q = add(`%${String(options.q).trim()}%`);
     conditions.push(`(m.subject ILIKE ${q} OR m.body ILIKE ${q} OR cp.endpoint_value_snapshot ILIKE ${q} OR p.display_name ILIKE ${q} OR o.canonical_name ILIKE ${q})`);
@@ -468,6 +478,13 @@ export async function listSentEmails(options = {}) {
     ) sj ON TRUE
     LEFT JOIN sequence_enrollments se ON se.id = sj.enrollment_id
     LEFT JOIN sequences seq ON seq.id = se.sequence_id
+    LEFT JOIN LATERAL (
+      SELECT reply.id, reply.suggested_intent AS intent, reply.occurred_at, reply.subject, reply.body
+      FROM messages reply
+      WHERE reply.conversation_id = m.conversation_id AND reply.direction = 'inbound'
+        AND COALESCE(reply.is_migration_duplicate, false) = false
+      ORDER BY reply.occurred_at DESC LIMIT 1
+    ) reply_meta ON TRUE
     WHERE ${conditions.map((condition) => `(${condition})`).join(' AND ')}
   `;
   const countRes = await db.query(`SELECT COUNT(*)::int AS total ${fromSql}`, params);
@@ -483,7 +500,15 @@ export async function listSentEmails(options = {}) {
       CASE WHEN o.id IS NULL THEN NULL ELSE jsonb_build_object('_id', o.id, 'companyName', o.canonical_name) END AS company,
       CASE WHEN campaign.id IS NULL THEN NULL ELSE jsonb_build_object('_id', campaign.id, 'projectName', campaign.name) END AS campaign,
       CASE WHEN seq.id IS NULL THEN NULL ELSE jsonb_build_object('_id', seq.id, 'name', seq.name) END AS sequence,
-      EXISTS (SELECT 1 FROM messages reply WHERE reply.conversation_id = m.conversation_id AND reply.direction = 'inbound' AND COALESCE(reply.is_migration_duplicate, false) = false) AS replied
+      reply_meta.id IS NOT NULL AS replied,
+      CASE
+        WHEN reply_meta.id IS NULL THEN NULL
+        WHEN reply_meta.intent = 'OOO' THEN 'OOO'
+        WHEN reply_meta.intent = 'Opt Out' THEN 'Opt Out'
+        ELSE 'Neutral'
+      END AS "replyIntent",
+      reply_meta.occurred_at AS "repliedAt",
+      LEFT(COALESCE(reply_meta.body, ''), 140) AS "replySnippet"
     ${fromSql}
     ORDER BY m.occurred_at DESC
     OFFSET ${offsetParam} LIMIT ${limitParam}

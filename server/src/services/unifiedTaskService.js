@@ -78,14 +78,27 @@ function taskReadModel(row) {
   };
 }
 
-export async function listUnifiedTasks({ status = 'Open', owner, ownerUserId, currentUserId, mine, opportunityId, ongoingJobId, taskType } = {}) {
+export async function listUnifiedTasks({ status = 'Open', owner, ownerUserId, currentUserId, mine, opportunityId, ongoingJobId, taskType, campaignId, projectId } = {}) {
   const params = [];
   const conditions = ['t.deleted_at IS NULL'];
+  const targetCampaignId = uuid(campaignId || projectId);
   const targetJobId = uuid(ongoingJobId || opportunityId);
   if (status && status !== 'All') {
     if (status === 'Open') conditions.push(`t.status IN ('pending','blocked','waiting')`);
     else if (status === 'Done') conditions.push(`t.status IN ('completed','resolved')`);
     else { params.push(statusValue(status)); conditions.push(`t.status=$${params.length}`); }
+  }
+  if (targetCampaignId) {
+    params.push(targetCampaignId);
+    conditions.push(`(
+      t.campaign_id = $${params.length}::uuid
+      OR t.opportunity_id IN (SELECT id FROM ongoing_jobs WHERE campaign_id = $${params.length}::uuid)
+      OR t.lead_id IN (
+        SELECT cc.id FROM campaign_contacts cc
+        JOIN campaign_accounts ca ON ca.id = cc.campaign_account_id
+        WHERE ca.campaign_id = $${params.length}::uuid
+      )
+    )`);
   }
   if (targetJobId) { params.push(targetJobId); conditions.push(`t.opportunity_id=$${params.length}::uuid`); }
   if (taskType) { params.push(String(taskType)); conditions.push(`COALESCE(NULLIF(t.type,''), NULLIF(t.task_type,''), 'general')=$${params.length}`); }

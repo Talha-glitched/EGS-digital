@@ -1015,6 +1015,8 @@ router.get('/sent-emails', asyncRoute(async (req, res) => {
     sequenceId: req.query.sequenceId,
     q: req.query.q || req.query.search,
     repliedOnly: req.query.repliedOnly,
+    replyType: req.query.replyType,
+    replyIntent: req.query.replyIntent,
     includeAllStatuses: req.query.includeAllStatuses,
   }));
 }));

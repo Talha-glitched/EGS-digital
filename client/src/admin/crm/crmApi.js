@@ -269,7 +269,7 @@ export async function fetchMailboxUsage() {
   return crmApiFetch('/api/admin/mailbox-usage');
 }
 
-export async function fetchSentEmails({ page, limit, campaignId, sequenceId, q, repliedOnly, includeAllStatuses } = {}) {
+export async function fetchSentEmails({ page, limit, campaignId, sequenceId, q, repliedOnly, replyType, replyIntent, includeAllStatuses } = {}) {
   const query = new URLSearchParams({
     ...(page && { page: String(page) }),
     ...(limit && { limit: String(limit) }),
@@ -277,6 +277,8 @@ export async function fetchSentEmails({ page, limit, campaignId, sequenceId, q, 
     ...(sequenceId && { sequenceId }),
     ...(q && { q }),
     ...(repliedOnly && { repliedOnly: String(repliedOnly) }),
+    ...(replyType && { replyType }),
+    ...(replyIntent && { replyIntent }),
     ...(includeAllStatuses && { includeAllStatuses: String(includeAllStatuses) }),
   }).toString();
   return crmApiFetch(`/api/admin/sent-emails${query ? `?${query}` : ''}`);

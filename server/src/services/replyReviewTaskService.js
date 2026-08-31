@@ -14,6 +14,9 @@ function formatTaskNotes(reply) {
 
 function formatTaskTitle(reply, lead) {
   const contactName = lead?.name || lead?.email || 'Contact';
+  if (reply?.intent === 'OOO' || reply?.suggested_outcome === 'Out of Office') {
+    return `Auto-reply / Out of Office: ${contactName}`;
+  }
   return `Review Reply from ${contactName}`;
 }
 
@@ -22,11 +25,13 @@ export async function ensureReplyReviewTask(reply, lead) {
 
   const leadId = lead.id || lead._id;
   const replyDate = reply?.receivedAt ? new Date(reply.receivedAt) : new Date();
+  const campaignId = reply?.campaignId || reply?.campaign_id || lead.campaignId || null;
 
   // Try PostgreSQL task creation
   try {
     const sourceMessageId = reply?.sourceMessageId || reply?.messageId || null;
     const conversationId = reply?.conversation_id || reply?.conversationId || null;
+    const suggestedOutcome = reply?.intent === 'OOO' ? 'Out of Office' : (reply?.intent || 'Neutral');
     let reviewItemId = null;
     if (sourceMessageId) {
       const existingReview = await db.query(
@@ -41,7 +46,7 @@ export async function ensureReplyReviewTask(reply, lead) {
              source_message_id, conversation_id, status, opened_at, suggested_outcome, payload
            ) VALUES ($1::uuid, $2::uuid, 'pending', NOW(), $3, $4::jsonb)
            RETURNING id`,
-          [sourceMessageId, conversationId, reply?.intent || 'Neutral', JSON.stringify({ source: 'runtime_email_sync' })]
+          [sourceMessageId, conversationId, suggestedOutcome, JSON.stringify({ source: 'runtime_email_sync' })]
         );
         reviewItemId = createdReview.rows[0].id;
       }
@@ -77,7 +82,7 @@ export async function ensureReplyReviewTask(reply, lead) {
       [
         title, formatTaskNotes(reply), dueAt, reviewItemId, sourceMessageId, leadId,
         lead.companyId?._id || lead.companyId || null,
-        lead.campaignId || null,
+        campaignId,
       ]
     );
 

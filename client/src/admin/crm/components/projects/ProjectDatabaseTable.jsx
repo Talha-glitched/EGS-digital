@@ -29,7 +29,7 @@ import {
   buildDistinctFieldOptions,
   buildDistinctFieldOptionsFromArrays,
 } from '../ui/advancedFilter/index.js';
-import { Building2, Users, Mail, Search, Send, Play, Trash2 } from 'lucide-react';
+import { Building2, Users, Mail, Search, Send, Play, Trash2, Clock, CheckCircle2 } from 'lucide-react';
 
 const SEND_JOB_STATUS_CONFIG = {
   pending: { className: 'bg-amber-50 text-amber-800 ring-amber-200/70', label: 'Pending' },
@@ -81,6 +81,7 @@ export default function ProjectDatabaseTable({
   const [emailLimit, setEmailLimit] = useState(50);
   const [emailSearch, setEmailSearch] = useState('');
   const [debouncedEmailSearch, setDebouncedEmailSearch] = useState('');
+  const [emailReplyFilter, setEmailReplyFilter] = useState('all');
 
   useEffect(() => {
     const timer = window.setTimeout(() => setDebouncedEmailSearch(emailSearch.trim()), 250);
@@ -248,6 +249,7 @@ export default function ProjectDatabaseTable({
         limit: emailLimit,
         campaignId: projectId,
         q: debouncedEmailSearch || undefined,
+        replyType: emailReplyFilter !== 'all' ? emailReplyFilter : undefined,
         includeAllStatuses: true,
       });
       setEmails(data.items || []);
@@ -257,7 +259,7 @@ export default function ProjectDatabaseTable({
     } finally {
       setEmailLoading(false);
     }
-  }, [projectId, view, emailPage, emailLimit, debouncedEmailSearch]);
+  }, [projectId, view, emailPage, emailLimit, debouncedEmailSearch, emailReplyFilter]);
 
   useEffect(() => {
     fetchEmails();
@@ -457,16 +459,60 @@ export default function ProjectDatabaseTable({
             <ToggleBtn active={view === 'queue'} onClick={() => setView('queue')} icon={Send} label={`Queue (${queueTotal})`} />
           </div>
           {view === 'emails' ? (
-            <label className="relative block min-w-[240px]">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-400" />
-              <input
-                type="search"
-                value={emailSearch}
-                onChange={(e) => setEmailSearch(e.target.value)}
-                placeholder="Search subject, recipient, company..."
-                className="crm-input w-full py-1.5 pl-9 text-xs"
-              />
-            </label>
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex rounded-lg border border-[var(--color-line)] bg-white p-0.5 text-2xs font-semibold">
+                <button
+                  type="button"
+                  onClick={() => { setEmailReplyFilter('all'); setEmailPage(1); }}
+                  className={cn(
+                    'rounded-md px-2.5 py-1 transition',
+                    emailReplyFilter === 'all' ? 'bg-brand-soft text-brand font-bold' : 'text-neutral-500 hover:text-neutral-700'
+                  )}
+                >
+                  All Sent
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setEmailReplyFilter('replied'); setEmailPage(1); }}
+                  className={cn(
+                    'rounded-md px-2.5 py-1 transition',
+                    emailReplyFilter === 'replied' ? 'bg-emerald-50 text-emerald-800 font-bold' : 'text-neutral-500 hover:text-neutral-700'
+                  )}
+                >
+                  With Replies
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setEmailReplyFilter('ooo'); setEmailPage(1); }}
+                  className={cn(
+                    'rounded-md px-2.5 py-1 transition',
+                    emailReplyFilter === 'ooo' ? 'bg-amber-100 text-amber-900 font-bold' : 'text-neutral-500 hover:text-neutral-700'
+                  )}
+                >
+                  Auto-Replies / OOO
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setEmailReplyFilter('direct'); setEmailPage(1); }}
+                  className={cn(
+                    'rounded-md px-2.5 py-1 transition',
+                    emailReplyFilter === 'direct' ? 'bg-blue-50 text-blue-800 font-bold' : 'text-neutral-500 hover:text-neutral-700'
+                  )}
+                >
+                  Direct Replies
+                </button>
+              </div>
+              <label className="relative block min-w-[220px]">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-400" />
+                <input
+                  type="search"
+                  value={emailSearch}
+                  onChange={(e) => setEmailSearch(e.target.value)}
+                  placeholder="Search subject, recipient, company..."
+                  className="crm-input w-full py-1.5 pl-9 text-xs"
+                />
+              </label>
+            </div>
           ) : (
             <AdvancedFilterPopover
               schema={activeSchema}
@@ -702,12 +748,20 @@ export default function ProjectDatabaseTable({
                       hour: '2-digit',
                       minute: '2-digit',
                     }) : '—';
-                    const replied = email.lead?.deliveryStatus === 'Replied' || email.lead?.hasResponded;
+                    const isOOO = email.replyIntent === 'OOO';
+                    const hasReplied = Boolean(email.replied || email.lead?.deliveryStatus === 'Replied' || email.lead?.hasResponded);
 
                     return (
                       <ClickableTableRow key={email._id} onClick={() => onEmailClick?.(email)}>
-                        <td className="px-4 py-2.5 font-semibold text-[var(--color-ink)] truncate max-w-[280px]" title={email.renderedSubject}>
-                          {email.renderedSubject || '(No subject)'}
+                        <td className="px-4 py-2.5 max-w-[280px]">
+                          <div className="font-semibold text-[var(--color-ink)] truncate" title={email.renderedSubject}>
+                            {email.renderedSubject || '(No subject)'}
+                          </div>
+                          {email.replySnippet && (
+                            <div className="text-neutral-500 text-2xs truncate mt-0.5 italic">
+                              ↳ {email.replySnippet}
+                            </div>
+                          )}
                         </td>
                         <td className="px-4 py-2.5">
                           <div className="font-semibold text-[var(--color-ink)]">{recipientName}</div>
@@ -719,12 +773,20 @@ export default function ProjectDatabaseTable({
                           <SendJobStatusBadge status={email.status} />
                         </td>
                         <td className="px-4 py-2.5 text-center">
-                          <span className={cn(
-                            'inline-flex items-center rounded-full px-2 py-0.5 text-2xs font-semibold ring-1 ring-inset',
-                            replied ? 'bg-emerald-50 text-emerald-800 ring-emerald-200/50' : 'bg-neutral-100 text-neutral-500 ring-neutral-200/50'
-                          )}>
-                            {replied ? 'Yes' : 'No'}
-                          </span>
+                          {isOOO ? (
+                            <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-2xs font-semibold ring-1 ring-inset bg-amber-50 text-amber-900 ring-amber-300">
+                              <Clock className="h-3 w-3 text-amber-600 shrink-0" />
+                              Auto-Reply (OOO)
+                            </span>
+                          ) : hasReplied ? (
+                            <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-2xs font-semibold ring-1 ring-inset bg-emerald-50 text-emerald-800 ring-emerald-300">
+                              Replied
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center rounded-full px-2 py-0.5 text-2xs font-semibold ring-1 ring-inset bg-neutral-100 text-neutral-400 ring-neutral-200/50">
+                              No
+                            </span>
+                          )}
                         </td>
                       </ClickableTableRow>
                     );

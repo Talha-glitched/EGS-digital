@@ -189,12 +189,12 @@ async function handleHumanReply(lead, message, text, systemInbox = '') {
   }
 
   const subject = message.envelope?.subject || '';
-  const { status: targetStatus, intent: suggestedIntent } = classifyInboundEmail(subject, text);
+  const headerSection = getMimeHeaderSection(String(message.source || ''));
+  const { status: targetStatus, intent: suggestedIntent } = classifyInboundEmail(subject, text, headerSection);
   const replyIntent = suggestedIntent === 'Opt Out' ? 'Opt Out' : suggestedIntent === 'OOO' ? 'OOO' : 'Neutral';
   const senderEmail = String(message.envelope?.from?.[0]?.address || '').trim().toLowerCase();
 
   const replyDate = message.envelope?.date ? new Date(message.envelope.date) : new Date();
-  const headerSection = getMimeHeaderSection(String(message.source || ''));
   const referencedMessageIds = extractMessageIdCandidatesFromHeaders(headerSection)
     .filter((candidate) => normalizeMessageIdToken(candidate) !== normalizeMessageIdToken(finalMsgId));
 
@@ -233,6 +233,7 @@ async function handleHumanReply(lead, message, text, systemInbox = '') {
     conversation = updated.rows[0];
   }
   const convId = conversation.id;
+  const resolvedCampaignId = conversation.campaign_id || lead.campaignId || null;
 
   if (lead.personContactMethodId) {
     await db.query(
@@ -251,10 +252,10 @@ async function handleHumanReply(lead, message, text, systemInbox = '') {
   }
 
   const insertedMessage = await db.query(
-    `INSERT INTO messages (conversation_id, direction, channel, external_message_id, subject, body, delivery_state, occurred_at)
-     VALUES ($1::uuid, 'inbound', 'email', $2, $3, $4, 'received', $5)
+    `INSERT INTO messages (conversation_id, direction, channel, external_message_id, subject, body, delivery_state, occurred_at, suggested_intent)
+     VALUES ($1::uuid, 'inbound', 'email', $2, $3, $4, 'received', $5, $6)
      RETURNING id`,
-    [convId, finalMsgId, subject || 'Inbound Reply', text.slice(0, MAX_REPLY_TEXT), replyDate]
+    [convId, finalMsgId, subject || 'Inbound Reply', text.slice(0, MAX_REPLY_TEXT), replyDate, replyIntent]
   );
 
   if (lead.campaignContactId) {
@@ -274,6 +275,7 @@ async function handleHumanReply(lead, message, text, systemInbox = '') {
       intent: replyIntent,
       subject,
       text: text.slice(0, MAX_REPLY_TEXT),
+      campaignId: resolvedCampaignId,
     },
     lead
   );

@@ -145,7 +145,12 @@ export default function EmailDetailsDrawer({
               <span className="block font-semibold text-neutral-400 uppercase tracking-wider text-2xs">Status</span>
               <div className="mt-1 flex items-center gap-2">
                 <StatusBadge status={email.status} />
-                {email.lead?.hasResponded && (
+                {email.replyIntent === 'OOO' ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-900 ring-1 ring-inset ring-amber-300">
+                    <Clock className="h-3 w-3 text-amber-600" />
+                    Auto-Reply (OOO)
+                  </span>
+                ) : (email.lead?.hasResponded || email.replied) && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-800 ring-1 ring-inset ring-emerald-200/70">
                     Replied
                   </span>

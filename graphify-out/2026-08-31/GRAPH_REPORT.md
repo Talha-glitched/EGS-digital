@@ -1,16 +1,16 @@
 # Graph Report - EGS-web  (2026-08-31)
 
 ## Corpus Check
-- 612 files · ~4,097,041 words
+- 612 files · ~4,097,074 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3902 nodes · 9275 edges · 254 communities (205 shown, 49 thin omitted)
+- 3902 nodes · 9275 edges · 254 communities (206 shown, 48 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 52 edges (avg confidence: 0.66)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `3a271562`
+- Built from commit: `0b0c6faa`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -96,7 +96,7 @@
 - campaignContactCoordinationService.js
 - usePageLifecycle
 - scripts
-- ongoing_jobs
+- design_versions
 - Section Order
 - Section Order
 - Section Order
@@ -105,7 +105,7 @@
 - 01 Home Page Content Spec
 - 07 Contact Page Content Spec
 - ingestionService.js
-- Finding 5 — Historical Jobs require controlled identity creation and matching
+- organizations
 - useStandPreview.js
 - openaiService.js
 - 2. Complete Functional Requirements (FR)
@@ -116,7 +116,7 @@
 - emailTemplateRenderer.js
 - runInventoryRefactorMigration.js
 - ServicesV2.jsx
-- job_scope_lines
+- ongoing_jobs
 - auditBusinessSemanticsReadOnly.js
 - recoverRuntimeInboundContext.js
 - src/constants/pocQualification.js
@@ -214,7 +214,7 @@
 - fieldExecutionService.js
 - ActiveSelectionContext.jsx
 - CTA System
-- conversation_job_links
+- project_time_entries
 - 21_employee_user_sync.sql
 - inventory_movements
 - job_activity_resource_assignments
@@ -276,7 +276,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (254 total, 49 thin omitted)
+## Communities (254 total, 48 thin omitted)
 
 ### Community 0 - "crmApi.js"
 Cohesion: 0.04
@@ -384,7 +384,7 @@ Nodes (23): AUTO_LOCKED_STATUSES, deriveAutoCampaignStatus(), syncAutoCampaignSt
 
 ### Community 26 - "01_init_postgresql_schema.sql"
 Cohesion: 0.06
-Nodes (59): predecessors, prevent_task_dependency_cycle, campaign_accounts, campaign_contact_focus_events, campaign_contacts, campaigns, communication_job_actions, conversation_job_links (+51 more)
+Nodes (52): predecessors, prevent_task_dependency_cycle, campaign_accounts, campaign_contact_focus_events, campaign_contacts, communication_job_actions, conversation_job_links, conversation_participants (+44 more)
 
 ### Community 27 - "completedJobService.js"
 Cohesion: 0.13
@@ -567,8 +567,8 @@ Cohesion: 0.07
 Nodes (26): 06 Case Studies Page Content Spec, Above The Fold, Audience, Case Studies, Case Study Format, Case Study Navigation, FAQ, Final CTA (+18 more)
 
 ### Community 72 - "users"
-Cohesion: 0.12
-Nodes (29): audit_events, job_activity_resource_assignments, job_activity_updates, note_attachments, note_versions, notes, operational_resources, project_time_corrections (+21 more)
+Cohesion: 0.14
+Nodes (24): audit_events, job_activity_resource_assignments, job_activity_updates, note_attachments, note_versions, notes, operational_resources, project_time_corrections (+16 more)
 
 ### Community 73 - "AdvancedFilterPopover.jsx"
 Cohesion: 0.15
@@ -602,9 +602,9 @@ Nodes (49): exhibitionFaqs, ExhibitionsFAQSection(), Footer(), InquiryCtaButton(
 Cohesion: 0.14
 Nodes (13): dependencies, @microsoft/clarity, @microsoft/clarity, name, private, scripts, build, dev (+5 more)
 
-### Community 81 - "ongoing_jobs"
-Cohesion: 0.09
-Nodes (29): milestone, resolved, artifact_decisions, design_sets, design_versions, financial_milestones, interactions, job_actual_costs (+21 more)
+### Community 81 - "design_versions"
+Cohesion: 0.21
+Nodes (12): artifact_decisions, design_sets, design_versions, production_release_design_versions, production_releases, quote_versions, quotes, artifact_decisions (+4 more)
 
 ### Community 82 - "Section Order"
 Cohesion: 0.08
@@ -619,8 +619,8 @@ Cohesion: 0.08
 Nodes (24): 05 Retail Page Content Spec, 10. Final CTA, 1. Hero, 2. Anchor Proof: Sadia / Carrefour UAE, 3. What EGS Installs, 4. Retail Rollout Process, 5. What Buyers Need Reassured, 6. Why Retail Rollouts Fail (+16 more)
 
 ### Community 85 - "EGS CRM Live Mongo Data Audit for SQL Migration"
-Cohesion: 0.08
-Nodes (25): Audit method, Baseline reconciliation numbers, Collections containing data, Complete collection inventory, EGS CRM Live Mongo Data Audit for SQL Migration, Empty collections, Enrollment overlap, Executive verdict (+17 more)
+Cohesion: 0.07
+Nodes (30): Audit method, Baseline reconciliation numbers, Collections containing data, Complete collection inventory, Customer Organization coverage, EGS CRM Live Mongo Data Audit for SQL Migration, Empty collections, Enrollment overlap (+22 more)
 
 ### Community 86 - "restoreWorkContextFromStaging.js"
 Cohesion: 0.18
@@ -638,9 +638,9 @@ Nodes (23): 07 Contact Page Content Spec, 1. Hero, 2. Choose Your Brief, 3. What
 Cohesion: 0.11
 Nodes (36): main(), findOrCreateCampaign(), main(), markCampaignEmailed(), parseArgs(), PRESERVE_STATUSES, blendAndIngestLeads(), buildCompanyRows() (+28 more)
 
-### Community 90 - "Finding 5 — Historical Jobs require controlled identity creation and matching"
-Cohesion: 0.40
-Nodes (5): Customer Organization coverage, Financial and completion meaning, Finding 5 — Historical Jobs require controlled identity creation and matching, Job/Opportunity overlap, Services
+### Community 90 - "organizations"
+Cohesion: 0.17
+Nodes (14): campaigns, event_editions, event_participations, events, interactions, job_closeouts, locations, organization_identifiers (+6 more)
 
 ### Community 91 - "useStandPreview.js"
 Cohesion: 0.36
@@ -678,9 +678,9 @@ Nodes (11): getBaseUrl(), isPublicTrackableUrl(), deliverSequenceEmail(), __dirn
 Cohesion: 0.47
 Nodes (4): chapterProgress(), PAGE_THEMES, ServicesV2(), smoothstep()
 
-### Community 101 - "job_scope_lines"
-Cohesion: 0.21
-Nodes (19): field_execution_files, field_execution_submissions, job_activities, job_delivery_activations, job_locations, job_phases, job_scope_lines, job_snags (+11 more)
+### Community 101 - "ongoing_jobs"
+Cohesion: 0.13
+Nodes (29): milestone, resolved, field_execution_files, field_execution_submissions, financial_milestones, job_activities, job_actual_costs, job_cost_confirmations (+21 more)
 
 ### Community 102 - "auditBusinessSemanticsReadOnly.js"
 Cohesion: 0.40
@@ -934,6 +934,10 @@ Nodes (12): coverage, ACTIONS, currentResource(), dayBounds(), getTodayWorkspace
 Cohesion: 0.50
 Nodes (4): CTA System, CTA Tone, Primary CTAs, Softer CTAs
 
+### Community 213 - "project_time_entries"
+Cohesion: 0.43
+Nodes (7): job_activity_resource_assignments, operational_resources, project_time_corrections, project_time_entries, resource_availability_blocks, job_activities, supplier_profiles
+
 ### Community 245 - "Modern Operator Voice"
 Cohesion: 0.67
 Nodes (3): Good EGS Lines, Modern Operator Voice, Voice Rules
@@ -957,7 +961,7 @@ Nodes (3): getPocOption(), POC_QUALIFICATION_OPTIONS, POC_STATUS_LABELS
 ## Knowledge Gaps
 - **1183 isolated node(s):** `name`, `private`, `type`, `dev`, `build` (+1178 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **49 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **48 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
