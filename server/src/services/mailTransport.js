@@ -37,13 +37,21 @@ export function deriveTitleFromEmail(email) {
   return 'Exhibit Graphic Sign LLC';
 }
 
+export function normalizeMailHost(host) {
+  const h = String(host || '').trim();
+  if (!h || h.toLowerCase() === 'mail.exhibitgraphicsign.com' || h.toLowerCase() === 'exhibitgraphicsign.com' || h.toLowerCase() === 'webmail.exhibitgraphicsign.com') {
+    return 'wardah.tasjeel.ae';
+  }
+  return h;
+}
+
 export function getConfiguredEmailAccounts() {
   const accounts = [];
   const seenEmails = new Set();
 
-  const defaultSmtpHost = process.env.EMAIL_SMTP_HOST || 'wardah.tasjeel.ae';
+  const defaultSmtpHost = normalizeMailHost(process.env.EMAIL_SMTP_HOST || 'wardah.tasjeel.ae');
   const defaultSmtpPort = Number(process.env.EMAIL_SMTP_PORT || 465);
-  const defaultImapHost = process.env.EMAIL_IMAP_HOST || defaultSmtpHost;
+  const defaultImapHost = normalizeMailHost(process.env.EMAIL_IMAP_HOST || defaultSmtpHost);
   const defaultImapPort = Number(process.env.EMAIL_IMAP_PORT || 993);
 
   // 1. Check EMAIL_ACCOUNTS JSON env var
@@ -61,9 +69,9 @@ export function getConfiguredEmailAccounts() {
               pass: item.pass || item.password || '',
               name: item.name || item.displayName || deriveNameFromEmail(email),
               title: item.title || deriveTitleFromEmail(email),
-              smtpHost: item.smtpHost || item.host || defaultSmtpHost,
+              smtpHost: normalizeMailHost(item.smtpHost || item.host || defaultSmtpHost),
               smtpPort: Number(item.smtpPort || item.port || defaultSmtpPort),
-              imapHost: item.imapHost || defaultImapHost,
+              imapHost: normalizeMailHost(item.imapHost || defaultImapHost),
               imapPort: Number(item.imapPort || defaultImapPort),
               isPrimary: accounts.length === 0,
             });
@@ -105,9 +113,9 @@ export function getConfiguredEmailAccounts() {
       const passVal = process.env[k.passKey] || (k.altPassKey ? process.env[k.altPassKey] : '') || '';
       const nameVal = process.env[k.nameKey] || (k.altNameKey ? process.env[k.altNameKey] : '') || (i === 0 ? (process.env.EMAIL_FROM_NAME || deriveNameFromEmail(email)) : deriveNameFromEmail(email));
       const titleVal = process.env[k.titleKey] || (k.altTitleKey ? process.env[k.altTitleKey] : '') || deriveTitleFromEmail(email);
-      const hostVal = (k.smtpHostKey && process.env[k.smtpHostKey]) || defaultSmtpHost;
+      const hostVal = normalizeMailHost((k.smtpHostKey && process.env[k.smtpHostKey]) || defaultSmtpHost);
       const portVal = Number((k.smtpPortKey && process.env[k.smtpPortKey]) || defaultSmtpPort);
-      const imapHostVal = (k.imapHostKey && process.env[k.imapHostKey]) || defaultImapHost;
+      const imapHostVal = normalizeMailHost((k.imapHostKey && process.env[k.imapHostKey]) || defaultImapHost);
       const imapPortVal = Number((k.imapPortKey && process.env[k.imapPortKey]) || defaultImapPort);
 
       accounts.push({
@@ -231,9 +239,8 @@ export function getMailConfigStatus() {
 }
 
 function envTlsRejectUnauthorized(imapSpecificEnv) {
-  const raw = String(imapSpecificEnv ?? process.env.EMAIL_TLS_REJECT_UNAUTHORIZED ?? '').toLowerCase();
-  if (raw === 'false' || raw === '0') return false;
-  return true;
+  const raw = String(imapSpecificEnv ?? process.env.EMAIL_TLS_REJECT_UNAUTHORIZED ?? 'false').toLowerCase();
+  return raw === 'true' || raw === '1';
 }
 
 function shouldSaveSentCopy() {
@@ -327,7 +334,8 @@ export async function sendAuthenticatedMail({
     throw new Error('SMTP user is not configured (EMAIL_SMTP_USER).');
   }
 
-  const smtpHost = creds.smtpHost || creds.host || process.env.EMAIL_SMTP_HOST || 'wardah.tasjeel.ae';
+  const rawHost = creds.smtpHost || creds.host || process.env.EMAIL_SMTP_HOST || 'wardah.tasjeel.ae';
+  const smtpHost = normalizeMailHost(rawHost);
   const formattedAttachments = Array.isArray(attachments) ? attachments : [];
   const smtpPort = Number(creds.smtpPort || creds.port || process.env.EMAIL_SMTP_PORT || 465);
   const secure = smtpPort === 465;
@@ -361,32 +369,49 @@ export async function sendAuthenticatedMail({
   try {
     console.log(`[Email] Compiling outbound message structure...`);
     const raw = await compileOutboundMessage(mailOptions);
-    console.log(`[Email] Creating SMTP transport...`);
-    const transporter = createTransporter(fromEmail);
+
+    const sendAttempts = [
+      { host: smtpHost, port: smtpPort, secure: smtpPort === 465, rejectUnauthorized },
+      { host: smtpHost, port: smtpPort === 465 ? 587 : 465, secure: smtpPort !== 465, rejectUnauthorized: false },
+    ];
+    if (smtpHost !== 'wardah.tasjeel.ae') {
+      sendAttempts.push(
+        { host: 'wardah.tasjeel.ae', port: 465, secure: true, rejectUnauthorized: false },
+        { host: 'wardah.tasjeel.ae', port: 587, secure: false, rejectUnauthorized: false }
+      );
+    }
+
+    let result;
+    let lastError = null;
 
     console.log(`[Email] Sending via nodemailer.transporter.sendMail...`);
-    let result;
-    try {
-      result = await transporter.sendMail(mailOptions);
-    } catch (primaryErr) {
-      const isConnTimeout = /timeout|ETIMEDOUT|ESOCKETTIMEDOUT|ECONNREFUSED|ENOTFOUND|greeting/i.test(primaryErr.message || '');
-      const primaryPort = Number(creds.smtpPort || creds.port || process.env.EMAIL_SMTP_PORT || 465);
-      const fallbackPort = primaryPort === 465 ? 587 : 465;
-
-      if (isConnTimeout) {
-        console.warn(`[Email] Primary Port ${primaryPort} timed out/failed (${primaryErr.message}). Retrying on Port ${fallbackPort}...`);
-        try {
-          const fallbackTransporter = createTransporter(fromEmail, { port: fallbackPort, secure: fallbackPort === 465 });
-          result = await fallbackTransporter.sendMail(mailOptions);
-          console.log(`[Email] Fallback to Port ${fallbackPort} SUCCESS.`);
-        } catch (fallbackErr) {
-          console.error(`[Email] Port ${fallbackPort} retry also failed:`, fallbackErr.message);
-          throw primaryErr;
+    for (let attemptIdx = 0; attemptIdx < sendAttempts.length; attemptIdx++) {
+      const cfg = sendAttempts[attemptIdx];
+      try {
+        if (attemptIdx > 0) {
+          console.warn(`[Email] Attempting fallback retry #${attemptIdx} with host=${cfg.host}, port=${cfg.port}, secure=${cfg.secure}...`);
         }
-      } else {
-        throw primaryErr;
+        const transporter = createTransporter(fromEmail, cfg);
+        result = await transporter.sendMail(mailOptions);
+        if (attemptIdx > 0) {
+          console.log(`[Email] Fallback retry #${attemptIdx} SUCCESS on ${cfg.host}:${cfg.port}`);
+        }
+        lastError = null;
+        break;
+      } catch (err) {
+        lastError = err;
+        const isConnOrTimeout = /timeout|ETIMEDOUT|ESOCKETTIMEDOUT|ECONNREFUSED|ENOTFOUND|greeting|certificate/i.test(err.message || '');
+        console.warn(`[Email] Attempt #${attemptIdx} on ${cfg.host}:${cfg.port} failed: ${err.message}`);
+        if (!isConnOrTimeout && attemptIdx === 0) {
+          break;
+        }
       }
     }
+
+    if (lastError) {
+      throw lastError;
+    }
+
     console.log(`[Email] nodemailer.sendMail SUCCESS. SMTP Response:`, JSON.stringify(result, null, 2));
 
     const accepted = normalizeRecipientList(result?.accepted);
@@ -412,12 +437,15 @@ export async function sendAuthenticatedMail({
 }
 
 export function createTransporter(fromEmail, overrideOptions = {}) {
-  const rejectUnauthorized = envTlsRejectUnauthorized(process.env.EMAIL_SMTP_TLS_REJECT_UNAUTHORIZED);
   const creds = getCredentialsForEmail(fromEmail);
   const domain = creds.user.includes('@') ? creds.user.split('@')[1] : 'exhibitgraphicsign.com';
   const port = Number(overrideOptions.port || creds.smtpPort || creds.port || process.env.EMAIL_SMTP_PORT || 465);
-  const host = overrideOptions.host || creds.smtpHost || creds.host || process.env.EMAIL_SMTP_HOST || 'wardah.tasjeel.ae';
+  const rawHost = overrideOptions.host || creds.smtpHost || creds.host || process.env.EMAIL_SMTP_HOST || 'wardah.tasjeel.ae';
+  const host = normalizeMailHost(rawHost);
   const secure = overrideOptions.secure !== undefined ? overrideOptions.secure : port === 465;
+  const rejectUnauthorized = overrideOptions.rejectUnauthorized !== undefined
+    ? overrideOptions.rejectUnauthorized
+    : envTlsRejectUnauthorized(process.env.EMAIL_SMTP_TLS_REJECT_UNAUTHORIZED);
 
   return nodemailer.createTransport({
     name: domain,
@@ -437,10 +465,13 @@ export function createTransporter(fromEmail, overrideOptions = {}) {
 }
 
 export function createImapClient(email, overrideOptions = {}) {
-  const rejectUnauthorized = envTlsRejectUnauthorized(process.env.EMAIL_IMAP_TLS_REJECT_UNAUTHORIZED);
   const creds = getCredentialsForEmail(email);
   const port = Number(overrideOptions.port || creds.imapPort || process.env.EMAIL_IMAP_PORT || 993);
-  const host = overrideOptions.host || creds.imapHost || process.env.EMAIL_IMAP_HOST || 'wardah.tasjeel.ae';
+  const rawHost = overrideOptions.host || creds.imapHost || process.env.EMAIL_IMAP_HOST || 'wardah.tasjeel.ae';
+  const host = normalizeMailHost(rawHost);
+  const rejectUnauthorized = overrideOptions.rejectUnauthorized !== undefined
+    ? overrideOptions.rejectUnauthorized
+    : envTlsRejectUnauthorized(process.env.EMAIL_IMAP_TLS_REJECT_UNAUTHORIZED);
 
   return new ImapFlow({
     host,

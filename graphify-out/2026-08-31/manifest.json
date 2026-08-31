@@ -40,8 +40,8 @@
     "semantic_hash": ""
   },
   "client/src/admin/crm/CrmApp.jsx": {
-    "mtime": 1786367683.1202002,
-    "ast_hash": "f013d0f4c156c2e82fb93d476aa83a83",
+    "mtime": 1788155633.46588,
+    "ast_hash": "07f9102478f7466bc17ef04870906cb7",
     "semantic_hash": ""
   },
   "client/src/admin/crm/components/analytics/CampaignVendorPerformanceGrid.jsx": {
@@ -145,8 +145,8 @@
     "semantic_hash": ""
   },
   "client/src/admin/crm/components/layout/SpotlightSearch.jsx": {
-    "mtime": 1786190812.2821586,
-    "ast_hash": "cbf6526a3532e44e3946ae2739dd7d98",
+    "mtime": 1788155806.5413415,
+    "ast_hash": "f2a139349fd002768dce451bb9d50fc7",
     "semantic_hash": ""
   },
   "client/src/admin/crm/components/layout/TopNavbar.jsx": {
@@ -270,8 +270,8 @@
     "semantic_hash": "25baf358608e61bf315c8889d0fc40dd"
   },
   "client/src/admin/crm/components/projects/ProjectDatabaseTable.jsx": {
-    "mtime": 1786121018.010328,
-    "ast_hash": "0deabadb6ad1427be00b5f5e5dd4d460",
+    "mtime": 1788155790.5068433,
+    "ast_hash": "cc8b5a36cd9d86529efb9089063754c0",
     "semantic_hash": ""
   },
   "client/src/admin/crm/components/projects/ProjectPerformanceModal.jsx": {
@@ -287,21 +287,6 @@
   "client/src/admin/crm/components/projects/ProjectSequenceMindMap.jsx": {
     "mtime": 1786113074.4309585,
     "ast_hash": "29f20bd0c4541fc27ad96e4b1892ef38",
-    "semantic_hash": ""
-  },
-  "client/src/admin/crm/components/resend/ResendAnalyticsView.jsx": {
-    "mtime": 1786113074.4319584,
-    "ast_hash": "7f4020cd6fdd5127c5f2f816a157bf94",
-    "semantic_hash": ""
-  },
-  "client/src/admin/crm/components/resend/ResendEmailsWorkspace.jsx": {
-    "mtime": 1786113074.4319584,
-    "ast_hash": "706671f5e527efbe27f3d84b57d5746e",
-    "semantic_hash": ""
-  },
-  "client/src/admin/crm/components/resend/ResendStatusBadge.jsx": {
-    "mtime": 1786113074.4329581,
-    "ast_hash": "5158e4d505b25a6c8b0b2d379cdcbc52",
     "semantic_hash": ""
   },
   "client/src/admin/crm/components/resources/ActivityResourcePlanningModal.jsx": {
@@ -355,8 +340,8 @@
     "semantic_hash": ""
   },
   "client/src/admin/crm/components/sequences/SequenceBuilderWorkspace.jsx": {
-    "mtime": 1786113074.4399748,
-    "ast_hash": "46a8e725457e06a81d79038e05090380",
+    "mtime": 1788155798.333655,
+    "ast_hash": "0b86178c843743849d5b99a5e878926a",
     "semantic_hash": ""
   },
   "client/src/admin/crm/components/sequences/SequenceInspector.jsx": {
@@ -694,11 +679,6 @@
     "ast_hash": "c0042ea085ad4b6c49f391142ac9b1de",
     "semantic_hash": "c0042ea085ad4b6c49f391142ac9b1de"
   },
-  "client/src/admin/crm/constants/resendLimits.js": {
-    "mtime": 1784182879.280051,
-    "ast_hash": "584808b0dd6b1548c4151691f315ea4f",
-    "semantic_hash": "584808b0dd6b1548c4151691f315ea4f"
-  },
   "client/src/admin/crm/constants/sensitiveData.js": {
     "mtime": 1783535422.5551686,
     "ast_hash": "512480a2765e34f4ad4278d5020a8fcb",
@@ -800,13 +780,13 @@
     "semantic_hash": ""
   },
   "client/src/admin/crm/pages/EmailHubPage.jsx": {
-    "mtime": 1786100504.259872,
-    "ast_hash": "aa9cf7a2b10580a38b862787ad3c1958",
-    "semantic_hash": "aa9cf7a2b10580a38b862787ad3c1958"
+    "mtime": 1788155644.537007,
+    "ast_hash": "01fb14b1141fa78dce3df96085daa55c",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/pages/EmailSettingsPage.jsx": {
-    "mtime": 1788147954.5057037,
-    "ast_hash": "443818d00f1720d8cf225f58e76ac8e5",
+    "mtime": 1788155583.814871,
+    "ast_hash": "b83f4d4f3d1e72479082086a52842ae7",
     "semantic_hash": ""
   },
   "client/src/admin/crm/pages/GlobalDashboard.jsx": {
@@ -847,11 +827,6 @@
   "client/src/admin/crm/pages/RelationshipsPage.jsx": {
     "mtime": 1786113074.4749384,
     "ast_hash": "d4dca8e734bf9724dd7a89b2bc6fd8f6",
-    "semantic_hash": ""
-  },
-  "client/src/admin/crm/pages/ResendEmailsPage.jsx": {
-    "mtime": 1786113074.4758618,
-    "ast_hash": "5c9b0beec02169e1acfbdd3c3379c8ba",
     "semantic_hash": ""
   },
   "client/src/admin/crm/pages/SequencesPage.jsx": {
@@ -905,9 +880,9 @@
     "semantic_hash": ""
   },
   "client/src/admin/crm/utils/batchedSend.js": {
-    "mtime": 1784182879.289347,
-    "ast_hash": "be4dbfae3f0973ca5bfffdf8950154bf",
-    "semantic_hash": "be4dbfae3f0973ca5bfffdf8950154bf"
+    "mtime": 1788155658.4775624,
+    "ast_hash": "e549183c1eeb4d95cb92c205134bc624",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/utils/sequenceDelay.js": {
     "mtime": 1783179152.9643464,
@@ -1674,11 +1649,6 @@
     "ast_hash": "f7836748064b5a0c99b6b7b712f93469",
     "semantic_hash": "f7836748064b5a0c99b6b7b712f93469"
   },
-  "server/scripts/inspect_resend_bounces.mjs": {
-    "mtime": 1784997685.4419813,
-    "ast_hash": "e55fddc4db55dc8aa876d67b5c6d2a0d",
-    "semantic_hash": "e55fddc4db55dc8aa876d67b5c6d2a0d"
-  },
   "server/scripts/inspect_resend_receiving.mjs": {
     "mtime": 1784990687.8560965,
     "ast_hash": "41b91ecf8ce0357a5a80e8c908c82480",
@@ -1919,11 +1889,6 @@
     "ast_hash": "d5c97cb50e5b456e0436c2e1db912d09",
     "semantic_hash": "d5c97cb50e5b456e0436c2e1db912d09"
   },
-  "server/scripts/sync_all_resend_bounces.mjs": {
-    "mtime": 1784997793.6141732,
-    "ast_hash": "42695532f11a684e6416745360690abe",
-    "semantic_hash": "42695532f11a684e6416745360690abe"
-  },
   "server/scripts/sync_imap_now.mjs": {
     "mtime": 1784990916.0412388,
     "ast_hash": "ec493e9f62c3cef91e5789eecc62a10c",
@@ -2094,14 +2059,9 @@
     "ast_hash": "1bfe8c381cbf0eead11ef8ef2c765f23",
     "semantic_hash": "1bfe8c381cbf0eead11ef8ef2c765f23"
   },
-  "server/src/constants/resendLimits.js": {
-    "mtime": 1784182879.2913787,
-    "ast_hash": "5340c8182c845224ecff04f272e991a7",
-    "semantic_hash": "5340c8182c845224ecff04f272e991a7"
-  },
   "server/src/constants/userRoles.js": {
-    "mtime": 1788146262.0032024,
-    "ast_hash": "e03c5793e26a6449c81a63bbd204801a",
+    "mtime": 1788155829.36052,
+    "ast_hash": "2b569d154d7e6653299a1bb487aa2ac6",
     "semantic_hash": ""
   },
   "server/src/db/index.js": {
@@ -2145,9 +2105,9 @@
     "semantic_hash": "69377a90afaf47b44be94a37282dbd68"
   },
   "server/src/models/Email.js": {
-    "mtime": 1785659207.00748,
-    "ast_hash": "9516989f836fa8ab8d36a9b5fe3afca0",
-    "semantic_hash": "9516989f836fa8ab8d36a9b5fe3afca0"
+    "mtime": 1788155821.4169824,
+    "ast_hash": "16323daf323fcec97ecbbcad48fd4b8f",
+    "semantic_hash": ""
   },
   "server/src/models/Job.js": {
     "mtime": 1785481230.7438965,
@@ -2225,9 +2185,9 @@
     "semantic_hash": "1aeb041d117e94bc451e52d07ef7110d"
   },
   "server/src/models/SystemSettings.js": {
-    "mtime": 1783565386.9032142,
-    "ast_hash": "e8fa4b57ffa320ea11e2a87ce52e475b",
-    "semantic_hash": "e8fa4b57ffa320ea11e2a87ce52e475b"
+    "mtime": 1788155500.9058075,
+    "ast_hash": "3d13d149d561ef4b948f06605068a8c9",
+    "semantic_hash": ""
   },
   "server/src/models/Task.js": {
     "mtime": 1785506559.7825027,
@@ -2240,8 +2200,8 @@
     "semantic_hash": "45df44bac4a6f87abfb54a27d9e1c96a"
   },
   "server/src/routes/adminRoutes.js": {
-    "mtime": 1788147698.6933546,
-    "ast_hash": "14a29a6feb38798d236a9b457431d51f",
+    "mtime": 1788155768.331143,
+    "ast_hash": "44ddd7a5090d5c5591874016e7361c5c",
     "semantic_hash": ""
   },
   "server/src/routes/pageRoutes.js": {
@@ -2255,9 +2215,9 @@
     "semantic_hash": "dd4e94d0b78fcfb5530a750280c23c89"
   },
   "server/src/routes/webhookRoutes.js": {
-    "mtime": 1785659207.0114806,
-    "ast_hash": "2fa7e1ea92b400f4b3c9b2b512f98a77",
-    "semantic_hash": "2fa7e1ea92b400f4b3c9b2b512f98a77"
+    "mtime": 1788155730.2368617,
+    "ast_hash": "ff98be0094224ef536118f9037cac56b",
+    "semantic_hash": ""
   },
   "server/src/server.js": {
     "mtime": 1785874787.5419097,
@@ -2315,8 +2275,8 @@
     "semantic_hash": "cb971dc6b6d45b9557d2a6e31852f27e"
   },
   "server/src/services/crmRuntime.js": {
-    "mtime": 1786198715.7844493,
-    "ast_hash": "3edb0af7a4a59bc7c8f75afeb9354c6a",
+    "mtime": 1788155486.5938988,
+    "ast_hash": "3701f5706cf37b64964ca4bca617d716",
     "semantic_hash": ""
   },
   "server/src/services/dailyReviewService.js": {
@@ -2340,8 +2300,8 @@
     "semantic_hash": ""
   },
   "server/src/services/imapWatcherService.js": {
-    "mtime": 1788145945.5676084,
-    "ast_hash": "19d702ae2dc34beae619712a1edde78b",
+    "mtime": 1788155692.831841,
+    "ast_hash": "17ccd717e41b589dc7625ed66043c046",
     "semantic_hash": ""
   },
   "server/src/services/ingestionService.js": {
@@ -2400,8 +2360,8 @@
     "semantic_hash": "0656ceaf0addb6a23dd86c84cd61771f"
   },
   "server/src/services/mailTransport.js": {
-    "mtime": 1788154715.4122505,
-    "ast_hash": "c1c1bf8529dfef40909af376c9246281",
+    "mtime": 1788155464.7426417,
+    "ast_hash": "5c21b8462054c7579e775717bff7cca0",
     "semantic_hash": ""
   },
   "server/src/services/openaiService.js": {
@@ -2434,16 +2394,6 @@
     "ast_hash": "87d60a05f730e490c8c4946e3e9e2d55",
     "semantic_hash": "87d60a05f730e490c8c4946e3e9e2d55"
   },
-  "server/src/services/resendAutoSyncService.js": {
-    "mtime": 1786100504.3333979,
-    "ast_hash": "2b52cd4009444cc29e84cd8079ecaec3",
-    "semantic_hash": "2b52cd4009444cc29e84cd8079ecaec3"
-  },
-  "server/src/services/resendService.js": {
-    "mtime": 1785916580.4616406,
-    "ast_hash": "e73d3849f71b7e1e73fbb79e8dd0fe02",
-    "semantic_hash": "e73d3849f71b7e1e73fbb79e8dd0fe02"
-  },
   "server/src/services/resourceTimeService.js": {
     "mtime": 1786100504.3333979,
     "ast_hash": "ed9e41747cec14d97edb40e4a0f8dd2f",
@@ -2470,8 +2420,8 @@
     "semantic_hash": "1e0b12caedbf8745fb8aef6a298aa6ac"
   },
   "server/src/services/sendWorker.js": {
-    "mtime": 1788147733.438131,
-    "ast_hash": "3de087a869ecd0ea9ddf02ca9f28eb86",
+    "mtime": 1788155531.153811,
+    "ast_hash": "debca804324135ebe1f5b37a8b896e61",
     "semantic_hash": ""
   },
   "server/src/services/sequenceService.js": {
@@ -2485,9 +2435,9 @@
     "semantic_hash": "9814efbb64b114cc6e70ef813db5eccf"
   },
   "server/src/services/systemSettingsService.js": {
-    "mtime": 1785874864.5734541,
-    "ast_hash": "ec6aee7caecc92666a993d64b084c7a8",
-    "semantic_hash": "ec6aee7caecc92666a993d64b084c7a8"
+    "mtime": 1788155508.8041143,
+    "ast_hash": "a43654f5be06a8c38d6d4bd76685948b",
+    "semantic_hash": ""
   },
   "server/src/services/unifiedFollowUpService.js": {
     "mtime": 1785916924.6331706,
@@ -2500,9 +2450,9 @@
     "semantic_hash": ""
   },
   "server/src/services/userEmailService.js": {
-    "mtime": 1784182879.3109107,
-    "ast_hash": "093a836c1a82118f2f3b30d6a621626c",
-    "semantic_hash": "093a836c1a82118f2f3b30d6a621626c"
+    "mtime": 1788155475.4968736,
+    "ast_hash": "2af96c87e8b9efc6d41b5da28085098c",
+    "semantic_hash": ""
   },
   "server/src/services/userService.js": {
     "mtime": 1785874776.9490418,
@@ -2643,11 +2593,6 @@
     "mtime": 1785877596.7891207,
     "ast_hash": "21c8ebffa3e4ca9f7837050f5b33e567",
     "semantic_hash": "21c8ebffa3e4ca9f7837050f5b33e567"
-  },
-  "server/tests/resendAutoSync.test.js": {
-    "mtime": 1785481230.769464,
-    "ast_hash": "a73e8ec905386952b16a6612e1f0be15",
-    "semantic_hash": "a73e8ec905386952b16a6612e1f0be15"
   },
   "server/tests/routePermissions.test.js": {
     "mtime": 1786100504.3394015,
@@ -5927,6 +5872,11 @@
   "server/tests/sendWorker.test.js": {
     "mtime": 1788006210.8457518,
     "ast_hash": "700d704dffbf5ea14ce62d66b4e6db8a",
+    "semantic_hash": ""
+  },
+  "server/src/utils/inboundEmailClassifier.js": {
+    "mtime": 1788155681.230938,
+    "ast_hash": "58a19634020cbe12e04f6d94b1459b0c",
     "semantic_hash": ""
   }
 }
