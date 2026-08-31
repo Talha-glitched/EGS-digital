@@ -191,7 +191,7 @@ export default function SequenceBuilderWorkspace({
     }
 
     if (launch && !mailStatus?.emailDeliveryReady) {
-      setError('Email delivery is not configured. Enable Resend or connect SMTP before launching.');
+      setError('Email delivery is not configured. Connect SMTP mailbox before launching.');
       return;
     }
 

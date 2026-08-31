@@ -11,8 +11,6 @@ export async function getSystemSettings() {
 
     const defaultVal = {
       key: 'email',
-      useResend: false,
-      resendDomain: 'masuood.exhibitgraphicsign.com',
     };
 
     await db.query(
@@ -29,11 +27,10 @@ export async function getSystemSettings() {
       if (!settings) {
         settings = await SystemSettings.create({
           key: 'email',
-          useResend: false,
-          resendDomain: 'masuood.exhibitgraphicsign.com',
+          settings: {},
         });
       }
-      return settings;
+      return settings?.settings || { key: 'email' };
     }
     throw err;
   }
@@ -43,15 +40,9 @@ export async function updateSystemSettings(updateData) {
   const current = await getSystemSettings();
   const updated = {
     ...current,
+    ...(updateData || {}),
     key: 'email',
   };
-
-  if (updateData.useResend !== undefined) {
-    updated.useResend = Boolean(updateData.useResend);
-  }
-  if (updateData.resendDomain !== undefined) {
-    updated.resendDomain = String(updateData.resendDomain).trim();
-  }
 
   try {
     await db.query(
@@ -69,14 +60,9 @@ export async function updateSystemSettings(updateData) {
       if (!settings) {
         settings = new SystemSettings({ key: 'email' });
       }
-      if (updateData.useResend !== undefined) {
-        settings.useResend = Boolean(updateData.useResend);
-      }
-      if (updateData.resendDomain !== undefined) {
-        settings.resendDomain = String(updateData.resendDomain).trim();
-      }
+      settings.settings = updated;
       await settings.save();
-      return settings;
+      return updated;
     }
     throw err;
   }

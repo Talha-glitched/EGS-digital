@@ -17,8 +17,6 @@ import db from '../db/index.js';
 import { sendAuthenticatedMail, getFromIdentity, getConfiguredEmailAccounts } from '../services/mailTransport.js';
 import { renderEmailHtml, getEmailAttachments } from '../utils/emailTemplateRenderer.js';
 import { getSystemSettings, updateSystemSettings } from '../services/systemSettingsService.js';
-import { getResendMetrics } from '../services/resendService.js';
-import { syncAllResendReplies } from '../services/resendAutoSyncService.js';
 import { assignReplyReview, completeReplyReview, resolveReplyReview } from '../services/replyReviewTaskService.js';
 import {
   getTodayReviewStatus,
@@ -408,11 +406,6 @@ router.use((req, res, next) => {
   return requireAdmin(req, res, () => requireRoutePermission(req, res, next));
 });
 
-router.post('/sync/resend-replies', asyncRoute(async (req, res) => {
-  const stats = await syncAllResendReplies();
-  res.json(stats);
-}));
-
 router.get('/status', asyncRoute(async (req, res) => {
   const session = readAdminCookie(req);
   const delivery = await getEmailDeliveryStatus();
@@ -431,8 +424,6 @@ router.get('/status', asyncRoute(async (req, res) => {
       : null,
     adminConfigured: isAdminConfigured(),
     ...getCrmAdminStatus(),
-    useResend: delivery.useResend,
-    resendReady: delivery.resendReady,
     emailDeliveryReady: delivery.emailDeliveryReady,
   });
 }));
@@ -1720,16 +1711,6 @@ router.get('/system-settings', asyncRoute(async (_req, res) => {
 
 router.patch('/system-settings', asyncRoute(async (req, res) => {
   res.json(await updateSystemSettings(req.body || {}));
-}));
-
-router.get('/resend/metrics', asyncRoute(async (req, res) => {
-  const { status, search, limit, campaignId } = req.query || {};
-  res.json(await getResendMetrics({
-    status: status ? String(status) : undefined,
-    search: search ? String(search) : undefined,
-    limit: limit ? Number(limit) : undefined,
-    campaignId: campaignId ? String(campaignId) : undefined,
-  }));
 }));
 
 router.get('/vendor-performance', asyncRoute(async (req, res) => {

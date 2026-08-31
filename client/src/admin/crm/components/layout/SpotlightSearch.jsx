@@ -38,7 +38,7 @@ const QUICK_NAV = [
   { id: 'nav-completed-jobs', type: 'page', title: 'Jobs Done', subtitle: 'Completed and past production jobs directory', href: '/admin/crm/completed-jobs', keywords: ['completed', 'jobs', 'done', 'past'], icon: BriefcaseBusiness },
   { id: 'nav-inventory', type: 'page', title: 'Inventory', subtitle: 'Stock, assets, locations, packing, and barcode movements', href: '/admin/crm/inventory', keywords: ['inventory', 'stock', 'barcode', 'assets', 'warehouse', 'packing'], icon: Boxes },
   { id: 'nav-tasks', type: 'page', title: 'Tasks', subtitle: 'Calls, meetings, and next actions', href: '/admin/crm/tasks', keywords: ['tasks', 'follow', 'todo'], icon: ListTodo },
-  { id: 'nav-communications', type: 'page', title: 'Communications', subtitle: 'Replies, outreach, message search, delivery issues, and Job links', href: '/admin/crm/communications', keywords: ['communications', 'inbox', 'email', 'replies', 'outbox', 'sent', 'queue', 'launch', 'batch', 'resend', 'delivery'], icon: SendHorizontal },
+  { id: 'nav-communications', type: 'page', title: 'Communications', subtitle: 'Replies, outreach, message search, delivery issues, and Job links', href: '/admin/crm/communications', keywords: ['communications', 'inbox', 'email', 'replies', 'outbox', 'sent', 'queue', 'launch', 'batch', 'delivery'], icon: SendHorizontal },
 ];
 
 const TYPE_ICONS = {

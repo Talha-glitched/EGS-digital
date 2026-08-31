@@ -18,7 +18,6 @@ import { useTableSort } from '../../hooks/useTableSort.js';
 import { campaignCompanySortAccessors, leadSortAccessors } from '../../hooks/tableSortAccessors.js';
 import { SortableTableHeader, TableSortIndicator } from '../ui/SortableTableHeader.jsx';
 import { deleteCompanyWithUndo, deleteLeadWithUndo, deleteCompanies, deleteLeads, fetchSentEmails, crmApiFetch, removeQueueJob, removeQueueJobs, sendCampaignQueue } from '../../crmApi.js';
-import { RESEND_MAX_SENDS_PER_REQUEST } from '../../constants/resendLimits.js';
 import { runBatchedSendLoop } from '../../utils/batchedSend.js';
 import {
   AdvancedFilterPopover,
@@ -773,7 +772,7 @@ export default function ProjectDatabaseTable({
                 <div className="min-w-0">
                   <h3 className="text-xs font-bold text-brand uppercase tracking-wider">Manual Campaign Send Execution</h3>
                   <p className="mt-1 text-xs text-neutral-500">
-                    Review the queue below and send manually. Automatically continues in batches of {RESEND_MAX_SENDS_PER_REQUEST} until complete.
+                    Review the queue below and send manually. Automatically continues in batches until complete.
                   </p>
                   {queueSendNotice ? (
                     <p className="mt-2 text-xs font-medium text-brand">{queueSendNotice}</p>

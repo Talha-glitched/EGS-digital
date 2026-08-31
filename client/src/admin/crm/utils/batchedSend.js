@@ -1,4 +1,4 @@
-import { RESEND_MAX_SENDS_PER_REQUEST } from '../constants/resendLimits.js';
+const BATCH_SEND_LIMIT = 100;
 
 /**
  * Calls sendFn repeatedly (max 100 emails per call) until the queue is clear or progress stalls.
@@ -23,7 +23,7 @@ export async function runBatchedSendLoop(sendFn, { onProgress } = {}) {
       starting: true,
     });
 
-    const result = await sendFn({ maxCount: RESEND_MAX_SENDS_PER_REQUEST });
+    const result = await sendFn({ maxCount: BATCH_SEND_LIMIT });
     totalSent += result.sent || 0;
     totalFailed += result.failed || 0;
     remaining = result.remaining ?? 0;

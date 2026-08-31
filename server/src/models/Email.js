@@ -45,7 +45,7 @@ const emailSchema = new mongoose.Schema(
     },
     provider: {
       type: String,
-      default: 'resend',
+      default: 'smtp',
       index: true,
     },
     suggestedIntent: {

@@ -3,7 +3,6 @@ import { startImapWatcher } from './imapWatcherService.js';
 import { startAnalyticsCron } from './analyticsCronService.js';
 import { getMailConfigStatus } from './mailTransport.js';
 import { recalculateAllCampaignCoverageStats } from './projectService.js';
-import { startResendAutoSyncCron } from './resendAutoSyncService.js';
 import { startInventoryPhotoRetentionCron } from './inventoryPhotoRetentionService.js';
 
 export function initializeCrmRuntime() {
@@ -19,9 +18,6 @@ export function initializeCrmRuntime() {
 
   startAnalyticsCron();
   console.info('Analytics cron started.');
-
-  startResendAutoSyncCron();
-  console.info('Resend automatic reply sync started.');
 
   startInventoryPhotoRetentionCron();
   console.info('Inventory photo retention cron started.');

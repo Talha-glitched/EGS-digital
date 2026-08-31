@@ -1,6 +1,5 @@
 import db from '../db/index.js';
 import { normalizeEmail } from '../utils/normalizeDomain.js';
-import { capResendBatchSize, RESEND_MAX_EMAILS_PER_REQUEST } from '../constants/resendLimits.js';
 import {
   findFlowNode,
   isShortFlowDelay,
@@ -433,12 +432,14 @@ export async function sendJobNow(jobId) {
   return processSendJob(jobId, { force: true });
 }
 
+const MAX_BATCH_SEND_COUNT = 100;
+
 export async function sendPendingJobsBatch(jobIds = [], options = {}) {
-  const ids = Array.isArray(jobIds) ? jobIds.slice(0, RESEND_MAX_EMAILS_PER_REQUEST) : [];
+  const ids = Array.isArray(jobIds) ? jobIds.slice(0, MAX_BATCH_SEND_COUNT) : [];
   const results = [];
   for (const id of ids) {
     try { results.push({ id, ok: true, result: await processSendJob(id, { force: true }) }); }
     catch (error) { results.push({ id, ok: false, error: error.message }); }
   }
-  return { sent: results.filter((row) => row.ok).length, failed: results.filter((row) => !row.ok).length, skipped: 0, processed: results.length, maxPerRequest: RESEND_MAX_EMAILS_PER_REQUEST, results };
+  return { sent: results.filter((row) => row.ok).length, failed: results.filter((row) => !row.ok).length, skipped: 0, processed: results.length, maxPerRequest: MAX_BATCH_SEND_COUNT, results };
 }

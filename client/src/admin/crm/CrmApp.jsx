@@ -21,7 +21,6 @@ import InventoryPage from './pages/InventoryPage.jsx';
 import SequencesPage from './pages/SequencesPage.jsx';
 import LiveSendMonitorPage from './pages/LiveSendMonitorPage.jsx';
 import EmailHubPage from './pages/EmailHubPage.jsx';
-import ResendEmailsPage from './pages/ResendEmailsPage.jsx';
 import RelationshipsPage from './pages/RelationshipsPage.jsx';
 import TeamSettingsPage from './pages/TeamSettingsPage.jsx';
 import EmailSettingsPage from './pages/EmailSettingsPage.jsx';
@@ -244,7 +243,6 @@ function CrmShell({ projects, onLogout, status }) {
     '/admin/crm/inbox': ['Communications', 'Replies, outreach, delivery exceptions, search, and Job-linked evidence'],
     '/admin/crm/email': ['Communications', 'Replies, outreach, delivery exceptions, search, and Job-linked evidence'],
     '/admin/crm/sent': ['Communications', 'Replies, outreach, delivery exceptions, search, and Job-linked evidence'],
-    '/admin/crm/resend-emails': ['Resend emails', 'Delivery status, opens, and clicks for API-sent outreach'],
     '/admin/crm/settings/team': ['Team', 'User accounts, roles, and CRM access'],
     '/admin/crm/settings/email': ['Email settings', 'Configure outbound email delivery'],
     '/admin/crm/settings/activity': ['Activity log', 'Who did what across the CRM'],
@@ -322,7 +320,6 @@ function CrmShell({ projects, onLogout, status }) {
               <Route path="inbox" element={<LegacyCommunicationsRedirect defaultTab="inbox" />} />
               <Route path="email" element={<LegacyCommunicationsRedirect />} />
               <Route path="sent" element={<LegacyCommunicationsRedirect defaultTab="sent" />} />
-              <Route path="resend-emails" element={<ResendEmailsPage />} />
               <Route path="settings/team" element={<TeamSettingsPage />} />
               <Route path="settings/email" element={<EmailSettingsPage />} />
               <Route path="settings/activity" element={<UserActivityPage />} />

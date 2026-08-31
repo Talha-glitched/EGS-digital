@@ -1,5 +1,5 @@
 import db from '../db/index.js';
-import { classifyInboundEmail } from './resendAutoSyncService.js';
+import { classifyInboundEmail } from '../utils/inboundEmailClassifier.js';
 import { purgeLeadFromQueue } from './sequenceService.js';
 import { ensureReplyReviewTask } from './replyReviewTaskService.js';
 import { coordinateReplyFocus } from './campaignContactCoordinationService.js';

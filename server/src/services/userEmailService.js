@@ -97,13 +97,8 @@ export async function sendUserCredentialsEmail({ user, password, welcome = false
 
 export async function getEmailDeliveryStatus() {
   const mail = getMailConfigStatus();
-  const { getSystemSettings } = await import('./systemSettingsService.js');
-  const settings = await getSystemSettings().catch(() => ({ useResend: false }));
-  const resendReady = Boolean(settings.useResend && process.env.RESEND_API_KEY);
   return {
     ...mail,
-    useResend: Boolean(settings.useResend),
-    resendReady,
-    emailDeliveryReady: mail.smtpReady || resendReady,
+    emailDeliveryReady: mail.smtpReady,
   };
 }

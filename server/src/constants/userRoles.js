@@ -134,7 +134,6 @@ export const ROUTE_PERMISSION_MAP = [
   { prefix: '/send-jobs', read: 'sequences:read', write: 'sequences:write' },
   { prefix: '/send-delivery', read: 'inbox:read', write: 'inbox:write' },
   { prefix: '/communications-workspace', read: 'inbox:read', write: 'inbox:write' },
-  { prefix: '/resend', read: 'sequences:read', write: 'sequences:write' },
   { prefix: '/vendor-performance', read: 'reports:read', write: 'reports:read' },
   // Personal surfaces every signed-in user needs: their own daily review,
   // working view and password.

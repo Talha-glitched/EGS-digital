@@ -184,7 +184,7 @@ export default function EmailHubPage() {
               Review replies, search message evidence, manage outreach and connect client communication to Jobs.
             </p>
           </div>
-          <Link to="/admin/crm/resend-emails" className="crm-btn-ghost text-xs">Provider diagnostics</Link>
+          <Link to="/admin/crm/settings/email" className="crm-btn-ghost text-xs">Mailbox settings</Link>
         </div>
 
         <div className="mb-3 flex flex-wrap gap-2">

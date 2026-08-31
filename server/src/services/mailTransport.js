@@ -41,7 +41,7 @@ export function getConfiguredEmailAccounts() {
   const accounts = [];
   const seenEmails = new Set();
 
-  const defaultSmtpHost = process.env.EMAIL_SMTP_HOST || 'mail.exhibitgraphicsign.com';
+  const defaultSmtpHost = process.env.EMAIL_SMTP_HOST || 'wardah.tasjeel.ae';
   const defaultSmtpPort = Number(process.env.EMAIL_SMTP_PORT || 465);
   const defaultImapHost = process.env.EMAIL_IMAP_HOST || defaultSmtpHost;
   const defaultImapPort = Number(process.env.EMAIL_IMAP_PORT || 993);
@@ -302,12 +302,6 @@ export async function appendOutboundCopyToSent(rawMessage, fromEmail) {
   }
 }
 
-export function getResendFromEmail(_fromEmail, resendDomain) {
-  const domain = resendDomain || 'masuood.exhibitgraphicsign.com';
-  const localPart = process.env.RESEND_FROM_LOCAL_PART || 'rana';
-  return `${localPart}@${domain}`;
-}
-
 export async function sendAuthenticatedMail({
   to,
   subject,
@@ -333,14 +327,9 @@ export async function sendAuthenticatedMail({
     throw new Error('SMTP user is not configured (EMAIL_SMTP_USER).');
   }
 
-  const smtpHost = process.env.EMAIL_SMTP_HOST;
-  if (!smtpHost) {
-    console.error('[Email] ERROR: EMAIL_SMTP_HOST is not set in environment variables.');
-    throw new Error('SMTP host is not configured (EMAIL_SMTP_HOST).');
-  }
-
+  const smtpHost = creds.smtpHost || creds.host || process.env.EMAIL_SMTP_HOST || 'wardah.tasjeel.ae';
   const formattedAttachments = Array.isArray(attachments) ? attachments : [];
-  const smtpPort = Number(process.env.EMAIL_SMTP_PORT || 465);
+  const smtpPort = Number(creds.smtpPort || creds.port || process.env.EMAIL_SMTP_PORT || 465);
   const secure = smtpPort === 465;
   const rejectUnauthorized = envTlsRejectUnauthorized(process.env.EMAIL_SMTP_TLS_REJECT_UNAUTHORIZED);
   const fromHeader = formatFromHeader(fromName, smtpUser);
@@ -376,7 +365,28 @@ export async function sendAuthenticatedMail({
     const transporter = createTransporter(fromEmail);
 
     console.log(`[Email] Sending via nodemailer.transporter.sendMail...`);
-    const result = await transporter.sendMail(mailOptions);
+    let result;
+    try {
+      result = await transporter.sendMail(mailOptions);
+    } catch (primaryErr) {
+      const isConnTimeout = /timeout|ETIMEDOUT|ESOCKETTIMEDOUT|ECONNREFUSED|ENOTFOUND|greeting/i.test(primaryErr.message || '');
+      const primaryPort = Number(creds.smtpPort || creds.port || process.env.EMAIL_SMTP_PORT || 465);
+      const fallbackPort = primaryPort === 465 ? 587 : 465;
+
+      if (isConnTimeout) {
+        console.warn(`[Email] Primary Port ${primaryPort} timed out/failed (${primaryErr.message}). Retrying on Port ${fallbackPort}...`);
+        try {
+          const fallbackTransporter = createTransporter(fromEmail, { port: fallbackPort, secure: fallbackPort === 465 });
+          result = await fallbackTransporter.sendMail(mailOptions);
+          console.log(`[Email] Fallback to Port ${fallbackPort} SUCCESS.`);
+        } catch (fallbackErr) {
+          console.error(`[Email] Port ${fallbackPort} retry also failed:`, fallbackErr.message);
+          throw primaryErr;
+        }
+      } else {
+        throw primaryErr;
+      }
+    }
     console.log(`[Email] nodemailer.sendMail SUCCESS. SMTP Response:`, JSON.stringify(result, null, 2));
 
     const accepted = normalizeRecipientList(result?.accepted);
@@ -401,13 +411,13 @@ export async function sendAuthenticatedMail({
   }
 }
 
-export function createTransporter(fromEmail) {
+export function createTransporter(fromEmail, overrideOptions = {}) {
   const rejectUnauthorized = envTlsRejectUnauthorized(process.env.EMAIL_SMTP_TLS_REJECT_UNAUTHORIZED);
   const creds = getCredentialsForEmail(fromEmail);
   const domain = creds.user.includes('@') ? creds.user.split('@')[1] : 'exhibitgraphicsign.com';
-  const port = Number(creds.port || process.env.EMAIL_SMTP_PORT || 465);
-  const host = creds.host || process.env.EMAIL_SMTP_HOST;
-  const secure = port === 465;
+  const port = Number(overrideOptions.port || creds.smtpPort || creds.port || process.env.EMAIL_SMTP_PORT || 465);
+  const host = overrideOptions.host || creds.smtpHost || creds.host || process.env.EMAIL_SMTP_HOST || 'wardah.tasjeel.ae';
+  const secure = overrideOptions.secure !== undefined ? overrideOptions.secure : port === 465;
 
   return nodemailer.createTransport({
     name: domain,
@@ -420,17 +430,17 @@ export function createTransporter(fromEmail) {
       pass: creds.pass,
     },
     tls: { rejectUnauthorized },
-    connectionTimeout: 8000,
-    greetingTimeout: 8000,
-    socketTimeout: 10000,
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
   });
 }
 
-export function createImapClient(email) {
+export function createImapClient(email, overrideOptions = {}) {
   const rejectUnauthorized = envTlsRejectUnauthorized(process.env.EMAIL_IMAP_TLS_REJECT_UNAUTHORIZED);
   const creds = getCredentialsForEmail(email);
-  const port = Number(creds.imapPort || process.env.EMAIL_IMAP_PORT || 993);
-  const host = creds.imapHost || process.env.EMAIL_IMAP_HOST;
+  const port = Number(overrideOptions.port || creds.imapPort || process.env.EMAIL_IMAP_PORT || 993);
+  const host = overrideOptions.host || creds.imapHost || process.env.EMAIL_IMAP_HOST || 'wardah.tasjeel.ae';
 
   return new ImapFlow({
     host,
@@ -442,7 +452,7 @@ export function createImapClient(email) {
     },
     logger: false,
     tls: { rejectUnauthorized },
-    connectionTimeout: 5000,
+    connectionTimeout: 8000,
   });
 }
 
@@ -458,7 +468,7 @@ export function getFromIdentity(project) {
   const accounts = getConfiguredEmailAccounts();
   const primary = accounts[0] || {};
 
-  const resolvedEmail = customEmail || process.env.RESEND_FROM_EMAIL || primary.email || 'rana@exhibitgraphicsign.com';
+  const resolvedEmail = customEmail || primary.email || 'haider@exhibitgraphicsign.com';
   const matchedAccount = accounts.find((a) => a.email.toLowerCase() === String(resolvedEmail).toLowerCase());
   const resolvedName = customName || matchedAccount?.name || (customEmail ? deriveNameFromEmail(customEmail) : (process.env.EMAIL_FROM_NAME || 'Exhibit Graphic Sign'));
   const resolvedTitle = matchedAccount?.title || deriveTitleFromEmail(resolvedEmail);
