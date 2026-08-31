@@ -15,6 +15,7 @@ function ShortcutHint() {
 
 export default function TopNavbar({ title, subtitle, pageInfo, onMenu, status, onOpenSearch }) {
   const infoText = pageInfo ?? subtitle;
+  const { displayName, role, user } = usePermissions(status);
   const systemReady = (status?.postgresReady || status?.mongodbReady) && (status?.smtpReady || status?.emailDeliveryReady) && status?.imapReady;
   const healthLabel = systemReady ? 'System ready' : 'Setup needed';
   const healthTitle = [

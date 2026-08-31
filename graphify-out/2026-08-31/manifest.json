@@ -150,8 +150,8 @@
     "semantic_hash": ""
   },
   "client/src/admin/crm/components/layout/TopNavbar.jsx": {
-    "mtime": 1786113074.4108527,
-    "ast_hash": "7cf4fc9215ede14b0fd99cab65a812b8",
+    "mtime": 1788164022.8985336,
+    "ast_hash": "5663fb1fbe83d49925afe2b62f4c7b4c",
     "semantic_hash": ""
   },
   "client/src/admin/crm/components/leads/AddCompanyModal.jsx": {
@@ -2275,8 +2275,8 @@
     "semantic_hash": "cb971dc6b6d45b9557d2a6e31852f27e"
   },
   "server/src/services/crmRuntime.js": {
-    "mtime": 1788155486.5938988,
-    "ast_hash": "3701f5706cf37b64964ca4bca617d716",
+    "mtime": 1788164557.7175603,
+    "ast_hash": "0bf434a1cadad5e9ee3ebf5db7bdbc59",
     "semantic_hash": ""
   },
   "server/src/services/dailyReviewService.js": {
@@ -2425,8 +2425,8 @@
     "semantic_hash": ""
   },
   "server/src/services/sequenceService.js": {
-    "mtime": 1788147743.4252532,
-    "ast_hash": "6695dd5b581563fb0f7cc2bbe4e2b8c9",
+    "mtime": 1788164545.3180346,
+    "ast_hash": "8e861bc8bfd991f4f773b5d18a8b909a",
     "semantic_hash": ""
   },
   "server/src/services/supplierProcurementService.js": {

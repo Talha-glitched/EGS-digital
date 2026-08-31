@@ -1,32 +1,32 @@
 # Graph Report - EGS-web  (2026-08-31)
 
 ## Corpus Check
-- 612 files · ~4,096,897 words
+- 612 files · ~4,096,905 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3902 nodes · 9273 edges · 255 communities (207 shown, 48 thin omitted)
+- 3902 nodes · 9274 edges · 254 communities (205 shown, 49 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 52 edges (avg confidence: 0.66)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c3230900`
+- Built from commit: `4aa23c6a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - crmApi.js
 - employeeOperationsService.js
-- Lead.js
+- campaignCleanupInventory.js
 - RevisionDetailDrawer.jsx
 - Alert
-- sequenceService.js
+- adminRoutes.js
 - filterEngine.js
 - filterSchemas.js
-- adminRoutes.js
+- projectService.js
 - design_system.py
-- campaignCleanupInventory.js
-- EmailOutboxWorkspace.jsx
+- campaignCleanupDelete.js
+- CommunicationJobModal.jsx
 - PortfolioFablePage.jsx
 - siteData.js
 - OffersPage.jsx
@@ -45,7 +45,7 @@
 - completedJobService.js
 - sortUtils.js
 - App.jsx
-- writeAuditLog
+- auditService.js
 - SequenceBuilderWorkspace.jsx
 - InteractionTimeline.jsx
 - Module-by-module audit
@@ -54,9 +54,9 @@
 - db/index.js
 - ExhibitionsPage.jsx
 - contactInquiry.js
-- revisionRegistry.js
+- OngoingJob.js
 - mailTransport.js
-- unifiedTaskService.js
+- writeAuditLog
 - cn
 - imapWatcherService.js
 - SensitiveDataContext.jsx
@@ -93,10 +93,10 @@
 - restoreEmailThreadsFromStaging.js
 - Section Order
 - dailyReview.test.js
-- inventoryService.js
+- main
 - usePageLifecycle
 - scripts
-- ongoing_jobs
+- design_versions
 - Section Order
 - Section Order
 - Section Order
@@ -116,7 +116,7 @@
 - emailTemplateRenderer.js
 - runInventoryRefactorMigration.js
 - ServicesV2.jsx
-- job_scope_lines
+- ongoing_jobs
 - auditBusinessSemanticsReadOnly.js
 - recoverRuntimeInboundContext.js
 - src/constants/pocQualification.js
@@ -214,7 +214,6 @@
 - fieldExecutionService.js
 - ActiveSelectionContext.jsx
 - CTA System
-- Company
 - 21_employee_user_sync.sql
 - inventory_movements
 - job_activity_resource_assignments
@@ -277,19 +276,19 @@
 ## Import Cycles
 - None detected.
 
-## Communities (255 total, 48 thin omitted)
+## Communities (254 total, 49 thin omitted)
 
 ### Community 0 - "crmApi.js"
 Cohesion: 0.05
-Nodes (84): CommunicationsOverview(), LinkedCommunicationsWorkspace(), UnifiedInboxWorkspace(), InteractionTimeline(), emptyStep(), GRADUATION_STEPS, ProjectSequenceMindMap(), LIFECYCLE_TABS (+76 more)
+Nodes (92): CommunicationsOverview(), LinkedCommunicationsWorkspace(), UnifiedInboxWorkspace(), InteractionTimeline(), LIFECYCLE_TABS, OngoingJobDrawer(), SUB_TABS, BatchJobTable() (+84 more)
 
 ### Community 1 - "employeeOperationsService.js"
-Cohesion: 0.06
-Nodes (73): ALL_READ, ALL_WRITE, DENY_PERMISSION, getPermissionsForRole(), isValidRole(), permissionForRequest(), ROLE_LABELS, ROLE_PERMISSIONS (+65 more)
+Cohesion: 0.05
+Nodes (80): ALL_READ, ALL_WRITE, DENY_PERMISSION, getPermissionsForRole(), isValidRole(), permissionForRequest(), ROLE_LABELS, ROLE_PERMISSIONS (+72 more)
 
-### Community 2 - "Lead.js"
-Cohesion: 0.07
-Nodes (45): __dirname, __filename, runAudit(), __dirname, __filename, parseEmailAndName(), runBackfill(), cleanTextString() (+37 more)
+### Community 2 - "campaignCleanupInventory.js"
+Cohesion: 0.06
+Nodes (56): __dirname, __filename, runAudit(), __dirname, __filename, parseEmailAndName(), runBackfill(), main() (+48 more)
 
 ### Community 3 - "RevisionDetailDrawer.jsx"
 Cohesion: 0.20
@@ -297,11 +296,11 @@ Nodes (15): ActionBadge(), TONES, ACTION_SUMMARY(), ActivityDetailDrawer(), Chan
 
 ### Community 4 - "Alert"
 Cohesion: 0.06
-Nodes (47): dayLabel(), JobActivationModal(), scheduled(), STEPS, today(), when(), AddCompanyModal(), EMPTY (+39 more)
+Nodes (50): dayLabel(), JobActivationModal(), scheduled(), STEPS, today(), when(), AddCompanyModal(), EMPTY (+42 more)
 
-### Community 5 - "sequenceService.js"
-Cohesion: 0.08
-Nodes (37): assertEnrollmentConfirmed(), assertLaunchAudience(), buildEnrollmentLeadQuery(), createSequence(), delayMs(), deleteSequence(), deleteSequences(), enrollableDeliveryFilter() (+29 more)
+### Community 5 - "adminRoutes.js"
+Cohesion: 0.05
+Nodes (61): activityEvidenceUpload, blockedJobMemoryExtensions, fieldPhotoUpload, handleBulkDeleteOngoingJobs, handleCreateCompletedJob, handleCreateOngoingJob, handleDeleteCompletedJob, handleDeleteOngoingJob (+53 more)
 
 ### Community 6 - "filterEngine.js"
 Cohesion: 0.36
@@ -311,21 +310,21 @@ Nodes (11): getNestedValue(), matchArrayIncludes(), matchDateRange(), matchField
 Cohesion: 0.09
 Nodes (21): buildOngoingJobFilterSchema(), buildOpportunityFilterSchema, buildTaskFilterSchema(), CAMPAIGN_COMPANY_FILTER_SCHEMA, CAMPAIGN_FILTER_SCHEMA, CAMPAIGN_LEAD_FILTER_SCHEMA, CAMPAIGN_ROI_FILTER_SCHEMA, CAMPAIGN_STATUSES (+13 more)
 
-### Community 8 - "adminRoutes.js"
-Cohesion: 0.05
-Nodes (70): run(), activityEvidenceUpload, blockedJobMemoryExtensions, fieldPhotoUpload, handleBulkDeleteOngoingJobs, handleCreateCompletedJob, handleCreateOngoingJob, handleDeleteCompletedJob (+62 more)
+### Community 8 - "projectService.js"
+Cohesion: 0.06
+Nodes (52): run(), requiredColumns, assertAccount(), getAccountWorkspace(), STATUS_BY_ASSESSMENT, applyReferralFocus(), coordinateReplyFocus(), holdAccountSending() (+44 more)
 
 ### Community 9 - "design_system.py"
 Cohesion: 0.06
 Nodes (42): BM25, detect_domain(), _load_csv(), Build BM25 index from documents, Score all documents against query, Load CSV and return list of dicts, Core search function using BM25, Auto-detect the most relevant domain from query (+34 more)
 
-### Community 10 - "campaignCleanupInventory.js"
-Cohesion: 0.08
-Nodes (42): main(), main(), pad(), __dirname, main(), XLSX_PATH, run(), run() (+34 more)
-
-### Community 11 - "EmailOutboxWorkspace.jsx"
+### Community 10 - "campaignCleanupDelete.js"
 Cohesion: 0.09
-Nodes (28): ACTIONS, CommunicationJobModal(), localDue(), stamp(), EmailDetailsDrawer(), formatTime(), STATUS_CONFIG, StatusBadge() (+20 more)
+Nodes (35): main(), __dirname, main(), XLSX_PATH, run(), run(), run(), AnalyticsSnapshot (+27 more)
+
+### Community 11 - "CommunicationJobModal.jsx"
+Cohesion: 0.23
+Nodes (13): ACTIONS, CommunicationJobModal(), localDue(), stamp(), EmailDetailsDrawer(), formatTime(), STATUS_CONFIG, StatusBadge() (+5 more)
 
 ### Community 12 - "PortfolioFablePage.jsx"
 Cohesion: 0.07
@@ -340,12 +339,12 @@ Cohesion: 0.13
 Nodes (27): InquiryBriefCard(), CardNav(), getLinkIconStyle(), OfferCard(), OfferDossierModal(), pad2(), AnalyticsDashboardWidget(), AuditRadarWidget() (+19 more)
 
 ### Community 15 - "ProjectDetailWorkspace.jsx"
-Cohesion: 0.10
-Nodes (24): CoverageMetricsBanner(), MetricCard(), TopNavbar(), CampaignStageControl(), ContactBlenderModal(), ExhibitorImportModal(), ProgressBlock(), ProjectPerformanceModal() (+16 more)
+Cohesion: 0.06
+Nodes (41): CampaignVendorPerformanceGrid(), SOURCE_DOT, CoverageMetricsBanner(), MetricCard(), SOURCE_DOT, VendorPerformanceGrid(), DECISION_LABELS, JobArtifactsPanel() (+33 more)
 
 ### Community 16 - "contactEmails.js"
-Cohesion: 0.16
-Nodes (29): run(), applyOutreachEmailFromReply(), BLAST_FIELDS, buildLeadEmailQuery(), detectEmailVendor(), EMAIL_FIELDS, firstContactEmail(), getBlastSendEmails() (+21 more)
+Cohesion: 0.10
+Nodes (41): findCampaign(), main(), normLi(), normName(), parseExcel(), run(), run(), recalculateCampaignCoverageStats() (+33 more)
 
 ### Community 17 - "dependencies"
 Cohesion: 0.05
@@ -361,11 +360,11 @@ Nodes (32): failurePoints, RetailFailurePointsSection(), RetailProofSection(), R
 
 ### Community 20 - "CrmApp.jsx"
 Cohesion: 0.06
-Nodes (33): BASE_NAV_GROUPS, NavItem(), Sidebar(), useSpotlightShortcut(), SettingsFilterSelect(), SettingsPageHeader(), SettingsShell(), TABS (+25 more)
+Nodes (34): BASE_NAV_GROUPS, NavItem(), Sidebar(), useSpotlightShortcut(), TopNavbar(), SettingsFilterSelect(), SettingsPageHeader(), SettingsShell() (+26 more)
 
 ### Community 21 - "interactionService.js"
-Cohesion: 0.09
-Nodes (46): main(), run(), defaultTitleForType(), INTERACTION_DIRECTION_LABELS, INTERACTION_DIRECTIONS, INTERACTION_OUTCOME_LABELS, INTERACTION_OUTCOMES, INTERACTION_TYPE_LABELS (+38 more)
+Cohesion: 0.07
+Nodes (62): main(), run(), defaultTitleForType(), INTERACTION_DIRECTION_LABELS, INTERACTION_DIRECTIONS, INTERACTION_OUTCOME_LABELS, INTERACTION_OUTCOMES, INTERACTION_TYPE_LABELS (+54 more)
 
 ### Community 22 - "dependencies"
 Cohesion: 0.05
@@ -399,9 +398,9 @@ Nodes (3): compareSortValues(), normalizeSortValue(), sortRows()
 Cohesion: 0.11
 Nodes (13): CrmApp(), App(), PLACEHOLDER_COPY, PlaceholderPage(), InquiryModalProvider(), AdminCrmPage(), ExhibitionsPage(), CAMPUS_METADATA (+5 more)
 
-### Community 30 - "writeAuditLog"
-Cohesion: 0.17
-Nodes (20): AuditLog, auditLogSchema, getAuditLogById(), getUserActivitySummary(), listAuditLogs(), writeAuditLog(), applyReferralFocus(), coordinateReplyFocus() (+12 more)
+### Community 30 - "auditService.js"
+Cohesion: 0.21
+Nodes (13): AuditLog, auditLogSchema, getAuditLogById(), getUserActivitySummary(), listAuditLogs(), activateJobDelivery(), assertContext(), assertJob() (+5 more)
 
 ### Community 31 - "SequenceBuilderWorkspace.jsx"
 Cohesion: 0.20
@@ -425,7 +424,7 @@ Nodes (24): CLOSED_LOST_STAGE, CLOSED_WON_STAGE, isClosedStage(), probabilityFor
 
 ### Community 36 - "db/index.js"
 Cohesion: 0.13
-Nodes (16): getClient(), getPool(), query(), getCommunicationsWorkspace(), positiveInt(), activateJobDelivery(), assertContext(), assertJob() (+8 more)
+Nodes (15): getClient(), getPool(), query(), ACTIONS, communicationContext(), createCommunicationJobAction(), due(), getCommunicationJobWorkspace() (+7 more)
 
 ### Community 37 - "ExhibitionsPage.jsx"
 Cohesion: 0.14
@@ -435,21 +434,21 @@ Nodes (12): ExhibitionsAdaptationSection(), ExhibitionsCTASection(), Exhibitions
 Cohesion: 0.14
 Nodes (21): InquiryModal(), buildInquiryMailto(), composeInquiryEmail(), createEmptyInquiryForm(), CTA_LABELS, DEADLINE_OPTIONS, EGS_EMAIL, GUEST_SCALE_OPTIONS (+13 more)
 
-### Community 39 - "revisionRegistry.js"
+### Community 39 - "OngoingJob.js"
 Cohesion: 0.10
-Nodes (28): run(), __dirname, __filename, runMigration(), STAGE_MAPPING, cleanNum(), __dirname, __filename (+20 more)
+Nodes (26): run(), __dirname, __filename, runMigration(), STAGE_MAPPING, cleanNum(), __dirname, __filename (+18 more)
 
 ### Community 40 - "mailTransport.js"
 Cohesion: 0.16
 Nodes (22): client, users, client, client, identity, transporter, appendOutboundCopyToSent(), compileOutboundMessage() (+14 more)
 
-### Community 41 - "unifiedTaskService.js"
-Cohesion: 0.23
-Nodes (20): addTaskEvidence(), createUnifiedTask(), displayPriority(), displayStatus(), getTaskJobContext(), getUnifiedTask(), listUnifiedTasks(), OPEN_STATUSES (+12 more)
+### Community 41 - "writeAuditLog"
+Cohesion: 0.22
+Nodes (21): writeAuditLog(), addTaskEvidence(), createUnifiedTask(), displayPriority(), displayStatus(), getTaskJobContext(), getUnifiedTask(), listUnifiedTasks() (+13 more)
 
 ### Community 42 - "cn"
-Cohesion: 0.04
-Nodes (69): CampaignVendorPerformanceGrid(), SOURCE_DOT, SOURCE_DOT, VendorPerformanceGrid(), CommunicationSourceDrawer(), when(), AttentionRow(), MessageRow() (+61 more)
+Cohesion: 0.05
+Nodes (55): CommunicationSourceDrawer(), when(), AttentionRow(), MessageRow(), when(), ACTIVE, OUTCOMES, ReplyReviewModal() (+47 more)
 
 ### Community 43 - "imapWatcherService.js"
 Cohesion: 0.13
@@ -500,8 +499,8 @@ Cohesion: 0.06
 Nodes (33): 0. The one-sentence diagnosis, 1.1 The collisions, as they exist today, 1.2 The canonical nouns, 1.3 Rename execution, 2.1 What's wrong, 2.2 The rule, 2.3 The new tree — 9 destinations, 2.4 Saved views replace the deleted items (+25 more)
 
 ### Community 55 - "jobCommercialArtifactService.js"
-Cohesion: 0.15
-Nodes (23): purgeExpiredInventoryPhotos(), startInventoryPhotoRetentionCron(), uploadRoot, addDesignVersion(), addQuoteVersion(), assertJob(), audit(), cleanText() (+15 more)
+Cohesion: 0.29
+Nodes (17): addDesignVersion(), addQuoteVersion(), assertJob(), audit(), cleanText(), createDesignSet(), createQuote(), dateOnly() (+9 more)
 
 ### Community 56 - "jobCostingService.js"
 Cohesion: 0.33
@@ -512,8 +511,8 @@ Cohesion: 0.16
 Nodes (13): apply, date(), number(), oid(), pool, scriptDir, apply, asDate() (+5 more)
 
 ### Community 58 - "crmRuntime.js"
-Cohesion: 0.24
-Nodes (13): initializeCrmRuntime(), startImapWatcher(), getMailConfigStatus(), getCrmAdminStatus(), recalculateAllCampaignCoverageStats(), recoverStaleProcessingJobs(), startSendWorker(), cleanupOrphanedSequenceStates() (+5 more)
+Cohesion: 0.18
+Nodes (12): initializeCrmRuntime(), startImapWatcher(), purgeExpiredInventoryPhotos(), startInventoryPhotoRetentionCron(), uploadRoot, recalculateAllCampaignCoverageStats(), recoverStaleProcessingJobs(), startSendWorker() (+4 more)
 
 ### Community 59 - "jobMemoryService.js"
 Cohesion: 0.26
@@ -588,12 +587,8 @@ Cohesion: 0.08
 Nodes (25): 03 Events Page Content Spec, 10. FAQ, 11. Final CTA, 1. Hero, 2. HCT Scale Proof, 3. Pressure Proof, 4. What EGS Handles, 5. Event Process (+17 more)
 
 ### Community 77 - "dailyReview.test.js"
-Cohesion: 0.26
-Nodes (11): requiredColumns, DailyReviewRecord, DailyReviewRecordSchema, completeDailyReview(), getDashboardWorkingViewData(), getDubaiBusinessDate(), getMonthlyReviewHistory(), getTodayReviewStatus() (+3 more)
-
-### Community 78 - "inventoryService.js"
-Cohesion: 0.23
-Nodes (16): audit(), createWarehouseItem(), deleteWarehouseItem(), findItemBySlug(), generateUniqueSlug(), listRecentlyRemovedItems(), listWarehouseItems(), nextDisplayName() (+8 more)
+Cohesion: 0.32
+Nodes (10): DailyReviewRecord, DailyReviewRecordSchema, completeDailyReview(), getDashboardWorkingViewData(), getDubaiBusinessDate(), getMonthlyReviewHistory(), getTodayReviewStatus(), parseDubaiYearMonth() (+2 more)
 
 ### Community 79 - "usePageLifecycle"
 Cohesion: 0.09
@@ -603,9 +598,9 @@ Nodes (49): exhibitionFaqs, ExhibitionsFAQSection(), Footer(), InquiryCtaButton(
 Cohesion: 0.14
 Nodes (13): dependencies, @microsoft/clarity, @microsoft/clarity, name, private, scripts, build, dev (+5 more)
 
-### Community 81 - "ongoing_jobs"
-Cohesion: 0.12
-Nodes (22): milestone, resolved, artifact_decisions, design_sets, design_versions, financial_milestones, job_actual_costs, job_cost_confirmations (+14 more)
+### Community 81 - "design_versions"
+Cohesion: 0.21
+Nodes (12): artifact_decisions, design_sets, design_versions, production_release_design_versions, production_releases, quote_versions, quotes, artifact_decisions (+4 more)
 
 ### Community 82 - "Section Order"
 Cohesion: 0.08
@@ -637,7 +632,7 @@ Nodes (23): 07 Contact Page Content Spec, 1. Hero, 2. Choose Your Brief, 3. What
 
 ### Community 89 - "ingestionService.js"
 Cohesion: 0.11
-Nodes (36): findOrCreateCampaign(), main(), markCampaignEmailed(), parseArgs(), PRESERVE_STATUSES, computeProjectSnapshot(), blendAndIngestLeads(), buildCompanyRows() (+28 more)
+Nodes (37): main(), findOrCreateCampaign(), main(), markCampaignEmailed(), parseArgs(), PRESERVE_STATUSES, computeProjectSnapshot(), blendAndIngestLeads() (+29 more)
 
 ### Community 90 - "systemSettingsService.js"
 Cohesion: 0.47
@@ -679,9 +674,9 @@ Nodes (11): getBaseUrl(), isPublicTrackableUrl(), deliverSequenceEmail(), __dirn
 Cohesion: 0.47
 Nodes (4): chapterProgress(), PAGE_THEMES, ServicesV2(), smoothstep()
 
-### Community 101 - "job_scope_lines"
-Cohesion: 0.21
-Nodes (19): field_execution_files, field_execution_submissions, job_activities, job_delivery_activations, job_locations, job_phases, job_scope_lines, job_snags (+11 more)
+### Community 101 - "ongoing_jobs"
+Cohesion: 0.13
+Nodes (29): milestone, resolved, field_execution_files, field_execution_submissions, financial_milestones, job_activities, job_actual_costs, job_cost_confirmations (+21 more)
 
 ### Community 102 - "auditBusinessSemanticsReadOnly.js"
 Cohesion: 0.40
@@ -935,10 +930,6 @@ Nodes (12): coverage, ACTIONS, currentResource(), dayBounds(), getTodayWorkspace
 Cohesion: 0.50
 Nodes (4): CTA System, CTA Tone, Primary CTAs, Softer CTAs
 
-### Community 213 - "Company"
-Cohesion: 0.19
-Nodes (15): findCampaign(), main(), normLi(), normName(), parseExcel(), main(), run(), run() (+7 more)
-
 ### Community 245 - "Modern Operator Voice"
 Cohesion: 0.67
 Nodes (3): Good EGS Lines, Modern Operator Voice, Voice Rules
@@ -966,22 +957,22 @@ Nodes (3): getPocOption(), POC_QUALIFICATION_OPTIONS, POC_STATUS_LABELS
 ## Knowledge Gaps
 - **1183 isolated node(s):** `name`, `private`, `type`, `dev`, `build` (+1178 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **48 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **49 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `line()` connect `contactInquiry.js` to `revisionRegistry.js`?**
+- **Why does `line()` connect `contactInquiry.js` to `OngoingJob.js`?**
   _High betweenness centrality (0.205) - this node is a cross-community bridge._
-- **Why does `runJobSeeding()` connect `revisionRegistry.js` to `adminRoutes.js`, `contactInquiry.js`?**
+- **Why does `runJobSeeding()` connect `OngoingJob.js` to `adminRoutes.js`, `contactInquiry.js`?**
   _High betweenness centrality (0.204) - this node is a cross-community bridge._
-- **Why does `crmApiFetch()` connect `crmApi.js` to `InteractionTimeline.jsx`, `ProjectDatabaseTable.jsx`, `Alert`, `cn`, `EmailOutboxWorkspace.jsx`, `InventoryPage.jsx`, `ProjectDetailWorkspace.jsx`, `TasksPage.jsx`, `CrmApp.jsx`, `OutreachDrawer.jsx`, `SequenceStudio.jsx`, `App.jsx`, `SequenceInspector.jsx`, `SequenceBuilderWorkspace.jsx`?**
+- **Why does `crmApiFetch()` connect `crmApi.js` to `InteractionTimeline.jsx`, `ProjectDatabaseTable.jsx`, `Alert`, `cn`, `CommunicationJobModal.jsx`, `InventoryPage.jsx`, `ProjectDetailWorkspace.jsx`, `TasksPage.jsx`, `CrmApp.jsx`, `OutreachDrawer.jsx`, `SequenceStudio.jsx`, `App.jsx`, `SequenceInspector.jsx`, `SequenceBuilderWorkspace.jsx`?**
   _High betweenness centrality (0.041) - this node is a cross-community bridge._
 - **What connects `name`, `private`, `type` to the rest of the system?**
   _1183 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `crmApi.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.050331731869137496 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.04644964782029316 - nodes in this community are weakly interconnected._
 - **Should `employeeOperationsService.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.05929989550679206 - nodes in this community are weakly interconnected._
-- **Should `Lead.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.07023705004389816 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.0537280701754386 - nodes in this community are weakly interconnected._
+- **Should `campaignCleanupInventory.js` be split into smaller, more focused modules?**
+  _Cohesion score 0.059609730018711574 - nodes in this community are weakly interconnected._
