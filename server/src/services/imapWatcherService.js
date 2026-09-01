@@ -16,6 +16,8 @@ import {
   getConfiguredEmailAccounts,
 } from './mailTransport.js';
 
+import { simpleParser } from 'mailparser';
+
 const MAX_REPLY_TEXT = 100000;
 const activeSyncs = new Set();
 let syncTimer = null;
@@ -26,60 +28,64 @@ export function decodeQuotedPrintable(str) {
     .replace(/=([0-9A-F]{2})/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
 }
 
-export function parseEmailSourceToText(source) {
+export function sanitizeEmailText(text) {
+  if (!text) return '';
+  return String(text)
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, '')
+    .replace(/--[A-Za-z0-9_=-]+--?\s*$/g, '')
+    .trim();
+}
+
+export async function parseEmailSourceToText(source) {
+  if (!source) return '';
   const s = String(source || '');
-  const boundaryMatch = s.match(/boundary=["']?([^"'\r\n;]+)["']?/i);
 
-  if (boundaryMatch) {
-    const boundary = boundaryMatch[1];
-    const parts = s.split('--' + boundary);
-
-    let textPart = '';
-    for (const part of parts) {
-      if (/content-type:\s*text\/plain/i.test(part)) {
-        textPart = part;
-        break;
-      }
+  try {
+    const parsed = await simpleParser(s);
+    let text = parsed.text ? parsed.text.trim() : '';
+    if (!text && parsed.html) {
+      text = parsed.html
+        .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+        .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/p>/gi, '\n\n')
+        .replace(/<[^>]+>/g, '')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .trim();
     }
-
-    if (!textPart && parts.length > 1) {
-      textPart = parts.find(p => p.trim() && !p.includes('content-type:'));
+    if (text && !text.includes('Content-Transfer-Encoding:')) {
+      return sanitizeEmailText(text);
     }
+  } catch (err) {}
 
-    if (textPart) {
-      const blankLineIdx = textPart.search(/\r?\n\r?\n/);
-      let headers = '';
-      let body = textPart;
-      if (blankLineIdx !== -1) {
-        headers = textPart.slice(0, blankLineIdx);
-        body = textPart.slice(blankLineIdx + 4);
+  const b64Match = s.match(/Content-Transfer-Encoding:\s*base64[\s\r\n]+([A-Za-z0-9+/=\s\r\n]+)/i);
+  if (b64Match) {
+    try {
+      const rawB64 = b64Match[1].replace(/--[^\r\n]*/g, '').replace(/\s+/g, '');
+      const decoded = Buffer.from(rawB64, 'base64').toString('utf-8');
+      if (decoded.trim()) {
+        return sanitizeEmailText(decoded);
       }
+    } catch (e) {}
+  }
 
-      body = body.trim().replace(/--$/, '');
-
-      if (/content-transfer-encoding:\s*quoted-printable/i.test(headers)) {
-        body = decodeQuotedPrintable(body);
-      } else if (/content-transfer-encoding:\s*base64/i.test(headers)) {
-        body = Buffer.from(body.replace(/\s+/g, ''), 'base64').toString('utf-8');
+  const qpMatch = s.match(/Content-Transfer-Encoding:\s*quoted-printable[\s\r\n]+([\s\S]+)/i);
+  if (qpMatch) {
+    try {
+      const decoded = decodeQuotedPrintable(qpMatch[1]);
+      if (decoded.trim()) {
+        return sanitizeEmailText(decoded);
       }
-
-      return body.trim();
-    }
+    } catch (e) {}
   }
 
   const blankLineIdx = s.search(/\r?\n\r?\n/);
-  if (blankLineIdx === -1) return s.trim();
-
-  const headers = s.slice(0, blankLineIdx);
-  let body = s.slice(blankLineIdx + 4).trim();
-
-  if (/content-transfer-encoding:\s*quoted-printable/i.test(headers)) {
-    body = decodeQuotedPrintable(body);
-  } else if (/content-transfer-encoding:\s*base64/i.test(headers)) {
-    body = Buffer.from(body.replace(/\s+/g, ''), 'base64').toString('utf-8');
-  }
-
-  return body.trim();
+  if (blankLineIdx === -1) return sanitizeEmailText(s);
+  return sanitizeEmailText(s.slice(blankLineIdx + 4));
 }
 
 async function findLeadForMessage(message) {
@@ -91,36 +97,104 @@ async function findLeadForMessage(message) {
 
   const raw = String(message.source || '');
   const headerSection = getMimeHeaderSection(raw);
-  const resolvedFromAddress = extractMailboxFromHeader(headerSection, 'Reply-To') || fromAddress;
-  if (!resolvedFromAddress) return null;
+  const replyTo = extractMailboxFromHeader(headerSection, 'Reply-To');
+  const resolvedFromAddress = (replyTo || fromAddress).trim().toLowerCase();
 
-  // Search person in PostgreSQL by email
-  const res = await db.query(
-    `SELECT p.id, p.display_name, pcm.id AS person_contact_method_id,
-            por.organization_id, cc.id AS campaign_contact_id, ca.campaign_id
-     FROM person_contact_methods pcm
-     JOIN people p ON pcm.person_id = p.id
-     LEFT JOIN person_organization_roles por ON por.person_id = p.id
-     LEFT JOIN campaign_contacts cc ON cc.role_id = por.id
-     LEFT JOIN campaign_accounts ca ON cc.campaign_account_id = ca.id
-     WHERE pcm.normalized_value = $1 AND pcm.type = 'email'
-     ORDER BY cc.created_at DESC NULLS LAST
-     LIMIT 1`,
-    [resolvedFromAddress.toLowerCase()]
-  );
+  // 1. Match by Referenced parent message ID (In-Reply-To, References)
+  const referencedMessageIds = extractMessageIdCandidatesFromHeaders(headerSection);
+  if (referencedMessageIds.length > 0) {
+    const parentMsg = await db.query(
+      `SELECT m.id, m.conversation_id, conv.campaign_id, conv.campaign_contact_id,
+              p.id AS person_id, p.display_name, pcm.id AS person_contact_method_id,
+              ca.organization_id
+       FROM messages m
+       JOIN conversations conv ON conv.id = m.conversation_id
+       LEFT JOIN campaign_contacts cc ON cc.id = conv.campaign_contact_id
+       LEFT JOIN person_organization_roles por ON por.id = cc.role_id
+       LEFT JOIN people p ON p.id = por.person_id
+       LEFT JOIN person_contact_methods pcm ON pcm.person_id = p.id AND pcm.type = 'email'
+       LEFT JOIN campaign_accounts ca ON cc.campaign_account_id = ca.id
+       WHERE m.external_message_id = ANY($1::text[])
+       ORDER BY m.occurred_at DESC NULLS LAST
+       LIMIT 1`,
+      [referencedMessageIds]
+    );
+    if (parentMsg.rows.length > 0) {
+      const row = parentMsg.rows[0];
+      return {
+        _id: row.person_id,
+        id: row.person_id,
+        name: row.display_name,
+        email: resolvedFromAddress || fromAddress,
+        personContactMethodId: row.person_contact_method_id,
+        companyId: row.organization_id,
+        campaignId: row.campaign_id,
+        campaignContactId: row.campaign_contact_id,
+        conversationId: row.conversation_id,
+      };
+    }
+  }
 
-  if (res.rows.length > 0) {
-    const row = res.rows[0];
-    return {
-      _id: row.id,
-      id: row.id,
-      name: row.display_name,
-      email: resolvedFromAddress,
-      personContactMethodId: row.person_contact_method_id,
-      companyId: row.organization_id,
-      campaignId: row.campaign_id,
-      campaignContactId: row.campaign_contact_id,
-    };
+  // 2. Search person in PostgreSQL by email (person_contact_methods)
+  const lookupEmails = Array.from(new Set([fromAddress, resolvedFromAddress].filter(Boolean)));
+  for (const email of lookupEmails) {
+    const res = await db.query(
+      `SELECT p.id, p.display_name, pcm.id AS person_contact_method_id,
+              por.organization_id, cc.id AS campaign_contact_id, ca.campaign_id
+       FROM person_contact_methods pcm
+       JOIN people p ON pcm.person_id = p.id
+       LEFT JOIN person_organization_roles por ON por.person_id = p.id
+       LEFT JOIN campaign_contacts cc ON cc.role_id = por.id
+       LEFT JOIN campaign_accounts ca ON cc.campaign_account_id = ca.id
+       WHERE LOWER(pcm.normalized_value) = $1 AND pcm.type = 'email'
+       ORDER BY cc.created_at DESC NULLS LAST
+       LIMIT 1`,
+      [email]
+    );
+    if (res.rows.length > 0) {
+      const row = res.rows[0];
+      return {
+        _id: row.id,
+        id: row.id,
+        name: row.display_name,
+        email,
+        personContactMethodId: row.person_contact_method_id,
+        companyId: row.organization_id,
+        campaignId: row.campaign_id,
+        campaignContactId: row.campaign_contact_id,
+      };
+    }
+  }
+
+  // 3. Search in send_jobs (by recipient_email)
+  for (const email of lookupEmails) {
+    const sjRes = await db.query(
+      `SELECT sj.id, sj.campaign_id, sj.lead_id, p.display_name,
+              pcm.id AS person_contact_method_id,
+              se.campaign_contact_id, ca.organization_id
+       FROM send_jobs sj
+       LEFT JOIN people p ON p.id = sj.lead_id
+       LEFT JOIN person_contact_methods pcm ON pcm.person_id = p.id AND pcm.type = 'email'
+       LEFT JOIN sequence_enrollments se ON se.id = sj.enrollment_id
+       LEFT JOIN campaign_contacts cc ON cc.id = se.campaign_contact_id
+       LEFT JOIN campaign_accounts ca ON cc.campaign_account_id = ca.id
+       WHERE LOWER(sj.recipient_email) = $1
+       ORDER BY sj.created_at DESC LIMIT 1`,
+      [email]
+    );
+    if (sjRes.rows.length > 0) {
+      const row = sjRes.rows[0];
+      return {
+        _id: row.lead_id,
+        id: row.lead_id,
+        name: row.display_name,
+        email,
+        personContactMethodId: row.person_contact_method_id,
+        companyId: row.organization_id,
+        campaignId: row.campaign_id,
+        campaignContactId: row.campaign_contact_id,
+      };
+    }
   }
 
   return null;
@@ -311,7 +385,10 @@ export async function syncImapMailboxForUser(email) {
     const lock = await client.getMailboxLock('INBOX');
     try {
       const since = new Date(Date.now() - 1000 * 60 * 60 * 24 * resolveImapSyncDays());
-      const uids = await client.search({ since });
+      const uids = await client.search({ since }, { uid: true });
+      if (!uids || !uids.length) {
+        return stats;
+      }
       const maxMsgs = Math.min(Number(process.env.EMAIL_IMAP_SYNC_MAX_MESSAGES) || 4000, 20000);
       const cappedUids = uids.length > maxMsgs ? uids.slice(-maxMsgs) : uids;
 
@@ -324,7 +401,7 @@ export async function syncImapMailboxForUser(email) {
           continue;
         }
 
-        const text = parseEmailSourceToText(message.source).slice(0, MAX_REPLY_TEXT * 2);
+        const text = (await parseEmailSourceToText(message.source)).slice(0, MAX_REPLY_TEXT * 2);
 
         if (isBounceSender(fromAddr) || /undeliverable|delivery status notification/i.test(text)) {
           const bounceResult = await handleBounceMessage(message, text);

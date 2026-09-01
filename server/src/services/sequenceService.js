@@ -438,8 +438,24 @@ export async function listSentEmails(options = {}) {
   const add = (value) => { params.push(value); return `$${params.length}`; };
 
   if (options.campaignId) {
-    const campVal = add(String(options.campaignId));
-    conditions.push(`(conv.campaign_id::text = ${campVal} OR ca.campaign_id::text = ${campVal})`);
+    const campRes = await db.query(
+      `SELECT id, mongo_campaign_id FROM campaigns WHERE id::text = $1 OR mongo_campaign_id = $1 LIMIT 1`,
+      [String(options.campaignId)]
+    );
+    if (campRes.rows.length) {
+      const campSqlId = campRes.rows[0].id;
+      const mongoCampId = campRes.rows[0].mongo_campaign_id;
+      const val1 = add(String(campSqlId));
+      if (mongoCampId) {
+        const val2 = add(String(mongoCampId));
+        conditions.push(`(conv.campaign_id::text = ${val1} OR ca.campaign_id::text = ${val1} OR campaign.id::text = ${val1} OR campaign.mongo_campaign_id = ${val2})`);
+      } else {
+        conditions.push(`(conv.campaign_id::text = ${val1} OR ca.campaign_id::text = ${val1} OR campaign.id::text = ${val1})`);
+      }
+    } else {
+      const campVal = add(String(options.campaignId));
+      conditions.push(`(conv.campaign_id::text = ${campVal} OR ca.campaign_id::text = ${campVal} OR campaign.id::text = ${campVal} OR campaign.mongo_campaign_id = ${campVal})`);
+    }
   }
   if (options.sequenceId) conditions.push(`seq.id::text = ${add(String(options.sequenceId))} OR seq.mongo_sequence_id = $${params.length}`);
 
@@ -876,10 +892,37 @@ export async function listCampaignQueueJobs(campaignId, options = {}) {
   const campaign = await db.query(`SELECT id FROM campaigns WHERE id::text=$1 OR mongo_campaign_id=$1 LIMIT 1`, [String(campaignId)]);
   if (!campaign.rows.length) return [];
   const params = [campaign.rows[0].id];
-  let filter = '';
-  if (options.status) { params.push(options.status); filter = `AND sj.status=$2`; }
-  return (await db.query(`SELECT sj.id AS "_id",sj.*,p.display_name AS "leadName" FROM send_jobs sj LEFT JOIN people p ON p.id=sj.lead_id
-    WHERE sj.campaign_id=$1::uuid ${filter} ORDER BY sj.created_at DESC`, params)).rows;
+  let filter = `AND sj.status IN ('pending', 'processing', 'rate_limited', 'failed')`;
+  if (options.status) {
+    params.push(options.status);
+    filter = `AND sj.status=$2`;
+  } else if (options.includeAll === true || options.includeAllStatuses === true) {
+    filter = '';
+  }
+  return (await db.query(`
+    SELECT sj.id AS "_id", sj.id, sj.status,
+           sj.recipient_email AS "recipientEmail",
+           COALESCE(NULLIF(sj.rendered_subject, ''), step.template_subject, '') AS "renderedSubject",
+           COALESCE(NULLIF(sj.rendered_body, ''), step.template_body, '') AS "renderedBody",
+           COALESCE(sj.step_index, 0) AS "stepIndex",
+           sj.step_index,
+           sj.error_message AS "errorMessage",
+           sj.scheduled_for AS "scheduledFor",
+           sj.sent_at AS "sentAt",
+           sj.created_at AS "createdAt",
+           CASE WHEN p.id IS NOT NULL THEN jsonb_build_object('_id', p.id, 'name', p.display_name, 'email', pcm.normalized_value) ELSE NULL END AS "leadId",
+           p.display_name AS "leadName"
+    FROM send_jobs sj
+    LEFT JOIN people p ON p.id = sj.lead_id
+    LEFT JOIN LATERAL (
+      SELECT normalized_value FROM person_contact_methods
+      WHERE person_id = p.id AND type = 'email'
+      ORDER BY preferred DESC NULLS LAST, created_at LIMIT 1
+    ) pcm ON TRUE
+    LEFT JOIN sequence_enrollments se ON se.id = sj.enrollment_id
+    LEFT JOIN sequence_steps step ON step.sequence_version_id = se.sequence_version_id AND step.step_number = (sj.step_index + 1)
+    WHERE sj.campaign_id = $1::uuid ${filter}
+    ORDER BY sj.created_at DESC`, params)).rows;
 }
 
 export async function removeSendJob(jobId) {

@@ -932,7 +932,8 @@ export default function ProjectDatabaseTable({
                   </thead>
                   <tbody className="divide-y divide-[var(--color-line)]">
                     {queueJobs.map((job) => {
-                      const recipientName = job.leadId?.name || 'Contact';
+                      const recipientName = job.leadId?.name || job.leadName || job.recipientEmail || 'Contact';
+                      const stepNumber = Number.isFinite(job.stepIndex) ? job.stepIndex + 1 : (Number.isFinite(job.step_index) ? job.step_index + 1 : 1);
                       const isActivelySending = sendingAll && job.status === 'processing';
                       return (
                         <tr key={job._id} className="hover:bg-neutral-50/50">
@@ -945,11 +946,11 @@ export default function ProjectDatabaseTable({
                             <div className="font-semibold text-[var(--color-ink)]">{recipientName}</div>
                             <div className="text-neutral-500 text-2xs font-mono mt-0.5">{job.recipientEmail}</div>
                           </td>
-                          <td className="px-4 py-2.5 text-neutral-600 truncate max-w-[280px]" title={job.renderedSubject}>
-                            {job.renderedSubject || '(No subject)'}
+                          <td className="px-4 py-2.5 text-neutral-600 truncate max-w-[280px]" title={job.renderedSubject || job.rendered_subject}>
+                            {job.renderedSubject || job.rendered_subject || '(No subject)'}
                           </td>
                           <td className="px-4 py-2.5 text-neutral-500 font-medium">
-                            Step {job.stepIndex + 1}
+                            Step {stepNumber}
                           </td>
                           <td className="px-4 py-2.5 text-center">
                             <SendJobStatusBadge status={job.status} />

@@ -270,8 +270,8 @@
     "semantic_hash": "25baf358608e61bf315c8889d0fc40dd"
   },
   "client/src/admin/crm/components/projects/ProjectDatabaseTable.jsx": {
-    "mtime": 1788184854.707016,
-    "ast_hash": "41e9fd11b1d6918170b74c365fb55186",
+    "mtime": 1788186437.9451153,
+    "ast_hash": "1f6b42a8ee34a2d8f94895c3137c6cb2",
     "semantic_hash": ""
   },
   "client/src/admin/crm/components/projects/ProjectPerformanceModal.jsx": {
@@ -1330,8 +1330,8 @@
     "semantic_hash": "a25ec7d8e3f3df8d015ccfcc6a508527"
   },
   "server/package.json": {
-    "mtime": 1786190812.291687,
-    "ast_hash": "7a6bc7eda0ab862bd4f2f13149276914",
+    "mtime": 1788187890.4008484,
+    "ast_hash": "1355f1489e62e2738b925cc1809c1f0e",
     "semantic_hash": ""
   },
   "server/scripts/01_init_postgresql_schema.sql": {
@@ -2300,8 +2300,8 @@
     "semantic_hash": ""
   },
   "server/src/services/imapWatcherService.js": {
-    "mtime": 1788184686.2567468,
-    "ast_hash": "57b952683726eddffac4a4e6f7e9e9c4",
+    "mtime": 1788188005.2926834,
+    "ast_hash": "ea0faec6b4c54278b50e8396279eb543",
     "semantic_hash": ""
   },
   "server/src/services/ingestionService.js": {
@@ -2425,8 +2425,8 @@
     "semantic_hash": ""
   },
   "server/src/services/sequenceService.js": {
-    "mtime": 1788184729.221445,
-    "ast_hash": "87ad14b1602eb3d7b3075f95c5c8f433",
+    "mtime": 1788186415.9790363,
+    "ast_hash": "afae0762a03469854a2e90abed15208f",
     "semantic_hash": ""
   },
   "server/src/services/supplierProcurementService.js": {
