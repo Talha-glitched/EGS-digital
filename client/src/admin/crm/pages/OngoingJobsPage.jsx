@@ -197,9 +197,16 @@ export default function OngoingJobsPage({ completedOnly = false }) {
   const activeCollaborators = active.reduce((sum, item) => sum + (getExecutionSummary(item).internalCollaborators || 0), 0);
 
   async function handleOngoingJobUpdated(updated) {
+    if (!updated) {
+      await load().catch(() => {});
+      return;
+    }
+    const updatedId = updated._id || updated.id || updated.ongoingJobId;
     setData((current) => ({
       ...current,
-      items: current.items.map((item) => (item._id === updated._id ? { ...item, ...updated } : item)),
+      items: (current.items || []).map((item) => (
+        (item._id === updatedId || item.id === updatedId) ? { ...item, ...updated } : item
+      )),
     }));
   }
 

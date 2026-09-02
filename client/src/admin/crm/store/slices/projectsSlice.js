@@ -22,14 +22,17 @@ export const projectsSlice = createSlice({
     },
     updateOngoingJobInState(state, action) {
       const updated = action.payload;
-      const index = state.ongoingJobs.findIndex((job) => job._id === updated._id);
+      if (!updated) return;
+      const targetId = updated._id || updated.id || updated.ongoingJobId;
+      const index = state.ongoingJobs.findIndex((job) => (job._id === targetId || job.id === targetId));
       if (index !== -1) {
         state.ongoingJobs[index] = { ...state.ongoingJobs[index], ...updated };
       }
     },
     removeOngoingJobFromState(state, action) {
       const id = action.payload;
-      state.ongoingJobs = state.ongoingJobs.filter((job) => job._id !== id);
+      if (!id) return;
+      state.ongoingJobs = state.ongoingJobs.filter((job) => job._id !== id && job.id !== id);
     },
     setCompletedJobs(state, action) {
       state.completedJobs = action.payload || [];

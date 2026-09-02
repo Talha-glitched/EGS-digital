@@ -300,8 +300,8 @@
     "semantic_hash": "62c843d8b27cce47515eb205566eccb8"
   },
   "client/src/admin/crm/components/sales/OngoingJobDrawer.jsx": {
-    "mtime": 1788356859.8421397,
-    "ast_hash": "f4e1d43d23a73c9160f4fa3ba45ab3b1",
+    "mtime": 1788357697.3646765,
+    "ast_hash": "ddec9416aed130621813748d23c93f49",
     "semantic_hash": ""
   },
   "client/src/admin/crm/components/sales/OngoingJobStageEditorModal.jsx": {
@@ -805,8 +805,8 @@
     "semantic_hash": ""
   },
   "client/src/admin/crm/pages/OngoingJobsPage.jsx": {
-    "mtime": 1788356876.8697011,
-    "ast_hash": "bab842a343c9573ca3a023e51efee0b4",
+    "mtime": 1788357709.2899418,
+    "ast_hash": "031b540e349e0c59580f050a67cec6c7",
     "semantic_hash": ""
   },
   "client/src/admin/crm/pages/PeoplePage.jsx": {
@@ -860,9 +860,9 @@
     "semantic_hash": "87c5988077132c1d792e71ed30ff0a1c"
   },
   "client/src/admin/crm/store/slices/projectsSlice.js": {
-    "mtime": 1785484518.8569634,
-    "ast_hash": "7584893d7c10e8c689e906eb52a47b08",
-    "semantic_hash": "7584893d7c10e8c689e906eb52a47b08"
+    "mtime": 1788357722.4564683,
+    "ast_hash": "854f0851972af7c4ef9c31c5eade30b0",
+    "semantic_hash": ""
   },
   "client/src/admin/crm/store/slices/tasksSlice.js": {
     "mtime": 1785484522.7442448,

@@ -1,16 +1,16 @@
-# Graph Report - EGS-web  (2026-08-31)
+# Graph Report - EGS-web  (2026-09-02)
 
 ## Corpus Check
-- 614 files · ~4,098,900 words
+- 614 files · ~4,099,110 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3909 nodes · 9284 edges · 260 communities (210 shown, 50 thin omitted)
+- 3909 nodes · 9284 edges · 260 communities (208 shown, 52 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 52 edges (avg confidence: 0.66)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `caaa8632`
+- Built from commit: `ba0d629b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -45,7 +45,7 @@
 - completedJobService.js
 - ProjectsPage.jsx
 - usePageLifecycle
-- organizations
+- Finding 5 — Historical Jobs require controlled identity creation and matching
 - interactionService.js
 - InteractionTimeline.jsx
 - Module-by-module audit
@@ -67,7 +67,7 @@
 - profileDatabaseForSqlMigration.js
 - jobDeliveryService.js
 - resourceTimeService.js
-- SiteChrome.jsx
+- HomeStandardsSection.jsx
 - CampaignListImportModal.jsx
 - CRM_UX_RESTRUCTURE_PLAN.md
 - jobCommercialArtifactService.js
@@ -94,9 +94,9 @@
 - Section Order
 - dailyReview.test.js
 - writeAuditLog
-- Navbar.jsx
+- SiteChrome.jsx
 - scripts
-- design_versions
+- ongoing_jobs
 - Section Order
 - Section Order
 - Section Order
@@ -116,7 +116,7 @@
 - emailTemplateRenderer.js
 - runInventoryRefactorMigration.js
 - ServicesV2.jsx
-- ongoing_jobs
+- job_scope_lines
 - auditBusinessSemanticsReadOnly.js
 - recoverRuntimeInboundContext.js
 - src/constants/pocQualification.js
@@ -248,7 +248,7 @@
 - ContactLeadTasksSection.jsx
 - seedDemoOperationalJob.js
 - DataBlenderWizard.jsx
-- project_time_entries
+- conversation_job_links
 - ProjectResourcesModal.jsx
 - JobActivationModal.jsx
 - SendDeliveryIssuesWorkspace.jsx
@@ -282,7 +282,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (260 total, 50 thin omitted)
+## Communities (260 total, 52 thin omitted)
 
 ### Community 0 - "crmApi.js"
 Cohesion: 0.05
@@ -337,8 +337,8 @@ Cohesion: 0.07
 Nodes (40): ABOUT_SLIDES, BOTTOM_NAV_ITEMS, GRADUATION_SERVICE_HEADINGS, pad2(), PortfolioFablePage(), ALL_CLIENTS, CATEGORIES, { clients: SHORTLIST_CLIENTS, categoriesMap } (+32 more)
 
 ### Community 13 - "siteData.js"
-Cohesion: 0.11
-Nodes (16): BlurText(), buildKeyframes(), proofItems, HomeCTASection(), homeFaqs, HomeFAQSection(), HomeServicesSection(), defaultServices (+8 more)
+Cohesion: 0.08
+Nodes (21): BlurText(), buildKeyframes(), proofItems, HomeCTASection(), homeFaqs, HomeFAQSection(), HomeServicesSection(), defaultServices (+13 more)
 
 ### Community 14 - "OffersPage.jsx"
 Cohesion: 0.13
@@ -390,7 +390,7 @@ Nodes (21): getFromIdentity(), getDailySendCount(), getHourlySendCount(), getMsU
 
 ### Community 26 - "01_init_postgresql_schema.sql"
 Cohesion: 0.06
-Nodes (52): predecessors, prevent_task_dependency_cycle, campaign_accounts, campaign_contact_focus_events, campaign_contacts, communication_job_actions, conversation_job_links, conversation_participants (+44 more)
+Nodes (59): predecessors, prevent_task_dependency_cycle, campaign_accounts, campaign_contact_focus_events, campaign_contacts, campaigns, communication_job_actions, conversation_job_links (+51 more)
 
 ### Community 27 - "completedJobService.js"
 Cohesion: 0.13
@@ -404,9 +404,9 @@ Nodes (24): formatDate(), SequenceListPanel(), SortableTableHeader(), TableSortI
 Cohesion: 0.17
 Nodes (27): App(), usePageLifecycle(), ArabHealthExhibitionStandsPage(), CaseStudiesPage(), CustomExhibitionStandsDubaiPage(), DwtcStandGuidelinesPage(), EventsPage(), ExhibitionsPage() (+19 more)
 
-### Community 30 - "organizations"
-Cohesion: 0.17
-Nodes (14): campaigns, event_editions, event_participations, events, interactions, job_closeouts, locations, organization_identifiers (+6 more)
+### Community 30 - "Finding 5 — Historical Jobs require controlled identity creation and matching"
+Cohesion: 0.40
+Nodes (5): Customer Organization coverage, Financial and completion meaning, Finding 5 — Historical Jobs require controlled identity creation and matching, Job/Opportunity overlap, Services
 
 ### Community 31 - "interactionService.js"
 Cohesion: 0.13
@@ -492,10 +492,6 @@ Nodes (19): archiveJobLocation(), archiveJobPhase(), archiveWorkPackage(), asser
 Cohesion: 0.28
 Nodes (19): addAvailabilityBlock(), assignResource(), audit(), AVAILABILITY_TYPES, correctTimeEntry(), createManualTimeEntry(), createResource(), getResourceWorkspace() (+11 more)
 
-### Community 52 - "SiteChrome.jsx"
-Cohesion: 0.12
-Nodes (7): pressureItems, ClientMarquee(), InfoGrid(), ProductionHub(), ProofCard(), Stepper(), clientLogos
-
 ### Community 53 - "CampaignListImportModal.jsx"
 Cohesion: 0.13
 Nodes (23): filterNav(), filterProjects(), matchesQuery(), mergeGroups(), normalize(), QUICK_NAV, SpotlightSearch(), TYPE_ICONS (+15 more)
@@ -573,8 +569,8 @@ Cohesion: 0.07
 Nodes (26): 06 Case Studies Page Content Spec, Above The Fold, Audience, Case Studies, Case Study Format, Case Study Navigation, FAQ, Final CTA (+18 more)
 
 ### Community 72 - "users"
-Cohesion: 0.14
-Nodes (24): audit_events, job_activity_resource_assignments, job_activity_updates, note_attachments, note_versions, notes, operational_resources, project_time_corrections (+16 more)
+Cohesion: 0.12
+Nodes (29): audit_events, job_activity_resource_assignments, job_activity_updates, note_attachments, note_versions, notes, operational_resources, project_time_corrections (+21 more)
 
 ### Community 73 - "AdvancedFilterPopover.jsx"
 Cohesion: 0.14
@@ -600,17 +596,17 @@ Nodes (10): DailyReviewRecord, DailyReviewRecordSchema, completeDailyReview(), g
 Cohesion: 0.17
 Nodes (20): AuditLog, auditLogSchema, getAuditLogById(), getUserActivitySummary(), listAuditLogs(), writeAuditLog(), applyReferralFocus(), coordinateReplyFocus() (+12 more)
 
-### Community 79 - "Navbar.jsx"
-Cohesion: 0.15
-Nodes (25): Footer(), InquiryCtaButton(), CardNav(), defaultItems, getLinkIconStyle(), Navbar(), arabHealthFaqs, caseProofCards (+17 more)
+### Community 79 - "SiteChrome.jsx"
+Cohesion: 0.12
+Nodes (25): Footer(), InquiryCtaButton(), CardNav(), defaultItems, getLinkIconStyle(), Navbar(), arabHealthFaqs, customFaqs (+17 more)
 
 ### Community 80 - "scripts"
 Cohesion: 0.14
 Nodes (13): dependencies, @microsoft/clarity, @microsoft/clarity, name, private, scripts, build, dev (+5 more)
 
-### Community 81 - "design_versions"
-Cohesion: 0.21
-Nodes (12): artifact_decisions, design_sets, design_versions, production_release_design_versions, production_releases, quote_versions, quotes, artifact_decisions (+4 more)
+### Community 81 - "ongoing_jobs"
+Cohesion: 0.09
+Nodes (29): milestone, resolved, artifact_decisions, design_sets, design_versions, financial_milestones, interactions, job_actual_costs (+21 more)
 
 ### Community 82 - "Section Order"
 Cohesion: 0.08
@@ -625,8 +621,8 @@ Cohesion: 0.08
 Nodes (24): 05 Retail Page Content Spec, 10. Final CTA, 1. Hero, 2. Anchor Proof: Sadia / Carrefour UAE, 3. What EGS Installs, 4. Retail Rollout Process, 5. What Buyers Need Reassured, 6. Why Retail Rollouts Fail (+16 more)
 
 ### Community 85 - "EGS CRM Live Mongo Data Audit for SQL Migration"
-Cohesion: 0.07
-Nodes (30): Audit method, Baseline reconciliation numbers, Collections containing data, Complete collection inventory, Customer Organization coverage, EGS CRM Live Mongo Data Audit for SQL Migration, Empty collections, Enrollment overlap (+22 more)
+Cohesion: 0.08
+Nodes (25): Audit method, Baseline reconciliation numbers, Collections containing data, Complete collection inventory, EGS CRM Live Mongo Data Audit for SQL Migration, Empty collections, Enrollment overlap, Executive verdict (+17 more)
 
 ### Community 86 - "restoreWorkContextFromStaging.js"
 Cohesion: 0.18
@@ -684,9 +680,9 @@ Nodes (11): getBaseUrl(), isPublicTrackableUrl(), deliverSequenceEmail(), __dirn
 Cohesion: 0.47
 Nodes (4): chapterProgress(), PAGE_THEMES, ServicesV2(), smoothstep()
 
-### Community 101 - "ongoing_jobs"
-Cohesion: 0.13
-Nodes (29): milestone, resolved, field_execution_files, field_execution_submissions, financial_milestones, job_activities, job_actual_costs, job_cost_confirmations (+21 more)
+### Community 101 - "job_scope_lines"
+Cohesion: 0.21
+Nodes (19): field_execution_files, field_execution_submissions, job_activities, job_delivery_activations, job_locations, job_phases, job_scope_lines, job_snags (+11 more)
 
 ### Community 102 - "auditBusinessSemanticsReadOnly.js"
 Cohesion: 0.40
@@ -960,10 +956,6 @@ Nodes (6): days(), DEMO_TAG, findDemo(), remove(), seed(), verify()
 Cohesion: 0.17
 Nodes (10): InfoPanel(), StepIndicator(), INTERNAL_FIELDS, PreviewStat(), STEP_META, STEPS, VENDORS, emptyStep() (+2 more)
 
-### Community 254 - "project_time_entries"
-Cohesion: 0.43
-Nodes (7): job_activity_resource_assignments, operational_resources, project_time_corrections, project_time_entries, resource_availability_blocks, job_activities, supplier_profiles
-
 ### Community 255 - "ProjectResourcesModal.jsx"
 Cohesion: 0.25
 Nodes (7): APOLLO_SEARCH_TEXT, EXHIBITOR_PROMPT_TEXT, HUNTER_SEARCH_TEXT, LUSHA_ROLES_EXCLUDED_TEXT, LUSHA_ROLES_INCLUDED_TEXT, ProjectResourcesModal(), ResourceCard()
@@ -983,7 +975,7 @@ Nodes (3): buildSequenceMeta(), formatWhen(), SequenceSidebar()
 ## Knowledge Gaps
 - **1185 isolated node(s):** `name`, `private`, `type`, `dev`, `build` (+1180 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **50 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **52 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_

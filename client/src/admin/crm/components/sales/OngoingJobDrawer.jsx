@@ -281,15 +281,16 @@ export default function OngoingJobDrawer({
         collaborators: form.collaborators,
       };
       const updated = await updateOngoingJob(targetId, payload);
+      const updatedJob = updated?.ongoingJob || updated?.opportunity || updated;
       setDetail((prev) => ({
         ...prev,
-        ongoingJob: updated.ongoingJob || updated,
-        opportunity: updated.opportunity || updated.ongoingJob || updated,
+        ongoingJob: updatedJob,
+        opportunity: updatedJob,
       }));
-      dispatch(updateOngoingJobInState(updated.ongoingJob || updated));
+      dispatch(updateOngoingJobInState(updatedJob));
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 2500);
-      onUpdated?.();
+      onUpdated?.(updatedJob);
     } catch (err) {
       setError(err.message || 'Failed to save changes.');
     } finally {
@@ -304,13 +305,14 @@ export default function OngoingJobDrawer({
         primaryLeadId: newPrimaryId || null,
       };
       const updated = await updateOngoingJob(targetId, payload);
+      const updatedJob = updated?.ongoingJob || updated?.opportunity || updated;
       setDetail((prev) => ({
         ...prev,
-        ongoingJob: updated.ongoingJob || updated,
-        opportunity: updated.opportunity || updated.ongoingJob || updated,
+        ongoingJob: updatedJob,
+        opportunity: updatedJob,
       }));
-      dispatch(updateOngoingJobInState(updated.ongoingJob || updated));
-      onUpdated?.();
+      dispatch(updateOngoingJobInState(updatedJob));
+      onUpdated?.(updatedJob);
     } catch (err) {
       console.error('Failed to save POC:', err);
     }
