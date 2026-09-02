@@ -22,6 +22,8 @@ export default function Drawer({
   subtitle,
   children,
   footer,
+  badge,
+  headerActions,
   size = 'md',
   stackLevel = 0,
   className = '',
@@ -69,16 +71,20 @@ export default function Drawer({
         )}
         style={{ zIndex: panelZ }}
       >
-        {(title || subtitle) && (
+        {(title || subtitle || badge || headerActions) && (
           <div className="crm-drawer-header">
             <div className="min-w-0 flex-1 pr-2">
-              {title && (
-                <h2 id={titleId} className="crm-drawer-title">
-                  {title}
-                </h2>
-              )}
+              <div className="flex items-center gap-2 flex-wrap">
+                {title && (
+                  <h2 id={titleId} className="crm-drawer-title">
+                    {title}
+                  </h2>
+                )}
+                {badge}
+              </div>
               {subtitle && <p className="crm-drawer-subtitle">{subtitle}</p>}
             </div>
+            {headerActions && <div className="flex items-center gap-2 shrink-0">{headerActions}</div>}
             <button type="button" onClick={onClose} className="crm-drawer-close" aria-label="Close">
               <X className="h-4 w-4" />
             </button>
@@ -93,3 +99,4 @@ export default function Drawer({
     document.body,
   );
 }
+

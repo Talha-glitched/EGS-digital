@@ -37,6 +37,7 @@ import {
   LayoutGrid,
   List,
   MessagesSquare,
+  Pencil,
   Plus,
   Settings2,
   Users,
@@ -585,11 +586,22 @@ function OngoingJobsTable({ items, stages, onMove, onOpen, onDelete, selection, 
               </td>
               {!isDesigner && (
                 <td className="py-1 px-2.5 text-center" onClick={stopRowClick}>
-                  <DeleteIconButton
-                    label={`Delete ${item.name}`}
-                    onClick={() => onDelete?.(item)}
-                    size="sm"
-                  />
+                  <div className="inline-flex items-center justify-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => onOpen(item._id)}
+                      className="inline-flex h-7 w-7 items-center justify-center rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 transition"
+                      title={`Edit ${item.name}`}
+                      aria-label={`Edit ${item.name}`}
+                    >
+                      <Pencil className="h-3.5 w-3.5" />
+                    </button>
+                    <DeleteIconButton
+                      label={`Delete ${item.name}`}
+                      onClick={() => onDelete?.(item)}
+                      size="sm"
+                    />
+                  </div>
                 </td>
               )}
             </ClickableTableRow>
@@ -626,15 +638,26 @@ function OngoingJobCard({ item, stages, onMove, onOpen, onDelete, index, isDesig
             title="This stage tends to run late — worth a check-in"
           />
         )}
-        {!isDesigner && onDelete ? (
-          <span onClick={stopRowClick}>
-            <DeleteIconButton
-              label={`Delete ${item.name}`}
-              onClick={() => onDelete(item)}
-              size="sm"
-            />
+        {!isDesigner && (
+          <span className="flex items-center gap-0.5 shrink-0" onClick={stopRowClick}>
+            <button
+              type="button"
+              onClick={() => onOpen(item._id)}
+              className="inline-flex h-6 w-6 items-center justify-center rounded text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 transition"
+              title={`Edit ${item.name}`}
+              aria-label={`Edit ${item.name}`}
+            >
+              <Pencil className="h-3 w-3" />
+            </button>
+            {onDelete ? (
+              <DeleteIconButton
+                label={`Delete ${item.name}`}
+                onClick={() => onDelete(item)}
+                size="sm"
+              />
+            ) : null}
           </span>
-        ) : null}
+        )}
       </div>
       <p className="mt-1 truncate text-2xs font-medium text-neutral-600">{item.companyId?.companyName || 'Unknown company'}</p>
       {item.eventName && <p className="mt-0.5 truncate text-2xs text-neutral-600">{item.eventName}</p>}

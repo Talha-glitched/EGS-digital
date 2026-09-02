@@ -300,8 +300,8 @@
     "semantic_hash": "62c843d8b27cce47515eb205566eccb8"
   },
   "client/src/admin/crm/components/sales/OngoingJobDrawer.jsx": {
-    "mtime": 1788356859.8421397,
-    "ast_hash": "f4e1d43d23a73c9160f4fa3ba45ab3b1",
+    "mtime": 1786190812.283663,
+    "ast_hash": "bf7ab29d1ce7690d96b4094b2bb37950",
     "semantic_hash": ""
   },
   "client/src/admin/crm/components/sales/OngoingJobStageEditorModal.jsx": {
@@ -520,8 +520,8 @@
     "semantic_hash": "299c4373e2de00154812258f7ee27e96"
   },
   "client/src/admin/crm/components/ui/Drawer.jsx": {
-    "mtime": 1788356844.1282637,
-    "ast_hash": "232400ece75322b4fbe72655e39a17b2",
+    "mtime": 1786113074.4469678,
+    "ast_hash": "8957963d77854a38e51687c027612799",
     "semantic_hash": ""
   },
   "client/src/admin/crm/components/ui/DrawerLoadingSkeleton.jsx": {
@@ -805,8 +805,8 @@
     "semantic_hash": ""
   },
   "client/src/admin/crm/pages/OngoingJobsPage.jsx": {
-    "mtime": 1788356876.8697011,
-    "ast_hash": "bab842a343c9573ca3a023e51efee0b4",
+    "mtime": 1786113074.469849,
+    "ast_hash": "e109cd376c893788434b925b5a970cbb",
     "semantic_hash": ""
   },
   "client/src/admin/crm/pages/PeoplePage.jsx": {

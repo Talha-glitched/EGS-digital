@@ -8023,8 +8023,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_primitives_pageshell",
-      "community": 18,
-      "community_name": "TaskTable.jsx",
+      "community": 4,
+      "community_name": "TeamSettingsPage.jsx",
       "norm_label": "pageshell()"
     },
     {
@@ -8035,8 +8035,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_primitives_pagesection",
-      "community": 3,
-      "community_name": "OngoingJobsPage.jsx",
+      "community": 18,
+      "community_name": "TaskTable.jsx",
       "norm_label": "pagesection()"
     },
     {
@@ -8179,8 +8179,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_primitives_statcard",
-      "community": 4,
-      "community_name": "TeamSettingsPage.jsx",
+      "community": 3,
+      "community_name": "OngoingJobsPage.jsx",
       "norm_label": "statcard()"
     },
     {
@@ -11651,7 +11651,7 @@
       "label": "DEFAULT_STAGES",
       "file_type": "code",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L62",
+      "source_location": "L61",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_default_stages",
       "community": 3,
@@ -11662,7 +11662,7 @@
       "label": "STAGE_TONES",
       "file_type": "code",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L74",
+      "source_location": "L73",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_stage_tones",
       "community": 3,
@@ -11673,7 +11673,7 @@
       "label": "TONE_ACCENTS",
       "file_type": "code",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L89",
+      "source_location": "L88",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_tone_accents",
       "community": 3,
@@ -11684,7 +11684,7 @@
       "label": "LATE_STAGES",
       "file_type": "code",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L95",
+      "source_location": "L94",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_late_stages",
       "community": 3,
@@ -11695,7 +11695,7 @@
       "label": "formatShortDate()",
       "file_type": "code",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L97",
+      "source_location": "L96",
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_formatshortdate",
@@ -11707,7 +11707,7 @@
       "label": "getExecutionSummary()",
       "file_type": "code",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L104",
+      "source_location": "L103",
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_getexecutionsummary",
@@ -11719,7 +11719,7 @@
       "label": "OngoingJobsPage()",
       "file_type": "code",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L113",
+      "source_location": "L112",
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobspage",
@@ -11731,7 +11731,7 @@
       "label": "OngoingJobsBoard()",
       "file_type": "code",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L464",
+      "source_location": "L463",
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobsboard",
@@ -11743,7 +11743,7 @@
       "label": "OngoingJobsTable()",
       "file_type": "code",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L518",
+      "source_location": "L517",
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobstable",
@@ -11755,7 +11755,7 @@
       "label": "OngoingJobCard()",
       "file_type": "code",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L615",
+      "source_location": "L603",
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobcard",
@@ -11767,7 +11767,7 @@
       "label": "OngoingJobWorkspaceSummary()",
       "file_type": "code",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L707",
+      "source_location": "L684",
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobworkspacesummary",
@@ -12984,7 +12984,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_footer",
-      "community": 79,
+      "community": 52,
       "community_name": "SiteChrome.jsx",
       "norm_label": "footer.jsx"
     },
@@ -12997,7 +12997,7 @@
       "_origin": "ast",
       "id": "client_src_components_footer_footer",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "footer()"
     },
     {
@@ -13042,7 +13042,7 @@
       "_origin": "ast",
       "id": "client_src_components_navbar",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "navbar.jsx"
     },
     {
@@ -13053,7 +13053,7 @@
       "_origin": "ast",
       "id": "client_src_components_navbar_defaultitems",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "defaultitems"
     },
     {
@@ -13065,7 +13065,7 @@
       "_origin": "ast",
       "id": "client_src_components_navbar_getlinkiconstyle",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "getlinkiconstyle()"
     },
     {
@@ -13089,7 +13089,7 @@
       "_origin": "ast",
       "id": "client_src_components_navbar_cardnav",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "cardnav()"
     },
     {
@@ -13101,7 +13101,7 @@
       "_origin": "ast",
       "id": "client_src_components_navbar_navbar",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "navbar()"
     },
     {
@@ -13486,7 +13486,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_home_homeprocesssection",
-      "community": 79,
+      "community": 52,
       "community_name": "SiteChrome.jsx",
       "norm_label": "homeprocesssection.jsx"
     },
@@ -13498,7 +13498,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_components_home_homeprocesssection_homeprocesssection",
-      "community": 79,
+      "community": 52,
       "community_name": "SiteChrome.jsx",
       "norm_label": "homeprocesssection()"
     },
@@ -13509,8 +13509,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_home_homeproofsection",
-      "community": 13,
-      "community_name": "siteData.js",
+      "community": 52,
+      "community_name": "SiteChrome.jsx",
       "norm_label": "homeproofsection.jsx"
     },
     {
@@ -13521,8 +13521,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_components_home_homeproofsection_homeproofsection",
-      "community": 13,
-      "community_name": "siteData.js",
+      "community": 52,
+      "community_name": "SiteChrome.jsx",
       "norm_label": "homeproofsection()"
     },
     {
@@ -13556,7 +13556,7 @@
       "_origin": "ast",
       "id": "client_src_components_home_homestandardssection",
       "community": 52,
-      "community_name": "HomeStandardsSection.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "homestandardssection.jsx"
     },
     {
@@ -13567,7 +13567,7 @@
       "_origin": "ast",
       "id": "client_src_components_home_homestandardssection_pressureitems",
       "community": 52,
-      "community_name": "HomeStandardsSection.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "pressureitems"
     },
     {
@@ -13579,7 +13579,7 @@
       "_origin": "ast",
       "id": "client_src_components_home_homestandardssection_homestandardssection",
       "community": 52,
-      "community_name": "HomeStandardsSection.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "homestandardssection()"
     },
     {
@@ -13683,7 +13683,7 @@
       "_origin": "ast",
       "id": "client_src_components_inquiry_inquiryctabutton",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "inquiryctabutton.jsx"
     },
     {
@@ -13695,7 +13695,7 @@
       "_origin": "ast",
       "id": "client_src_components_inquiry_inquiryctabutton_inquiryctabutton",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "inquiryctabutton()"
     },
     {
@@ -14530,7 +14530,7 @@
       "_origin": "ast",
       "id": "client_src_pages_arabhealthexhibitionstandspage",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "arabhealthexhibitionstandspage.jsx"
     },
     {
@@ -14541,7 +14541,7 @@
       "_origin": "ast",
       "id": "client_src_pages_arabhealthexhibitionstandspage_arabhealthfaqs",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "arabhealthfaqs"
     },
     {
@@ -14563,8 +14563,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_pages_casestudiespage",
-      "community": 13,
-      "community_name": "siteData.js",
+      "community": 79,
+      "community_name": "Navbar.jsx",
       "norm_label": "casestudiespage.jsx"
     },
     {
@@ -14574,8 +14574,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_pages_casestudiespage_caseproofcards",
-      "community": 13,
-      "community_name": "siteData.js",
+      "community": 79,
+      "community_name": "Navbar.jsx",
       "norm_label": "caseproofcards"
     },
     {
@@ -14585,8 +14585,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_pages_casestudiespage_cases",
-      "community": 13,
-      "community_name": "siteData.js",
+      "community": 79,
+      "community_name": "Navbar.jsx",
       "norm_label": "cases"
     },
     {
@@ -14596,8 +14596,8 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "client_src_pages_casestudiespage_casestudiesfaqs",
-      "community": 13,
-      "community_name": "siteData.js",
+      "community": 79,
+      "community_name": "Navbar.jsx",
       "norm_label": "casestudiesfaqs"
     },
     {
@@ -14620,7 +14620,7 @@
       "_origin": "ast",
       "id": "client_src_pages_customexhibitionstandsdubaipage",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "customexhibitionstandsdubaipage.jsx"
     },
     {
@@ -14631,7 +14631,7 @@
       "_origin": "ast",
       "id": "client_src_pages_customexhibitionstandsdubaipage_customfaqs",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "customfaqs"
     },
     {
@@ -14654,7 +14654,7 @@
       "_origin": "ast",
       "id": "client_src_pages_dwtcstandguidelinespage",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "dwtcstandguidelinespage.jsx"
     },
     {
@@ -14665,7 +14665,7 @@
       "_origin": "ast",
       "id": "client_src_pages_dwtcstandguidelinespage_dwtcfaqs",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "dwtcfaqs"
     },
     {
@@ -14766,7 +14766,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstandbuilderdubaipage",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "exhibitionstandbuilderdubaipage.jsx"
     },
     {
@@ -14777,7 +14777,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstandbuilderdubaipage_builderfaqs",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "builderfaqs"
     },
     {
@@ -14800,7 +14800,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstandcontractorabudhabipage",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "exhibitionstandcontractorabudhabipage.jsx"
     },
     {
@@ -14811,7 +14811,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstandcontractorabudhabipage_abudhabifaqs",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "abudhabifaqs"
     },
     {
@@ -14834,7 +14834,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstandcontractordubaipage",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "exhibitionstandcontractordubaipage.jsx"
     },
     {
@@ -14845,7 +14845,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstandcontractordubaipage_contractorfaqs",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "contractorfaqs"
     },
     {
@@ -14868,7 +14868,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstandcontractorriyadhpage",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "exhibitionstandcontractorriyadhpage.jsx"
     },
     {
@@ -14879,7 +14879,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstandcontractorriyadhpage_riyadhfaqs",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "riyadhfaqs"
     },
     {
@@ -14902,7 +14902,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstandcostdubaiguidepage",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "exhibitionstandcostdubaiguidepage.jsx"
     },
     {
@@ -14913,7 +14913,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstandcostdubaiguidepage_costfaqs",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "costfaqs"
     },
     {
@@ -14936,7 +14936,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstanddesigndubaipage",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "exhibitionstanddesigndubaipage.jsx"
     },
     {
@@ -14947,7 +14947,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstanddesigndubaipage_designfaqs",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "designfaqs"
     },
     {
@@ -15126,7 +15126,7 @@
       "_origin": "ast",
       "id": "client_src_pages_gitexexhibitionstandspage",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "gitexexhibitionstandspage.jsx"
     },
     {
@@ -15137,7 +15137,7 @@
       "_origin": "ast",
       "id": "client_src_pages_gitexexhibitionstandspage_gitexfaqs",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "gitexfaqs"
     },
     {
@@ -15239,7 +15239,7 @@
       "_origin": "ast",
       "id": "client_src_pages_graduationstagesetupuaepage",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "graduationstagesetupuaepage.jsx"
     },
     {
@@ -15250,7 +15250,7 @@
       "_origin": "ast",
       "id": "client_src_pages_graduationstagesetupuaepage_graduationfaqs",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "graduationfaqs"
     },
     {
@@ -15273,7 +15273,7 @@
       "_origin": "ast",
       "id": "client_src_pages_gulfoodexhibitionstandspage",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "gulfoodexhibitionstandspage.jsx"
     },
     {
@@ -15284,7 +15284,7 @@
       "_origin": "ast",
       "id": "client_src_pages_gulfoodexhibitionstandspage_gulfoodfaqs",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "gulfoodfaqs"
     },
     {
@@ -15582,7 +15582,7 @@
       "_origin": "ast",
       "id": "client_src_pages_posdisplaystandsdubaipage",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "posdisplaystandsdubaipage.jsx"
     },
     {
@@ -15593,7 +15593,7 @@
       "_origin": "ast",
       "id": "client_src_pages_posdisplaystandsdubaipage_posfaqs",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "posfaqs"
     },
     {
@@ -15694,7 +15694,7 @@
       "_origin": "ast",
       "id": "client_src_pages_signagemanufacturerdubaipage",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "signagemanufacturerdubaipage.jsx"
     },
     {
@@ -15705,7 +15705,7 @@
       "_origin": "ast",
       "id": "client_src_pages_signagemanufacturerdubaipage_signagefaqs",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "signagefaqs"
     },
     {
@@ -15727,7 +15727,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_pages_sitechrome",
-      "community": 79,
+      "community": 52,
       "community_name": "SiteChrome.jsx",
       "norm_label": "sitechrome.jsx"
     },
@@ -15739,7 +15739,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_pages_sitechrome_sitenav",
-      "community": 79,
+      "community": 52,
       "community_name": "SiteChrome.jsx",
       "norm_label": "sitenav()"
     },
@@ -15751,7 +15751,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_pages_sitechrome_cardnav",
-      "community": 79,
+      "community": 52,
       "community_name": "SiteChrome.jsx",
       "norm_label": "cardnav()"
     },
@@ -15763,7 +15763,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_pages_sitechrome_clientmarquee",
-      "community": 79,
+      "community": 52,
       "community_name": "SiteChrome.jsx",
       "norm_label": "clientmarquee()"
     },
@@ -15775,8 +15775,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_pages_sitechrome_proofcard",
-      "community": 13,
-      "community_name": "siteData.js",
+      "community": 52,
+      "community_name": "SiteChrome.jsx",
       "norm_label": "proofcard()"
     },
     {
@@ -15787,7 +15787,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_pages_sitechrome_stepper",
-      "community": 79,
+      "community": 52,
       "community_name": "SiteChrome.jsx",
       "norm_label": "stepper()"
     },
@@ -15800,7 +15800,7 @@
       "_origin": "ast",
       "id": "client_src_pages_sitechrome_infogrid",
       "community": 52,
-      "community_name": "HomeStandardsSection.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "infogrid()"
     },
     {
@@ -15811,7 +15811,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_pages_sitechrome_faqaccordion",
-      "community": 79,
+      "community": 52,
       "community_name": "SiteChrome.jsx",
       "norm_label": "faqaccordion()"
     },
@@ -15824,7 +15824,7 @@
       "_origin": "ast",
       "id": "client_src_pages_sitechrome_faqsection",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "faqsection()"
     },
     {
@@ -15835,7 +15835,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_pages_sitechrome_productionhub",
-      "community": 79,
+      "community": 52,
       "community_name": "SiteChrome.jsx",
       "norm_label": "productionhub()"
     },
@@ -15847,7 +15847,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_pages_sitechrome_annotatedimage",
-      "community": 79,
+      "community": 52,
       "community_name": "SiteChrome.jsx",
       "norm_label": "annotatedimage()"
     },
@@ -15859,7 +15859,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_pages_sitechrome_controlboard",
-      "community": 79,
+      "community": 52,
       "community_name": "SiteChrome.jsx",
       "norm_label": "controlboard()"
     },
@@ -15871,7 +15871,7 @@
       "_origin": "ast",
       "id": "client_src_pages_index",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "pages/index.js"
     },
     {
@@ -15903,7 +15903,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "client_src_pages_sitedata_clientlogos",
-      "community": 79,
+      "community": 52,
       "community_name": "SiteChrome.jsx",
       "norm_label": "clientlogos"
     },
@@ -15947,8 +15947,8 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "client_src_pages_sitedata_proofcards",
-      "community": 13,
-      "community_name": "siteData.js",
+      "community": 79,
+      "community_name": "Navbar.jsx",
       "norm_label": "proofcards"
     },
     {
@@ -16675,7 +16675,7 @@
       "_origin": "ast",
       "id": "client_src_utils_schemagenerator",
       "community": 79,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "Navbar.jsx",
       "norm_label": "schemagenerator.js"
     },
     {
@@ -17493,7 +17493,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_service_families",
       "community": 101,
-      "community_name": "job_scope_lines",
+      "community_name": "ongoing_jobs",
       "norm_label": "service_families"
     },
     {
@@ -17504,7 +17504,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_service_offerings",
       "community": 101,
-      "community_name": "job_scope_lines",
+      "community_name": "ongoing_jobs",
       "norm_label": "service_offerings"
     },
     {
@@ -17515,7 +17515,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_uoms",
       "community": 101,
-      "community_name": "job_scope_lines",
+      "community_name": "ongoing_jobs",
       "norm_label": "uoms"
     },
     {
@@ -17526,7 +17526,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_service_allowed_uoms",
       "community": 101,
-      "community_name": "job_scope_lines",
+      "community_name": "ongoing_jobs",
       "norm_label": "service_allowed_uoms"
     },
     {
@@ -17558,8 +17558,8 @@
       "source_location": "L180",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_organizations",
-      "community": 26,
-      "community_name": "01_init_postgresql_schema.sql",
+      "community": 30,
+      "community_name": "organizations",
       "norm_label": "organizations"
     },
     {
@@ -17569,8 +17569,8 @@
       "source_location": "L192",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_organization_identifiers",
-      "community": 26,
-      "community_name": "01_init_postgresql_schema.sql",
+      "community": 30,
+      "community_name": "organizations",
       "norm_label": "organization_identifiers"
     },
     {
@@ -17591,8 +17591,8 @@
       "source_location": "L214",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_locations",
-      "community": 26,
-      "community_name": "01_init_postgresql_schema.sql",
+      "community": 30,
+      "community_name": "organizations",
       "norm_label": "locations"
     },
     {
@@ -17602,8 +17602,8 @@
       "source_location": "L224",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_people",
-      "community": 81,
-      "community_name": "ongoing_jobs",
+      "community": 30,
+      "community_name": "organizations",
       "norm_label": "people"
     },
     {
@@ -17657,8 +17657,8 @@
       "source_location": "L282",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_events",
-      "community": 26,
-      "community_name": "01_init_postgresql_schema.sql",
+      "community": 30,
+      "community_name": "organizations",
       "norm_label": "events"
     },
     {
@@ -17668,8 +17668,8 @@
       "source_location": "L289",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_event_editions",
-      "community": 26,
-      "community_name": "01_init_postgresql_schema.sql",
+      "community": 30,
+      "community_name": "organizations",
       "norm_label": "event_editions"
     },
     {
@@ -17679,8 +17679,8 @@
       "source_location": "L298",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_event_participations",
-      "community": 26,
-      "community_name": "01_init_postgresql_schema.sql",
+      "community": 30,
+      "community_name": "organizations",
       "norm_label": "event_participations"
     },
     {
@@ -17690,8 +17690,8 @@
       "source_location": "L308",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_campaigns",
-      "community": 26,
-      "community_name": "01_init_postgresql_schema.sql",
+      "community": 30,
+      "community_name": "organizations",
       "norm_label": "campaigns"
     },
     {
@@ -17822,8 +17822,8 @@
       "source_location": "L424",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_interactions",
-      "community": 81,
-      "community_name": "ongoing_jobs",
+      "community": 30,
+      "community_name": "organizations",
       "norm_label": "interactions"
     },
     {
@@ -17855,7 +17855,7 @@
       "source_location": "L462",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_ongoing_jobs",
-      "community": 81,
+      "community": 101,
       "community_name": "ongoing_jobs",
       "norm_label": "ongoing_jobs"
     },
@@ -17878,7 +17878,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_phases",
       "community": 101,
-      "community_name": "job_scope_lines",
+      "community_name": "ongoing_jobs",
       "norm_label": "job_phases"
     },
     {
@@ -17889,7 +17889,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_locations",
       "community": 101,
-      "community_name": "job_scope_lines",
+      "community_name": "ongoing_jobs",
       "norm_label": "job_locations"
     },
     {
@@ -17900,7 +17900,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_scope_lines",
       "community": 101,
-      "community_name": "job_scope_lines",
+      "community_name": "ongoing_jobs",
       "norm_label": "job_scope_lines"
     },
     {
@@ -17922,7 +17922,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_design_sets",
       "community": 81,
-      "community_name": "ongoing_jobs",
+      "community_name": "design_versions",
       "norm_label": "design_sets"
     },
     {
@@ -17933,7 +17933,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_quotes",
       "community": 81,
-      "community_name": "ongoing_jobs",
+      "community_name": "design_versions",
       "norm_label": "quotes"
     },
     {
@@ -17944,7 +17944,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_quote_versions",
       "community": 81,
-      "community_name": "ongoing_jobs",
+      "community_name": "design_versions",
       "norm_label": "quote_versions"
     },
     {
@@ -17955,7 +17955,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_quote_lines",
       "community": 101,
-      "community_name": "job_scope_lines",
+      "community_name": "ongoing_jobs",
       "norm_label": "quote_lines"
     },
     {
@@ -17966,7 +17966,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_design_versions",
       "community": 81,
-      "community_name": "ongoing_jobs",
+      "community_name": "design_versions",
       "norm_label": "design_versions"
     },
     {
@@ -17977,7 +17977,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_artifact_decisions",
       "community": 81,
-      "community_name": "ongoing_jobs",
+      "community_name": "design_versions",
       "norm_label": "artifact_decisions"
     },
     {
@@ -17988,7 +17988,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_production_releases",
       "community": 81,
-      "community_name": "ongoing_jobs",
+      "community_name": "design_versions",
       "norm_label": "production_releases"
     },
     {
@@ -17999,7 +17999,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_production_release_design_versions",
       "community": 81,
-      "community_name": "ongoing_jobs",
+      "community_name": "design_versions",
       "norm_label": "production_release_design_versions"
     },
     {
@@ -18010,7 +18010,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_activities",
       "community": 101,
-      "community_name": "job_scope_lines",
+      "community_name": "ongoing_jobs",
       "norm_label": "job_activities"
     },
     {
@@ -18042,7 +18042,7 @@
       "source_location": "L717",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_financial_milestones",
-      "community": 81,
+      "community": 101,
       "community_name": "ongoing_jobs",
       "norm_label": "financial_milestones"
     },
@@ -18053,7 +18053,7 @@
       "source_location": "L728",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_events",
-      "community": 81,
+      "community": 101,
       "community_name": "ongoing_jobs",
       "norm_label": "job_events"
     },
@@ -18186,7 +18186,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_project_time_entries",
       "community": 101,
-      "community_name": "job_scope_lines",
+      "community_name": "ongoing_jobs",
       "norm_label": "project_time_entries"
     },
     {
@@ -18284,7 +18284,7 @@
       "source_location": "L1011",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_cost_estimates",
-      "community": 81,
+      "community": 101,
       "community_name": "ongoing_jobs",
       "norm_label": "job_cost_estimates"
     },
@@ -18295,7 +18295,7 @@
       "source_location": "L1019",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_actual_costs",
-      "community": 81,
+      "community": 101,
       "community_name": "ongoing_jobs",
       "norm_label": "job_actual_costs"
     },
@@ -18306,7 +18306,7 @@
       "source_location": "L1028",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_cost_confirmations",
-      "community": 81,
+      "community": 101,
       "community_name": "ongoing_jobs",
       "norm_label": "job_cost_confirmations"
     },
@@ -18383,8 +18383,8 @@
       "source_location": "L1057",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_closeouts",
-      "community": 81,
-      "community_name": "ongoing_jobs",
+      "community": 30,
+      "community_name": "organizations",
       "norm_label": "job_closeouts"
     },
     {
@@ -18406,7 +18406,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_snags",
       "community": 101,
-      "community_name": "job_scope_lines",
+      "community_name": "ongoing_jobs",
       "norm_label": "job_snags"
     },
     {
@@ -18538,7 +18538,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_validate_task_job_context",
       "community": 101,
-      "community_name": "job_scope_lines",
+      "community_name": "ongoing_jobs",
       "norm_label": "validate_task_job_context()"
     },
     {
@@ -18571,7 +18571,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_field_execution_submissions",
       "community": 101,
-      "community_name": "job_scope_lines",
+      "community_name": "ongoing_jobs",
       "norm_label": "field_execution_submissions"
     },
     {
@@ -18582,7 +18582,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_field_execution_files",
       "community": 101,
-      "community_name": "job_scope_lines",
+      "community_name": "ongoing_jobs",
       "norm_label": "field_execution_files"
     },
     {
@@ -18604,7 +18604,7 @@
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_delivery_activations",
       "community": 101,
-      "community_name": "job_scope_lines",
+      "community_name": "ongoing_jobs",
       "norm_label": "job_delivery_activations"
     },
     {
@@ -18759,8 +18759,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "server_scripts_04_add_missing_tables",
-      "community": 81,
-      "community_name": "ongoing_jobs",
+      "community": 30,
+      "community_name": "organizations",
       "norm_label": "04_add_missing_tables.sql"
     },
     {
@@ -18770,8 +18770,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "server_scripts_04_add_missing_tables_completed_jobs",
-      "community": 81,
-      "community_name": "ongoing_jobs",
+      "community": 30,
+      "community_name": "organizations",
       "norm_label": "completed_jobs"
     },
     {
@@ -18781,8 +18781,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "server_scripts_04_add_missing_tables_daily_review_records",
-      "community": 81,
-      "community_name": "ongoing_jobs",
+      "community": 30,
+      "community_name": "organizations",
       "norm_label": "daily_review_records"
     },
     {
@@ -18792,8 +18792,8 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "server_scripts_04_add_missing_tables_analytics_snapshots",
-      "community": 81,
-      "community_name": "ongoing_jobs",
+      "community": 30,
+      "community_name": "organizations",
       "norm_label": "analytics_snapshots"
     },
     {
@@ -18803,8 +18803,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "server_scripts_04_add_missing_tables_revenue_entries",
-      "community": 81,
-      "community_name": "ongoing_jobs",
+      "community": 30,
+      "community_name": "organizations",
       "norm_label": "revenue_entries"
     },
     {
@@ -18914,7 +18914,7 @@
       "_origin": "ast",
       "id": "server_scripts_12_job_commercial_artifacts",
       "community": 81,
-      "community_name": "ongoing_jobs",
+      "community_name": "design_versions",
       "norm_label": "12_job_commercial_artifacts.sql"
     },
     {
@@ -18925,7 +18925,7 @@
       "_origin": "ast",
       "id": "server_scripts_12_job_commercial_artifacts_design_sets",
       "community": 81,
-      "community_name": "ongoing_jobs",
+      "community_name": "design_versions",
       "norm_label": "design_sets"
     },
     {
@@ -18936,7 +18936,7 @@
       "_origin": "ast",
       "id": "server_scripts_12_job_commercial_artifacts_artifact_decisions",
       "community": 81,
-      "community_name": "ongoing_jobs",
+      "community_name": "design_versions",
       "norm_label": "artifact_decisions"
     },
     {
@@ -18947,7 +18947,7 @@
       "_origin": "ast",
       "id": "server_scripts_13_production_execution",
       "community": 81,
-      "community_name": "ongoing_jobs",
+      "community_name": "design_versions",
       "norm_label": "13_production_execution.sql"
     },
     {
@@ -18958,7 +18958,7 @@
       "_origin": "ast",
       "id": "server_scripts_13_production_execution_production_releases",
       "community": 81,
-      "community_name": "ongoing_jobs",
+      "community_name": "design_versions",
       "norm_label": "production_releases"
     },
     {
@@ -18969,7 +18969,7 @@
       "_origin": "ast",
       "id": "server_scripts_13_production_execution_production_release_design_versions",
       "community": 81,
-      "community_name": "ongoing_jobs",
+      "community_name": "design_versions",
       "norm_label": "production_release_design_versions"
     },
     {
@@ -18980,7 +18980,7 @@
       "_origin": "ast",
       "id": "server_scripts_13_production_execution_job_activities",
       "community": 101,
-      "community_name": "job_scope_lines",
+      "community_name": "ongoing_jobs",
       "norm_label": "job_activities"
     },
     {
@@ -18991,7 +18991,7 @@
       "_origin": "ast",
       "id": "server_scripts_13_production_execution_job_activity_updates",
       "community": 81,
-      "community_name": "ongoing_jobs",
+      "community_name": "design_versions",
       "norm_label": "job_activity_updates"
     },
     {
@@ -19067,8 +19067,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "server_scripts_15_resources_and_project_time",
-      "community": 72,
-      "community_name": "users",
+      "community": 254,
+      "community_name": "project_time_entries",
       "norm_label": "15_resources_and_project_time.sql"
     },
     {
@@ -19078,8 +19078,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "server_scripts_15_resources_and_project_time_operational_resources",
-      "community": 72,
-      "community_name": "users",
+      "community": 254,
+      "community_name": "project_time_entries",
       "norm_label": "operational_resources"
     },
     {
@@ -19089,8 +19089,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "supplier_profiles",
-      "community": 72,
-      "community_name": "users",
+      "community": 254,
+      "community_name": "project_time_entries",
       "norm_label": "supplier_profiles"
     },
     {
@@ -19100,8 +19100,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "server_scripts_15_resources_and_project_time_job_activity_resource_assignments",
-      "community": 72,
-      "community_name": "users",
+      "community": 254,
+      "community_name": "project_time_entries",
       "norm_label": "job_activity_resource_assignments"
     },
     {
@@ -19111,8 +19111,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_scripts_15_resources_and_project_time_sql_job_activities",
-      "community": 72,
-      "community_name": "users",
+      "community": 254,
+      "community_name": "project_time_entries",
       "norm_label": "job_activities"
     },
     {
@@ -19122,8 +19122,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "server_scripts_15_resources_and_project_time_resource_availability_blocks",
-      "community": 72,
-      "community_name": "users",
+      "community": 254,
+      "community_name": "project_time_entries",
       "norm_label": "resource_availability_blocks"
     },
     {
@@ -19133,8 +19133,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "server_scripts_15_resources_and_project_time_project_time_entries",
-      "community": 72,
-      "community_name": "users",
+      "community": 254,
+      "community_name": "project_time_entries",
       "norm_label": "project_time_entries"
     },
     {
@@ -19144,8 +19144,8 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "server_scripts_15_resources_and_project_time_project_time_corrections",
-      "community": 72,
-      "community_name": "users",
+      "community": 254,
+      "community_name": "project_time_entries",
       "norm_label": "project_time_corrections"
     },
     {
@@ -19288,7 +19288,7 @@
       "_origin": "ast",
       "id": "server_scripts_17_job_closeout_job_snags",
       "community": 101,
-      "community_name": "job_scope_lines",
+      "community_name": "ongoing_jobs",
       "norm_label": "job_snags"
     },
     {
@@ -19794,7 +19794,7 @@
       "_origin": "ast",
       "id": "server_scripts_25_job_activation",
       "community": 101,
-      "community_name": "job_scope_lines",
+      "community_name": "ongoing_jobs",
       "norm_label": "25_job_activation.sql"
     },
     {
@@ -19805,7 +19805,7 @@
       "_origin": "ast",
       "id": "server_scripts_25_job_activation_delivery_activity_templates",
       "community": 101,
-      "community_name": "job_scope_lines",
+      "community_name": "ongoing_jobs",
       "norm_label": "delivery_activity_templates"
     },
     {
@@ -19816,7 +19816,7 @@
       "_origin": "ast",
       "id": "server_scripts_25_job_activation_job_delivery_activations",
       "community": 101,
-      "community_name": "job_scope_lines",
+      "community_name": "ongoing_jobs",
       "norm_label": "job_delivery_activations"
     },
     {
@@ -19837,8 +19837,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "server_scripts_26_communication_job_actions",
-      "community": 254,
-      "community_name": "conversation_job_links",
+      "community": 72,
+      "community_name": "users",
       "norm_label": "26_communication_job_actions.sql"
     },
     {
@@ -19848,8 +19848,8 @@
       "source_location": "L2",
       "_origin": "ast",
       "id": "server_scripts_26_communication_job_actions_conversation_job_links",
-      "community": 254,
-      "community_name": "conversation_job_links",
+      "community": 72,
+      "community_name": "users",
       "norm_label": "conversation_job_links"
     },
     {
@@ -19859,8 +19859,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "server_scripts_26_communication_job_actions_communication_job_actions",
-      "community": 254,
-      "community_name": "conversation_job_links",
+      "community": 72,
+      "community_name": "users",
       "norm_label": "communication_job_actions"
     },
     {
@@ -19903,7 +19903,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "server_scripts_30_financial_settlement_spine",
-      "community": 81,
+      "community": 101,
       "community_name": "ongoing_jobs",
       "norm_label": "30_financial_settlement_spine.sql"
     },
@@ -19914,7 +19914,7 @@
       "source_location": "L202",
       "_origin": "ast",
       "id": "server_scripts_30_financial_settlement_spine_job_settlement_status",
-      "community": 81,
+      "community": 101,
       "community_name": "ongoing_jobs",
       "norm_label": "job_settlement_status"
     },
@@ -19925,7 +19925,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "zoho_invoices",
-      "community": 81,
+      "community": 101,
       "community_name": "ongoing_jobs",
       "norm_label": "zoho_invoices"
     },
@@ -19936,7 +19936,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "milestone",
-      "community": 81,
+      "community": 101,
       "community_name": "ongoing_jobs",
       "norm_label": "milestone"
     },
@@ -19947,7 +19947,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "resolved",
-      "community": 81,
+      "community": 101,
       "community_name": "ongoing_jobs",
       "norm_label": "resolved"
     },
@@ -19958,7 +19958,7 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "server_scripts_30_financial_settlement_spine_assert_zoho_mirror_is_synced_only",
-      "community": 81,
+      "community": 101,
       "community_name": "ongoing_jobs",
       "norm_label": "assert_zoho_mirror_is_synced_only()"
     },
@@ -37544,8 +37544,8 @@
       "source_location": "L221",
       "_origin": "ast",
       "id": "crm_live_mongo_data_audit_finding_5_historical_jobs_require_controlled_identity_creation_and_matching",
-      "community": 30,
-      "community_name": "Finding 5 \u2014 Historical Jobs require controlled identity creation and matching",
+      "community": 85,
+      "community_name": "EGS CRM Live Mongo Data Audit for SQL Migration",
       "norm_label": "finding 5 \u2014 historical jobs require controlled identity creation and matching"
     },
     {
@@ -37555,8 +37555,8 @@
       "source_location": "L223",
       "_origin": "ast",
       "id": "crm_live_mongo_data_audit_job_opportunity_overlap",
-      "community": 30,
-      "community_name": "Finding 5 \u2014 Historical Jobs require controlled identity creation and matching",
+      "community": 85,
+      "community_name": "EGS CRM Live Mongo Data Audit for SQL Migration",
       "norm_label": "job/opportunity overlap"
     },
     {
@@ -37566,8 +37566,8 @@
       "source_location": "L237",
       "_origin": "ast",
       "id": "crm_live_mongo_data_audit_customer_organization_coverage",
-      "community": 30,
-      "community_name": "Finding 5 \u2014 Historical Jobs require controlled identity creation and matching",
+      "community": 85,
+      "community_name": "EGS CRM Live Mongo Data Audit for SQL Migration",
       "norm_label": "customer organization coverage"
     },
     {
@@ -37577,8 +37577,8 @@
       "source_location": "L257",
       "_origin": "ast",
       "id": "crm_live_mongo_data_audit_services",
-      "community": 30,
-      "community_name": "Finding 5 \u2014 Historical Jobs require controlled identity creation and matching",
+      "community": 85,
+      "community_name": "EGS CRM Live Mongo Data Audit for SQL Migration",
       "norm_label": "services"
     },
     {
@@ -37588,8 +37588,8 @@
       "source_location": "L271",
       "_origin": "ast",
       "id": "crm_live_mongo_data_audit_financial_and_completion_meaning",
-      "community": 30,
-      "community_name": "Finding 5 \u2014 Historical Jobs require controlled identity creation and matching",
+      "community": 85,
+      "community_name": "EGS CRM Live Mongo Data Audit for SQL Migration",
       "norm_label": "financial and completion meaning"
     },
     {
@@ -59568,7 +59568,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L50",
+      "source_location": "L49",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -59616,7 +59616,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L50",
+      "source_location": "L49",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -59937,7 +59937,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L52",
+      "source_location": "L51",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -60033,7 +60033,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L52",
+      "source_location": "L51",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -60199,7 +60199,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L51",
+      "source_location": "L50",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -60235,7 +60235,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L51",
+      "source_location": "L50",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -70154,7 +70154,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L49",
+      "source_location": "L48",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -70226,7 +70226,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L49",
+      "source_location": "L48",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -70322,7 +70322,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L49",
+      "source_location": "L48",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -70441,7 +70441,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L48",
+      "source_location": "L47",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -70537,7 +70537,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L48",
+      "source_location": "L47",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -71194,7 +71194,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/admin/crm/components/ui/Drawer.jsx",
-      "source_location": "L48",
+      "source_location": "L46",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_components_ui_drawer_drawer",
@@ -71206,7 +71206,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/admin/crm/components/ui/Drawer.jsx",
-      "source_location": "L35",
+      "source_location": "L33",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_components_ui_drawer_drawer",
@@ -71218,7 +71218,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/admin/crm/components/ui/Drawer.jsx",
-      "source_location": "L36",
+      "source_location": "L34",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_components_ui_drawer_drawer",
@@ -71230,7 +71230,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/admin/crm/components/ui/Drawer.jsx",
-      "source_location": "L34",
+      "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_components_ui_drawer_drawer",
@@ -73376,7 +73376,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L53",
+      "source_location": "L52",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -73496,7 +73496,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L53",
+      "source_location": "L52",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -74737,7 +74737,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L53",
+      "source_location": "L52",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -74750,7 +74750,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L171",
+      "source_location": "L170",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobspage",
@@ -74809,7 +74809,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L53",
+      "source_location": "L52",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -74904,7 +74904,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L53",
+      "source_location": "L52",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -74917,7 +74917,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L177",
+      "source_location": "L176",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobspage",
@@ -76027,7 +76027,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L620",
+      "source_location": "L608",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobcard",
@@ -76040,7 +76040,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L377",
+      "source_location": "L376",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobspage",
@@ -76051,7 +76051,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L580",
+      "source_location": "L579",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobstable",
@@ -82841,7 +82841,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L671",
+      "source_location": "L648",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobcard",
@@ -82853,7 +82853,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L491",
+      "source_location": "L490",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobsboard",
@@ -82866,7 +82866,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L310",
+      "source_location": "L309",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobspage",
@@ -82877,7 +82877,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L577",
+      "source_location": "L576",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobstable",
@@ -83346,7 +83346,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L229",
+      "source_location": "L228",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobspage",
@@ -83370,7 +83370,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L243",
+      "source_location": "L242",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobspage",
@@ -84302,7 +84302,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L241",
+      "source_location": "L240",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobspage",
@@ -84529,7 +84529,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L227",
+      "source_location": "L226",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobspage",
@@ -84811,7 +84811,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L189",
+      "source_location": "L188",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobspage",
@@ -85026,7 +85026,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L160",
+      "source_location": "L159",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobspage",
@@ -85229,7 +85229,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L181",
+      "source_location": "L180",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobspage",
@@ -85742,7 +85742,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L62",
+      "source_location": "L61",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -85753,7 +85753,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L97",
+      "source_location": "L96",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -85764,7 +85764,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L104",
+      "source_location": "L103",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -85775,7 +85775,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L95",
+      "source_location": "L94",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -85786,7 +85786,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L615",
+      "source_location": "L603",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -85797,7 +85797,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L464",
+      "source_location": "L463",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -85808,7 +85808,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L113",
+      "source_location": "L112",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -85819,7 +85819,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L518",
+      "source_location": "L517",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -85830,7 +85830,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L707",
+      "source_location": "L684",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -85841,7 +85841,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L74",
+      "source_location": "L73",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -85852,7 +85852,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L89",
+      "source_location": "L88",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage",
@@ -85865,7 +85865,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L617",
+      "source_location": "L605",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobcard",
@@ -85877,7 +85877,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L193",
+      "source_location": "L192",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobspage",
@@ -85888,22 +85888,34 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
+      "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
+      "source_location": "L579",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobstable",
+      "target": "client_src_admin_crm_pages_ongoingjobspage_late_stages"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
+      "source_location": "L651",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobcard",
+      "target": "client_src_admin_crm_pages_ongoingjobspage_formatshortdate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
       "source_location": "L580",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobstable",
-      "target": "client_src_admin_crm_pages_ongoingjobspage_late_stages"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L674",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobcard",
       "target": "client_src_admin_crm_pages_ongoingjobspage_formatshortdate",
       "confidence_score": 1.0
     },
@@ -85912,19 +85924,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L581",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobstable",
-      "target": "client_src_admin_crm_pages_ongoingjobspage_formatshortdate",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L616",
+      "source_location": "L604",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobcard",
@@ -85936,7 +85936,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L195",
+      "source_location": "L194",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobspage",
@@ -85948,7 +85948,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/admin/crm/pages/OngoingJobsPage.jsx",
-      "source_location": "L708",
+      "source_location": "L685",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobworkspacesummary",
@@ -152389,5 +152389,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "ba0d629b5c1954cd3f0dd9eaf9a88b54753f9e8c"
+  "built_at_commit": "caaa86328890c81c6b9284529d54e326a0e8a72d"
 }

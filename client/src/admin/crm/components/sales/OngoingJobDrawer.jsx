@@ -380,14 +380,62 @@ export default function OngoingJobDrawer({
               <Trash2 className="h-4 w-4" />
             </button>
           )}
-          {isDirty && (
+          {tab === 'overview' && subTab === 'job_info' && (
             <button
               type="button"
               onClick={handleSave}
-              disabled={saving}
+              disabled={saving || !isDirty}
               className={cn(
-                'crm-btn-primary gap-1.5 transition-all',
-                saveSuccess && 'bg-emerald-600 hover:bg-emerald-600'
+                'crm-btn-primary gap-1.5 transition-all text-xs',
+                saveSuccess && 'bg-emerald-600 hover:bg-emerald-600',
+                !isDirty && !saving && !saveSuccess && 'opacity-60 cursor-not-allowed'
+              )}
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  Saving…
+                </>
+              ) : saveSuccess ? (
+                <>
+                  <Check className="h-3.5 w-3.5 text-emerald-300" />
+                  Saved!
+                </>
+              ) : (
+                <>
+                  <Save className="h-3.5 w-3.5" />
+                  Save
+                </>
+              )}
+            </button>
+          )}
+        </div>
+      )}
+      footer={
+        <div className="flex items-center gap-3">
+          {onDelete && (
+            <button
+              type="button"
+              onClick={() => onDelete(targetId)}
+              className="crm-btn-ghost shrink-0 text-rose-600 hover:bg-rose-50"
+            >
+              <Trash2 className="h-4 w-4" />
+              Delete
+            </button>
+          )}
+          <div className="flex-1" />
+          <button type="button" onClick={onClose} className="crm-btn-secondary shrink-0">
+            Close
+          </button>
+          {tab === 'overview' && subTab === 'job_info' && (
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving || !isDirty}
+              className={cn(
+                'crm-btn-primary shrink-0 flex items-center gap-2 transition-all',
+                saveSuccess && 'bg-emerald-600 hover:bg-emerald-600',
+                !isDirty && !saving && !saveSuccess && 'opacity-60 cursor-not-allowed'
               )}
             >
               {saving ? (
@@ -397,19 +445,19 @@ export default function OngoingJobDrawer({
                 </>
               ) : saveSuccess ? (
                 <>
-                  <Check className="h-4 w-4 text-emerald-300" />
+                  <Check className="h-4 w-4" />
                   Saved!
                 </>
               ) : (
                 <>
                   <Save className="h-4 w-4" />
-                  Save
+                  Save changes
                 </>
               )}
             </button>
           )}
         </div>
-      )}
+      }
     >
       {loading ? (
         <LoadingState label="Loading Ongoing Job…" />
