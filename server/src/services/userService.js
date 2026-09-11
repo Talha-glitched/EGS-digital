@@ -1,5 +1,3 @@
-import mongoose from 'mongoose';
-import { User } from '../models/User.js';
 import { ROLES, isValidRole, ROLE_LABELS } from '../constants/userRoles.js';
 import { hashPassword, serializeUser, verifyPassword } from './authService.js';
 import { sendUserCredentialsEmail } from './userEmailService.js';
@@ -7,59 +5,30 @@ import { generateTemporaryPassword } from '../utils/temporaryPassword.js';
 import db from '../db/index.js';
 
 export async function listUsers({ includeInactive = true } = {}) {
-  try {
-    const sql = includeInactive
-      ? 'SELECT id, name AS "displayName", email, role, is_active AS "isActive", created_at AS "createdAt", updated_at AS "updatedAt" FROM users ORDER BY name ASC'
-      : 'SELECT id, name AS "displayName", email, role, is_active AS "isActive", created_at AS "createdAt", updated_at AS "updatedAt" FROM users WHERE is_active = true ORDER BY name ASC';
-    const res = await db.query(sql);
-    return res.rows.map(serializeUser);
-  } catch (err) {
-    if (mongoose.connection?.readyState) {
-      const query = includeInactive ? {} : { isActive: true };
-      const users = await User.find(query).sort({ displayName: 1 }).lean();
-      return users.map(serializeUser);
-    }
-    throw err;
-  }
+  const sql = includeInactive
+    ? 'SELECT id, name AS "displayName", email, role, is_active AS "isActive", created_at AS "createdAt", updated_at AS "updatedAt" FROM users ORDER BY name ASC'
+    : 'SELECT id, name AS "displayName", email, role, is_active AS "isActive", created_at AS "createdAt", updated_at AS "updatedAt" FROM users WHERE is_active = true ORDER BY name ASC';
+  const res = await db.query(sql);
+  return res.rows.map(serializeUser);
 }
 
 export async function listActiveUsers() {
-  try {
-    const res = await db.query('SELECT id, email, name AS "displayName", role FROM users WHERE is_active = true ORDER BY name ASC');
-    return res.rows.map((u) => ({
-      id: String(u.id),
-      email: u.email,
-      displayName: u.displayName,
-      role: u.role,
-    }));
-  } catch (err) {
-    if (mongoose.connection?.readyState) {
-      const users = await User.find({ isActive: true }).sort({ displayName: 1 }).lean();
-      return users.map((u) => ({
-        id: String(u._id),
-        email: u.email,
-        displayName: u.displayName,
-        role: u.role,
-      }));
-    }
-    throw err;
-  }
+  const res = await db.query('SELECT id, email, name AS "displayName", role FROM users WHERE is_active = true ORDER BY name ASC');
+  return res.rows.map((u) => ({
+    id: String(u.id),
+    email: u.email,
+    displayName: u.displayName,
+    role: u.role,
+  }));
 }
 
 export async function getUserById(id) {
-  try {
-    const res = await db.query(
-      'SELECT id, name AS "displayName", email, role, is_active AS "isActive", created_at AS "createdAt", updated_at AS "updatedAt" FROM users WHERE id = $1 LIMIT 1',
-      [id]
-    );
-    if (res.rows.length > 0) {
-      return serializeUser(res.rows[0]);
-    }
-  } catch (err) {
-    if (mongoose.connection?.readyState) {
-      const user = await User.findById(id).lean();
-      if (user) return serializeUser(user);
-    }
+  const res = await db.query(
+    'SELECT id, name AS "displayName", email, role, is_active AS "isActive", created_at AS "createdAt", updated_at AS "updatedAt" FROM users WHERE id = $1 LIMIT 1',
+    [id]
+  );
+  if (res.rows.length > 0) {
+    return serializeUser(res.rows[0]);
   }
 
   const error = new Error('User not found.');
@@ -100,27 +69,6 @@ export async function createUser(payload, actor = {}) {
       error.status = 409;
       throw error;
     }
-
-    if (mongoose.connection?.readyState) {
-      const existing = await User.findOne({ email });
-      if (existing) {
-        const error = new Error('A user with this email already exists.');
-        error.status = 409;
-        throw error;
-      }
-
-      const user = await User.create({
-        email,
-        displayName,
-        passwordHash,
-        role,
-        isActive: payload.isActive !== false,
-        mustChangePassword: Boolean(payload.mustChangePassword),
-        createdBy: actor.userId || null,
-      });
-
-      return serializeUser(user);
-    }
     throw err;
   }
 }
@@ -159,22 +107,8 @@ export async function updateUser(id, payload) {
     updates.push(`updated_at = CURRENT_TIMESTAMP`);
     params.push(id);
     const sql = `UPDATE users SET ${updates.join(', ')} WHERE id = $${paramIdx} RETURNING id, name AS "displayName", email, role, is_active AS "isActive"`;
-    try {
-      const res = await db.query(sql, params);
-      return serializeUser(res.rows[0]);
-    } catch (err) {
-      if (mongoose.connection?.readyState) {
-        const mUser = await User.findById(id);
-        if (mUser) {
-          if (payload.displayName !== undefined) mUser.displayName = String(payload.displayName).trim();
-          if (payload.role !== undefined) mUser.role = payload.role;
-          if (payload.isActive !== undefined) mUser.isActive = Boolean(payload.isActive);
-          await mUser.save();
-          return serializeUser(mUser);
-        }
-      }
-      throw err;
-    }
+    const res = await db.query(sql, params);
+    return serializeUser(res.rows[0]);
   }
 
   return user;
@@ -189,20 +123,8 @@ export async function setUserPassword(id, newPassword) {
 
   const passwordHash = await hashPassword(newPassword);
 
-  try {
-    await db.query('UPDATE users SET password_hash = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2', [passwordHash, id]);
-    return { ok: true };
-  } catch (err) {
-    if (mongoose.connection?.readyState) {
-      const user = await User.findById(id);
-      if (user) {
-        user.passwordHash = passwordHash;
-        await user.save();
-        return { ok: true };
-      }
-    }
-    throw err;
-  }
+  await db.query('UPDATE users SET password_hash = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2', [passwordHash, id]);
+  return { ok: true };
 }
 
 export async function issueUserCredentials(id, {

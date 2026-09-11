@@ -1,34 +1,34 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import mongoose from 'mongoose';
-import { Opportunity, OPPORTUNITY_STAGES } from '../src/models/Opportunity.js';
-import { Task } from '../src/models/Task.js';
+import {
+  DEFAULT_PIPELINE_STAGES,
+  CLOSED_WON_STAGE,
+  CLOSED_LOST_STAGE,
+  isClosedStage,
+  stageNames,
+  probabilityForStage,
+} from '../src/constants/ongoingJobPipeline.js';
 
-test('opportunity model supports the full commercial pipeline', () => {
-  assert.deepEqual(OPPORTUNITY_STAGES, [
+test('pipeline stages support the full commercial pipeline', () => {
+  const names = stageNames(DEFAULT_PIPELINE_STAGES);
+  assert.deepEqual(names, [
     'Inquiry', 'Design', 'Quotation Sent', 'Waiting Adv/ PO', 'In Production',
     'Installation', 'Ready', 'Waiting Balance Payment', 'Job Done', 'Job Lost',
   ]);
-  const opportunity = new Opportunity({
-    name: 'GITEX stand',
-    companyId: new mongoose.Types.ObjectId(),
-    valueAed: 150000,
-    probability: 40,
-  });
-  assert.equal(opportunity.validateSync(), undefined);
-  assert.equal(opportunity.stage, 'Inquiry');
 });
 
-test('opportunity requires an account and task requires a title', () => {
-  const opportunityError = new Opportunity({ name: 'Missing account' }).validateSync();
-  assert.ok(opportunityError.errors.companyId);
-  const taskError = new Task({ priority: 'High' }).validateSync();
-  assert.ok(taskError.errors.title);
+test('isClosedStage correctly identifies terminal stages', () => {
+  assert.equal(isClosedStage(CLOSED_WON_STAGE), true);
+  assert.equal(isClosedStage(CLOSED_LOST_STAGE), true);
+  assert.equal(isClosedStage('Closed Won'), true);
+  assert.equal(isClosedStage('Closed Lost'), true);
+  assert.equal(isClosedStage('Inquiry'), false);
+  assert.equal(isClosedStage('In Production'), false);
 });
 
-test('task defaults support an actionable follow-up queue', () => {
-  const task = new Task({ title: 'Call marketing director' });
-  assert.equal(task.validateSync(), undefined);
-  assert.equal(task.status, 'Open');
-  assert.equal(task.priority, 'Normal');
+test('probabilityForStage returns expected probabilities', () => {
+  assert.equal(probabilityForStage(DEFAULT_PIPELINE_STAGES, 'Inquiry'), 10);
+  assert.equal(probabilityForStage(DEFAULT_PIPELINE_STAGES, 'Job Done'), 100);
+  assert.equal(probabilityForStage(DEFAULT_PIPELINE_STAGES, 'Job Lost'), 0);
+  assert.equal(probabilityForStage(DEFAULT_PIPELINE_STAGES, 'NonExistent'), 10);
 });

@@ -14,10 +14,10 @@ import {
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 import { Footer } from './SiteChrome.jsx';
 import { images } from './siteData.js';
-import graduationCeremonialStaging from '../assets/Graduation/SHJ1.jpg';
-import graduationVipGuestStudent from '../assets/Graduation/SHJ3.jpg';
-import graduationOnsiteOperations from '../assets/Graduation/operation.jpeg';
-import rakEditedVideo from '../assets/Rak-Edited.mp4';
+const graduationCeremonialStaging = '/media/graduation/SHJ1.jpg';
+const graduationVipGuestStudent = '/media/graduation/SHJ3.jpg';
+const graduationOnsiteOperations = '/media/graduation/operation.jpeg';
+const rakEditedVideo = '/media/site/Rak-Edited.mp4';
 import { getProjectCta } from '../utils/contactInquiry.js';
 import { buildPageSchemaBundle } from '../utils/schemaGenerator.js';
 

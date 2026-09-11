@@ -33,12 +33,22 @@ app.use(
     },
   })
 );
-app.use('/uploads', express.static(UPLOADS_DIR));
+app.use(
+  '/uploads',
+  express.static(UPLOADS_DIR, {
+    maxAge: '365d',
+    immutable: true,
+    setHeaders: (res) => {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Accept-Ranges', 'bytes');
+    },
+  })
+);
 
 app.get('/api/health', (_req, res) => {
   res.json({
     ok: true,
-    mode: process.env.MONGODB_URI ? 'mongodb-enabled' : 'filesystem-fallback',
+    mode: 'postgres-sql',
   });
 });
 

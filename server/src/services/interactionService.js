@@ -1,13 +1,3 @@
-import mongoose from 'mongoose';
-import { ContactInteraction } from '../models/ContactInteraction.js';
-import { Lead } from '../models/Lead.js';
-import { Company } from '../models/Company.js';
-import { normalizeCompanyName } from '../utils/companyResolver.js';
-import {
-  softDeleteRecord,
-  restoreRecord,
-  registerRevisionModel,
-} from './revisionService.js';
 import {
   INTERACTION_TYPES,
   INTERACTION_DIRECTIONS,
@@ -88,44 +78,27 @@ export function buildRelatedContacts(record, leadMap = new Map()) {
 }
 
 export async function listInteractionsForLead(leadId) {
-  try {
-    const res = await db.query(
-      `SELECT id, person_id AS "leadId", organization_id AS "companyId", channel AS type,
-              direction, occurred_at AS "occurredAt", outcome, notes AS summary,
-              title, duration_minutes AS "durationMinutes", location, attendees,
-              logged_by AS "loggedBy", related_person_ids AS "relatedLeadIds"
-       FROM interactions WHERE person_id = $1::uuid ORDER BY occurred_at DESC`,
-      [leadId]
-    );
-    return res.rows;
-  } catch (err) {
-    if (mongoose.connection?.readyState) {
-      return ContactInteraction.find({
-        deletedAt: null,
-        $or: [{ leadId }, { relatedLeadIds: leadId }],
-      }).sort({ occurredAt: -1 }).lean();
-    }
-    throw err;
-  }
+  const res = await db.query(
+    `SELECT id, person_id AS "leadId", organization_id AS "companyId", channel AS type,
+            direction, occurred_at AS "occurredAt", outcome, notes AS summary,
+            title, duration_minutes AS "durationMinutes", location, attendees,
+            logged_by AS "loggedBy", related_person_ids AS "relatedLeadIds"
+     FROM interactions WHERE person_id = $1::uuid ORDER BY occurred_at DESC`,
+    [leadId]
+  );
+  return res.rows;
 }
 
 export async function listInteractionsForCompany(companyId) {
-  try {
-    const res = await db.query(
-      `SELECT id, person_id AS "leadId", organization_id AS "companyId", channel AS type,
-              direction, occurred_at AS "occurredAt", outcome, notes AS summary,
-              title, duration_minutes AS "durationMinutes", location, attendees,
-              logged_by AS "loggedBy", related_person_ids AS "relatedLeadIds"
-       FROM interactions WHERE organization_id = $1::uuid ORDER BY occurred_at DESC`,
-      [companyId]
-    );
-    return res.rows;
-  } catch (err) {
-    if (mongoose.connection?.readyState) {
-      return ContactInteraction.find({ companyId, deletedAt: null }).sort({ occurredAt: -1 }).lean();
-    }
-    throw err;
-  }
+  const res = await db.query(
+    `SELECT id, person_id AS "leadId", organization_id AS "companyId", channel AS type,
+            direction, occurred_at AS "occurredAt", outcome, notes AS summary,
+            title, duration_minutes AS "durationMinutes", location, attendees,
+            logged_by AS "loggedBy", related_person_ids AS "relatedLeadIds"
+     FROM interactions WHERE organization_id = $1::uuid ORDER BY occurred_at DESC`,
+    [companyId]
+  );
+  return res.rows;
 }
 
 export async function createInteraction(leadId, payload, adminUsername = 'admin') {
@@ -152,112 +125,57 @@ export async function createInteraction(leadId, payload, adminUsername = 'admin'
 
   const occurredAt = payload.occurredAt ? new Date(payload.occurredAt) : new Date();
 
-  try {
-    const res = await db.query(
-      `INSERT INTO interactions (
-         person_id, organization_id, channel, direction, occurred_at, outcome, notes,
-         title, duration_minutes, location, attendees, logged_by
-       )
-       VALUES (
-         $1::uuid,
-         COALESCE($7::uuid, (SELECT organization_id FROM person_organization_roles WHERE person_id = $1::uuid ORDER BY is_current DESC NULLS LAST LIMIT 1)),
-         $2::varchar, $3::varchar, $4::timestamptz, $5::varchar, $6::text,
-         $8, $9, $10, $11, $12
-       )
-       RETURNING id, person_id AS "leadId", organization_id AS "companyId", channel AS type,
-         direction, occurred_at AS "occurredAt", outcome, notes AS summary, title,
-         duration_minutes AS "durationMinutes", location, attendees, logged_by AS "loggedBy"`,
-      [
-        leadId, type, direction, occurredAt, payload.outcome || null, summary,
-        payload.companyId || null,
-        String(payload.title || '').trim() || defaultTitleForType(type, direction),
-        payload.durationMinutes || null, payload.location || '', payload.attendees || '', adminUsername,
-      ]
-    );
+  const res = await db.query(
+    `INSERT INTO interactions (
+       person_id, organization_id, channel, direction, occurred_at, outcome, notes,
+       title, duration_minutes, location, attendees, logged_by
+     )
+     VALUES (
+       $1::uuid,
+       COALESCE($7::uuid, (SELECT organization_id FROM person_organization_roles WHERE person_id = $1::uuid ORDER BY is_current DESC NULLS LAST LIMIT 1)),
+       $2::varchar, $3::varchar, $4::timestamptz, $5::varchar, $6::text,
+       $8, $9, $10, $11, $12
+     )
+     RETURNING id, person_id AS "leadId", organization_id AS "companyId", channel AS type,
+       direction, occurred_at AS "occurredAt", outcome, notes AS summary, title,
+       duration_minutes AS "durationMinutes", location, attendees, logged_by AS "loggedBy"`,
+    [
+      leadId, type, direction, occurredAt, payload.outcome || null, summary,
+      payload.companyId || null,
+      String(payload.title || '').trim() || defaultTitleForType(type, direction),
+      payload.durationMinutes || null, payload.location || '', payload.attendees || '', adminUsername,
+    ]
+  );
 
-    return toInteractionEvent(res.rows[0], payload.contactName || 'Contact', []);
-  } catch (err) {
-    if (mongoose.connection?.readyState) {
-      const lead = await Lead.findById(leadId).select('companyId name email').lean();
-      const record = await ContactInteraction.create({
-        leadId,
-        companyId: lead?.companyId,
-        type,
-        direction,
-        title: String(payload.title || '').trim() || defaultTitleForType(type, direction),
-        summary,
-        occurredAt,
-        outcome: payload.outcome || null,
-        loggedBy: adminUsername,
-      });
-
-      return toInteractionEvent(record.toObject(), lead?.name || lead?.email || 'Contact', []);
-    }
-    throw err;
-  }
+  return toInteractionEvent(res.rows[0], payload.contactName || 'Contact', []);
 }
 
 export async function updateInteraction(interactionId, payload, adminUsername = 'admin') {
-  try {
-    const res = await db.query(
-      `UPDATE interactions 
-       SET channel = COALESCE($1::varchar, channel),
-           direction = COALESCE($2::varchar, direction),
-           outcome = COALESCE($3::varchar, outcome),
-           notes = COALESCE($4::text, notes)
-       WHERE id = $5::uuid
-       RETURNING id, person_id AS "leadId", channel AS type, direction, occurred_at AS "occurredAt", outcome, notes AS summary`,
-      [payload.type || null, payload.direction || null, payload.outcome || null, payload.summary || payload.notes || null, interactionId]
-    );
-    if (res.rows.length > 0) {
-      return toInteractionEvent(res.rows[0], payload.contactName || 'Contact', []);
-    }
-  } catch (err) {
-    if (mongoose.connection?.readyState) {
-      const record = await ContactInteraction.findById(interactionId);
-      if (!record) {
-        const error = new Error('Interaction not found.');
-        error.status = 404;
-        throw error;
-      }
-      if (payload.type) record.type = payload.type;
-      if (payload.direction) record.direction = payload.direction;
-      if (payload.summary) record.summary = String(payload.summary).trim();
-      await record.save();
-      return toInteractionEvent(record.toObject(), 'Contact', []);
-    }
-    throw err;
+  const res = await db.query(
+    `UPDATE interactions 
+     SET channel = COALESCE($1::varchar, channel),
+         direction = COALESCE($2::varchar, direction),
+         outcome = COALESCE($3::varchar, outcome),
+         notes = COALESCE($4::text, notes)
+     WHERE id = $5::uuid
+     RETURNING id, person_id AS "leadId", channel AS type, direction, occurred_at AS "occurredAt", outcome, notes AS summary`,
+    [payload.type || null, payload.direction || null, payload.outcome || null, payload.summary || payload.notes || null, interactionId]
+  );
+  if (res.rows.length > 0) {
+    return toInteractionEvent(res.rows[0], payload.contactName || 'Contact', []);
   }
+
+  const error = new Error('Interaction not found.');
+  error.status = 404;
+  throw error;
 }
 
 export async function deleteInteraction(interactionId, actor = {}) {
-  try {
-    await db.query(`DELETE FROM interactions WHERE id = $1::uuid`, [interactionId]);
-    return { ok: true, id: interactionId, resourceType: 'interaction' };
-  } catch (err) {
-    if (mongoose.connection?.readyState) {
-      registerRevisionModel('interaction', ContactInteraction);
-      return softDeleteRecord({
-        Model: ContactInteraction,
-        resourceType: 'interaction',
-        id: interactionId,
-        actor,
-      });
-    }
-    throw err;
-  }
+  await db.query(`DELETE FROM interactions WHERE id = $1::uuid`, [interactionId]);
+  return { ok: true, id: interactionId, resourceType: 'interaction' };
 }
 
 export async function restoreInteraction(interactionId, actor = {}) {
-  if (mongoose.connection?.readyState) {
-    registerRevisionModel('interaction', ContactInteraction);
-    return restoreRecord({
-      Model: ContactInteraction,
-      resourceType: 'interaction',
-      id: interactionId,
-      actor,
-    });
-  }
   return { ok: true };
 }
 
@@ -277,23 +195,6 @@ export async function buildLatestInteractionDateMap(leadIds = []) {
     res.rows.forEach(r => map.set(r.leadId, r.latest));
     return map;
   } catch (err) {
-    if (mongoose.connection?.readyState) {
-      const objectIds = leadIds
-        .map((id) => String(id))
-        .filter((id) => mongoose.Types.ObjectId.isValid(id))
-        .map((id) => new mongoose.Types.ObjectId(id));
-
-      if (!objectIds.length) return new Map();
-
-      const rows = await ContactInteraction.aggregate([
-        { $match: { deletedAt: null, leadId: { $in: objectIds } } },
-        { $group: { _id: '$leadId', latest: { $max: '$occurredAt' } } },
-      ]);
-
-      const map = new Map();
-      rows.forEach((row) => map.set(String(row._id), row.latest));
-      return map;
-    }
     return new Map();
   }
 }

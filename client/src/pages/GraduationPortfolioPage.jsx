@@ -4,27 +4,17 @@ import portfolioStyles from '../styles/pages/graduation-portfolio.css?raw';
 import { Navbar } from '../components/Navbar.jsx';
 import { Footer } from './SiteChrome.jsx';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
-import hero2021 from '../assets/Graduation/2021-hero.jpg';
-
-// Scan all files in the graduation assets gallery
-const graduationAssets = import.meta.glob('../assets/Graduation/Websites Gallery Graduations/**/*', {
-  eager: true,
-  import: 'default'
-});
+const hero2021 = '/media/graduation/2021-hero.jpg';
+import graduationManifest from '../portfolio/data/graduationManifest.json';
 
 // Build projects map by year and campus key
 const projectsMap = {};
 
-Object.entries(graduationAssets).forEach(([path, url]) => {
-  if (path.includes('.DS_Store')) return;
-
-  const prefix = '../assets/Graduation/Websites Gallery Graduations/';
-  const relativePath = path.substring(path.indexOf(prefix) + prefix.length);
+graduationManifest.forEach(({ relativePath, url, filename }) => {
   const parts = relativePath.split('/');
 
   let year = null;
   let campusFolder = null;
-  const filename = parts[parts.length - 1];
 
   if (relativePath.startsWith('2021 Videos')) {
     year = 2021;

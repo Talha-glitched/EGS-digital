@@ -3,12 +3,7 @@ import { isExcludedAsset } from './exclusions.js';
 import { buildClient, mediaTypeForFilename } from './media.js';
 import { getProjectDetails } from './resolveProject.js';
 
-const shortlistAssets = import.meta.glob('../assets/Existing Website Shortlist/**/*', {
-  eager: true,
-  import: 'default',
-});
-
-const SHORTLIST_PREFIX = '../assets/Existing Website Shortlist/';
+import shortlistManifest from './data/shortlistManifest.json';
 
 export function buildShortlistClients() {
   const categoriesMap = {
@@ -16,16 +11,11 @@ export function buildShortlistClients() {
   };
   const projectGroups = {};
 
-  Object.entries(shortlistAssets).forEach(([path, url]) => {
-    if (path.includes('.DS_Store')) return;
-    if (!path.startsWith(SHORTLIST_PREFIX)) return;
-
-    const relPath = path.substring(SHORTLIST_PREFIX.length);
+  shortlistManifest.forEach(({ relativePath: relPath, url, filename }) => {
     const parts = relPath.split('/');
     if (parts.length < 2) return;
 
     const folderName = parts[0];
-    const filename = parts[parts.length - 1];
     if (isExcludedAsset(filename)) return;
 
     const mediaType = mediaTypeForFilename(filename);

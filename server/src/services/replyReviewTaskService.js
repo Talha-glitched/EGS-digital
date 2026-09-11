@@ -1,7 +1,3 @@
-import mongoose from 'mongoose';
-import { Task } from '../models/Task.js';
-import { Reply } from '../models/Reply.js';
-import { Lead } from '../models/Lead.js';
 import db from '../db/index.js';
 import { writeAuditLog } from './auditService.js';
 import { releaseWrongPocFocus } from './campaignContactCoordinationService.js';
@@ -88,35 +84,7 @@ export async function ensureReplyReviewTask(reply, lead) {
 
     return newRes.rows[0];
   } catch (err) {
-    if (mongoose.connection?.readyState) {
-      const existingTask = await Task.findOne({
-        leadId,
-        taskType: 'reply_review',
-        status: 'Open',
-        deletedAt: null,
-      });
-
-      if (existingTask) {
-        existingTask.replyId = reply._id || existingTask.replyId;
-        existingTask.title = formatTaskTitle(reply, lead);
-        existingTask.notes = formatTaskNotes(reply);
-        await existingTask.save();
-        return existingTask;
-      }
-
-      const dueAt = new Date(replyDate.getTime() + 60 * 60 * 1000);
-      return Task.create({
-        title: formatTaskTitle(reply, lead),
-        taskType: 'reply_review',
-        dueAt,
-        status: 'Open',
-        owner: '',
-        ownerUserId: null,
-        replyId: reply._id,
-        leadId,
-        notes: formatTaskNotes(reply),
-      });
-    }
+    console.error('Error creating reply review task in PostgreSQL:', err.message);
     throw err;
   }
 }
@@ -319,11 +287,6 @@ export async function resolveReplyReview(reviewItemId, payload = {}, actor = {},
 export async function completeReplyReview(taskId, payload = {}) {
   const taskResult = await db.query(`SELECT id,review_item_id AS "reviewItemId" FROM tasks WHERE id=$1::uuid`, [taskId]);
   if (!taskResult.rows.length) {
-    if (mongoose.connection?.readyState) {
-      const task = await Task.findById(taskId);
-      if (!task) throw Object.assign(new Error('Reply review task not found.'), { status: 404 });
-      task.status = 'Done'; task.completedAt = new Date(); await task.save(); return { task };
-    }
     throw Object.assign(new Error('Reply review task not found.'), { status: 404 });
   }
   if (!taskResult.rows[0].reviewItemId) throw Object.assign(new Error('This legacy task is not linked to a reply review item.'), { status: 409 });

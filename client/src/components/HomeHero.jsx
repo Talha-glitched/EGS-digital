@@ -1,8 +1,8 @@
 import { motion } from 'motion/react';
 import BlurText from './BlurText.jsx';
 import { images } from '../pages/siteData.js';
-import hctHeroPoster from '../assets/HCT.jpeg';
-import hctHeroVideo from '../assets/hctgraduation.mp4';
+const hctHeroPoster = '/media/site/HCT.jpeg';
+const hctHeroVideo = '/media/site/hctgraduation.mp4';
 import './HomeHero.css';
 
 const defaultServices = [

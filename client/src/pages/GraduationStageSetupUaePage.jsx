@@ -4,7 +4,7 @@ import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 import { Navbar } from '../components/Navbar.jsx';
 import { FAQSection, Footer } from './SiteChrome.jsx';
 import InquiryCtaButton from '../components/inquiry/InquiryCtaButton.jsx';
-import graduationCeremonialStaging from '../assets/Graduation/SHJ1.jpg';
+const graduationCeremonialStaging = '/media/graduation/SHJ1.jpg';
 import { buildPageSchemaBundle } from '../utils/schemaGenerator.js';
 
 const graduationFaqs = [

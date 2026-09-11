@@ -1,9 +1,6 @@
 import { buildClient, mediaTypeForFilename } from './media.js';
 
-const graduationAssets = import.meta.glob('../assets/Graduation/Websites Gallery Graduations/**/*', {
-  eager: true,
-  import: 'default',
-});
+import graduationManifest from './data/graduationManifest.json';
 
 const CAMPUS_META = {
   'abu-dhabi': { name: 'HCT Abu Dhabi', location: 'ADNEC, Abu Dhabi' },
@@ -42,14 +39,9 @@ function campusKeyFor(folder) {
 
 export function buildGradClients() {
   const gradGroups = {};
-  const prefix = '../assets/Graduation/Websites Gallery Graduations/';
 
-  Object.entries(graduationAssets).forEach(([path, url]) => {
-    if (path.includes('.DS_Store')) return;
-
-    const rel = path.substring(path.indexOf(prefix) + prefix.length);
+  graduationManifest.forEach(({ relativePath: rel, url, filename }) => {
     const parts = rel.split('/');
-    const filename = parts[parts.length - 1];
     const mediaType = mediaTypeForFilename(filename);
     if (!mediaType) return;
 

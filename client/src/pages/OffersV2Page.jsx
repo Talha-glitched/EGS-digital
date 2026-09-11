@@ -7,9 +7,9 @@ import { OFFERS_DATA, OFFERS_FAQS, DIAGNOSTIC_QUESTIONS, OFFERS_STAGES } from '.
 
 import egsLogo from '../assets/logo/New_Logo/Logo-03.png';
 import lightbulbGif from '../assets/Icons/lightbulb.gif';
-import audGraduation from '../assets/Graduation/Websites Gallery Graduations/2025/AUD/DSC02388.JPG';
-import fuGraduationSpeaker from '../assets/Existing Website Shortlist/FU-Graduation/DSC08234.jpg.jpeg';
-import cocaColaArenaGraduation from '../assets/Graduation/Websites Gallery Graduations/2024/Dubai-CocaCola Arena/IZM09305.jpg';
+const audGraduation = '/media/graduation/Websites Gallery Graduations/2025/AUD/DSC02388.JPG';
+const fuGraduationSpeaker = '/media/shortlist/FU-Graduation/DSC08234.jpg.jpeg';
+const cocaColaArenaGraduation = '/media/graduation/Websites Gallery Graduations/2024/Dubai-CocaCola Arena/IZM09305.jpg';
 
 const pad2 = (n) => String(n).padStart(2, '0');
 

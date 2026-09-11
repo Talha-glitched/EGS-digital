@@ -21,3 +21,10 @@ GRAPHIFY.md
 
 client/src/assets/temporary/Mongo Back up
 server/backups/sql-repair/
+
+# Persistent media archives and storage (stored on VPS disk, not in git)
+uploads/media/
+uploads/*.tar.gz
+uploads/*.zip
+*.tar.gz
+

@@ -77,7 +77,6 @@ import {
   deleteJob,
   restoreJob,
 } from '../services/completedJobService.js';
-import { runJobSeeding } from '../../scripts/seedJobsFromSheet.mjs';
 import {
   listInboxThreads,
   getInboxThread,
@@ -297,8 +296,6 @@ import {
   restoreRecord,
   getRevisionById,
 } from '../services/revisionService.js';
-import { Task } from '../models/Task.js';
-import { ContactInteraction } from '../models/ContactInteraction.js';
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 15 * 1024 * 1024 } });

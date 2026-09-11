@@ -141,6 +141,10 @@
   ],
   "rewrites": [
     {
+      "source": "/media/:path*",
+      "destination": "https://api.exhibitgraphicsign.com/uploads/media/:path*"
+    },
+    {
       "source": "/api/:path*",
       "destination": "https://api.exhibitgraphicsign.com/api/:path*"
     },

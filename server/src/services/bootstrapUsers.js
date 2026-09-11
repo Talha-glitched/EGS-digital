@@ -1,5 +1,3 @@
-import mongoose from 'mongoose';
-import { User } from '../models/User.js';
 import { ROLES } from '../constants/userRoles.js';
 import { hashPassword } from './authService.js';
 import db from '../db/index.js';
@@ -12,7 +10,6 @@ export async function bootstrapAdminUser() {
     return null;
   }
 
-  // Try PostgreSQL bootstrap
   try {
     const checkRes = await db.query('SELECT COUNT(*) as count FROM users');
     if (parseInt(checkRes.rows[0].count, 10) === 0) {
@@ -27,22 +24,7 @@ export async function bootstrapAdminUser() {
       return res.rows[0];
     }
   } catch (err) {
-    // Fallback to Mongoose if PG not active
-    if (mongoose.connection?.readyState) {
-      const count = await User.countDocuments();
-      if (count === 0) {
-        const user = await User.create({
-          email,
-          passwordHash: await hashPassword(password),
-          displayName: email.split('@')[0] || 'Super Admin',
-          role: ROLES.SUPER_ADMIN,
-          isActive: true,
-          mustChangePassword: false,
-        });
-        console.info(`Bootstrapped Super Admin user in MongoDB: ${user.email}`);
-        return user;
-      }
-    }
+    console.error('Failed to bootstrap admin user in PostgreSQL:', err.message);
   }
 
   return null;

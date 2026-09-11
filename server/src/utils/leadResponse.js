@@ -1,5 +1,3 @@
-import mongoose from 'mongoose';
-
 const INBOUND_RESPONSE_OUTCOMES = new Set([
   'connected',
   'interested',
@@ -119,16 +117,15 @@ export function buildLatestInteractionByLead(interactions = []) {
 
 export function interactionQueryForLeadIds(leadIds = []) {
   if (!leadIds.length) return null;
-  const objectIds = leadIds
-    .map((id) => String(id))
-    .filter((id) => mongoose.Types.ObjectId.isValid(id))
-    .map((id) => new mongoose.Types.ObjectId(id));
-  if (!objectIds.length) return null;
+  const cleanIds = leadIds
+    .map((id) => String(id).trim())
+    .filter(Boolean);
+  if (!cleanIds.length) return null;
   return {
     deletedAt: null,
     $or: [
-      { leadId: { $in: objectIds } },
-      { relatedLeadIds: { $in: objectIds } },
+      { leadId: { $in: cleanIds } },
+      { relatedLeadIds: { $in: cleanIds } },
     ],
   };
 }

@@ -6,8 +6,9 @@ import {
   isClosedStage,
   probabilityForStage,
   stageNames,
+  DEFAULT_PIPELINE_STAGES,
 } from '../constants/ongoingJobPipeline.js';
-import { DEFAULT_PIPELINE_STAGES } from '../models/PipelineConfig.js';
+import { writeAuditLog } from './auditService.js';
 
 // Mongo `jobs` are deferred historical records. They remain preserved in SQL and
 // migration provenance, but they are not part of the current operational workspace.
@@ -451,6 +452,15 @@ export async function updateOngoingJob(id, payload, actor = 'admin') {
     ongoingJobId: res.rows[0]._id,
     valueAed: Number(res.rows[0].valueAed) || 0,
   };
+
+  writeAuditLog({
+    userDisplayName: modifier,
+    action: 'ongoing_job:update',
+    resource: 'ongoing_job',
+    resourceId: id,
+    summary: `Updated ongoing job ${updatedJob.name || id}`,
+    metadata: { stage: updatedJob.stage, valueAed: updatedJob.valueAed },
+  }).catch(() => {});
 
   return updatedJob;
 }

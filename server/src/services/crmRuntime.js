@@ -10,7 +10,7 @@ export function initializeCrmRuntime() {
   const { imapReady, imap2Ready } = getMailConfigStatus();
 
   startSendWorker();
-  console.info('CRM send worker started (MongoDB queue, no Redis).');
+  console.info('CRM send worker started (PostgreSQL queue).');
 
   if (imapReady || imap2Ready) {
     startImapWatcher();
