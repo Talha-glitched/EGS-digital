@@ -1040,9 +1040,9 @@
     "semantic_hash": "bfd80937697a320d263a029c318c9bb7"
   },
   "client/src/components/services/MinimalServiceSections.jsx": {
-    "mtime": 1781095696.4217536,
-    "ast_hash": "b39ddf2fe7f5c2a4b71c261d943ab876",
-    "semantic_hash": "b39ddf2fe7f5c2a4b71c261d943ab876"
+    "mtime": 1789136742.4229772,
+    "ast_hash": "cc7e2c25519c63ec81f5777593acb009",
+    "semantic_hash": ""
   },
   "client/src/config/site.js": {
     "mtime": 1781627921.1679115,
@@ -1075,8 +1075,8 @@
     "semantic_hash": "cbb3b6c18220ec9787276bc78354987e"
   },
   "client/src/pages/CaseStudiesPage.jsx": {
-    "mtime": 1787753611.3640337,
-    "ast_hash": "0855f8e7209d465212677db8e60aa49b",
+    "mtime": 1789136837.4000435,
+    "ast_hash": "9c29972489ed7f2bba4b8427e77c34ed",
     "semantic_hash": ""
   },
   "client/src/pages/EventsPage.jsx": {

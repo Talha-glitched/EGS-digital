@@ -95,12 +95,12 @@ export function MinimalServiceHero({
           transition={{ duration: 0.78, ease: 'easeOut', delay: 0.34 }}
         >
           <InquiryCtaButton
-            inquiryType={primaryCta.inquiryType}
-            label={primaryCta.label}
+            inquiryType={primaryCta?.inquiryType || 'general'}
+            label={primaryCta?.label}
             className="btn btn-primary"
             arrow={false}
           >
-            {primaryCta.label} <span className="arrow">-&gt;</span>
+            {primaryCta?.label || 'Inquire'} <span className="arrow">-&gt;</span>
           </InquiryCtaButton>
           {secondaryCta ? (
             <a href={secondaryCta.href} className="btn btn-ghost">{secondaryCta.label}</a>
@@ -195,7 +195,8 @@ export function MinimalFAQSection({ title, copy, faqs, accordion = false }) {
   );
 }
 
-export function MinimalCTASection({ title, copy, cta }) {
+export function MinimalCTASection({ title, copy, cta, primaryCta, secondaryCta }) {
+  const activeCta = primaryCta || cta || {};
   return (
     <section className="section-band alt minimal-cta-section">
       <div className="container">
@@ -203,9 +204,19 @@ export function MinimalCTASection({ title, copy, cta }) {
           <h2>{title}</h2>
           <p>{copy}</p>
         </div>
-        <InquiryCtaButton inquiryType={cta.inquiryType} label={cta.label} className="btn btn-primary" arrow={false}>
-          {cta.label} <span className="arrow">-&gt;</span>
-        </InquiryCtaButton>
+        <div className="minimal-cta-actions" style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', alignItems: 'center' }}>
+          <InquiryCtaButton
+            inquiryType={activeCta.inquiryType || 'general'}
+            label={activeCta.label}
+            className="btn btn-primary"
+            arrow={false}
+          >
+            {activeCta.label || 'Tell us about your project'} <span className="arrow">-&gt;</span>
+          </InquiryCtaButton>
+          {secondaryCta ? (
+            <a href={secondaryCta.href} className="btn btn-ghost">{secondaryCta.label}</a>
+          ) : null}
+        </div>
       </div>
     </section>
   );
