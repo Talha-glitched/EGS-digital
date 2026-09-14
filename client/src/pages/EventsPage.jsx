@@ -181,7 +181,7 @@ export default function EventsPage() {
           title="Ceremonies built for showtime."
           subline={['Stage', 'Branding', 'Guest flow', 'Ready before doors open']}
           primaryCta={eventsCta}
-          secondaryCta={{ href: '/case-studies#hct-graduation-program', label: 'Read HCT proof' }}
+          secondaryCta={{ href: '/case-studies/hct-nationwide-graduation-ceremonies', label: 'Read HCT Case Study' }}
         />
         <StickyProcessShowcase
           steps={eventsStickyShowcaseSteps}
@@ -192,20 +192,21 @@ export default function EventsPage() {
             <div className="graduation-portfolio-redirect reveal">
               <div className="container">
                 <span className="eyebrow" style={{ color: 'rgba(245, 241, 234, 0.45)' }}>
-                  <span className="dot" style={{ backgroundColor: 'var(--accent)' }} />Ceremony Archives
+                  <span className="dot" style={{ backgroundColor: 'var(--accent)' }} />Ceremony Archives &amp; Staging
                 </span>
                 <h2>Physical proof at UAE university scale.</h2>
                 <p>Browse the full list of campuses, stages, LED backdrops, guest flows, and operational stats.</p>
-                <a
-                  href="/graduation-portfolio"
-                  className="btn btn-primary"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    navigate('/graduation-portfolio');
-                  }}
-                >
-                  View graduation portfolio <span className="arrow">→</span>
-                </a>
+                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '18px' }}>
+                  <a href="/graduation-portfolio" className="btn btn-primary">
+                    View Graduation Portfolio <span className="arrow">→</span>
+                  </a>
+                  <a href="/graduation-stage-setup-uae" className="btn btn-ghost">
+                    Graduation Stage Setup UAE
+                  </a>
+                  <a href="/graduation-ceremonies-2025" className="btn btn-ghost">
+                    2025 Ceremonies Archive
+                  </a>
+                </div>
               </div>
             </div>
           }
@@ -220,7 +221,7 @@ export default function EventsPage() {
           title="Plan your ceremony production."
           copy="Send the date, venue, guest numbers, and stage requirements. EGS will return a structured staging and cue plan."
           primaryCta={eventsCta}
-          secondaryCta={{ href: '/case-studies#hct-graduation-program', label: 'See HCT Case Study' }}
+          secondaryCta={{ href: '/case-studies/hct-nationwide-graduation-ceremonies', label: 'See HCT Case Study' }}
         />
         <Footer />
       </div>

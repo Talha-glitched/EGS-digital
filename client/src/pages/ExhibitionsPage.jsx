@@ -121,6 +121,52 @@ export default function ExhibitionsPage() {
         <ExhibitionsScopeSection />
         <ExhibitionsProcessSection />
         <ExhibitionsAdaptationSection />
+        <section className="section-band alt">
+          <div className="container">
+            <div className="section-head">
+              <span className="eyebrow"><span className="dot" style={{ backgroundColor: 'var(--ochre)' }} />Trade Show &amp; Venue Hubs</span>
+              <h2>Specialized Hubs for Major UAE Exhibitions</h2>
+              <p>Explore dedicated booth specifications, venue regulations, and contractor guidelines tailored for premier trade shows at DWTC, ADNEC, and DEC.</p>
+            </div>
+            <div className="capability-grid">
+              <article className="cap-card">
+                <small>Healthcare &amp; Medlab</small>
+                <h3><a href="/events/arab-health-exhibition-stands" style={{ color: 'inherit', textDecoration: 'none' }}>Arab Health Exhibition Stands →</a></h3>
+                <p>Clinical-grade medical booth fabrication, diagnostic equipment load plates, and VIP consultation suites at DWTC.</p>
+              </article>
+              <article className="cap-card">
+                <small>Technology &amp; SaaS</small>
+                <h3><a href="/events/gitex-exhibition-stands" style={{ color: 'inherit', textDecoration: 'none' }}>GITEX Global Exhibition Stands →</a></h3>
+                <p>High-resolution curved LED video walls, interactive software demo workstations, and high-footfall tech layouts.</p>
+              </article>
+              <article className="cap-card">
+                <small>Food &amp; Beverage</small>
+                <h3><a href="/events/gulfood-exhibition-stands" style={{ color: 'inherit', textDecoration: 'none' }}>Gulfood Stands &amp; Country Pavilions →</a></h3>
+                <p>Live cooking stations, commercial refrigerated displays, hygiene-certified surfaces, and national export pavilions.</p>
+              </article>
+              <article className="cap-card">
+                <small>Energy &amp; Industry</small>
+                <h3><a href="/events/adipec-stand-contractor" style={{ color: 'inherit', textDecoration: 'none' }}>ADIPEC Stand Contractor Abu Dhabi →</a></h3>
+                <p>ADNEC HSE approvals, heavy machinery sub-floor load plates, flame-retardant joinery, and executive meeting lounges.</p>
+              </article>
+              <article className="cap-card">
+                <small>Building &amp; Construction</small>
+                <h3><a href="/events/big-5-exhibition-stands" style={{ color: 'inherit', textDecoration: 'none' }}>The Big 5 Stand Builder Dubai →</a></h3>
+                <p>Heavy building material display plinths, recessed utility ducting, double-decker VIP spaces, and structural joinery.</p>
+              </article>
+              <article className="cap-card">
+                <small>Venue Authority Hubs</small>
+                <h3>Official UAE Venue Builder Guides →</h3>
+                <p>
+                  Explore official contractor services for{' '}
+                  <a href="/venues/dwtc-exhibition-stand-builder" style={{ textDecoration: 'underline' }}>DWTC Dubai</a>,{' '}
+                  <a href="/venues/adnec-exhibition-stand-builder" style={{ textDecoration: 'underline' }}>ADNEC Abu Dhabi</a>, and{' '}
+                  <a href="/venues/dubai-exhibition-centre-stand-builder" style={{ textDecoration: 'underline' }}>DEC Expo City</a>.
+                </p>
+              </article>
+            </div>
+          </div>
+        </section>
         <ExhibitionsFAQSection />
         <ExhibitionsCTASection />
         <Footer />

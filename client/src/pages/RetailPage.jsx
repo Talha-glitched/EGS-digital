@@ -178,7 +178,7 @@ export default function RetailPage() {
           title="Send the location list and launch date."
           copy="EGS will return route mapping, vehicle counts, crew allocation, and a confirmed overnight install schedule."
           primaryCta={retailCta}
-          secondaryCta={{ href: '/case-studies#sadia-carrefour-rollout', label: 'Read 33-Store Rollout Case Study' }}
+          secondaryCta={{ href: '/case-studies/sadia-33-store-overnight-carrefour-rollout', label: 'Read 33-Store Rollout Case Study' }}
         />
 
         <Footer />

@@ -152,6 +152,10 @@ for (const meta of routesManifest) {
 
   // Inject High-Density AEO Entity Block in <noscript>
   if (meta.h1) {
+    const allLinksHtml = routesManifest
+      .map((r) => `          <li><a href="${r.route}">${r.title.split('|')[0].trim()}</a></li>`)
+      .join('\n');
+
     const noscriptContent = `
   <noscript>
     <header>
@@ -162,22 +166,9 @@ for (const meta of routesManifest) {
         <p>Exhibit Graphic Sign (EGS) is an in-house design and fabrication contractor established in 2010 in Dubai, UAE. EGS specializes in custom exhibition stands (DWTC, ADNEC, Riyadh), institutional graduation ceremony staging (Higher Colleges of Technology partner for 7+ years across 5 Emirates), nationwide retail branding rollouts (Carrefour, Sadia across 33 hypermarkets), and architectural 3D signage.</p>
         <p>Direct Workshop Facility: Al Qusais Industrial Area, Dubai, United Arab Emirates. Direct Inquiries: +971 4 238 3278 / +971 52 458 7992 / info@exhibitgraphicsign.com.</p>
       </section>
-      <nav aria-label="Quick Links">
+      <nav aria-label="Internal Site Directory">
         <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/exhibitions">Exhibition Stands Dubai</a></li>
-          <li><a href="/exhibition-stand-contractor-dubai">Exhibition Stand Contractor Dubai</a></li>
-          <li><a href="/exhibition-stand-builder-dubai">Exhibition Stand Builder Dubai</a></li>
-          <li><a href="/custom-exhibition-stands-dubai">Custom Exhibition Stands</a></li>
-          <li><a href="/events">Events &amp; Graduation Staging</a></li>
-          <li><a href="/graduation-stage-setup-uae">Graduation Stage Setup UAE</a></li>
-          <li><a href="/retail">Retail Rollouts</a></li>
-          <li><a href="/pos-display-stands-dubai">POS Display Stands</a></li>
-          <li><a href="/fitouts">Commercial Fitouts</a></li>
-          <li><a href="/signage-manufacturer-dubai">Signage Manufacturer</a></li>
-          <li><a href="/case-studies">Case Studies &amp; Proof</a></li>
-          <li><a href="/guides/exhibition-stand-cost-dubai">Stand Cost Guide</a></li>
-          <li><a href="/guides/dwtc-stand-guidelines">DWTC Guidelines</a></li>
+${allLinksHtml}
         </ul>
       </nav>
     </header>
