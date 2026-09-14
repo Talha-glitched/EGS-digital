@@ -4,6 +4,7 @@ import { usePageLifecycle } from '../../hooks/usePageLifecycle.js';
 import { Navbar } from '../../components/Navbar.jsx';
 import { FAQSection, Footer } from '../SiteChrome.jsx';
 import InquiryCtaButton from '../../components/inquiry/InquiryCtaButton.jsx';
+import EventHero from '../../components/events/EventHero.jsx';
 import { images } from '../siteData.js';
 import { buildPageSchemaBundle } from '../../utils/schemaGenerator.js';
 
@@ -59,29 +60,33 @@ export default function AdipecStandContractorPage() {
         <Navbar active="exhibitions" overlay />
 
         {/* Hero Section */}
-        <section className="exhibitions-hero" aria-label="ADIPEC Stand Contractor Hero">
-          <img
-            className="exhibitions-hero-media"
-            src={images.phillips2}
-            alt="ADIPEC custom energy exhibition stand at ADNEC Abu Dhabi by contractor EGS"
-          />
-          <div className="exhibitions-hero-shade" aria-hidden="true" />
-          <div className="exhibitions-hero-copy">
-            <span className="exhibitions-kicker">ADIPEC Abu Dhabi (ADNEC) Specialist Contractor</span>
-            <h1>ADIPEC Exhibition Stand Contractor at ADNEC Abu Dhabi — Energy Pavilions &amp; Custom Booths</h1>
-            <p>
-              Built for the world’s leading energy showcase. From high-level ministerial meeting suites to heavy equipment demonstration floors, EGS delivers turnkey stands at ADNEC with full HSE certification and zero middleman delays.
-            </p>
-            <div className="exhibitions-hero-actions">
-              <InquiryCtaButton inquiryType="exhibitions" className="btn btn-primary">
-                Book ADIPEC Stand Contractor →
-              </InquiryCtaButton>
-              <a href="/venues/adnec-exhibition-stand-builder" className="btn btn-ghost">
-                Explore ADNEC Venue Services
-              </a>
-            </div>
-          </div>
-        </section>
+        <EventHero
+          kicker="ADIPEC Abu Dhabi • ADNEC Specialist Contractor"
+          title="ADIPEC Exhibition Stand Contractor at ADNEC Abu Dhabi"
+          subline="Built for the world’s premier energy conference. From ministerial VIP suites to heavy equipment staging and HSE certifications, we deliver turnkey exhibition stands at ADNEC with zero middleman delays."
+          bgImage={images.phillips2}
+          bgAlt="ADIPEC custom energy exhibition stand at ADNEC Abu Dhabi by contractor EGS"
+          primaryCtaText="Book ADIPEC Stand Contractor →"
+          secondaryCtaLink="/venues/adnec-exhibition-stand-builder"
+          secondaryCtaText="Explore ADNEC Venue Services"
+          trustItems={[
+            'Full ADNEC HSE & Civil Defence Permits',
+            'Heavy Equipment Load Distribution',
+            'Dedicated Abu Dhabi Standby Crew',
+          ]}
+          showcase={{
+            badge: 'Energy Sector Build',
+            image: images.phillips2,
+            imageAlt: 'Custom energy corporate pavilion at ADNEC Abu Dhabi',
+            title: 'Energy Innovation Pavilion',
+            description: 'Turnkey exhibition stand built to rigorous ADNEC HSE standards featuring structural meeting mezzanines, flame-retardant joinery, and heavy valve staging.',
+            specs: [
+              { value: 'Turnkey', label: 'Build Scope' },
+              { value: 'ADNEC', label: 'Venue' },
+              { value: 'HSE Permitted', label: 'Compliance' },
+            ],
+          }}
+        />
 
         {/* Core Capabilities */}
         <section className="section-band alt">

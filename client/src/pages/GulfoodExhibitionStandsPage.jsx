@@ -4,6 +4,7 @@ import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 import { Navbar } from '../components/Navbar.jsx';
 import { FAQSection, Footer } from './SiteChrome.jsx';
 import InquiryCtaButton from '../components/inquiry/InquiryCtaButton.jsx';
+import EventHero from '../components/events/EventHero.jsx';
 import kazakhstanPavilion from '../assets/Exhibition Stands/Kazakhstan_Pavillion.jpeg';
 import { buildPageSchemaBundle } from '../utils/schemaGenerator.js';
 
@@ -47,32 +48,36 @@ export default function GulfoodExhibitionStandsPage() {
     <>
       <style>{pageStyles}</style>
       <style>{exhibitionsResponsiveStyles}</style>
-      <div className="content-page exhibitions-page gulfood-page" style={{ '--accent': 'var(--ochre)' }}>
+      <div className="content-page gulfood-page" style={{ '--accent': 'var(--ochre)' }}>
         <Navbar active="exhibitions" overlay />
 
-        <section className="exhibitions-hero" aria-label="Gulfood Exhibition Stand Contractor Hero">
-          <img
-            className="exhibitions-hero-media"
-            src={kazakhstanPavilion}
-            alt="Kazakhstan Pavilion at Gulfood DWTC Dubai built by EGS"
-          />
-          <div className="exhibitions-hero-shade" aria-hidden="true" />
-          <div className="exhibitions-hero-copy">
-            <span className="exhibitions-kicker">Gulfood &amp; Gulfood Manufacturing (DWTC)</span>
-            <h1>Gulfood Exhibition Stand Design &amp; Build Dubai — F&amp;B Booths &amp; Country Pavilions</h1>
-            <p>
-              Showcasing global food and beverage excellence. We design and fabricate custom Gulfood booths, tasting counters, refrigerated display islands, and massive multi-brand country pavilions at DWTC.
-            </p>
-            <div className="exhibitions-hero-actions">
-              <InquiryCtaButton inquiryType="exhibitions" className="btn btn-primary">
-                Inquire for Gulfood Stand →
-              </InquiryCtaButton>
-              <a href="/case-studies#kazakhstan-pavilion-gulfood" className="btn btn-ghost">
-                Read Kazakhstan Pavilion Proof
-              </a>
-            </div>
-          </div>
-        </section>
+        <EventHero
+          kicker="Gulfood & Gulfood Manufacturing • DWTC Dubai"
+          title="Gulfood Exhibition Stand Design & Build in Dubai"
+          subline="Showcasing global food and beverage excellence. We design and fabricate custom Gulfood booths, tasting counters, refrigerated display islands, and multi-brand country pavilions at DWTC."
+          bgImage={kazakhstanPavilion}
+          bgAlt="Kazakhstan Pavilion at Gulfood DWTC Dubai built by EGS"
+          primaryCtaText="Inquire for Gulfood Stand →"
+          secondaryCtaLink="/exhibitions"
+          secondaryCtaText="Explore Exhibition Portfolio"
+          trustItems={[
+            '15 Min from DWTC Halls',
+            'Food Grade & Hygiene Certified',
+            'Overnight Fabrication Capacity',
+          ]}
+          showcase={{
+            badge: 'National Pavilion Build',
+            image: kazakhstanPavilion,
+            imageAlt: 'Kazakhstan National Pavilion at Gulfood DWTC',
+            title: 'Kazakhstan National Country Pavilion',
+            description: '168 sqm multi-brand export pavilion hosting national agricultural producers with unified overhead architectural branding and live sampling stations.',
+            specs: [
+              { value: '168 SQM', label: 'Pavilion Area' },
+              { value: 'DWTC', label: 'Venue' },
+              { value: 'Turnkey', label: 'Multi-Brand' },
+            ],
+          }}
+        />
 
         <section className="section-band alt">
           <div className="container">

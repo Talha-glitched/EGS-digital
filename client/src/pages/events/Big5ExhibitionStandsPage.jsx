@@ -4,6 +4,7 @@ import { usePageLifecycle } from '../../hooks/usePageLifecycle.js';
 import { Navbar } from '../../components/Navbar.jsx';
 import { FAQSection, Footer } from '../SiteChrome.jsx';
 import InquiryCtaButton from '../../components/inquiry/InquiryCtaButton.jsx';
+import EventHero from '../../components/events/EventHero.jsx';
 import { images } from '../siteData.js';
 import { buildPageSchemaBundle } from '../../utils/schemaGenerator.js';
 
@@ -59,29 +60,33 @@ export default function Big5ExhibitionStandsPage() {
         <Navbar active="exhibitions" overlay />
 
         {/* Hero Section */}
-        <section className="exhibitions-hero" aria-label="The Big 5 Stand Builder Hero">
-          <img
-            className="exhibitions-hero-media"
-            src={images.phillips2}
-            alt="The Big 5 Global custom construction exhibition stand at DWTC Dubai by contractor EGS"
-          />
-          <div className="exhibitions-hero-shade" aria-hidden="true" />
-          <div className="exhibitions-hero-copy">
-            <span className="exhibitions-kicker">The Big 5 Global (DWTC) Specialist Stand Builder</span>
-            <h1>The Big 5 Exhibition Stand Builder in Dubai — Custom Booths for Construction Leaders</h1>
-            <p>
-              Engineered for heavy-duty impact. From architectural material displays and MEP equipment plinths to double-decker VIP lounges, EGS builds stands at Dubai World Trade Centre that showcase structural craftsmanship at its highest level.
-            </p>
-            <div className="exhibitions-hero-actions">
-              <InquiryCtaButton inquiryType="exhibitions" className="btn btn-primary">
-                Book Big 5 Stand Builder →
-              </InquiryCtaButton>
-              <a href="/venues/dwtc-exhibition-stand-builder" className="btn btn-ghost">
-                DWTC Venue Capabilities
-              </a>
-            </div>
-          </div>
-        </section>
+        <EventHero
+          kicker="The Big 5 Global • DWTC Dubai Specialist"
+          title="The Big 5 Exhibition Stand Builder in Dubai"
+          subline="Engineered for heavy-duty impact. From architectural building material displays and MEP equipment plinths to double-decker VIP lounges, we build custom DWTC exhibition stands that command attention across the halls."
+          bgImage={images.microlink}
+          bgAlt="The Big 5 Global custom construction exhibition stand at DWTC Dubai by contractor EGS"
+          primaryCtaText="Book Big 5 Stand Builder →"
+          secondaryCtaLink="/venues/dwtc-exhibition-stand-builder"
+          secondaryCtaText="DWTC Venue Capabilities"
+          trustItems={[
+            '15 Min from DWTC Halls',
+            'Reinforced Heavy-Load Flooring',
+            'Direct In-House Structural Joinery',
+          ]}
+          showcase={{
+            badge: 'Construction Sector Build',
+            image: images.microlink,
+            imageAlt: 'The Big 5 custom exhibition stand at DWTC Dubai',
+            title: 'Architectural & Industrial Showcase',
+            description: 'Heavy-duty exhibition stand with reinforced product display plinths, recessed 3-phase power channels, and elevated brand canopy towers.',
+            specs: [
+              { value: '150 SQM', label: 'Stand Area' },
+              { value: 'DWTC', label: 'Venue' },
+              { value: 'Heavy Load', label: 'Plinths' },
+            ],
+          }}
+        />
 
         {/* Construction Capabilities */}
         <section className="section-band alt">

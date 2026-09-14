@@ -4,6 +4,7 @@ import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 import { Navbar } from '../components/Navbar.jsx';
 import { FAQSection, Footer } from './SiteChrome.jsx';
 import InquiryCtaButton from '../components/inquiry/InquiryCtaButton.jsx';
+import EventHero from '../components/events/EventHero.jsx';
 import healthtechStand from '../assets/Exhibition Stands/healthtech.jpg';
 import { buildPageSchemaBundle } from '../utils/schemaGenerator.js';
 
@@ -47,32 +48,36 @@ export default function GitexExhibitionStandsPage() {
     <>
       <style>{pageStyles}</style>
       <style>{exhibitionsResponsiveStyles}</style>
-      <div className="content-page exhibitions-page gitex-page" style={{ '--accent': 'var(--ochre)' }}>
+      <div className="content-page gitex-page" style={{ '--accent': 'var(--ochre)' }}>
         <Navbar active="exhibitions" overlay />
 
-        <section className="exhibitions-hero" aria-label="GITEX Exhibition Stand Contractor Hero">
-          <img
-            className="exhibitions-hero-media"
-            src={healthtechStand}
-            alt="GITEX Global custom tech exhibition stand at DWTC Dubai"
-          />
-          <div className="exhibitions-hero-shade" aria-hidden="true" />
-          <div className="exhibitions-hero-copy">
-            <span className="exhibitions-kicker">GITEX Global &amp; Expand North Star (DWTC)</span>
-            <h1>GITEX Global Exhibition Stand Builder in Dubai — High-Tech Custom Booths</h1>
-            <p>
-              Command attention at the world’s largest tech showcase. We design and build high-impact, LED-integrated exhibition stands engineered for software demos, executive meetings, and brand dominance at DWTC.
-            </p>
-            <div className="exhibitions-hero-actions">
-              <InquiryCtaButton inquiryType="exhibitions" className="btn btn-primary">
-                Book GITEX Stand Contractor →
-              </InquiryCtaButton>
-              <a href="/exhibition-stand-contractor-dubai" className="btn btn-ghost">
-                Dubai Contractor Capabilities
-              </a>
-            </div>
-          </div>
-        </section>
+        <EventHero
+          kicker="GITEX Global & Expand North Star • DWTC Dubai"
+          title="GITEX Global Exhibition Stand Builder in Dubai"
+          subline="Command attention at the world’s largest tech showcase. We engineer high-impact, LED-integrated custom exhibition booths designed for SaaS demos, investor meetings, and brand dominance at DWTC."
+          bgImage={healthtechStand}
+          bgAlt="GITEX Global custom tech exhibition stand at DWTC Dubai"
+          primaryCtaText="Book GITEX Stand Contractor →"
+          secondaryCtaLink="/exhibition-stand-contractor-dubai"
+          secondaryCtaText="Dubai Contractor Capabilities"
+          trustItems={[
+            '15 Min from DWTC Halls',
+            'LED Walls & AV Rigging Approvals',
+            'Dedicated Move-In Standby Crew',
+          ]}
+          showcase={{
+            badge: 'Tech Showcase Build',
+            image: healthtechStand,
+            imageAlt: 'GITEX custom tech exhibition stand with LED integration',
+            title: 'High-Tech Showcase Pavilion',
+            description: 'Bespoke tech exhibition booth featuring curved video walls, live software demonstration pods, and executive discussion lounges.',
+            specs: [
+              { value: '180 SQM', label: 'Stand Area' },
+              { value: 'DWTC', label: 'Venue' },
+              { value: '4K LED', label: 'AV Rigging' },
+            ],
+          }}
+        />
 
         <section className="section-band alt">
           <div className="container">

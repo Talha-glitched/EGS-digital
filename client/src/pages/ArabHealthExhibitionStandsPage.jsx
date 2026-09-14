@@ -4,6 +4,7 @@ import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 import { Navbar } from '../components/Navbar.jsx';
 import { FAQSection, Footer } from './SiteChrome.jsx';
 import InquiryCtaButton from '../components/inquiry/InquiryCtaButton.jsx';
+import EventHero from '../components/events/EventHero.jsx';
 import { images } from './siteData.js';
 import { buildPageSchemaBundle } from '../utils/schemaGenerator.js';
 
@@ -22,7 +23,7 @@ export default function ArabHealthExhibitionStandsPage() {
   usePageLifecycle('Arab Health Exhibition Stand Contractor Dubai | DWTC Booths | EGS', {
     revealSelector: '.arabhealth-page .reveal',
     description: 'Custom healthcare exhibition stand contractor for Arab Health & Medlab at DWTC. Clinical-grade booth design, medical equipment displays, and turnkey build.',
-    ogImage: 'https://exhibitgraphicsign.com/wp-content/uploads/2024/05/Philips-Pairs.jpg',
+    ogImage: images.phillips2,
     structuredData: buildPageSchemaBundle({
       service: {
         name: 'Arab Health Exhibition Stand Contractor Dubai',
@@ -43,32 +44,36 @@ export default function ArabHealthExhibitionStandsPage() {
     <>
       <style>{pageStyles}</style>
       <style>{exhibitionsResponsiveStyles}</style>
-      <div className="content-page exhibitions-page arabhealth-page" style={{ '--accent': 'var(--ochre)' }}>
+      <div className="content-page arabhealth-page" style={{ '--accent': 'var(--ochre)' }}>
         <Navbar active="exhibitions" overlay />
 
-        <section className="exhibitions-hero" aria-label="Arab Health Exhibition Stand Contractor Hero">
-          <img
-            className="exhibitions-hero-media"
-            src={images.phillips1}
-            alt="Arab Health custom medical exhibition booth by EGS"
-          />
-          <div className="exhibitions-hero-shade" aria-hidden="true" />
-          <div className="exhibitions-hero-copy">
-            <span className="exhibitions-kicker">Arab Health &amp; Medlab Middle East (DWTC)</span>
-            <h1>Arab Health Exhibition Stand Contractor in Dubai — Healthcare &amp; Medical Booths</h1>
-            <p>
-              Architectural excellence for the region’s premier healthcare gathering. We engineer clinical-grade medical exhibition stands, heavy diagnostic equipment platforms, and confidential hospital consultation suites.
-            </p>
-            <div className="exhibitions-hero-actions">
-              <InquiryCtaButton inquiryType="exhibitions" className="btn btn-primary">
-                Inquire for Arab Health Stand →
-              </InquiryCtaButton>
-              <a href="/case-studies#philips-global-health-riyadh" className="btn btn-ghost">
-                Read Philips Healthcare Proof
-              </a>
-            </div>
-          </div>
-        </section>
+        <EventHero
+          kicker="Arab Health & Medlab Middle East • DWTC Dubai"
+          title="Arab Health Exhibition Stand Contractor in Dubai"
+          subline="Architectural precision for the region’s premier healthcare summit. We engineer clinical-grade medical exhibition booths, heavy diagnostic machinery load plates, and confidential physician consultation suites."
+          bgImage={images.phillips2}
+          bgAlt="Arab Health custom medical exhibition booth by EGS"
+          primaryCtaText="Inquire for Arab Health Stand →"
+          secondaryCtaLink="/case-studies/philips-global-health-riyadh-healthcare-booth"
+          secondaryCtaText="Read Philips Healthcare Proof"
+          trustItems={[
+            '15 Min from DWTC Halls',
+            'Civil Defence & Venue Approvals',
+            'Direct In-House Joinery & AV',
+          ]}
+          showcase={{
+            badge: 'Featured Healthcare Build',
+            image: images.philipsMri || images.phillips2,
+            imageAlt: 'Philips Healthcare MRI exhibition stand at DWTC',
+            title: 'Philips Healthcare Exhibition Pavilion',
+            description: '200 sqm clinical booth featuring heavy MRI floor reinforcements, edge-lit display joinery, and private hospital director meeting suites.',
+            specs: [
+              { value: '200 SQM', label: 'Stand Area' },
+              { value: 'DWTC', label: 'Venue' },
+              { value: 'MRI & AV', label: 'Equipment' },
+            ],
+          }}
+        />
 
         <section className="section-band alt">
           <div className="container">
