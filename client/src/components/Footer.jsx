@@ -18,18 +18,21 @@ export function Footer() {
             <h4>Pages</h4>
             <ul>
               <li><a href="/exhibitions">Exhibitions</a></li>
-              <li><a href="/events">Events</a></li>
-              <li><a href="/retail">Retail</a></li>
-              <li><a href="/fitouts">Fitouts</a></li>
+              <li><a href="/venues/dwtc-exhibition-stand-builder">Venues (DWTC &amp; ADNEC)</a></li>
+              <li><a href="/events">Events &amp; Graduations</a></li>
+              <li><a href="/retail">Retail Rollouts</a></li>
+              <li><a href="/fitouts">Fitouts &amp; Signage</a></li>
+              <li><a href="/blog">Blog &amp; Guides</a></li>
             </ul>
           </div>
           <div>
             <h4>Proof</h4>
             <ul>
-              <li><a href="/case-studies#hct-graduation-program">HCT program</a></li>
-              <li><a href="/case-studies#sadia-carrefour-rollout">Sadia rollout</a></li>
-              <li><a href="/case-studies#philips-global-health-riyadh">Philips Riyadh</a></li>
-              <li><a href="/case-studies#kazakhstan-pavilion-gulfood">Kazakhstan Pavilion</a></li>
+              <li><a href="/case-studies/hct-nationwide-graduation-ceremonies">HCT Convocation</a></li>
+              <li><a href="/case-studies/sadia-33-store-overnight-carrefour-rollout">Sadia 33 Stores</a></li>
+              <li><a href="/case-studies/philips-global-health-riyadh-healthcare-booth">Philips Riyadh</a></li>
+              <li><a href="/case-studies/kazakhstan-pavilion-gulfood">Kazakhstan Pavilion</a></li>
+              <li><a href="/case-studies">All Case Studies</a></li>
             </ul>
           </div>
           <div>

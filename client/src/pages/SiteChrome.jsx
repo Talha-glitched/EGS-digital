@@ -10,10 +10,11 @@ export function SiteNav({ active = 'home', cta = 'Send a brief' }) {
       textColor: 'var(--paper)',
       links: [
         { label: 'Exhibitions', href: '/exhibitions', ariaLabel: 'Open exhibitions page' },
-        { label: '6 Exhibition Offers', href: '/offers', ariaLabel: 'Open 6 exhibition offers page' },
+        { label: 'DWTC & ADNEC Venues', href: '/venues/dwtc-exhibition-stand-builder', ariaLabel: 'Open venues page' },
         { label: 'Events / Graduations', href: '/events', ariaLabel: 'Open events and graduations page' },
         { label: 'Retail Rollouts', href: '/retail', ariaLabel: 'Open retail rollouts page' },
         { label: 'Fitouts', href: '/fitouts', ariaLabel: 'Open fitouts page' },
+        { label: 'Blog & Guides', href: '/blog', ariaLabel: 'Open blog and guides' },
       ],
     },
     {
@@ -21,9 +22,10 @@ export function SiteNav({ active = 'home', cta = 'Send a brief' }) {
       bgColor: 'var(--terracotta)',
       textColor: 'var(--paper)',
       links: [
-        { label: 'HCT Graduation Program', href: '/case-studies#hct-graduation-program', ariaLabel: 'Open HCT graduation case study' },
-        { label: 'Sadia / Carrefour UAE', href: '/case-studies#sadia-carrefour-rollout', ariaLabel: 'Open Sadia Carrefour case study' },
-        { label: 'Philips Riyadh', href: '/case-studies#philips-global-health-riyadh', ariaLabel: 'Open Philips Riyadh case study' },
+        { label: 'HCT Graduation Program', href: '/case-studies/hct-nationwide-graduation-ceremonies', ariaLabel: 'Open HCT graduation case study' },
+        { label: 'Sadia / Carrefour UAE', href: '/case-studies/sadia-33-store-overnight-carrefour-rollout', ariaLabel: 'Open Sadia Carrefour case study' },
+        { label: 'Philips Riyadh', href: '/case-studies/philips-global-health-riyadh-healthcare-booth', ariaLabel: 'Open Philips Riyadh case study' },
+        { label: 'Kazakhstan Pavilion', href: '/case-studies/kazakhstan-pavilion-gulfood', ariaLabel: 'Open Kazakhstan Pavilion case study' },
         { label: 'All Case Studies', href: '/case-studies', ariaLabel: 'Open all case studies' },
       ],
     },

@@ -1,10 +1,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { routesManifest, EGS_ORGANIZATION } from '../src/config/seoManifest.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const distDir = path.resolve(__dirname, '../dist');
+const publicDir = path.resolve(__dirname, '../public');
 const indexHtmlPath = path.join(distDir, 'index.html');
 
 if (!fs.existsSync(indexHtmlPath)) {
@@ -18,30 +20,30 @@ const EGS_BASE_SCHEMA = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
   '@id': 'https://www.exhibitgraphicsign.com/#organization',
-  name: 'Exhibit Graphic Sign (EGS)',
-  alternateName: ['EGS Dubai', 'Exhibit Graphic Sign LLC', 'EGS Exhibition Stands'],
-  url: 'https://www.exhibitgraphicsign.com/',
-  logo: 'https://www.exhibitgraphicsign.com/assets/logo/EGS-Logo.svg',
-  image: 'https://www.exhibitgraphicsign.com/assets/images/egs-workshop-dubai.jpg',
+  name: EGS_ORGANIZATION.name,
+  alternateName: EGS_ORGANIZATION.alternateName,
+  url: EGS_ORGANIZATION.url,
+  logo: EGS_ORGANIZATION.logo,
+  image: EGS_ORGANIZATION.image,
   description: 'In-house design and fabrication contractor in Dubai for custom exhibition stands, institutional graduation ceremonies, retail branding rollouts, and commercial interior fitouts across the UAE and Saudi Arabia since 2010.',
   foundingDate: '2010',
-  telephone: '+97142383278',
-  email: 'info@exhibitgraphicsign.com',
+  telephone: EGS_ORGANIZATION.telephone,
+  email: EGS_ORGANIZATION.email,
   priceRange: '$$$',
   currenciesAccepted: 'AED, SAR, USD',
   paymentAccepted: 'Bank Transfer, Cheque, Credit Card',
   address: {
     '@type': 'PostalAddress',
-    streetAddress: 'Al Qusais Industrial Area',
-    addressLocality: 'Dubai',
-    addressRegion: 'Dubai',
-    postalCode: '00000',
-    addressCountry: 'AE',
+    streetAddress: EGS_ORGANIZATION.address.streetAddress,
+    addressLocality: EGS_ORGANIZATION.address.addressLocality,
+    addressRegion: EGS_ORGANIZATION.address.addressRegion,
+    postalCode: EGS_ORGANIZATION.address.postalCode,
+    addressCountry: EGS_ORGANIZATION.address.addressCountry,
   },
   geo: {
     '@type': 'GeoCoordinates',
-    latitude: 25.2819,
-    longitude: 55.3854,
+    latitude: EGS_ORGANIZATION.geo.latitude,
+    longitude: EGS_ORGANIZATION.geo.longitude,
   },
   openingHoursSpecification: [
     {
@@ -78,138 +80,9 @@ const EGS_BASE_SCHEMA = {
   ],
 };
 
-const routesMetadata = [
-  {
-    route: '/',
-    title: 'Exhibition Stand Contractor & Event Production Dubai | EGS',
-    description: 'EGS is an in-house Dubai exhibition stand contractor and event production house. Turnkey booth design & fabrication, graduation ceremonies, retail rollouts, and fitouts across UAE since 2010.',
-    h1: 'Shaping Brand Moments across the UAE',
-  },
-  {
-    route: '/exhibitions',
-    title: 'Custom Exhibition Stand Contractor Dubai | Design & Build | EGS',
-    description: 'Premier exhibition stand contractor in Dubai & Riyadh. In-house custom booth design, CNC joinery fabrication, and turnkey installation at DWTC & ADNEC.',
-    h1: 'Exhibition stands built for opening day.',
-  },
-  {
-    route: '/events',
-    title: 'Graduation Ceremony Setup & Event Production UAE | EGS',
-    description: 'Professional event staging and graduation ceremony production across the UAE. Over 7 years serving Higher Colleges of Technology (HCT) with stage, LED backdrop, and AV production.',
-    h1: 'Ceremonies built for showtime.',
-  },
-  {
-    route: '/retail',
-    title: 'Retail Branding Rollouts & Hypermarket Displays UAE | EGS',
-    description: 'Nationwide retail branding rollouts, supermarket chiller displays (Carrefour, Sadia), and mall activations executed overnight with in-house fabrication.',
-    h1: 'Retail rollouts ready before shoppers arrive.',
-  },
-  {
-    route: '/fitouts',
-    title: 'Commercial Interior Fitout & Office Branding Dubai | EGS',
-    description: 'Commercial interior fitouts, corporate office branding, custom joinery, reception counters, and architectural signage in Dubai and Sharjah.',
-    h1: 'Commercial spaces built for everyday wear.',
-  },
-  {
-    route: '/case-studies',
-    title: 'Exhibition & Event Staging Case Studies | EGS UAE Production Proof',
-    description: 'Verified production case studies: HCT nationwide graduation staging, Sadia 33-store overnight Carrefour rollout, Philips Riyadh healthcare booth adaptation, and Kazakhstan Pavilion at Gulfood.',
-    h1: 'Pressure-tested deliveries across the UAE and GCC.',
-  },
-  {
-    route: '/graduation-portfolio',
-    title: 'Institutional Staging & Graduation Ceremony Portfolio UAE | EGS',
-    description: 'Archive of graduation ceremony stages, LED backdrop walls, and VIP protocol seating setups delivered across the UAE by EGS.',
-    h1: 'Graduation Staging Portfolio',
-  },
-  {
-    route: '/exhibition-stand-contractor-dubai',
-    title: 'Exhibition Stand Contractor Dubai | In-House Turnkey Fabrication | EGS',
-    description: 'Premier exhibition stand contractor in Dubai. Direct in-house joinery workshop, turnkey custom booth construction, DWTC approvals, and opening-day delivery.',
-    h1: 'Exhibition Stand Contractor in Dubai — In-House Fabrication & Turnkey Delivery',
-  },
-  {
-    route: '/exhibition-stand-builder-dubai',
-    title: 'Exhibition Stand Builder Dubai | Custom Booth Construction | EGS',
-    description: 'Expert exhibition stand builder in Dubai. Custom booth construction, joinery craftsmanship, DWTC pre-assembly, and on-time trade show handover.',
-    h1: 'Exhibition Stand Builder in Dubai — Custom Booth Construction & Joinery',
-  },
-  {
-    route: '/exhibition-stand-design-dubai',
-    title: 'Exhibition Stand Design Dubai | 3D Booth Concepts & Renders | EGS',
-    description: 'Bespoke exhibition stand design in Dubai. High-impact 3D booth concepts, spatial ergonomics, lead-generation layouts, and build-ready engineering.',
-    h1: 'Exhibition Stand Design in Dubai — High-Impact 3D Concepts & Space Planning',
-  },
-  {
-    route: '/custom-exhibition-stands-dubai',
-    title: 'Custom Exhibition Stands Dubai | Bespoke Trade Show Booths | EGS',
-    description: 'Bespoke custom exhibition stands in Dubai. Architectural joinery, double-decker pavilions, immersive product zones, and premium trade show execution.',
-    h1: 'Custom Exhibition Stands in Dubai — Bespoke Trade Show Booths & Pavilions',
-  },
-  {
-    route: '/exhibition-stand-contractor-abu-dhabi',
-    title: 'Exhibition Stand Contractor Abu Dhabi | ADNEC Stand Builder | EGS',
-    description: 'Trusted exhibition stand contractor in Abu Dhabi. Custom booth construction, joinery fabrication, and turnkey delivery at ADNEC for ADIPEC, IDEX, and major expos.',
-    h1: 'Exhibition Stand Contractor in Abu Dhabi — Turnkey ADNEC Stand Builder',
-  },
-  {
-    route: '/exhibition-stand-contractor-riyadh',
-    title: 'Exhibition Stand Contractor Riyadh | Stand Builder Saudi Arabia | EGS',
-    description: 'Premier exhibition stand contractor in Riyadh, Saudi Arabia. Custom booth design, cross-border fabrication, RICEC & Riyadh Front delivery.',
-    h1: 'Exhibition Stand Contractor in Riyadh — Custom Booths for Saudi Arabia',
-  },
-  {
-    route: '/pos-display-stands-dubai',
-    title: 'POS Display Stands Dubai | Retail POSM Manufacturer UAE | EGS',
-    description: 'Custom POS display stands and POSM manufacturer in Dubai. Supermarket gondolas, FSDUs, chiller branding, and overnight hypermarket rollouts across the UAE.',
-    h1: 'POS Display Stands in Dubai — Custom Retail POSM & Hypermarket Units',
-  },
-  {
-    route: '/signage-manufacturer-dubai',
-    title: 'Signage Manufacturer Dubai | Corporate Signage & 3D Letters | EGS',
-    description: 'Premier signage manufacturer in Dubai. 3D illuminated letters, corporate reception signs, building wayfinding, and outdoor commercial signs across the UAE.',
-    h1: 'Signage Manufacturer in Dubai — 3D Illuminated Letters & Corporate Signage',
-  },
-  {
-    route: '/graduation-stage-setup-uae',
-    title: 'Graduation Ceremony Setup UAE | Institutional Stage Staging | EGS',
-    description: 'Premier graduation ceremony setup and institutional stage staging in UAE. 7+ years delivering for HCT across 5 Emirates with staging, LED backdrops, and VIP protocol.',
-    h1: 'Graduation Ceremony Stage Setup UAE — Staging, AV & Protocol Execution',
-  },
-  {
-    route: '/events/gitex-exhibition-stands',
-    title: 'GITEX Global Exhibition Stand Builder Dubai | DWTC Booths | EGS',
-    description: 'Custom exhibition stand contractor for GITEX Global at Dubai World Trade Centre (DWTC). Tech-focused 3D booth design, LED integration, and turnkey delivery.',
-    h1: 'GITEX Global Exhibition Stand Builder in Dubai — High-Tech Custom Booths',
-  },
-  {
-    route: '/events/arab-health-exhibition-stands',
-    title: 'Arab Health Exhibition Stand Contractor Dubai | DWTC Booths | EGS',
-    description: 'Custom healthcare exhibition stand contractor for Arab Health & Medlab at DWTC. Clinical-grade booth design, medical equipment displays, and turnkey build.',
-    h1: 'Arab Health Exhibition Stand Contractor in Dubai — Healthcare & Medical Booths',
-  },
-  {
-    route: '/events/gulfood-exhibition-stands',
-    title: 'Gulfood Exhibition Stand Design & Build Dubai | DWTC Booths | EGS',
-    description: 'Custom F&B exhibition stand builder for Gulfood at Dubai World Trade Centre (DWTC). National country pavilions, sampling counters, and turnkey booth delivery.',
-    h1: 'Gulfood Exhibition Stand Design & Build Dubai — F&B Booths & Country Pavilions',
-  },
-  {
-    route: '/guides/exhibition-stand-cost-dubai',
-    title: 'Exhibition Stand Cost in Dubai | 2026 Pricing Guide | EGS',
-    description: 'Comprehensive 2026 guide to exhibition stand costs in Dubai. Cost per sqm breakdowns, custom vs shell scheme pricing, hidden venue fees, and procurement tips.',
-    h1: 'Exhibition Stand Cost in Dubai — The Complete Pricing Guide for Exhibitors',
-  },
-  {
-    route: '/guides/dwtc-stand-guidelines',
-    title: 'DWTC Exhibition Stand Guidelines & Regulations | Builder Guide | EGS',
-    description: 'Dubai World Trade Centre (DWTC) exhibition stand regulations guide. Maximum build heights, double-decker structural approvals, rigging permits, and safety rules.',
-    h1: 'DWTC Exhibition Stand Guidelines & Height Regulations — The Builder’s Manual',
-  },
-];
+console.log('Generating AEO/GEO pre-rendered static HTML files from seoManifest.js...');
 
-console.log('Generating AEO/GEO pre-rendered static HTML files for all routes...');
-
-for (const meta of routesMetadata) {
+for (const meta of routesManifest) {
   const canonicalUrl = `https://www.exhibitgraphicsign.com${meta.route === '/' ? '/' : meta.route}`;
   let html = baseHtml;
 
@@ -221,6 +94,22 @@ for (const meta of routesMetadata) {
     /<meta\s+name=["']description["']\s+content=["'].*?["']\s*\/?>/i,
     `<meta name="description" content="${meta.description}" />`
   );
+
+  // Replace Keywords if available
+  if (meta.keywords && meta.keywords.length > 0) {
+    const keywordsStr = meta.keywords.join(', ');
+    if (html.includes('<meta name="keywords"')) {
+      html = html.replace(
+        /<meta\s+name=["']keywords["']\s+content=["'].*?["']\s*\/?>/i,
+        `<meta name="keywords" content="${keywordsStr}" />`
+      );
+    } else {
+      html = html.replace(
+        /<meta name="description"/i,
+        `<meta name="keywords" content="${keywordsStr}" />\n    <meta name="description"`
+      );
+    }
+  }
 
   // Replace Canonical Link
   html = html.replace(
@@ -270,20 +159,25 @@ for (const meta of routesMetadata) {
       <p>${meta.description}</p>
       <section aria-label="Entity Summary for AI Retrieval">
         <h2>About Exhibit Graphic Sign (EGS)</h2>
-        <p>Exhibit Graphic Sign (EGS) is an in-house design and fabrication contractor established in 2010 in Dubai, UAE. EGS specializes in custom exhibition stands (DWTC, ADNEC, Riyadh), institutional graduation ceremony staging (Higher Colleges of Technology partner for 7+ years), nationwide retail branding rollouts (Carrefour, Sadia), and architectural 3D signage.</p>
-        <p>Location: Al Qusais Industrial Area, Dubai, United Arab Emirates. Direct Contact: +971 4 238 3278 / info@exhibitgraphicsign.com.</p>
+        <p>Exhibit Graphic Sign (EGS) is an in-house design and fabrication contractor established in 2010 in Dubai, UAE. EGS specializes in custom exhibition stands (DWTC, ADNEC, Riyadh), institutional graduation ceremony staging (Higher Colleges of Technology partner for 7+ years across 5 Emirates), nationwide retail branding rollouts (Carrefour, Sadia across 33 hypermarkets), and architectural 3D signage.</p>
+        <p>Direct Workshop Facility: Al Qusais Industrial Area, Dubai, United Arab Emirates. Direct Inquiries: +971 4 238 3278 / +971 52 458 7992 / info@exhibitgraphicsign.com.</p>
       </section>
       <nav aria-label="Quick Links">
         <ul>
           <li><a href="/">Home</a></li>
+          <li><a href="/exhibitions">Exhibition Stands Dubai</a></li>
           <li><a href="/exhibition-stand-contractor-dubai">Exhibition Stand Contractor Dubai</a></li>
           <li><a href="/exhibition-stand-builder-dubai">Exhibition Stand Builder Dubai</a></li>
           <li><a href="/custom-exhibition-stands-dubai">Custom Exhibition Stands</a></li>
           <li><a href="/events">Events &amp; Graduation Staging</a></li>
+          <li><a href="/graduation-stage-setup-uae">Graduation Stage Setup UAE</a></li>
           <li><a href="/retail">Retail Rollouts</a></li>
+          <li><a href="/pos-display-stands-dubai">POS Display Stands</a></li>
           <li><a href="/fitouts">Commercial Fitouts</a></li>
+          <li><a href="/signage-manufacturer-dubai">Signage Manufacturer</a></li>
           <li><a href="/case-studies">Case Studies &amp; Proof</a></li>
           <li><a href="/guides/exhibition-stand-cost-dubai">Stand Cost Guide</a></li>
+          <li><a href="/guides/dwtc-stand-guidelines">DWTC Guidelines</a></li>
         </ul>
       </nav>
     </header>
@@ -308,4 +202,28 @@ for (const meta of routesMetadata) {
   console.log(`Pre-rendered AEO/GEO: ${meta.route} -> ${path.relative(distDir, targetFile)}`);
 }
 
-console.log('AEO/GEO static pre-rendering completed successfully!');
+// ==========================================
+// Automated XML Sitemap Generation
+// ==========================================
+console.log('Generating dynamic XML sitemap from routesManifest...');
+const today = new Date().toISOString().split('T')[0];
+const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${routesManifest
+  .map(
+    (item) => `  <url>
+    <loc>https://www.exhibitgraphicsign.com${item.route === '/' ? '/' : item.route}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${item.changefreq || 'weekly'}</changefreq>
+    <priority>${item.priority !== undefined ? item.priority.toFixed(2) : '0.80'}</priority>
+  </url>`
+  )
+  .join('\n')}
+</urlset>
+`;
+
+fs.writeFileSync(path.join(distDir, 'sitemap.xml'), sitemapXml, 'utf8');
+fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemapXml, 'utf8');
+console.log('Dynamic sitemap.xml generated in dist/ and public/ successfully!');
+
+console.log('AEO/GEO static pre-rendering and sitemap pipeline completed successfully!');

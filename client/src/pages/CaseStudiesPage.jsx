@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import pageStyles from '../styles/pages/content-first.css?raw';
 import caseStudiesResponsiveStyles from '../styles/pages/case-studies-responsive.css?raw';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
@@ -9,6 +10,14 @@ import InquiryCtaButton from '../components/inquiry/InquiryCtaButton.jsx';
 import healthtechStand from '../assets/Exhibition Stands/healthtech.jpg';
 import kazakhstanPavilion from '../assets/Exhibition Stands/Kazakhstan_Pavillion.jpeg';
 import { buildPageSchemaBundle } from '../utils/schemaGenerator.js';
+
+const SLUG_MAP = {
+  'hct-graduation-program': 'hct-nationwide-graduation-ceremonies',
+  'hct-fujairah-stage-extension': 'hct-fujairah-stage-extension',
+  'sadia-carrefour-rollout': 'sadia-33-store-overnight-carrefour-rollout',
+  'philips-global-health-riyadh': 'philips-global-health-riyadh-healthcare-booth',
+  'kazakhstan-pavilion-gulfood': 'kazakhstan-pavilion-gulfood',
+};
 
 const cases = [
   {
@@ -381,6 +390,9 @@ export default function CaseStudiesPage() {
                       <InquiryCtaButton inquiryType={item.inquiryType || 'general'} className="btn btn-primary">
                         {item.ctaLabel} &rarr;
                       </InquiryCtaButton>
+                      <Link to={`/case-studies/${SLUG_MAP[item.id] || item.id}`} className="btn btn-ghost">
+                        Full Case Study Details &rarr;
+                      </Link>
                       {item.serviceLink ? (
                         <a href={item.serviceLink} className="btn btn-ghost">
                           {item.serviceLinkLabel}

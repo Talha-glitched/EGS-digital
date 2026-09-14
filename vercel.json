@@ -84,11 +84,6 @@
       "permanent": true
     },
     {
-      "source": "/blog",
-      "destination": "/case-studies",
-      "permanent": true
-    },
-    {
       "source": "/portfolio",
       "destination": "/graduation-portfolio",
       "permanent": true

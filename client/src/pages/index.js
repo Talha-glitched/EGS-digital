@@ -6,6 +6,7 @@ export { default as FitoutsPage } from './FitoutsPage.jsx';
 export { default as RetailPage } from './RetailPage.jsx';
 export { default as HctCaseStudyPage } from './HctCaseStudyPage.jsx';
 export { default as CaseStudiesPage } from './CaseStudiesPage.jsx';
+export { default as CaseStudyDetailPage } from './CaseStudyDetailPage.jsx';
 export { default as GraduationPortfolioPage } from './GraduationPortfolioPage.jsx';
 export { default as PortfolioFablePage } from './PortfolioFablePage.jsx';
 export { default as OffersV2Page } from './OffersV2Page.jsx';
@@ -29,6 +30,20 @@ export { default as ExhibitionStandContractorRiyadhPage } from './ExhibitionStan
 export { default as GitexExhibitionStandsPage } from './GitexExhibitionStandsPage.jsx';
 export { default as ArabHealthExhibitionStandsPage } from './ArabHealthExhibitionStandsPage.jsx';
 export { default as GulfoodExhibitionStandsPage } from './GulfoodExhibitionStandsPage.jsx';
+export { default as AdipecStandContractorPage } from './events/AdipecStandContractorPage.jsx';
+export { default as Big5ExhibitionStandsPage } from './events/Big5ExhibitionStandsPage.jsx';
+
+// Venue Hubs
+export { default as DwtcStandBuilderPage } from './venues/DwtcStandBuilderPage.jsx';
+export { default as AdnecStandBuilderPage } from './venues/AdnecStandBuilderPage.jsx';
+export { default as DecStandBuilderPage } from './venues/DecStandBuilderPage.jsx';
+
+// Graduation Yearly Pages
+export { default as GraduationYearPage } from './GraduationYearPage.jsx';
+
+// Blog Knowledge Hub
+export { default as BlogHubPage } from './BlogHubPage.jsx';
+export { default as BlogDetailPage } from './BlogDetailPage.jsx';
 
 // Tier 5 Guides
 export { default as ExhibitionStandCostDubaiGuidePage } from './ExhibitionStandCostDubaiGuidePage.jsx';

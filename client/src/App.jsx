@@ -8,6 +8,7 @@ import {
   HomePage,
   RetailPage,
   CaseStudiesPage,
+  CaseStudyDetailPage,
   GraduationPortfolioPage,
   PortfolioFablePage,
   OffersV2Page,
@@ -25,6 +26,14 @@ import {
   GulfoodExhibitionStandsPage,
   ExhibitionStandCostDubaiGuidePage,
   DwtcStandGuidelinesPage,
+  DwtcStandBuilderPage,
+  AdnecStandBuilderPage,
+  DecStandBuilderPage,
+  AdipecStandContractorPage,
+  Big5ExhibitionStandsPage,
+  GraduationYearPage,
+  BlogHubPage,
+  BlogDetailPage,
 } from './pages/index.js';
 import AdminCrmPage from './pages/AdminCrmPage.jsx';
 
@@ -39,8 +48,19 @@ export default function App() {
         <Route path="/fitouts" element={<FitoutsPage />} />
         <Route path="/retail" element={<RetailPage />} />
         <Route path="/case-studies" element={<CaseStudiesPage />} />
+        <Route path="/case-studies/:slug" element={<CaseStudyDetailPage />} />
         <Route path="/graduation-portfolio" element={<GraduationPortfolioPage />} />
         <Route path="/portfolio-fable" element={<PortfolioFablePage />} />
+
+        {/* Graduation Yearly Archives */}
+        <Route path="/graduation-ceremonies-2025" element={<GraduationYearPage />} />
+        <Route path="/graduation-ceremonies-2024" element={<GraduationYearPage />} />
+        <Route path="/graduation-ceremonies-2023" element={<GraduationYearPage />} />
+        <Route path="/graduation-ceremonies/:year" element={<GraduationYearPage />} />
+
+        {/* Blog Knowledge Hub & Articles */}
+        <Route path="/blog" element={<BlogHubPage />} />
+        <Route path="/blog/:slug" element={<BlogDetailPage />} />
 
         {/* Offers */}
         <Route path="/offers" element={<OffersPage />} />
@@ -63,10 +83,17 @@ export default function App() {
         <Route path="/exhibition-stand-contractor-abu-dhabi" element={<ExhibitionStandContractorAbuDhabiPage />} />
         <Route path="/exhibition-stand-contractor-riyadh" element={<ExhibitionStandContractorRiyadhPage />} />
 
+        {/* Venue Authority Hubs */}
+        <Route path="/venues/dwtc-exhibition-stand-builder" element={<DwtcStandBuilderPage />} />
+        <Route path="/venues/adnec-exhibition-stand-builder" element={<AdnecStandBuilderPage />} />
+        <Route path="/venues/dubai-exhibition-centre-stand-builder" element={<DecStandBuilderPage />} />
+
         {/* Tier 4: Major Event Hubs */}
         <Route path="/events/gitex-exhibition-stands" element={<GitexExhibitionStandsPage />} />
         <Route path="/events/arab-health-exhibition-stands" element={<ArabHealthExhibitionStandsPage />} />
         <Route path="/events/gulfood-exhibition-stands" element={<GulfoodExhibitionStandsPage />} />
+        <Route path="/events/adipec-stand-contractor" element={<AdipecStandContractorPage />} />
+        <Route path="/events/big-5-exhibition-stands" element={<Big5ExhibitionStandsPage />} />
 
         {/* Tier 5: High-Intent Buyer Guides */}
         <Route path="/guides/exhibition-stand-cost-dubai" element={<ExhibitionStandCostDubaiGuidePage />} />

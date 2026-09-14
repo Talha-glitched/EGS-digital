@@ -169,6 +169,21 @@ export function buildInquiryMailto({ subject, body }) {
 }
 
 export function openInquiryMailto(form) {
+  if (typeof window !== 'undefined') {
+    try {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'generate_lead',
+        lead_service: form?.service || 'general',
+        lead_urgency: form?.urgency || 'standard',
+      });
+      if (typeof window.clarity === 'function') {
+        window.clarity('event', 'lead_form_submit');
+      }
+    } catch (err) {
+      // non-blocking
+    }
+  }
   const { subject, body } = composeInquiryEmail(form);
   window.location.href = buildInquiryMailto({ subject, body });
 }
