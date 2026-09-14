@@ -1,7 +1,7 @@
 import { motion } from 'motion/react';
 import BlurText from './BlurText.jsx';
 import { images } from '../pages/siteData.js';
-const hctHeroPoster = '/media/site/HCT.jpeg';
+const hctHeroPoster = '/media/site/HCT.webp';
 const hctHeroVideo = '/media/site/hctgraduation.mp4';
 import './HomeHero.css';
 
@@ -37,15 +37,9 @@ export default function HomeHero({
       <div className="egs-home-video-shade" aria-hidden="true" />
       <div className="egs-home-video-copy">
         <span className="egs-home-video-kicker">{kicker}</span>
-        <motion.h1
-          className="egs-home-video-heading"
-          initial={{ filter: 'blur(10px)', opacity: 0, y: 18 }}
-          whileInView={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.35 }}
-          transition={{ duration: 0.78, ease: 'easeOut', delay: 0.1 }}
-        >
+        <h1 className="egs-home-video-heading">
           {title}
-        </motion.h1>
+        </h1>
         <motion.div
           className="egs-home-video-services"
           aria-label="EGS services"

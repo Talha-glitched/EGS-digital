@@ -1,9 +1,9 @@
 const hctGraduationCard = '/media/graduation/ADGRAD1.jpg';
-import hctFitout from '../assets/hct-fitout.jpeg';
-import roastRetail from '../assets/roast-retail.jpeg';
-import microlink from '../assets/Exhibition Stands/Microlink1.jpeg';
-import phillips2 from '../assets/Exhibition Stands/Phillips_2.jpeg';
-import philipsMri from '../assets/Exhibition Stands/Philips_MRI.jpg';
+import hctFitout from '../assets/hct-fitout.webp';
+import roastRetail from '../assets/roast-retail.webp';
+import microlink from '../assets/Exhibition Stands/Microlink1.webp';
+import phillips2 from '../assets/Exhibition Stands/Phillips_2.webp';
+import philipsMri from '../assets/Exhibition Stands/Philips_MRI.webp';
 const fitoutVelocityInterior = '/media/shortlist/5Showroom & Office Branding/Velocity (6).jpg';
 import fitoutReceptionArea from '../assets/Uniestate/Uniestate Retail_1_8.jpeg';
 const fitoutOfficeGraphics = '/media/shortlist/5Showroom & Office Branding/BIG FM Printing (25).jpg';

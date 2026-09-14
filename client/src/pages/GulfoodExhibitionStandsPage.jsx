@@ -5,7 +5,7 @@ import { Navbar } from '../components/Navbar.jsx';
 import { FAQSection, Footer } from './SiteChrome.jsx';
 import InquiryCtaButton from '../components/inquiry/InquiryCtaButton.jsx';
 import EventHero from '../components/events/EventHero.jsx';
-import kazakhstanPavilion from '../assets/Exhibition Stands/Kazakhstan_Pavillion.jpeg';
+import kazakhstanPavilion from '../assets/Exhibition Stands/Kazakhstan_Pavillion.webp';
 import { buildPageSchemaBundle } from '../utils/schemaGenerator.js';
 
 const gulfoodFaqs = [

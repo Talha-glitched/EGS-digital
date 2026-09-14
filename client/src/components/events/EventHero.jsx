@@ -39,7 +39,7 @@ export default function EventHero({
           src={bgImage}
           alt={bgAlt}
           loading="eager"
-          fetchPriority="high"
+          fetchpriority="high"
         />
       ) : null}
       <div className="egs-event-hero-overlay" aria-hidden="true" />

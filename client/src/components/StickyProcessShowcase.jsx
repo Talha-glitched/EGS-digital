@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { images } from '../pages/siteData.js';
-import drawingImage from '../assets/Exhibition Stands/drawing.png';
-import drawingTwoImage from '../assets/Exhibition Stands/drawing2.png';
-import healthtechImage from '../assets/Exhibition Stands/healthtech.jpg';
-import hp1Image from '../assets/Exhibition Stands/hp1.jpeg';
-import hp2Image from '../assets/Exhibition Stands/hp2.jpeg';
+import drawingImage from '../assets/Exhibition Stands/drawing.webp';
+import drawingTwoImage from '../assets/Exhibition Stands/drawing2.webp';
+import healthtechImage from '../assets/Exhibition Stands/healthtech.webp';
+import hp1Image from '../assets/Exhibition Stands/hp1.webp';
+import hp2Image from '../assets/Exhibition Stands/hp2.webp';
 import './StickyProcessShowcase.css';
 
 const DEFAULT_STEPS = [
@@ -225,7 +225,7 @@ export default function StickyProcessShowcase({
                     key={step.label}
                     className={`egs-sticky-showcase-slide${idx === 0 ? ' egs-sticky-showcase-slide--first' : ''}${idx === stepCount - 1 ? ' egs-sticky-showcase-slide--last' : ''}`}
                   >
-                    <img src={step.image} alt={step.alt} loading="lazy" />
+                    <img src={step.image} alt={step.alt} loading="lazy" decoding="async" />
                     <div className="egs-sticky-showcase-slide-overlay" aria-hidden="true" />
                   </div>
                 ))}

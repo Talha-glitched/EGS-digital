@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
+/* Google Fonts loaded globally via index.html */
 
 /* Tailwind v4 — import theme + preflight in cascade layers, but import the
    UTILITIES UNLAYERED. The marketing site loads a global, unlayered reset

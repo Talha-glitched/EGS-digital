@@ -1,46 +1,62 @@
+import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { InquiryModalProvider } from './context/InquiryModalContext.jsx';
-import {
-  EventsPage,
-  ExhibitionsPage,
-  OffersPage,
-  FitoutsPage,
-  HomePage,
-  RetailPage,
-  CaseStudiesPage,
-  CaseStudyDetailPage,
-  GraduationPortfolioPage,
-  PortfolioFablePage,
-  OffersV2Page,
-  ExhibitionStandContractorDubaiPage,
-  ExhibitionStandBuilderDubaiPage,
-  ExhibitionStandDesignDubaiPage,
-  CustomExhibitionStandsDubaiPage,
-  PosDisplayStandsDubaiPage,
-  SignageManufacturerDubaiPage,
-  GraduationStageSetupUaePage,
-  ExhibitionStandContractorAbuDhabiPage,
-  ExhibitionStandContractorRiyadhPage,
-  GitexExhibitionStandsPage,
-  ArabHealthExhibitionStandsPage,
-  GulfoodExhibitionStandsPage,
-  ExhibitionStandCostDubaiGuidePage,
-  DwtcStandGuidelinesPage,
-  DwtcStandBuilderPage,
-  AdnecStandBuilderPage,
-  DecStandBuilderPage,
-  AdipecStandContractorPage,
-  Big5ExhibitionStandsPage,
-  GraduationYearPage,
-  BlogHubPage,
-  BlogDetailPage,
-} from './pages/index.js';
-import AdminCrmPage from './pages/AdminCrmPage.jsx';
+import HomePage from './pages/HomePage.jsx';
+
+// Route-level code-splitting: secondary pages loaded on-demand
+const ExhibitionsPage = lazy(() => import('./pages/ExhibitionsPage.jsx'));
+const EventsPage = lazy(() => import('./pages/EventsPage.jsx'));
+const FitoutsPage = lazy(() => import('./pages/FitoutsPage.jsx'));
+const RetailPage = lazy(() => import('./pages/RetailPage.jsx'));
+const CaseStudiesPage = lazy(() => import('./pages/CaseStudiesPage.jsx'));
+const CaseStudyDetailPage = lazy(() => import('./pages/CaseStudyDetailPage.jsx'));
+const GraduationPortfolioPage = lazy(() => import('./pages/GraduationPortfolioPage.jsx'));
+const PortfolioFablePage = lazy(() => import('./pages/PortfolioFablePage.jsx'));
+const OffersPage = lazy(() => import('./pages/OffersPage.jsx'));
+const OffersV2Page = lazy(() => import('./pages/OffersV2Page.jsx'));
+
+// Tier 1: Commercial Exhibition Money Pages
+const ExhibitionStandContractorDubaiPage = lazy(() => import('./pages/ExhibitionStandContractorDubaiPage.jsx'));
+const ExhibitionStandBuilderDubaiPage = lazy(() => import('./pages/ExhibitionStandBuilderDubaiPage.jsx'));
+const ExhibitionStandDesignDubaiPage = lazy(() => import('./pages/ExhibitionStandDesignDubaiPage.jsx'));
+const CustomExhibitionStandsDubaiPage = lazy(() => import('./pages/CustomExhibitionStandsDubaiPage.jsx'));
+
+// Tier 2: Sub-Service Silos
+const PosDisplayStandsDubaiPage = lazy(() => import('./pages/PosDisplayStandsDubaiPage.jsx'));
+const SignageManufacturerDubaiPage = lazy(() => import('./pages/SignageManufacturerDubaiPage.jsx'));
+const GraduationStageSetupUaePage = lazy(() => import('./pages/GraduationStageSetupUaePage.jsx'));
+
+// Tier 3: Location Hubs
+const ExhibitionStandContractorAbuDhabiPage = lazy(() => import('./pages/ExhibitionStandContractorAbuDhabiPage.jsx'));
+const ExhibitionStandContractorRiyadhPage = lazy(() => import('./pages/ExhibitionStandContractorRiyadhPage.jsx'));
+
+// Venue Hubs
+const DwtcStandBuilderPage = lazy(() => import('./pages/venues/DwtcStandBuilderPage.jsx'));
+const AdnecStandBuilderPage = lazy(() => import('./pages/venues/AdnecStandBuilderPage.jsx'));
+const DecStandBuilderPage = lazy(() => import('./pages/venues/DecStandBuilderPage.jsx'));
+
+// Tier 4: Major Event Hubs
+const GitexExhibitionStandsPage = lazy(() => import('./pages/GitexExhibitionStandsPage.jsx'));
+const ArabHealthExhibitionStandsPage = lazy(() => import('./pages/ArabHealthExhibitionStandsPage.jsx'));
+const GulfoodExhibitionStandsPage = lazy(() => import('./pages/GulfoodExhibitionStandsPage.jsx'));
+const AdipecStandContractorPage = lazy(() => import('./pages/events/AdipecStandContractorPage.jsx'));
+const Big5ExhibitionStandsPage = lazy(() => import('./pages/events/Big5ExhibitionStandsPage.jsx'));
+
+// Tier 5: High-Intent Guides & Yearly Archives
+const ExhibitionStandCostDubaiGuidePage = lazy(() => import('./pages/ExhibitionStandCostDubaiGuidePage.jsx'));
+const DwtcStandGuidelinesPage = lazy(() => import('./pages/DwtcStandGuidelinesPage.jsx'));
+const GraduationYearPage = lazy(() => import('./pages/GraduationYearPage.jsx'));
+const BlogHubPage = lazy(() => import('./pages/BlogHubPage.jsx'));
+const BlogDetailPage = lazy(() => import('./pages/BlogDetailPage.jsx'));
+
+// Admin CRM (isolated: keeps SheetJS / xlsx out of the public marketing bundle)
+const AdminCrmPage = lazy(() => import('./pages/AdminCrmPage.jsx'));
 
 export default function App() {
   return (
     <InquiryModalProvider>
-      <Routes>
+      <Suspense fallback={null}>
+        <Routes>
         {/* Core Hub Pages */}
         <Route path="/" element={<HomePage />} />
         <Route path="/exhibitions" element={<ExhibitionsPage />} />
@@ -106,6 +122,7 @@ export default function App() {
         <Route path="/hct-case-study" element={<Navigate to="/case-studies#hct-graduation-program" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      </Suspense>
     </InquiryModalProvider>
   );
 }

@@ -5,7 +5,7 @@ import { Navbar } from '../components/Navbar.jsx';
 import { FAQSection, Footer } from './SiteChrome.jsx';
 import InquiryCtaButton from '../components/inquiry/InquiryCtaButton.jsx';
 import EventHero from '../components/events/EventHero.jsx';
-import healthtechStand from '../assets/Exhibition Stands/healthtech.jpg';
+import healthtechStand from '../assets/Exhibition Stands/healthtech.webp';
 import { buildPageSchemaBundle } from '../utils/schemaGenerator.js';
 
 const gitexFaqs = [
