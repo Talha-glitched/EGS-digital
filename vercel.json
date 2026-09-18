@@ -31,11 +31,20 @@
       ]
     },
     {
-      "source": "/media/(.*)",
+      "source": "/media/(.*\\.(?:jpg|jpeg|png|gif|webp|svg|ico|pdf|JPG|JPEG|PNG|WEBP))",
       "headers": [
         {
           "key": "Cache-Control",
           "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/media/(.*\\.(?:mp4|mov|webm|MP4|MOV|WEBM))",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
         }
       ]
     },

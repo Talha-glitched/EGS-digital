@@ -94,8 +94,14 @@ function BgImage({ src }) {
 }
 
 function BgMedia({ client }) {
+  const [videoFailed, setVideoFailed] = useState(false);
+
+  useEffect(() => {
+    setVideoFailed(false);
+  }, [client?.id, client?.hero?.url]);
+
   if (!client) return null;
-  if (client.hero?.type === 'video') {
+  if (client.hero?.type === 'video' && !videoFailed) {
     return (
       <video
         src={client.hero.url}
@@ -103,6 +109,7 @@ function BgMedia({ client }) {
         autoPlay
         loop
         playsInline
+        onError={() => setVideoFailed(true)}
         onContextMenu={(e) => e.preventDefault()}
       />
     );
@@ -116,10 +123,16 @@ function GalleryVideo({ src, name }) {
   const trackRef = useRef(null);
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setHasError(false);
+    setPlaying(false);
+  }, [src]);
 
   const togglePlay = () => {
     const v = videoRef.current;
-    if (!v) return;
+    if (!v || hasError) return;
     if (v.paused) v.play().catch(() => { });
     else v.pause();
   };
@@ -156,6 +169,7 @@ function GalleryVideo({ src, name }) {
         onClick={togglePlay}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
+        onError={() => setHasError(true)}
         onTimeUpdate={(e) => {
           const v = e.currentTarget;
           if (trackRef.current && v.duration) {
@@ -163,13 +177,31 @@ function GalleryVideo({ src, name }) {
           }
         }}
       />
-      <span className="pf-video-center" aria-hidden="true">▶</span>
+      {!hasError && <span className="pf-video-center" aria-hidden="true">▶</span>}
+      {hasError && (
+        <div className="pf-video-error-badge" style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          background: 'rgba(0,0,0,0.8)',
+          color: '#f87171',
+          padding: '8px 16px',
+          borderRadius: '8px',
+          fontSize: '13px',
+          pointerEvents: 'none',
+          textAlign: 'center'
+        }}>
+          Video format not supported or unavailable
+        </div>
+      )}
       <div className="pf-video-ui">
         <button
           type="button"
           className="pf-video-btn pf-video-play"
           onClick={togglePlay}
           aria-label={playing ? `Pause ${name}` : `Play ${name}`}
+          disabled={hasError}
         >
           {playing ? '❚❚' : '▶'}
         </button>
@@ -264,7 +296,7 @@ export default function PortfolioFablePage() {
       } else if (asset.type === 'video') {
         const video = document.createElement('video');
         video.src = asset.url;
-        video.preload = 'auto';
+        video.preload = 'metadata';
         video.muted = true;
         activeVideoElements.push(video);
 
@@ -272,14 +304,16 @@ export default function PortfolioFablePage() {
         
         const handleVideoLoad = () => {
           clearTimeout(timeoutId);
+          video.removeEventListener('loadedmetadata', handleVideoLoad);
           video.removeEventListener('loadeddata', handleVideoLoad);
           video.removeEventListener('error', handleVideoLoad);
           if (!isCancelled) preloadNext(index + 1);
         };
 
-        // Fallback timeout of 2 seconds per video to ensure slow videos do not block the queue
-        timeoutId = setTimeout(handleVideoLoad, 2000);
+        // Fallback timeout of 1.5 seconds per video so slow videos do not block the queue
+        timeoutId = setTimeout(handleVideoLoad, 1500);
 
+        video.addEventListener('loadedmetadata', handleVideoLoad);
         video.addEventListener('loadeddata', handleVideoLoad);
         video.addEventListener('error', handleVideoLoad);
         video.load();

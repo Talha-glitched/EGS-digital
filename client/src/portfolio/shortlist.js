@@ -1,6 +1,6 @@
 import { CUSTOM_LABELS, ensureCategory } from './categories.js';
 import { isExcludedAsset } from './exclusions.js';
-import { buildClient, mediaTypeForFilename } from './media.js';
+import { buildClient, mediaTypeForFilename, resolveMediaUrl } from './media.js';
 import { getProjectDetails } from './resolveProject.js';
 
 import shortlistManifest from './data/shortlistManifest.json';
@@ -77,7 +77,7 @@ export function buildShortlistClients() {
 
     projectGroups[projectKey].items.push({
       type: mediaType,
-      url,
+      url: resolveMediaUrl(url),
       name: filename,
       year: pYear,
     });

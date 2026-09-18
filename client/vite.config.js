@@ -43,6 +43,11 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           secure: false,
         },
+        '/media': {
+          target,
+          changeOrigin: true,
+          secure: false,
+        },
       },
     },
   };

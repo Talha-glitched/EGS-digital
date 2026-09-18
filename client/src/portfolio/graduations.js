@@ -1,4 +1,4 @@
-import { buildClient, mediaTypeForFilename } from './media.js';
+import { buildClient, mediaTypeForFilename, resolveMediaUrl } from './media.js';
 
 import graduationManifest from './data/graduationManifest.json';
 
@@ -61,7 +61,7 @@ export function buildGradClients() {
 
     const key = `${campus}|${year}`;
     if (!gradGroups[key]) gradGroups[key] = [];
-    gradGroups[key].push({ type: mediaType, url, name: filename, year });
+    gradGroups[key].push({ type: mediaType, url: resolveMediaUrl(url), name: filename, year });
   });
 
   return Object.entries(gradGroups)

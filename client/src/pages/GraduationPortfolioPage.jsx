@@ -6,6 +6,7 @@ import { Footer } from './SiteChrome.jsx';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
 const hero2021 = '/media/graduation/2021-hero.jpg';
 import graduationManifest from '../portfolio/data/graduationManifest.json';
+import { resolveMediaUrl } from '../portfolio/media.js';
 
 // Build projects map by year and campus key
 const projectsMap = {};
@@ -60,7 +61,7 @@ graduationManifest.forEach(({ relativePath, url, filename }) => {
   }
 
   if (isVideo) {
-    projectsMap[key].videos.push({ name: filename, url });
+    projectsMap[key].videos.push({ name: filename, url: resolveMediaUrl(url) });
   } else {
     projectsMap[key].photos.push({ name: filename, url });
   }

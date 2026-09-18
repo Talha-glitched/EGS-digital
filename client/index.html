@@ -67,8 +67,18 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
   </noscript>
 
-  <!-- Performance: Preload Critical Hero Poster for LCP -->
-  <link rel="preload" as="image" href="/media/site/HCT.webp" type="image/webp" fetchpriority="high" />
+  <!-- Performance: Conditionally Preload Critical Hero Poster for LCP only on Homepage -->
+  <script>
+    if (window.location.pathname === '/' || window.location.pathname === '') {
+      var preloadLink = document.createElement('link');
+      preloadLink.rel = 'preload';
+      preloadLink.as = 'image';
+      preloadLink.href = '/media/site/HCT.webp';
+      preloadLink.type = 'image/webp';
+      preloadLink.fetchPriority = 'high';
+      document.head.appendChild(preloadLink);
+    }
+  </script>
 
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="shortcut icon" href="/favicon.svg" />

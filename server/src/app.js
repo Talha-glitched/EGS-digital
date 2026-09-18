@@ -44,6 +44,20 @@ app.use(
     },
   })
 );
+app.use(
+  '/media',
+  express.static(path.join(UPLOADS_DIR, 'media'), {
+    maxAge: '365d',
+    immutable: true,
+    setHeaders: (res, filePath) => {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Accept-Ranges', 'bytes');
+      if (/\.(mp4|mov|webm)$/i.test(filePath)) {
+        res.setHeader('Cache-Control', 'public, max-age=86400, no-transform');
+      }
+    },
+  })
+);
 
 app.get('/api/health', (_req, res) => {
   res.json({
