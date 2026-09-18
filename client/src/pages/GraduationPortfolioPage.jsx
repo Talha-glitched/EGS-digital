@@ -66,7 +66,7 @@ graduationManifest.forEach(({ relativePath, url, filename }) => {
   if (isVideo) {
     projectsMap[key].videos.push({ name: filename, url: resolveMediaUrl(url) });
   } else {
-    projectsMap[key].photos.push({ name: filename, url });
+    projectsMap[key].photos.push({ name: filename, url: resolveMediaUrl(url) });
   }
 });
 
@@ -702,6 +702,11 @@ export default function GraduationPortfolioPage() {
                       <div className="portfolio-card-media">
                         {project.image ? (
                           <img src={project.image} alt={project.title} loading="lazy" />
+                        ) : project.video ? (
+                          <div className="card-video-thumb">
+                            <video src={`${project.video}#t=0.5`} muted playsInline preload="metadata" />
+                            <span className="play-icon-overlay">▶ Video Highlights</span>
+                          </div>
                         ) : (
                           <div className="empty-image-placeholder">
                             <span className="placeholder-year">Class of {project.year}</span>

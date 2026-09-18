@@ -21,7 +21,8 @@ export function resolveMediaUrl(url) {
 
   const ext = url.split('.').pop().toLowerCase();
   const isVideo = VIDEO_EXTS.includes(ext);
-  if (!isVideo) {
+  const isPhoto = PHOTO_EXTS.includes(ext);
+  if (!isVideo && !isPhoto) {
     return url;
   }
 

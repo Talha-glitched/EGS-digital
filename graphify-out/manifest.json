@@ -1095,8 +1095,8 @@
     "semantic_hash": ""
   },
   "client/src/pages/GraduationPortfolioPage.jsx": {
-    "mtime": 1789729113.359733,
-    "ast_hash": "e5db9d0d1b3a44c6dc5ca9afe8311366",
+    "mtime": 1789733461.8044424,
+    "ast_hash": "6f9a68cb1f9d771fecef4151bd483361",
     "semantic_hash": ""
   },
   "client/src/pages/HctCaseStudyPage.jsx": {
@@ -1155,8 +1155,8 @@
     "semantic_hash": ""
   },
   "client/src/portfolio/media.js": {
-    "mtime": 1789714143.2585585,
-    "ast_hash": "dfa4d1ebffd6c2b2d0ec65a399076eb0",
+    "mtime": 1789733455.1752827,
+    "ast_hash": "0d7d3a25b9fc0c820155a99cc839f6fa",
     "semantic_hash": ""
   },
   "client/src/portfolio/projectRules.js": {
@@ -3725,8 +3725,8 @@
     "semantic_hash": ""
   },
   "client/src/portfolio/data/graduationManifest.json": {
-    "mtime": 1789726560.3455927,
-    "ast_hash": "f20440d71eabbbe04905c60baee35ba7",
+    "mtime": 1789732571.0635426,
+    "ast_hash": "53e01a91d6c8d404cb6caf2e45ff48fa",
     "semantic_hash": ""
   },
   "client/src/portfolio/data/shortlistManifest.json": {
@@ -3982,41 +3982,6 @@
   "client/public/media/site/hctgraduation.mp4": {
     "mtime": 1781095696.380679,
     "ast_hash": "6a5fb2ee1be3d910dc5a47000082f791",
-    "semantic_hash": ""
-  },
-  "client/public/media/graduation/Websites Gallery Graduations/2026/RAK AA/(11).jpg": {
-    "mtime": 1781097704.3046803,
-    "ast_hash": "69f16e78a4e8a7bbbb8fa3ed93c2a69f",
-    "semantic_hash": ""
-  },
-  "client/public/media/graduation/Websites Gallery Graduations/2026/RAK AA/(16).jpg": {
-    "mtime": 1781097704.221447,
-    "ast_hash": "6da065ae36ac1b01bc51f3d7fcb05f85",
-    "semantic_hash": ""
-  },
-  "client/public/media/graduation/Websites Gallery Graduations/2026/RAK AA/(160).jpg": {
-    "mtime": 1781097704.2157826,
-    "ast_hash": "974734546edfd31837a51173959347ff",
-    "semantic_hash": ""
-  },
-  "client/public/media/graduation/Websites Gallery Graduations/2026/RAK AA/(162).jpg": {
-    "mtime": 1781097704.203252,
-    "ast_hash": "b2f731cba244d23d84d71cb40368f60f",
-    "semantic_hash": ""
-  },
-  "client/public/media/graduation/Websites Gallery Graduations/2026/RAK AA/(30).jpg": {
-    "mtime": 1781097704.6376832,
-    "ast_hash": "792844981007a82510680aff635152d6",
-    "semantic_hash": ""
-  },
-  "client/public/media/graduation/Websites Gallery Graduations/2026/RAK AA/(37).jpg": {
-    "mtime": 1781097704.209252,
-    "ast_hash": "957f9b79ac72943647576ef059f35d44",
-    "semantic_hash": ""
-  },
-  "client/public/media/graduation/Websites Gallery Graduations/2026/RAK AA/(51).jpg": {
-    "mtime": 1781097704.6429226,
-    "ast_hash": "e2c66ea653d1303d10ef19afab727dfa",
     "semantic_hash": ""
   },
   "client/public/media/graduation/Websites Gallery Graduations/2026/RAK AA/Rak-2026.mp4": {

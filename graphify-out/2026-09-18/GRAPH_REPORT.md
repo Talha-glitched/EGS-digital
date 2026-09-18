@@ -1,16 +1,16 @@
 # Graph Report - EGS-web  (2026-09-18)
 
 ## Corpus Check
-- 611 files · ~2,549,242 words
+- 611 files · ~2,497,217 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3966 nodes · 9022 edges · 270 communities (216 shown, 54 thin omitted)
+- 3966 nodes · 9022 edges · 271 communities (217 shown, 54 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 52 edges (avg confidence: 0.66)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `61c58efa`
+- Built from commit: `30b02571`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -95,7 +95,7 @@
 - auditService.js
 - SiteChrome.jsx
 - scripts
-- ongoing_jobs
+- design_versions
 - Section Order
 - Section Order
 - Section Order
@@ -115,13 +115,13 @@
 - emailTemplateRenderer.js
 - runInventoryRefactorMigration.js
 - ServicesV2.jsx
-- job_scope_lines
+- ongoing_jobs
 - auditBusinessSemanticsReadOnly.js
 - recoverRuntimeInboundContext.js
 - src/constants/pocQualification.js
 - sendDeliveryErrors.js
 - Video Hero + GSAP Navbar (Portable Implementation Guide)
-- 04_add_missing_tables.sql
+- organizations
 - client/vercel.json
 - 03_migrate_staged_campaigns_sequences.js
 - repairOpportunityValues.js
@@ -244,6 +244,7 @@
 - inventory_items
 - inventory_items
 - repairCampaignTasksAndReplies.js
+- project_time_entries
 - seedDemoOperationalJob.js
 - migratePipelineStages.js
 - Watches and Jewellery Expo 57th edition 2026_dd165515.md
@@ -286,7 +287,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (270 total, 54 thin omitted)
+## Communities (271 total, 54 thin omitted)
 
 ### Community 0 - "crmApi.js"
 Cohesion: 0.04
@@ -390,7 +391,7 @@ Nodes (16): DELAY_UNITS, delayToMs(), formatStepDelay(), normalizeDelayUnit(), p
 
 ### Community 26 - "01_init_postgresql_schema.sql"
 Cohesion: 0.06
-Nodes (57): prevent_task_dependency_cycle, campaign_accounts, campaign_contact_focus_events, campaign_contacts, campaigns, communication_job_actions, conversation_job_links, conversation_participants (+49 more)
+Nodes (52): predecessors, prevent_task_dependency_cycle, campaign_accounts, campaign_contact_focus_events, campaign_contacts, communication_job_actions, conversation_job_links, conversation_participants (+44 more)
 
 ### Community 27 - "completedJobService.js"
 Cohesion: 0.13
@@ -569,8 +570,8 @@ Cohesion: 0.07
 Nodes (26): 06 Case Studies Page Content Spec, Above The Fold, Audience, Case Studies, Case Study Format, Case Study Navigation, FAQ, Final CTA (+18 more)
 
 ### Community 72 - "users"
-Cohesion: 0.11
-Nodes (31): audit_events, job_activity_resource_assignments, job_activity_updates, note_attachments, note_versions, notes, operational_resources, project_time_corrections (+23 more)
+Cohesion: 0.14
+Nodes (24): audit_events, job_activity_resource_assignments, job_activity_updates, note_attachments, note_versions, notes, operational_resources, project_time_corrections (+16 more)
 
 ### Community 73 - "contactEmails.test.js"
 Cohesion: 0.20
@@ -596,9 +597,9 @@ Nodes (28): EventHero(), Footer(), InquiryCtaButton(), defaultItems, Navbar(), a
 Cohesion: 0.14
 Nodes (13): dependencies, @microsoft/clarity, @microsoft/clarity, name, private, scripts, build, dev (+5 more)
 
-### Community 81 - "ongoing_jobs"
-Cohesion: 0.12
-Nodes (22): milestone, resolved, artifact_decisions, design_sets, design_versions, financial_milestones, job_actual_costs, job_cost_confirmations (+14 more)
+### Community 81 - "design_versions"
+Cohesion: 0.21
+Nodes (12): artifact_decisions, design_sets, design_versions, production_release_design_versions, production_releases, quote_versions, quotes, artifact_decisions (+4 more)
 
 ### Community 82 - "Section Order"
 Cohesion: 0.08
@@ -672,9 +673,9 @@ Nodes (11): getBaseUrl(), isPublicTrackableUrl(), deliverSequenceEmail(), __dirn
 Cohesion: 0.47
 Nodes (4): chapterProgress(), PAGE_THEMES, ServicesV2(), smoothstep()
 
-### Community 101 - "job_scope_lines"
-Cohesion: 0.15
-Nodes (24): predecessors, field_execution_files, field_execution_submissions, job_activities, job_delivery_activations, job_locations, job_phases, job_scope_lines (+16 more)
+### Community 101 - "ongoing_jobs"
+Cohesion: 0.13
+Nodes (29): milestone, resolved, field_execution_files, field_execution_submissions, financial_milestones, job_activities, job_actual_costs, job_cost_confirmations (+21 more)
 
 ### Community 102 - "auditBusinessSemanticsReadOnly.js"
 Cohesion: 0.40
@@ -696,9 +697,9 @@ Nodes (4): describeSendDeliveryError(), ERROR_RULES, formatDeliveryIssueRow(), S
 Cohesion: 0.11
 Nodes (18): 1) Dependencies, 2) Shared CSS tokens you must bring over, 3) Implementing the Video Hero, 4) Implementing the GSAP Navbar (Card Menu), 5) Recommended integration order (so it “just works”), 6) Common issues / fixes, Customizing the menu items, How it works (high level) (+10 more)
 
-### Community 108 - "04_add_missing_tables.sql"
-Cohesion: 0.40
-Nodes (4): analytics_snapshots, completed_jobs, daily_review_records, revenue_entries
+### Community 108 - "organizations"
+Cohesion: 0.17
+Nodes (14): campaigns, event_editions, event_participations, events, interactions, job_closeouts, locations, organization_identifiers (+6 more)
 
 ### Community 109 - "client/vercel.json"
 Cohesion: 0.50
@@ -935,6 +936,10 @@ Nodes (11): SITE_ORIGIN, siteUrl(), hydrateMarquees(), hydrateReveals(), setCano
 ### Community 245 - "GISEC 2026_d5283835.md"
 Cohesion: 0.29
 Nodes (6): Sheet: Companies, Sheet: Dashboard, Sheet: Export Sheet, Sheet: Lists, Sheet: POCs, Sheet: Read Me
+
+### Community 251 - "project_time_entries"
+Cohesion: 0.43
+Nodes (7): job_activity_resource_assignments, operational_resources, project_time_corrections, project_time_entries, resource_availability_blocks, job_activities, supplier_profiles
 
 ### Community 252 - "seedDemoOperationalJob.js"
 Cohesion: 0.48
