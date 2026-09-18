@@ -27,7 +27,11 @@ graduationManifest.forEach(({ relativePath, url, filename }) => {
     year = parseInt(parts[0], 10);
     const folder = parts[1] || '';
     const norm = folder.toLowerCase().trim();
-    if (norm.includes('abu dhabi') || norm === 'aud') {
+    if (norm.includes('fujairah university') || norm.includes('university of fujairah') || norm === 'fu' || norm.includes('fu-grad')) {
+      campusFolder = 'fu';
+    } else if (norm.includes('rak aa') || norm.includes('american academy') || norm.includes('raak')) {
+      campusFolder = 'rak-aa';
+    } else if (norm.includes('abu dhabi') || norm === 'aud') {
       campusFolder = 'abu-dhabi';
     } else if (norm.includes('dubai') || norm === 'dxb' || norm.includes('coca')) {
       campusFolder = 'dubai';
@@ -69,6 +73,15 @@ graduationManifest.forEach(({ relativePath, url, filename }) => {
 
 // Metadata config map for campuses and years
 const CAMPUS_METADATA = {
+  'fu': {
+    title: 'University of Fujairah Ceremony 2026',
+    location: 'Fujairah, UAE',
+    institution: 'University of Fujairah (FU)',
+    shortDesc: 'Complete institutional convocation staging, wide curved LED video wall, ceremonial dais, and royal VIP protocol seating for the University of Fujairah.',
+    venue: 'Fujairah University Grand Hall',
+    vip: 'H.H. Sheikh Mohammed bin Hamad Al Sharqi, Crown Prince of Fujairah',
+    stats: 'Class of 2026 | 2,500 Guests'
+  },
   'rak-aa': {
     title: 'RAK American Academy Ceremony 2025',
     location: 'Ras Al Khaimah, UAE',
@@ -150,6 +163,25 @@ const getCampusMetadata = (campusKey, year) => {
   };
 
   // Customize dynamic attributes per year
+  if (campusKey === 'fu') {
+    return {
+      ...meta,
+      title: `University of Fujairah Ceremony ${year}`,
+      institution: 'University of Fujairah (FU)',
+      stats: 'Class of 2026 | 2,500 Guests',
+      vip: 'H.H. Sheikh Mohammed bin Hamad Al Sharqi, Crown Prince of Fujairah'
+    };
+  }
+
+  if (campusKey === 'rak-aa') {
+    return {
+      ...meta,
+      title: `Ras Al Khaimah American Academy Ceremony ${year}`,
+      institution: 'Ras Al Khaimah American Academy (RAAK)',
+      stats: year === 2026 ? 'Class of 2026 | 1,200 Guests' : '60 Graduates | 1,200 Guests'
+    };
+  }
+
   if (campusKey === 'abu-dhabi') {
     return {
       ...meta,
@@ -321,6 +353,55 @@ export default function GraduationPortfolioPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProject, setSelectedProject] = useState(null);
   const [cinemaIndex, setCinemaIndex] = useState(null);
+  const [copied, setCopied] = useState(false);
+
+  // Read URL query params on mount for direct deep linking
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const yr = params.get('year');
+    const projId = params.get('project');
+    const q = params.get('q');
+    if (yr) setActiveYear(yr);
+    if (q) setSearchQuery(q);
+    if (projId) {
+      const match = GRADUATION_PROJECTS.find(
+        (p) => p.id === projId || p.campus === projId || p.id.toLowerCase().includes(projId.toLowerCase())
+      );
+      if (match) setSelectedProject(match);
+    }
+  }, []);
+
+  // Keep browser URL updated with current filters and selected ceremony
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+    if (activeYear && activeYear !== 'All') {
+      url.searchParams.set('year', activeYear);
+    } else {
+      url.searchParams.delete('year');
+    }
+    if (selectedProject) {
+      url.searchParams.set('project', selectedProject.id);
+    } else {
+      url.searchParams.delete('project');
+    }
+    const newPath = url.pathname + (url.searchParams.toString() ? '?' + url.searchParams.toString() : '');
+    if (window.location.pathname + window.location.search !== newPath) {
+      window.history.replaceState(null, '', newPath);
+    }
+  }, [activeYear, selectedProject]);
+
+  const handleCopyLink = () => {
+    if (typeof window === 'undefined') return;
+    const url = selectedProject
+      ? `${window.location.origin}/graduation-portfolio?project=${selectedProject.id}`
+      : `${window.location.origin}/graduation-portfolio${activeYear !== 'All' ? `?year=${activeYear}` : ''}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   // Filter projects based on Year and Search query
   const filteredProjects = useMemo(() => {
@@ -688,14 +769,24 @@ export default function GraduationPortfolioPage() {
                     <span className="modal-year-badge">{modalProject.year}</span>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleCloseModal}
-                  className="modal-close-btn"
-                  aria-label="Close modal"
-                >
-                  ✕
-                </button>
+                <div className="modal-header-actions">
+                  <button
+                    type="button"
+                    onClick={handleCopyLink}
+                    className="modal-share-btn"
+                    title="Copy direct link to this ceremony"
+                  >
+                    {copied ? '✓ Link Copied' : '🔗 Share Link'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCloseModal}
+                    className="modal-close-btn"
+                    aria-label="Close modal"
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
 
               {/* Modal Content */}

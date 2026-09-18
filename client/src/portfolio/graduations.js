@@ -7,12 +7,16 @@ const CAMPUS_META = {
   dubai: { name: 'HCT Dubai', locationByYear: { 2025: 'Grand Hyatt Dubai', 2024: 'Coca-Cola Arena, Dubai' } },
   fujairah: { name: 'HCT Fujairah', locationByYear: { 2025: 'Zayed Sports Complex, Fujairah', 2024: 'Fujairah, UAE' } },
   'ras-al-khaimah': { name: 'HCT Ras Al Khaimah', location: 'HCT RAK Campus, Ras Al Khaimah' },
-  sharjah: { name: 'HCT Sharjah', location: 'University City Hall, Sharjah' },
-  'rak-aa': { name: 'RAK American Academy', location: 'Ras Al Khaimah' },
+  'sharjah': { name: 'HCT Sharjah', location: 'University City Hall, Sharjah' },
+  'rak-aa': { name: 'Ras Al Khaimah American Academy (RAAK)', location: 'Ras Al Khaimah' },
+  fu: { name: 'University of Fujairah (FU)', location: 'Fujairah, UAE' },
   'hct-graduation': { name: 'HCT Graduation Ceremonies', location: 'Dubai ExpoCity Exhibition Center' },
 };
 
 const GRAD_FACTS = {
+  'fu|2026': { venue: 'Fujairah University Grand Hall', graduates: 'Class of 2026', guests: '2,500' },
+  'rak-aa|2026': { venue: 'RAK American Academy Auditorium', graduates: 'Class of 2026', guests: '1,200' },
+  'rak-aa|2025': { venue: 'RAK American Academy Auditorium', graduates: '60', guests: '1,200' },
   'abu-dhabi|2025': { venue: 'ADNEC Halls, Abu Dhabi', graduates: '1,668', guests: '5,000' },
   'abu-dhabi|2024': { venue: 'ADNEC Halls, Abu Dhabi', graduates: '1,500', guests: '4,500' },
   'dubai|2025': { venue: 'Grand Hyatt Dubai', graduates: '602', guests: '2,200' },
@@ -23,12 +27,13 @@ const GRAD_FACTS = {
   'ras-al-khaimah|2024': { venue: 'RAK Campus Sports Hall', graduates: '480', guests: '1,600' },
   'sharjah|2025': { venue: 'University City Hall, Sharjah', graduates: '937 (2 sessions)', guests: '3,000' },
   'sharjah|2024': { venue: 'University City Hall, Sharjah', graduates: '820', guests: '2,500' },
-  'rak-aa|2025': { venue: 'RAK American Academy Auditorium', graduates: '60', guests: '1,200' },
   'hct-graduation|2021': { venue: 'Dubai ExpoCity Exhibition Center', graduates: 'N/A', guests: 'N/A' },
 };
 
 function campusKeyFor(folder) {
   const norm = folder.toLowerCase().trim();
+  if (norm.includes('fujairah university') || norm.includes('university of fujairah') || norm === 'fu' || norm.includes('fu-grad')) return 'fu';
+  if (norm.includes('rak aa') || norm.includes('american academy') || norm.includes('raak')) return 'rak-aa';
   if (norm.includes('abu dhabi') || norm === 'aud') return 'abu-dhabi';
   if (norm.includes('dubai') || norm === 'dxb' || norm.includes('coca')) return 'dubai';
   if (norm.includes('fujairah')) return 'fujairah';

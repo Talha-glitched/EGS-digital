@@ -1531,6 +1531,37 @@
   text-align: left;
 }
 
+.pf-viewer-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.pf-viewer-share {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 100px;
+  background: rgba(245, 241, 234, 0.12);
+  border: 1px solid rgba(245, 241, 234, 0.25);
+  color: var(--paper);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  backdrop-filter: blur(10px);
+}
+
+.pf-viewer-share:hover {
+  background: rgba(245, 241, 234, 0.24);
+  border-color: rgba(245, 241, 234, 0.5);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
 .pf-viewer-close {
   font-size: 22px;
   line-height: 1;

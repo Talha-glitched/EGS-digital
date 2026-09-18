@@ -520,6 +520,36 @@
   border-radius: 100px;
 }
 
+.modal-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.modal-share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 100px;
+  background: rgba(245, 241, 234, 0.08);
+  border: 1px solid rgba(245, 241, 234, 0.22);
+  color: var(--paper);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.modal-share-btn:hover {
+  background: rgba(245, 241, 234, 0.18);
+  border-color: rgba(245, 241, 234, 0.45);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
 .modal-close-btn {
   display: flex;
   align-items: center;

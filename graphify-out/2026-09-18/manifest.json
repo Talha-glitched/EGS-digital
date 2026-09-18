@@ -35,8 +35,8 @@
     "semantic_hash": "750a8bca3b71129f6155ce7a0667ae42"
   },
   "client/src/App.jsx": {
-    "mtime": 1787752544.6306803,
-    "ast_hash": "2e677d04866543bf78261ea48cdee00a",
+    "mtime": 1789365461.850631,
+    "ast_hash": "415e5d936b157ec197a8d722caa6e869",
     "semantic_hash": ""
   },
   "client/src/admin/crm/CrmApp.jsx": {
@@ -900,13 +900,13 @@
     "semantic_hash": "024cdeb3ba7a4123f244543be7c8d30e"
   },
   "client/src/components/Footer.jsx": {
-    "mtime": 1787753628.0094938,
-    "ast_hash": "a5b7208357ce23942843415148be23cb",
+    "mtime": 1789368060.7320254,
+    "ast_hash": "fc4844821df19304474896f3e4a0e98a",
     "semantic_hash": ""
   },
   "client/src/components/HomeHero.jsx": {
-    "mtime": 1789133252.4164195,
-    "ast_hash": "361fc17b63eef0d1c7c4ce9c70e532c8",
+    "mtime": 1789365476.0303376,
+    "ast_hash": "c5053ac9afded28ccbceaa905f35c343",
     "semantic_hash": ""
   },
   "client/src/components/Navbar.jsx": {
@@ -920,9 +920,9 @@
     "semantic_hash": "c29e9319d41bede697d9846fc87fed13"
   },
   "client/src/components/StickyProcessShowcase.jsx": {
-    "mtime": 1781652271.770051,
-    "ast_hash": "2e95db0c2239da8fb584435c85c6df70",
-    "semantic_hash": "2e95db0c2239da8fb584435c85c6df70"
+    "mtime": 1789365348.7905736,
+    "ast_hash": "d0f9181dd8d892d0996ac0ab5799911b",
+    "semantic_hash": ""
   },
   "client/src/components/exhibitions/ExhibitionsAdaptationSection.jsx": {
     "mtime": 1781095696.4096847,
@@ -1075,18 +1075,18 @@
     "semantic_hash": "cbb3b6c18220ec9787276bc78354987e"
   },
   "client/src/pages/CaseStudiesPage.jsx": {
-    "mtime": 1789136837.4000435,
-    "ast_hash": "9c29972489ed7f2bba4b8427e77c34ed",
+    "mtime": 1789358398.946099,
+    "ast_hash": "5d4a76327b723750b1132282cd6a8f87",
     "semantic_hash": ""
   },
   "client/src/pages/EventsPage.jsx": {
-    "mtime": 1789133277.5240233,
-    "ast_hash": "fba08fa29e0e04d2e32163c174e67d6e",
+    "mtime": 1789367564.345881,
+    "ast_hash": "856b2cac74d84fec6ea34749636fa8c2",
     "semantic_hash": ""
   },
   "client/src/pages/ExhibitionsPage.jsx": {
-    "mtime": 1787752326.59459,
-    "ast_hash": "ed88132a27314a268d3b954354640fdd",
+    "mtime": 1789367593.702855,
+    "ast_hash": "ff284efff5f7c5fa1f81f0ef81e1f420",
     "semantic_hash": ""
   },
   "client/src/pages/FitoutsPage.jsx": {
@@ -1095,8 +1095,8 @@
     "semantic_hash": ""
   },
   "client/src/pages/GraduationPortfolioPage.jsx": {
-    "mtime": 1789133229.0923,
-    "ast_hash": "d593841411996ef958a4a4d25474a7e9",
+    "mtime": 1789724869.9101155,
+    "ast_hash": "c67bc3a24911e08b729989dd09cd74e0",
     "semantic_hash": ""
   },
   "client/src/pages/HctCaseStudyPage.jsx": {
@@ -1110,28 +1110,28 @@
     "semantic_hash": ""
   },
   "client/src/pages/PortfolioFablePage.jsx": {
-    "mtime": 1789133335.7884686,
-    "ast_hash": "11fc5be7948886f03ffe282f18b9452c",
+    "mtime": 1789726024.9832394,
+    "ast_hash": "750182ef8b1826650b08628cc2481735",
     "semantic_hash": ""
   },
   "client/src/pages/RetailPage.jsx": {
-    "mtime": 1787752367.7847838,
-    "ast_hash": "53d99d51086fd766db0f0fee2a65f9b3",
+    "mtime": 1789367543.3822405,
+    "ast_hash": "4112c474d32f02008f986f0ad00723a6",
     "semantic_hash": ""
   },
   "client/src/pages/SiteChrome.jsx": {
-    "mtime": 1787753328.2806714,
-    "ast_hash": "8283b50e38f87a180af2779c88d71fee",
+    "mtime": 1789358460.071083,
+    "ast_hash": "8cf49f30753fdeb41efda2b69dd781c0",
     "semantic_hash": ""
   },
   "client/src/pages/index.js": {
-    "mtime": 1787752532.6931748,
-    "ast_hash": "844ec608deaaf7b43f32f8fbf2080c6b",
+    "mtime": 1789358267.4401534,
+    "ast_hash": "2a48fb47ec418273353307024d6c992d",
     "semantic_hash": ""
   },
   "client/src/pages/siteData.js": {
-    "mtime": 1789133401.4420743,
-    "ast_hash": "12e46d0d7ebaaa07b46f8a5ad0197e4d",
+    "mtime": 1789365363.0782032,
+    "ast_hash": "996f68a972f5f1b66071aef21b405658",
     "semantic_hash": ""
   },
   "client/src/portfolio/buildIndex.js": {
@@ -1150,14 +1150,14 @@
     "semantic_hash": "79cb203f462fb97ab2ef025b82c71e2c"
   },
   "client/src/portfolio/graduations.js": {
-    "mtime": 1789133155.2445323,
-    "ast_hash": "30261eaf9d22523a2de416f4045c441d",
+    "mtime": 1789718381.0891438,
+    "ast_hash": "84ab50c0a16b60a34d0eb3e133d13b29",
     "semantic_hash": ""
   },
   "client/src/portfolio/media.js": {
-    "mtime": 1781629980.9198964,
-    "ast_hash": "72681d009a2b3d398533787397066565",
-    "semantic_hash": "72681d009a2b3d398533787397066565"
+    "mtime": 1789714143.2585585,
+    "ast_hash": "dfa4d1ebffd6c2b2d0ec65a399076eb0",
+    "semantic_hash": ""
   },
   "client/src/portfolio/projectRules.js": {
     "mtime": 1781798619.0761037,
@@ -1170,23 +1170,23 @@
     "semantic_hash": "a5db9b079188c72f0ea46945815ee7e8"
   },
   "client/src/portfolio/shortlist.js": {
-    "mtime": 1789133518.5936549,
-    "ast_hash": "8da335328524ade69e2a63e11d3eb3eb",
+    "mtime": 1789714191.0382159,
+    "ast_hash": "53b0874db0f47009b6441cf1e640886f",
     "semantic_hash": ""
   },
   "client/src/utils/contactInquiry.js": {
-    "mtime": 1781095696.4447756,
-    "ast_hash": "3ec75685a1361b8fa832d8be90820686",
-    "semantic_hash": "3ec75685a1361b8fa832d8be90820686"
+    "mtime": 1789357888.2375503,
+    "ast_hash": "e1bb4b791a12685325cc1722e56c79ac",
+    "semantic_hash": ""
   },
   "client/vercel.json": {
-    "mtime": 1789133016.8053844,
-    "ast_hash": "786d85720997bf044c1812200b862b28",
+    "mtime": 1789365523.7043014,
+    "ast_hash": "7d6b43ee318b5ac1b6027fb4b3be446f",
     "semantic_hash": ""
   },
   "client/vite.config.js": {
-    "mtime": 1786192165.4688964,
-    "ast_hash": "28af21c8236e68ede3832a64198838bc",
+    "mtime": 1789714334.1970475,
+    "ast_hash": "e480fd050519eaa9cc37f908759b4fdc",
     "semantic_hash": ""
   },
   "package.json": {
@@ -2035,8 +2035,8 @@
     "semantic_hash": "715a60f3ba633035f09aa03ed7502bab"
   },
   "server/src/app.js": {
-    "mtime": 1789132982.7188628,
-    "ast_hash": "87f3a4dcd1e7e5077b914dd157b34aef",
+    "mtime": 1789714322.1629481,
+    "ast_hash": "1ea036a4972abec23788a1f5840b2186",
     "semantic_hash": ""
   },
   "server/src/constants/interactionTypes.js": {
@@ -2500,8 +2500,8 @@
     "semantic_hash": "6f575f3e4354e99f4de1183418f8aae4"
   },
   "vercel.json": {
-    "mtime": 1789133029.594781,
-    "ast_hash": "da8250c0d5ae8cfa60e2923a82801b42",
+    "mtime": 1789714309.4409444,
+    "ast_hash": "dad4b1c548154612aceaa32958d334f0",
     "semantic_hash": ""
   },
   ".claude/launch.json": {
@@ -2660,8 +2660,8 @@
     "semantic_hash": ""
   },
   "client/index.html": {
-    "mtime": 1788090777.3756163,
-    "ast_hash": "2efcd7ed1aaa70c64dc82c739810b9b7",
+    "mtime": 1789714295.7584877,
+    "ast_hash": "5ab822796f41e7407cd50f8adfb01916",
     "semantic_hash": ""
   },
   "client/public/googleb9378e737f302227.html": {
@@ -3465,8 +3465,8 @@
     "semantic_hash": ""
   },
   "client/scripts/prerender.js": {
-    "mtime": 1787754616.4053402,
-    "ast_hash": "6f9529ae4eb365907b6bb57b7a2b7880",
+    "mtime": 1789367434.7741616,
+    "ast_hash": "2cad9496b21f1ab4e5dd6293786cb61a",
     "semantic_hash": ""
   },
   "client/src/admin/crm/components/sequences/EmailPreviewModal.jsx": {
@@ -3515,8 +3515,8 @@
     "semantic_hash": ""
   },
   "client/src/pages/ArabHealthExhibitionStandsPage.jsx": {
-    "mtime": 1787752498.239903,
-    "ast_hash": "5608278237d20ea27c7c4c925f97d740",
+    "mtime": 1789362853.998465,
+    "ast_hash": "2b0f66ecf2189dab66382c41baf35666",
     "semantic_hash": ""
   },
   "client/src/pages/CustomExhibitionStandsDubaiPage.jsx": {
@@ -3560,8 +3560,8 @@
     "semantic_hash": ""
   },
   "client/src/pages/GitexExhibitionStandsPage.jsx": {
-    "mtime": 1787752491.0182168,
-    "ast_hash": "4aa5cbdb572e996ee1c76a5ba29a008e",
+    "mtime": 1789365389.6075222,
+    "ast_hash": "2c01cf5af10f6372a9f3b851cc4dbfa2",
     "semantic_hash": ""
   },
   "client/src/pages/GraduationStageSetupUaePage.jsx": {
@@ -3570,8 +3570,8 @@
     "semantic_hash": ""
   },
   "client/src/pages/GulfoodExhibitionStandsPage.jsx": {
-    "mtime": 1787752506.1338487,
-    "ast_hash": "789e4ff871d26b5056d49955abdd2789",
+    "mtime": 1789365377.0788329,
+    "ast_hash": "ccb817ffd0e7dc2b7adaa3639a8eb96a",
     "semantic_hash": ""
   },
   "client/src/pages/OffersPage.jsx": {
@@ -3725,8 +3725,8 @@
     "semantic_hash": ""
   },
   "client/src/portfolio/data/graduationManifest.json": {
-    "mtime": 1789133085.8722014,
-    "ast_hash": "016d8e2b84a1290b0489a24074af6995",
+    "mtime": 1789718332.443707,
+    "ast_hash": "1e652fba3f194a0188aceafcd075afbc",
     "semantic_hash": ""
   },
   "client/src/portfolio/data/shortlistManifest.json": {
@@ -3762,6 +3762,271 @@
   "graphify-out/converted/Watches and Jewellery Expo 57th edition 2026_dd165515.md": {
     "mtime": 1789133846.0750084,
     "ast_hash": "cda0e5c08aba1f3df862629233656b9e",
+    "semantic_hash": ""
+  },
+  "client/src/components/events/EventHero.jsx": {
+    "mtime": 1789365870.6630044,
+    "ast_hash": "7b0194a86877209bd162b6bb5b73e9d4",
+    "semantic_hash": ""
+  },
+  "client/src/config/seoManifest.js": {
+    "mtime": 1789358318.328899,
+    "ast_hash": "e51cd29b3616891b1a452ceac0ca7e8a",
+    "semantic_hash": ""
+  },
+  "client/src/data/blogArticlesData.js": {
+    "mtime": 1789358049.4662132,
+    "ast_hash": "25099576b029f786f3aea8417967c444",
+    "semantic_hash": ""
+  },
+  "client/src/data/caseStudiesData.js": {
+    "mtime": 1789358235.5644526,
+    "ast_hash": "8883ee7fadc1fdeb23284ab8e99e833f",
+    "semantic_hash": ""
+  },
+  "client/src/pages/BlogDetailPage.jsx": {
+    "mtime": 1789359393.953105,
+    "ast_hash": "0ca20dd40224a468003f7e5bf6a84767",
+    "semantic_hash": ""
+  },
+  "client/src/pages/BlogHubPage.jsx": {
+    "mtime": 1789359409.2057858,
+    "ast_hash": "a3e61546baa68ce832028f733778fc5c",
+    "semantic_hash": ""
+  },
+  "client/src/pages/CaseStudyDetailPage.jsx": {
+    "mtime": 1789359433.829259,
+    "ast_hash": "73695b731b2ed20787bd5cdc4e708850",
+    "semantic_hash": ""
+  },
+  "client/src/pages/GraduationYearPage.jsx": {
+    "mtime": 1789359460.0314138,
+    "ast_hash": "48a344d4a0dfa9a71eea63e5e806f70d",
+    "semantic_hash": ""
+  },
+  "client/src/pages/events/AdipecStandContractorPage.jsx": {
+    "mtime": 1789363034.771312,
+    "ast_hash": "a84bf3deb822e93c3ca3b468fb2cecce",
+    "semantic_hash": ""
+  },
+  "client/src/pages/events/Big5ExhibitionStandsPage.jsx": {
+    "mtime": 1789363050.309813,
+    "ast_hash": "9a45120d4ae311bff181c03f45e3100d",
+    "semantic_hash": ""
+  },
+  "client/src/pages/venues/AdnecStandBuilderPage.jsx": {
+    "mtime": 1789359650.7141137,
+    "ast_hash": "7b17b7dacfd8df70ab89af0b72d1baa7",
+    "semantic_hash": ""
+  },
+  "client/src/pages/venues/DecStandBuilderPage.jsx": {
+    "mtime": 1789359660.052206,
+    "ast_hash": "7ab42c36f1fb448971157c82852fe15f",
+    "semantic_hash": ""
+  },
+  "client/src/pages/venues/DwtcStandBuilderPage.jsx": {
+    "mtime": 1789359633.97956,
+    "ast_hash": "aac94d3d344c5f9a17da184c30b0889a",
+    "semantic_hash": ""
+  },
+  "EGS_SEO_Agent_Action_Plan.md": {
+    "mtime": 1789356932.0553906,
+    "ast_hash": "367cd1b0db150d97bd7a838aad36b995",
+    "semantic_hash": ""
+  },
+  "graphify-out/converted/Final 6 Offers_ff52531a.md": {
+    "mtime": 1789714451.2494917,
+    "ast_hash": "81bde37004389e7cc696c2e801bcef8e",
+    "semantic_hash": ""
+  },
+  "client/public/media/graduation/2021-hero.jpg": {
+    "mtime": 1781095650.8488314,
+    "ast_hash": "a6e1f05debd69dd3f278b791186430c8",
+    "semantic_hash": ""
+  },
+  "client/public/media/graduation/ADGRAD1.jpg": {
+    "mtime": 1781098331.6373043,
+    "ast_hash": "9318826cd730ca026f829b433c35801c",
+    "semantic_hash": ""
+  },
+  "client/public/media/graduation/ADGRAD2.jpg": {
+    "mtime": 1781098331.6401246,
+    "ast_hash": "a56a49bf877a82a70929bcc045b69c3a",
+    "semantic_hash": ""
+  },
+  "client/public/media/graduation/SHJ1.jpg": {
+    "mtime": 1781098331.6417542,
+    "ast_hash": "0ee9ec61455543f8a8265f987e01f300",
+    "semantic_hash": ""
+  },
+  "client/public/media/graduation/SHJ2.jpg": {
+    "mtime": 1781098331.64337,
+    "ast_hash": "1a58ea6f738968ba04328d66d195de9b",
+    "semantic_hash": ""
+  },
+  "client/public/media/graduation/SHJ3.jpg": {
+    "mtime": 1781098331.6451108,
+    "ast_hash": "c9e3afac054f37c49187f10f366f15a8",
+    "semantic_hash": ""
+  },
+  "client/public/media/graduation/operation.jpeg": {
+    "mtime": 1781098331.6482358,
+    "ast_hash": "3fa5529737483219996a5b6cf8ab4604",
+    "semantic_hash": ""
+  },
+  "client/public/media/site/HCT.jpeg": {
+    "mtime": 1781095696.1574118,
+    "ast_hash": "85abe27a2a3de1faedbf2cdf7320619a",
+    "semantic_hash": ""
+  },
+  "client/public/media/site/HCT.webp": {
+    "mtime": 1789365314.7936025,
+    "ast_hash": "27e3c3295528e0f99e0df537d48dc3f2",
+    "semantic_hash": ""
+  },
+  "client/public/media/site/hct-fitout.jpeg": {
+    "mtime": 1781095696.3157074,
+    "ast_hash": "8706f4d4791b7c8ed619648057c59f4c",
+    "semantic_hash": ""
+  },
+  "client/public/media/site/roast-retail.jpeg": {
+    "mtime": 1781095696.3986776,
+    "ast_hash": "f73482b81844cf521f081da6fc8e0405",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/AUS-CAA.webp": {
+    "mtime": 1789365314.0041642,
+    "ast_hash": "a2d1465196ef30c9e82fb72aa1f73e01",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/HCT1.webp": {
+    "mtime": 1789365314.4013417,
+    "ast_hash": "27e3c3295528e0f99e0df537d48dc3f2",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/Kazakhstan_Pavillion.webp": {
+    "mtime": 1789365312.2529163,
+    "ast_hash": "1c5035caddb8b2bb2775a3abccefb34c",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/Microlink1.webp": {
+    "mtime": 1789365312.7367468,
+    "ast_hash": "c595a9bce6c9a51d9884be699551ca69",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/Philips_MRI.webp": {
+    "mtime": 1789365313.1828475,
+    "ast_hash": "9c304ec17e189ad0d935dc9b7ec99f42",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/Phillips_2-clean.webp": {
+    "mtime": 1789365311.2885754,
+    "ast_hash": "85e396ed9bd8a77d171d1106f19338bd",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/Phillips_2.webp": {
+    "mtime": 1789365313.6382074,
+    "ast_hash": "8fdb4d709f7ec574dc6e7b37ef999e70",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/drawing.webp": {
+    "mtime": 1789365310.472536,
+    "ast_hash": "e73468f457404d4052f2a7ac226f5900",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/drawing2.webp": {
+    "mtime": 1789365310.7980988,
+    "ast_hash": "020a77f8c2ef359afa637073cb851e88",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/healthtech.webp": {
+    "mtime": 1789365312.0141451,
+    "ast_hash": "3de597cbc88de50757a798d4f81b7ac1",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/hp1.webp": {
+    "mtime": 1789365311.7818933,
+    "ast_hash": "e7b7fac99eb22578a3b96bed8706c522",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Exhibition Stands/hp2.webp": {
+    "mtime": 1789365311.931145,
+    "ast_hash": "fd0bab94cb3cf7b45bd69f57b5092ee1",
+    "semantic_hash": ""
+  },
+  "client/src/assets/hct-fitout.webp": {
+    "mtime": 1789365315.1647823,
+    "ast_hash": "7a138115d82b33c233634f47bc55b2d1",
+    "semantic_hash": ""
+  },
+  "client/src/assets/hero.webp": {
+    "mtime": 1789365318.7370648,
+    "ast_hash": "1d718a7a6f9034eb163a9022c90a17b6",
+    "semantic_hash": ""
+  },
+  "client/src/assets/roast-retail.webp": {
+    "mtime": 1789365315.424193,
+    "ast_hash": "18816909edd4ccb1b1a72e19b40f9a92",
+    "semantic_hash": ""
+  },
+  "client/public/media/shortlist/1Exhibition Stand/Philips Arab Health 2021 EGS.mp4": {
+    "mtime": 1781626017.217213,
+    "ast_hash": "4f13d27659c3b0b57c1a5432b54ec626",
+    "semantic_hash": ""
+  },
+  "client/public/media/site/Rak-Edited.mp4": {
+    "mtime": 1781095696.2272046,
+    "ast_hash": "11a9def09a3259d15f648f246cb7d5be",
+    "semantic_hash": ""
+  },
+  "client/public/media/site/hctgraduation.mp4": {
+    "mtime": 1781095696.380679,
+    "ast_hash": "6a5fb2ee1be3d910dc5a47000082f791",
+    "semantic_hash": ""
+  },
+  "client/public/media/graduation/Websites Gallery Graduations/2026/RAK AA/(11).jpg": {
+    "mtime": 1781097704.3046803,
+    "ast_hash": "69f16e78a4e8a7bbbb8fa3ed93c2a69f",
+    "semantic_hash": ""
+  },
+  "client/public/media/graduation/Websites Gallery Graduations/2026/RAK AA/(16).jpg": {
+    "mtime": 1781097704.221447,
+    "ast_hash": "6da065ae36ac1b01bc51f3d7fcb05f85",
+    "semantic_hash": ""
+  },
+  "client/public/media/graduation/Websites Gallery Graduations/2026/RAK AA/(160).jpg": {
+    "mtime": 1781097704.2157826,
+    "ast_hash": "974734546edfd31837a51173959347ff",
+    "semantic_hash": ""
+  },
+  "client/public/media/graduation/Websites Gallery Graduations/2026/RAK AA/(162).jpg": {
+    "mtime": 1781097704.203252,
+    "ast_hash": "b2f731cba244d23d84d71cb40368f60f",
+    "semantic_hash": ""
+  },
+  "client/public/media/graduation/Websites Gallery Graduations/2026/RAK AA/(30).jpg": {
+    "mtime": 1781097704.6376832,
+    "ast_hash": "792844981007a82510680aff635152d6",
+    "semantic_hash": ""
+  },
+  "client/public/media/graduation/Websites Gallery Graduations/2026/RAK AA/(37).jpg": {
+    "mtime": 1781097704.209252,
+    "ast_hash": "957f9b79ac72943647576ef059f35d44",
+    "semantic_hash": ""
+  },
+  "client/public/media/graduation/Websites Gallery Graduations/2026/RAK AA/(51).jpg": {
+    "mtime": 1781097704.6429226,
+    "ast_hash": "e2c66ea653d1303d10ef19afab727dfa",
+    "semantic_hash": ""
+  },
+  "client/public/media/graduation/Websites Gallery Graduations/2026/RAK AA/Rak-2026.mp4": {
+    "mtime": 1789717422.1013978,
+    "ast_hash": "bc9a519df8a863a20d34d485f8cf67ab",
+    "semantic_hash": ""
+  },
+  "client/src/assets/Rak-2026.mp4": {
+    "mtime": 1789717422.1013978,
+    "ast_hash": "bc9a519df8a863a20d34d485f8cf67ab",
     "semantic_hash": ""
   }
 }

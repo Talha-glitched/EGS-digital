@@ -1896,8 +1896,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_analytics_campaignvendorperformancegrid_campaignvendorperformancegrid",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "campaignvendorperformancegrid()"
     },
     {
@@ -1908,7 +1908,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_analytics_coveragemetricsbanner",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "coveragemetricsbanner.jsx"
     },
     {
@@ -1920,7 +1920,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_analytics_coveragemetricsbanner_coveragemetricsbanner",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "coveragemetricsbanner()"
     },
     {
@@ -1932,7 +1932,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_analytics_coveragemetricsbanner_metriccard",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "metriccard()"
     },
     {
@@ -1976,8 +1976,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_common_formattedemailviewer",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 7,
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "formattedemailviewer.jsx"
     },
     {
@@ -1988,8 +1988,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_common_formattedemailviewer_striplatestsubjectprefix",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 7,
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "striplatestsubjectprefix()"
     },
     {
@@ -2000,8 +2000,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_common_formattedemailviewer_parseemailbodytooutlookhtml",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 7,
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "parseemailbodytooutlookhtml()"
     },
     {
@@ -2012,8 +2012,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_common_formattedemailviewer_formattedemailviewer",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 7,
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "formattedemailviewer()"
     },
     {
@@ -2023,8 +2023,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationjobmodal",
-      "community": 42,
-      "community_name": "cn",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "communicationjobmodal.jsx"
     },
     {
@@ -2034,8 +2034,8 @@
       "source_location": "L2",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationjobmodal_actions",
-      "community": 42,
-      "community_name": "cn",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "actions"
     },
     {
@@ -2046,8 +2046,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationjobmodal_localdue",
-      "community": 42,
-      "community_name": "cn",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "localdue()"
     },
     {
@@ -2058,8 +2058,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationjobmodal_stamp",
-      "community": 42,
-      "community_name": "cn",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "stamp()"
     },
     {
@@ -2070,8 +2070,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationjobmodal_communicationjobmodal",
-      "community": 42,
-      "community_name": "cn",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "communicationjobmodal()"
     },
     {
@@ -2082,7 +2082,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationsourcedrawer",
       "community": 7,
-      "community_name": "CompanyDetailsDrawer.jsx",
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "communicationsourcedrawer.jsx"
     },
     {
@@ -2094,7 +2094,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationsourcedrawer_when",
       "community": 7,
-      "community_name": "CompanyDetailsDrawer.jsx",
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "when()"
     },
     {
@@ -2106,7 +2106,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationsourcedrawer_communicationsourcedrawer",
       "community": 7,
-      "community_name": "CompanyDetailsDrawer.jsx",
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "communicationsourcedrawer()"
     },
     {
@@ -2117,7 +2117,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationsoverview",
       "community": 7,
-      "community_name": "CompanyDetailsDrawer.jsx",
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "communicationsoverview.jsx"
     },
     {
@@ -2129,7 +2129,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationsoverview_when",
       "community": 7,
-      "community_name": "CompanyDetailsDrawer.jsx",
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "when()"
     },
     {
@@ -2141,7 +2141,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationsoverview_messagerow",
       "community": 7,
-      "community_name": "CompanyDetailsDrawer.jsx",
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "messagerow()"
     },
     {
@@ -2153,7 +2153,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationsoverview_attentionrow",
       "community": 7,
-      "community_name": "CompanyDetailsDrawer.jsx",
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "attentionrow()"
     },
     {
@@ -2165,7 +2165,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationsoverview_communicationsoverview",
       "community": 7,
-      "community_name": "CompanyDetailsDrawer.jsx",
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "communicationsoverview()"
     },
     {
@@ -2177,7 +2177,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_communicationsoverview_linkedcommunicationsworkspace",
       "community": 7,
-      "community_name": "CompanyDetailsDrawer.jsx",
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "linkedcommunicationsworkspace()"
     },
     {
@@ -2188,7 +2188,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_replyreviewmodal",
       "community": 7,
-      "community_name": "CompanyDetailsDrawer.jsx",
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "replyreviewmodal.jsx"
     },
     {
@@ -2199,7 +2199,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_replyreviewmodal_outcomes",
       "community": 7,
-      "community_name": "CompanyDetailsDrawer.jsx",
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "outcomes"
     },
     {
@@ -2210,7 +2210,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_replyreviewmodal_active",
       "community": 7,
-      "community_name": "CompanyDetailsDrawer.jsx",
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "active"
     },
     {
@@ -2222,7 +2222,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_replyreviewmodal_tomorrowatten",
       "community": 7,
-      "community_name": "CompanyDetailsDrawer.jsx",
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "tomorrowatten()"
     },
     {
@@ -2234,7 +2234,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_communications_replyreviewmodal_replyreviewmodal",
       "community": 7,
-      "community_name": "CompanyDetailsDrawer.jsx",
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "replyreviewmodal()"
     },
     {
@@ -2336,8 +2336,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_employees_employeecreatemodal",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "employeecreatemodal.jsx"
     },
     {
@@ -2347,8 +2347,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_employees_employeecreatemodal_employment_labels",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "employment_labels"
     },
     {
@@ -2359,8 +2359,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_employees_employeecreatemodal_generatepassword",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "generatepassword()"
     },
     {
@@ -2370,8 +2370,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_employees_employeecreatemodal_initial",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "initial"
     },
     {
@@ -2382,8 +2382,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_employees_employeecreatemodal_employeecreatemodal",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "employeecreatemodal()"
     },
     {
@@ -2393,8 +2393,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_employees_employeeusersyncmodal",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "employeeusersyncmodal.jsx"
     },
     {
@@ -2405,8 +2405,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_employees_employeeusersyncmodal_employeeusersyncmodal",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "employeeusersyncmodal()"
     },
     {
@@ -2474,8 +2474,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobactivationmodal",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "jobactivationmodal.jsx"
     },
     {
@@ -2485,8 +2485,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobactivationmodal_steps",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "steps"
     },
     {
@@ -2497,8 +2497,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobactivationmodal_today",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "today()"
     },
     {
@@ -2509,8 +2509,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobactivationmodal_scheduled",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "scheduled()"
     },
     {
@@ -2521,8 +2521,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobactivationmodal_when",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "when()"
     },
     {
@@ -2533,8 +2533,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobactivationmodal_daylabel",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "daylabel()"
     },
     {
@@ -2545,8 +2545,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobactivationmodal_jobactivationmodal",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "jobactivationmodal()"
     },
     {
@@ -2557,7 +2557,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobartifactspanel",
       "community": 7,
-      "community_name": "CompanyDetailsDrawer.jsx",
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "jobartifactspanel.jsx"
     },
     {
@@ -2568,7 +2568,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobartifactspanel_decision_labels",
       "community": 7,
-      "community_name": "CompanyDetailsDrawer.jsx",
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "decision_labels"
     },
     {
@@ -2580,7 +2580,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobartifactspanel_when",
       "community": 7,
-      "community_name": "CompanyDetailsDrawer.jsx",
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "when()"
     },
     {
@@ -2592,7 +2592,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobartifactspanel_decisioncomposer",
       "community": 7,
-      "community_name": "CompanyDetailsDrawer.jsx",
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "decisioncomposer()"
     },
     {
@@ -2604,7 +2604,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobartifactspanel_versioncard",
       "community": 7,
-      "community_name": "CompanyDetailsDrawer.jsx",
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "versioncard()"
     },
     {
@@ -2616,7 +2616,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobartifactspanel_versionupload",
       "community": 7,
-      "community_name": "CompanyDetailsDrawer.jsx",
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "versionupload()"
     },
     {
@@ -2628,7 +2628,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobartifactspanel_jobartifactspanel",
       "community": 7,
-      "community_name": "CompanyDetailsDrawer.jsx",
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "jobartifactspanel()"
     },
     {
@@ -2638,8 +2638,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobcloseoutpanel",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 257,
+      "community_name": "InventoryPage.jsx",
       "norm_label": "jobcloseoutpanel.jsx"
     },
     {
@@ -2649,8 +2649,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobcloseoutpanel_evidence_labels",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 257,
+      "community_name": "InventoryPage.jsx",
       "norm_label": "evidence_labels"
     },
     {
@@ -2660,8 +2660,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobcloseoutpanel_status_labels",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 257,
+      "community_name": "InventoryPage.jsx",
       "norm_label": "status_labels"
     },
     {
@@ -2672,8 +2672,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobcloseoutpanel_localinput",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 257,
+      "community_name": "InventoryPage.jsx",
       "norm_label": "localinput()"
     },
     {
@@ -2684,8 +2684,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobcloseoutpanel_when",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 257,
+      "community_name": "InventoryPage.jsx",
       "norm_label": "when()"
     },
     {
@@ -2696,8 +2696,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_jobs_jobcloseoutpanel_jobcloseoutpanel",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 257,
+      "community_name": "InventoryPage.jsx",
       "norm_label": "jobcloseoutpanel()"
     },
     {
@@ -2905,8 +2905,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_addcompanymodal",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "addcompanymodal.jsx"
     },
     {
@@ -2916,8 +2916,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_addcompanymodal_empty",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "empty"
     },
     {
@@ -2928,8 +2928,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_addcompanymodal_addcompanymodal",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "addcompanymodal()"
     },
     {
@@ -2939,8 +2939,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_addcontactmodal",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "addcontactmodal.jsx"
     },
     {
@@ -2950,8 +2950,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_addcontactmodal_empty",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "empty"
     },
     {
@@ -2962,8 +2962,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_addcontactmodal_addcontactmodal",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "addcontactmodal()"
     },
     {
@@ -2973,7 +2973,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_companydetailsdrawer",
-      "community": 7,
+      "community": 96,
       "community_name": "CompanyDetailsDrawer.jsx",
       "norm_label": "companydetailsdrawer.jsx"
     },
@@ -2984,7 +2984,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_companydetailsdrawer_active_job_stages",
-      "community": 7,
+      "community": 96,
       "community_name": "CompanyDetailsDrawer.jsx",
       "norm_label": "active_job_stages"
     },
@@ -2995,7 +2995,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_companydetailsdrawer_status_tone",
-      "community": 7,
+      "community": 96,
       "community_name": "CompanyDetailsDrawer.jsx",
       "norm_label": "status_tone"
     },
@@ -3007,7 +3007,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_companydetailsdrawer_when",
-      "community": 7,
+      "community": 96,
       "community_name": "CompanyDetailsDrawer.jsx",
       "norm_label": "when()"
     },
@@ -3019,7 +3019,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_companydetailsdrawer_money",
-      "community": 7,
+      "community": 96,
       "community_name": "CompanyDetailsDrawer.jsx",
       "norm_label": "money()"
     },
@@ -3031,7 +3031,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_companydetailsdrawer_initials",
-      "community": 7,
+      "community": 96,
       "community_name": "CompanyDetailsDrawer.jsx",
       "norm_label": "initials()"
     },
@@ -3043,7 +3043,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_companydetailsdrawer_summarycard",
-      "community": 7,
+      "community": 96,
       "community_name": "CompanyDetailsDrawer.jsx",
       "norm_label": "summarycard()"
     },
@@ -3055,7 +3055,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_companydetailsdrawer_companydetailsdrawer",
-      "community": 7,
+      "community": 96,
       "community_name": "CompanyDetailsDrawer.jsx",
       "norm_label": "companydetailsdrawer()"
     },
@@ -3067,7 +3067,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_companydetailsdrawer_peoplelist",
-      "community": 7,
+      "community": 96,
       "community_name": "CompanyDetailsDrawer.jsx",
       "norm_label": "peoplelist()"
     },
@@ -3079,7 +3079,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_companydetailsdrawer_joblist",
-      "community": 7,
+      "community": 96,
       "community_name": "CompanyDetailsDrawer.jsx",
       "norm_label": "joblist()"
     },
@@ -3090,8 +3090,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_contactfollowuptaskssection",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 7,
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "contactfollowuptaskssection.jsx"
     },
     {
@@ -3102,8 +3102,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_contactfollowuptaskssection_formfield",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 7,
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "formfield()"
     },
     {
@@ -3114,8 +3114,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_contactfollowuptaskssection_contactfollowuptaskssection",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 7,
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "contactfollowuptaskssection()"
     },
     {
@@ -3125,8 +3125,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_contactleadtaskssection",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 7,
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "contactleadtaskssection.jsx"
     },
     {
@@ -3137,8 +3137,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_contactleadtaskssection_formfield",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 7,
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "formfield()"
     },
     {
@@ -3148,8 +3148,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_contactleadtaskssection_human_outcomes",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 7,
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "human_outcomes"
     },
     {
@@ -3159,8 +3159,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_contactleadtaskssection_channel_options",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 7,
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "channel_options"
     },
     {
@@ -3171,8 +3171,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_contactleadtaskssection_contactleadtaskssection",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 7,
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "contactleadtaskssection()"
     },
     {
@@ -3182,8 +3182,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_contactunifiedfollowupssection",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 7,
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "contactunifiedfollowupssection.jsx"
     },
     {
@@ -3194,8 +3194,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_contactunifiedfollowupssection_contactunifiedfollowupssection",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 7,
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "contactunifiedfollowupssection()"
     },
     {
@@ -3205,8 +3205,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_drawercollapsible",
-      "community": 42,
-      "community_name": "cn",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "drawercollapsible.jsx"
     },
     {
@@ -3217,8 +3217,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_drawercollapsible_drawercollapsible",
-      "community": 42,
-      "community_name": "cn",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "drawercollapsible()"
     },
     {
@@ -3228,8 +3228,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_drawertabs",
-      "community": 42,
-      "community_name": "cn",
+      "community": 96,
+      "community_name": "CompanyDetailsDrawer.jsx",
       "norm_label": "drawertabs.jsx"
     },
     {
@@ -3240,8 +3240,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_drawertabs_drawertabs",
-      "community": 42,
-      "community_name": "cn",
+      "community": 96,
+      "community_name": "CompanyDetailsDrawer.jsx",
       "norm_label": "drawertabs()"
     },
     {
@@ -3402,8 +3402,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_leadtablecomponents",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "leadtablecomponents.jsx"
     },
     {
@@ -3413,8 +3413,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_leadtablecomponents_status_config",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "status_config"
     },
     {
@@ -3436,8 +3436,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_leadtablecomponents_channel_labels",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "channel_labels"
     },
     {
@@ -3459,8 +3459,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_leadtablecomponents_source_styles",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "source_styles"
     },
     {
@@ -3471,8 +3471,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_leads_leadtablecomponents_sourceattributionchips",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "sourceattributionchips()"
     },
     {
@@ -3996,7 +3996,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_campaignlaunchmonitormodal",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "campaignlaunchmonitormodal.jsx"
     },
     {
@@ -4008,7 +4008,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_campaignlaunchmonitormodal_formatdate",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "formatdate()"
     },
     {
@@ -4020,7 +4020,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_campaignlaunchmonitormodal_campaignlaunchmonitormodal",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "campaignlaunchmonitormodal()"
     },
     {
@@ -4030,7 +4030,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_campaignstagecontrol",
-      "community": 89,
+      "community": 44,
       "community_name": "ProjectDetailWorkspace.jsx",
       "norm_label": "campaignstagecontrol.jsx"
     },
@@ -4042,7 +4042,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_campaignstagecontrol_campaignstagecontrol",
-      "community": 89,
+      "community": 44,
       "community_name": "ProjectDetailWorkspace.jsx",
       "norm_label": "campaignstagecontrol()"
     },
@@ -4054,7 +4054,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_contactblendermodal",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "contactblendermodal.jsx"
     },
     {
@@ -4065,7 +4065,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_contactblendermodal_field_labels",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "field_labels"
     },
     {
@@ -4076,7 +4076,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_contactblendermodal_email_fields",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "email_fields"
     },
     {
@@ -4087,7 +4087,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_contactblendermodal_fallback_sources",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "fallback_sources"
     },
     {
@@ -4099,7 +4099,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_contactblendermodal_pickmapping",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "pickmapping()"
     },
     {
@@ -4110,7 +4110,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_contactblendermodal_contactblendermodal",
-      "community": 89,
+      "community": 44,
       "community_name": "ProjectDetailWorkspace.jsx",
       "norm_label": "contactblendermodal()"
     },
@@ -4122,7 +4122,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_exhibitorimportmodal",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "exhibitorimportmodal.jsx"
     },
     {
@@ -4133,7 +4133,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_exhibitorimportmodal_field_labels",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "field_labels"
     },
     {
@@ -4145,7 +4145,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_exhibitorimportmodal_pickmapping",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "pickmapping()"
     },
     {
@@ -4156,7 +4156,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_exhibitorimportmodal_exhibitorimportmodal",
-      "community": 89,
+      "community": 44,
       "community_name": "ProjectDetailWorkspace.jsx",
       "norm_label": "exhibitorimportmodal()"
     },
@@ -4226,7 +4226,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_projectperformancemodal",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "projectperformancemodal.jsx"
     },
     {
@@ -4238,7 +4238,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_projectperformancemodal_projectperformancemodal",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "projectperformancemodal()"
     },
     {
@@ -4250,7 +4250,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_projectperformancemodal_progressblock",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "progressblock()"
     },
     {
@@ -4260,8 +4260,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_projectresourcesmodal",
-      "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "projectresourcesmodal.jsx"
     },
     {
@@ -4271,8 +4271,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_projectresourcesmodal_exhibitor_prompt_text",
-      "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "exhibitor_prompt_text"
     },
     {
@@ -4282,8 +4282,8 @@
       "source_location": "L103",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_projectresourcesmodal_apollo_search_text",
-      "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "apollo_search_text"
     },
     {
@@ -4293,8 +4293,8 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_projectresourcesmodal_lusha_roles_included_text",
-      "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "lusha_roles_included_text"
     },
     {
@@ -4304,8 +4304,8 @@
       "source_location": "L190",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_projectresourcesmodal_lusha_roles_excluded_text",
-      "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "lusha_roles_excluded_text"
     },
     {
@@ -4315,8 +4315,8 @@
       "source_location": "L205",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_projectresourcesmodal_hunter_search_text",
-      "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "hunter_search_text"
     },
     {
@@ -4327,8 +4327,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_projectresourcesmodal_projectresourcesmodal",
-      "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "projectresourcesmodal()"
     },
     {
@@ -4339,8 +4339,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_projectresourcesmodal_resourcecard",
-      "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "resourcecard()"
     },
     {
@@ -4350,8 +4350,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_projectsequencemindmap",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "projectsequencemindmap.jsx"
     },
     {
@@ -4361,8 +4361,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_projectsequencemindmap_graduation_steps",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "graduation_steps"
     },
     {
@@ -4373,8 +4373,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_projectsequencemindmap_emptystep",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "emptystep()"
     },
     {
@@ -4385,8 +4385,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_projects_projectsequencemindmap_projectsequencemindmap",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "projectsequencemindmap()"
     },
     {
@@ -4396,8 +4396,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_resources_activityresourceplanningmodal",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "activityresourceplanningmodal.jsx"
     },
     {
@@ -4408,8 +4408,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_resources_activityresourceplanningmodal_hours",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "hours()"
     },
     {
@@ -4420,8 +4420,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_resources_activityresourceplanningmodal_activityresourceplanningmodal",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "activityresourceplanningmodal()"
     },
     {
@@ -4432,7 +4432,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sales_createongoingjobmodal",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "createongoingjobmodal.jsx"
     },
     {
@@ -4443,8 +4443,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sales_createongoingjobmodal_emptyform",
-      "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community": 96,
+      "community_name": "CompanyDetailsDrawer.jsx",
       "norm_label": "emptyform()"
     },
     {
@@ -4455,8 +4455,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sales_createongoingjobmodal_createongoingjobmodal",
-      "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community": 96,
+      "community_name": "CompanyDetailsDrawer.jsx",
       "norm_label": "createongoingjobmodal()"
     },
     {
@@ -4512,7 +4512,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sales_ongoingjobstageeditormodal",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "ongoingjobstageeditormodal.jsx"
     },
     {
@@ -4524,7 +4524,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sales_ongoingjobstageeditormodal_normalizestages",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "normalizestages()"
     },
     {
@@ -4536,7 +4536,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sales_ongoingjobstageeditormodal_ongoingjobstageeditormodal",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "ongoingjobstageeditormodal()"
     },
     {
@@ -4546,8 +4546,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sent_emailoutboxworkspace",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 86,
+      "community_name": "EmailOutboxWorkspace.jsx",
       "norm_label": "emailoutboxworkspace.jsx"
     },
     {
@@ -4557,8 +4557,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sent_emailoutboxworkspace_job_block_labels",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 86,
+      "community_name": "EmailOutboxWorkspace.jsx",
       "norm_label": "job_block_labels"
     },
     {
@@ -4568,8 +4568,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sent_emailoutboxworkspace_status_config",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 86,
+      "community_name": "EmailOutboxWorkspace.jsx",
       "norm_label": "status_config"
     },
     {
@@ -4580,8 +4580,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sent_emailoutboxworkspace_statusbadge",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 86,
+      "community_name": "EmailOutboxWorkspace.jsx",
       "norm_label": "statusbadge()"
     },
     {
@@ -4592,8 +4592,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sent_emailoutboxworkspace_formatlaunchdate",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 86,
+      "community_name": "EmailOutboxWorkspace.jsx",
       "norm_label": "formatlaunchdate()"
     },
     {
@@ -4604,8 +4604,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sent_emailoutboxworkspace_sleep",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 86,
+      "community_name": "EmailOutboxWorkspace.jsx",
       "norm_label": "sleep()"
     },
     {
@@ -4616,8 +4616,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sent_emailoutboxworkspace_batchjobtable",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 86,
+      "community_name": "EmailOutboxWorkspace.jsx",
       "norm_label": "batchjobtable()"
     },
     {
@@ -4628,8 +4628,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sent_emailoutboxworkspace_emailoutboxworkspace",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 86,
+      "community_name": "EmailOutboxWorkspace.jsx",
       "norm_label": "emailoutboxworkspace()"
     },
     {
@@ -4639,8 +4639,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sent_senddeliveryissuesworkspace",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "senddeliveryissuesworkspace.jsx"
     },
     {
@@ -4651,8 +4651,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sent_senddeliveryissuesworkspace_formatwhen",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "formatwhen()"
     },
     {
@@ -4663,8 +4663,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sent_senddeliveryissuesworkspace_severitytone",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "severitytone()"
     },
     {
@@ -4675,8 +4675,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sent_senddeliveryissuesworkspace_issuebadge",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "issuebadge()"
     },
     {
@@ -4687,8 +4687,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sent_senddeliveryissuesworkspace_deliveryissuedetail",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "deliveryissuedetail()"
     },
     {
@@ -4699,8 +4699,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sent_senddeliveryissuesworkspace_senddeliveryissuesworkspace",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "senddeliveryissuesworkspace()"
     },
     {
@@ -4711,8 +4711,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sent_senddeliveryissuesworkspace_sequencedeliveryalert",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "sequencedeliveryalert()"
     },
     {
@@ -4769,8 +4769,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_audiencepreviewmodal",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 62,
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "audiencepreviewmodal.jsx"
     },
     {
@@ -4780,8 +4780,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_audiencepreviewmodal_blocked_reason_labels",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 62,
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "blocked_reason_labels"
     },
     {
@@ -4792,8 +4792,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_audiencepreviewmodal_rowstatus",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 62,
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "rowstatus()"
     },
     {
@@ -4803,8 +4803,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_audiencepreviewmodal_tone_classes",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 62,
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "tone_classes"
     },
     {
@@ -4815,8 +4815,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_audiencepreviewmodal_audiencepreviewmodal",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 62,
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "audiencepreviewmodal()"
     },
     {
@@ -4826,8 +4826,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_campaignlistimportmodal",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 62,
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "campaignlistimportmodal.jsx"
     },
     {
@@ -4837,8 +4837,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_campaignlistimportmodal_hold_focus_states",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 62,
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "hold_focus_states"
     },
     {
@@ -4849,8 +4849,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_campaignlistimportmodal_isonhold",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 62,
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "isonhold()"
     },
     {
@@ -4860,8 +4860,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_campaignlistimportmodal_status_filters",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 62,
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "status_filters"
     },
     {
@@ -4872,8 +4872,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_campaignlistimportmodal_campaignlistimportmodal",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 62,
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "campaignlistimportmodal()"
     },
     {
@@ -4884,7 +4884,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_emailpreviewmodal",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "emailpreviewmodal.jsx"
     },
     {
@@ -4895,7 +4895,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_emailpreviewmodal_sample_personas",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "sample_personas"
     },
     {
@@ -4907,7 +4907,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_emailpreviewmodal_emailpreviewmodal",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "emailpreviewmodal()"
     },
     {
@@ -4918,7 +4918,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_emailtemplatepickermodal",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "emailtemplatepickermodal.jsx"
     },
     {
@@ -4930,7 +4930,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_emailtemplatepickermodal_emailtemplatepickermodal",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "emailtemplatepickermodal()"
     },
     {
@@ -4940,8 +4940,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_mailboxusagepopover",
-      "community": 42,
-      "community_name": "cn",
+      "community": 62,
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "mailboxusagepopover.jsx"
     },
     {
@@ -4952,8 +4952,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_mailboxusagepopover_mailboxusagepopover",
-      "community": 42,
-      "community_name": "cn",
+      "community": 62,
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "mailboxusagepopover()"
     },
     {
@@ -5011,7 +5011,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequenceinspector",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "sequenceinspector.jsx"
     },
     {
@@ -5022,7 +5022,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequenceinspector_condition_types",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "condition_types"
     },
     {
@@ -5034,7 +5034,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequenceinspector_compactfield",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "compactfield()"
     },
     {
@@ -5046,7 +5046,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequenceinspector_inspectorsection",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "inspectorsection()"
     },
     {
@@ -5057,8 +5057,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequenceinspector_sequenceinspector",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "sequenceinspector()"
     },
     {
@@ -5070,7 +5070,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequenceinspector_globalinspector",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "globalinspector()"
     },
     {
@@ -5082,7 +5082,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequenceinspector_audienceaddrow",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "audienceaddrow()"
     },
     {
@@ -5094,7 +5094,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequenceinspector_nodeinspector",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "nodeinspector()"
     },
     {
@@ -5152,7 +5152,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequencenodeeditormodal",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "sequencenodeeditormodal.jsx"
     },
     {
@@ -5163,7 +5163,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequencenodeeditormodal_condition_types",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "condition_types"
     },
     {
@@ -5174,7 +5174,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequencenodeeditormodal_branch_actions",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "branch_actions"
     },
     {
@@ -5186,7 +5186,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequencenodeeditormodal_editorfield",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "editorfield()"
     },
     {
@@ -5198,7 +5198,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequencenodeeditormodal_emaileditor",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "emaileditor()"
     },
     {
@@ -5210,7 +5210,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequencenodeeditormodal_waiteditor",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "waiteditor()"
     },
     {
@@ -5222,7 +5222,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequencenodeeditormodal_conditioneditor",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "conditioneditor()"
     },
     {
@@ -5233,7 +5233,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequencenodeeditormodal_node_meta",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "node_meta"
     },
     {
@@ -5255,8 +5255,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequencesidebar",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 86,
+      "community_name": "EmailOutboxWorkspace.jsx",
       "norm_label": "sequencesidebar.jsx"
     },
     {
@@ -5267,8 +5267,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequencesidebar_formatwhen",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 86,
+      "community_name": "EmailOutboxWorkspace.jsx",
       "norm_label": "formatwhen()"
     },
     {
@@ -5279,8 +5279,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequencesidebar_buildsequencemeta",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 86,
+      "community_name": "EmailOutboxWorkspace.jsx",
       "norm_label": "buildsequencemeta()"
     },
     {
@@ -5291,8 +5291,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequencesidebar_sequencesidebar",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 86,
+      "community_name": "EmailOutboxWorkspace.jsx",
       "norm_label": "sequencesidebar()"
     },
     {
@@ -5302,8 +5302,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequencestudio",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "sequencestudio.jsx"
     },
     {
@@ -5314,8 +5314,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequencestudio_buildaudienceparams",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "buildaudienceparams()"
     },
     {
@@ -5326,8 +5326,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequencestudio_sequencestudio",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "sequencestudio()"
     },
     {
@@ -5337,8 +5337,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequencestudiotoast",
-      "community": 42,
-      "community_name": "cn",
+      "community": 62,
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "sequencestudiotoast.jsx"
     },
     {
@@ -5348,8 +5348,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequencestudiotoast_tone_styles",
-      "community": 42,
-      "community_name": "cn",
+      "community": 62,
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "tone_styles"
     },
     {
@@ -5360,8 +5360,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequencestudiotoast_sequencestudiotoast",
-      "community": 42,
-      "community_name": "cn",
+      "community": 62,
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "sequencestudiotoast()"
     },
     {
@@ -5454,7 +5454,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_audiencebuilder",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "audiencebuilder.js"
     },
     {
@@ -5465,7 +5465,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_audiencebuilder_empty_audience",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "empty_audience"
     },
     {
@@ -5477,7 +5477,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_audiencebuilder_normalizecampaignid",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "normalizecampaignid()"
     },
     {
@@ -5489,7 +5489,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_audiencebuilder_audiencewithimportedcampaign",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "audiencewithimportedcampaign()"
     },
     {
@@ -5501,7 +5501,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_audiencebuilder_audiencetoapiparams",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "audiencetoapiparams()"
     },
     {
@@ -5513,7 +5513,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_audiencebuilder_buildaudiencesummary",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "buildaudiencesummary()"
     },
     {
@@ -5525,7 +5525,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_audiencebuilder_buildimportedlistlabels",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "buildimportedlistlabels()"
     },
     {
@@ -5702,8 +5702,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_sequenceflow_flowgraphfromstate",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "flowgraphfromstate()"
     },
     {
@@ -5893,8 +5893,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_usestudiotoast",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "usestudiotoast.js"
     },
     {
@@ -5905,8 +5905,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_sequences_usestudiotoast_usestudiotoast",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "usestudiotoast()"
     },
     {
@@ -6031,8 +6031,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_createusermodal",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "createusermodal.jsx"
     },
     {
@@ -6066,8 +6066,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_credentialresultmodal",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "credentialresultmodal.jsx"
     },
     {
@@ -6090,8 +6090,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_settings_credentialresultmodal_credentialrow",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "credentialrow()"
     },
     {
@@ -6457,8 +6457,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_tasks_taskdetailmodal",
-      "community": 18,
-      "community_name": "TasksPage.jsx",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "taskdetailmodal.jsx"
     },
     {
@@ -6468,8 +6468,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_tasks_taskdetailmodal_emptyform",
-      "community": 18,
-      "community_name": "TasksPage.jsx",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "emptyform"
     },
     {
@@ -6480,8 +6480,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_tasks_taskdetailmodal_taskdetailmodal",
-      "community": 18,
-      "community_name": "TasksPage.jsx",
+      "community": 96,
+      "community_name": "CompanyDetailsDrawer.jsx",
       "norm_label": "taskdetailmodal()"
     },
     {
@@ -6491,8 +6491,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_tasks_tasktable",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 18,
+      "community_name": "TasksPage.jsx",
       "norm_label": "tasktable.jsx"
     },
     {
@@ -6502,8 +6502,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_tasks_tasktable_none_option",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 18,
+      "community_name": "TasksPage.jsx",
       "norm_label": "none_option"
     },
     {
@@ -6513,8 +6513,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_tasks_tasktable_deadline_tone_styles",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 18,
+      "community_name": "TasksPage.jsx",
       "norm_label": "deadline_tone_styles"
     },
     {
@@ -6537,8 +6537,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_tasks_tasktable_tasktitlecell",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 18,
+      "community_name": "TasksPage.jsx",
       "norm_label": "tasktitlecell()"
     },
     {
@@ -6560,8 +6560,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_tasks_taskworkspacemodal",
-      "community": 18,
-      "community_name": "TasksPage.jsx",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "taskworkspacemodal.jsx"
     },
     {
@@ -6572,8 +6572,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_tasks_taskworkspacemodal_field",
-      "community": 18,
-      "community_name": "TasksPage.jsx",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "field()"
     },
     {
@@ -6583,8 +6583,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_tasks_taskworkspacemodal_empty_context",
-      "community": 18,
-      "community_name": "TasksPage.jsx",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "empty_context"
     },
     {
@@ -7144,7 +7144,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_drawerloadingskeleton",
-      "community": 7,
+      "community": 96,
       "community_name": "CompanyDetailsDrawer.jsx",
       "norm_label": "drawerloadingskeleton.jsx"
     },
@@ -7156,7 +7156,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_drawerloadingskeleton_drawerloadingskeleton",
-      "community": 7,
+      "community": 96,
       "community_name": "CompanyDetailsDrawer.jsx",
       "norm_label": "drawerloadingskeleton()"
     },
@@ -7167,7 +7167,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_infotip",
-      "community": 89,
+      "community": 44,
       "community_name": "ProjectDetailWorkspace.jsx",
       "norm_label": "infotip.jsx"
     },
@@ -7179,7 +7179,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_infotip_infotip",
-      "community": 89,
+      "community": 44,
       "community_name": "ProjectDetailWorkspace.jsx",
       "norm_label": "infotip()"
     },
@@ -7191,7 +7191,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_infotip_tableheaderlabel",
-      "community": 89,
+      "community": 44,
       "community_name": "ProjectDetailWorkspace.jsx",
       "norm_label": "tableheaderlabel()"
     },
@@ -7225,8 +7225,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_modal",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "modal.jsx"
     },
     {
@@ -7237,8 +7237,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_modal_modal",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "modal()"
     },
     {
@@ -7364,8 +7364,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_searchableselect",
-      "community": 18,
-      "community_name": "TasksPage.jsx",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "searchableselect.jsx"
     },
     {
@@ -7376,8 +7376,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_searchableselect_searchableselect",
-      "community": 18,
-      "community_name": "TasksPage.jsx",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "searchableselect()"
     },
     {
@@ -7562,8 +7562,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_tablepagination",
-      "community": 42,
-      "community_name": "cn",
+      "community": 67,
+      "community_name": "ProjectDatabaseTable.jsx",
       "norm_label": "tablepagination.jsx"
     },
     {
@@ -7573,8 +7573,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_tablepagination_page_size_options",
-      "community": 42,
-      "community_name": "cn",
+      "community": 67,
+      "community_name": "ProjectDatabaseTable.jsx",
       "norm_label": "page_size_options"
     },
     {
@@ -7585,8 +7585,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_tablepagination_tablepagination",
-      "community": 42,
-      "community_name": "cn",
+      "community": 67,
+      "community_name": "ProjectDatabaseTable.jsx",
       "norm_label": "tablepagination()"
     },
     {
@@ -7930,8 +7930,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_advancedfilter_filterengine_countactivefilters",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 32,
+      "community_name": "AdvancedFilterPopover.jsx",
       "norm_label": "countactivefilters()"
     },
     {
@@ -7954,8 +7954,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_advancedfilter_filterengine_isfilteractive",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 32,
+      "community_name": "AdvancedFilterPopover.jsx",
       "norm_label": "isfilteractive()"
     },
     {
@@ -7978,8 +7978,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_advancedfilter_filterengine_applytablefilters",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 32,
+      "community_name": "AdvancedFilterPopover.jsx",
       "norm_label": "applytablefilters()"
     },
     {
@@ -8293,8 +8293,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_advancedfilter_usetablefilters",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 32,
+      "community_name": "AdvancedFilterPopover.jsx",
       "norm_label": "usetablefilters.js"
     },
     {
@@ -8362,8 +8362,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_primitives",
-      "community": 42,
-      "community_name": "cn",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "primitives.jsx"
     },
     {
@@ -8386,8 +8386,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_primitives_pageshell",
-      "community": 42,
-      "community_name": "cn",
+      "community": 67,
+      "community_name": "ProjectDatabaseTable.jsx",
       "norm_label": "pageshell()"
     },
     {
@@ -8398,8 +8398,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_primitives_pagesection",
-      "community": 42,
-      "community_name": "cn",
+      "community": 67,
+      "community_name": "ProjectDatabaseTable.jsx",
       "norm_label": "pagesection()"
     },
     {
@@ -8482,8 +8482,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_primitives_statband",
-      "community": 42,
-      "community_name": "cn",
+      "community": 7,
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "statband()"
     },
     {
@@ -8494,8 +8494,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_primitives_statbanditem",
-      "community": 42,
-      "community_name": "cn",
+      "community": 7,
+      "community_name": "CommunicationsOverview.jsx",
       "norm_label": "statbanditem()"
     },
     {
@@ -8506,8 +8506,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_primitives_pageheader",
-      "community": 42,
-      "community_name": "cn",
+      "community": 257,
+      "community_name": "InventoryPage.jsx",
       "norm_label": "pageheader()"
     },
     {
@@ -8518,8 +8518,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_primitives_card",
-      "community": 42,
-      "community_name": "cn",
+      "community": 67,
+      "community_name": "ProjectDatabaseTable.jsx",
       "norm_label": "card()"
     },
     {
@@ -8578,8 +8578,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_primitives_loadingstate",
-      "community": 18,
-      "community_name": "TasksPage.jsx",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "loadingstate()"
     },
     {
@@ -8590,8 +8590,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_primitives_alert",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "alert()"
     },
     {
@@ -8602,7 +8602,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_primitives_toast",
-      "community": 89,
+      "community": 44,
       "community_name": "ProjectDetailWorkspace.jsx",
       "norm_label": "toast()"
     },
@@ -8626,8 +8626,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_primitives_infopanel",
-      "community": 44,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "infopanel()"
     },
     {
@@ -8638,8 +8638,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_primitives_workflowguide",
-      "community": 42,
-      "community_name": "cn",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "workflowguide()"
     },
     {
@@ -8651,7 +8651,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_primitives_field",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "field()"
     },
     {
@@ -8662,8 +8662,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_primitives_progressbar",
-      "community": 42,
-      "community_name": "cn",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "progressbar()"
     },
     {
@@ -8674,8 +8674,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_primitives_badge",
-      "community": 42,
-      "community_name": "cn",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "badge()"
     },
     {
@@ -8685,8 +8685,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_usebodyscrolllock",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 62,
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "usebodyscrolllock.js"
     },
     {
@@ -8697,8 +8697,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_usebodyscrolllock_usebodyscrolllock",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 62,
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "usebodyscrolllock()"
     },
     {
@@ -8765,8 +8765,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_useoverlaytransition_useoverlaytransition",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 62,
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "useoverlaytransition()"
     },
     {
@@ -8777,7 +8777,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_workspacemodalparts",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "workspacemodalparts.jsx"
     },
     {
@@ -8789,7 +8789,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_workspacemodalparts_modalsegmenttabs",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "modalsegmenttabs()"
     },
     {
@@ -8801,7 +8801,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_workspacemodalparts_modaldropzone",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "modaldropzone()"
     },
     {
@@ -8813,7 +8813,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_workspacemodalparts_modalpreviewmetrics",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "modalpreviewmetrics()"
     },
     {
@@ -8825,7 +8825,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_workspacemodalparts_modalactionfooter",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "modalactionfooter()"
     },
     {
@@ -8837,7 +8837,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_workspacemodalparts_modalstack",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "modalstack()"
     },
     {
@@ -8849,7 +8849,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_workspacemodalparts_modalsection",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "modalsection()"
     },
     {
@@ -8861,7 +8861,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_workspacemodalparts_modalfieldlist",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "modalfieldlist()"
     },
     {
@@ -8873,7 +8873,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_ui_workspacemodalparts_modalsteprail",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "modalsteprail()"
     },
     {
@@ -8884,7 +8884,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_campaigninitwizard",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "campaigninitwizard.jsx"
     },
     {
@@ -8895,7 +8895,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_campaigninitwizard_steps",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "steps"
     },
     {
@@ -8906,7 +8906,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_campaigninitwizard_step_meta",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "step_meta"
     },
     {
@@ -8917,7 +8917,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_campaigninitwizard_milestone_presets",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "milestone_presets"
     },
     {
@@ -8928,7 +8928,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_campaigninitwizard_company_field_meta",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "company_field_meta"
     },
     {
@@ -8940,7 +8940,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_campaigninitwizard_downloadsamplecsv",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "downloadsamplecsv()"
     },
     {
@@ -8951,8 +8951,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_campaigninitwizard_campaigninitwizard",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "campaigninitwizard()"
     },
     {
@@ -8962,8 +8962,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_datablenderwizard",
-      "community": 44,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "datablenderwizard.jsx"
     },
     {
@@ -8973,8 +8973,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_datablenderwizard_internal_fields",
-      "community": 44,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "internal_fields"
     },
     {
@@ -8984,8 +8984,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_datablenderwizard_vendors",
-      "community": 44,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "vendors"
     },
     {
@@ -8995,8 +8995,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_datablenderwizard_steps",
-      "community": 44,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "steps"
     },
     {
@@ -9006,8 +9006,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_datablenderwizard_step_meta",
-      "community": 44,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "step_meta"
     },
     {
@@ -9018,8 +9018,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_datablenderwizard_datablenderwizard",
-      "community": 44,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "datablenderwizard()"
     },
     {
@@ -9030,8 +9030,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_datablenderwizard_previewstat",
-      "community": 44,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "previewstat()"
     },
     {
@@ -9041,8 +9041,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_sequencebuilder",
-      "community": 44,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "sequencebuilder.jsx"
     },
     {
@@ -9053,8 +9053,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_sequencebuilder_emptystep",
-      "community": 44,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "emptystep()"
     },
     {
@@ -9064,8 +9064,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_sequencebuilder_graduation_steps",
-      "community": 44,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "graduation_steps"
     },
     {
@@ -9076,8 +9076,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_components_wizards_sequencebuilder_sequencebuilder",
-      "community": 44,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "sequencebuilder()"
     },
     {
@@ -9087,7 +9087,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_constants_automationhints",
-      "community": 89,
+      "community": 44,
       "community_name": "ProjectDetailWorkspace.jsx",
       "norm_label": "automationhints.js"
     },
@@ -9098,7 +9098,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_constants_automationhints_campaign_automation",
-      "community": 89,
+      "community": 44,
       "community_name": "ProjectDetailWorkspace.jsx",
       "norm_label": "campaign_automation"
     },
@@ -9109,7 +9109,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "client_src_admin_crm_constants_automationhints_timeline_automation",
-      "community": 89,
+      "community": 44,
       "community_name": "ProjectDetailWorkspace.jsx",
       "norm_label": "timeline_automation"
     },
@@ -9120,7 +9120,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_constants_campaignstatus",
-      "community": 89,
+      "community": 44,
       "community_name": "ProjectDetailWorkspace.jsx",
       "norm_label": "campaignstatus.js"
     },
@@ -9131,7 +9131,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_constants_campaignstatus_campaign_statuses",
-      "community": 89,
+      "community": 44,
       "community_name": "ProjectDetailWorkspace.jsx",
       "norm_label": "campaign_statuses"
     },
@@ -9142,7 +9142,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "client_src_admin_crm_constants_campaignstatus_campaign_status_short",
-      "community": 89,
+      "community": 44,
       "community_name": "ProjectDetailWorkspace.jsx",
       "norm_label": "campaign_status_short"
     },
@@ -9153,7 +9153,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "client_src_admin_crm_constants_campaignstatus_campaign_status_tone",
-      "community": 89,
+      "community": 44,
       "community_name": "ProjectDetailWorkspace.jsx",
       "norm_label": "campaign_status_tone"
     },
@@ -9165,7 +9165,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_constants_emailtemplates",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "emailtemplates.js"
     },
     {
@@ -9176,7 +9176,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_constants_emailtemplates_email_templates",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "email_templates"
     },
     {
@@ -9188,7 +9188,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_constants_emailtemplates_gettemplatebyid",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "gettemplatebyid()"
     },
     {
@@ -9200,7 +9200,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_constants_emailtemplates_replaceplaceholders",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "replaceplaceholders()"
     },
     {
@@ -9212,7 +9212,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_constants_emailtemplates_formatbodyhtml",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "formatbodyhtml()"
     },
     {
@@ -9224,7 +9224,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_constants_emailtemplates_buildemailhtml",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "buildemailhtml()"
     },
     {
@@ -9689,8 +9689,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_context_confirmdeletecontext",
-      "community": 20,
-      "community_name": "CrmApp.jsx",
+      "community": 86,
+      "community_name": "EmailOutboxWorkspace.jsx",
       "norm_label": "confirmdeletecontext.jsx"
     },
     {
@@ -9700,8 +9700,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "client_src_admin_crm_context_confirmdeletecontext_confirmdeletecontext",
-      "community": 20,
-      "community_name": "CrmApp.jsx",
+      "community": 86,
+      "community_name": "EmailOutboxWorkspace.jsx",
       "norm_label": "confirmdeletecontext"
     },
     {
@@ -9712,8 +9712,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_context_confirmdeletecontext_confirmdeleteprovider",
-      "community": 20,
-      "community_name": "CrmApp.jsx",
+      "community": 86,
+      "community_name": "EmailOutboxWorkspace.jsx",
       "norm_label": "confirmdeleteprovider()"
     },
     {
@@ -9724,8 +9724,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_context_confirmdeletecontext_useconfirmdeletedialog",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 86,
+      "community_name": "EmailOutboxWorkspace.jsx",
       "norm_label": "useconfirmdeletedialog()"
     },
     {
@@ -9875,8 +9875,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_notifyworkspacechanged",
-      "community": 18,
-      "community_name": "TasksPage.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "notifyworkspacechanged()"
     },
     {
@@ -9887,8 +9887,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_uploadingestfile",
-      "community": 44,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "uploadingestfile()"
     },
     {
@@ -9899,8 +9899,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_previewingestfile",
-      "community": 44,
-      "community_name": "DataBlenderWizard.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "previewingestfile()"
     },
     {
@@ -9911,8 +9911,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_previewcompaniesfile",
-      "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "previewcompaniesfile()"
     },
     {
@@ -9923,8 +9923,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_uploadcompaniesfile",
-      "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "uploadcompaniesfile()"
     },
     {
@@ -9935,8 +9935,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_formatcurrency",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "formatcurrency()"
     },
     {
@@ -9948,7 +9948,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_formatpercent",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "formatpercent()"
     },
     {
@@ -9959,8 +9959,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_updatelead",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "updatelead()"
     },
     {
@@ -9971,8 +9971,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_fetchgloballeads",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "fetchgloballeads()"
     },
     {
@@ -9983,8 +9983,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_createcompany",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "createcompany()"
     },
     {
@@ -10043,7 +10043,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_updatecompanydetails",
-      "community": 7,
+      "community": 96,
       "community_name": "CompanyDetailsDrawer.jsx",
       "norm_label": "updatecompanydetails()"
     },
@@ -10055,7 +10055,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_addleadtocompany",
-      "community": 7,
+      "community": 96,
       "community_name": "CompanyDetailsDrawer.jsx",
       "norm_label": "addleadtocompany()"
     },
@@ -10187,8 +10187,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_fetchmailboxusage",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "fetchmailboxusage()"
     },
     {
@@ -10247,8 +10247,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_fetchsequencedeliverysummary",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "fetchsequencedeliverysummary()"
     },
     {
@@ -10319,8 +10319,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_deletesequences",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "deletesequences()"
     },
     {
@@ -10331,8 +10331,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_isusablecampaignid",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 62,
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "isusablecampaignid()"
     },
     {
@@ -10343,8 +10343,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_previewsequenceaudience",
-      "community": 251,
-      "community_name": "Alert",
+      "community": 62,
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "previewsequenceaudience()"
     },
     {
@@ -10355,8 +10355,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_launchsequence",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "launchsequence()"
     },
     {
@@ -10367,8 +10367,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_fetchlaunchbatches",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 86,
+      "community_name": "EmailOutboxWorkspace.jsx",
       "norm_label": "fetchlaunchbatches()"
     },
     {
@@ -10379,8 +10379,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_fetchlaunchbatchjobs",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 86,
+      "community_name": "EmailOutboxWorkspace.jsx",
       "norm_label": "fetchlaunchbatchjobs()"
     },
     {
@@ -10391,8 +10391,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_removelaunchbatchjobs",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 86,
+      "community_name": "EmailOutboxWorkspace.jsx",
       "norm_label": "removelaunchbatchjobs()"
     },
     {
@@ -10403,8 +10403,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_sendlaunchbatch",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 86,
+      "community_name": "EmailOutboxWorkspace.jsx",
       "norm_label": "sendlaunchbatch()"
     },
     {
@@ -10414,8 +10414,8 @@
       "source_location": "L409",
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_sendlaunchbatchjobs",
-      "community": 42,
-      "community_name": "cn",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "sendlaunchbatchjobs"
     },
     {
@@ -10426,8 +10426,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_fetchlaunchbatchsendstatus",
-      "community": 0,
-      "community_name": "crmApi.js",
+      "community": 86,
+      "community_name": "EmailOutboxWorkspace.jsx",
       "norm_label": "fetchlaunchbatchsendstatus()"
     },
     {
@@ -10462,8 +10462,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_resetsequenceenrollments",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "resetsequenceenrollments()"
     },
     {
@@ -10474,7 +10474,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_updatecampaign",
-      "community": 89,
+      "community": 44,
       "community_name": "ProjectDetailWorkspace.jsx",
       "norm_label": "updatecampaign()"
     },
@@ -10486,8 +10486,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_fetchallprojectpages",
-      "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "fetchallprojectpages()"
     },
     {
@@ -10498,8 +10498,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_fetchallprojectleads",
-      "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "fetchallprojectleads()"
     },
     {
@@ -10510,8 +10510,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_fetchallprojectcompanies",
-      "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "fetchallprojectcompanies()"
     },
     {
@@ -10547,7 +10547,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_fetchpipelineconfig",
       "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community_name": "primitives.jsx",
       "norm_label": "fetchpipelineconfig()"
     },
     {
@@ -10558,8 +10558,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_updatepipelineconfig",
-      "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "updatepipelineconfig()"
     },
     {
@@ -10606,8 +10606,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_createongoingjob",
-      "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "createongoingjob()"
     },
     {
@@ -11051,8 +11051,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_deletesequencewithundo",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "deletesequencewithundo()"
     },
     {
@@ -11183,8 +11183,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_crmapi_fetchconfiguredemailaccounts",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "fetchconfiguredemailaccounts()"
     },
     {
@@ -11694,8 +11694,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_designerdashboard",
-      "community": 42,
-      "community_name": "cn",
+      "community": 18,
+      "community_name": "TasksPage.jsx",
       "norm_label": "designerdashboard.jsx"
     },
     {
@@ -11705,8 +11705,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_designerdashboard_deadline_tone_styles",
-      "community": 42,
-      "community_name": "cn",
+      "community": 18,
+      "community_name": "TasksPage.jsx",
       "norm_label": "deadline_tone_styles"
     },
     {
@@ -11728,8 +11728,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_designerdashboard_priority_colours",
-      "community": 42,
-      "community_name": "cn",
+      "community": 18,
+      "community_name": "TasksPage.jsx",
       "norm_label": "priority_colours"
     },
     {
@@ -11739,8 +11739,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_designerdashboard_stage_tone",
-      "community": 42,
-      "community_name": "cn",
+      "community": 18,
+      "community_name": "TasksPage.jsx",
       "norm_label": "stage_tone"
     },
     {
@@ -11866,8 +11866,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_globaldashboard_globaldashboard",
-      "community": 18,
-      "community_name": "TasksPage.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "globaldashboard()"
     },
     {
@@ -11877,8 +11877,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_inboxpage",
-      "community": 42,
-      "community_name": "cn",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "inboxpage.jsx"
     },
     {
@@ -11889,8 +11889,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_inboxpage_inboxworkspacecontent",
-      "community": 42,
-      "community_name": "cn",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "inboxworkspacecontent()"
     },
     {
@@ -11901,8 +11901,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_inboxpage_inboxpage",
-      "community": 42,
-      "community_name": "cn",
+      "community": 89,
+      "community_name": "primitives.jsx",
       "norm_label": "inboxpage()"
     },
     {
@@ -11912,8 +11912,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_inventorypage",
-      "community": 20,
-      "community_name": "CrmApp.jsx",
+      "community": 257,
+      "community_name": "InventoryPage.jsx",
       "norm_label": "inventorypage.jsx"
     },
     {
@@ -11924,8 +11924,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_inventorypage_itemcard",
-      "community": 20,
-      "community_name": "CrmApp.jsx",
+      "community": 257,
+      "community_name": "InventoryPage.jsx",
       "norm_label": "itemcard()"
     },
     {
@@ -11936,8 +11936,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_inventorypage_itemdetail",
-      "community": 20,
-      "community_name": "CrmApp.jsx",
+      "community": 257,
+      "community_name": "InventoryPage.jsx",
       "norm_label": "itemdetail()"
     },
     {
@@ -11948,8 +11948,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_inventorypage_recentlyremoved",
-      "community": 20,
-      "community_name": "CrmApp.jsx",
+      "community": 257,
+      "community_name": "InventoryPage.jsx",
       "norm_label": "recentlyremoved()"
     },
     {
@@ -11960,8 +11960,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_inventorypage_inventorypage",
-      "community": 20,
-      "community_name": "CrmApp.jsx",
+      "community": 257,
+      "community_name": "InventoryPage.jsx",
       "norm_label": "inventorypage()"
     },
     {
@@ -11971,8 +11971,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_livesendmonitorpage",
-      "community": 42,
-      "community_name": "cn",
+      "community": 67,
+      "community_name": "ProjectDatabaseTable.jsx",
       "norm_label": "livesendmonitorpage.jsx"
     },
     {
@@ -11983,8 +11983,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_livesendmonitorpage_statusbadge",
-      "community": 42,
-      "community_name": "cn",
+      "community": 67,
+      "community_name": "ProjectDatabaseTable.jsx",
       "norm_label": "statusbadge()"
     },
     {
@@ -11995,8 +11995,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_livesendmonitorpage_livesendmonitorpage",
-      "community": 42,
-      "community_name": "cn",
+      "community": 20,
+      "community_name": "CrmApp.jsx",
       "norm_label": "livesendmonitorpage()"
     },
     {
@@ -12050,8 +12050,8 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_late_stages",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "late_stages"
     },
     {
@@ -12062,8 +12062,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_formatshortdate",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "formatshortdate()"
     },
     {
@@ -12098,8 +12098,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobsboard",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "ongoingjobsboard()"
     },
     {
@@ -12110,8 +12110,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobstable",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "ongoingjobstable()"
     },
     {
@@ -12122,8 +12122,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_ongoingjobspage_ongoingjobcard",
-      "community": 67,
-      "community_name": "ProjectDatabaseTable.jsx",
+      "community": 42,
+      "community_name": "cn",
       "norm_label": "ongoingjobcard()"
     },
     {
@@ -12192,7 +12192,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_projectdetailworkspace",
-      "community": 89,
+      "community": 44,
       "community_name": "ProjectDetailWorkspace.jsx",
       "norm_label": "projectdetailworkspace.jsx"
     },
@@ -12203,7 +12203,7 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_projectdetailworkspace_emailed_statuses",
-      "community": 89,
+      "community": 44,
       "community_name": "ProjectDetailWorkspace.jsx",
       "norm_label": "emailed_statuses"
     },
@@ -12215,8 +12215,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_projectdetailworkspace_projectdetailworkspace",
-      "community": 89,
-      "community_name": "ProjectDetailWorkspace.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "projectdetailworkspace()"
     },
     {
@@ -12227,7 +12227,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_projectdetailworkspace_compactstat",
-      "community": 89,
+      "community": 44,
       "community_name": "ProjectDetailWorkspace.jsx",
       "norm_label": "compactstat()"
     },
@@ -12239,7 +12239,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_projectdetailworkspace_progressblock",
-      "community": 89,
+      "community": 44,
       "community_name": "ProjectDetailWorkspace.jsx",
       "norm_label": "progressblock()"
     },
@@ -12251,7 +12251,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_projectdetailworkspace_actionbtn",
-      "community": 89,
+      "community": 44,
       "community_name": "ProjectDetailWorkspace.jsx",
       "norm_label": "actionbtn()"
     },
@@ -12440,8 +12440,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_sequencespage",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "sequencespage.jsx"
     },
     {
@@ -12452,8 +12452,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_pages_sequencespage_sequencespage",
-      "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community": 0,
+      "community_name": "crmApi.js",
       "norm_label": "sequencespage()"
     },
     {
@@ -12787,8 +12787,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_admin_crm_utils_mediaurl",
-      "community": 20,
-      "community_name": "CrmApp.jsx",
+      "community": 257,
+      "community_name": "InventoryPage.jsx",
       "norm_label": "mediaurl.js"
     },
     {
@@ -12799,8 +12799,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_admin_crm_utils_mediaurl_getmediaurl",
-      "community": 20,
-      "community_name": "CrmApp.jsx",
+      "community": 257,
+      "community_name": "InventoryPage.jsx",
       "norm_label": "getmediaurl()"
     },
     {
@@ -12811,7 +12811,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_utils_sequencedelay",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "crm/utils/sequencedelay.js"
     },
     {
@@ -12822,7 +12822,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_utils_sequencedelay_delay_units",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "delay_units"
     },
     {
@@ -12833,7 +12833,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_utils_sequencedelay_delay_unit_options",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "delay_unit_options"
     },
     {
@@ -12844,7 +12844,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_utils_sequencedelay_delay_presets",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "delay_presets"
     },
     {
@@ -12880,7 +12880,7 @@
       "_origin": "ast",
       "id": "client_src_admin_crm_utils_sequencedelay_formatdelaylabel",
       "community": 62,
-      "community_name": "SequenceStudio.jsx",
+      "community_name": "SequenceInspector.jsx",
       "norm_label": "formatdelaylabel()"
     },
     {
@@ -13347,7 +13347,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_footer",
-      "community": 52,
+      "community": 79,
       "community_name": "SiteChrome.jsx",
       "norm_label": "footer.jsx"
     },
@@ -13360,7 +13360,7 @@
       "_origin": "ast",
       "id": "client_src_components_footer_footer",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "footer()"
     },
     {
@@ -13405,7 +13405,7 @@
       "_origin": "ast",
       "id": "client_src_components_navbar",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "navbar.jsx"
     },
     {
@@ -13416,7 +13416,7 @@
       "_origin": "ast",
       "id": "client_src_components_navbar_defaultitems",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "defaultitems"
     },
     {
@@ -13464,7 +13464,7 @@
       "_origin": "ast",
       "id": "client_src_components_navbar_navbar",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "navbar()"
     },
     {
@@ -13554,7 +13554,7 @@
       "_origin": "ast",
       "id": "client_src_components_events_eventhero",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "eventhero.jsx"
     },
     {
@@ -13566,7 +13566,7 @@
       "_origin": "ast",
       "id": "client_src_components_events_eventhero_eventhero",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "eventhero()"
     },
     {
@@ -13873,7 +13873,7 @@
       "_origin": "ast",
       "id": "client_src_components_home_homeprocesssection",
       "community": 52,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "HomeProcessSection.jsx",
       "norm_label": "homeprocesssection.jsx"
     },
     {
@@ -13885,7 +13885,7 @@
       "_origin": "ast",
       "id": "client_src_components_home_homeprocesssection_homeprocesssection",
       "community": 52,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "HomeProcessSection.jsx",
       "norm_label": "homeprocesssection()"
     },
     {
@@ -13895,7 +13895,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_home_homeproofsection",
-      "community": 52,
+      "community": 79,
       "community_name": "SiteChrome.jsx",
       "norm_label": "homeproofsection.jsx"
     },
@@ -13907,7 +13907,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_components_home_homeproofsection_homeproofsection",
-      "community": 52,
+      "community": 79,
       "community_name": "SiteChrome.jsx",
       "norm_label": "homeproofsection()"
     },
@@ -13941,8 +13941,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_components_home_homestandardssection",
-      "community": 52,
-      "community_name": "SiteChrome.jsx",
+      "community": 271,
+      "community_name": "HomeStandardsSection.jsx",
       "norm_label": "homestandardssection.jsx"
     },
     {
@@ -13952,8 +13952,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "client_src_components_home_homestandardssection_pressureitems",
-      "community": 52,
-      "community_name": "SiteChrome.jsx",
+      "community": 271,
+      "community_name": "HomeStandardsSection.jsx",
       "norm_label": "pressureitems"
     },
     {
@@ -13964,8 +13964,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_components_home_homestandardssection_homestandardssection",
-      "community": 52,
-      "community_name": "SiteChrome.jsx",
+      "community": 271,
+      "community_name": "HomeStandardsSection.jsx",
       "norm_label": "homestandardssection()"
     },
     {
@@ -14069,7 +14069,7 @@
       "_origin": "ast",
       "id": "client_src_components_inquiry_inquiryctabutton",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "inquiryctabutton.jsx"
     },
     {
@@ -14081,7 +14081,7 @@
       "_origin": "ast",
       "id": "client_src_components_inquiry_inquiryctabutton_inquiryctabutton",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "inquiryctabutton()"
     },
     {
@@ -15062,7 +15062,7 @@
       "_origin": "ast",
       "id": "client_src_pages_arabhealthexhibitionstandspage",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "arabhealthexhibitionstandspage.jsx"
     },
     {
@@ -15073,7 +15073,7 @@
       "_origin": "ast",
       "id": "client_src_pages_arabhealthexhibitionstandspage_arabhealthfaqs",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "arabhealthfaqs"
     },
     {
@@ -15280,7 +15280,7 @@
       "_origin": "ast",
       "id": "client_src_pages_customexhibitionstandsdubaipage",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "customexhibitionstandsdubaipage.jsx"
     },
     {
@@ -15291,7 +15291,7 @@
       "_origin": "ast",
       "id": "client_src_pages_customexhibitionstandsdubaipage_customfaqs",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "customfaqs"
     },
     {
@@ -15314,7 +15314,7 @@
       "_origin": "ast",
       "id": "client_src_pages_dwtcstandguidelinespage",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "dwtcstandguidelinespage.jsx"
     },
     {
@@ -15325,7 +15325,7 @@
       "_origin": "ast",
       "id": "client_src_pages_dwtcstandguidelinespage_dwtcfaqs",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "dwtcfaqs"
     },
     {
@@ -15426,7 +15426,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstandbuilderdubaipage",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "exhibitionstandbuilderdubaipage.jsx"
     },
     {
@@ -15437,7 +15437,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstandbuilderdubaipage_builderfaqs",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "builderfaqs"
     },
     {
@@ -15460,7 +15460,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstandcontractorabudhabipage",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "exhibitionstandcontractorabudhabipage.jsx"
     },
     {
@@ -15471,7 +15471,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstandcontractorabudhabipage_abudhabifaqs",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "abudhabifaqs"
     },
     {
@@ -15494,7 +15494,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstandcontractordubaipage",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "exhibitionstandcontractordubaipage.jsx"
     },
     {
@@ -15505,7 +15505,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstandcontractordubaipage_contractorfaqs",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "contractorfaqs"
     },
     {
@@ -15528,7 +15528,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstandcontractorriyadhpage",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "exhibitionstandcontractorriyadhpage.jsx"
     },
     {
@@ -15539,7 +15539,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstandcontractorriyadhpage_riyadhfaqs",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "riyadhfaqs"
     },
     {
@@ -15562,7 +15562,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstandcostdubaiguidepage",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "exhibitionstandcostdubaiguidepage.jsx"
     },
     {
@@ -15573,7 +15573,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstandcostdubaiguidepage_costfaqs",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "costfaqs"
     },
     {
@@ -15596,7 +15596,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstanddesigndubaipage",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "exhibitionstanddesigndubaipage.jsx"
     },
     {
@@ -15607,7 +15607,7 @@
       "_origin": "ast",
       "id": "client_src_pages_exhibitionstanddesigndubaipage_designfaqs",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "designfaqs"
     },
     {
@@ -15786,7 +15786,7 @@
       "_origin": "ast",
       "id": "client_src_pages_gitexexhibitionstandspage",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "gitexexhibitionstandspage.jsx"
     },
     {
@@ -15797,7 +15797,7 @@
       "_origin": "ast",
       "id": "client_src_pages_gitexexhibitionstandspage_gitexfaqs",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "gitexfaqs"
     },
     {
@@ -15838,7 +15838,7 @@
       "label": "CAMPUS_METADATA",
       "file_type": "code",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L71",
+      "source_location": "L75",
       "_origin": "ast",
       "id": "client_src_pages_graduationportfoliopage_campus_metadata",
       "community": 213,
@@ -15849,7 +15849,7 @@
       "label": "getCampusMetadata()",
       "file_type": "code",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L137",
+      "source_location": "L150",
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_pages_graduationportfoliopage_getcampusmetadata",
@@ -15861,7 +15861,7 @@
       "label": "GRADUATION_PROJECTS",
       "file_type": "code",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L207",
+      "source_location": "L239",
       "_origin": "ast",
       "id": "client_src_pages_graduationportfoliopage_graduation_projects",
       "community": 213,
@@ -15872,7 +15872,7 @@
       "label": "GraduationPortfolioPage()",
       "file_type": "code",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L319",
+      "source_location": "L351",
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_pages_graduationportfoliopage_graduationportfoliopage",
@@ -15888,7 +15888,7 @@
       "_origin": "ast",
       "id": "client_src_pages_graduationstagesetupuaepage",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "graduationstagesetupuaepage.jsx"
     },
     {
@@ -15899,7 +15899,7 @@
       "_origin": "ast",
       "id": "client_src_pages_graduationstagesetupuaepage_graduationfaqs",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "graduationfaqs"
     },
     {
@@ -15922,7 +15922,7 @@
       "_origin": "ast",
       "id": "client_src_pages_graduationyearpage",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "graduationyearpage.jsx"
     },
     {
@@ -15933,7 +15933,7 @@
       "_origin": "ast",
       "id": "client_src_pages_graduationyearpage_year_data",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "year_data"
     },
     {
@@ -15956,7 +15956,7 @@
       "_origin": "ast",
       "id": "client_src_pages_gulfoodexhibitionstandspage",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "gulfoodexhibitionstandspage.jsx"
     },
     {
@@ -15967,7 +15967,7 @@
       "_origin": "ast",
       "id": "client_src_pages_gulfoodexhibitionstandspage_gulfoodfaqs",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "gulfoodfaqs"
     },
     {
@@ -16265,7 +16265,7 @@
       "_origin": "ast",
       "id": "client_src_pages_posdisplaystandsdubaipage",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "posdisplaystandsdubaipage.jsx"
     },
     {
@@ -16276,7 +16276,7 @@
       "_origin": "ast",
       "id": "client_src_pages_posdisplaystandsdubaipage_posfaqs",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "posfaqs"
     },
     {
@@ -16377,7 +16377,7 @@
       "_origin": "ast",
       "id": "client_src_pages_signagemanufacturerdubaipage",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "signagemanufacturerdubaipage.jsx"
     },
     {
@@ -16388,7 +16388,7 @@
       "_origin": "ast",
       "id": "client_src_pages_signagemanufacturerdubaipage_signagefaqs",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "signagefaqs"
     },
     {
@@ -16410,7 +16410,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_src_pages_sitechrome",
-      "community": 52,
+      "community": 79,
       "community_name": "SiteChrome.jsx",
       "norm_label": "sitechrome.jsx"
     },
@@ -16422,7 +16422,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_pages_sitechrome_sitenav",
-      "community": 52,
+      "community": 79,
       "community_name": "SiteChrome.jsx",
       "norm_label": "sitenav()"
     },
@@ -16434,7 +16434,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_pages_sitechrome_cardnav",
-      "community": 52,
+      "community": 79,
       "community_name": "SiteChrome.jsx",
       "norm_label": "cardnav()"
     },
@@ -16458,7 +16458,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_pages_sitechrome_proofcard",
-      "community": 52,
+      "community": 79,
       "community_name": "SiteChrome.jsx",
       "norm_label": "proofcard()"
     },
@@ -16471,7 +16471,7 @@
       "_origin": "ast",
       "id": "client_src_pages_sitechrome_stepper",
       "community": 52,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "HomeProcessSection.jsx",
       "norm_label": "stepper()"
     },
     {
@@ -16482,8 +16482,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_pages_sitechrome_infogrid",
-      "community": 52,
-      "community_name": "SiteChrome.jsx",
+      "community": 271,
+      "community_name": "HomeStandardsSection.jsx",
       "norm_label": "infogrid()"
     },
     {
@@ -16494,7 +16494,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_pages_sitechrome_faqaccordion",
-      "community": 52,
+      "community": 79,
       "community_name": "SiteChrome.jsx",
       "norm_label": "faqaccordion()"
     },
@@ -16507,7 +16507,7 @@
       "_origin": "ast",
       "id": "client_src_pages_sitechrome_faqsection",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "faqsection()"
     },
     {
@@ -16519,7 +16519,7 @@
       "_origin": "ast",
       "id": "client_src_pages_sitechrome_productionhub",
       "community": 52,
-      "community_name": "SiteChrome.jsx",
+      "community_name": "HomeProcessSection.jsx",
       "norm_label": "productionhub()"
     },
     {
@@ -16530,7 +16530,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_pages_sitechrome_annotatedimage",
-      "community": 52,
+      "community": 79,
       "community_name": "SiteChrome.jsx",
       "norm_label": "annotatedimage()"
     },
@@ -16542,7 +16542,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_pages_sitechrome_controlboard",
-      "community": 52,
+      "community": 79,
       "community_name": "SiteChrome.jsx",
       "norm_label": "controlboard()"
     },
@@ -16554,7 +16554,7 @@
       "_origin": "ast",
       "id": "client_src_pages_events_adipecstandcontractorpage",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "adipecstandcontractorpage.jsx"
     },
     {
@@ -16565,7 +16565,7 @@
       "_origin": "ast",
       "id": "client_src_pages_events_adipecstandcontractorpage_adipecfaqs",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "adipecfaqs"
     },
     {
@@ -16588,7 +16588,7 @@
       "_origin": "ast",
       "id": "client_src_pages_events_big5exhibitionstandspage",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "big5exhibitionstandspage.jsx"
     },
     {
@@ -16599,7 +16599,7 @@
       "_origin": "ast",
       "id": "client_src_pages_events_big5exhibitionstandspage_big5faqs",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "big5faqs"
     },
     {
@@ -16622,7 +16622,7 @@
       "_origin": "ast",
       "id": "client_src_pages_index",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "pages/index.js"
     },
     {
@@ -16677,7 +16677,7 @@
       "_origin": "ast",
       "id": "client_src_pages_sitedata_images",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "images"
     },
     {
@@ -16721,7 +16721,7 @@
       "_origin": "ast",
       "id": "client_src_pages_venues_adnecstandbuilderpage",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "adnecstandbuilderpage.jsx"
     },
     {
@@ -16732,7 +16732,7 @@
       "_origin": "ast",
       "id": "client_src_pages_venues_adnecstandbuilderpage_adnecfaqs",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "adnecfaqs"
     },
     {
@@ -16755,7 +16755,7 @@
       "_origin": "ast",
       "id": "client_src_pages_venues_decstandbuilderpage",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "decstandbuilderpage.jsx"
     },
     {
@@ -16766,7 +16766,7 @@
       "_origin": "ast",
       "id": "client_src_pages_venues_decstandbuilderpage_decfaqs",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "decfaqs"
     },
     {
@@ -16789,7 +16789,7 @@
       "_origin": "ast",
       "id": "client_src_pages_venues_dwtcstandbuilderpage",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "dwtcstandbuilderpage.jsx"
     },
     {
@@ -16800,7 +16800,7 @@
       "_origin": "ast",
       "id": "client_src_pages_venues_dwtcstandbuilderpage_dwtcfaqs",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "dwtcfaqs"
     },
     {
@@ -17067,7 +17067,7 @@
       "label": "GRAD_FACTS",
       "file_type": "code",
       "source_file": "client/src/portfolio/graduations.js",
-      "source_location": "L15",
+      "source_location": "L16",
       "_origin": "ast",
       "id": "client_src_portfolio_graduations_grad_facts",
       "community": 12,
@@ -17078,7 +17078,7 @@
       "label": "campusKeyFor()",
       "file_type": "code",
       "source_file": "client/src/portfolio/graduations.js",
-      "source_location": "L30",
+      "source_location": "L33",
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_portfolio_graduations_campuskeyfor",
@@ -17090,7 +17090,7 @@
       "label": "buildGradClients()",
       "file_type": "code",
       "source_file": "client/src/portfolio/graduations.js",
-      "source_location": "L40",
+      "source_location": "L45",
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_portfolio_graduations_buildgradclients",
@@ -17518,7 +17518,7 @@
       "_origin": "ast",
       "id": "client_src_utils_schemagenerator",
       "community": 79,
-      "community_name": "Navbar.jsx",
+      "community_name": "SiteChrome.jsx",
       "norm_label": "schemagenerator.js"
     },
     {
@@ -22390,7 +22390,7 @@
       "_origin": "ast",
       "id": "server_scripts_migratereplyreviewtasks",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "migratereplyreviewtasks.mjs"
     },
     {
@@ -22402,7 +22402,7 @@
       "_origin": "ast",
       "id": "server_scripts_migratereplyreviewtasks_runmigration",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "runmigration()"
     },
     {
@@ -22849,8 +22849,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_scripts_re_sync_cleaned_replies",
-      "community": 43,
-      "community_name": "imapWatcherService.js",
+      "community": 58,
+      "community_name": "crmRuntime.js",
       "norm_label": "re-sync-cleaned-replies.mjs"
     },
     {
@@ -22860,8 +22860,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "server_scripts_re_sync_cleaned_replies_idstodelete",
-      "community": 43,
-      "community_name": "imapWatcherService.js",
+      "community": 58,
+      "community_name": "crmRuntime.js",
       "norm_label": "idstodelete"
     },
     {
@@ -23173,8 +23173,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_scripts_restorecampaigncontextfromstaging",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 267,
+      "community_name": "restoreCampaignContextFromStaging.js",
       "norm_label": "restorecampaigncontextfromstaging.js"
     },
     {
@@ -23184,8 +23184,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "server_scripts_restorecampaigncontextfromstaging_scriptdir",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 267,
+      "community_name": "restoreCampaignContextFromStaging.js",
       "norm_label": "scriptdir"
     },
     {
@@ -23195,8 +23195,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "server_scripts_restorecampaigncontextfromstaging_apply",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 267,
+      "community_name": "restoreCampaignContextFromStaging.js",
       "norm_label": "apply"
     },
     {
@@ -23206,8 +23206,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "server_scripts_restorecampaigncontextfromstaging_pool",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 267,
+      "community_name": "restoreCampaignContextFromStaging.js",
       "norm_label": "pool"
     },
     {
@@ -23218,8 +23218,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_restorecampaigncontextfromstaging_oid",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 267,
+      "community_name": "restoreCampaignContextFromStaging.js",
       "norm_label": "oid()"
     },
     {
@@ -23230,8 +23230,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_restorecampaigncontextfromstaging_clean",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 267,
+      "community_name": "restoreCampaignContextFromStaging.js",
       "norm_label": "clean()"
     },
     {
@@ -23242,8 +23242,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_restorecampaigncontextfromstaging_endpointtype",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 267,
+      "community_name": "restoreCampaignContextFromStaging.js",
       "norm_label": "endpointtype()"
     },
     {
@@ -23253,8 +23253,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_scripts_restorecontactcontextfromstaging",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 269,
+      "community_name": "restoreContactContextFromStaging.js",
       "norm_label": "restorecontactcontextfromstaging.js"
     },
     {
@@ -23264,8 +23264,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "server_scripts_restorecontactcontextfromstaging_scriptdir",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 269,
+      "community_name": "restoreContactContextFromStaging.js",
       "norm_label": "scriptdir"
     },
     {
@@ -23275,8 +23275,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "server_scripts_restorecontactcontextfromstaging_apply",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 269,
+      "community_name": "restoreContactContextFromStaging.js",
       "norm_label": "apply"
     },
     {
@@ -23286,8 +23286,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "server_scripts_restorecontactcontextfromstaging_pool",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 269,
+      "community_name": "restoreContactContextFromStaging.js",
       "norm_label": "pool"
     },
     {
@@ -23297,8 +23297,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "server_scripts_restorecontactcontextfromstaging_assessmentbystatus",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 269,
+      "community_name": "restoreContactContextFromStaging.js",
       "norm_label": "assessmentbystatus"
     },
     {
@@ -23309,8 +23309,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_restorecontactcontextfromstaging_hasrelationshipevidence",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 269,
+      "community_name": "restoreContactContextFromStaging.js",
       "norm_label": "hasrelationshipevidence()"
     },
     {
@@ -23320,8 +23320,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_scripts_restoreemailthreadsfromstaging",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 261,
+      "community_name": "restoreEmailThreadsFromStaging.js",
       "norm_label": "restoreemailthreadsfromstaging.js"
     },
     {
@@ -23331,8 +23331,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "server_scripts_restoreemailthreadsfromstaging_scriptdir",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 261,
+      "community_name": "restoreEmailThreadsFromStaging.js",
       "norm_label": "scriptdir"
     },
     {
@@ -23342,8 +23342,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "server_scripts_restoreemailthreadsfromstaging_apply",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 261,
+      "community_name": "restoreEmailThreadsFromStaging.js",
       "norm_label": "apply"
     },
     {
@@ -23353,8 +23353,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "server_scripts_restoreemailthreadsfromstaging_withschema",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 261,
+      "community_name": "restoreEmailThreadsFromStaging.js",
       "norm_label": "withschema"
     },
     {
@@ -23364,8 +23364,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "server_scripts_restoreemailthreadsfromstaging_pool",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 261,
+      "community_name": "restoreEmailThreadsFromStaging.js",
       "norm_label": "pool"
     },
     {
@@ -23376,8 +23376,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_restoreemailthreadsfromstaging_oid",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 261,
+      "community_name": "restoreEmailThreadsFromStaging.js",
       "norm_label": "oid()"
     },
     {
@@ -23388,8 +23388,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_restoreemailthreadsfromstaging_clean",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 261,
+      "community_name": "restoreEmailThreadsFromStaging.js",
       "norm_label": "clean()"
     },
     {
@@ -23400,8 +23400,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_restoreemailthreadsfromstaging_lower",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 261,
+      "community_name": "restoreEmailThreadsFromStaging.js",
       "norm_label": "lower()"
     },
     {
@@ -23412,8 +23412,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_restoreemailthreadsfromstaging_asdate",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 261,
+      "community_name": "restoreEmailThreadsFromStaging.js",
       "norm_label": "asdate()"
     },
     {
@@ -23424,8 +23424,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_restoreemailthreadsfromstaging_json",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 261,
+      "community_name": "restoreEmailThreadsFromStaging.js",
       "norm_label": "json()"
     },
     {
@@ -23436,8 +23436,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_restoreemailthreadsfromstaging_chunks",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 261,
+      "community_name": "restoreEmailThreadsFromStaging.js",
       "norm_label": "chunks()"
     },
     {
@@ -23550,8 +23550,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_scripts_restoreworkcontextfromstaging",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 265,
+      "community_name": "restoreWorkContextFromStaging.js",
       "norm_label": "restoreworkcontextfromstaging.js"
     },
     {
@@ -23561,8 +23561,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "server_scripts_restoreworkcontextfromstaging_scriptdir",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 265,
+      "community_name": "restoreWorkContextFromStaging.js",
       "norm_label": "scriptdir"
     },
     {
@@ -23572,8 +23572,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "server_scripts_restoreworkcontextfromstaging_apply",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 265,
+      "community_name": "restoreWorkContextFromStaging.js",
       "norm_label": "apply"
     },
     {
@@ -23583,8 +23583,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "server_scripts_restoreworkcontextfromstaging_withschema",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 265,
+      "community_name": "restoreWorkContextFromStaging.js",
       "norm_label": "withschema"
     },
     {
@@ -23594,8 +23594,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "server_scripts_restoreworkcontextfromstaging_pool",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 265,
+      "community_name": "restoreWorkContextFromStaging.js",
       "norm_label": "pool"
     },
     {
@@ -23606,8 +23606,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_restoreworkcontextfromstaging_oid",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 265,
+      "community_name": "restoreWorkContextFromStaging.js",
       "norm_label": "oid()"
     },
     {
@@ -23618,8 +23618,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_restoreworkcontextfromstaging_asdate",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 265,
+      "community_name": "restoreWorkContextFromStaging.js",
       "norm_label": "asdate()"
     },
     {
@@ -23630,8 +23630,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_restoreworkcontextfromstaging_json",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 265,
+      "community_name": "restoreWorkContextFromStaging.js",
       "norm_label": "json()"
     },
     {
@@ -23642,8 +23642,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_restoreworkcontextfromstaging_normalizestatus",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 265,
+      "community_name": "restoreWorkContextFromStaging.js",
       "norm_label": "normalizestatus()"
     },
     {
@@ -23654,8 +23654,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_restoreworkcontextfromstaging_normalizepriority",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 265,
+      "community_name": "restoreWorkContextFromStaging.js",
       "norm_label": "normalizepriority()"
     },
     {
@@ -23666,8 +23666,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_restoreworkcontextfromstaging_chunks",
-      "community": 57,
-      "community_name": "unwrapBson",
+      "community": 265,
+      "community_name": "restoreWorkContextFromStaging.js",
       "norm_label": "chunks()"
     },
     {
@@ -24725,8 +24725,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_scripts_sync_imap_now",
-      "community": 43,
-      "community_name": "imapWatcherService.js",
+      "community": 58,
+      "community_name": "crmRuntime.js",
       "norm_label": "sync_imap_now.mjs"
     },
     {
@@ -24737,8 +24737,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_scripts_sync_imap_now_run",
-      "community": 43,
-      "community_name": "imapWatcherService.js",
+      "community": 58,
+      "community_name": "crmRuntime.js",
       "norm_label": "run()"
     },
     {
@@ -24952,7 +24952,7 @@
       "_origin": "ast",
       "id": "server_scripts_verifycampaigncontactcoordinationrollback",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "verifycampaigncontactcoordinationrollback.js"
     },
     {
@@ -25306,7 +25306,7 @@
       "_origin": "ast",
       "id": "server_scripts_verifyunifiedtasksreadonly",
       "community": 41,
-      "community_name": "unifiedTaskService.js",
+      "community_name": "writeAuditLog",
       "norm_label": "verifyunifiedtasksreadonly.js"
     },
     {
@@ -25493,8 +25493,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_src_constants_ongoingjobpipeline",
-      "community": 35,
-      "community_name": "salesService.js",
+      "community": 266,
+      "community_name": "ongoingJobPipeline.js",
       "norm_label": "ongoingjobpipeline.js"
     },
     {
@@ -25504,8 +25504,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_src_constants_ongoingjobpipeline_default_pipeline_stages",
-      "community": 35,
-      "community_name": "salesService.js",
+      "community": 266,
+      "community_name": "ongoingJobPipeline.js",
       "norm_label": "default_pipeline_stages"
     },
     {
@@ -25515,8 +25515,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "server_src_constants_ongoingjobpipeline_closed_won_stage",
-      "community": 35,
-      "community_name": "salesService.js",
+      "community": 266,
+      "community_name": "ongoingJobPipeline.js",
       "norm_label": "closed_won_stage"
     },
     {
@@ -25526,8 +25526,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "server_src_constants_ongoingjobpipeline_closed_lost_stage",
-      "community": 35,
-      "community_name": "salesService.js",
+      "community": 266,
+      "community_name": "ongoingJobPipeline.js",
       "norm_label": "closed_lost_stage"
     },
     {
@@ -25538,8 +25538,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_constants_ongoingjobpipeline_isclosedstage",
-      "community": 35,
-      "community_name": "salesService.js",
+      "community": 266,
+      "community_name": "ongoingJobPipeline.js",
       "norm_label": "isclosedstage()"
     },
     {
@@ -25550,8 +25550,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_constants_ongoingjobpipeline_stagenames",
-      "community": 35,
-      "community_name": "salesService.js",
+      "community": 266,
+      "community_name": "ongoingJobPipeline.js",
       "norm_label": "stagenames()"
     },
     {
@@ -25562,8 +25562,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_constants_ongoingjobpipeline_probabilityforstage",
-      "community": 35,
-      "community_name": "salesService.js",
+      "community": 266,
+      "community_name": "ongoingJobPipeline.js",
       "norm_label": "probabilityforstage()"
     },
     {
@@ -25573,8 +25573,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_src_constants_opportunitypipeline",
-      "community": 35,
-      "community_name": "salesService.js",
+      "community": 266,
+      "community_name": "ongoingJobPipeline.js",
       "norm_label": "opportunitypipeline.js"
     },
     {
@@ -25673,8 +25673,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "server_src_constants_userroles_role_labels",
-      "community": 58,
-      "community_name": "crmRuntime.js",
+      "community": 1,
+      "community_name": "employeeOperationsService.js",
       "norm_label": "role_labels"
     },
     {
@@ -26490,7 +26490,7 @@
       "_origin": "ast",
       "id": "server_src_services_auditservice",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "auditservice.js"
     },
     {
@@ -26501,7 +26501,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_auditservice_writeauditlog",
-      "community": 78,
+      "community": 41,
       "community_name": "writeAuditLog",
       "norm_label": "writeauditlog()"
     },
@@ -26514,7 +26514,7 @@
       "_origin": "ast",
       "id": "server_src_services_auditservice_listauditlogs",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "listauditlogs()"
     },
     {
@@ -26526,7 +26526,7 @@
       "_origin": "ast",
       "id": "server_src_services_auditservice_getauditlogbyid",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "getauditlogbyid()"
     },
     {
@@ -26538,7 +26538,7 @@
       "_origin": "ast",
       "id": "server_src_services_auditservice_getuseractivitysummary",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "getuseractivitysummary()"
     },
     {
@@ -26679,7 +26679,7 @@
       "_origin": "ast",
       "id": "server_src_services_campaigncontactcoordinationservice",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "campaigncontactcoordinationservice.js"
     },
     {
@@ -26691,7 +26691,7 @@
       "_origin": "ast",
       "id": "server_src_services_campaigncontactcoordinationservice_clean",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "clean()"
     },
     {
@@ -26703,7 +26703,7 @@
       "_origin": "ast",
       "id": "server_src_services_campaigncontactcoordinationservice_loadcontactcontext",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "loadcontactcontext()"
     },
     {
@@ -26715,7 +26715,7 @@
       "_origin": "ast",
       "id": "server_src_services_campaigncontactcoordinationservice_recordfocuschanges",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "recordfocuschanges()"
     },
     {
@@ -26727,7 +26727,7 @@
       "_origin": "ast",
       "id": "server_src_services_campaigncontactcoordinationservice_holdaccountsending",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "holdaccountsending()"
     },
     {
@@ -26739,7 +26739,7 @@
       "_origin": "ast",
       "id": "server_src_services_campaigncontactcoordinationservice_coordinatereplyfocus",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "coordinatereplyfocus()"
     },
     {
@@ -26751,7 +26751,7 @@
       "_origin": "ast",
       "id": "server_src_services_campaigncontactcoordinationservice_applyreferralfocus",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "applyreferralfocus()"
     },
     {
@@ -26763,7 +26763,7 @@
       "_origin": "ast",
       "id": "server_src_services_campaigncontactcoordinationservice_releasewrongpocfocus",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "releasewrongpocfocus()"
     },
     {
@@ -26775,7 +26775,7 @@
       "_origin": "ast",
       "id": "server_src_services_campaigncontactcoordinationservice_selectcampaigncontactfocus",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "selectcampaigncontactfocus()"
     },
     {
@@ -26925,8 +26925,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "server_src_services_completedjobservice_completed_job_categories",
-      "community": 35,
-      "community_name": "salesService.js",
+      "community": 266,
+      "community_name": "ongoingJobPipeline.js",
       "norm_label": "completed_job_categories"
     },
     {
@@ -27910,8 +27910,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_imapwatcherservice_syncimapmailbox",
-      "community": 43,
-      "community_name": "imapWatcherService.js",
+      "community": 58,
+      "community_name": "crmRuntime.js",
       "norm_label": "syncimapmailbox()"
     },
     {
@@ -28347,8 +28347,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_src_services_inventoryphotoretentionservice",
-      "community": 68,
-      "community_name": "jobCloseoutService.js",
+      "community": 55,
+      "community_name": "jobCommercialArtifactService.js",
       "norm_label": "inventoryphotoretentionservice.js"
     },
     {
@@ -28358,8 +28358,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "server_src_services_inventoryphotoretentionservice_uploadroot",
-      "community": 68,
-      "community_name": "jobCloseoutService.js",
+      "community": 55,
+      "community_name": "jobCommercialArtifactService.js",
       "norm_label": "uploadroot"
     },
     {
@@ -28370,8 +28370,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_inventoryphotoretentionservice_purgeexpiredinventoryphotos",
-      "community": 68,
-      "community_name": "jobCloseoutService.js",
+      "community": 55,
+      "community_name": "jobCommercialArtifactService.js",
       "norm_label": "purgeexpiredinventoryphotos()"
     },
     {
@@ -28382,8 +28382,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_inventoryphotoretentionservice_startinventoryphotoretentioncron",
-      "community": 68,
-      "community_name": "jobCloseoutService.js",
+      "community": 55,
+      "community_name": "jobCommercialArtifactService.js",
       "norm_label": "startinventoryphotoretentioncron()"
     },
     {
@@ -28394,8 +28394,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_inventoryphotoretentionservice_stopinventoryphotoretentioncron",
-      "community": 68,
-      "community_name": "jobCloseoutService.js",
+      "community": 55,
+      "community_name": "jobCommercialArtifactService.js",
       "norm_label": "stopinventoryphotoretentioncron()"
     },
     {
@@ -30034,8 +30034,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_mailtransport_getmailconfigstatus",
-      "community": 58,
-      "community_name": "crmRuntime.js",
+      "community": 1,
+      "community_name": "employeeOperationsService.js",
       "norm_label": "getmailconfigstatus()"
     },
     {
@@ -30793,8 +30793,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_projectservice_getcrmadminstatus",
-      "community": 58,
-      "community_name": "crmRuntime.js",
+      "community": 1,
+      "community_name": "employeeOperationsService.js",
       "norm_label": "getcrmadminstatus()"
     },
     {
@@ -31342,7 +31342,7 @@
       "_origin": "ast",
       "id": "server_src_services_replyreviewtaskservice",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "replyreviewtaskservice.js"
     },
     {
@@ -31353,7 +31353,7 @@
       "_origin": "ast",
       "id": "server_src_services_replyreviewtaskservice_active_outcomes",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "active_outcomes"
     },
     {
@@ -31365,7 +31365,7 @@
       "_origin": "ast",
       "id": "server_src_services_replyreviewtaskservice_formattasknotes",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "formattasknotes()"
     },
     {
@@ -31377,7 +31377,7 @@
       "_origin": "ast",
       "id": "server_src_services_replyreviewtaskservice_formattasktitle",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "formattasktitle()"
     },
     {
@@ -31389,7 +31389,7 @@
       "_origin": "ast",
       "id": "server_src_services_replyreviewtaskservice_ensurereplyreviewtask",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "ensurereplyreviewtask()"
     },
     {
@@ -31400,7 +31400,7 @@
       "_origin": "ast",
       "id": "server_src_services_replyreviewtaskservice_valid_outcomes",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "valid_outcomes"
     },
     {
@@ -31411,7 +31411,7 @@
       "_origin": "ast",
       "id": "server_src_services_replyreviewtaskservice_follow_up_outcomes",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "follow_up_outcomes"
     },
     {
@@ -31423,7 +31423,7 @@
       "_origin": "ast",
       "id": "server_src_services_replyreviewtaskservice_text",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "text()"
     },
     {
@@ -31435,7 +31435,7 @@
       "_origin": "ast",
       "id": "server_src_services_replyreviewtaskservice_priority",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "priority()"
     },
     {
@@ -31447,7 +31447,7 @@
       "_origin": "ast",
       "id": "server_src_services_replyreviewtaskservice_assignreplyreview",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "assignreplyreview()"
     },
     {
@@ -31459,7 +31459,7 @@
       "_origin": "ast",
       "id": "server_src_services_replyreviewtaskservice_resolvereplyreview",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "resolvereplyreview()"
     },
     {
@@ -31471,7 +31471,7 @@
       "_origin": "ast",
       "id": "server_src_services_replyreviewtaskservice_completereplyreview",
       "community": 78,
-      "community_name": "writeAuditLog",
+      "community_name": "auditService.js",
       "norm_label": "completereplyreview()"
     },
     {
@@ -33388,7 +33388,7 @@
       "_origin": "ast",
       "id": "server_src_services_unifiedtaskservice",
       "community": 41,
-      "community_name": "unifiedTaskService.js",
+      "community_name": "writeAuditLog",
       "norm_label": "unifiedtaskservice.js"
     },
     {
@@ -33399,7 +33399,7 @@
       "_origin": "ast",
       "id": "server_src_services_unifiedtaskservice_uploadroot",
       "community": 41,
-      "community_name": "unifiedTaskService.js",
+      "community_name": "writeAuditLog",
       "norm_label": "uploadroot"
     },
     {
@@ -33410,7 +33410,7 @@
       "_origin": "ast",
       "id": "server_src_services_unifiedtaskservice_open_statuses",
       "community": 41,
-      "community_name": "unifiedTaskService.js",
+      "community_name": "writeAuditLog",
       "norm_label": "open_statuses"
     },
     {
@@ -33421,7 +33421,7 @@
       "_origin": "ast",
       "id": "server_src_services_unifiedtaskservice_valid_statuses",
       "community": 41,
-      "community_name": "unifiedTaskService.js",
+      "community_name": "writeAuditLog",
       "norm_label": "valid_statuses"
     },
     {
@@ -33432,7 +33432,7 @@
       "_origin": "ast",
       "id": "server_src_services_unifiedtaskservice_valid_priorities",
       "community": 41,
-      "community_name": "unifiedTaskService.js",
+      "community_name": "writeAuditLog",
       "norm_label": "valid_priorities"
     },
     {
@@ -33444,7 +33444,7 @@
       "_origin": "ast",
       "id": "server_src_services_unifiedtaskservice_text",
       "community": 41,
-      "community_name": "unifiedTaskService.js",
+      "community_name": "writeAuditLog",
       "norm_label": "text()"
     },
     {
@@ -33456,7 +33456,7 @@
       "_origin": "ast",
       "id": "server_src_services_unifiedtaskservice_uuid",
       "community": 41,
-      "community_name": "unifiedTaskService.js",
+      "community_name": "writeAuditLog",
       "norm_label": "uuid()"
     },
     {
@@ -33468,7 +33468,7 @@
       "_origin": "ast",
       "id": "server_src_services_unifiedtaskservice_timestamp",
       "community": 41,
-      "community_name": "unifiedTaskService.js",
+      "community_name": "writeAuditLog",
       "norm_label": "timestamp()"
     },
     {
@@ -33480,7 +33480,7 @@
       "_origin": "ast",
       "id": "server_src_services_unifiedtaskservice_safename",
       "community": 41,
-      "community_name": "unifiedTaskService.js",
+      "community_name": "writeAuditLog",
       "norm_label": "safename()"
     },
     {
@@ -33492,7 +33492,7 @@
       "_origin": "ast",
       "id": "server_src_services_unifiedtaskservice_statusvalue",
       "community": 41,
-      "community_name": "unifiedTaskService.js",
+      "community_name": "writeAuditLog",
       "norm_label": "statusvalue()"
     },
     {
@@ -33504,7 +33504,7 @@
       "_origin": "ast",
       "id": "server_src_services_unifiedtaskservice_priorityvalue",
       "community": 41,
-      "community_name": "unifiedTaskService.js",
+      "community_name": "writeAuditLog",
       "norm_label": "priorityvalue()"
     },
     {
@@ -33516,7 +33516,7 @@
       "_origin": "ast",
       "id": "server_src_services_unifiedtaskservice_displaystatus",
       "community": 41,
-      "community_name": "unifiedTaskService.js",
+      "community_name": "writeAuditLog",
       "norm_label": "displaystatus()"
     },
     {
@@ -33528,7 +33528,7 @@
       "_origin": "ast",
       "id": "server_src_services_unifiedtaskservice_displaypriority",
       "community": 41,
-      "community_name": "unifiedTaskService.js",
+      "community_name": "writeAuditLog",
       "norm_label": "displaypriority()"
     },
     {
@@ -33540,7 +33540,7 @@
       "_origin": "ast",
       "id": "server_src_services_unifiedtaskservice_taskreadmodel",
       "community": 41,
-      "community_name": "unifiedTaskService.js",
+      "community_name": "writeAuditLog",
       "norm_label": "taskreadmodel()"
     },
     {
@@ -33552,7 +33552,7 @@
       "_origin": "ast",
       "id": "server_src_services_unifiedtaskservice_listunifiedtasks",
       "community": 41,
-      "community_name": "unifiedTaskService.js",
+      "community_name": "writeAuditLog",
       "norm_label": "listunifiedtasks()"
     },
     {
@@ -33564,7 +33564,7 @@
       "_origin": "ast",
       "id": "server_src_services_unifiedtaskservice_getunifiedtask",
       "community": 41,
-      "community_name": "unifiedTaskService.js",
+      "community_name": "writeAuditLog",
       "norm_label": "getunifiedtask()"
     },
     {
@@ -33576,7 +33576,7 @@
       "_origin": "ast",
       "id": "server_src_services_unifiedtaskservice_gettaskjobcontext",
       "community": 41,
-      "community_name": "unifiedTaskService.js",
+      "community_name": "writeAuditLog",
       "norm_label": "gettaskjobcontext()"
     },
     {
@@ -33588,7 +33588,7 @@
       "_origin": "ast",
       "id": "server_src_services_unifiedtaskservice_replacedependencies",
       "community": 41,
-      "community_name": "unifiedTaskService.js",
+      "community_name": "writeAuditLog",
       "norm_label": "replacedependencies()"
     },
     {
@@ -33600,7 +33600,7 @@
       "_origin": "ast",
       "id": "server_src_services_unifiedtaskservice_createunifiedtask",
       "community": 41,
-      "community_name": "unifiedTaskService.js",
+      "community_name": "writeAuditLog",
       "norm_label": "createunifiedtask()"
     },
     {
@@ -33612,7 +33612,7 @@
       "_origin": "ast",
       "id": "server_src_services_unifiedtaskservice_updateunifiedtask",
       "community": 41,
-      "community_name": "unifiedTaskService.js",
+      "community_name": "writeAuditLog",
       "norm_label": "updateunifiedtask()"
     },
     {
@@ -33624,7 +33624,7 @@
       "_origin": "ast",
       "id": "server_src_services_unifiedtaskservice_addtaskevidence",
       "community": 41,
-      "community_name": "unifiedTaskService.js",
+      "community_name": "writeAuditLog",
       "norm_label": "addtaskevidence()"
     },
     {
@@ -33634,8 +33634,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_src_services_useremailservice",
-      "community": 58,
-      "community_name": "crmRuntime.js",
+      "community": 1,
+      "community_name": "employeeOperationsService.js",
       "norm_label": "useremailservice.js"
     },
     {
@@ -33646,8 +33646,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_useremailservice_getcrmloginurl",
-      "community": 58,
-      "community_name": "crmRuntime.js",
+      "community": 1,
+      "community_name": "employeeOperationsService.js",
       "norm_label": "getcrmloginurl()"
     },
     {
@@ -33658,8 +33658,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_useremailservice_assertsmtpready",
-      "community": 58,
-      "community_name": "crmRuntime.js",
+      "community": 1,
+      "community_name": "employeeOperationsService.js",
       "norm_label": "assertsmtpready()"
     },
     {
@@ -33670,8 +33670,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_useremailservice_buildcredentialsemail",
-      "community": 58,
-      "community_name": "crmRuntime.js",
+      "community": 1,
+      "community_name": "employeeOperationsService.js",
       "norm_label": "buildcredentialsemail()"
     },
     {
@@ -33682,8 +33682,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_useremailservice_sendusercredentialsemail",
-      "community": 58,
-      "community_name": "crmRuntime.js",
+      "community": 1,
+      "community_name": "employeeOperationsService.js",
       "norm_label": "sendusercredentialsemail()"
     },
     {
@@ -33694,8 +33694,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_useremailservice_getemaildeliverystatus",
-      "community": 58,
-      "community_name": "crmRuntime.js",
+      "community": 1,
+      "community_name": "employeeOperationsService.js",
       "norm_label": "getemaildeliverystatus()"
     },
     {
@@ -35221,8 +35221,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_utils_sequenceflowexecutor_nodetoemailstep",
-      "community": 63,
-      "community_name": "sendWorker.js",
+      "community": 25,
+      "community_name": "sequenceFlowExecutor.js",
       "norm_label": "nodetoemailstep()"
     },
     {
@@ -35245,8 +35245,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_utils_sequenceflowexecutor_isshortflowdelay",
-      "community": 63,
-      "community_name": "sendWorker.js",
+      "community": 25,
+      "community_name": "sequenceFlowExecutor.js",
       "norm_label": "isshortflowdelay()"
     },
     {
@@ -35374,8 +35374,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_src_utils_uploadpath",
-      "community": 68,
-      "community_name": "jobCloseoutService.js",
+      "community": 55,
+      "community_name": "jobCommercialArtifactService.js",
       "norm_label": "uploadpath.js"
     },
     {
@@ -35385,8 +35385,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "server_src_utils_uploadpath_filename",
-      "community": 68,
-      "community_name": "jobCloseoutService.js",
+      "community": 55,
+      "community_name": "jobCommercialArtifactService.js",
       "norm_label": "__filename"
     },
     {
@@ -35396,8 +35396,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "server_src_utils_uploadpath_dirname",
-      "community": 68,
-      "community_name": "jobCloseoutService.js",
+      "community": 55,
+      "community_name": "jobCommercialArtifactService.js",
       "norm_label": "__dirname"
     },
     {
@@ -35408,8 +35408,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_utils_uploadpath_getuploadsdir",
-      "community": 68,
-      "community_name": "jobCloseoutService.js",
+      "community": 55,
+      "community_name": "jobCommercialArtifactService.js",
       "norm_label": "getuploadsdir()"
     },
     {
@@ -35419,8 +35419,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "server_src_utils_uploadpath_uploads_dir",
-      "community": 68,
-      "community_name": "jobCloseoutService.js",
+      "community": 55,
+      "community_name": "jobCommercialArtifactService.js",
       "norm_label": "uploads_dir"
     },
     {
@@ -35431,8 +35431,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_utils_uploadpath_getuploadsubdir",
-      "community": 68,
-      "community_name": "jobCloseoutService.js",
+      "community": 55,
+      "community_name": "jobCommercialArtifactService.js",
       "norm_label": "getuploadsubdir()"
     },
     {
@@ -35741,8 +35741,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_tests_renamephase1_test",
-      "community": 35,
-      "community_name": "salesService.js",
+      "community": 266,
+      "community_name": "ongoingJobPipeline.js",
       "norm_label": "renamephase1.test.js"
     },
     {
@@ -35819,8 +35819,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_tests_salesworkspace_test",
-      "community": 35,
-      "community_name": "salesService.js",
+      "community": 266,
+      "community_name": "ongoingJobPipeline.js",
       "norm_label": "salesworkspace.test.js"
     },
     {
@@ -38921,8 +38921,8 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "egs_website_content_bible_modern_operator_voice",
-      "community": 161,
-      "community_name": "EGS Website Content Bible",
+      "community": 174,
+      "community_name": "Modern Operator Voice",
       "norm_label": "modern operator voice"
     },
     {
@@ -38932,8 +38932,8 @@
       "source_location": "L107",
       "_origin": "ast",
       "id": "egs_website_content_bible_voice_rules",
-      "community": 161,
-      "community_name": "EGS Website Content Bible",
+      "community": 174,
+      "community_name": "Modern Operator Voice",
       "norm_label": "voice rules"
     },
     {
@@ -38943,8 +38943,8 @@
       "source_location": "L131",
       "_origin": "ast",
       "id": "egs_website_content_bible_good_egs_lines",
-      "community": 161,
-      "community_name": "EGS Website Content Bible",
+      "community": 174,
+      "community_name": "Modern Operator Voice",
       "norm_label": "good egs lines"
     },
     {
@@ -94405,7 +94405,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L350",
+      "source_location": "L431",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_graduationportfoliopage_graduationportfoliopage",
@@ -94573,7 +94573,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/pages/PortfolioFablePage.jsx",
-      "source_location": "L535",
+      "source_location": "L552",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_portfoliofablepage_portfoliofablepage",
@@ -96793,7 +96793,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L71",
+      "source_location": "L75",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_graduationportfoliopage",
@@ -96804,7 +96804,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L137",
+      "source_location": "L150",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_graduationportfoliopage",
@@ -96815,7 +96815,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L207",
+      "source_location": "L239",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_graduationportfoliopage",
@@ -96826,7 +96826,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L319",
+      "source_location": "L351",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_graduationportfoliopage",
@@ -96891,6 +96891,18 @@
       "source": "client_src_pages_index",
       "target": "client_src_pages_graduationportfoliopage",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
+      "source_location": "L368",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "client_src_pages_graduationportfoliopage_graduationportfoliopage",
+      "target": "client_src_pages_graduationportfoliopage_graduation_projects"
     },
     {
       "relation": "contains",
@@ -97688,7 +97700,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/pages/PortfolioFablePage.jsx",
-      "source_location": "L1267",
+      "source_location": "L1342",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_portfoliofablepage_portfoliofablepage",
@@ -97701,7 +97713,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/pages/PortfolioFablePage.jsx",
-      "source_location": "L508",
+      "source_location": "L525",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_portfoliofablepage_portfoliofablepage",
@@ -99336,7 +99348,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/portfolio/graduations.js",
-      "source_location": "L40",
+      "source_location": "L45",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_portfolio_graduations",
@@ -99358,7 +99370,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/portfolio/graduations.js",
-      "source_location": "L30",
+      "source_location": "L33",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_portfolio_graduations",
@@ -99369,7 +99381,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/portfolio/graduations.js",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_portfolio_graduations",
@@ -99429,7 +99441,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "client/src/portfolio/graduations.js",
-      "source_location": "L58",
+      "source_location": "L63",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_portfolio_graduations_buildgradclients",
@@ -99442,7 +99454,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/portfolio/graduations.js",
-      "source_location": "L73",
+      "source_location": "L78",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_portfolio_graduations_buildgradclients",
@@ -99454,7 +99466,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/portfolio/graduations.js",
-      "source_location": "L45",
+      "source_location": "L50",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_portfolio_graduations_buildgradclients",
@@ -99466,7 +99478,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/portfolio/graduations.js",
-      "source_location": "L64",
+      "source_location": "L69",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_portfolio_graduations_buildgradclients",
@@ -149807,5 +149819,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "7efa1d73463c87b34c942d49ea22a40efd254f23"
+  "built_at_commit": "61c58efac094d84a99d5b4dbec9f57914e6e754c"
 }

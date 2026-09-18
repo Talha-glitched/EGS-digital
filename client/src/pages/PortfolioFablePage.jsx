@@ -217,12 +217,28 @@ function GalleryVideo({ src, name }) {
 }
 
 export default function PortfolioFablePage() {
-  const [activeCat, setActiveCat] = useState('about-us');
-  const [activeYear, setActiveYear] = useState('all');
-  const [loaderStep, setLoaderStep] = useState('blank'); // 'blank', 'logo-fade-in', 'logo-shrink', 'quote-fade-in', 'quote-fade-out', 'overlay-fade-out', 'done'
+  const initialParams = useMemo(() => {
+    if (typeof window === 'undefined') return { cat: 'about-us', year: 'all', project: null };
+    const sp = new URLSearchParams(window.location.search);
+    const hash = window.location.hash ? window.location.hash.replace('#', '') : null;
+    const cat = sp.get('category') || sp.get('cat') || (hash && ['graduation', 'exhibition-stand', 'corporate-events-branding', 'retail', 'fitouts', 'all'].includes(hash) ? hash : null);
+    const year = sp.get('year') || 'all';
+    const project = sp.get('project') || sp.get('client') || null;
+    return {
+      cat: cat || 'about-us',
+      year,
+      project
+    };
+  }, []);
+
+  const hasDirectCategory = initialParams.cat && initialParams.cat !== 'about-us';
+  const [activeCat, setActiveCat] = useState(hasDirectCategory ? initialParams.cat : 'about-us');
+  const [activeYear, setActiveYear] = useState(initialParams.year);
+  const [loaderStep, setLoaderStep] = useState(hasDirectCategory ? 'done' : 'blank'); // 'blank', 'logo-fade-in', 'logo-shrink', 'quote-fade-in', 'quote-fade-out', 'overlay-fade-out', 'done'
   const [aboutScrolled, setAboutScrolled] = useState(false);
   const [activeSlideIdx, setActiveSlideIdx] = useState(0);
   const [lastInteraction, setLastInteraction] = useState('mouse'); // 'mouse' or 'keyboard'
+  const [fableCopied, setFableCopied] = useState(false);
   const lastMousePos = useRef({ x: 0, y: 0 });
   const aboutRef = useRef(null);
   const lastWheelTime = useRef(0);
@@ -240,6 +256,7 @@ export default function PortfolioFablePage() {
   };
 
   useEffect(() => {
+    if (hasDirectCategory) return undefined;
     const t0 = setTimeout(() => setLoaderStep('logo-fade-in'), 500);
     const t1 = setTimeout(() => setLoaderStep('logo-shrink'), 1500);
     const t2 = setTimeout(() => setLoaderStep('quote-fade-in'), 1800);
@@ -255,7 +272,7 @@ export default function PortfolioFablePage() {
       clearTimeout(t4);
       clearTimeout(t5);
     };
-  }, []);
+  }, [hasDirectCategory]);
 
   // Preload project media in the background while the user is viewing the slides (about-us active)
   useEffect(() => {
@@ -676,6 +693,64 @@ export default function PortfolioFablePage() {
     setViewerIdx(Math.max(0, origIndex));
   };
   const closeViewer = () => setViewerIdx(null);
+
+  // If initial URL specified a project/client, open it once clients list is loaded
+  const initialProjectHandled = useRef(false);
+  useEffect(() => {
+    if (initialProjectHandled.current || !initialParams.project || clients.length === 0) return;
+    const query = initialParams.project.toLowerCase();
+    const idx = clients.findIndex(
+      (c) => c.id.toLowerCase() === query || c.id.toLowerCase().includes(query) || c.name.toLowerCase().includes(query)
+    );
+    if (idx !== -1) {
+      initialProjectHandled.current = true;
+      setViewerIdx(idx);
+    }
+  }, [clients, initialParams.project]);
+
+  // Sync URL query params with active category, year, and viewer project
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (loaderStep !== 'done' && activeCat === 'about-us') return;
+
+    const url = new URL(window.location.href);
+    if (activeCat && activeCat !== 'about-us') {
+      url.searchParams.set('category', activeCat);
+      if (activeYear && activeYear !== 'all') {
+        url.searchParams.set('year', activeYear);
+      } else {
+        url.searchParams.delete('year');
+      }
+      if (viewerProject) {
+        url.searchParams.set('project', viewerProject.id);
+      } else {
+        url.searchParams.delete('project');
+        url.searchParams.delete('client');
+      }
+    } else {
+      url.searchParams.delete('category');
+      url.searchParams.delete('cat');
+      url.searchParams.delete('year');
+      url.searchParams.delete('project');
+      url.searchParams.delete('client');
+    }
+
+    const newPath = url.pathname + (url.searchParams.toString() ? '?' + url.searchParams.toString() : '');
+    if (window.location.pathname + window.location.search !== newPath) {
+      window.history.replaceState(null, '', newPath);
+    }
+  }, [activeCat, activeYear, viewerProject, loaderStep]);
+
+  const handleCopyViewerLink = () => {
+    if (typeof window === 'undefined') return;
+    const url = viewerProject
+      ? `${window.location.origin}/portfolio-fable?category=${activeCat}&year=${activeYear}&project=${viewerProject.id}`
+      : `${window.location.origin}/portfolio-fable?category=${activeCat}${activeYear !== 'all' ? `&year=${activeYear}` : ''}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setFableCopied(true);
+      setTimeout(() => setFableCopied(false), 2000);
+    });
+  };
 
   // vertical axis: previous / next project (wraps around the list)
   const goProject = (dir) => {
@@ -1339,9 +1414,20 @@ export default function PortfolioFablePage() {
                   {pad2(mediaIdx + 1)} / {pad2(viewerProject.media.length)}
                 </span>
               </div>
-              <button type="button" className="pf-viewer-close" onClick={closeViewer} aria-label="Close gallery">
-                ✕
-              </button>
+              <div className="pf-viewer-actions">
+                <button
+                  type="button"
+                  className="pf-viewer-share"
+                  onClick={handleCopyViewerLink}
+                  aria-label="Share project link"
+                  title="Copy direct link to this project"
+                >
+                  {fableCopied ? '✓ Copied' : '🔗 Share'}
+                </button>
+                <button type="button" className="pf-viewer-close" onClick={closeViewer} aria-label="Close gallery">
+                  ✕
+                </button>
+              </div>
             </div>
 
             {viewerProject.facts && (
