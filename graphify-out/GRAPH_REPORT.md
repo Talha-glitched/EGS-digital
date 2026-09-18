@@ -1,16 +1,16 @@
 # Graph Report - EGS-web  (2026-09-18)
 
 ## Corpus Check
-- 611 files · ~2,549,242 words
+- 611 files · ~2,549,241 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3966 nodes · 9022 edges · 270 communities (216 shown, 54 thin omitted)
+- 3966 nodes · 9022 edges · 270 communities (215 shown, 55 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 52 edges (avg confidence: 0.66)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `61c58efa`
+- Built from commit: `19ae7408`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -40,7 +40,7 @@
 - dependencies
 - sequenceFlow.js
 - GalleryApp
-- sequenceFlowExecutor.js
+- sendWorker.js
 - 01_init_postgresql_schema.sql
 - completedJobService.js
 - sortUtils.js
@@ -78,7 +78,7 @@
 - leadResponse.js
 - fixGisecLeadNames.js
 - SequenceInspector.jsx
-- sendWorker.js
+- uaeBusinessHours.js
 - app.js
 - Prerequisites
 - auditArabianOrganics.js
@@ -121,7 +121,7 @@
 - src/constants/pocQualification.js
 - sendDeliveryErrors.js
 - Video Hero + GSAP Navbar (Portable Implementation Guide)
-- 04_add_missing_tables.sql
+- conversation_job_links
 - client/vercel.json
 - 03_migrate_staged_campaigns_sequences.js
 - repairOpportunityValues.js
@@ -286,7 +286,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (270 total, 54 thin omitted)
+## Communities (270 total, 55 thin omitted)
 
 ### Community 0 - "crmApi.js"
 Cohesion: 0.04
@@ -384,13 +384,13 @@ Nodes (43): buildAudienceQuery(), SequenceBuilderWorkspace(), appendConditionWit
 Cohesion: 0.10
 Nodes (9): autoBind(), CircularGallery(), createTextTexture(), debounce(), GalleryApp, getFontSize(), lerp(), Media (+1 more)
 
-### Community 25 - "sequenceFlowExecutor.js"
-Cohesion: 0.21
-Nodes (16): DELAY_UNITS, delayToMs(), formatStepDelay(), normalizeDelayUnit(), parseStepDelay(), evaluateCondition(), findFlowNode(), getNextNodeId() (+8 more)
+### Community 25 - "sendWorker.js"
+Cohesion: 0.12
+Nodes (29): getDailySendCount(), getHourlySendCount(), getMsUntilHourlyLimitResumes(), kickSendQueue(), pollSendQueue(), processSendJob(), renderTemplate(), sendJobNow() (+21 more)
 
 ### Community 26 - "01_init_postgresql_schema.sql"
 Cohesion: 0.06
-Nodes (57): prevent_task_dependency_cycle, campaign_accounts, campaign_contact_focus_events, campaign_contacts, campaigns, communication_job_actions, conversation_job_links, conversation_participants (+49 more)
+Nodes (59): predecessors, prevent_task_dependency_cycle, campaign_accounts, campaign_contact_focus_events, campaign_contacts, campaigns, communication_job_actions, conversation_job_links (+51 more)
 
 ### Community 27 - "completedJobService.js"
 Cohesion: 0.13
@@ -445,8 +445,8 @@ Cohesion: 0.43
 Nodes (6): cleanNum(), __dirname, __filename, parseCsvLine(), parseDate(), runJobSeeding()
 
 ### Community 40 - "mailTransport.js"
-Cohesion: 0.16
-Nodes (22): client, users, client, client, identity, transporter, appendOutboundCopyToSent(), compileOutboundMessage() (+14 more)
+Cohesion: 0.15
+Nodes (23): client, users, client, client, identity, transporter, appendOutboundCopyToSent(), compileOutboundMessage() (+15 more)
 
 ### Community 41 - "writeAuditLog"
 Cohesion: 0.22
@@ -532,9 +532,9 @@ Nodes (5): findCampaign(), main(), fixMojibakeName(), MOJIBAKE_REPLACEMENTS, nam
 Cohesion: 0.07
 Nodes (43): audienceToApiParams(), audienceWithImportedCampaign(), buildAudienceSummary(), buildImportedListLabels(), EMPTY_AUDIENCE, normalizeCampaignId(), AudiencePreviewModal(), BLOCKED_REASON_LABELS (+35 more)
 
-### Community 63 - "sendWorker.js"
-Cohesion: 0.15
-Nodes (21): getDailySendCount(), getHourlySendCount(), getMsUntilHourlyLimitResumes(), kickSendQueue(), pollSendQueue(), processSendJob(), renderTemplate(), sendJobNow() (+13 more)
+### Community 63 - "uaeBusinessHours.js"
+Cohesion: 0.46
+Nodes (7): fromGstParts(), getGstDateKey(), getGstDayBounds(), getNextUaeBusinessWindow(), isWithinUaeBusinessHours(), randomSendDelayMs(), toGstDate()
 
 ### Community 64 - "app.js"
 Cohesion: 0.09
@@ -569,8 +569,8 @@ Cohesion: 0.07
 Nodes (26): 06 Case Studies Page Content Spec, Above The Fold, Audience, Case Studies, Case Study Format, Case Study Navigation, FAQ, Final CTA (+18 more)
 
 ### Community 72 - "users"
-Cohesion: 0.11
-Nodes (31): audit_events, job_activity_resource_assignments, job_activity_updates, note_attachments, note_versions, notes, operational_resources, project_time_corrections (+23 more)
+Cohesion: 0.12
+Nodes (29): audit_events, job_activity_resource_assignments, job_activity_updates, note_attachments, note_versions, notes, operational_resources, project_time_corrections (+21 more)
 
 ### Community 73 - "contactEmails.test.js"
 Cohesion: 0.20
@@ -597,8 +597,8 @@ Cohesion: 0.14
 Nodes (13): dependencies, @microsoft/clarity, @microsoft/clarity, name, private, scripts, build, dev (+5 more)
 
 ### Community 81 - "ongoing_jobs"
-Cohesion: 0.12
-Nodes (22): milestone, resolved, artifact_decisions, design_sets, design_versions, financial_milestones, job_actual_costs, job_cost_confirmations (+14 more)
+Cohesion: 0.09
+Nodes (29): milestone, resolved, artifact_decisions, design_sets, design_versions, financial_milestones, interactions, job_actual_costs (+21 more)
 
 ### Community 82 - "Section Order"
 Cohesion: 0.08
@@ -673,8 +673,8 @@ Cohesion: 0.47
 Nodes (4): chapterProgress(), PAGE_THEMES, ServicesV2(), smoothstep()
 
 ### Community 101 - "job_scope_lines"
-Cohesion: 0.15
-Nodes (24): predecessors, field_execution_files, field_execution_submissions, job_activities, job_delivery_activations, job_locations, job_phases, job_scope_lines (+16 more)
+Cohesion: 0.21
+Nodes (19): field_execution_files, field_execution_submissions, job_activities, job_delivery_activations, job_locations, job_phases, job_scope_lines, job_snags (+11 more)
 
 ### Community 102 - "auditBusinessSemanticsReadOnly.js"
 Cohesion: 0.40
@@ -695,10 +695,6 @@ Nodes (4): describeSendDeliveryError(), ERROR_RULES, formatDeliveryIssueRow(), S
 ### Community 107 - "Video Hero + GSAP Navbar (Portable Implementation Guide)"
 Cohesion: 0.11
 Nodes (18): 1) Dependencies, 2) Shared CSS tokens you must bring over, 3) Implementing the Video Hero, 4) Implementing the GSAP Navbar (Card Menu), 5) Recommended integration order (so it “just works”), 6) Common issues / fixes, Customizing the menu items, How it works (high level) (+10 more)
-
-### Community 108 - "04_add_missing_tables.sql"
-Cohesion: 0.40
-Nodes (4): analytics_snapshots, completed_jobs, daily_review_records, revenue_entries
 
 ### Community 109 - "client/vercel.json"
 Cohesion: 0.50
@@ -987,7 +983,7 @@ Nodes (4): apply, assessmentByStatus, pool, scriptDir
 ## Knowledge Gaps
 - **1254 isolated node(s):** `name`, `private`, `type`, `dev`, `build` (+1249 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **54 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **55 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_

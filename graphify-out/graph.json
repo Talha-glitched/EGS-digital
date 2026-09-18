@@ -15827,7 +15827,7 @@
       "label": "projectsMap",
       "file_type": "code",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L12",
+      "source_location": "L11",
       "_origin": "ast",
       "id": "client_src_pages_graduationportfoliopage_projectsmap",
       "community": 213,
@@ -15838,7 +15838,7 @@
       "label": "CAMPUS_METADATA",
       "file_type": "code",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L75",
+      "source_location": "L74",
       "_origin": "ast",
       "id": "client_src_pages_graduationportfoliopage_campus_metadata",
       "community": 213,
@@ -15849,7 +15849,7 @@
       "label": "getCampusMetadata()",
       "file_type": "code",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L150",
+      "source_location": "L149",
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_pages_graduationportfoliopage_getcampusmetadata",
@@ -15861,7 +15861,7 @@
       "label": "GRADUATION_PROJECTS",
       "file_type": "code",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L239",
+      "source_location": "L238",
       "_origin": "ast",
       "id": "client_src_pages_graduationportfoliopage_graduation_projects",
       "community": 213,
@@ -15872,7 +15872,7 @@
       "label": "GraduationPortfolioPage()",
       "file_type": "code",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L351",
+      "source_location": "L350",
       "_callable": true,
       "_origin": "ast",
       "id": "client_src_pages_graduationportfoliopage_graduationportfoliopage",
@@ -18435,8 +18435,8 @@
       "source_location": "L224",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_people",
-      "community": 26,
-      "community_name": "01_init_postgresql_schema.sql",
+      "community": 81,
+      "community_name": "ongoing_jobs",
       "norm_label": "people"
     },
     {
@@ -18655,8 +18655,8 @@
       "source_location": "L424",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_interactions",
-      "community": 26,
-      "community_name": "01_init_postgresql_schema.sql",
+      "community": 81,
+      "community_name": "ongoing_jobs",
       "norm_label": "interactions"
     },
     {
@@ -18666,8 +18666,8 @@
       "source_location": "L436",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_tasks",
-      "community": 101,
-      "community_name": "job_scope_lines",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "tasks"
     },
     {
@@ -19216,8 +19216,8 @@
       "source_location": "L1057",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_job_closeouts",
-      "community": 26,
-      "community_name": "01_init_postgresql_schema.sql",
+      "community": 81,
+      "community_name": "ongoing_jobs",
       "norm_label": "job_closeouts"
     },
     {
@@ -19304,8 +19304,8 @@
       "source_location": "L1155",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_task_dependencies",
-      "community": 101,
-      "community_name": "job_scope_lines",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "task_dependencies"
     },
     {
@@ -19315,8 +19315,8 @@
       "source_location": "L1164",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_task_evidence",
-      "community": 101,
-      "community_name": "job_scope_lines",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "task_evidence"
     },
     {
@@ -19326,8 +19326,8 @@
       "source_location": "L1172",
       "_origin": "ast",
       "id": "server_scripts_01_init_postgresql_schema_prevent_task_dependency_cycle",
-      "community": 101,
-      "community_name": "job_scope_lines",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "prevent_task_dependency_cycle()"
     },
     {
@@ -19337,8 +19337,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "predecessors",
-      "community": 101,
-      "community_name": "job_scope_lines",
+      "community": 26,
+      "community_name": "01_init_postgresql_schema.sql",
       "norm_label": "predecessors"
     },
     {
@@ -19592,8 +19592,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "server_scripts_04_add_missing_tables",
-      "community": 108,
-      "community_name": "04_add_missing_tables.sql",
+      "community": 81,
+      "community_name": "ongoing_jobs",
       "norm_label": "04_add_missing_tables.sql"
     },
     {
@@ -19603,8 +19603,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "server_scripts_04_add_missing_tables_completed_jobs",
-      "community": 108,
-      "community_name": "04_add_missing_tables.sql",
+      "community": 81,
+      "community_name": "ongoing_jobs",
       "norm_label": "completed_jobs"
     },
     {
@@ -19614,8 +19614,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "server_scripts_04_add_missing_tables_daily_review_records",
-      "community": 108,
-      "community_name": "04_add_missing_tables.sql",
+      "community": 81,
+      "community_name": "ongoing_jobs",
       "norm_label": "daily_review_records"
     },
     {
@@ -19625,8 +19625,8 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "server_scripts_04_add_missing_tables_analytics_snapshots",
-      "community": 108,
-      "community_name": "04_add_missing_tables.sql",
+      "community": 81,
+      "community_name": "ongoing_jobs",
       "norm_label": "analytics_snapshots"
     },
     {
@@ -19636,8 +19636,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "server_scripts_04_add_missing_tables_revenue_entries",
-      "community": 108,
-      "community_name": "04_add_missing_tables.sql",
+      "community": 81,
+      "community_name": "ongoing_jobs",
       "norm_label": "revenue_entries"
     },
     {
@@ -20670,8 +20670,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "server_scripts_26_communication_job_actions",
-      "community": 72,
-      "community_name": "users",
+      "community": 108,
+      "community_name": "conversation_job_links",
       "norm_label": "26_communication_job_actions.sql"
     },
     {
@@ -20681,8 +20681,8 @@
       "source_location": "L2",
       "_origin": "ast",
       "id": "server_scripts_26_communication_job_actions_conversation_job_links",
-      "community": 72,
-      "community_name": "users",
+      "community": 108,
+      "community_name": "conversation_job_links",
       "norm_label": "conversation_job_links"
     },
     {
@@ -20692,8 +20692,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "server_scripts_26_communication_job_actions_communication_job_actions",
-      "community": 72,
-      "community_name": "users",
+      "community": 108,
+      "community_name": "conversation_job_links",
       "norm_label": "communication_job_actions"
     },
     {
@@ -32352,7 +32352,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_src_services_sendworker",
-      "community": 63,
+      "community": 25,
       "community_name": "sendWorker.js",
       "norm_label": "sendworker.js"
     },
@@ -32376,8 +32376,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_sendworker_withoptoutfooter",
-      "community": 63,
-      "community_name": "sendWorker.js",
+      "community": 40,
+      "community_name": "mailTransport.js",
       "norm_label": "withoptoutfooter()"
     },
     {
@@ -32388,7 +32388,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_sendworker_getdailysendcount",
-      "community": 63,
+      "community": 25,
       "community_name": "sendWorker.js",
       "norm_label": "getdailysendcount()"
     },
@@ -32400,7 +32400,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_sendworker_gethourlysendcount",
-      "community": 63,
+      "community": 25,
       "community_name": "sendWorker.js",
       "norm_label": "gethourlysendcount()"
     },
@@ -32412,7 +32412,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_sendworker_getmsuntilhourlylimitresumes",
-      "community": 63,
+      "community": 25,
       "community_name": "sendWorker.js",
       "norm_label": "getmsuntilhourlylimitresumes()"
     },
@@ -32424,7 +32424,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_sendworker_rendertemplate",
-      "community": 63,
+      "community": 25,
       "community_name": "sendWorker.js",
       "norm_label": "rendertemplate()"
     },
@@ -32436,7 +32436,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_sendworker_stepdelayms",
-      "community": 63,
+      "community": 25,
       "community_name": "sendWorker.js",
       "norm_label": "stepdelayms()"
     },
@@ -32448,7 +32448,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_sendworker_processsendjob",
-      "community": 63,
+      "community": 25,
       "community_name": "sendWorker.js",
       "norm_label": "processsendjob()"
     },
@@ -32472,7 +32472,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_sendworker_pollsendqueue",
-      "community": 63,
+      "community": 25,
       "community_name": "sendWorker.js",
       "norm_label": "pollsendqueue()"
     },
@@ -32484,7 +32484,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_sendworker_scheduleenrollmentjob",
-      "community": 63,
+      "community": 25,
       "community_name": "sendWorker.js",
       "norm_label": "scheduleenrollmentjob()"
     },
@@ -32496,7 +32496,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_sendworker_cancelleadjobs",
-      "community": 63,
+      "community": 25,
       "community_name": "sendWorker.js",
       "norm_label": "cancelleadjobs()"
     },
@@ -32508,7 +32508,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_sendworker_kicksendqueue",
-      "community": 63,
+      "community": 25,
       "community_name": "sendWorker.js",
       "norm_label": "kicksendqueue()"
     },
@@ -32532,7 +32532,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_sendworker_stopsendworker",
-      "community": 63,
+      "community": 25,
       "community_name": "sendWorker.js",
       "norm_label": "stopsendworker()"
     },
@@ -32544,7 +32544,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_sendworker_shutdownsendworker",
-      "community": 63,
+      "community": 25,
       "community_name": "sendWorker.js",
       "norm_label": "shutdownsendworker()"
     },
@@ -32556,7 +32556,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_sendworker_sendjobnow",
-      "community": 63,
+      "community": 25,
       "community_name": "sendWorker.js",
       "norm_label": "sendjobnow()"
     },
@@ -32568,7 +32568,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_sendworker_sendpendingjobsbatch",
-      "community": 63,
+      "community": 25,
       "community_name": "sendWorker.js",
       "norm_label": "sendpendingjobsbatch()"
     },
@@ -32974,7 +32974,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "server_src_services_sequenceservice_sendcampaignqueuejobs",
-      "community": 63,
+      "community": 25,
       "community_name": "sendWorker.js",
       "norm_label": "sendcampaignqueuejobs()"
     },
@@ -35044,7 +35044,7 @@
       "_origin": "ast",
       "id": "server_src_utils_sequencedelay",
       "community": 25,
-      "community_name": "sequenceFlowExecutor.js",
+      "community_name": "sendWorker.js",
       "norm_label": "src/utils/sequencedelay.js"
     },
     {
@@ -35055,7 +35055,7 @@
       "_origin": "ast",
       "id": "server_src_utils_sequencedelay_delay_units",
       "community": 25,
-      "community_name": "sequenceFlowExecutor.js",
+      "community_name": "sendWorker.js",
       "norm_label": "delay_units"
     },
     {
@@ -35067,7 +35067,7 @@
       "_origin": "ast",
       "id": "server_src_utils_sequencedelay_normalizedelayunit",
       "community": 25,
-      "community_name": "sequenceFlowExecutor.js",
+      "community_name": "sendWorker.js",
       "norm_label": "normalizedelayunit()"
     },
     {
@@ -35079,7 +35079,7 @@
       "_origin": "ast",
       "id": "server_src_utils_sequencedelay_delaytoms",
       "community": 25,
-      "community_name": "sequenceFlowExecutor.js",
+      "community_name": "sendWorker.js",
       "norm_label": "delaytoms()"
     },
     {
@@ -35091,7 +35091,7 @@
       "_origin": "ast",
       "id": "server_src_utils_sequencedelay_parsestepdelay",
       "community": 25,
-      "community_name": "sequenceFlowExecutor.js",
+      "community_name": "sendWorker.js",
       "norm_label": "parsestepdelay()"
     },
     {
@@ -35103,7 +35103,7 @@
       "_origin": "ast",
       "id": "server_src_utils_sequencedelay_formatstepdelay",
       "community": 25,
-      "community_name": "sequenceFlowExecutor.js",
+      "community_name": "sendWorker.js",
       "norm_label": "formatstepdelay()"
     },
     {
@@ -35114,7 +35114,7 @@
       "_origin": "ast",
       "id": "server_src_utils_sequenceflowexecutor",
       "community": 25,
-      "community_name": "sequenceFlowExecutor.js",
+      "community_name": "sendWorker.js",
       "norm_label": "sequenceflowexecutor.js"
     },
     {
@@ -35126,7 +35126,7 @@
       "_origin": "ast",
       "id": "server_src_utils_sequenceflowexecutor_normalizeflowgraph",
       "community": 25,
-      "community_name": "sequenceFlowExecutor.js",
+      "community_name": "sendWorker.js",
       "norm_label": "normalizeflowgraph()"
     },
     {
@@ -35138,7 +35138,7 @@
       "_origin": "ast",
       "id": "server_src_utils_sequenceflowexecutor_findflownode",
       "community": 25,
-      "community_name": "sequenceFlowExecutor.js",
+      "community_name": "sendWorker.js",
       "norm_label": "findflownode()"
     },
     {
@@ -35150,7 +35150,7 @@
       "_origin": "ast",
       "id": "server_src_utils_sequenceflowexecutor_getoutgoingedge",
       "community": 25,
-      "community_name": "sequenceFlowExecutor.js",
+      "community_name": "sendWorker.js",
       "norm_label": "getoutgoingedge()"
     },
     {
@@ -35162,7 +35162,7 @@
       "_origin": "ast",
       "id": "server_src_utils_sequenceflowexecutor_getnextnodeid",
       "community": 25,
-      "community_name": "sequenceFlowExecutor.js",
+      "community_name": "sendWorker.js",
       "norm_label": "getnextnodeid()"
     },
     {
@@ -35174,7 +35174,7 @@
       "_origin": "ast",
       "id": "server_src_utils_sequenceflowexecutor_resolveentrynodeid",
       "community": 25,
-      "community_name": "sequenceFlowExecutor.js",
+      "community_name": "sendWorker.js",
       "norm_label": "resolveentrynodeid()"
     },
     {
@@ -35186,7 +35186,7 @@
       "_origin": "ast",
       "id": "server_src_utils_sequenceflowexecutor_readwaitdelayms",
       "community": 25,
-      "community_name": "sequenceFlowExecutor.js",
+      "community_name": "sendWorker.js",
       "norm_label": "readwaitdelayms()"
     },
     {
@@ -35198,7 +35198,7 @@
       "_origin": "ast",
       "id": "server_src_utils_sequenceflowexecutor_evaluatecondition",
       "community": 25,
-      "community_name": "sequenceFlowExecutor.js",
+      "community_name": "sendWorker.js",
       "norm_label": "evaluatecondition()"
     },
     {
@@ -35210,7 +35210,7 @@
       "_origin": "ast",
       "id": "server_src_utils_sequenceflowexecutor_resolveconditionbranch",
       "community": 25,
-      "community_name": "sequenceFlowExecutor.js",
+      "community_name": "sendWorker.js",
       "norm_label": "resolveconditionbranch()"
     },
     {
@@ -35222,7 +35222,7 @@
       "_origin": "ast",
       "id": "server_src_utils_sequenceflowexecutor_nodetoemailstep",
       "community": 25,
-      "community_name": "sequenceFlowExecutor.js",
+      "community_name": "sendWorker.js",
       "norm_label": "nodetoemailstep()"
     },
     {
@@ -35234,7 +35234,7 @@
       "_origin": "ast",
       "id": "server_src_utils_sequenceflowexecutor_resolvenextemailtarget",
       "community": 25,
-      "community_name": "sequenceFlowExecutor.js",
+      "community_name": "sendWorker.js",
       "norm_label": "resolvenextemailtarget()"
     },
     {
@@ -35246,7 +35246,7 @@
       "_origin": "ast",
       "id": "server_src_utils_sequenceflowexecutor_isshortflowdelay",
       "community": 25,
-      "community_name": "sequenceFlowExecutor.js",
+      "community_name": "sendWorker.js",
       "norm_label": "isshortflowdelay()"
     },
     {
@@ -35280,7 +35280,7 @@
       "_origin": "ast",
       "id": "server_src_utils_uaebusinesshours",
       "community": 63,
-      "community_name": "sendWorker.js",
+      "community_name": "uaeBusinessHours.js",
       "norm_label": "uaebusinesshours.js"
     },
     {
@@ -35292,7 +35292,7 @@
       "_origin": "ast",
       "id": "server_src_utils_uaebusinesshours_togstdate",
       "community": 63,
-      "community_name": "sendWorker.js",
+      "community_name": "uaeBusinessHours.js",
       "norm_label": "togstdate()"
     },
     {
@@ -35304,7 +35304,7 @@
       "_origin": "ast",
       "id": "server_src_utils_uaebusinesshours_fromgstparts",
       "community": 63,
-      "community_name": "sendWorker.js",
+      "community_name": "uaeBusinessHours.js",
       "norm_label": "fromgstparts()"
     },
     {
@@ -35316,7 +35316,7 @@
       "_origin": "ast",
       "id": "server_src_utils_uaebusinesshours_iswithinuaebusinesshours",
       "community": 63,
-      "community_name": "sendWorker.js",
+      "community_name": "uaeBusinessHours.js",
       "norm_label": "iswithinuaebusinesshours()"
     },
     {
@@ -35328,7 +35328,7 @@
       "_origin": "ast",
       "id": "server_src_utils_uaebusinesshours_getnextuaebusinesswindow",
       "community": 63,
-      "community_name": "sendWorker.js",
+      "community_name": "uaeBusinessHours.js",
       "norm_label": "getnextuaebusinesswindow()"
     },
     {
@@ -35340,7 +35340,7 @@
       "_origin": "ast",
       "id": "server_src_utils_uaebusinesshours_randomsenddelayms",
       "community": 63,
-      "community_name": "sendWorker.js",
+      "community_name": "uaeBusinessHours.js",
       "norm_label": "randomsenddelayms()"
     },
     {
@@ -35352,7 +35352,7 @@
       "_origin": "ast",
       "id": "server_src_utils_uaebusinesshours_getgstdatekey",
       "community": 63,
-      "community_name": "sendWorker.js",
+      "community_name": "uaeBusinessHours.js",
       "norm_label": "getgstdatekey()"
     },
     {
@@ -35364,7 +35364,7 @@
       "_origin": "ast",
       "id": "server_src_utils_uaebusinesshours_getgstdaybounds",
       "community": 63,
-      "community_name": "sendWorker.js",
+      "community_name": "uaeBusinessHours.js",
       "norm_label": "getgstdaybounds()"
     },
     {
@@ -35830,8 +35830,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_tests_sendworker_test",
-      "community": 63,
-      "community_name": "sendWorker.js",
+      "community": 40,
+      "community_name": "mailTransport.js",
       "norm_label": "sendworker.test.js"
     },
     {
@@ -35842,7 +35842,7 @@
       "_origin": "ast",
       "id": "server_tests_sequenceflowexecutor_test",
       "community": 25,
-      "community_name": "sequenceFlowExecutor.js",
+      "community_name": "sendWorker.js",
       "norm_label": "sequenceflowexecutor.test.js"
     },
     {
@@ -88451,7 +88451,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L5",
+      "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_graduationportfoliopage",
@@ -88984,7 +88984,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L4",
+      "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_graduationportfoliopage",
@@ -89392,7 +89392,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L4",
+      "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_graduationportfoliopage",
@@ -93708,7 +93708,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L6",
+      "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_graduationportfoliopage",
@@ -94392,7 +94392,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L6",
+      "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_graduationportfoliopage",
@@ -94405,7 +94405,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L431",
+      "source_location": "L430",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_graduationportfoliopage_graduationportfoliopage",
@@ -96793,7 +96793,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L75",
+      "source_location": "L74",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_graduationportfoliopage",
@@ -96804,7 +96804,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L150",
+      "source_location": "L149",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_graduationportfoliopage",
@@ -96815,7 +96815,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L239",
+      "source_location": "L238",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_graduationportfoliopage",
@@ -96826,7 +96826,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L351",
+      "source_location": "L350",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_graduationportfoliopage",
@@ -96837,7 +96837,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L12",
+      "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_graduationportfoliopage",
@@ -96849,7 +96849,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L5",
+      "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_graduationportfoliopage",
@@ -96861,7 +96861,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L9",
+      "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_graduationportfoliopage",
@@ -96873,7 +96873,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L9",
+      "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_graduationportfoliopage",
@@ -96898,7 +96898,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "client/src/pages/GraduationPortfolioPage.jsx",
-      "source_location": "L368",
+      "source_location": "L367",
       "weight": 1.0,
       "_origin": "ast",
       "source": "client_src_pages_graduationportfoliopage_graduationportfoliopage",
@@ -149819,5 +149819,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "61c58efac094d84a99d5b4dbec9f57914e6e754c"
+  "built_at_commit": "19ae7408ee7a2f85acdd889407303b3db2a95fb5"
 }

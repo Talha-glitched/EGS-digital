@@ -1,6 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
-import pageStyles from '../styles/pages/content-first.css?raw';
-import portfolioStyles from '../styles/pages/graduation-portfolio.css?raw';
+import pageStyles from '../styles/pages/graduation-portfolio.css?raw';
 import { Navbar } from '../components/Navbar.jsx';
 import { Footer } from './SiteChrome.jsx';
 import { usePageLifecycle } from '../hooks/usePageLifecycle.js';
@@ -590,7 +589,6 @@ export default function GraduationPortfolioPage() {
   return (
     <>
       <style>{pageStyles}</style>
-      <style>{portfolioStyles}</style>
 
       <div className="content-page graduation-portfolio-page" style={{ '--accent': '#482683' }}>
         <Navbar active="events" cta="Send us your brief" overlay />
@@ -605,7 +603,7 @@ export default function GraduationPortfolioPage() {
                     <span className="chip"><span className="chip-dot" />Ceremony Portfolio</span>
                     <span className="chip"><span className="chip-dot" />Institutional Proof</span>
                   </div>
-                  <h1 className="wide-title">Lasting moments.</h1>
+                  <h1 className="wide-title" style={{ whiteSpace: 'nowrap' }}>Lasting moments.</h1>
                   <p className="lede">Browse through our high-stakes graduation ceremonies, stage setups, and AV production work across the UAE.</p>
                 </div>
               </div>
