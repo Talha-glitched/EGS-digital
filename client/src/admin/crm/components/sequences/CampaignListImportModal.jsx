@@ -12,6 +12,8 @@ import {
   Clock,
   Building2,
   Mail,
+  MailX,
+  ShieldCheck,
   CheckCircle2,
 } from 'lucide-react';
 import { crmApiFetch } from '../../crmApi.js';
@@ -25,6 +27,9 @@ import OutreachDrawer from '../leads/OutreachDrawer.jsx';
 // engine holds them back by default; ticking one here is the explicit decision
 // to send anyway, so it is surfaced at selection time rather than downstream.
 const HOLD_FOCUS_STATES = new Set(['active_reply', 'paused_after_reply', 'paused', 'manual_hold']);
+
+// Statuses that mean the contact has already been emailed / processed
+const EMAILED_STATUSES = new Set(['Emailed Outbound', 'Replied', 'Bounced / Invalid', 'Opted Out', 'Out of Office']);
 
 function isOnHold(lead) {
   const state = lead.campaignFocusState;
@@ -56,6 +61,7 @@ export default function CampaignListImportModal({
   const [selectedLeadIds, setSelectedLeadIds] = useState(new Set());
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [notEmailedOnly, setNotEmailedOnly] = useState(false);
   const [inspectingLead, setInspectingLead] = useState(null);
 
   useBodyScrollLock(mounted);
@@ -88,6 +94,7 @@ export default function CampaignListImportModal({
       fetchLeads();
       setSearchTerm('');
       setStatusFilter('All');
+      setNotEmailedOnly(false);
     }
   }, [open, campaignId, fetchLeads]);
 
@@ -113,7 +120,12 @@ export default function CampaignListImportModal({
   // Filter leads based on search & status filter
   const filteredLeads = useMemo(() => {
     return leads.filter((lead) => {
-      if (statusFilter !== 'All' && (lead.deliveryStatus || 'Pending Inqueue') !== statusFilter) {
+      const leadStatus = lead.deliveryStatus || 'Pending Inqueue';
+      // "Not yet emailed" toggle takes priority — only show un-emailed contacts
+      if (notEmailedOnly && EMAILED_STATUSES.has(leadStatus)) {
+        return false;
+      }
+      if (statusFilter !== 'All' && leadStatus !== statusFilter) {
         return false;
       }
       if (searchTerm.trim()) {
@@ -126,7 +138,7 @@ export default function CampaignListImportModal({
       }
       return true;
     });
-  }, [leads, statusFilter, searchTerm]);
+  }, [leads, statusFilter, searchTerm, notEmailedOnly]);
 
   // Visible selection check
   const visibleLeadIds = useMemo(() => filteredLeads.map((l) => String(l._id)), [filteredLeads]);
@@ -240,6 +252,40 @@ export default function CampaignListImportModal({
               </div>
 
               <div className="flex items-center gap-2">
+                {/* "Not yet emailed" toggle — filters to only show un-emailed contacts */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next = !notEmailedOnly;
+                    setNotEmailedOnly(next);
+                    if (next) {
+                      // When toggling ON: auto-select only contacts that haven't been emailed
+                      const notEmailedIds = new Set(
+                        leads
+                          .filter((l) => !EMAILED_STATUSES.has(l.deliveryStatus || 'Pending Inqueue'))
+                          .map((l) => String(l._id)),
+                      );
+                      setSelectedLeadIds(notEmailedIds);
+                      // Reset status filter so it doesn't conflict
+                      setStatusFilter('All');
+                    }
+                  }}
+                  className={cn(
+                    'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold shadow-xs transition-all',
+                    notEmailedOnly
+                      ? 'bg-emerald-600 text-white border border-emerald-700 hover:bg-emerald-700 ring-2 ring-emerald-300/40'
+                      : 'border border-[var(--color-line)] bg-white text-neutral-700 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300',
+                  )}
+                  title="Filter to only show contacts who have not been sent any emails yet"
+                >
+                  {notEmailedOnly ? (
+                    <ShieldCheck className="h-3.5 w-3.5" />
+                  ) : (
+                    <MailX className="h-3.5 w-3.5" />
+                  )}
+                  {notEmailedOnly ? 'Showing not emailed only' : 'Not yet emailed'}
+                </button>
+
                 <button
                   type="button"
                   onClick={toggleSelectAllVisible}
@@ -312,12 +358,13 @@ export default function CampaignListImportModal({
                 <p className="text-xs text-neutral-400 mt-1 max-w-sm">
                   Try clearing your search term or switching the status filter tab above.
                 </p>
-                {(searchTerm || statusFilter !== 'All') && (
+                {(searchTerm || statusFilter !== 'All' || notEmailedOnly) && (
                   <button
                     type="button"
                     onClick={() => {
                       setSearchTerm('');
                       setStatusFilter('All');
+                      setNotEmailedOnly(false);
                     }}
                     className="mt-3 text-xs font-semibold text-brand hover:underline"
                   >
