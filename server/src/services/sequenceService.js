@@ -423,10 +423,19 @@ export async function previewAudience(projectId, options = {}) {
 }
 
 export async function getMailboxUsageStats() {
+  const hourlyCap = Number(process.env.MAILBOX_HOURLY_CAP) || 150;
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+  const res = await db.query(
+    `SELECT COUNT(*)::int AS count FROM messages
+     WHERE direction = 'outbound' AND COALESCE(is_migration_duplicate, false) = false
+       AND occurred_at >= $1`,
+    [oneHourAgo]
+  );
+  const sentThisHour = res.rows[0]?.count || 0;
   return {
-    dailyCap: 150,
-    sentToday: 0,
-    remainingToday: 150,
+    hourlyCap,
+    sentThisHour,
+    remaining: Math.max(0, hourlyCap - sentThisHour),
   };
 }
 

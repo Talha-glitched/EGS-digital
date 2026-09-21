@@ -197,10 +197,24 @@ export default function SequenceInspector({
               <>
                 {launchArmed && (
                   <p className="mb-2 rounded-lg border border-orange-200 bg-orange-50 px-2.5 py-2 text-xs leading-relaxed text-orange-800">
-                    This sends real email to <span className="font-semibold">{audiencePreview?.netNew || 0} new contact{(audiencePreview?.netNew || 0) === 1 ? '' : 's'}</span> right now
-                    {mailboxUsage ? (
-                      <>, using <span className="font-semibold">{Math.min(audiencePreview?.netNew || 0, mailboxUsage.remaining ?? mailboxUsage.dailyCap ?? 150)}</span> of the {mailboxUsage.remaining ?? Math.max(0, (mailboxUsage.dailyCap || 150) - (mailboxUsage.sentToday || 0))} sends left on this mailbox today</>
-                    ) : null}. Click again to confirm.
+                    {(audiencePreview?.netNew || 0) > 0 ? (
+                      <>
+                        This sends real email to <span className="font-semibold">{audiencePreview.netNew} new contact{audiencePreview.netNew === 1 ? '' : 's'}</span> right now
+                        {mailboxUsage ? (
+                          <>, using <span className="font-semibold">{Math.min(audiencePreview.netNew, mailboxUsage.remaining ?? mailboxUsage.hourlyCap ?? 150)}</span> of the {mailboxUsage.remaining ?? Math.max(0, (mailboxUsage.hourlyCap || 150) - (mailboxUsage.sentThisHour || 0))} sends left this hour</>
+                        ) : null}. Click again to confirm.
+                      </>
+                    ) : (
+                      <>
+                        <span className="font-semibold">0 new contacts</span> to enroll.
+                        {(audiencePreview?.alreadyEnrolled || 0) > 0 && (
+                          <> All {audiencePreview.alreadyEnrolled} contact{audiencePreview.alreadyEnrolled === 1 ? ' is' : 's are'} already enrolled in this sequence{(audiencePreview?.alreadySent || 0) > 0 ? ` (${audiencePreview.alreadySent} already emailed)` : ' (no emails sent yet)'}. Use <span className="font-semibold">Reset enrollments</span> below to re-enroll them.</>
+                        )}
+                        {(audiencePreview?.blocked || 0) > 0 && !(audiencePreview?.alreadyEnrolled || 0) && (
+                          <> {audiencePreview.blocked} contact{audiencePreview.blocked === 1 ? ' is' : 's are'} blocked (missing email, suppressed, or opted out).</>
+                        )}
+                      </>
+                    )}
                     {(audiencePreview?.holdOverridden || 0) > 0 && (
                       <span className="mt-1.5 block font-semibold">
                         {audiencePreview.holdOverridden} of these {audiencePreview.holdOverridden === 1 ? 'is' : 'are'} mid-conversation

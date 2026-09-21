@@ -15,9 +15,9 @@ export default function MailboxUsagePopover({ usage, className = '' }) {
     return () => document.removeEventListener('mousedown', onDocClick);
   }, [open]);
 
-  const dailyCap = usage?.dailyCap || 150;
-  const sentToday = usage?.sentToday || 0;
-  const usedPercent = usage?.usedPercent ?? Math.round((sentToday / dailyCap) * 100);
+  const hourlyCap = usage?.hourlyCap || usage?.dailyCap || 150;
+  const sentThisHour = usage?.sentThisHour ?? usage?.sentToday ?? 0;
+  const usedPercent = usage?.usedPercent ?? Math.round((sentThisHour / hourlyCap) * 100);
   const breakdown = usage?.breakdown || [];
 
   return (
@@ -26,19 +26,19 @@ export default function MailboxUsagePopover({ usage, className = '' }) {
         type="button"
         onClick={() => setOpen((v) => !v)}
         className="flex h-7 w-7 items-center justify-center rounded-full border border-[var(--color-line)] bg-white text-neutral-400 transition hover:border-brand/40 hover:text-brand"
-        aria-label="Daily send usage"
-        title="Daily mailbox usage"
+        aria-label="Hourly send usage"
+        title="Hourly mailbox usage"
       >
         <Info className="h-3.5 w-3.5" />
       </button>
 
       {open && (
         <div className="crm-seq-usage-popover absolute right-0 top-full z-50 mt-2 w-64 rounded-xl border border-[var(--color-line)] bg-white p-3 shadow-xl">
-          <p className="text-2xs font-semibold uppercase tracking-wide text-neutral-400">Today&apos;s mailbox</p>
+          <p className="text-2xs font-semibold uppercase tracking-wide text-neutral-400">This hour&apos;s mailbox</p>
           <div className="mt-2 flex items-end justify-between gap-2">
             <p className="text-lg font-bold tabular-nums text-[var(--color-ink)]">
-              {sentToday}
-              <span className="text-sm font-medium text-neutral-400"> / {dailyCap}</span>
+              {sentThisHour}
+              <span className="text-sm font-medium text-neutral-400"> / {hourlyCap}</span>
             </p>
             <span className="text-xs font-semibold text-brand">{usedPercent}%</span>
           </div>
@@ -51,7 +51,7 @@ export default function MailboxUsagePopover({ usage, className = '' }) {
           </div>
 
           <p className="mt-2 text-xs text-neutral-500">
-            {usage?.remaining ?? Math.max(0, dailyCap - sentToday)} sends remaining today (GST)
+            {usage?.remaining ?? Math.max(0, hourlyCap - sentThisHour)} sends remaining this hour
           </p>
 
           {breakdown.length > 0 && (
