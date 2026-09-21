@@ -128,6 +128,7 @@ export const ROUTE_PERMISSION_MAP = [
   { prefix: '/inventory', read: 'pipeline:read', write: 'pipeline:write' },
   { prefix: '/resources', read: 'pipeline:read', write: 'pipeline:write' },
   { prefix: '/suppliers', read: 'pipeline:read', write: 'pipeline:write' },
+  { prefix: '/labour', read: 'pipeline:read', write: 'pipeline:write' },
   { prefix: '/settings', read: 'dashboard:read', write: 'users:manage' },
   { prefix: '/system-settings', read: 'dashboard:read', write: 'users:manage' },
   // Dispatches real outbound email; was previously reachable by any role.

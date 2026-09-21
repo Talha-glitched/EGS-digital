@@ -208,16 +208,16 @@ export default function AddLabourModal({
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <Field label="Daily Rate (AED)" hint="Standard 8-10hr shift">
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-neutral-400">
+            <div className="flex min-h-[44px] rounded-md border border-[var(--color-line-strong)] bg-white overflow-hidden transition focus-within:border-[var(--color-brand)] focus-within:ring-3 focus-within:ring-red-500/12">
+              <span className="flex items-center px-3 bg-neutral-50 border-r border-[var(--color-line)] text-xs font-semibold text-neutral-500 select-none">
                 AED
               </span>
               <input
                 type="number"
                 step="5"
                 min="0"
-                className="crm-input pl-12 font-medium tabular-nums"
-                placeholder="e.g. 200"
+                className="w-full px-3 py-2 text-sm text-[var(--color-ink)] outline-none font-medium tabular-nums bg-transparent placeholder:text-neutral-400"
+                placeholder="200"
                 value={dailyRate}
                 onChange={(e) => setDailyRate(e.target.value)}
               />
@@ -225,16 +225,16 @@ export default function AddLabourModal({
           </Field>
 
           <Field label="Hourly Rate (AED)" hint="Overtime rate">
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-neutral-400">
+            <div className="flex min-h-[44px] rounded-md border border-[var(--color-line-strong)] bg-white overflow-hidden transition focus-within:border-[var(--color-brand)] focus-within:ring-3 focus-within:ring-red-500/12">
+              <span className="flex items-center px-3 bg-neutral-50 border-r border-[var(--color-line)] text-xs font-semibold text-neutral-500 select-none">
                 AED
               </span>
               <input
                 type="number"
                 step="1"
                 min="0"
-                className="crm-input pl-12 font-medium tabular-nums"
-                placeholder="e.g. 25"
+                className="w-full px-3 py-2 text-sm text-[var(--color-ink)] outline-none font-medium tabular-nums bg-transparent placeholder:text-neutral-400"
+                placeholder="25"
                 value={hourlyRate}
                 onChange={(e) => setHourlyRate(e.target.value)}
               />

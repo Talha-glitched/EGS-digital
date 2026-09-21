@@ -2060,8 +2060,8 @@
     "semantic_hash": "1bfe8c381cbf0eead11ef8ef2c765f23"
   },
   "server/src/constants/userRoles.js": {
-    "mtime": 1788155829.36052,
-    "ast_hash": "2b569d154d7e6653299a1bb487aa2ac6",
+    "mtime": 1789969251.571765,
+    "ast_hash": "1ec9bed1caedcdfb2a640eca59471ec5",
     "semantic_hash": ""
   },
   "server/src/db/index.js": {
@@ -4057,16 +4057,6 @@
   "client/public/media/graduation/Websites Gallery Graduations/2026/Fujairah University/MAC09158.jpg.jpeg": {
     "mtime": 1781626017.7525764,
     "ast_hash": "262661f124b19a810e2505d3858e32a8",
-    "semantic_hash": ""
-  },
-  "client/public/media/graduation/Websites Gallery Graduations/2026/Fujairah University/Highlights FU GC2026 4JUN2026.mp4": {
-    "mtime": 1789960225.71498,
-    "ast_hash": "11244d80a9a193904a5ff5e86d595723",
-    "semantic_hash": ""
-  },
-  "client/public/media/graduation/Websites Gallery Graduations/2026/Fujairah University/Fujairah-University.mp4": {
-    "mtime": 1789960219.3649404,
-    "ast_hash": "11244d80a9a193904a5ff5e86d595723",
     "semantic_hash": ""
   },
   "client/src/assets/Fujairah-University.mp4": {

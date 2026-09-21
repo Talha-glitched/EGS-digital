@@ -40,8 +40,8 @@
     "semantic_hash": ""
   },
   "client/src/admin/crm/CrmApp.jsx": {
-    "mtime": 1788155633.46588,
-    "ast_hash": "07f9102478f7466bc17ef04870906cb7",
+    "mtime": 1789968573.5329118,
+    "ast_hash": "2747b0e300aa174daeebc4d4c2891528",
     "semantic_hash": ""
   },
   "client/src/admin/crm/components/analytics/CampaignVendorPerformanceGrid.jsx": {
@@ -140,8 +140,8 @@
     "semantic_hash": ""
   },
   "client/src/admin/crm/components/layout/Sidebar.jsx": {
-    "mtime": 1786190812.2821586,
-    "ast_hash": "23cf5c23b93bb9ea101a0cb858d57156",
+    "mtime": 1789968549.781381,
+    "ast_hash": "cc0931457c9bbcff875c6c4f91f7bd10",
     "semantic_hash": ""
   },
   "client/src/admin/crm/components/layout/SpotlightSearch.jsx": {
@@ -705,8 +705,8 @@
     "semantic_hash": "f9f09740463d055049bd6ff05d2e7a50"
   },
   "client/src/admin/crm/crmApi.js": {
-    "mtime": 1788184773.9675953,
-    "ast_hash": "1fa2773b8023e81fe0833db10acca87f",
+    "mtime": 1789968435.2080176,
+    "ast_hash": "fcb70396275eeeba578f23846b5a5d61",
     "semantic_hash": ""
   },
   "client/src/admin/crm/hooks/sortUtils.js": {
@@ -2075,8 +2075,8 @@
     "semantic_hash": "f5a9da384e1f7bc8af79b9618c36fd1a"
   },
   "server/src/routes/adminRoutes.js": {
-    "mtime": 1788361029.946527,
-    "ast_hash": "1b56f33917ce1b1402aa5e1f243f1a6a",
+    "mtime": 1789968361.8338642,
+    "ast_hash": "9a61ae54904d5457d9481538c8e98483",
     "semantic_hash": ""
   },
   "server/src/routes/pageRoutes.js": {
@@ -4077,6 +4077,56 @@
   "client/src/assets/Fujairah-University.webm": {
     "mtime": 1789958918.9124563,
     "ast_hash": "03349ce02eea77d42123d8971918fbf2",
+    "semantic_hash": ""
+  },
+  "client/src/admin/crm/components/labour/AddLabourModal.jsx": {
+    "mtime": 1789968503.4878998,
+    "ast_hash": "d1b39af68eea59d64ae83441c955e350",
+    "semantic_hash": ""
+  },
+  "client/src/admin/crm/components/suppliers/AddPurchaseModal.jsx": {
+    "mtime": 1789968446.194708,
+    "ast_hash": "484e4a1f0d43313ffb317c50f9cd54f7",
+    "semantic_hash": ""
+  },
+  "client/src/admin/crm/components/suppliers/AddSupplierModal.jsx": {
+    "mtime": 1789968456.087582,
+    "ast_hash": "972ddc6d5fb2eb9f14f8a3b9f07f9ca6",
+    "semantic_hash": ""
+  },
+  "client/src/admin/crm/components/suppliers/SupplierDetailsDrawer.jsx": {
+    "mtime": 1789968476.0549545,
+    "ast_hash": "64f0be65ffcc11882290b0b0fd43dbf7",
+    "semantic_hash": ""
+  },
+  "client/src/admin/crm/pages/LabourPage.jsx": {
+    "mtime": 1789968518.5549798,
+    "ast_hash": "a756d79337764cc7d9f88cab442f4ec9",
+    "semantic_hash": ""
+  },
+  "client/src/admin/crm/pages/SuppliersPage.jsx": {
+    "mtime": 1789968490.9430602,
+    "ast_hash": "1820a3a2463fe85be67e7b4cfe78cfa7",
+    "semantic_hash": ""
+  },
+  "server/scripts/34_suppliers_and_labour.sql": {
+    "mtime": 1789968388.3821795,
+    "ast_hash": "15227071ed22f7b5f95bba6ea2ac85a2",
+    "semantic_hash": ""
+  },
+  "server/scripts/runSuppliersAndLabourMigration.js": {
+    "mtime": 1789968294.1890714,
+    "ast_hash": "34d8b1e0b7f5fbf0e6a900a2db650bf5",
+    "semantic_hash": ""
+  },
+  "server/src/services/labourService.js": {
+    "mtime": 1789968335.2147863,
+    "ast_hash": "8a3366ffc334dddaa603ba493a249730",
+    "semantic_hash": ""
+  },
+  "server/src/services/supplierService.js": {
+    "mtime": 1789968319.583247,
+    "ast_hash": "3e578f17dc25cf12594141df355f3600",
     "semantic_hash": ""
   }
 }
