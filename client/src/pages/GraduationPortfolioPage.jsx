@@ -646,7 +646,7 @@ export default function GraduationPortfolioPage() {
             <div className="filter-search-inner">
               {/* Year Filter Buttons */}
               <div className="filters-group">
-                {['All', '2025', '2024', '2021'].map((year) => (
+                {['All', '2026', '2025', '2024', '2021'].map((year) => (
                   <button
                     key={year}
                     type="button"

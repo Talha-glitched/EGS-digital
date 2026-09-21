@@ -209,7 +209,7 @@ import {
 import {
   getProcurementWorkspace,
   getSupplierDirectory,
-  createSupplier,
+  createSupplier as createProcurementSupplier,
   createSupplierRfq,
   updateSupplierRfq,
   updateSupplierProfile,
@@ -218,6 +218,22 @@ import {
   updateSupplierCommitment,
   addSupplierCommitmentUpdate,
 } from '../services/supplierProcurementService.js';
+import {
+  listSuppliers,
+  getSupplierById,
+  createSupplier,
+  updateSupplier,
+  deleteSupplier,
+  addSupplierPurchase,
+  deleteSupplierPurchase,
+} from '../services/supplierService.js';
+import {
+  listLabour,
+  getLabourById,
+  createLabour,
+  updateLabour,
+  deleteLabour,
+} from '../services/labourService.js';
 import {
   getResourceWorkspace,
   createResource,
@@ -1432,6 +1448,56 @@ router.get('/inventory/by-slug/:slug', asyncRoute(async (req, res) => {
   const item = await findItemBySlug(req.params.slug);
   if (!item) return res.status(404).json({ error: 'Item not found.' });
   res.json(item);
+}));
+
+// ── Suppliers & Buy History ──────────────────────────────────────────
+router.get('/suppliers', asyncRoute(async (req, res) => {
+  res.json(await listSuppliers(req.query));
+}));
+
+router.get('/suppliers/:id', asyncRoute(async (req, res) => {
+  res.json(await getSupplierById(req.params.id));
+}));
+
+router.post('/suppliers', asyncRoute(async (req, res) => {
+  res.status(201).json(await createSupplier(req.body || {}, getActor(req)));
+}));
+
+router.patch('/suppliers/:id', asyncRoute(async (req, res) => {
+  res.json(await updateSupplier(req.params.id, req.body || {}, getActor(req)));
+}));
+
+router.delete('/suppliers/:id', asyncRoute(async (req, res) => {
+  res.json(await deleteSupplier(req.params.id, getActor(req)));
+}));
+
+router.post('/suppliers/:id/purchases', asyncRoute(async (req, res) => {
+  res.status(201).json(await addSupplierPurchase(req.params.id, req.body || {}, getActor(req)));
+}));
+
+router.delete('/suppliers/:id/purchases/:purchaseId', asyncRoute(async (req, res) => {
+  res.json(await deleteSupplierPurchase(req.params.id, req.params.purchaseId, getActor(req)));
+}));
+
+// ── Outsource Labour ──────────────────────────────────────────────────
+router.get('/labour', asyncRoute(async (req, res) => {
+  res.json(await listLabour(req.query));
+}));
+
+router.get('/labour/:id', asyncRoute(async (req, res) => {
+  res.json(await getLabourById(req.params.id));
+}));
+
+router.post('/labour', asyncRoute(async (req, res) => {
+  res.status(201).json(await createLabour(req.body || {}, getActor(req)));
+}));
+
+router.patch('/labour/:id', asyncRoute(async (req, res) => {
+  res.json(await updateLabour(req.params.id, req.body || {}, getActor(req)));
+}));
+
+router.delete('/labour/:id', asyncRoute(async (req, res) => {
+  res.json(await deleteLabour(req.params.id, getActor(req)));
 }));
 
 router.get('/sales/ongoing-jobs/:id/closeout', asyncRoute(async (req, res) => {

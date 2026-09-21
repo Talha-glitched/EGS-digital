@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, MessageSquareText, FolderKanban, LogOut, Users, Building2, BarChart3, X, BriefcaseBusiness, ListTodo, PanelLeftClose, PanelLeft, Wallet, ChevronLeft, HeartHandshake, Mail, Shield, Activity, History, ClipboardList, CalendarDays, PackageSearch, HardHat, Boxes, UserRoundCheck, CalendarCheck2 } from 'lucide-react';
+import { LayoutDashboard, MessageSquareText, FolderKanban, LogOut, Users, Building2, BarChart3, X, BriefcaseBusiness, ListTodo, PanelLeftClose, PanelLeft, Wallet, ChevronLeft, HeartHandshake, Mail, Shield, Activity, History, ClipboardList, CalendarDays, PackageSearch, HardHat, Boxes, UserRoundCheck, CalendarCheck2, Truck } from 'lucide-react';
 import { cn } from '../ui/primitives.jsx';
 import { usePermissions } from '../../hooks/usePermissions.js';
 import egsLogo from '../../../../assets/logo/New_Logo/Logo-01.png';
@@ -28,6 +28,13 @@ const BASE_NAV_GROUPS = [
       { to: '/admin/crm/completed-jobs', label: 'Jobs Done', icon: ClipboardList },
       { to: '/admin/crm/inventory', label: 'Inventory', icon: Boxes },
       { to: '/admin/crm/tasks', label: 'Tasks', icon: ListTodo },
+    ],
+  },
+  {
+    heading: 'Operations',
+    items: [
+      { to: '/admin/crm/suppliers', label: 'Suppliers', icon: Truck },
+      { to: '/admin/crm/labour', label: 'Labour', icon: HardHat },
     ],
   },
   {
@@ -73,6 +80,13 @@ export default function Sidebar({ activeProject, onLogout, mobileOpen = false, o
             { to: '/admin/crm/ongoing-jobs', label: 'Ongoing Jobs', icon: BriefcaseBusiness },
             { to: '/admin/crm/inventory', label: 'Inventory', icon: Boxes },
             { to: '/admin/crm/tasks', label: 'Tasks', icon: ListTodo },
+          ],
+        },
+        {
+          heading: 'Operations',
+          items: [
+            { to: '/admin/crm/suppliers', label: 'Suppliers', icon: Truck },
+            { to: '/admin/crm/labour', label: 'Labour', icon: HardHat },
           ],
         },
       ];

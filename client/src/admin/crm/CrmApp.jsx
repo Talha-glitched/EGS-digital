@@ -18,6 +18,8 @@ import OngoingJobsPage from './pages/OngoingJobsPage.jsx';
 import CompletedJobsPage from './pages/CompletedJobsPage.jsx';
 import TasksPage from './pages/TasksPage.jsx';
 import InventoryPage from './pages/InventoryPage.jsx';
+import SuppliersPage from './pages/SuppliersPage.jsx';
+import LabourPage from './pages/LabourPage.jsx';
 import SequencesPage from './pages/SequencesPage.jsx';
 import LiveSendMonitorPage from './pages/LiveSendMonitorPage.jsx';
 import EmailHubPage from './pages/EmailHubPage.jsx';
@@ -189,6 +191,8 @@ function DesignerShell({ onLogout, status }) {
                   <Route path="tasks" element={<TasksPage />} />
                   <Route path="inventory" element={<InventoryPage />} />
                   <Route path="inventory/i/:slug" element={<InventoryPage />} />
+                  <Route path="suppliers" element={<SuppliersPage />} />
+                  <Route path="labour" element={<LabourPage />} />
                   <Route path="*" element={<Navigate to="/admin/crm" replace />} />
                 </Routes>
               </main>
@@ -236,6 +240,8 @@ function CrmShell({ projects, onLogout, status }) {
     '/admin/crm/jobs': ['Jobs Done', 'Completed and past production jobs directory'],
     '/admin/crm/tasks': ['Tasks', 'Calls, meetings, proposals, and overdue next actions'],
     '/admin/crm/inventory': ['Inventory', 'Track items, quantities, notes, photos, and status across warehouse and job sites'],
+    '/admin/crm/suppliers': ['Suppliers', 'Material vendors, fabrication workshops, and purchase history with quality ratings'],
+    '/admin/crm/labour': ['Labour Directory', 'Outsource craftsmen and technicians: plasterers, carpenters, painters, and helpers'],
     '/admin/crm/relationships': ['Key Relationships', 'Confirmed right POCs, last touchpoints, and follow-up timing'],
     '/admin/crm/people': ['Contacts', 'Search and manage every point of contact'],
     '/admin/crm/companies': ['Companies', 'Target companies, clients, and relationship history'],
@@ -309,6 +315,8 @@ function CrmShell({ projects, onLogout, status }) {
               <Route path="tasks" element={<TasksPage />} />
               <Route path="inventory" element={<InventoryPage />} />
               <Route path="inventory/i/:slug" element={<InventoryPage />} />
+              <Route path="suppliers" element={<SuppliersPage />} />
+              <Route path="labour" element={<LabourPage />} />
               <Route path="relationships" element={<RelationshipsPage />} />
               <Route path="projects" element={<ProjectsPage initialProjects={projects} />} />
               <Route path="projects/:id" element={<ProjectDetailWorkspace />} />

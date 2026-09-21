@@ -768,3 +768,91 @@ export async function fetchConfiguredEmailAccounts() {
   return crmApiFetch('/api/admin/email-accounts').catch(() => []);
 }
 
+// ── Suppliers & Buy History API ──────────────────────────────────────
+export async function fetchSuppliers(params = {}) {
+  const qs = new URLSearchParams();
+  Object.entries(params).forEach(([key, val]) => {
+    if (val !== undefined && val !== null && val !== '') {
+      qs.append(key, String(val));
+    }
+  });
+  const queryString = qs.toString() ? `?${qs.toString()}` : '';
+  return crmApiFetch(`/api/admin/suppliers${queryString}`);
+}
+
+export async function fetchSupplierDetails(id) {
+  return crmApiFetch(`/api/admin/suppliers/${encodeURIComponent(normalizeId(id))}`);
+}
+
+export async function createSupplier(payload) {
+  return crmApiFetch('/api/admin/suppliers', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function updateSupplier(id, payload) {
+  return crmApiFetch(`/api/admin/suppliers/${encodeURIComponent(normalizeId(id))}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function deleteSupplier(id) {
+  return crmApiFetch(`/api/admin/suppliers/${encodeURIComponent(normalizeId(id))}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function addSupplierPurchase(supplierId, payload) {
+  return crmApiFetch(`/api/admin/suppliers/${encodeURIComponent(normalizeId(supplierId))}/purchases`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function deleteSupplierPurchase(supplierId, purchaseId) {
+  return crmApiFetch(
+    `/api/admin/suppliers/${encodeURIComponent(normalizeId(supplierId))}/purchases/${encodeURIComponent(normalizeId(purchaseId))}`,
+    {
+      method: 'DELETE',
+    }
+  );
+}
+
+// ── Outsource Labour API ──────────────────────────────────────────────
+export async function fetchLabour(params = {}) {
+  const qs = new URLSearchParams();
+  Object.entries(params).forEach(([key, val]) => {
+    if (val !== undefined && val !== null && val !== '') {
+      qs.append(key, String(val));
+    }
+  });
+  const queryString = qs.toString() ? `?${qs.toString()}` : '';
+  return crmApiFetch(`/api/admin/labour${queryString}`);
+}
+
+export async function fetchLabourDetails(id) {
+  return crmApiFetch(`/api/admin/labour/${encodeURIComponent(normalizeId(id))}`);
+}
+
+export async function createLabour(payload) {
+  return crmApiFetch('/api/admin/labour', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function updateLabour(id, payload) {
+  return crmApiFetch(`/api/admin/labour/${encodeURIComponent(normalizeId(id))}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function deleteLabour(id) {
+  return crmApiFetch(`/api/admin/labour/${encodeURIComponent(normalizeId(id))}`, {
+    method: 'DELETE',
+  });
+}
+
