@@ -288,7 +288,7 @@ export async function fetchProjectSequences(projectId) {
   return crmApiFetch(`/api/admin/projects/${projectId}/sequences`);
 }
 
-export async function fetchSendDeliveryIssues({ page, limit, campaignId, sequenceId, status, q } = {}) {
+export async function fetchSendDeliveryIssues({ page, limit, campaignId, sequenceId, status, q, vendorSource } = {}) {
   const query = new URLSearchParams({
     ...(page && { page: String(page) }),
     ...(limit && { limit: String(limit) }),
@@ -296,6 +296,7 @@ export async function fetchSendDeliveryIssues({ page, limit, campaignId, sequenc
     ...(sequenceId && { sequenceId }),
     ...(status && { status }),
     ...(q && { q }),
+    ...(vendorSource && { vendorSource }),
   }).toString();
   return crmApiFetch(`/api/admin/send-delivery/issues${query ? `?${query}` : ''}`);
 }

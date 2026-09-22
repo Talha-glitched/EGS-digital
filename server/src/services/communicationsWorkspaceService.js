@@ -11,13 +11,24 @@ export async function getCommunicationsWorkspace(options = {}, actor = {}) {
   const query = String(options.q || '').trim();
   const searchPattern = query ? `%${query}%` : null;
 
-  const [summaryResult, attentionResult, linkedResult, searchResult, ownersResult] = await Promise.all([
+  const [summaryResult, attentionResult, linkedResult, searchResult, ownersResult, vendorBreakdownResult] = await Promise.all([
     db.query(`
       SELECT
         (SELECT COUNT(DISTINCT conversation_id)::int FROM messages
           WHERE direction = 'inbound' AND COALESCE(is_migration_duplicate, FALSE) = FALSE) AS "inboxThreads",
         (SELECT COUNT(*)::int FROM review_items WHERE status = 'pending') AS "needsReview",
         (SELECT COUNT(*)::int FROM send_jobs WHERE status IN ('failed', 'cancelled', 'migration_held')) AS "deliveryIssues",
+        (SELECT COUNT(*)::int FROM send_jobs WHERE status = 'failed') AS "totalFailed",
+        (SELECT COUNT(*)::int FROM send_jobs WHERE status = 'cancelled') AS "totalCancelled",
+        (SELECT COUNT(*)::int FROM send_jobs WHERE status = 'failed' AND (
+          error_message ILIKE '%bounce%'
+          OR error_message ILIKE '%smtp%'
+          OR error_message ILIKE '%suppress%'
+          OR error_message = 'Bounced / Invalid'
+          OR error_message ILIKE '%mail server%'
+          OR error_message ILIKE '%ECONN%'
+          OR error_message ILIKE '%ETIMEDOUT%'
+        )) AS "totalBounced",
         (SELECT COUNT(*)::int FROM send_jobs WHERE status IN ('pending', 'processing')) AS "queuedSends",
         (SELECT COUNT(*)::int FROM messages WHERE direction = 'outbound'
           AND COALESCE(is_migration_duplicate, FALSE) = FALSE AND occurred_at >= CURRENT_DATE) AS "sentToday",
@@ -126,10 +137,44 @@ export async function getCommunicationsWorkspace(options = {}, actor = {}) {
       LIMIT $2
     `, [searchPattern, limit]) : Promise.resolve({ rows: [] }),
     db.query(`SELECT id,name,email,role FROM users WHERE is_active=TRUE ORDER BY name`),
+    db.query(`
+      SELECT
+        COALESCE(pcm.source, 'Manual') AS "source",
+        COUNT(*) FILTER (WHERE sj.status = 'sent')::int AS "sent",
+        COUNT(*) FILTER (WHERE sj.status = 'failed')::int AS "failed",
+        COUNT(*) FILTER (WHERE sj.status = 'failed' AND (
+          sj.error_message ILIKE '%bounce%'
+          OR sj.error_message ILIKE '%smtp%'
+          OR sj.error_message ILIKE '%suppress%'
+          OR sj.error_message = 'Bounced / Invalid'
+          OR sj.error_message ILIKE '%mail server%'
+          OR sj.error_message ILIKE '%ECONN%'
+          OR sj.error_message ILIKE '%ETIMEDOUT%'
+        ))::int AS "bounced",
+        COUNT(DISTINCT CASE WHEN m.direction = 'inbound' AND COALESCE(m.is_migration_duplicate, FALSE) = FALSE THEN m.id END)::int AS "replied"
+      FROM send_jobs sj
+      LEFT JOIN sequence_enrollments se ON se.id = sj.enrollment_id
+      LEFT JOIN campaign_contacts cc ON cc.id = se.campaign_contact_id
+      LEFT JOIN person_organization_roles por ON por.id = cc.role_id
+      LEFT JOIN LATERAL (
+        SELECT pcm2.source
+        FROM person_contact_methods pcm2
+        WHERE pcm2.person_id = COALESCE(por.person_id, sj.lead_id::uuid)
+        ORDER BY CASE WHEN pcm2.normalized_value = LOWER(sj.recipient_email) THEN 0 ELSE 1 END, pcm2.id
+        LIMIT 1
+      ) pcm ON TRUE
+      LEFT JOIN conversations conv ON conv.campaign_contact_id = cc.id
+      LEFT JOIN messages m ON m.conversation_id = conv.id
+      GROUP BY COALESCE(pcm.source, 'Manual')
+      ORDER BY "sent" DESC
+    `),
   ]);
 
+  const summaryRow = summaryResult.rows[0] || {};
+  summaryRow.vendorBreakdown = vendorBreakdownResult.rows || [];
+
   return {
-    summary: summaryResult.rows[0] || {},
+    summary: summaryRow,
     attention: attentionResult.rows,
     linked: linkedResult.rows,
     search: { query, items: searchResult.rows },

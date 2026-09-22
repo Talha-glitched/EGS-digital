@@ -585,17 +585,146 @@ export async function listSendDeliveryIssues(options = {}) {
   const page = Math.max(1, Number(options.page) || 1);
   const limit = Math.min(200, Math.max(1, Number(options.limit) || 50));
   const statuses = options.status === 'failed' ? ['failed'] : options.status === 'cancelled' ? ['cancelled'] : ['failed', 'cancelled', 'migration_held'];
+
+  // ── Build dynamic WHERE clauses ──────────────────────────────────
+  const conditions = ['sj.status = ANY($1::text[])'];
+  const params = [statuses];
+  let paramIdx = 1;
+
+  if (options.campaignId) {
+    paramIdx++;
+    conditions.push(`sj.campaign_id::text = $${paramIdx}::text`);
+    params.push(String(options.campaignId));
+  }
+  if (options.sequenceId) {
+    paramIdx++;
+    conditions.push(`seq.id::text = $${paramIdx}::text`);
+    params.push(String(options.sequenceId));
+  }
+  if (options.vendorSource) {
+    paramIdx++;
+    conditions.push(`COALESCE(pcm.source, 'Manual') = $${paramIdx}`);
+    params.push(String(options.vendorSource));
+  }
+  if (options.q) {
+    paramIdx++;
+    const pattern = `%${String(options.q).trim()}%`;
+    conditions.push(`(
+      p.display_name ILIKE $${paramIdx}
+      OR o.canonical_name ILIKE $${paramIdx}
+      OR sj.recipient_email ILIKE $${paramIdx}
+      OR sj.rendered_subject ILIKE $${paramIdx}
+      OR sj.error_message ILIKE $${paramIdx}
+      OR camp.name ILIKE $${paramIdx}
+    )`);
+    params.push(pattern);
+  }
+
+  const whereClause = conditions.join(' AND ');
+
+  const joinFragment = `
+    FROM send_jobs sj
+    LEFT JOIN sequence_enrollments se ON se.id = sj.enrollment_id
+    LEFT JOIN sequences seq ON seq.id = se.sequence_id
+    LEFT JOIN campaign_contacts cc ON cc.id = se.campaign_contact_id
+    LEFT JOIN campaign_accounts ca ON ca.id = cc.campaign_account_id
+    LEFT JOIN person_organization_roles por ON por.id = cc.role_id
+    LEFT JOIN people p ON p.id = COALESCE(por.person_id, sj.lead_id::uuid)
+    LEFT JOIN organizations o ON o.id = ca.organization_id
+    LEFT JOIN campaigns camp ON camp.id = COALESCE(sj.campaign_id::uuid, ca.campaign_id)
+    LEFT JOIN LATERAL (
+      SELECT pcm2.source, pcm2.normalized_value
+      FROM person_contact_methods pcm2
+      WHERE pcm2.person_id = COALESCE(por.person_id, sj.lead_id::uuid)
+      ORDER BY CASE WHEN pcm2.normalized_value = LOWER(sj.recipient_email) THEN 0 ELSE 1 END, pcm2.id
+      LIMIT 1
+    ) pcm ON TRUE
+  `;
+
+  // ── Main query with enrichment ───────────────────────────────────
+  const offsetParam = ++paramIdx;
+  const limitParam = ++paramIdx;
+  params.push((page - 1) * limit, limit);
+
   const res = await db.query(`
     SELECT sj.id AS "_id", sj.status, sj.error_message AS "errorMessage",
       sj.recipient_email AS "recipientEmail", sj.rendered_subject AS "renderedSubject",
-      sj.scheduled_for AS "scheduledFor", sj.sent_at AS "sentAt"
-    FROM send_jobs sj WHERE sj.status = ANY($1::text[])
-    ORDER BY COALESCE(sj.sent_at, sj.scheduled_for, sj.created_at) DESC
-    OFFSET $2 LIMIT $3
-  `, [statuses, (page - 1) * limit, limit]);
-  const count = await db.query(`SELECT COUNT(*)::int AS total FROM send_jobs WHERE status = ANY($1::text[])`, [statuses]);
-  const total = count.rows[0]?.total || 0;
-  return { items: res.rows, total, page, pages: Math.ceil(total / limit), summary: { failed: statuses.includes('failed') ? total : 0 } };
+      sj.scheduled_for AS "scheduledFor", sj.sent_at AS "sentAt",
+      sj.updated_at AS "updatedAt", sj.step_index AS "stepIndex",
+      COALESCE(pcm.source, 'Manual') AS "vendorSource",
+      p.id AS "leadId", p.display_name AS "leadName",
+      cc.lead_state AS "leadDeliveryStatus",
+      o.id AS "companyId", o.canonical_name AS "companyName",
+      camp.id AS "campaignId", camp.name AS "campaignName",
+      seq.id AS "sequenceId", seq.name AS "sequenceName"
+    ${joinFragment}
+    WHERE ${whereClause}
+    ORDER BY COALESCE(sj.updated_at, sj.sent_at, sj.scheduled_for, sj.created_at) DESC
+    OFFSET $${offsetParam} LIMIT $${limitParam}
+  `, params);
+
+  // ── Count query (same filters) ──────────────────────────────────
+  const countRes = await db.query(`
+    SELECT COUNT(*)::int AS total
+    ${joinFragment}
+    WHERE ${whereClause}
+  `, params.slice(0, paramIdx - 2)); // exclude offset/limit
+
+  const total = countRes.rows[0]?.total || 0;
+
+  // ── Summary query (all statuses, same filters except status) ────
+  const summaryConditions = conditions.slice(1); // drop the status filter
+  const summaryParams = params.slice(1, paramIdx - 2); // drop statuses, offset, limit
+  const summaryWhere = summaryConditions.length ? `WHERE ${summaryConditions.join(' AND ')}` : '';
+
+  const summaryRes = await db.query(`
+    SELECT
+      COUNT(*) FILTER (WHERE sj.status = 'failed')::int AS "failed",
+      COUNT(*) FILTER (WHERE sj.status = 'cancelled')::int AS "cancelled",
+      COUNT(*) FILTER (WHERE sj.status = 'migration_held')::int AS "held",
+      COUNT(*) FILTER (WHERE sj.status = 'failed' AND (
+        sj.error_message ILIKE '%bounce%'
+        OR sj.error_message ILIKE '%smtp%'
+        OR sj.error_message ILIKE '%suppress%'
+        OR sj.error_message = 'Bounced / Invalid'
+        OR sj.error_message ILIKE '%mail server%'
+        OR sj.error_message ILIKE '%ECONN%'
+        OR sj.error_message ILIKE '%ETIMEDOUT%'
+      ))::int AS "bounced"
+    ${joinFragment}
+    ${summaryWhere}
+  `, summaryParams);
+
+  // ── Vendor sources for filter dropdown ──────────────────────────
+  const vendorRes = await db.query(`
+    SELECT DISTINCT COALESCE(pcm.source, 'Manual') AS source
+    ${joinFragment}
+    WHERE sj.status = ANY($1::text[])
+    ORDER BY source
+  `, [['failed', 'cancelled', 'migration_held']]);
+
+  const summary = summaryRes.rows[0] || { failed: 0, cancelled: 0, held: 0, bounced: 0 };
+  const vendorSources = vendorRes.rows.map((r) => r.source).filter(Boolean);
+
+  // ── Shape items to match the existing client contract ───────────
+  const items = res.rows.map((row) => ({
+    _id: row._id,
+    status: row.status,
+    errorMessage: row.errorMessage || '',
+    recipientEmail: row.recipientEmail || '',
+    renderedSubject: row.renderedSubject || '',
+    scheduledFor: row.scheduledFor,
+    sentAt: row.sentAt,
+    updatedAt: row.updatedAt,
+    stepIndex: row.stepIndex,
+    vendorSource: row.vendorSource || 'Manual',
+    lead: row.leadId ? { _id: row.leadId, name: row.leadName || '', email: row.recipientEmail || '', deliveryStatus: row.leadDeliveryStatus || '' } : null,
+    company: row.companyId ? { _id: row.companyId, companyName: row.companyName || '' } : null,
+    campaign: row.campaignId ? { _id: row.campaignId, projectName: row.campaignName || '' } : null,
+    sequence: row.sequenceId ? { _id: row.sequenceId, name: row.sequenceName || '' } : null,
+  }));
+
+  return { items, total, page, pages: Math.ceil(total / limit), summary, vendorSources };
 }
 
 export async function getSequenceDeliverySummary(id) {

@@ -1046,6 +1046,7 @@ router.get('/send-delivery/issues', asyncRoute(async (req, res) => {
     sequenceId: req.query.sequenceId,
     status: req.query.status || req.query.view,
     q: req.query.q || req.query.search,
+    vendorSource: req.query.vendorSource,
   }));
 }));
 

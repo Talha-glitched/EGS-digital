@@ -84,6 +84,13 @@ export default function CommunicationsOverview({ data, loading, search, onSearch
   const summary = data?.summary || {};
   const results = data?.search?.items || [];
   const attention = data?.attention || [];
+  const vendorBreakdown = summary.vendorBreakdown || [];
+
+  const deliveryDetail = [
+    summary.totalFailed ? `${summary.totalFailed} failed` : null,
+    summary.totalBounced ? `${summary.totalBounced} bounced` : null,
+    summary.totalCancelled ? `${summary.totalCancelled} cancelled` : null,
+  ].filter(Boolean).join(' · ') || 'Failed, cancelled or held';
 
   async function assign(item, ownerUserId) {
     if (!ownerUserId) return;
@@ -105,10 +112,48 @@ export default function CommunicationsOverview({ data, loading, search, onSearch
       <StatBand>
         <StatBandItem as="button" onClick={() => onNavigate('inbox')} icon={MessageSquareReply} tone="success" label="Reply conversations" value={summary.inboxThreads || 0} detail={`${summary.unlinkedReplies || 0} not yet linked to a Job`} />
         <StatBandItem as="button" onClick={() => onNavigate('attention')} icon={Clock3} tone="warning" label="Needs human review" value={summary.needsReview || 0} detail="Pending reply decisions" />
-        <StatBandItem as="button" onClick={() => onNavigate('failed')} icon={AlertTriangle} tone="warning" label="Delivery issues" value={summary.deliveryIssues || 0} detail="Failed, cancelled or held" />
+        <StatBandItem as="button" onClick={() => onNavigate('failed')} icon={AlertTriangle} tone="warning" label="Delivery issues" value={summary.deliveryIssues || 0} detail={deliveryDetail} />
         <StatBandItem as="button" onClick={() => onNavigate('linked')} icon={Link2} tone="info" label="Linked conversations" value={summary.linkedThreads || 0} detail="Connected to operational Jobs" />
         <StatBandItem as="button" onClick={() => onNavigate('outbox')} icon={SendHorizontal} tone="brand" label="Queued sends" value={summary.queuedSends || 0} detail={`${summary.sentToday || 0} sent today`} />
       </StatBand>
+
+      {vendorBreakdown.length > 0 && (
+        <section className="crm-card overflow-hidden">
+          <div className="border-b border-[var(--color-line)] px-4 py-3">
+            <h2 className="text-xs font-semibold text-[var(--color-ink)]">Email delivery by source</h2>
+            <p className="mt-0.5 text-2xs text-neutral-500">Sent, failed, bounced, and replied breakdown per vendor data source.</p>
+          </div>
+          <div className="crm-scroll overflow-x-auto">
+            <table className="w-full min-w-[480px] text-xs">
+              <thead>
+                <tr className="crm-table-head">
+                  <th className="px-4 py-2.5 text-left">Source</th>
+                  <th className="px-4 py-2.5 text-right">Sent</th>
+                  <th className="px-4 py-2.5 text-right">Failed</th>
+                  <th className="px-4 py-2.5 text-right">Bounced</th>
+                  <th className="px-4 py-2.5 text-right">Replied</th>
+                </tr>
+              </thead>
+              <tbody>
+                {vendorBreakdown.map((row) => (
+                  <tr key={row.source} className="crm-table-row">
+                    <td className="px-4 py-2.5">
+                      <span className="inline-flex items-center gap-2 font-semibold text-[var(--color-ink)]">
+                        <span className={`h-2 w-2 rounded-full ${row.source === 'Apollo' ? 'bg-violet-500' : row.source === 'Hunter' ? 'bg-orange-500' : row.source === 'Lusha' ? 'bg-cyan-500' : row.source === 'Personal' ? 'bg-emerald-500' : 'bg-neutral-400'}`} />
+                        {row.source}
+                      </span>
+                    </td>
+                    <td className="px-4 py-2.5 text-right tabular-nums text-neutral-700">{row.sent || 0}</td>
+                    <td className="px-4 py-2.5 text-right tabular-nums text-red-600 font-medium">{row.failed || 0}</td>
+                    <td className="px-4 py-2.5 text-right tabular-nums text-amber-600 font-medium">{row.bounced || 0}</td>
+                    <td className="px-4 py-2.5 text-right tabular-nums text-emerald-600 font-medium">{row.replied || 0}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
 
       <section className="crm-card overflow-hidden">
         <div className="border-b border-[var(--color-line)] px-4 py-3">

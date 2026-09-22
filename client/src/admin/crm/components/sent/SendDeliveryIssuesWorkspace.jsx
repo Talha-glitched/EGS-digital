@@ -129,6 +129,9 @@ export default function SendDeliveryIssuesWorkspace({
   campaigns = [],
   campaignId = '',
   onCampaignChange,
+  vendorSource = '',
+  vendorSources = [],
+  onVendorSourceChange,
   search = '',
   onSearchChange,
   page = 1,
@@ -157,6 +160,23 @@ export default function SendDeliveryIssuesWorkspace({
   const title = view === 'queued' ? 'Queued sends' : 'Failed & blocked sends';
   const Icon = view === 'queued' ? Clock3 : XCircle;
 
+  const summaryText = view === 'queued'
+    ? `${summary.queued || 0} queued · ${summary.processing || 0} sending now`
+    : [
+        summary.failed ? `${summary.failed} failed` : null,
+        summary.bounced ? `${summary.bounced} bounced` : null,
+        summary.cancelled ? `${summary.cancelled} cancelled` : null,
+        summary.held ? `${summary.held} held` : null,
+      ].filter(Boolean).join(' · ') || `${summary.failed || 0} failed · ${summary.cancelled || 0} cancelled`;
+
+  const VENDOR_DOT = {
+    Apollo: 'bg-violet-500',
+    Hunter: 'bg-orange-500',
+    Lusha: 'bg-cyan-500',
+    Personal: 'bg-emerald-500',
+    Manual: 'bg-neutral-400',
+  };
+
   return (
     <div className="crm-card flex min-h-[560px] flex-col overflow-hidden md:h-[calc(100vh-168px)] md:flex-row">
       <aside className="flex h-80 w-full shrink-0 flex-col border-b border-[var(--color-line)] bg-neutral-50/40 md:h-auto md:w-[380px] md:border-b-0 md:border-r">
@@ -167,9 +187,7 @@ export default function SendDeliveryIssuesWorkspace({
             <span className="text-xs font-medium text-neutral-400">({total})</span>
           </h2>
           <p className="mt-1 text-xs text-neutral-500">
-            {view === 'queued'
-              ? `${summary.queued || 0} queued · ${summary.processing || 0} sending now`
-              : `${summary.failed || 0} failed · ${summary.cancelled || 0} cancelled`}
+            {summaryText}
           </p>
 
           <div className="mt-3 space-y-2">
@@ -195,6 +213,18 @@ export default function SendDeliveryIssuesWorkspace({
                 </option>
               ))}
             </select>
+            {onVendorSourceChange && (
+              <select
+                value={vendorSource}
+                onChange={(e) => onVendorSourceChange(e.target.value)}
+                className="crm-input w-full py-2 text-xs"
+              >
+                <option value="">All data sources</option>
+                {(vendorSources.length > 0 ? vendorSources : ['Apollo', 'Hunter', 'Lusha', 'Personal', 'Manual']).map((src) => (
+                  <option key={src} value={src}>{src}</option>
+                ))}
+              </select>
+            )}
           </div>
         </div>
 
@@ -212,6 +242,7 @@ export default function SendDeliveryIssuesWorkspace({
           ) : (
             issues.map((issue) => {
               const selected = activeIssue?._id === issue._id;
+              const dotClass = VENDOR_DOT[issue.vendorSource] || VENDOR_DOT.Manual;
               return (
                 <button
                   key={issue._id}
@@ -223,7 +254,15 @@ export default function SendDeliveryIssuesWorkspace({
                   )}
                 >
                   <div className="mb-1 flex items-center justify-between gap-2">
-                    <IssueBadge issue={issue} />
+                    <div className="flex items-center gap-2">
+                      <IssueBadge issue={issue} />
+                      {issue.vendorSource && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-1.5 py-0.5 text-2xs font-medium text-neutral-600">
+                          <span className={`h-1.5 w-1.5 rounded-full ${dotClass}`} />
+                          {issue.vendorSource}
+                        </span>
+                      )}
+                    </div>
                     <span className="shrink-0 text-2xs text-neutral-400">Step {issue.stepNumber}</span>
                   </div>
                   <p className="truncate text-sm font-semibold text-[var(--color-ink)]">

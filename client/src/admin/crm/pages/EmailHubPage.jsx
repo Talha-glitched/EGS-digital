@@ -38,6 +38,8 @@ export default function EmailHubPage() {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [repliedOnly, setRepliedOnly] = useState(false);
+  const [vendorSource, setVendorSource] = useState('');
+  const [vendorSources, setVendorSources] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [workspace, setWorkspace] = useState(null);
@@ -88,7 +90,7 @@ export default function EmailHubPage() {
 
   useEffect(() => {
     setPage(1);
-  }, [campaignId, sequenceId, debouncedSearch, repliedOnly, view]);
+  }, [campaignId, sequenceId, debouncedSearch, repliedOnly, vendorSource, view]);
 
   const setView = useCallback((nextView) => {
     setSearchParams((prev) => {
@@ -143,11 +145,13 @@ export default function EmailHubPage() {
           sequenceId: sequenceId || undefined,
           q: debouncedSearch || undefined,
           status: view,
+          vendorSource: vendorSource || undefined,
         });
         setIssues(data.items || []);
         setTotal(data.total || 0);
         setPages(data.pages || 0);
         setIssueSummary(data.summary || {});
+        setVendorSources(data.vendorSources || []);
       }
     } catch (err) {
       setError(err.message || 'Failed to load email delivery data.');
@@ -158,7 +162,7 @@ export default function EmailHubPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, campaignId, sequenceId, debouncedSearch, repliedOnly, view]);
+  }, [page, campaignId, sequenceId, debouncedSearch, repliedOnly, vendorSource, view]);
 
   useEffect(() => {
     load().catch(console.error);
@@ -257,6 +261,9 @@ export default function EmailHubPage() {
             campaigns={campaigns}
             campaignId={campaignId}
             onCampaignChange={setCampaignId}
+            vendorSource={vendorSource}
+            vendorSources={vendorSources}
+            onVendorSourceChange={setVendorSource}
             sequences={sequences}
             sequenceId={sequenceId}
             onSequenceChange={setSequenceId}
