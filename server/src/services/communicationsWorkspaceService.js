@@ -141,16 +141,18 @@ export async function getCommunicationsWorkspace(options = {}, actor = {}) {
       SELECT
         COALESCE(pcm.source, 'Manual') AS "source",
         COUNT(*) FILTER (WHERE sj.status = 'sent')::int AS "sent",
-        COUNT(*) FILTER (WHERE sj.status = 'failed')::int AS "failed",
-        COUNT(*) FILTER (WHERE sj.status = 'failed' AND (
-          sj.error_message ILIKE '%bounce%'
-          OR sj.error_message ILIKE '%smtp%'
-          OR sj.error_message ILIKE '%suppress%'
-          OR sj.error_message = 'Bounced / Invalid'
-          OR sj.error_message ILIKE '%mail server%'
-          OR sj.error_message ILIKE '%ECONN%'
-          OR sj.error_message ILIKE '%ETIMEDOUT%'
-        ))::int AS "bounced",
+        COUNT(*) FILTER (WHERE sj.status IN ('failed', 'cancelled', 'migration_held'))::int AS "failed",
+        COUNT(DISTINCT CASE WHEN (
+          sj.status = 'failed' AND (
+            sj.error_message ILIKE '%bounce%'
+            OR sj.error_message ILIKE '%smtp%'
+            OR sj.error_message ILIKE '%suppress%'
+            OR sj.error_message = 'Bounced / Invalid'
+            OR sj.error_message ILIKE '%mail server%'
+            OR sj.error_message ILIKE '%ECONN%'
+            OR sj.error_message ILIKE '%ETIMEDOUT%'
+          )
+        ) OR cc.lead_state = 'Bounced / Invalid' THEN cc.id END)::int AS "bounced",
         COUNT(DISTINCT CASE WHEN m.direction = 'inbound' AND COALESCE(m.is_migration_duplicate, FALSE) = FALSE THEN m.id END)::int AS "replied"
       FROM send_jobs sj
       LEFT JOIN sequence_enrollments se ON se.id = sj.enrollment_id

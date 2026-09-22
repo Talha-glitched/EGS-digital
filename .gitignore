@@ -31,3 +31,5 @@ uploads/*.zip
 client/public/media/graduation/Websites Gallery Graduations/2026/Fujairah University/Fujairah-University.mp4
 client/public/media/graduation/Websites Gallery Graduations/2026/Fujairah University/Highlights FU GC2026 4JUN2026.mp4
 
+server/scripts/syncMongoVendorSources.js
+server/mongo_check.cjs
