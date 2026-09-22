@@ -586,41 +586,46 @@ export async function listSendDeliveryIssues(options = {}) {
   const limit = Math.min(200, Math.max(1, Number(options.limit) || 50));
   const statuses = options.status === 'failed' ? ['failed'] : options.status === 'cancelled' ? ['cancelled'] : ['failed', 'cancelled', 'migration_held'];
 
-  // ── Build dynamic WHERE clauses ──────────────────────────────────
+  // ── Build dynamic WHERE clauses for main/count queries ───────────
   const conditions = ['sj.status = ANY($1::text[])'];
   const params = [statuses];
-  let paramIdx = 1;
+  
+  // ── Build dynamic WHERE clauses for summary query (no status filter) ─
+  const summaryConditions = [];
+  const summaryParams = [];
+
+  const addFilter = (mainSql, summarySql, val) => {
+    params.push(val);
+    conditions.push(mainSql.replace('$$', `$${params.length}`));
+    
+    summaryParams.push(val);
+    summaryConditions.push(summarySql.replace('$$', `$${summaryParams.length}`));
+  };
 
   if (options.campaignId) {
-    paramIdx++;
-    conditions.push(`sj.campaign_id::text = $${paramIdx}::text`);
-    params.push(String(options.campaignId));
+    addFilter(`sj.campaign_id::text = $$::text`, `sj.campaign_id::text = $$::text`, String(options.campaignId));
   }
   if (options.sequenceId) {
-    paramIdx++;
-    conditions.push(`seq.id::text = $${paramIdx}::text`);
-    params.push(String(options.sequenceId));
+    addFilter(`seq.id::text = $$::text`, `seq.id::text = $$::text`, String(options.sequenceId));
   }
   if (options.vendorSource) {
-    paramIdx++;
-    conditions.push(`COALESCE(pcm.source, 'Manual') = $${paramIdx}`);
-    params.push(String(options.vendorSource));
+    addFilter(`COALESCE(pcm.source, 'Manual') = $$`, `COALESCE(pcm.source, 'Manual') = $$`, String(options.vendorSource));
   }
   if (options.q) {
-    paramIdx++;
     const pattern = `%${String(options.q).trim()}%`;
-    conditions.push(`(
-      p.display_name ILIKE $${paramIdx}
-      OR o.canonical_name ILIKE $${paramIdx}
-      OR sj.recipient_email ILIKE $${paramIdx}
-      OR sj.rendered_subject ILIKE $${paramIdx}
-      OR sj.error_message ILIKE $${paramIdx}
-      OR camp.name ILIKE $${paramIdx}
-    )`);
-    params.push(pattern);
+    const sql = `(
+      p.display_name ILIKE $$
+      OR o.canonical_name ILIKE $$
+      OR sj.recipient_email ILIKE $$
+      OR sj.rendered_subject ILIKE $$
+      OR sj.error_message ILIKE $$
+      OR camp.name ILIKE $$
+    )`;
+    addFilter(sql, sql, pattern);
   }
 
   const whereClause = conditions.join(' AND ');
+  const summaryWhereClause = summaryConditions.length > 0 ? `WHERE ${summaryConditions.join(' AND ')}` : '';
 
   const joinFragment = `
     FROM send_jobs sj
@@ -642,9 +647,9 @@ export async function listSendDeliveryIssues(options = {}) {
   `;
 
   // ── Main query with enrichment ───────────────────────────────────
-  const offsetParam = ++paramIdx;
-  const limitParam = ++paramIdx;
-  params.push((page - 1) * limit, limit);
+  const mainParams = [...params, (page - 1) * limit, limit];
+  const offsetIdx = params.length + 1;
+  const limitIdx = params.length + 2;
 
   const res = await db.query(`
     SELECT sj.id AS "_id", sj.status, sj.error_message AS "errorMessage",
@@ -660,23 +665,19 @@ export async function listSendDeliveryIssues(options = {}) {
     ${joinFragment}
     WHERE ${whereClause}
     ORDER BY COALESCE(sj.updated_at, sj.sent_at, sj.scheduled_for, sj.created_at) DESC
-    OFFSET $${offsetParam} LIMIT $${limitParam}
-  `, params);
+    OFFSET $${offsetIdx} LIMIT $${limitIdx}
+  `, mainParams);
 
   // ── Count query (same filters) ──────────────────────────────────
   const countRes = await db.query(`
     SELECT COUNT(*)::int AS total
     ${joinFragment}
     WHERE ${whereClause}
-  `, params.slice(0, paramIdx - 2)); // exclude offset/limit
+  `, params);
 
   const total = countRes.rows[0]?.total || 0;
 
   // ── Summary query (all statuses, same filters except status) ────
-  const summaryConditions = conditions.slice(1); // drop the status filter
-  const summaryParams = params.slice(1, paramIdx - 2); // drop statuses, offset, limit
-  const summaryWhere = summaryConditions.length ? `WHERE ${summaryConditions.join(' AND ')}` : '';
-
   const summaryRes = await db.query(`
     SELECT
       COUNT(*) FILTER (WHERE sj.status = 'failed')::int AS "failed",
@@ -692,7 +693,7 @@ export async function listSendDeliveryIssues(options = {}) {
         OR sj.error_message ILIKE '%ETIMEDOUT%'
       ))::int AS "bounced"
     ${joinFragment}
-    ${summaryWhere}
+    ${summaryWhereClause}
   `, summaryParams);
 
   // ── Vendor sources for filter dropdown ──────────────────────────
