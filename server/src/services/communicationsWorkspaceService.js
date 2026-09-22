@@ -152,7 +152,7 @@ export async function getCommunicationsWorkspace(options = {}, actor = {}) {
             OR sj.error_message ILIKE '%ECONN%'
             OR sj.error_message ILIKE '%ETIMEDOUT%'
           )
-        ) OR cc.lead_state = 'Bounced / Invalid' OR EXISTS(SELECT 1 FROM endpoint_suppressions es WHERE LOWER(es.endpoint) = LOWER(sj.recipient_email) AND es.reason = 'bounced') THEN cc.id END)::int AS "bounced",
+        ) OR cc.lead_state = 'Bounced / Invalid' THEN cc.id END)::int AS "bounced",
         COUNT(DISTINCT CASE WHEN m.direction = 'inbound' AND COALESCE(m.is_migration_duplicate, FALSE) = FALSE THEN m.id END)::int AS "replied"
       FROM send_jobs sj
       LEFT JOIN sequence_enrollments se ON se.id = sj.enrollment_id

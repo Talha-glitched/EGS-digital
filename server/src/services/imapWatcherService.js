@@ -217,6 +217,18 @@ async function handleBounceMessage(message, text) {
     [bouncedEmail.toLowerCase()]
   );
 
+  // Sync to campaign_contacts lead_state so analytics display properly
+  await db.query(
+    `UPDATE campaign_contacts cc
+     SET lead_state = 'Bounced / Invalid'
+     FROM person_organization_roles por
+     JOIN person_contact_methods pcm ON pcm.person_id = por.person_id
+     WHERE por.id = cc.role_id
+       AND LOWER(pcm.normalized_value) = $1
+       AND COALESCE(cc.lead_state, '') != 'Bounced / Invalid'`,
+    [bouncedEmail.toLowerCase()]
+  );
+
   return { bouncedEmail, leadFound: true };
 }
 
