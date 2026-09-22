@@ -132,6 +132,7 @@ export default function CommunicationsOverview({ data, loading, search, onSearch
                   <th className="px-4 py-2.5 text-right">Failed</th>
                   <th className="px-4 py-2.5 text-right">Bounced</th>
                   <th className="px-4 py-2.5 text-right">Bounce Rate</th>
+                  <th className="px-4 py-2.5 text-right">Failed Rate</th>
                   <th className="px-4 py-2.5 text-right">Replied</th>
                   <th className="px-4 py-2.5 text-right">Reply Rate</th>
                 </tr>
@@ -144,6 +145,7 @@ export default function CommunicationsOverview({ data, loading, search, onSearch
                   const replied = row.replied || 0;
                   const totalAttempts = sent + failed;
                   const bounceRate = totalAttempts > 0 ? (bounced / totalAttempts) * 100 : 0;
+                  const failedRate = sent > 0 ? ((failed + bounced) / sent) * 100 : 0;
                   const replyRate = sent > 0 ? (replied / sent) * 100 : 0;
                   
                   return (
@@ -158,6 +160,7 @@ export default function CommunicationsOverview({ data, loading, search, onSearch
                       <td className="px-4 py-2.5 text-right tabular-nums text-red-600 font-medium">{failed}</td>
                       <td className="px-4 py-2.5 text-right tabular-nums text-amber-600 font-medium">{bounced}</td>
                       <td className="px-4 py-2.5 text-right tabular-nums text-amber-600 font-medium">{bounceRate.toFixed(1)}%</td>
+                      <td className="px-4 py-2.5 text-right tabular-nums text-red-600 font-medium">{failedRate.toFixed(1)}%</td>
                       <td className="px-4 py-2.5 text-right tabular-nums text-emerald-600 font-medium">{replied}</td>
                       <td className="px-4 py-2.5 text-right tabular-nums text-emerald-600 font-medium">{replyRate.toFixed(1)}%</td>
                     </tr>
