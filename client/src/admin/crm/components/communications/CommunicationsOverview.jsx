@@ -131,24 +131,38 @@ export default function CommunicationsOverview({ data, loading, search, onSearch
                   <th className="px-4 py-2.5 text-right">Sent</th>
                   <th className="px-4 py-2.5 text-right">Failed</th>
                   <th className="px-4 py-2.5 text-right">Bounced</th>
+                  <th className="px-4 py-2.5 text-right">Bounce Rate</th>
                   <th className="px-4 py-2.5 text-right">Replied</th>
+                  <th className="px-4 py-2.5 text-right">Reply Rate</th>
                 </tr>
               </thead>
               <tbody>
-                {vendorBreakdown.map((row) => (
-                  <tr key={row.source} className="crm-table-row">
-                    <td className="px-4 py-2.5">
-                      <span className="inline-flex items-center gap-2 font-semibold text-[var(--color-ink)]">
-                        <span className={`h-2 w-2 rounded-full ${row.source === 'Apollo' ? 'bg-violet-500' : row.source === 'Hunter' ? 'bg-orange-500' : row.source === 'Lusha' ? 'bg-cyan-500' : row.source === 'Personal' ? 'bg-emerald-500' : 'bg-neutral-400'}`} />
-                        {row.source}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2.5 text-right tabular-nums text-neutral-700">{row.sent || 0}</td>
-                    <td className="px-4 py-2.5 text-right tabular-nums text-red-600 font-medium">{row.failed || 0}</td>
-                    <td className="px-4 py-2.5 text-right tabular-nums text-amber-600 font-medium">{row.bounced || 0}</td>
-                    <td className="px-4 py-2.5 text-right tabular-nums text-emerald-600 font-medium">{row.replied || 0}</td>
-                  </tr>
-                ))}
+                {vendorBreakdown.map((row) => {
+                  const sent = row.sent || 0;
+                  const failed = row.failed || 0;
+                  const bounced = row.bounced || 0;
+                  const replied = row.replied || 0;
+                  const totalAttempts = sent + failed;
+                  const bounceRate = totalAttempts > 0 ? (bounced / totalAttempts) * 100 : 0;
+                  const replyRate = sent > 0 ? (replied / sent) * 100 : 0;
+                  
+                  return (
+                    <tr key={row.source} className="crm-table-row">
+                      <td className="px-4 py-2.5">
+                        <span className="inline-flex items-center gap-2 font-semibold text-[var(--color-ink)]">
+                          <span className={`h-2 w-2 rounded-full ${row.source === 'Apollo' ? 'bg-violet-500' : row.source === 'Hunter' ? 'bg-orange-500' : row.source === 'Lusha' ? 'bg-cyan-500' : row.source === 'Personal' ? 'bg-emerald-500' : 'bg-neutral-400'}`} />
+                          {row.source}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2.5 text-right tabular-nums text-neutral-700">{sent}</td>
+                      <td className="px-4 py-2.5 text-right tabular-nums text-red-600 font-medium">{failed}</td>
+                      <td className="px-4 py-2.5 text-right tabular-nums text-amber-600 font-medium">{bounced}</td>
+                      <td className="px-4 py-2.5 text-right tabular-nums text-amber-600 font-medium">{bounceRate.toFixed(1)}%</td>
+                      <td className="px-4 py-2.5 text-right tabular-nums text-emerald-600 font-medium">{replied}</td>
+                      <td className="px-4 py-2.5 text-right tabular-nums text-emerald-600 font-medium">{replyRate.toFixed(1)}%</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
